@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
@@ -98,7 +99,7 @@ class NotificationService
         $filter = [
             'id != ?' => $fromUser,
             'active = ?' => 1,
-            'roles LIKE ?' => '%' . $groupId . '%'
+            'roles LIKE ?' => '%' . $groupId . '%',
         ];
 
         $condition = implode(' AND ', array_keys($filter));
@@ -186,7 +187,7 @@ class NotificationService
 
         $result = [
             'total' => $listing->count(),
-            'data' => $listing->getItems($offset, $limit)
+            'data' => $listing->getItems($offset, $limit),
         ];
 
         $this->commit();
@@ -200,7 +201,7 @@ class NotificationService
      *
      * @return array
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws Exception
      */
     public function findLastUnread(int $user, int $lastUpdate): array
     {
@@ -209,7 +210,7 @@ class NotificationService
             'recipient = ? AND `read` = 0 AND creationDate >= ?',
             [
                 $user,
-                date('Y-m-d H:i:s', $lastUpdate)
+                date('Y-m-d H:i:s', $lastUpdate),
             ]
         );
         $listing->setOrderKey('creationDate');
@@ -220,7 +221,7 @@ class NotificationService
 
         $result = [
             'total' => $listing->count(),
-            'data' => $listing->getData()
+            'data' => $listing->getData(),
         ];
 
         $this->commit();

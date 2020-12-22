@@ -22,7 +22,6 @@ use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
-use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\Kernel;
 use Pimcore\Routing\RouteReferenceInterface;
@@ -223,7 +222,7 @@ class PimcoreBundleManager
                 $bundles[$item->getBundleIdentifier()] = $this->stateConfig->normalizeOptions([
                     'enabled' => in_array($item->getBundleIdentifier(), $enabledBundles),
                     'priority' => $item->getPriority(),
-                    'environments' => $item->getEnvironments()
+                    'environments' => $item->getEnvironments(),
                 ]);
             }
 
@@ -402,7 +401,7 @@ class PimcoreBundleManager
     public function enable($bundle, array $state = [])
     {
         $state = array_merge($state, [
-            'enabled' => true
+            'enabled' => true,
         ]);
 
         $this->setState($bundle, $state);
@@ -551,6 +550,7 @@ class PimcoreBundleManager
      */
     public function isInstalled(PimcoreBundleInterface $bundle): bool
     {
+        return true;
         if (null === $installer = $bundle->getInstaller()) {
             // bundle has no dedicated installer, so we can treat it as installed
             return true;
@@ -574,44 +574,6 @@ class PimcoreBundleManager
         }
 
         return $installer->needsReloadAfterInstall();
-    }
-
-    /**
-     * Determines if a bundle can be updated
-     *
-     * @param PimcoreBundleInterface $bundle
-     *
-     * @return bool
-     */
-    public function canBeUpdated(PimcoreBundleInterface $bundle): bool
-    {
-        if (!$this->isEnabled($bundle)) {
-            return false;
-        }
-
-        if (null === $installer = $this->loadBundleInstaller($bundle)) {
-            return false;
-        }
-
-        return $installer->canBeUpdated();
-    }
-
-    /**
-     * Runs update routine for a bundle
-     *
-     * @param PimcoreBundleInterface $bundle
-     *
-     * @throws UpdateException If the bundle can not be updated or doesn't define an installer
-     */
-    public function update(PimcoreBundleInterface $bundle)
-    {
-        $installer = $this->loadBundleInstaller($bundle, true);
-
-        if (!$installer->canBeUpdated()) {
-            throw new UpdateException(sprintf('Bundle %s can not be updated', $bundle->getName()));
-        }
-
-        $installer->update();
     }
 
     /**
@@ -714,8 +676,7 @@ class PimcoreBundleManager
     protected function resolveEventPaths(array $paths, string $eventName): array
     {
         $event = new PathsEvent($paths);
-
-        $this->dispatcher->dispatch($eventName, $event);
+        $this->dispatcher->dispatch($event, $eventName);
 
         return $event->getPaths();
     }

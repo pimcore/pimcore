@@ -10,7 +10,7 @@ Contains general settings about timezone, view suffix, additional path variables
 
  
 ## Localization & Internationalization (i18n/l10n) 
-This settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
+These settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
 for shared translations, ... simply everywhere the editor can choose or use a language for the content.
 Fallback languages are currently used in object's localized fields and shared translations.
 
@@ -51,7 +51,7 @@ creating a bundle. Please don't activate it in production systems!
 
 What exactly does the dev mode:
 * Loading the source javascript files (uncompressed & commented)
-* Disables some caches (Webservice Cache, ...)
+* Disables some caches (Cache, ...)
 * extensive logging into log files
 * ... and some more little things
 
@@ -62,18 +62,6 @@ Settings for default values of Mails sent via `Pimcore\Mail`.
 
 ## Website
 System settings about the CMS part of Pimcore.
-
-### EU Cookie Policy Notice
-Pimcore has a default implementation for EU cookie policy that looks like as follows. 
-
-![Cookie Policy](../img/system-settings-sample.png)
-
-
-You can specify your own texts and add your custom detail link using the "Shared Translations".
-Just search for "cookie-" in Shared Translations, then you get listed the predefined keys for the cookie 
-texts and links:
-
-![Cookie Policy Translation](../img/system-settings2.png)
 
 ##### Use a Custom Template Code
 
@@ -103,7 +91,7 @@ Only use a *Service Account* from the Google Cloud Console.
 Google API Key (Simple API Access for CSE, ...) is e.g. required for correct display of geo data types in Pimcore ojbects. 
  
  
-## Ouput-Cache
+## Output-Cache
 Settings for Pimcore [output cache](../19_Development_Tools_and_Details/09_Cache/README.md).
 
 
@@ -123,3 +111,28 @@ Settings for outbound HTTP connectivity of Pimcore - needed e.g. for Pimcore Upd
 Possibility for configuring different newsletter delivery settings from the default e-mail settings.
  
  
+## Access system config in PHP Controller
+Using `\Pimcore\Config::getSystemConfig()` is deprecated. You can choose one of the following options to access the system configuration:
+
+```php 
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+use Pimcore\Config;
+
+class DefaultController extends FrontendController
+{
+    public function defaultAction(Request $request, Config $config)
+    {
+        // option 1 - use type-hinting to inject the config service
+        $bar = $config['general']['valid_languages'];
+        
+        // option 2 - use the container parameter 
+        $foo = $this->getParameter('pimcore.config')['general']['valid_languages'];    
+    }
+
+}
+```

@@ -32,10 +32,9 @@ class Substring extends AbstractOperator
     {
         parent::__construct($config, $context);
 
-        $this->label = $config->cssClass;
-        $this->start = $config->start;
-        $this->length = $config->length;
-        $this->ellipses = $config->ellipses;
+        $this->start = $config->start ?? 0;
+        $this->length = $config->length ?? 0;
+        $this->ellipses = $config->ellipses ?? false;
     }
 
     public function getLabeledValue($element)
@@ -53,8 +52,8 @@ class Substring extends AbstractOperator
             $valueArray = [];
 
             $childResult = $c->getLabeledValue($element);
-            $isArrayType = $childResult->isArrayType;
-            $childValues = $childResult->value;
+            $isArrayType = $childResult->isArrayType ?? false;
+            $childValues = $childResult->value ?? null;
             if ($childValues && !$isArrayType) {
                 $childValues = [$childValues];
             }
@@ -89,7 +88,6 @@ class Substring extends AbstractOperator
             } else {
                 $result->value = $valueArray[0];
             }
-            $result->$valueArray;
         }
 
         return $result;

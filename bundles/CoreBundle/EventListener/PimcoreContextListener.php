@@ -22,12 +22,14 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
+    const ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING = '_pimcore_context_force_resolving';
 
     /**
      * @var PimcoreContextResolver
@@ -59,25 +61,25 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         return [
             // run after router to be able to match the _route attribute
             // TODO check if this is early enough
-            KernelEvents::REQUEST => ['onKernelRequest', 24]
+            KernelEvents::REQUEST => ['onKernelRequest', 24],
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
-        if ($event->isMasterRequest()) {
+        if ($event->isMasterRequest() || $event->getRequest()->attributes->has(self::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING)) {
             $context = $this->resolver->getPimcoreContext($request);
 
             if ($context) {
                 $this->logger->debug('Resolved pimcore context for path {path} to {context}', [
                     'path' => $request->getPathInfo(),
-                    'context' => $context
+                    'context' => $context,
                 ]);
             } else {
                 $this->logger->debug('Could not resolve a pimcore context for path {path}', [
-                    'path' => $request->getPathInfo()
+                    'path' => $request->getPathInfo(),
                 ]);
             }
 
@@ -93,14 +95,10 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
      */
     protected function initializeContext($context, $request)
     {
-        if ($context == PimcoreContextResolver::CONTEXT_ADMIN || $context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
+        if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
             DataObject\AbstractObject::setHideUnpublished(false);
-
-            if ($context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
-                DataObject\AbstractObject::setGetInheritedValues(filter_var($request->get('inheritance'), FILTER_VALIDATE_BOOLEAN));
-            }
             DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
             \Pimcore::unsetAdminMode();

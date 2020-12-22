@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +29,37 @@ class EmailController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_email_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_email_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_email_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_email_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -51,7 +80,8 @@ class EmailController extends DocumentControllerBase
         }
 
         $email = clone $email;
-        $email = $this->getLatestVersion($email);
+        $isLatestVersion = true;
+        $email = $this->getLatestVersion($email, $isLatestVersion);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
@@ -59,14 +89,17 @@ class EmailController extends DocumentControllerBase
         $email->setParent(null);
 
         // unset useless data
-        $email->setElements(null);
+        $email->setEditables(null);
         $email->setChildren(null);
 
-        $this->addTranslationsData($email);
-        $this->minimizeProperties($email);
-
         $data = $email->getObjectVars();
+
+        $this->addTranslationsData($email, $data);
+        $this->minimizeProperties($email, $data);
+
         $data['url'] = $email->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $email);
 
@@ -78,7 +111,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_email_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -110,15 +143,15 @@ class EmailController extends DocumentControllerBase
             $page->save();
             $this->saveToSession($page);
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
                 'success' => true,
                 'data' => [
                     'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount()
+                    'versionCount' => $page->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);

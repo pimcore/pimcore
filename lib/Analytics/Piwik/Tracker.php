@@ -28,7 +28,7 @@ use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class Tracker extends AbstractTracker
 {
@@ -53,9 +53,9 @@ class Tracker extends AbstractTracker
     private $eventDispatcher;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templatingEngine;
+    private $twig;
 
     /**
      * @var array
@@ -76,13 +76,13 @@ class Tracker extends AbstractTracker
         SiteIdProvider $siteIdProvider,
         ConfigProvider $configProvider,
         EventDispatcherInterface $eventDispatcher,
-        EngineInterface $templatingEngine
+        Environment $twig
     ) {
         parent::__construct($siteIdProvider);
 
         $this->configProvider = $configProvider;
         $this->eventDispatcher = $eventDispatcher;
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
     }
 
     protected function buildCodeCollector(): CodeCollector
@@ -106,7 +106,7 @@ class Tracker extends AbstractTracker
             'siteId' => $siteId,
             'config' => $config,
             'piwikSiteId' => $config->getPiwikSiteId($siteId->getConfigKey()),
-            'piwikUrl' => $config->getPiwikUrl()
+            'piwikUrl' => $config->getPiwikUrl(),
         ];
 
         $blocks = $this->buildCodeBlocks($config, $siteId);
@@ -114,7 +114,7 @@ class Tracker extends AbstractTracker
         $template = '@PimcoreCore/Analytics/Tracking/Piwik/trackingCode.html.twig';
 
         $event = new TrackingDataEvent($config, $siteId, $data, $blocks, $template);
-        $this->eventDispatcher->dispatch(PiwikEvents::CODE_TRACKING_DATA, $event);
+        $this->eventDispatcher->dispatch($event, PiwikEvents::CODE_TRACKING_DATA);
 
         return $this->renderTemplate($event);
     }
@@ -124,7 +124,7 @@ class Tracker extends AbstractTracker
         $data = $event->getData();
         $data['blocks'] = $event->getBlocks();
 
-        $code = $this->templatingEngine->render(
+        $code = $this->twig->render(
             $event->getTemplate(),
             $data
         );
@@ -179,7 +179,7 @@ class Tracker extends AbstractTracker
 
         $blockData[self::BLOCK_BEFORE_ASYNC] = [
             "_paq.push(['setTrackerUrl', u+'piwik.php']);",
-            sprintf("_paq.push(['setSiteId', '%d']);", $config->getPiwikSiteId($siteId->getConfigKey()))
+            sprintf("_paq.push(['setSiteId', '%d']);", $config->getPiwikSiteId($siteId->getConfigKey())),
         ];
 
         return $blockData;

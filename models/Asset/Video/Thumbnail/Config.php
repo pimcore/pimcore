@@ -84,6 +84,8 @@ class Config extends Model\AbstractModel
      * @param string $name
      *
      * @return null|Config
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -99,7 +101,7 @@ class Config extends Model\AbstractModel
                 $thumbnail = new self();
                 $thumbnail->getDao()->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }
@@ -122,9 +124,9 @@ class Config extends Model\AbstractModel
                 'method' => 'scaleByWidth',
                 'arguments' =>
                 [
-                    'width' => 500
-                ]
-            ]
+                    'width' => 500,
+                ],
+            ],
         ]);
 
         return $config;
@@ -140,7 +142,7 @@ class Config extends Model\AbstractModel
     {
         $this->items[] = [
             'method' => $name,
-            'arguments' => $parameters
+            'arguments' => $parameters,
         ];
 
         return true;
@@ -157,7 +159,7 @@ class Config extends Model\AbstractModel
     {
         array_splice($this->items, $position, 0, [[
             'method' => $name,
-            'arguments' => $parameters
+            'arguments' => $parameters,
         ]]);
 
         return true;

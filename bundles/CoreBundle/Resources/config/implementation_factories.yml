@@ -9,14 +9,18 @@ services:
     # Class maps and prefixes will be set from the extension as they are loaded from config
     #
 
-    # document tag loader
-    pimcore.implementation_loader.document.tag:
-        class: Pimcore\Model\Document\Tag\Loader\TagLoader
+    # document editable loader
+    Pimcore\Model\Document\Editable\Loader\EditableLoader:
         public: true
 
     # object data loader
     pimcore.implementation_loader.object.data:
         class: Pimcore\Model\DataObject\ClassDefinition\Loader\DataLoader
+        public: true
+
+    # asset metadata data loader
+    pimcore.implementation_loader.asset.metadata.data:
+        class: Pimcore\Model\Asset\Metadata\Loader\DataLoader
         public: true
 
     # object layout loader

@@ -230,7 +230,7 @@ class InheritanceHelper
             $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
             $o = [
                 'id' => $result['id'],
-                'values' => $result ?? null
+                'values' => $result ?? null,
             ];
 
             $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
@@ -281,7 +281,7 @@ class InheritanceHelper
                 $query = 'SELECT b.o_id AS id '
                     . ' FROM objects b LEFT JOIN ' . $this->querytable . ' a ON b.o_id = a.' . $this->idField
                     . ' WHERE b.o_classId = ' . $this->db->quote($classId)
-                    . ' AND o_path LIKE '. $this->db->quote($object->getRealFullPath().'/%')
+                    . ' AND o_path LIKE '. $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%')
                     . ' AND ISNULL(a.' . $this->queryIdField . ')';
                 $missingIds = $this->db->fetchCol($query);
 
@@ -316,7 +316,7 @@ class InheritanceHelper
 
         $o = [
             'id' => $objectId,
-            'children' => $this->buildTree($objectId, $fields, null, $params)
+            'children' => $this->buildTree($objectId, $fields, null, $params),
         ];
 
         if (!empty($this->fields)) {
@@ -359,7 +359,7 @@ class InheritanceHelper
             $objectsWithBrickIds = [];
             $objectsWithBricks = $this->db->fetchAll('SELECT ' . $this->idField . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
             foreach ($objectsWithBricks as $item) {
-                $objectsWithBrickIds[] = $item['id'];
+                $objectsWithBrickIds[] = $item[$this->idField];
             }
 
             $currentQueryItems = $this->db->fetchAll('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
@@ -422,11 +422,11 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
-                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($object->getRealFullPath() . '/%')
+                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()) . '/%')
                     . ' HAVING `language` = "' . $params['language'] . '" OR ISNULL(`language`)'
                     . ' ORDER BY LENGTH(o_path) ASC';
             } else {
-                $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+                $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
             }
             $queryCacheKey = 'tree_'.md5($query);
 
@@ -475,7 +475,7 @@ class InheritanceHelper
                 $o = [
                     'id' => $id,
                     'children' => $this->buildTree($id, $fields, $parentIdGroups, $params),
-                    'values' => $rowData
+                    'values' => $rowData,
                 ];
 
                 $objects[] = $o;
@@ -524,7 +524,7 @@ class InheritanceHelper
         $relationCondition = $this->getRelationCondition($params);
 
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+            $objectRelationsResult = $this->db->fetchAll('SELECT src_id as id, fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
                 . ' GROUP BY position, fieldname'
                 . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)', [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');

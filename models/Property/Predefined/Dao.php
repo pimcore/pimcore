@@ -20,6 +20,8 @@ namespace Pimcore\Model\Property\Predefined;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Property\Predefined $model
  */
 class Dao extends Model\Dao\PhpArrayTable
@@ -92,7 +94,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['id', 'name', 'description', 'key', 'type', 'data',
-            'config', 'ctype', 'inheritable', 'creationDate', 'modificationDate'];
+            'config', 'ctype', 'inheritable', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

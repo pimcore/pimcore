@@ -119,6 +119,12 @@ Ext.define('pimcore.filters', {
             theFilter.lt.config.type = type;
             theFilter.gt.config.type = type;
             theFilter.eq.config.type = type;
+
+            if (column.decimalPrecision) {
+                column.filter.fields.lt.decimalPrecision = column.decimalPrecision;
+                column.filter.fields.gt.decimalPrecision = column.decimalPrecision;
+                column.filter.fields.eq.decimalPrecision = column.decimalPrecision;
+            }
         } else {
             theFilter.config.type = type;
         }
@@ -248,6 +254,12 @@ Ext.define('pimcore.tree.View', {
                 record.ptb.destroy();
                 delete record.ptb;
             }
+        },
+
+        itemupdate: function(record) {
+            if (record.needsPaging && typeof record.ptb == "undefined") {
+                this.doUpdatePaging(record);
+            }
         }
     },
 
@@ -261,7 +273,7 @@ Ext.define('pimcore.tree.View', {
 
         me.superclass.renderRow.call(this, record, rowIdx, out);
 
-        if (record.needsPaging && typeof record.ptp == "undefined") {
+        if (record.needsPaging && typeof record.ptb == "undefined") {
             this.doUpdatePaging(record);
         }
 

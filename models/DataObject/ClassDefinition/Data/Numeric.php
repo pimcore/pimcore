@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
 
@@ -66,13 +66,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $columnType = 'double';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'float';
-
-    /**
      * @var bool
      */
     public $integer = false;
@@ -114,10 +107,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $decimalPrecision;
 
-    /**
-     * @inheritDoc
-     */
-    public function getPhpdocType(): string
+    protected function getPhpdocType(): string
     {
         if ($this->getInteger()) {
             return 'int';
@@ -169,7 +159,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if ((string)$defaultValue !== '') {
             $this->defaultValue = $defaultValue;
         }
 
@@ -348,11 +338,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $scale = self::DECIMAL_PRECISION_DEFAULT;
 
         if (null !== $this->decimalSize) {
-            $precision = intval($this->decimalSize);
+            $precision = (int)$this->decimalSize;
         }
 
         if (null !== $this->decimalPrecision) {
-            $scale = intval($this->decimalPrecision);
+            $scale = (int)$this->decimalPrecision;
         }
 
         if ($precision < 1 || $precision > 65) {
@@ -377,7 +367,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string|null
@@ -397,7 +387,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -415,7 +405,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -431,7 +421,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataForEditmode
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -445,7 +435,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataFromEditmode
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -517,7 +507,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -526,7 +516,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return strval($data);
+        return (string)$data;
     }
 
     /**
@@ -616,5 +606,36 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     protected function doGetDefaultValue($object, $context = [])
     {
         return $this->getDefaultValue() ?? null;
+    }
+
+    /**
+     * @param float|int|string $oldValue
+     * @param float|int|string $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?' . $this->getPhpdocType();
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?' . $this->getPhpdocType();
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return $this->getPhpdocType() . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return $this->getPhpdocType() . '|null';
     }
 }

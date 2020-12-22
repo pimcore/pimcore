@@ -20,6 +20,8 @@ namespace Pimcore\Model\User\Permission\Definition\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\User\Permission\Definition\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -42,5 +44,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setDefinitions($definitions);
 
         return $definitions;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM users_permission_definitions ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

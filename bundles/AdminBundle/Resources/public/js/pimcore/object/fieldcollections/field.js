@@ -17,8 +17,10 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
     allowedInType: 'fieldcollection',
     disallowedDataTypes: ["reverseManyToManyObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
         "objectsMetadata"],
-    uploadUrl: '/admin/class/import-fieldcollection',
-    exportUrl: "/admin/class/export-fieldcollection",
+
+    uploadRoute: 'pimcore_admin_dataobject_class_importfieldcollection',
+    exportRoute: 'pimcore_admin_dataobject_class_exportfieldcollection',
+
     context: "fieldcollection",
 
     getId: function () {
@@ -29,7 +31,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         this.usagesStore = new Ext.data.ArrayStore({
             proxy: {
-                url: '/admin/class/get-fieldcollection-usages',
+                url: Routing.generate('pimcore_admin_dataobject_class_getfieldcollectionusages'),
                 type: 'ajax',
                 reader: {
                     type: 'json'
@@ -94,6 +96,12 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                     fieldLabel: t("title"),
                     value: this.data.title
                 },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("generate_type_declarations"),
+                    name: "generateTypeDeclarations",
+                    checked: this.data.generateTypeDeclarations
+                },
                 this.groupField,
                 {
                     xtype: 'displayfield',
@@ -126,7 +134,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         if (this.getDataSuccess) {
             Ext.Ajax.request({
-                url: "/admin/class/fieldcollection-update",
+                url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionupdate'),
                 method: 'PUT',
                 params: {
                     configuration: m,
@@ -152,7 +160,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 if (res.message) {
                     pimcore.helpers.showNotification(t("error"), res.message, "error");
                 } else {
-                    throw "save was not successful, see log files in /var/logs";
+                    throw "save was not successful, see log files in /var/log";
                 }
             }
         } catch (e) {
@@ -168,15 +176,16 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function () {
             Ext.Ajax.request({
-                url: "/admin/class/fieldcollection-get",
+                url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionget'),
                 params: {
                     id: this.getId()
                 },
                 success: function (response) {
                     this.data = Ext.decode(response.responseText);
                     this.parentPanel.getEditPanel().removeAll();
-                    this.addLayout();
+                    this.addTree();
                     this.initLayoutFields();
+                    this.addLayout();
                     pimcore.layout.refresh();
                 }.bind(this)
             });

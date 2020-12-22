@@ -16,13 +16,13 @@ pimcore.object.classes.data.data = Class.create({
 
     invalidFieldNames: false,
     forbiddenNames: [
-                "id","key","path","type","index","classname","creationdate","userowner","value","class","list",
-                "fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent",
-                "userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data",
-                "versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource",
-                "parentClass","definition","locked","language","omitmandatorycheck", "idpath", "object", "fieldname",
-                "property","localizedfields","parentId", "children", "scheduledTasks"
-            ],
+        "id", "key", "path", "type", "index", "classname", "creationdate", "userowner", "value", "class", "list",
+        "fullpath", "childs", "values", "cachetag", "cachetags", "parent", "published", "valuefromparent",
+        "userpermissions", "dependencies", "modificationdate", "usermodification", "byid", "bypath", "data",
+        "versions", "properties", "permissions", "permissionsforuser", "childamount", "apipluginbroker", "resource",
+        "parentClass", "definition", "locked", "language", "omitmandatorycheck", "idpath", "object", "fieldname",
+        "property", "localizedfields", "parentid", "children", "scheduledtasks"
+    ],
 
     /**
      * define where this datatype is allowed
@@ -96,21 +96,6 @@ pimcore.object.classes.data.data = Class.create({
             disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
         });
 
-        if (this.supportsUnique()) {
-            this.uniqueCheckbox = new Ext.form.field.Checkbox({
-                fieldLabel: t("unique"),
-                name: "unique",
-                itemId: "unique",
-                checked: this.datax.unique,
-                autoEl: {
-                    tag: 'div',
-                    'data-qtip': t('unique_qtip')
-                },
-                hidden: true
-            });
-        }
-
-
         var standardSettings = [
             {
                 xtype: "textfield",
@@ -175,7 +160,8 @@ pimcore.object.classes.data.data = Class.create({
                 autoEl: {
                     tag: 'div',
                     'data-qtip': t('unique_qtip')
-                }
+                },
+                disabled: this.isInCustomLayoutEditor()
             });
             standardSettings.push(this.uniqueCheckbox);
         }
@@ -309,19 +295,20 @@ pimcore.object.classes.data.data = Class.create({
 
     isValid: function () {
 
-
         var data = this.getData();
         data.name = trim(data.name);
-        var regresult = data.name.match(/[a-zA-Z][a-zA-Z0-9_]*/);
 
-        if (data.name.length > 1 && regresult == data.name
-                            && in_array(data.name.toLowerCase(), this.forbiddenNames) == false) {
+        var isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+        var isForbiddenName = in_arrayi(data.name, this.forbiddenNames);
+
+        if (data.name.length > 1 && isValidName.test(data.name) && !isForbiddenName) {
             return true;
         }
 
-        if(in_array(data.name.toLowerCase(), this.forbiddenNames)==true){
+        if (isForbiddenName) {
             this.invalidFieldNames = true;
         }
+
         return false;
     },
 

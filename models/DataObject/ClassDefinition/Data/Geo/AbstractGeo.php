@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
-abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
+abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
     /**
      * @var float
@@ -35,6 +35,16 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
      * @var int
      */
     public $zoom = 1;
+
+    /**
+     * @var int
+     */
+    public $width;
+
+    /**
+     * @var int
+     */
+    public $height;
 
     /**
      * @var string
@@ -97,6 +107,46 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
     public function setZoom($zoom)
     {
         $this->zoom = (int) $zoom;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param int $width
+     *
+     * @return $this
+     */
+    public function setWidth($width)
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
+     * @param int $height
+     *
+     * @return $this
+     */
+    public function setHeight($height)
+    {
+        $this->height = $height;
 
         return $this;
     }

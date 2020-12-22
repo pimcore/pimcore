@@ -31,7 +31,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/ecommerceframework/index/get-fields',
+                url: Routing.generate('pimcore_ecommerceframework_index_getfields'),
                 reader: {
                     rootProperty: 'data',
                     idProperty: 'key'
@@ -85,7 +85,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/ecommerceframework/index/get-all-tenants',
+                    url: Routing.generate('pimcore_ecommerceframework_index_getalltenants'),
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'key'
@@ -160,7 +160,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
                     tenantCombobox,
                     this.fieldsCombobox
                 ],
-                cls: "object_field",
+                cls: "object_field object_field_type_" + this.type,
                 isDirty: function() {
                     return tenantCombobox.isDirty() || this.fieldsCombobox.isDirty()
                 }.bind(this)

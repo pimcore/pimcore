@@ -115,7 +115,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         this.fieldStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/object-helper/grid-get-column-config',
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 extraParams: {
                     no_brick_columns: "true",
                     gridtype: 'all',
@@ -379,12 +379,13 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     classes: source.datax.classes,
                     enableBatchEdit: source.datax.enableBatchEdit,
                     allowMultipleAssignments: source.datax.allowMultipleAssignments,
-                    optimizedAdminLoading: source.datax.optimizedAdminLoading
+                    optimizedAdminLoading: source.datax.optimizedAdminLoading,
+                    pathFormatterClass: source.datax.pathFormatterClass
                 });
         }
     }
 
 });
 
-// @TODO BC layer, to be removed in v7.0
+// @TODO BC layer, to be removed in Pimcore 10
 pimcore.object.classes.data.objectsMetadata = pimcore.object.classes.data.advancedManyToManyObjectRelation;

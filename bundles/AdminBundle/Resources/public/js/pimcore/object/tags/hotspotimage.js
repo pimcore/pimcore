@@ -57,29 +57,34 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
                 if (value && value.id) {
-                    var baseUrl = '<img src="/admin/asset/get-image-thumbnail?id=' + value.id;
-                    if (forGridConfigPreview) {
-                        return baseUrl + '&width=88&height=20&frame=true" />';
-                    } else {
-                        var params = {
-                            width: 88,
-                            height: 88,
-                            frame: true
-                        };
+                    var params = {
+                        id: value.id
+                    };
 
-                        var url = Ext.String.urlAppend(baseUrl, Ext.Object.toQueryString(params));
+                    if (forGridConfigPreview) {
+                        params['width'] = 88;
+                        params['height'] = 20;
+                        params['frame'] = true;
+
+                        return '<img src="' + Routing.generate('pimcore_admin_asset_getimagethumbnail', params)  + '" />';
+                    } else {
+                        params['width'] = 88;
+                        params['height'] = 88;
+                        params['frame'] = true;
+
+                        var url = Routing.generate('pimcore_admin_asset_getimagethumbnail', params);
 
                         if (value.crop) {
                             var cropParams = Ext.Object.toQueryString(value.crop);
                             url = Ext.String.urlAppend(url, cropParams);
                         }
 
-                        url = url + '" style="width:88px; height:88px;" />';
+                        url = '<img src="' + url + '" style="width:88px; height:88px;" />';
                         return url;
                     }
                 }
@@ -231,12 +236,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             tbar: toolbar
         };
 
-        if (!this.additionalConfig.condensed) {
-            // conf.style = "padding-bottom: 10px;";
+        if (!this.additionalConfig.gallery) {
+             conf.style = "padding-bottom: 10px;";
         }
 
         this.component = new Ext.Panel(conf);
@@ -319,9 +324,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 height = body.getHeight() - 10;
             }
 
-            var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width
-                + "&height=" + height + "&contain=true" + "&" + Ext.urlEncode(this.crop);
-
+            var path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge({
+                id: this.data.id,
+                width: width,
+                height: height,
+                contain: true
+            }, this.crop));
 
             body.setStyle({
                 backgroundImage: "url(" + path + ")",

@@ -33,6 +33,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
@@ -86,9 +87,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('pimcore_ecommerce_framework');
 
-        $rootNode = $treeBuilder->root('pimcore_ecommerce_framework');
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
 
         $this->addRootNodeChildren($rootNode);
@@ -127,9 +128,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildPimcoreNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('pimcore');
 
-        $pimcore = $builder->root('pimcore');
+        $pimcore = $builder->getRootNode();
         $pimcore
             ->addDefaultsIfNotSet()
             ->info('Configuration of Pimcore backend menu entries');
@@ -166,9 +167,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildFactoryNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('factory');
 
-        $factory = $builder->root('factory');
+        $factory = $builder->getRootNode();
         $factory
             ->addDefaultsIfNotSet()
             ->info('Configuration of e-commerce framework factory');
@@ -191,9 +192,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildEnvironmentNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('environment');
 
-        $environment = $builder->root('environment');
+        $environment = $builder->getRootNode();
         $environment
             ->addDefaultsIfNotSet()
             ->info('Configuration of environment');
@@ -210,9 +211,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildCartManagerNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('cart_manager');
 
-        $cartManager = $builder->root('cart_manager');
+        $cartManager = $builder->getRootNode();
         $cartManager
             ->addDefaultsIfNotSet()
             ->info('Settings for cart manager');
@@ -225,32 +226,32 @@ class Configuration implements ConfigurationInterface
                     ->example([
                         '_defaults' => [
                             'cart' => [
-                                'factory_id' => 'CartFactory'
-                            ]
+                                'factory_id' => 'CartFactory',
+                            ],
                         ],
                         'default' => [
                             'cart' => [
                                 'factory_options' => [
-                                    'cart_class_name' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart'
-                                ]
+                                    'cart_class_name' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart',
+                                ],
                             ],
                             'price_calculator' => [
                                 'modificators' => [
                                     'shipping' => [
                                         'class' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping',
                                         'options' => [
-                                            'charge' => '5.90'
-                                        ]
-                                    ]
-                                ]
-                            ]
+                                            'charge' => '5.90',
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                         'noShipping' => [
                             'price_calculator' => [
                                 'factory_id' => 'PriceCalculatorFactory',
-                                'modificators' => '~'
-                            ]
-                        ]
+                                'modificators' => '~',
+                            ],
+                        ],
                     ])
                     ->useAttributeAsKey('name')
                     ->validate()
@@ -286,7 +287,7 @@ class Configuration implements ConfigurationInterface
                                     ->append($this->buildOptionsNode('factory_options', [
                                         'cart_class_name' => Cart::class,
                                         'guest_cart_class_name' => SessionCart::class,
-                                        'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT
+                                        'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT,
                                     ]))
                                 ->end()
                             ->end()
@@ -300,7 +301,7 @@ class Configuration implements ConfigurationInterface
                                     ->append($this->buildOptionsNode(
                                         'factory_options',
                                         [
-                                            'class' => CartPriceCalculator::class
+                                            'class' => CartPriceCalculator::class,
                                         ],
                                         "'class' defines a class name of the price calculator, which the factory instantiates. If you wish to replace or extend price calculation routine shipped with e-commerce framework provide your custom class name here."
                                     ))
@@ -325,9 +326,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildOrderManagerNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('order_manager');
 
-        $orderManager = $builder->root('order_manager');
+        $orderManager = $builder->getRootNode();
         $orderManager
             ->info('Configuration of Order Manager')
             ->addDefaultsIfNotSet();
@@ -410,9 +411,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildPricingManagerNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('pricing_manager');
 
-        $pricingManager = $builder->root('pricing_manager');
+        $pricingManager = $builder->getRootNode();
         $pricingManager
             ->info('Configuration of Pricing Manager')
             ->addDefaultsIfNotSet();
@@ -421,7 +422,7 @@ class Configuration implements ConfigurationInterface
             // support deprecated options at the root level of the pricing_manager
             // values set here will OVERWRITE the value in every tenant, even if the
             // tenant defines the value!
-            // TODO remove in Pimcore 7
+            // TODO remove in Pimcore 10
             ->validate()
                 ->always(function ($v) {
                     $enabled = null;
@@ -554,9 +555,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildPriceSystemsNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('price_systems');
 
-        $priceSystems = $builder->root('price_systems');
+        $priceSystems = $builder->getRootNode();
         $priceSystems
             ->info('Configuration of price systems - key is name of price system.')
             ->useAttributeAsKey('name')
@@ -580,9 +581,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildAvailabilitySystemsNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('availability_systems');
 
-        $availabilitySystems = $builder->root('availability_systems');
+        $availabilitySystems = $builder->getRootNode();
         $availabilitySystems
             ->useAttributeAsKey('name')
             ->info('Configuration of availability systems - key is name of price system.')
@@ -606,9 +607,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildCheckoutManagerNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('checkout_manager');
 
-        $checkoutManager = $builder->root('checkout_manager');
+        $checkoutManager = $builder->getRootNode();
         $checkoutManager
             ->info('Configuration of checkout manager')
             ->addDefaultsIfNotSet();
@@ -683,9 +684,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildPaymentManagerNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('payment_manager');
 
-        $paymentManager = $builder->root('payment_manager');
+        $paymentManager = $builder->getRootNode();
         $paymentManager
             ->info('Configuration of payment manager and payment providers')
             ->addDefaultsIfNotSet();
@@ -737,9 +738,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildIndexServiceNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('index_service');
 
-        $indexService = $builder->root('index_service');
+        $indexService = $builder->getRootNode();
         $indexService
             ->addDefaultsIfNotSet()
             ->info('Configuration of index service');
@@ -749,6 +750,14 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('index_service_id')
                     ->cannotBeEmpty()
                     ->defaultValue(IndexService::class)
+                ->end()
+                // @TODO Pimcore 10 - remove this
+                ->enumNode('worker_mode')
+                    ->values([ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC, ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY])
+                    ->cannotBeEmpty()
+                    ->setDeprecated('will be removed in Pimcore 10 as then ' . ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC . ' will be default mode.')
+                    ->info('Worker mode for ' . ProductCentricBatchProcessingWorker::class . ' workers.')
+                    ->defaultValue(ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY)
                 ->end()
                 ->scalarNode('default_tenant')
                     ->cannotBeEmpty()
@@ -851,8 +860,8 @@ class Configuration implements ConfigurationInterface
                                 ->info('Placeholder values in this tenant attributes definition (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")')
                                 ->example([
                                     'placeholders' => [
-                                        '%%locale%%' => 'de_AT'
-                                    ]
+                                        '%%locale%%' => 'de_AT',
+                                    ],
                                 ])
                                 ->defaultValue([])
                                 ->beforeNormalization()
@@ -900,13 +909,13 @@ class Configuration implements ConfigurationInterface
                                                 'getter' => 'getter_id',
                                                 'interpreter' => 'interpreter_id',
                                                 'config' => 'options',
-                                                'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype'
+                                                'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype',
                                             ]);
 
                                             // this option was never properly supported
                                             // and is ignored
                                             if (isset($v['mapping'])) {
-                                                @trigger_error('The "mapping" config entry on the ecommerce index attribute level is unsupported and will be removed in Pimcore 7. Please set "options.mapping" instead.', E_USER_DEPRECATED);
+                                                @trigger_error('The "mapping" config entry on the ecommerce index attribute level is unsupported and will be removed in Pimcore 10. Please set "options.mapping" instead.', E_USER_DEPRECATED);
                                                 unset($v['mapping']);
                                             }
 
@@ -924,7 +933,7 @@ class Configuration implements ConfigurationInterface
                                         ->append($this->buildOptionsNode('getter_options'))
                                         ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
-                                        ->append($this->buildOptionsNode('mapping')) // TODO Symfony 3.4 set as deprecated. TODO Pimcore 7 remove option completely.
+                                        ->append($this->buildOptionsNode('mapping')) // TODO Symfony 3.4 set as deprecated. TODO Pimcore 10 remove option completely.
                                         ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
                                     ->end()
                                 ->end()
@@ -939,9 +948,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildFilterServiceNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('filter_service');
 
-        $filterService = $builder->root('filter_service');
+        $filterService = $builder->getRootNode();
         $filterService
             ->info('Configuration of filter service')
             ->addDefaultsIfNotSet();
@@ -981,7 +990,7 @@ class Configuration implements ConfigurationInterface
 
                                             return $this->remapProperties($v, [
                                                 'class' => 'filter_type_id',
-                                                'script' => 'template'
+                                                'script' => 'template',
                                             ]);
                                         })
                                     ->end()
@@ -1008,9 +1017,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildVoucherServiceNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('voucher_service');
 
-        $voucherService = $builder->root('voucher_service');
+        $voucherService = $builder->getRootNode();
         $voucherService
             ->info('Configuration of voucher service')
             ->addDefaultsIfNotSet();
@@ -1061,9 +1070,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildOfferToolNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('offer_tool');
 
-        $offerTool = $builder->root('offer_tool');
+        $offerTool = $builder->getRootNode();
         $offerTool
             ->info('Configuration of offer tool')
             ->addDefaultsIfNotSet();
@@ -1102,9 +1111,9 @@ class Configuration implements ConfigurationInterface
 
     private function buildTrackingManagerNode(): NodeDefinition
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('tracking_manager');
 
-        $trackingManager = $builder->root('tracking_manager');
+        $trackingManager = $builder->getRootNode();
         $trackingManager
             ->info('Configuration of Tracking Manager')
             ->addDefaultsIfNotSet();

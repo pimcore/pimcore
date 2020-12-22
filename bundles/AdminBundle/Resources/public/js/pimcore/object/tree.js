@@ -14,10 +14,10 @@
 pimcore.registerNS("pimcore.object.tree");
 pimcore.object.tree = Class.create({
 
-    treeDataUrl: "/admin/object/tree-get-childs-by-id",
+    treeDataUrl: null,
 
     initialize: function (config, perspectiveCfg) {
-
+        this.treeDataUrl = Routing.generate('pimcore_admin_dataobject_dataobject_treegetchildsbyid');
         this.perspectiveCfg = perspectiveCfg;
         if (!perspectiveCfg) {
             this.perspectiveCfg = {
@@ -49,7 +49,7 @@ pimcore.object.tree = Class.create({
 
         // get root node config
         Ext.Ajax.request({
-            url: "/admin/object/tree-get-root",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_treegetroot'),
             params: {
                 id: this.config.rootId,
                 view: this.config.customViewId,
@@ -663,12 +663,17 @@ pimcore.object.tree = Class.create({
                 sortByItems.push({
                     text: t('by_key'),
                     iconCls: "pimcore_icon_alphabetical_sorting_az",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key')
+                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'ASC')
+                });
+                sortByItems.push({
+                    text: t('by_key_reverse'),
+                    iconCls: "pimcore_icon_alphabetical_sorting_za",
+                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'DESC')
                 });
                 sortByItems.push({
                     text: t('by_index'),
                     iconCls: "pimcore_icon_index_sorting",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index')
+                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index', 'ASC')
                 });
             }
 
@@ -725,7 +730,7 @@ pimcore.object.tree = Class.create({
 
         if (button == "ok") {
             var options =  {
-                url: "/admin/object/add-folder",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_addfolder'),
                 elementType : "object",
                 sourceTree: tree,
                 parentId: record.data.id,
@@ -744,7 +749,7 @@ pimcore.object.tree = Class.create({
             }
 
             var options = {
-                url: "/admin/object/add",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_add'),
                 elementType: "object",
                 sourceTree: tree,
                 parentId: record.data.id,
@@ -767,7 +772,7 @@ pimcore.object.tree = Class.create({
             }
 
             var options = {
-                url: "/admin/object/add",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_add'),
                 elementType: "object",
                 sourceTree: tree,
                 className: record.data.className,
@@ -839,7 +844,7 @@ pimcore.object.tree = Class.create({
         pimcore.helpers.addTreeNodeLoadingIndicator("object", record.data.id);
 
         Ext.Ajax.request({
-            url: "/admin/object/copy-info",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_copyinfo'),
             params: {
                 targetId: record.data.id,
                 sourceId: pimcore.cachedObjectId,
@@ -984,7 +989,7 @@ pimcore.object.tree = Class.create({
         parameters.id = record.data.id;
 
         Ext.Ajax.request({
-            url: '/admin/object/save?task=' + task,
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_save', {task: task}),
             method: "PUT",
             params: parameters,
             success: function (tree, record, task, response) {
@@ -1019,15 +1024,16 @@ pimcore.object.tree = Class.create({
 
     },
 
-    changeObjectChildrenSortBy: function (tree, record, sortBy) {
+    changeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
 
         var parameters = {
             id: record.data.id,
-            sortBy: sortBy
+            sortBy: sortBy,
+            childrenSortOrder: childrenSortOrder
         };
 
         Ext.Ajax.request({
-            url: '/admin/object/change-children-sort-by',
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_changechildrensortby'),
             method: "PUT",
             params: parameters,
             success: function (tree, record, sortBy, response) {

@@ -66,7 +66,7 @@ class OverrideHandler
     protected function buildForm(Request $request): FormInterface
     {
         $formBuilder = $this->formFactory->createNamedBuilder('_ptg_overrides', FormType::class, null, [
-            'csrf_protection' => false
+            'csrf_protection' => false,
         ]);
 
         $formBuilder->setMethod('GET');

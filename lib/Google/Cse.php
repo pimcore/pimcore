@@ -14,11 +14,12 @@
 
 namespace Pimcore\Google;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
@@ -58,7 +59,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
             $search = new \Google_Service_Customsearch($client);
 
             // determine language
-            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
             if ($position = strpos($language, '_')) {
                 $language = substr($language, 0, $position);
@@ -81,6 +82,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
                 }
 
                 $config['num'] = $perPage;
+                $config['q'] = $query;
 
                 $cacheKey = 'google_cse_' . md5($query . serialize($config));
 
@@ -89,7 +91,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
                     $result = \Pimcore\Cache\Runtime::get($cacheKey);
                 } else {
                     if (!$result = Cache::load($cacheKey)) {
-                        $result = $search->cse->listCse($query, $config);
+                        $result = $search->cse->listCse($config);
                         Cache::save($result, $cacheKey, ['google_cse'], 3600, 999);
                         \Pimcore\Cache\Runtime::set($cacheKey, $result);
                     }
@@ -166,7 +168,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         $this->setRaw($googleResponse);
 
         // set search results
-        $total = intval($googleResponse->getSearchInformation()->getTotalResults());
+        $total = (int)$googleResponse->getSearchInformation()->getTotalResults();
         if ($total > 100) {
             $total = 100;
         }
@@ -188,7 +190,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
                             $regexes = [
                                 '/image-thumb__([0-9]+)__/',
                                 '/([0-9]+)\/thumb__/',
-                                '/thumb_([0-9]+)__/'
+                                '/thumb_([0-9]+)__/',
                             ];
 
                             foreach ($regexes as $regex) {

@@ -21,8 +21,8 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\ElementEventInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class UUIDListener implements EventSubscriberInterface
 {
@@ -40,7 +40,7 @@ class UUIDListener implements EventSubscriberInterface
             DataObjectEvents::POST_DELETE => 'onPostDelete',
             DocumentEvents::POST_DELETE => 'onPostDelete',
             AssetEvents::POST_DELETE => 'onPostDelete',
-            DataObjectClassDefinitionEvents::POST_DELETE => 'onPostDelete'
+            DataObjectClassDefinitionEvents::POST_DELETE => 'onPostDelete',
         ];
     }
 

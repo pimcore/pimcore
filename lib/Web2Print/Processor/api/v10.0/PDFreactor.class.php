@@ -81,7 +81,7 @@ class PDFreactor
                 'max_redirects' => 0,
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -92,7 +92,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -160,7 +160,7 @@ class PDFreactor
                 'max_redirects' => 0,
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -171,7 +171,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -246,7 +246,7 @@ class PDFreactor
                 'max_redirects' => 0,
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -257,7 +257,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -342,7 +342,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -353,7 +353,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -408,7 +408,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -419,7 +419,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -479,7 +479,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -490,7 +490,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -556,7 +556,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -567,7 +567,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -622,7 +622,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'DELETE',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -633,7 +633,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -683,7 +683,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -694,7 +694,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -744,7 +744,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -755,7 +755,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }

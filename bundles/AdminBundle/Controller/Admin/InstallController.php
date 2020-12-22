@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class InstallController extends AdminController
 {
     /**
-     * @Route("/check", methods={"GET", "POST"})
+     * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param ConnectionInterface $db
@@ -42,19 +42,9 @@ class InstallController extends AdminController
             $profiler->disable();
         }
 
-        $checksPHP = Requirements::checkPhp();
-        $checksFS = Requirements::checkFilesystem();
-        $checksApps = Requirements::checkExternalApplications();
-        $checksMySQL = Requirements::checkMysql($db);
+        $viewParams = Requirements::checkAll($db);
+        $viewParams['headless'] = (bool)$request->get('headless');
 
-        $viewParams = [
-            'checksApps' => $checksApps,
-            'checksPHP' => $checksPHP,
-            'checksMySQL' => $checksMySQL,
-            'checksFS' => $checksFS,
-            'headless' => (bool)$request->get('headless')
-        ];
-
-        return $this->render('PimcoreAdminBundle:Admin/Install:check.html.twig', $viewParams);
+        return $this->render('@PimcoreAdmin/Admin/Install/check.html.twig', $viewParams);
     }
 }

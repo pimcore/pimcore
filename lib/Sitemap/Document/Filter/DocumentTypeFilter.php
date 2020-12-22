@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Sitemap\Document\Filter;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\Element\FilterInterface;
 use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
@@ -30,7 +30,7 @@ class DocumentTypeFilter implements FilterInterface
     private $documentTypes = [
         'page',
         'link',
-        'hardlink'
+        'hardlink',
     ];
 
     /**
@@ -40,7 +40,7 @@ class DocumentTypeFilter implements FilterInterface
         'page',
         'folder',
         'link',
-        'hardlink'
+        'hardlink',
     ];
 
     public function __construct(array $documentTypes = null, array $containerTypes = null)
@@ -54,16 +54,16 @@ class DocumentTypeFilter implements FilterInterface
         }
     }
 
-    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {
-        if (!$element instanceof Document) {
+        if (!$element instanceof Document || $element instanceof Document\Hardlink\Wrapper\WrapperInterface) {
             return false;
         }
 
         return in_array($element->getType(), $this->documentTypes);
     }
 
-    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         if (!$element instanceof Document) {
             return false;

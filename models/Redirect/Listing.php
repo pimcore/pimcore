@@ -28,18 +28,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $redirects = null;
-
-    public function __construct()
-    {
-        $this->redirects = & $this->data;
-    }
-
-    /**
      * @return Model\Redirect[]
      */
     public function getRedirects()

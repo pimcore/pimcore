@@ -20,6 +20,8 @@ namespace Pimcore\Model\Tool\TmpStore;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Tool\TmpStore $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -47,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
                 'tag' => $tag,
                 'date' => time(),
                 'expiryDate' => (time() + $lifetime),
-                'serialized' => (int) $serialized
+                'serialized' => (int) $serialized,
             ]);
 
             return true;

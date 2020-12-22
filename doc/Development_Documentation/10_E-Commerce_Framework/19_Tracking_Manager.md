@@ -5,6 +5,7 @@ different tracker implementations, it supports different tracking services.
 
 Current implementations of trackers are
 
+* **Google Tag Manager (GTM)**: `\\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager`
 * **Google Analytics Classic**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce`
 * **Google Analytics Universal**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce`
 * **Google Analytics Enhanced E-Commerce**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce`
@@ -125,7 +126,7 @@ namespace AppBundle\Controller;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class ShopController extends FrontendController
 {

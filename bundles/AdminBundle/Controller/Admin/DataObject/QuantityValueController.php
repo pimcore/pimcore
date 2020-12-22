@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class QuantityValueController extends AdminController
 {
     /**
-     * @Route("/quantity-value/unit-proxy", methods={"GET"})
+     * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxyget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -83,7 +83,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/unit-proxy", methods={"POST", "PUT"})
+     * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxy", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -124,7 +124,12 @@ class QuantityValueController extends AdminController
                 if (isset($data['baseunit']) && $data['baseunit'] === -1) {
                     $data['baseunit'] = null;
                 }
-                unset($data['id']);
+
+                $id = $data['id'];
+                if (Unit::getById($id)) {
+                    throw new \Exception('unit with ID [' . $id . '] already exists');
+                }
+
                 $unit = new Unit();
                 $unit->setValues($data);
                 $unit->save();
@@ -153,7 +158,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/unit-list", methods={"GET"})
+     * @Route("/quantity-value/unit-list", name="pimcore_admin_dataobject_quantityvalue_unitlist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -177,7 +182,6 @@ class QuantityValueController extends AdminController
 
         $units = $list->getUnits();
 
-        /** @var Unit $unit */
         foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
@@ -197,7 +201,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/convert", methods={"GET"})
+     * @Route("/quantity-value/convert", name="pimcore_admin_dataobject_quantityvalue_convert", methods={"GET"})
      *
      * @param Request $request
      *
@@ -226,7 +230,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/convert-all", methods={"GET"})
+     * @Route("/quantity-value/convert-all", name="pimcore_admin_dataobject_quantityvalue_convertall", methods={"GET"})
      *
      * @param Request $request
      *
@@ -250,7 +254,6 @@ class QuantityValueController extends AdminController
         $convertedValues = [];
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        /** @var Unit $targetUnit */
         foreach ($units as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);

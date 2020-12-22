@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +29,37 @@ class FolderController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_folder_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_folder_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_folder_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_folder_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -56,10 +85,10 @@ class FolderController extends DocumentControllerBase
         $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
-        $this->addTranslationsData($folder);
-        $this->minimizeProperties($folder);
-
         $data = $folder->getObjectVars();
+
+        $this->addTranslationsData($folder, $data);
+        $this->minimizeProperties($folder, $data);
 
         $this->preSendDataActions($data, $folder);
 
@@ -71,7 +100,7 @@ class FolderController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_folder_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -94,7 +123,7 @@ class FolderController extends DocumentControllerBase
             $this->setValuesToDocument($request, $folder);
             $folder->save();
 
-            $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($folder);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData]);
         } else {

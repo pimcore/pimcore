@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
@@ -29,7 +30,7 @@ use Pimcore\Tool;
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
     /**
      * @var array
      */
@@ -336,8 +337,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param int $keyId
      * @param int $groupId
+     * @param int $keyId
      * @param string $language
      * @param bool $ignoreFallbackLanguage
      * @param bool $ignoreDefaultLanguage
@@ -415,7 +416,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,
-                'name' => $groupId . '-' . $keyId
+                'name' => $groupId . '-' . $keyId,
             ]);
         }
 

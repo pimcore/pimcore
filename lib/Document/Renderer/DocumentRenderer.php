@@ -24,10 +24,9 @@ use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Templating\Helper\Placeholder\ContainerService;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
 class DocumentRenderer implements DocumentRendererInterface
@@ -113,8 +112,8 @@ class DocumentRenderer implements DocumentRendererInterface
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
         $this->eventDispatcher->dispatch(
-            DocumentEvents::RENDERER_PRE_RENDER,
-            new DocumentEvent($document)
+            new DocumentEvent($document),
+            DocumentEvents::RENDERER_PRE_RENDER
         );
 
         // apply best matching target group (if any)
@@ -132,7 +131,7 @@ class DocumentRenderer implements DocumentRendererInterface
         try {
             $request = $this->requestHelper->getCurrentRequest();
         } catch (\Exception $e) {
-            $request = new Request();
+            $request = $this->requestHelper->createRequestWithContext();
         }
 
         $documentLocale = $document->getProperty('language');
@@ -148,8 +147,8 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->localeService->setLocale($tempLocale);
 
         $this->eventDispatcher->dispatch(
-            DocumentEvents::RENDERER_POST_RENDER,
-            new DocumentEvent($document)
+            new DocumentEvent($document),
+            DocumentEvents::RENDERER_POST_RENDER
         );
 
         return $response->getContent();

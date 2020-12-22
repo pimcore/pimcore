@@ -21,30 +21,36 @@ use Pimcore\Model\AbstractModel;
 
 class AnyGetter extends AbstractOperator
 {
+    /** @var string */
     private $attribute;
 
+    /** @var string */
     private $param1;
 
+    /** @var bool */
     private $isArrayType;
 
+    /** @var string */
     private $forwardAttribute;
 
+    /** @var string */
     private $forwardParam1;
 
+    /** @var bool */
     private $returnLastResult;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->attribute = $config->attribute;
-        $this->param1 = $config->param1;
-        $this->isArrayType = $config->isArrayType;
+        $this->attribute = $config->attribute ?? '';
+        $this->param1 = $config->param1 ?? '';
+        $this->isArrayType = $config->isArrayType ?? false;
 
-        $this->forwardAttribute = $config->forwardAttribute;
-        $this->forwardParam1 = $config->forwardParam1;
+        $this->forwardAttribute = $config->forwardAttribute ?? '';
+        $this->forwardParam1 = $config->forwardParam1 ?? '';
 
-        $this->returnLastResult = $config->returnLastResult;
+        $this->returnLastResult = $config->returnLastResult ?? false;
     }
 
     public function getLabeledValue($element)
@@ -55,15 +61,18 @@ class AnyGetter extends AbstractOperator
         $childs = $this->getChilds();
 
         $getter = 'get'.ucfirst($this->attribute);
+        $fallbackGetter = $this->attribute;
 
         if (!$childs) {
+            $result->value = null;
             if ($this->attribute && method_exists($element, $getter)) {
-                $result->value = $element->$getter();
-                if ($result->value instanceof AbstractModel) {
-                    $result->value = $result->value->getObjectVars();
-                }
+                $result->value = $element->$getter($this->getParam1());
+            } elseif ($this->attribute && method_exists($element, $fallbackGetter)) {
+                $result->value = $element->$fallbackGetter($this->getParam1());
+            }
 
-                return $result;
+            if ($result->value instanceof AbstractModel) {
+                $result->value = $result->value->getObjectVars();
             }
         } else {
             if (count($childs) > 1) {
@@ -102,20 +111,22 @@ class AnyGetter extends AbstractOperator
 
                 if ($this->getisArrayType()) {
                     if (is_array($value)) {
-                        $newValues = [];
+                        $subValues = [];
                         foreach ($value as $o) {
                             if ($this->attribute && method_exists($o, $getter)) {
-                                $targetValue = $o->$getter($this->getParam1());
-                                $newValues[] = $targetValue;
+                                $subValues[] = $o->$getter($this->getParam1());
+                            } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
+                                $subValues[] = $o->$fallbackGetter($this->getParam1());
                             }
                         }
-                        $resultElementValue = $newValues;
+                        $resultElementValue = $subValues;
                     }
                 } else {
-                    $o = $value; // Concrete::getById($value->getId());
+                    $o = $value;
                     if ($this->attribute && method_exists($o, $getter)) {
-                        $value = $o->$getter($this->getParam1());
-                        $resultElementValue = $value;
+                        $resultElementValue = $o->$getter($this->getParam1());
+                    } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
+                        $resultElementValue = $o->$fallbackGetter($this->getParam1());
                     }
                 }
                 $resultElements[] = $resultElementValue;
@@ -131,7 +142,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAttribute()
     {
@@ -139,7 +150,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $attribute
+     * @param string $attribute
      */
     public function setAttribute($attribute)
     {
@@ -147,7 +158,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getParam1()
     {
@@ -155,7 +166,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $param1
+     * @param string $param1
      */
     public function setParam1($param1)
     {
@@ -163,7 +174,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getForwardAttribute()
     {
@@ -171,7 +182,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $forwardAttribute
+     * @param string $forwardAttribute
      */
     public function setForwardAttribute($forwardAttribute)
     {
@@ -179,7 +190,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getForwardParam1()
     {
@@ -187,7 +198,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $forwardParam1
+     * @param string $forwardParam1
      */
     public function setForwardParam1($forwardParam1)
     {
@@ -195,15 +206,15 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getisArrayType()
+    public function getIsArrayType()
     {
         return $this->isArrayType;
     }
 
     /**
-     * @param mixed $isArrayType
+     * @param bool $isArrayType
      */
     public function setIsArrayType($isArrayType)
     {
@@ -211,7 +222,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getReturnLastResult()
     {
@@ -219,7 +230,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $returnLastResult
+     * @param bool $returnLastResult
      */
     public function setReturnLastResult($returnLastResult)
     {

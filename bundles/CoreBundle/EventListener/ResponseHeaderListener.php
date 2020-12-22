@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ResponseHeaderListener implements EventSubscriberInterface
@@ -43,11 +43,11 @@ class ResponseHeaderListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => ['onKernelResponse', 32]
+            KernelEvents::RESPONSE => ['onKernelResponse', 32],
         ];
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $headers = $this->responseHeaderResolver->getResponseHeaders($event->getRequest());
 

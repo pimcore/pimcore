@@ -14,6 +14,8 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Localization\LocaleServiceInterface;
+
 class Transliteration
 {
     /**
@@ -29,7 +31,7 @@ class Transliteration
         // the transliteration is based on the locale
         // äüö is in EN auo in DE  aeueoe
         if (!$language) {
-            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             if ($locale) {
                 $language = \Locale::getPrimaryLanguage($locale);
             }
@@ -207,26 +209,24 @@ class Transliteration
 
         $bank = $ord >> 8;
 
-        if (!isset($map[$bank][$langcode])) {
-            $file = __DIR__ . '/Transliteration/Data/' . sprintf('x%02x', $bank) . '.php';
-            if (file_exists($file)) {
-                $base = [];
-                $variant = [];
-                // contains the $base variable
-                include($file);
-                if ($langcode !== 'en' && isset($variant[$langcode])) {
-                    // Merge in language specific mappings.
-                    $map[$bank][$langcode] = $variant[$langcode] + $base;
-                } else {
-                    $map[$bank][$langcode] = $base;
-                }
+        $file = __DIR__ . '/Transliteration/Data/' . sprintf('x%02x', $bank) . '.php';
+        if (file_exists($file)) {
+            $base = [];
+            $variant = [];
+            // contains the $base variable
+            include($file);
+            if ($langcode !== 'en' && isset($variant[$langcode])) {
+                // Merge in language specific mappings.
+                $map[$bank][$langcode] = $variant[$langcode] + $base;
             } else {
-                $map[$bank][$langcode] = [];
+                $map[$bank][$langcode] = $base;
             }
+        } else {
+            $map[$bank][$langcode] = [];
         }
 
         $ord = $ord & 255;
 
-        return isset($map[$bank][$langcode][$ord]) ? $map[$bank][$langcode][$ord] : $unknown;
+        return $map[$bank][$langcode][$ord] ?? $unknown;
     }
 }

@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -67,13 +67,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @var string
      */
     public $queryColumnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
 
     /**
      * @var bool
@@ -229,7 +222,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                         'dest_id' => $object->getId(),
                         'type' => Element\Service::getElementType($object),
                         'fieldname' => $this->getName(),
-                        'index' => $counter
+                        'index' => $counter,
                     ];
                 }
                 $counter++;
@@ -252,7 +245,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     {
         $elements = [
             'dirty' => false,
-            'data' => []
+            'data' => [],
         ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
@@ -280,7 +273,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @throws \Exception
@@ -316,7 +309,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -351,7 +344,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -386,7 +379,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -422,15 +415,15 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
-            $pathes = [];
+            $paths = [];
 
-            foreach ($data as $e) {
-                if ($e instanceof Element\ElementInterface) {
-                    $pathes[] = get_class($e) . $e->getRealFullPath();
+            foreach ($data as $element) {
+                if ($element instanceof Element\ElementInterface) {
+                    $paths[] = Element\Service::getElementType($element) .' '. $element->getRealFullPath();
                 }
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $paths);
         }
 
         return null;
@@ -492,6 +485,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
         $allow = true;
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
             foreach ($data as $d) {
                 if ($d instanceof Document) {
                     $allow = $this->allowDocumentRelation($d);
@@ -595,7 +589,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param Element\AbstractElement[]|null $data
+     * @param Element\ElementInterface[]|null $data
      *
      * @return array
      */
@@ -609,95 +603,13 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                     $elementType = Element\Service::getElementType($e);
                     $dependencies[$elementType . '_' . $e->getId()] = [
                         'id' => $e->getId(),
-                        'type' => $elementType
+                        'type' => $elementType,
                     ];
                 }
             }
         }
 
         return $dependencies;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (is_array($data)) {
-            $items = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $items[] = [
-                        'type' => Element\Service::getType($eo),
-                        'subtype' => $eo->getType(),
-                        'id' => $eo->getId()
-                    ];
-                }
-            }
-
-            return $items;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } elseif (is_array($value)) {
-            $hrefs = [];
-            foreach ($value as $href) {
-                // cast is needed to make it work for both SOAP and REST
-                $href = (array) $href;
-                if (is_array($href) and array_key_exists('id', $href) and array_key_exists('type', $href)) {
-                    $type = $href['type'];
-                    $id = $href['id'];
-                    if ($idMapper) {
-                        $id = $idMapper->getMappedId($type, $id);
-                    }
-
-                    $e = null;
-                    if ($id) {
-                        $e = Element\Service::getElementById($type, $id);
-                    }
-
-                    if ($e instanceof Element\ElementInterface) {
-                        $hrefs[] = $e;
-                    } else {
-                        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                            throw new \Exception('cannot get values from web service import - unknown element of type [ ' . $href['type'] . ' ] with id [' . $href['id'] . '] is referenced');
-                        } else {
-                            $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $href['id']);
-                        }
-                    }
-                }
-            }
-
-            return $hrefs;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
     }
 
     /**
@@ -717,7 +629,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
 
-                if ($object instanceof DataObject\DirtyIndicatorInterface) {
+                if ($object instanceof Element\DirtyIndicatorInterface) {
                     $object->markFieldDirty($this->getName(), false);
                 }
             }
@@ -880,14 +792,14 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -901,7 +813,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $id = $element->getId();
                 $result[] = [
                     'type' => $type,
-                    'id' => $id
+                    'id' => $id,
                 ];
             }
 
@@ -913,7 +825,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -948,7 +860,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             $item['id'],
             $item['path'],
             $item['type'],
-            $item['subtype']
+            $item['subtype'],
         ];
 
         return json_encode($parts);
@@ -982,7 +894,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                         'title' => $item['path'],
                         'raw' => $raw,
                         'gridrow' => $item,
-                        'unique' => $unique
+                        'unique' => $unique,
                     ];
                 }
                 $data['data'] = $newItems;
@@ -992,14 +904,14 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 'type' => 'grid',
                 'columnConfig' => [
                     'id' => [
-                        'width' => 60
+                        'width' => 60,
                     ],
                     'path' => [
-                        'flex' => 2
-                    ]
+                        'flex' => 2,
+                    ],
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params),
             ];
 
             $newData = [];
@@ -1074,7 +986,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         if ($data instanceof Element\ElementInterface) {
             $data = [
                 'id' => $data->getId(),
-                'type' => Element\Service::getElementType($data)
+                'type' => Element\Service::getElementType($data),
             ];
         }
 
@@ -1091,5 +1003,3 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 }
-
-class_alias(ManyToManyRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Multihref');

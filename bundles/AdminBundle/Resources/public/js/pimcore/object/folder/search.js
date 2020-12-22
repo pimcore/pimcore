@@ -22,7 +22,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     onlyDirectChildren: false,
 
     sortinfo: {},
-    initialize: function (object, searchType) {
+    initialize: function ($super, object, searchType) {
+        $super();
+
         this.object = object;
         this.element = object;
         this.searchType = searchType;
@@ -129,7 +131,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     getTableDescription: function () {
         Ext.Ajax.request({
-            url: "/admin/object-helper/grid-get-column-config",
+            url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
             params: {
                 id: this.classId,
                 objectId:
@@ -145,7 +147,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 
 
-    createGrid: function (fromConfig, response, settings, save) {
+    createGrid: function (fromConfig, response, settings, save, context) {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var fields = [];
@@ -163,16 +165,18 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.sortinfo = response.sortinfo;
 
             this.settings = response.settings || {};
+            this.context = response.context || {};
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
-                this.onlyDirectChildren = response.onlyDirectChildren;
-            }
+            this.onlyDirectChildren = response.onlyDirectChildren;
+            this.searchFilter = response.searchFilter;
+            this.sqlFilter = response.sqlFilter;
         } else {
             itemsPerPage = this.gridPageSize;
             fields = response;
             this.settings = settings;
+            this.context = context;
             this.buildColumnConfigMenu();
         }
 
@@ -202,19 +206,25 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         // get current class
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klass = classStore.getById(this.classId);
-        var baseParams = {
-            language: this.gridLanguage,
-        };
+
+        var baseParams;
+
         var existingFilters;
         if (this.store) {
             existingFilters = this.store.getFilters();
             baseParams = this.store.getProxy().getExtraParams();
+        } else {
+            baseParams = {};
         }
+
+        Ext.apply(baseParams, {
+            language: this.gridLanguage,
+        });
 
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
             fields,
-            "/admin/object/grid-proxy?classId=" + this.classId + "&folderId=" + this.object.id,
+            Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', {classId: this.classId, folderId: this.object.id}),
             baseParams,
             false
         );
@@ -222,6 +232,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         gridHelper.showSubtype = false;
         gridHelper.enableEditor = true;
         gridHelper.limit = itemsPerPage;
+
+        var enableGridLocking = klass.get("enableGridLocking");
 
         this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         if (this.sortinfo) {
@@ -266,6 +278,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             store: this.store,
             columns: gridColumns,
             columnLines: true,
+            enableLocking: enableGridLocking,
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             border: true,
@@ -276,7 +289,16 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             viewConfig: {
                 forceFit: false,
                 xtype: 'patchedgridview',
-                enableTextSelection: true
+                enableTextSelection: true,
+                listeners: {
+                    refresh: function (dataview) {
+                        Ext.each(dataview.panel.columns, function (column) {
+                            if (column.autoSizeColumn === true) {
+                                column.autoSize();
+                            }
+                        })
+                    }
+                },
             },
             listeners: {
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
@@ -297,11 +319,24 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.grid.on("columnresize", function () {
             this.saveColumnConfigButton.show()
         }.bind(this));
+        this.grid.on("lockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
+        this.grid.on("unlockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
+            if (grid.enableLocking) {
+                var grids = grid.items.items;
+                for (var i = 0; i < grids.length; i++) {
+                    this.updateGridHeaderContextMenu(grids[i]);
+                }
+            } else {
+                this.updateGridHeaderContextMenu(grid);
+            }
         }.bind(this));
 
         this.grid.on("sortchange", function (ct, column, direction, eOpts) {
@@ -346,6 +381,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;
         config.pageSize = this.pagingtoolbar.pageSize;
+        config.searchFilter = this.searchField.getValue();
+        config.sqlFilter = this.sqlEditor.getValue();
+        config.onlyDirectChildren = this.checkboxOnlyDirectChildren.getValue();
         return config;
     },
 

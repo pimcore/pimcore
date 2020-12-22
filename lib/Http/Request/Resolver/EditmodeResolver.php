@@ -17,13 +17,12 @@ namespace Pimcore\Http\Request\Resolver;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Cache\Runtime;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Templating\Vars\TemplateVarsProviderInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsProviderInterface, LoggerAwareInterface
+class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -95,7 +94,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
         $logData = [
             'param' => false,
             'adminRequest' => false,
-            'user' => false
+            'user' => false,
         ];
 
         // read editmode from request params
@@ -123,7 +122,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
 
         $this->logger->debug('Resolved editmode to {editmode}', [
             'editmode' => $result ? 'true' : 'false',
-            'params' => $logData
+            'params' => $logData,
         ]);
 
         $request->attributes->set(static::ATTRIBUTE_EDITMODE, $result);
@@ -132,15 +131,5 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
         Runtime::set('pimcore_editmode', $result);
 
         return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addTemplateVars(Request $request, array $templateVars)
-    {
-        $templateVars['editmode'] = $this->isEditmode($request);
-
-        return $templateVars;
     }
 }

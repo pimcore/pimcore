@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
+use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
@@ -27,7 +28,6 @@ use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Zend\Paginator\Paginator;
 
 /**
  * Class Pattern
@@ -43,14 +43,14 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     protected $characterPools = [
         'alphaNumeric' => '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
         'numeric' => '123456789',
-        'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+        'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
     ];
 
     public function __construct(AbstractVoucherTokenType $configuration)
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypePattern) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_pattern.html.twig';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_pattern.html.twig';
         } else {
             throw new InvalidConfigException('Invalid Configuration Class for Type VoucherTokenTypePattern.');
         }
@@ -214,7 +214,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             'usageCount' => $usageCount,
             'freeCount' => $overallCount - $usageCount - $reservedTokenCount,
             'reservedCount' => $reservedTokenCount,
-            'usage' => $usage
+            'usage' => $usage,
         ];
     }
 
@@ -393,7 +393,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $finalLength = $this->getFinalTokenLength();
         $insertParts = [];
 
-        if (sizeof($insertTokens) > 0) {
+        if (count($insertTokens) > 0) {
             foreach ($insertTokens as $token) {
                 $insertParts[] =
                     "('" .
@@ -490,7 +490,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             }
 
             // If there are tokens to insert add them to query.
-            if (sizeof($insertTokens)) {
+            if (count($insertTokens)) {
                 $resultTokenSet[] = $insertTokens;
             }
 
@@ -535,29 +535,29 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         try {
             $tokens->setFilterConditions($params['id'], $params);
         } catch (\Exception $e) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_error.html.twig';
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
         if ($tokens) {
             $paginator = new Paginator($tokens);
 
-            if ($params['tokensPerPage']) {
+            if ($params['tokensPerPage'] ?? false) {
                 $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
             } else {
                 $paginator->setItemCountPerPage(25);
             }
 
-            $paginator->setCurrentPageNumber($params['page']);
+            $paginator->setCurrentPageNumber($params['page'] ?? 1);
 
             $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = sizeof($tokens);
+            $viewParamsBag['count'] = count($tokens);
         } else {
             $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
         }
 
-        $viewParamsBag['msg']['error'] = $params['error'];
-        $viewParamsBag['msg']['success'] = $params['success'];
+        $viewParamsBag['msg']['error'] = $params['error'] ?? '';
+        $viewParamsBag['msg']['success'] = $params['success'] ?? '';
 
         // Settings parsed via foreach in view -> key is translation
         $viewParamsBag['settings'] = [
@@ -605,7 +605,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                 'token' => $token->getToken(),
                 'usages' => $token->getUsages(),
                 'length' => $token->getLength(),
-                'timestamp' => $token->getTimestamp()
+                'timestamp' => $token->getTimestamp(),
             ];
         }
 

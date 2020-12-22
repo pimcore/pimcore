@@ -17,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class User extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -50,7 +51,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -110,7 +111,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
                     }
                     $options[] = [
                         'value' => $user->getId(),
-                        'key' => $value
+                        'key' => $value,
                     ];
                 }
             }
@@ -162,6 +163,18 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $obj->configureOptions();
 
         return $obj;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 
     /**

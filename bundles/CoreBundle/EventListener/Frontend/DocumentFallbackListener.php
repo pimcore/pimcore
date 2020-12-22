@@ -21,10 +21,9 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -65,9 +64,9 @@ class DocumentFallbackListener implements EventSubscriberInterface
     protected $options;
 
     /**
-     * @var bool|null
+     * @var Document
      */
-    protected $isRequestContextDefault = null;
+    private $fallbackDocument;
 
     public function __construct(
         RequestStack $requestStack,
@@ -90,7 +89,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
     protected function configureOptions(OptionsResolver $optionsResolver)
     {
         $optionsResolver->setDefaults([
-            'nearestDocumentTypes' => ['page', 'snippet', 'hardlink', 'link', 'folder']
+            'nearestDocumentTypes' => ['page', 'snippet', 'hardlink', 'link', 'folder'],
         ]);
 
         $optionsResolver->setAllowedTypes('nearestDocumentTypes', 'array');
@@ -106,23 +105,45 @@ class DocumentFallbackListener implements EventSubscriberInterface
             // -> Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()
             // -> Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener::onKernelRequest()
             KernelEvents::REQUEST => ['onKernelRequest', 20],
-            KernelEvents::CONTROLLER => ['onKernelController', 20],
+            KernelEvents::CONTROLLER => ['onKernelController', 50],
         ];
     }
 
     /**
      * Finds the nearest document for the current request if the routing/document router didn't find one (e.g. static routes)
      *
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
-        if (!$this->isRequestContextDefault($request)) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
 
-        if (!$event->isMasterRequest() && !$this->documentResolver->getDocument($request)) {
+        if ($this->documentResolver->getDocument($request)) {
+            return;
+        }
+
+        if ($event->isMasterRequest()) {
+            // no document found yet - try to find the nearest document by request path
+            // this is only done on the master request as a sub-request's pathInfo is _fragment when
+            // rendered via actions helper
+            $path = null;
+            if ($this->siteResolver->isSiteRequest($request)) {
+                $path = $this->siteResolver->getSitePath($request);
+            } else {
+                $path = urldecode($request->getPathInfo());
+            }
+
+            $document = $this->documentService->getNearestDocumentByPath($path, false, $this->options['nearestDocumentTypes']);
+            if ($document) {
+                $this->fallbackDocument = $document;
+                if ($document->getProperty('language')) {
+                    $request->setLocale($document->getProperty('language'));
+                }
+            }
+        } else {
             // if we're in a sub request and no explicit document is set - try to load document from
             // parent and/or master request and set it on our sub-request
             $parentRequest = $this->requestStack->getParentRequest();
@@ -148,7 +169,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $controller = $event->getController();
         if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
@@ -156,36 +177,8 @@ class DocumentFallbackListener implements EventSubscriberInterface
             return;
         }
 
-        // no document found yet - try to find the nearest document by request path
-        // this is only done on the master request as a sub-request's pathInfo is _fragment when
-        // rendered via actions helper
-        $request = $event->getRequest();
-        if ($event->isMasterRequest() && $this->isRequestContextDefault($request) && !$this->documentResolver->getDocument($request)) {
-            $path = null;
-            if ($this->siteResolver->isSiteRequest($request)) {
-                $path = $this->siteResolver->getSitePath($request);
-            } else {
-                $path = urldecode($request->getPathInfo());
-            }
-
-            $document = $this->documentService->getNearestDocumentByPath($path, false, $this->options['nearestDocumentTypes']);
-            if ($document) {
-                $this->documentResolver->setDocument($request, $document);
-            }
+        if ($this->fallbackDocument && $event->isMasterRequest()) {
+            $this->documentResolver->setDocument($event->getRequest(), $this->fallbackDocument);
         }
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return bool
-     */
-    private function isRequestContextDefault(Request $request): bool
-    {
-        if ($this->isRequestContextDefault === null) {
-            $this->isRequestContextDefault = $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT);
-        }
-
-        return $this->isRequestContextDefault;
     }
 }

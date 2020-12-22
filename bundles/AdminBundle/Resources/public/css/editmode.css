@@ -54,18 +54,16 @@ input.cke_dialog_ui_input_tel {
     border-radius: 3px;
 }
 
-/* pimcore editables */
-
-.pimcore_tag_image {
+.pimcore_editable_image {
     position: relative;
 }
 
-.pimcore_tag_image img {
+.pimcore_editable_image img {
     max-width: 100%;
     max-height: 100%;
 }
 
-.pimcore_tag_image_alt {
+.pimcore_editable_image_alt {
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -118,8 +116,16 @@ input.cke_dialog_ui_input_tel {
 }
 
 .pimcore_area_buttons_inner{
+    height: 34px;
+    display: flex;
     background: #3c3f41;
     border-left: 1px solid #000;
+}
+
+.pimcore_area_buttons.right .pimcore_area_buttons_inner,
+.pimcore_area_buttons.left .pimcore_area_buttons_inner {
+    height: auto;
+    flex-direction: column;
 }
 
 .pimcore_area_buttons:after {
@@ -136,6 +142,10 @@ input.cke_dialog_ui_input_tel {
     left: 100%;
     border-left: 8px solid #000000;
     border-right: 0px solid #000000;
+}
+
+.pimcore_area_buttons.left:after {
+    left: 34px;
 }
 
 .pimcore_area_buttons.right:after {
@@ -228,7 +238,7 @@ input.cke_dialog_ui_input_tel {
     display: inline-block;
     float: left;
     color: #ccc;
-    line-height: 34px;
+    line-height: 38px;
     font-size: 10px;
     padding-left: 10px;
 }
@@ -294,7 +304,7 @@ input.cke_dialog_ui_input_tel {
 }
 
 /* default styles for wysiwyg (overwrite ExtJS reset CSS) */
-.pimcore_tag_wysiwyg {
+.pimcore_editable_wysiwyg {
     position:relative;
 }
 
@@ -303,68 +313,68 @@ input.cke_dialog_ui_input_tel {
 	z-index: 9996;
 }
 
-.pimcore_tag_link {
+.pimcore_editable_link {
 	position: relative;
 	padding: 0 30px 0 0;
 }
 
-.pimcore_tag_link .pimcore_edit_link_button {
+.pimcore_editable_link .pimcore_edit_link_button {
 	position: absolute;
     right: -7px;
     top: -7px;
 }
 
-.pimcore_tag_link .pimcore_open_link_button {
+.pimcore_editable_link .pimcore_open_link_button {
     position: absolute;
     right: -38px;
     top: -7px;
 }
 
 
-.pimcore_tag_link .x-btn-default-small {
+.pimcore_editable_link .x-btn-default-small {
     padding: 3px;
 }
 
-.pimcore_tag_snippet_empty {
+.pimcore_editable_snippet_empty {
 	border: 1px solid #d0d0d0 !important;
 	background:url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
 }
 
-.pimcore_tag_image_empty {
+.pimcore_editable_image_empty {
 	border: 1px solid #d0d0d0 !important;
 	background:url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/80px no-repeat #f9fbfb !important;
     min-height: 50px;
 }
 
-.pimcore_tag_image_no_upload_empty {
+.pimcore_editable_image_no_upload_empty {
     border: 1px solid #d0d0d0 !important;
     background:url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
     min-height: 50px;
 }
 
-.pimcore_tag_video_empty {
+.pimcore_editable_video_empty {
 	border: 1px solid #d0d0d0 !important;
     background:url(/bundles/pimcoreadmin/img/flat-color-icons/film_reel.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
 }
 
-.pimcore_tag_embed {
+.pimcore_editable_embed {
     position: relative;
 }
 
-.pimcore_tag_embed_empty {
+.pimcore_editable_embed_empty {
     border: 1px solid #d0d0d0 !important;
     background:url(/bundles/pimcoreadmin/img/flat-color-icons/bricks.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
     min-height:100px;
 }
 
-.pimcore_tag_relation input{
+.pimcore_editable_relation input{
 	background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right 3px center/24px no-repeat #fff;
 	cursor: default;
 }
 
-.pimcore_tag_droptarget {
+.pimcore_editable_droptarget {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/24px no-repeat;
     position:absolute;
     width:24px;
@@ -373,7 +383,7 @@ input.cke_dialog_ui_input_tel {
     top:5px;
 }
 
-.pimcore_tag_droptarget_upload {
+.pimcore_editable_droptarget_upload {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/48px no-repeat;
     position:absolute;
     width:50px;
@@ -382,7 +392,7 @@ input.cke_dialog_ui_input_tel {
     top:5px;
 }
 
-.pimcore_tag_block .x5-btn {
+.pimcore_editable_block .x5-btn {
     width: auto;
     clear: none;
     border-collapse: separate;
@@ -390,25 +400,25 @@ input.cke_dialog_ui_input_tel {
     table-layout: auto;
 }
 
-.pimcore_tag_renderlet {
+.pimcore_editable_renderlet {
     position: relative;
 }
 
-.pimcore_tag_snippet {
+.pimcore_editable_snippet {
     position: relative;
 }
 
-.pimcore_tag_snippet .x5-panel-body {
+.pimcore_editable_snippet .x5-panel-body {
 	background:none;
 	overflow:hidden !important;
 }
 
-.pimcore_tag_renderlet .x5-panel-body {
+.pimcore_editable_renderlet .x5-panel-body {
 	overflow:hidden !important;
 	background:none;
 }
 
-.pimcore_tag_table {
+.pimcore_editable_table {
     color: black !important;
 }
 
@@ -427,13 +437,12 @@ input.cke_dialog_ui_input_tel {
     left:-10000px;
 }
 
-.pimcore_area_entry .pimcore_area_edit_button,
-.pimcore_tag_area .pimcore_area_edit_button {
-    position:absolute;
-    width:25px;
-    height:25px;
-    right:5px;
-    top:5px;
+.pimcore_areablock_dialogBox .x-fieldset-body {
+    overflow: visible;
+}
+
+.pimcore_areablock_dialogBox legend {
+    width: auto;
 }
 
 .pimcore_areablock_toolbar {
@@ -466,10 +475,10 @@ input.cke_dialog_ui_input_tel {
 }
 
 
-.pimcore_tag_video {
+.pimcore_editable_video {
     position: relative;
 }
-.pimcore_tag_video.x5-masked {
+.pimcore_editable_video.x5-masked {
     min-height: 50px;
 }
 
@@ -502,17 +511,21 @@ input.cke_dialog_ui_input_tel {
     color: #db1d09;
 }
 
-.pimcore_tag_multihref .x5-panel, .pimcore_tag_table .x5-panel  {
+.pimcore_editable_multihref .x5-panel, .pimcore_editable_table .x5-panel {
     border:1px solid #000;
 }
 
-.pimcore_tag_select, .pimcore_tag_checkbox {
+.pimcore_editable_select, .pimcore_editable_checkbox {
     display: inline-block;
 }
 
+.pimcore_editable_checkbox input {
+    margin-right: 5px;
+}
+
 /* support for placeholders */
-.pimcore_tag_input[contenteditable=true][data-placeholder]:empty:before,
-.pimcore_tag_textarea[contenteditable=true][data-placeholder]:empty:before,
+.pimcore_editable_input[contenteditable=true][data-placeholder]:empty:before,
+.pimcore_editable_textarea[contenteditable=true][data-placeholder]:empty:before,
 .pimcore_wysiwyg.empty[contenteditable=true][data-placeholder]:before {
     cursor: text; /* For chrome */
     content: attr(data-placeholder);
@@ -525,12 +538,12 @@ input.cke_dialog_ui_input_tel {
 }
 
 /* text fields: hover, focus, ... states */
-.pimcore_tag_input, .pimcore_tag_wysiwyg, .pimcore_tag_textarea, .pimcore_tag_textarea:focus .pimcore_wysiwyg:focus {
+.pimcore_editable_input, .pimcore_editable_wysiwyg, .pimcore_editable_textarea, .pimcore_editable_textarea:focus .pimcore_wysiwyg:focus{
     outline:0 auto;
     overflow-y: visible;
 }
 
-.pimcore_tag_input.empty, .pimcore_wysiwyg.empty, .pimcore_tag_textarea.empty {
+.pimcore_editable_input.empty, .pimcore_wysiwyg.empty, .pimcore_editable_textarea.empty{
     outline: 1px dashed #BABABA;
 }
 
@@ -544,21 +557,42 @@ input.cke_dialog_ui_input_tel {
     content: "\0000a0";
 }
 
-.pimcore_tag_input:hover, .pimcore_wysiwyg:hover, .pimcore_tag_textarea:hover, .pimcore_tag_snippet:hover, .pimcore_tag_renderlet:hover, .pimcore_tag_inc:hover {
+.pimcore_editable_input:hover, .pimcore_wysiwyg:hover, .pimcore_editable_textarea:hover, .pimcore_editable_snippet:hover, .pimcore_editable_renderlet:hover, .pimcore_editable_inc:hover {
     outline: 2px dashed #BABABA;
     outline-offset: 5px;
 }
 
-.pimcore_tag_input:focus, .pimcore_wysiwyg:focus, .pimcore_tag_textarea:focus {
+.pimcore_areablock_dialogBox .pimcore_editable_input,
+.pimcore_areablock_dialogBox .pimcore_editable_wysiwyg,
+.pimcore_areablock_dialogBox .pimcore_editable_textarea {
+    background-color: #fff;
+}
+
+.pimcore_areablock_dialogBox .pimcore_editable_input:hover,
+.pimcore_areablock_dialogBox .pimcore_wysiwyg:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_textarea:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_snippet:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_renderlet:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_inc:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_input:hover,
+.pimcore_areablock_dialogBox .pimcore_wysiwyg:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_textarea:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_snippet:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_renderlet:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_inc:hover {
     outline: none;
 }
 
-.pimcore_tag_textarea {
+.pimcore_editable_input:focus, .pimcore_wysiwyg:focus, .pimcore_editable_textarea:focus {
+    outline: none;
+}
+
+.pimcore_editable_textarea {
     white-space: pre-line;
     width: 100%;
 }
 
-.pimcore_tag_date input {
+.pimcore_editable_date input {
     min-width: 80px;
     line-height: 24px;
 }
@@ -568,15 +602,15 @@ input.cke_dialog_ui_input_tel {
     opacity: 0.5;
 }
 
-.pimcore_tag_scheduledblock .x-slider-thumb.selected {
+.pimcore_editable_scheduledblock .x-slider-thumb.selected {
     background-color: #ffefbb;
 }
 
-.pimcore_tag_scheduledblock .x-slider-thumb {
+.pimcore_editable_scheduledblock .x-slider-thumb {
     cursor: pointer;
 }
 
-.pimcore_tag_scheduledblock .x-slider-thumb.selected:before {
+.pimcore_editable_scheduledblock .x-slider-thumb.selected:before {
     color: #e9d097;
 }
 

@@ -20,6 +20,8 @@ namespace Pimcore\Model\Site\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Site\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -41,5 +43,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setSites($sites);
 
         return $sites;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM sites ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

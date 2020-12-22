@@ -16,17 +16,30 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Event\SystemEvents;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CacheClearCommand extends AbstractCommand
 {
+    protected static $defaultName = 'pimcore:cache:clear';
+
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        parent::__construct();
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     protected function configure()
     {
         $this
-            ->setName('pimcore:cache:clear')
             ->setDescription('Clear caches')
             ->addOption(
                 'tags',
@@ -63,6 +76,9 @@ class CacheClearCommand extends AbstractCommand
             $io->success('Pimcore output cache cleared successfully');
         } else {
             Cache::clearAll();
+
+            $this->eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
+
             $io->success('Pimcore data cache cleared successfully');
         }
 

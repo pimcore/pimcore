@@ -70,13 +70,14 @@ class Hardlink extends Document
     public function resolveDependencies()
     {
         $dependencies = parent::resolveDependencies();
+        $sourceDocument = $this->getSourceDocument();
 
-        if ($this->getSourceDocument() instanceof Document) {
-            $key = 'document_' . $this->getSourceDocument()->getId();
+        if ($sourceDocument instanceof Document) {
+            $key = 'document_' . $sourceDocument->getId();
 
             $dependencies[$key] = [
-                'id' => $this->getSourceDocument()->getId(),
-                'type' => 'document'
+                'id' => $sourceDocument->getId(),
+                'type' => 'document',
             ];
         }
 
@@ -237,7 +238,7 @@ class Hardlink extends Document
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
     {
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -248,7 +249,7 @@ class Hardlink extends Document
             $redirect->delete();
         }
 
-        parent::delete($isNested);
+        parent::doDelete();
     }
 
     /**

@@ -17,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
 
 class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
@@ -48,7 +49,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
 
             $options[] = [
                 'key' => $translation,
-                'value' => $short
+                'value' => $short,
             ];
         }
 
@@ -86,5 +87,17 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         $obj->configureOptions();
 
         return $obj;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

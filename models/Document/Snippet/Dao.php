@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Snippet $model
  */
 class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
@@ -63,7 +65,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
         parent::create();
 
         $this->db->insert('documents_snippet', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

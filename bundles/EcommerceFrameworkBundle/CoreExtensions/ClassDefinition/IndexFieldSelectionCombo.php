@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class IndexFieldSelectionCombo extends Select
 {
@@ -50,14 +51,14 @@ class IndexFieldSelectionCombo extends Select
                 foreach ($indexColumns as $c) {
                     $options[] = [
                         'key' => $c,
-                        'value' => $c
+                        'value' => $c,
                     ];
                 }
 
                 if ($this->getSpecificPriceField()) {
                     $options[] = [
                         'key' => ProductListInterface::ORDERKEY_PRICE,
-                        'value' => ProductListInterface::ORDERKEY_PRICE
+                        'value' => ProductListInterface::ORDERKEY_PRICE,
                     ];
                 }
             } catch (\Exception $e) {
@@ -96,5 +97,17 @@ class IndexFieldSelectionCombo extends Select
     public function getConsiderTenants()
     {
         return $this->considerTenants;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

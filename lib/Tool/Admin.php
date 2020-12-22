@@ -17,8 +17,10 @@ namespace Pimcore\Tool;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Admin
 {
@@ -70,7 +72,7 @@ class Admin
 
                         if (($adminLang != null && in_array($languageCode, array_values($adminLang))) || $adminLang == null) {
                             if ($parts[1] === 'json' || $parts[0] === 'admin') {
-                                if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($languageCode)) {
+                                if (\Pimcore::getContainer()->get(LocaleServiceInterface::class)->isLocale($languageCode)) {
                                     $languages[] = $languageCode;
                                 }
                             }
@@ -100,10 +102,10 @@ class Admin
 
         $params = [
             'scripts' => basename($scriptPath),
-            '_dc' => \Pimcore\Version::getRevision()
+            '_dc' => \Pimcore\Version::getRevision(),
         ];
 
-        return '/admin/misc/script-proxy?' . array_toquerystring($params);
+        return $params;
     }
 
     /**
@@ -170,12 +172,12 @@ class Admin
         }
 
         File::putPhpFile(self::getMaintenanceModeFile(), to_php_data_file_format([
-            'sessionId' => $sessionId
+            'sessionId' => $sessionId,
         ]));
 
-        @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeFile(), 0666); // so it can be removed also via FTP, ...
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_ACTIVATE);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_ACTIVATE);
     }
 
     /**
@@ -185,7 +187,7 @@ class Admin
     {
         @unlink(self::getMaintenanceModeFile());
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
     }
 
     /**
@@ -228,19 +230,19 @@ class Admin
     public static function scheduleMaintenanceModeOnLogin()
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
-            'schedule' => true
+            'schedule' => true,
         ]));
 
-        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0666); // so it can be removed also via FTP, ...
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
 
     public static function unscheduleMaintenanceModeOnLogin()
     {
         @unlink(self::getMaintenanceModeScheduleLoginFile());
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_UNSCHEDULE_LOGIN);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_UNSCHEDULE_LOGIN);
     }
 
     /**

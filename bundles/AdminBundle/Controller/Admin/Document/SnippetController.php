@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +29,37 @@ class SnippetController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_snippet_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_snippet_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_snippet_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_snippet_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -53,7 +82,8 @@ class SnippetController extends DocumentControllerBase
         }
 
         $snippet = clone $snippet;
-        $snippet = $this->getLatestVersion($snippet);
+        $isLatestVersion = true;
+        $snippet = $this->getLatestVersion($snippet, $isLatestVersion);
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
@@ -61,14 +91,17 @@ class SnippetController extends DocumentControllerBase
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
-        $this->addTranslationsData($snippet);
-        $this->minimizeProperties($snippet);
-
         // unset useless data
-        $snippet->setElements(null);
+        $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
+
+        $this->addTranslationsData($snippet, $data);
+        $this->minimizeProperties($snippet, $data);
+
         $data['url'] = $snippet->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = !$isLatestVersion;
         if ($snippet->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }
@@ -83,7 +116,7 @@ class SnippetController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"POST","PUT"})
+     * @Route("/save", name="pimcore_admin_document_snippet_save", methods={"POST","PUT"})
      *
      * @param Request $request
      *
@@ -123,15 +156,15 @@ class SnippetController extends DocumentControllerBase
             $snippet->save();
             $this->saveToSession($snippet);
 
-            $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($snippet);
 
             return $this->adminJson([
                 'success' => true,
                 'data' => [
                     'versionDate' => $snippet->getModificationDate(),
-                    'versionCount' => $snippet->getVersionCount()
+                    'versionCount' => $snippet->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($snippet->isAllowed('save')) {
             $this->setValuesToDocument($request, $snippet);

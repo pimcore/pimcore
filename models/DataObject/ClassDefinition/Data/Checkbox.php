@@ -20,11 +20,10 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
 
-    use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -55,13 +54,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $columnType = 'tinyint(1)';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'boolean';
-
-    /**
      * @return int|null
      */
     public function getDefaultValue()
@@ -88,7 +80,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param bool $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -104,7 +96,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param bool $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -122,7 +114,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param bool $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -136,7 +128,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      * @param bool $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -150,7 +142,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataFromEditmode
      *
      * @param bool $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -206,7 +198,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return strval($data);
+        return (string)$data;
     }
 
     /**
@@ -223,38 +215,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return (bool)$importValue;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return (bool) $data;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        return (bool)$value;
     }
 
     /** True if change is allowed in edit mode.
@@ -312,7 +272,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         $value = $db->quote($value);
         $key = $db->quoteIdentifier($this->name);
 
-        $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
+        $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
 
         return 'IFNULL(' . $brickPrefix . $key . ', 0) = ' . $value . ' ';
     }
@@ -350,5 +310,36 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     protected function doGetDefaultValue($object, $context = [])
     {
         return $this->getDefaultValue() ?? null;
+    }
+
+    /**
+     * @param bool|null $oldValue
+     * @param bool|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'bool|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'bool|null';
     }
 }

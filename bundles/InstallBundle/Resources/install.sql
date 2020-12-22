@@ -14,7 +14,7 @@ CREATE TABLE `application_logs` (
   `source` varchar(190) DEFAULT NULL,
   `relatedobject` int(11) unsigned DEFAULT NULL,
   `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
-  `maintenanceChecked` tinyint(4) DEFAULT NULL,
+  `maintenanceChecked` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `component` (`component`),
   KEY `timestamp` (`timestamp`),
@@ -50,27 +50,10 @@ CREATE TABLE `assets_metadata` (
   `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
-  `data` text,
+  `data` longtext,
   PRIMARY KEY (`cid`, `name`, `language`),
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `cache`;
-CREATE TABLE `cache` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `data` longblob,
-  `mtime` INT(11) UNSIGNED DEFAULT NULL,
-  `expire` INT(11) UNSIGNED DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `cache_tags`;
-CREATE TABLE `cache_tags` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `tag` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`,`tag`),
-  INDEX `tag` (`tag`)
-) DEFAULT CHARSET=ascii;
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
@@ -90,7 +73,7 @@ CREATE TABLE `custom_layouts` (
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`default` tinyint(4) NOT NULL DEFAULT '0',
+	`default` tinyint(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`, `classId`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -129,8 +112,8 @@ CREATE TABLE `documents` (
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `documents_elements`;
-CREATE TABLE `documents_elements` (
+DROP TABLE IF EXISTS `documents_editables`;
+CREATE TABLE `documents_editables` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
@@ -141,9 +124,7 @@ CREATE TABLE `documents_elements` (
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `to` varchar(255) DEFAULT NULL,
   `from` varchar(255) DEFAULT NULL,
@@ -158,9 +139,7 @@ CREATE TABLE `documents_email` (
 DROP TABLE IF EXISTS `documents_newsletter`;
 CREATE TABLE `documents_newsletter` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `from` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
@@ -197,9 +176,7 @@ CREATE TABLE `documents_link` (
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(383) DEFAULT NULL,
@@ -215,9 +192,7 @@ CREATE TABLE `documents_page` (
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
@@ -237,9 +212,7 @@ CREATE TABLE `documents_translations` (
 DROP TABLE IF EXISTS `documents_printpage`;
 CREATE TABLE `documents_printpage` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
@@ -299,7 +272,6 @@ CREATE TABLE `glossary` (
   `text` varchar(255) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `abbr` varchar(255) DEFAULT NULL,
-  `acronym` varchar(255) DEFAULT NULL,
   `site` int(11) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
@@ -311,7 +283,7 @@ CREATE TABLE `glossary` (
 DROP TABLE IF EXISTS `http_error_log`;
 CREATE TABLE `http_error_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `uri` varchar(3000) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `uri` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `code` int(3) DEFAULT NULL,
   `parametersGet` longtext,
   `parametersPost` longtext,
@@ -320,18 +292,21 @@ CREATE TABLE `http_error_log` (
   `date` int(11) unsigned DEFAULT NULL,
   `count` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY (`uri` (765)),
+  KEY `uri` (`uri`),
   KEY `code` (`code`),
   KEY `date` (`date`),
   KEY `count` (`count`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `locks`;
-CREATE TABLE `locks` (
-  `id` varchar(150) NOT NULL DEFAULT '',
-  `date` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
+DROP TABLE IF EXISTS `lock_keys`;
+CREATE TABLE `lock_keys` (
+  `key_id` varchar(64) NOT NULL,
+  `key_token` varchar(44) NOT NULL,
+  `key_expiration` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`key_id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `migration_versions`; /* table is created using doctrine:migrations:sync-metadata-storage command */
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
@@ -344,9 +319,9 @@ CREATE TABLE `notes` (
   `title` varchar(255) DEFAULT NULL,
   `description` longtext,
   PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
-  KEY `date` (`date`)
+  KEY `cid_ctype` (`cid`, `ctype`),
+  KEY `date` (`date`),
+  KEY `user` (`user`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes_data`;
@@ -374,6 +349,7 @@ CREATE TABLE `objects` (
   `o_classId` VARCHAR(50) NULL DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
   `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
+  `o_childrenSortOrder` ENUM('ASC','DESC') NULL DEFAULT NULL,
   `o_versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`o_id`),
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),
@@ -382,7 +358,8 @@ CREATE TABLE `objects` (
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
-  KEY `o_modificationDate` (`o_modificationDate`)
+  KEY `o_modificationDate` (`o_modificationDate`),
+  KEY `o_classId` (`o_classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
@@ -395,9 +372,7 @@ CREATE TABLE `properties` (
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
-  KEY `cpath` (`cpath`),
-  KEY `inheritable` (`inheritable`),
-  KEY `ctype` (`ctype`)
+  KEY `getall` (`cpath`, `ctype`, `inheritable`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `recyclebin`;
@@ -466,7 +441,7 @@ CREATE TABLE `search_backend_data` (
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(190) DEFAULT NULL,
-  `published` int(11) unsigned DEFAULT NULL,
+  `published` tinyint(1) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
   `userOwner` int(11) DEFAULT NULL,
@@ -501,11 +476,12 @@ CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(10) unsigned DEFAULT NULL,
   `idPath` varchar(190) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL COLLATE utf8_bin,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
   KEY `parentid` (`parentId`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  UNIQUE INDEX `idPath_name` (`idPath`,`name`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS  `tags_assignment`;
@@ -568,40 +544,6 @@ CREATE TABLE `tmp_store` (
   KEY `expiryDate` (`expiryDate`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `tracking_events`;
-CREATE TABLE `tracking_events` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(190) DEFAULT NULL,
-  `action` varchar(190) DEFAULT NULL,
-  `label` varchar(190) DEFAULT NULL,
-  `data` varchar(190) DEFAULT NULL,
-  `timestamp` int(11) unsigned DEFAULT NULL,
-  `year` int(5) unsigned DEFAULT NULL,
-  `month` int(2) unsigned DEFAULT NULL,
-  `day` int(2) unsigned DEFAULT NULL,
-  `dayOfWeek` int(1) unsigned DEFAULT NULL,
-  `dayOfYear` int(3) unsigned DEFAULT NULL,
-  `weekOfYear` int(2) unsigned DEFAULT NULL,
-  `hour` int(2) unsigned DEFAULT NULL,
-  `minute` int(2) unsigned DEFAULT NULL,
-  `second` int(2) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `timestamp` (`timestamp`),
-  KEY `year` (`year`),
-  KEY `month` (`month`),
-  KEY `day` (`day`),
-  KEY `dayOfWeek` (`dayOfWeek`),
-  KEY `dayOfYear` (`dayOfYear`),
-  KEY `weekOfYear` (`weekOfYear`),
-  KEY `hour` (`hour`),
-  KEY `minute` (`minute`),
-  KEY `second` (`second`),
-  KEY `category` (`category`),
-  KEY `action` (`action`),
-  KEY `label` (`label`),
-  KEY `data` (`data`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
@@ -656,7 +598,6 @@ CREATE TABLE `users` (
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` text DEFAULT NULL,
-  `apiKey` varchar(255) DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,
@@ -693,7 +634,8 @@ CREATE TABLE `users_workspaces_asset` (
   `versions` tinyint(1) DEFAULT '0',
   `properties` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
@@ -713,7 +655,8 @@ CREATE TABLE `users_workspaces_document` (
   `versions` tinyint(1) unsigned DEFAULT '0',
   `properties` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
@@ -736,7 +679,8 @@ CREATE TABLE `users_workspaces_object` (
   `lView` text,
   `layouts` text,
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `uuids`;
@@ -745,7 +689,7 @@ CREATE TABLE `uuids` (
   `itemId` int(11) unsigned NOT NULL,
   `type` VARCHAR(25) NOT NULL,
   `instanceIdentifier` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`itemId`, `type`, `uuid`)
+  PRIMARY KEY (`uuid`, `itemId`, `type`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `versions`;
@@ -849,28 +793,25 @@ CREATE TABLE `classificationstore_collectionrelations` (
 
 DROP TABLE IF EXISTS `quantityvalue_units`;
 CREATE TABLE `quantityvalue_units` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `group` varchar(50) DEFAULT NULL,
-  `abbreviation` varchar(20) NOT NULL,
-  `longname` varchar(250) DEFAULT NULL,
-  `baseunit` INT(11) UNSIGNED DEFAULT NULL,
-  `factor` double DEFAULT NULL,
-  `conversionOffset` DOUBLE NULL DEFAULT NULL,
-  `reference` varchar(50) DEFAULT NULL,
-  `converter` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_baseunit`
-    FOREIGN KEY (`baseunit`)
-    REFERENCES `quantityvalue_units` (`id`)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE
+	`id` VARCHAR(50) NOT NULL,
+	`group` VARCHAR(50) NULL DEFAULT NULL,
+	`abbreviation` VARCHAR(20) NULL DEFAULT NULL,
+	`longname` VARCHAR(250) NULL DEFAULT NULL,
+	`baseunit` VARCHAR(50) NULL DEFAULT NULL,
+	`factor` DOUBLE NULL DEFAULT NULL,
+	`conversionOffset` DOUBLE NULL DEFAULT NULL,
+	`reference` VARCHAR(50) NULL DEFAULT NULL,
+	`converter` VARCHAR(255) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `fk_baseunit` (`baseunit`),
+	CONSTRAINT `fk_baseunit` FOREIGN KEY (`baseunit`) REFERENCES `quantityvalue_units` (`id`) ON UPDATE CASCADE ON DELETE SET NULL
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
   `cid` int(10) NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL,
-  `place` varchar(255) DEFAULT NULL,
+  `place` text DEFAULT NULL,
   `workflow` varchar(100) NOT NULL,
   PRIMARY KEY (`cid`,`ctype`,`workflow`)
 ) DEFAULT CHARSET=utf8mb4;

@@ -16,12 +16,12 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
@@ -41,7 +41,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
 
     private function buildOptions()
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getDisplayRegions();
         asort($countries);
         $options = [];
 
@@ -49,7 +49,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
             if (strlen($short) == 2) {
                 $options[] = [
                     'key' => $translation,
-                    'value' => $short
+                    'value' => $short,
                 ];
             }
         }
@@ -94,5 +94,17 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

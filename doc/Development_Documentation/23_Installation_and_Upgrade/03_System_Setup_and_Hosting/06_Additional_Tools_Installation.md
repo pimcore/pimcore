@@ -23,7 +23,7 @@ sudo apt-get install ffmpeg
 
 ## LibreOffice, pdftotext, Inkscape, ...
 
-```bash 
+```bash
 apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
@@ -97,7 +97,7 @@ ln -s /usr/lib/go/bin/primitive
 
 ## Exiftool
 
-```bash 
+```bash
 apt-get install libimage-exiftool-perl
 ```
 
@@ -105,7 +105,7 @@ apt-get install libimage-exiftool-perl
 
 Install webp for [WebP-Support](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
 
-```bash 
+```bash
 apt-get install webp
 ```
 
@@ -125,10 +125,13 @@ Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working
 apt-get install facedetect
 ```
 
-# html2text
 
-Install html2text for [Pimcore mail](../../19_Development_Tools_and_Details/25_Email_Framework/01_Pimcore_Mail.md)
+# Check your installation
+
+You can check system requirements via Admin UI `Tools` / `System Info & Tools` / `System-Requirements Check` menu.
+
+Or via following CLI command:
 
 ```bash
-apt-get install html2text
+bin/console pimcore:system:requirements:check
 ```

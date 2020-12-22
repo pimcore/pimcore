@@ -109,10 +109,10 @@ class WkHtmlToPdf extends Processor
     public function getProcessingOptions()
     {
         $event = new PrintConfigEvent($this, [
-            'options' => []
+            'options' => [],
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
 
         return (array)$event->getArgument('options');
     }
@@ -213,9 +213,9 @@ class WkHtmlToPdf extends Processor
             'options' => $this->options,
             'srcUrl' => $srcUrl,
             'dstFile' => $dstFile,
-            'config' => $this->config
+            'config' => $this->config,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
 
         $params = $event->getArguments();
         $cmd = $params['cmd'] ?? null;

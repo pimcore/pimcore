@@ -13,14 +13,14 @@
  */
 use Pimcore\Cache;
 use Pimcore\File;
-use Pimcore\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
 {
     /**
-     * @var bool
+     * @var bool|null
      */
     public static $adminMode;
 
@@ -38,6 +38,11 @@ class Pimcore
      * @var bool
      */
     private static $inShutdown = false;
+
+    /**
+     * @var bool
+     */
+    private static $shutdownEnabled = true;
 
     /**
      * @var KernelInterface
@@ -147,7 +152,7 @@ class Pimcore
     public static function isInstalled()
     {
         try {
-            \Pimcore\Db::get();
+            \Pimcore\Db::get()->fetchOne('SELECT VERSION()');
 
             return true;
         } catch (\Exception $e) {
@@ -156,7 +161,7 @@ class Pimcore
     }
 
     /**
-     * @return \Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
+     * @return EventDispatcherInterface
      */
     public static function getEventDispatcher()
     {
@@ -247,8 +252,8 @@ class Pimcore
         $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
         $longRunningHelper->cleanUp([
             'pimcoreRuntimeCache' => [
-                'keepItems' => $keepItems
-            ]
+                'keepItems' => $keepItems,
+            ],
         ]);
     }
 
@@ -266,15 +271,26 @@ class Pimcore
             return;
         }
 
-        // Check if this is a cache warming run and if this runs on an installed instance. If this is a cache warmup
-        // we can't use self::isInstalled() as it will refer to the wrong caching dir.
-        if (self::getKernel()->getCacheDir() === self::getContainer()->getParameter('kernel.cache_dir') && self::isInstalled()) {
+        if (self::$shutdownEnabled && self::isInstalled()) {
             // write and clean up cache
             Cache::shutdown();
-
-            // release all open locks from this process
-            Model\Tool\Lock::releaseAll();
         }
+    }
+
+    /**
+     * @internal
+     */
+    public static function disableShutdown()
+    {
+        self::$shutdownEnabled = false;
+    }
+
+    /**
+     * @internal
+     */
+    public static function enableShutdown()
+    {
+        self::$shutdownEnabled = true;
     }
 
     public static function disableMinifyJs(): bool

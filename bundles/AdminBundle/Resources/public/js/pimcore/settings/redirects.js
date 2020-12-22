@@ -56,7 +56,7 @@ pimcore.settings.redirects = Class.create({
         var that = this;
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/redirects/list?';
+        var url = Routing.generate('pimcore_admin_redirects_redirects');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -140,24 +140,39 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {text: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
-            {text: t("target_site") + ' (' + t('optional') + ')', flex: 200, sortable:true, dataIndex: "targetSite",
-                editor: new Ext.form.ComboBox({
-                store: pimcore.globalmanager.get("sites"),
-                valueField: "id",
-                displayField: "domain",
-                editable: false,
-                triggerAction: "all"
-            }), renderer: function (siteId) {
-                var store = pimcore.globalmanager.get("sites");
-                var pos = store.findExact("id", siteId);
-                if(pos >= 0) {
-                    return store.getAt(pos).get("domain");
-                }
-            }},
-            {text: t("target"), flex: 200, sortable: false, dataIndex: 'target',
+            {
+                text: t("source"),
+                flex: 200,
+                sortable: true,
+                dataIndex: 'source',
                 editor: new Ext.form.TextField({}),
-                tdCls: "input_drop_target"
+                renderer: function (value) {
+                    return Ext.util.Format.htmlEncode(value);
+                }
+            },
+            {
+                text: t("target_site") + ' (' + t('optional') + ')', flex: 200, sortable: true, dataIndex: "targetSite",
+                editor: new Ext.form.ComboBox({
+                    store: pimcore.globalmanager.get("sites"),
+                    valueField: "id",
+                    displayField: "domain",
+                    editable: false,
+                    triggerAction: "all"
+                }), renderer: function (siteId) {
+                    var store = pimcore.globalmanager.get("sites");
+                    var pos = store.findExact("id", siteId);
+                    if (pos >= 0) {
+                        return store.getAt(pos).get("domain");
+                    }
+                }
+            },
+            {
+                text: t("target"), flex: 200, sortable: false, dataIndex: 'target',
+                editor: new Ext.form.TextField({}),
+                tdCls: "input_drop_target",
+                renderer: function (value) {
+                    return Ext.util.Format.htmlEncode(value);
+                }
             },
             {text: t("status"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
@@ -307,7 +322,7 @@ pimcore.settings.redirects = Class.create({
                     text: t("export_csv"),
                     iconCls: "pimcore_icon_export",
                     handler: function () {
-                        pimcore.helpers.download('/admin/redirects/csv-export');
+                        pimcore.helpers.download(Routing.generate('pimcore_admin_redirects_csvexport'));
                     }
                 },
                 {
@@ -315,7 +330,7 @@ pimcore.settings.redirects = Class.create({
                     iconCls: "pimcore_icon_import",
                     handler: function () {
                         pimcore.helpers.uploadDialog(
-                            '/admin/redirects/csv-import', 'redirects',
+                            Routing.generate('pimcore_admin_redirects_csvimport'), 'redirects',
                             function (res) {
                                 that.store.reload();
 
@@ -469,7 +484,7 @@ pimcore.settings.redirects = Class.create({
 
     cleanupExpiredRedirects: function () {
         Ext.Ajax.request({
-            url: '/admin/redirects/cleanup',
+            url: Routing.generate('pimcore_admin_redirects_cleanup'),
             method: 'DELETE',
             success: function (response) {
                 try{
@@ -505,7 +520,7 @@ pimcore.settings.redirects = Class.create({
                             var record = data.records[0];
                             var data = record.data;
 
-                            if (in_array(data.type, ["page", "link", "hardlink"])) {
+                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
                                 return Ext.dd.DropZone.prototype.dropAllowed;
                             }
                         } catch (e) {
@@ -521,7 +536,7 @@ pimcore.settings.redirects = Class.create({
                         try {
                             var record = data.records[0];
                             var data = record.data;
-                            if (in_array(data.type, ["page", "link", "hardlink"])) {
+                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
                                 var rec = this.grid.getStore().getAt(myRowIndex);
                                 rec.set("target", data.path);
                                 this.updateRows();

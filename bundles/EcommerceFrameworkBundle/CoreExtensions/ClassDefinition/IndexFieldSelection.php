@@ -41,7 +41,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public $queryColumnType = [
         'tenant' => 'varchar(100)',
         'field' => 'varchar(200)',
-        'preSelect' => 'text'
+        'preSelect' => 'text',
     ];
 
     /**
@@ -52,15 +52,8 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public $columnType = [
         'tenant' => 'varchar(100)',
         'field' => 'varchar(200)',
-        'preSelect' => 'text'
+        'preSelect' => 'text',
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
 
     public $width;
     public $considerTenants = false;
@@ -139,14 +132,14 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
             return [
                 $this->getName() . '__tenant' => $data->getTenant(),
                 $this->getName() . '__field' => $data->getField(),
-                $this->getName() . '__preSelect' => $data->getPreSelect()
+                $this->getName() . '__preSelect' => $data->getPreSelect(),
             ];
         }
 
         return [
             $this->getName() . '__tenant' => null,
             $this->getName() . '__field' => null,
-            $this->getName() . '__preSelect' => null
+            $this->getName() . '__preSelect' => null,
         ];
     }
 
@@ -197,7 +190,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
             return [
                 'tenant' => $data->getTenant(),
                 'field' => $data->getField(),
-                'preSelect' => $data->getPreSelect()
+                'preSelect' => $data->getPreSelect(),
             ];
         }
 
@@ -309,63 +302,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @param \Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $key = $this->getName();
-        $getter = 'get'.ucfirst($key);
-
-        if ($object->$getter() instanceof ObjectData\IndexFieldSelection) {
-            $preSelect = $object->$getter()->getPreSelect();
-            if ($preSelect) {
-                if (!is_array($preSelect)) {
-                    $preSelect = explode(',', $preSelect);
-                }
-                $preSelect = implode('%%', $preSelect);
-            }
-
-            return [
-                'tenant' => $object->$getter()->getTenant(),
-                'field' => $object->$getter()->getField(),
-                'preSelect' => $preSelect
-            ];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
-     * @param mixed $params
-     * @param \Pimcore\Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     *
-     * @return mixed
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } elseif ($value['field'] !== null) {
-            return new ObjectData\IndexFieldSelection($value['tenant'], $value['field'], explode('%%', $value['preSelect']));
-        } else {
-            throw new \Exception(get_class($this).': cannot get values from web service import - invalid data');
-        }
-    }
-
-    /**
      * True if change is allowed in edit mode.
      *
      * @param Concrete $object
@@ -391,6 +327,26 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      */
     public function setWidth($width)
     {
-        $this->width = intval($width);
+        $this->width = (int)$width;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . IndexFieldSelection::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . IndexFieldSelection::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . IndexFieldSelection::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . IndexFieldSelection::class . '|null';
     }
 }

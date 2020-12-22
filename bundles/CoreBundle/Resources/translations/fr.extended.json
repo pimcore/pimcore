@@ -22,7 +22,6 @@
     "good": "Bon",
     "best": "Meilleur",
     "average": "Moyen",
-    "please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail": "Merci de renseigner la largeur maximum en pixel autorisée pour cette image.",
     "example": "Exemple",
     "add_media_query": "Ajouter une requête Média",
     "send_as_html_mime": "Envoyer au format HTML",
@@ -582,7 +581,7 @@
     "assign_target_group_weight": "Poids",
     "target_group_multiselect": "Groupe Cible Multiselect",
     "select_a_target_group": "Sélectionner un Groupe Cible",
-    "usage_statistics_explanation": "Veuillez ne pas désactiver ceci à moins que vous n'en ayez vraiment besoin. Vous pouvez voir les données dans /var/logs/usagelog.log",
+    "usage_statistics_explanation": "Veuillez ne pas désactiver ceci à moins que vous n'en ayez vraiment besoin. Vous pouvez voir les données dans /var/log/usagelog.log",
     "turn_off_usage_statistics": "Désactiver les statistiques d'utilisation",
     "redirects_type_entire_uri": "URI entière",
     "redirects_type_path_query": "Chemin et paramètres",
@@ -717,5 +716,10 @@
     "url_slug": "Slug URL",
     "url_slug_datatype_info": "Entrez le contrôleur et l'action au format suivant : <br>AppBundle\\Controller\\ProductController:slugAction",
     "controller_action": "Contrôleur et action",
-    "implements_interfaces": "Implémente interface(s)"
+    "implements_interfaces": "Implémente interface(s)",
+    "enter_media_query": "Veuillez saisir une requête média CSS valide",
+    "1x1_pixel_placeholder": "Pixel 1x1 Placeholder",
+    "1x1_pixel_placeholder_description": "Renvoie simplement un GIF de 1x1 pixel encodé en base64, au cas où vous ne voudriez pas afficher une image pour une certaine condition",
+    "you_can_drag_the_tabs_to_reorder_the_media_queries": "Vous pouvez faire glisser les onglets pour réorganiser la priorité des requêtes \nmédias",
+    "classificationstore_group_limitation": "Max. éléments de groupe"
 }

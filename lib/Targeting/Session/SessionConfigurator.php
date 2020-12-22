@@ -35,7 +35,7 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
     {
         return [
             FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys',
-            FullPageCacheEvents::PREPARE_RESPONSE => 'prepareFullPageCacheResponse'
+            FullPageCacheEvents::PREPARE_RESPONSE => 'prepareFullPageCacheResponse',
         ];
     }
 
@@ -56,7 +56,7 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
         // configures full page cache to ignore session data in targeting storage
         $event->setKeys(array_merge($event->getKeys(), [
             '_' . self::TARGETING_BAG_SESSION,
-            '_' . self::TARGETING_BAG_VISITOR
+            '_' . self::TARGETING_BAG_VISITOR,
         ]));
     }
 
@@ -81,7 +81,6 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
 
         $cookies = $response->headers->getCookies();
 
-        /** @var Cookie $cookie */
         foreach ($cookies as $cookie) {
             if ($cookie->getName() === $sessionName) {
                 $response->headers->removeCookie(

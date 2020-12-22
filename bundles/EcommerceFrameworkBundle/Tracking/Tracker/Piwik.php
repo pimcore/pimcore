@@ -32,8 +32,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackEventInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingCodeAwareInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
 class Piwik extends Tracker implements
     ProductViewInterface,
@@ -68,12 +68,12 @@ class Piwik extends Tracker implements
     public function __construct(
         PiwikTracker $tracker,
         TrackingItemBuilderInterface $trackingItemBuilder,
-        EngineInterface $templatingEngine,
+        Environment $twig,
         array $options = []
     ) {
         $this->tracker = $tracker;
 
-        parent::__construct($trackingItemBuilder, $templatingEngine, $options);
+        parent::__construct($trackingItemBuilder, $twig, $options);
     }
 
     protected function configureOptions(OptionsResolver $resolver)
@@ -81,7 +81,7 @@ class Piwik extends Tracker implements
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/piwik',
+            'template_prefix' => '@PimcoreEcommerceFramework/Tracking/piwik',
 
             // by default, a cart add/remove delegates to cart update
             // if you manually trigger cart update on every change you can
@@ -139,8 +139,8 @@ class Piwik extends Tracker implements
                 'setEcommerceView',
                 false,
                 false,
-                $category
-            ]
+                $category,
+            ],
         ]);
 
         $this->trackCode($result);
@@ -176,7 +176,7 @@ class Piwik extends Tracker implements
         $calls = $this->buildItemCalls($items);
         $calls[] = [
             'trackEcommerceCartUpdate',
-            $cart->getPriceCalculator()->getGrandTotal()->getAmount()->asNumeric()
+            $cart->getPriceCalculator()->getGrandTotal()->getAmount()->asNumeric(),
         ];
 
         $result = $this->renderCalls($calls);
@@ -220,7 +220,7 @@ class Piwik extends Tracker implements
                 $eventAction,
                 $eventLabel,
                 $eventValue,
-            ]
+            ],
         ]);
 
         $this->trackCode($result);
@@ -240,7 +240,7 @@ class Piwik extends Tracker implements
     private function renderCalls(array $calls): string
     {
         return $this->renderTemplate('calls', [
-            'calls' => $calls
+            'calls' => $calls,
         ]);
     }
 
@@ -259,7 +259,7 @@ class Piwik extends Tracker implements
                 $item->getName(),
                 $item->getCategories(),
                 $item->getPrice(),
-                $item->getQuantity()
+                $item->getQuantity(),
             ];
         }
 

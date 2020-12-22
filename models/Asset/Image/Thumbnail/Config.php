@@ -125,6 +125,11 @@ class Config extends Model\AbstractModel
     public $forcePictureTag = false;
 
     /**
+     * @var bool
+     */
+    public $preserveAnimation = false;
+
+    /**
      * @param string|array|self $config
      *
      * @return self|null
@@ -159,6 +164,8 @@ class Config extends Model\AbstractModel
      * @param string $name
      *
      * @return null|Config
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -179,7 +186,7 @@ class Config extends Model\AbstractModel
                 $thumbnail = new self();
                 $thumbnail->getDao()->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }
@@ -242,11 +249,11 @@ class Config extends Model\AbstractModel
             $thumbnail = new self();
             $thumbnail->setName(self::PREVIEW_THUMBNAIL_NAME);
             $thumbnail->addItem('scaleByWidth', [
-                'width' => 400
+                'width' => 400,
             ]);
             $thumbnail->addItem('setBackgroundImage', [
                 'path' => '/bundles/pimcoreadmin/img/tree-preview-transparent-background.png',
-                'mode' => 'asTexture'
+                'mode' => 'asTexture',
             ]);
             $thumbnail->setQuality(60);
             $thumbnail->setFormat('PJPEG');
@@ -257,20 +264,6 @@ class Config extends Model\AbstractModel
         }
 
         return $thumbnail;
-    }
-
-    /**
-     * Returns thumbnail config for webservice export.
-     *
-     * @deprecated
-     */
-    public function getForWebserviceExport()
-    {
-        $arrayConfig = object2array($this);
-        $items = $arrayConfig['items'];
-        $arrayConfig['items'] = $items;
-
-        return $arrayConfig;
     }
 
     /**
@@ -294,7 +287,7 @@ class Config extends Model\AbstractModel
     {
         $item = [
             'method' => $name,
-            'arguments' => $parameters
+            'arguments' => $parameters,
         ];
 
         // default is added to $this->items for compatibility reasons
@@ -327,7 +320,7 @@ class Config extends Model\AbstractModel
 
         array_splice($itemContainer, $position, 0, [[
             'method' => $name,
-            'arguments' => $parameters
+            'arguments' => $parameters,
         ]]);
 
         return true;
@@ -346,17 +339,20 @@ class Config extends Model\AbstractModel
      */
     public function selectMedia($name)
     {
-        if (array_key_exists($name, $this->medias)) {
-            $this->setItems($this->medias[$name]);
+        if (preg_match('/^[0-9a-f]{8}$/', $name)) {
+            $hash = $name;
+        } else {
+            $hash = hash('crc32b', $name);
+        }
 
-            $suffix = strtolower($name);
-            $suffix = preg_replace("/[^a-z\-0-9]/", '-', $suffix);
-            $suffix = trim($suffix, '-');
-            $suffix = preg_replace("/[\-]+/", '-', $suffix);
+        foreach ($this->medias as $key => $value) {
+            $currentHash = hash('crc32b', $key);
+            if ($key === $name || $currentHash === $hash) {
+                $this->setItems($value);
+                $this->setFilenameSuffix('media--' . $currentHash . '--query');
 
-            $this->setFilenameSuffix($suffix);
-
-            return true;
+                return true;
+            }
         }
 
         return false;
@@ -579,53 +575,53 @@ class Config extends Model\AbstractModel
                 'width' => $config['width'],
                 'height' => $config['height'],
                 'positioning' => ((isset($config['positioning']) && !empty($config['positioning'])) ? (string)$config['positioning'] : 'center'),
-                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
             ]);
         } elseif (isset($config['contain'])) {
             $pipe->addItem('contain', [
                 'width' => $config['width'],
                 'height' => $config['height'],
-                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
             ]);
         } elseif (isset($config['frame'])) {
             $pipe->addItem('frame', [
                 'width' => $config['width'],
                 'height' => $config['height'],
-                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
             ]);
         } elseif (isset($config['aspectratio']) && $config['aspectratio']) {
             if (isset($config['height']) && isset($config['width']) && $config['height'] > 0 && $config['width'] > 0) {
                 $pipe->addItem('contain', [
                     'width' => $config['width'],
                     'height' => $config['height'],
-                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
                 ]);
             } elseif (isset($config['height']) && $config['height'] > 0) {
                 $pipe->addItem('scaleByHeight', [
                     'height' => $config['height'],
-                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
                 ]);
             } else {
                 $pipe->addItem('scaleByWidth', [
                     'width' => $config['width'],
-                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
                 ]);
             }
         } else {
             if (!isset($config['width']) && isset($config['height'])) {
                 $pipe->addItem('scaleByHeight', [
                     'height' => $config['height'],
-                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
                 ]);
             } elseif (isset($config['width']) && !isset($config['height'])) {
                 $pipe->addItem('scaleByWidth', [
                     'width' => $config['width'],
-                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false),
                 ]);
             } elseif (isset($config['width']) && isset($config['height'])) {
                 $pipe->addItem('resize', [
                     'width' => $config['width'],
-                    'height' => $config['height']
+                    'height' => $config['height'],
                 ]);
             }
         }
@@ -652,7 +648,7 @@ class Config extends Model\AbstractModel
 
         $dimensions = [
             'width' => $originalWidth,
-            'height' => $originalHeight
+            'height' => $originalHeight,
         ];
 
         $transformations = $this->getItems();
@@ -670,6 +666,11 @@ class Config extends Model\AbstractModel
                         if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
                             $dimensions['width'] = $arg['width'];
                             $dimensions['height'] = $arg['height'];
+                        } elseif ($transformation['method'] == '1x1_pixel') {
+                            return [
+                                'width' => 1,
+                                'height' => 1,
+                            ];
                         } elseif ($transformation['method'] == 'scaleByWidth') {
                             if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
                                 $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
@@ -723,8 +724,8 @@ class Config extends Model\AbstractModel
         }
 
         // ensure we return int's, sometimes $arg[...] contain strings
-        $dimensions['width'] = (int) $dimensions['width'];
-        $dimensions['height'] = (int) $dimensions['height'];
+        $dimensions['width'] = (int) $dimensions['width'] * ($this->getHighResolution() ?: 1);
+        $dimensions['height'] = (int) $dimensions['height'] * ($this->getHighResolution() ?: 1);
 
         return $dimensions;
     }
@@ -872,6 +873,22 @@ class Config extends Model\AbstractModel
     public function setForcePictureTag(bool $forcePictureTag): void
     {
         $this->forcePictureTag = $forcePictureTag;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPreserveAnimation(): bool
+    {
+        return $this->preserveAnimation;
+    }
+
+    /**
+     * @param bool $preserveAnimation
+     */
+    public function setPreserveAnimation(bool $preserveAnimation): void
+    {
+        $this->preserveAnimation = $preserveAnimation;
     }
 
     /**

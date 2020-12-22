@@ -20,12 +20,14 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\Service;
 
 class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
     /**
-     * @var Asset\Image
+     * @var Asset\Image|null
      */
     protected $image;
 
@@ -189,7 +191,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
                         'width' => $crop['cropWidth'],
                         'height' => $crop['cropHeight'],
                         'y' => $crop['cropTop'],
-                        'x' => $crop['cropLeft']
+                        'x' => $crop['cropLeft'],
                     ], $mediaName);
                 }
             }
@@ -198,7 +200,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
                 'width' => $crop['cropWidth'],
                 'height' => $crop['cropHeight'],
                 'y' => $crop['cropTop'],
-                'x' => $crop['cropLeft']
+                'x' => $crop['cropLeft'],
             ]);
 
             $hash = md5(\Pimcore\Tool\Serialize::serialize($thumbConfig->getItems()));
@@ -218,5 +220,17 @@ class Hotspotimage implements OwnerAwareFieldInterface
         }
 
         return '';
+    }
+
+    public function __wakeup()
+    {
+        if ($this->image instanceof ElementDescriptor) {
+            $image = Service::getElementById($this->image->getType(), $this->image->getId());
+            if ($image instanceof Asset\Image) {
+                $this->image = $image;
+            } else {
+                $this->image = null;
+            }
+        }
     }
 }

@@ -15,9 +15,10 @@
 namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
-use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
 use Pimcore\Cache\Runtime;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
@@ -28,7 +29,6 @@ use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
-use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -42,6 +42,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
@@ -62,7 +63,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getRootDir()
     {
-        return PIMCORE_APP_ROOT;
+        return PIMCORE_PROJECT_ROOT;
     }
 
     /**
@@ -109,9 +110,9 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($bundleConfig);
         }
 
-        $configRealPath = realpath($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
+        $configRealPath = realpath($this->getProjectDir() . '/config/packages/' . $this->getEnvironment() . '/config.yaml');
         if ($configRealPath === false) {
-            throw new InvalidConfigurationException('File ' . $this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml  cannot be found.');
+            throw new InvalidConfigurationException('File ' . $this->getProjectDir() . '/config/packages/' . $this->getEnvironment() . '/config.yaml cannot be found.');
         }
         $loader->load($configRealPath);
     }
@@ -120,7 +121,7 @@ abstract class Kernel extends SymfonyKernel
     {
         $filenames = [
             'extensions.php',
-            sprintf('extensions_%s.php', $this->getEnvironment())
+            sprintf('extensions_%s.php', $this->getEnvironment()),
         ];
 
         $directories = [
@@ -196,7 +197,7 @@ abstract class Kernel extends SymfonyKernel
             // check if container still exists at this point as it could already
             // be cleared (e.g. when running tests which boot multiple containers)
             if (null !== $container = $this->getContainer()) {
-                $container->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
+                $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
             }
 
             \Pimcore::shutdown();
@@ -264,43 +265,32 @@ abstract class Kernel extends SymfonyKernel
             new MonologBundle(),
             new SwiftmailerBundle(),
             new DoctrineBundle(),
+            new DoctrineMigrationsBundle(),
             new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),
-            new SchebTwoFactorBundle()
+            new SchebTwoFactorBundle(),
+            new FOSJsRoutingBundle(),
         ], 100);
 
         // pimcore bundles
         $collection->addBundles([
             new PimcoreCoreBundle(),
-            new PimcoreAdminBundle()
+            new PimcoreAdminBundle(),
         ], 60);
 
         // load development bundles only in matching environments
         if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
-                new WebProfilerBundle()
+                new WebProfilerBundle(),
             ], 80);
-
-            // PimcoreGeneratorBundle depends on SensioGeneratorBundle
-            $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
-            $collection->addBundle(
-                new PimcoreGeneratorBundle(),
-                60,
-                $generatorEnvironments
-            );
         }
     }
 
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
-    }
-
-    protected function getEnvironmentsForDevGeneratorBundles(): array
-    {
-        return ['dev'];
     }
 
     /**
@@ -376,13 +366,6 @@ abstract class Kernel extends SymfonyKernel
         $defaultTimezone = @date_default_timezone_get();
         if (!$defaultTimezone) {
             date_default_timezone_set('UTC'); // UTC -> default timezone
-        }
-
-        // check some system variables
-        $requiredVersion = '7.2';
-        if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
-            $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
-            Tool::exitWithError($m);
         }
     }
 }

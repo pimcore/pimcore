@@ -225,7 +225,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
         $this->logger->debug('Admin session {name} was successfully opened. Open admin sessions: {count}', [
             'name' => $sessionName,
-            'count' => $this->openedSessions
+            'count' => $this->openedSessions,
         ]);
 
         return $this->session;
@@ -242,12 +242,12 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
             $this->session->save();
 
             $this->logger->debug('Admin session {name} was written and closed', [
-                'name' => $this->getSessionName()
+                'name' => $this->getSessionName(),
             ]);
         } else {
             $this->logger->debug('Not writing/closing session admin session {name} as there are still {count} open sessions', [
                 'name' => $this->getSessionName(),
-                'count' => $this->openedSessions
+                'count' => $this->openedSessions,
             ]);
         }
     }

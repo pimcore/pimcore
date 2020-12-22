@@ -1,0 +1,22 @@
+{# @var brick \Pimcore\Extension\Document\Areabrick\AreabrickInterface #}
+{# @var info \Pimcore\Model\Document\Editable\Area\Info #}
+{# @var templating \Symfony\Component\Templating\EngineInterface #}
+
+{# @var editmode bool #}
+
+{# @var viewTemplate string #}
+{# @var viewParameters array #}
+
+{% block areabrickWrapper %}
+    {% block areabrickOpenTag %}
+        {{ brick.htmlTagOpen(info) | raw }}
+    {% endblock %}
+
+        {% block areabrickFrontend %}
+            {{ templating.render(viewTemplate, viewParameters) | raw }}
+        {% endblock %}
+
+    {% block areabrickCloseTag %}
+        {{ brick.htmlTagClose(info) | raw }}
+    {% endblock %}
+{% endblock %}

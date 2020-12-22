@@ -23,7 +23,7 @@ class PDFreactor
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
 
@@ -31,7 +31,7 @@ class PDFreactor
 
         $result = file_get_contents($url, false, $context);
 
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -53,12 +53,12 @@ class PDFreactor
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -81,12 +81,12 @@ class PDFreactor
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -121,12 +121,12 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -150,12 +150,12 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -179,12 +179,12 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -208,12 +208,12 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'DELETE',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -232,12 +232,12 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -258,12 +258,12 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {

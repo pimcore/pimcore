@@ -74,7 +74,7 @@ pimcore.object.preview = Class.create({
 
     loadCurrentPreview: function () {
         var date = new Date();
-        var url = "/admin/object/preview?id=" + this.object.data.general.o_id + "&time=" + date.getTime();
+        var url = Routing.generate('pimcore_admin_dataobject_dataobject_preview', {id: this.object.data.general.o_id, time: date.getTime()});
 
         try {
             Ext.get(this.frameId).dom.src = url;

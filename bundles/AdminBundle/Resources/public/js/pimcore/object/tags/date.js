@@ -42,7 +42,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -65,7 +65,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         var date = {
             fieldLabel:this.fieldConfig.title,
             name:this.fieldConfig.name,
-            componentCls:"object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             width:130,
             format: "Y-m-d"
         };
@@ -73,7 +73,14 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.labelWidth) {
             date.labelWidth = this.fieldConfig.labelWidth;
         }
-        date.width += date.labelWidth;
+
+        if (this.fieldConfig.labelAlign) {
+            date.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            date.width += date.labelWidth;
+        }
 
         if (this.data) {
             var tmpDate = new Date(intval(this.data) * 1000);

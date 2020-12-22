@@ -47,7 +47,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         var proxy = {
             type: 'ajax',
-            url: '/admin/asset/get-folder-content-preview',
+            url: Routing.generate('pimcore_admin_asset_getfoldercontentpreview'),
             reader: {
                 type: 'json',
                 rootProperty: 'assets'
@@ -256,7 +256,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             if (this.isAllowed("rename") && !this.data.locked && this.data.id != 1) {
                 buttons.push(this.toolbarButtons.rename);
             }
-            
+
             buttons.push({
                 tooltip: t("download_as_zip"),
                 iconCls: "pimcore_material_icon_download_zip pimcore_material_icon",

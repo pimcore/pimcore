@@ -1112,7 +1112,12 @@ span.warning {
     height: 13px;
 }
 
-.pimcore_tag_wysiwyg {
+[class^="pimcore_tag_"], [class*=" pimcore_tag_"] {
+    --deprecated: "Warning! pimcore_tag_* class selectors are deprecated and will be removed in Pimcore 10. Use .pimcore_editable_* instead";
+}
+
+.pimcore_tag_wysiwyg,
+.pimcore_editable_wysiwyg {
     position:relative;
     padding: 10px;
     min-height: 80px;
@@ -1120,67 +1125,80 @@ span.warning {
     background-color: #fff;
 }
 
-.pimcore_tag_wysiwyg strong {
+.pimcore_tag_wysiwyg strong,
+.pimcore_editable_wysiwyg strong {
     font-weight: bold !important;
     font-style: inherit;
 }
 
-.pimcore_tag_wysiwyg em {
+.pimcore_tag_wysiwyg em,
+.pimcore_editable_wysiwyg em {
     font-style: italic !important;
     font-weight: inherit;
 }
 
-.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol {
+.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol,
+.pimcore_editable_wysiwyg ul, .pimcore_editable_wysiwyg ol {
     list-style: inherit;
     margin:inherit;
     padding-left: 30px;
 }
 
-.pimcore_tag_wysiwyg ol {
+.pimcore_tag_wysiwyg ol,
+.pimcore_editable_wysiwyg ol {
     list-style: decimal;
 }
 
-.pimcore_tag_wysiwyg ul {
+.pimcore_tag_wysiwyg ul,
+.pimcore_editable_wysiwyg ul {
     list-style: disc;
 }
 
-.pimcore_tag_wysiwyg blockquote {
+.pimcore_tag_wysiwyg blockquote,
+.pimcore_editable_wysiwyg blockquote {
     padding-left: 20px;
     border-left: 3px solid #666666;
 }
 
-.pimcore_tag_wysiwyg h1 {
+.pimcore_tag_wysiwyg h1,
+.pimcore_editable_wysiwyg h1 {
     font-size: 28px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h2 {
+.pimcore_tag_wysiwyg h2,
+.pimcore_editable_wysiwyg h2 {
     font-size: 24px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h3 {
+.pimcore_tag_wysiwyg h3,
+.pimcore_editable_wysiwyg h3 {
     font-size: 20px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h4 {
+.pimcore_tag_wysiwyg h4,
+.pimcore_editable_wysiwyg h4 {
     font-size: 18px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h5 {
+.pimcore_tag_wysiwyg h5,
+.pimcore_editable_wysiwyg h5 {
     font-size: 14px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg table {
+.pimcore_tag_wysiwyg table,
+.pimcore_editable_wysiwyg table {
     border-collapse: collapse;
     border-top:1px solid #333333;
     border-right:1px solid #333333;
 }
 
-.pimcore_tag_wysiwyg table td, .pimcore_tag_wysiwyg table th{
+.pimcore_tag_wysiwyg table td, .pimcore_tag_wysiwyg table th,
+.pimcore_editable_wysiwyg table td, .pimcore_editable_wysiwyg table th {
     border-left:1px solid #333333;
     border-bottom:1px solid #333333;
     padding: 3px;
@@ -1333,14 +1351,6 @@ span.warning {
 
 
 /* ExtJS 6.0 specific styles */
-
-#pimcore_panel_tabs-body {
-    background-image: url(/admin/settings/display-custom-logo);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 500px auto;
-}
-
 #pimcore_panel_tabs > .x-tab-bar {
     background: #0C0F12;
     background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
@@ -1467,12 +1477,12 @@ span.warning {
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled {
-    background-color: #393C3F;
+    background-color: #484B4E;
     opacity: 1;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-inner {
-    color: #000;
+    color: #8e8e8e;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-wrap {
@@ -2031,6 +2041,7 @@ span.warning {
 
 #pimcore_quicksearch_preview .full-preview img {
     max-width: 100%;
+    max-height: 100%;
 }
 
 #pimcore_quicksearch_preview .data-table {
@@ -2064,6 +2075,10 @@ span.warning {
 
 #pimcore_quicksearch_preview .data-table td .limit-height {
     overflow: hidden;
+    max-height: 50px;
+}
+
+#pimcore_quicksearch_preview .data-table td .limit-height img {
     max-height: 50px;
 }
 
@@ -2280,7 +2295,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 /** END notifications **/
 
 .x-body .sf-minitoolbar {
-    left:0;
+    left:12px;
     right:auto;
     bottom: 195px;
     background: #0C0F12;

@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\DependencyInjection;
 
+/**
+ * @deprecated Will be removed in Pimcore 10
+ */
 class ConfigMerger
 {
     /**
@@ -38,7 +41,7 @@ class ConfigMerger
     public function merge(array $first, array $second): array
     {
         foreach ($second as $idx => $value) {
-            if (is_integer($idx)) {
+            if (is_int($idx)) {
                 $first[] = $value;
             } else {
                 if (!array_key_exists($idx, $first)) {

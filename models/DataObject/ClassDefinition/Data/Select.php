@@ -19,8 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
-class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, \JsonSerializable
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -82,13 +83,6 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @var int
      */
     public $columnLength = 190;
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
 
     /**
      * @var bool
@@ -197,7 +191,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -213,7 +207,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -227,7 +221,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -241,7 +235,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -255,7 +249,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -514,11 +508,13 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
-        if ($operator === '=') {
-            $value = is_array($value) ? current($value) : $value;
-            $name = $params['name'] ?: $this->name;
+        $value = is_array($value) ? current($value) : $value;
+        $name = $params['name'] ?: $this->name;
 
-            return '`'.$name.'` LIKE '."'$value'".' ';
+        if ($operator === '=') {
+            return '`'.$name.'` = '."\"$value\"".' ';
+        } elseif ($operator === 'LIKE') {
+            return '`'.$name.'` LIKE '."\"%$value%\"".' ';
         }
 
         return null;
@@ -557,5 +553,37 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         }
 
         return $this->getDefaultValue();
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
     }
 }

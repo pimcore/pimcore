@@ -14,26 +14,25 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LogController extends AdminController implements EventedControllerInterface
+class LogController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @inheritDoc
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$this->getAdminUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
@@ -41,14 +40,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @inheritDoc
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-    }
-
-    /**
-     * @Route("/log/show", methods={"GET", "POST"})
+     * @Route("/log/show", name="pimcore_admin_log_show", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -93,12 +85,12 @@ class LogController extends AdminController implements EventedControllerInterfac
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
             $qb->andWhere('timestamp > :fromDate');
-            $qb->setParameter('fromDate', $fromDate, Type::DATETIME);
+            $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
         if ($toDate = $this->parseDateObject($request->get('toDate'), $request->get('toTime'))) {
             $qb->andWhere('timestamp <= :toDate');
-            $qb->setParameter('toDate', $toDate, Type::DATETIME);
+            $qb->setParameter('toDate', $toDate, Types::DATETIME_MUTABLE);
         }
 
         if (!empty($component = $request->get('component'))) {
@@ -144,7 +136,7 @@ class LogController extends AdminController implements EventedControllerInterfac
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
                 'component' => $row['component'],
-                'source' => $row['source']
+                'source' => $row['source'],
             ];
 
             $logEntries[] = $logEntry;
@@ -152,7 +144,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
         return $this->adminJson([
             'p_totalCount' => $total,
-            'p_results' => $logEntries
+            'p_results' => $logEntries,
         ]);
     }
 
@@ -195,7 +187,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @Route("/log/priority-json", methods={"GET"})
+     * @Route("/log/priority-json", name="pimcore_admin_log_priorityjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -212,7 +204,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @Route("/log/component-json", methods={"GET"})
+     * @Route("/log/component-json", name="pimcore_admin_log_componentjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -229,7 +221,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @Route("/log/show-file-object", methods={"GET"})
+     * @Route("/log/show-file-object", name="pimcore_admin_log_showfileobject", methods={"GET"})
      *
      * @param Request $request
      *
@@ -240,9 +232,13 @@ class LogController extends AdminController implements EventedControllerInterfac
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
-        $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
-        $filePath = realpath($filePath);
-        $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
+            $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
+            $filePath = realpath($filePath);
+            $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        } else {
+            $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
+        }
 
         if (!preg_match('@^' . $fileObjectPath . '@', $filePath)) {
             throw new AccessDeniedHttpException('Accessing file out of scope');

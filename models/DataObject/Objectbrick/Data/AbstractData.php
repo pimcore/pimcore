@@ -28,11 +28,13 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
  * @method void save(Concrete $object, $params = [])
  * @method array getRelationData($field, $forOwner, $remoteClassId)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     use Model\Element\ElementDumpStateTrait;
+
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * Will be overriden by the actual ObjectBrick
@@ -257,8 +259,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                            && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

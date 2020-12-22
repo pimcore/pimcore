@@ -31,8 +31,8 @@ class LocationOverrideHandler implements OverrideHandlerInterface
             'label' => 'Location',
             'required' => false,
             'attr' => [
-                'class' => '_ptgtb__override-form__collapse-section'
-            ]
+                'class' => '_ptgtb__override-form__collapse-section',
+            ],
         ]);
     }
 

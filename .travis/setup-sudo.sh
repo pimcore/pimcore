@@ -8,7 +8,7 @@ sudo chmod 0755 /home/travis
 .travis/setup-db-server.sh
 
 # install apache
-sudo apt-get update
+sudo apt-get update --allow-unauthenticated
 sudo apt-get install apache2 libapache2-mod-fastcgi
 sudo a2enmod rewrite actions fastcgi alias env
 sudo rm -f /etc/apache2/sites-available/*
@@ -28,6 +28,6 @@ VHOSTCFG=/etc/apache2/sites-available/pimcore-test.dev.conf
 sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" -i $VHOSTCFG
 sudo sed -e "s?%PIMCORE_ENVIRONMENT%?$PIMCORE_ENVIRONMENT?g" -i $VHOSTCFG
 sudo sed -e "s?%PIMCORE_TEST_DB_DSN%?$PIMCORE_TEST_DB_DSN?g" -i $VHOSTCFG
-sudo sed -e "s?%PIMCORE_TEST_CACHE_REDIS_DATABASE%?$PIMCORE_TEST_CACHE_REDIS_DATABASE?g" -i $VHOSTCFG
+sudo sed -e "s?%PIMCORE_TEST_REDIS_DSN%?$PIMCORE_TEST_REDIS_DSN?g" -i $VHOSTCFG
 
 sudo service apache2 restart

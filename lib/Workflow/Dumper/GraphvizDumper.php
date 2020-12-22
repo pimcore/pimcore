@@ -83,7 +83,7 @@ class GraphvizDumper implements DumperInterface
         $places = [];
         foreach ($definition->getPlaces() as $place) {
             $attributes = [];
-            if ($place === $definition->getInitialPlace()) {
+            if (in_array($place, $definition->getInitialPlaces(), true)) {
                 $attributes['style'] = 'filled';
                 $attributes['fillcolor'] = '#DFDFDF';
             }
@@ -98,7 +98,7 @@ class GraphvizDumper implements DumperInterface
 
             $places[$place] = [
                 'attributes' => $attributes,
-                'label' => $placeConfig->getLabel()
+                'label' => $placeConfig->getLabel(),
             ];
         }
 
@@ -116,7 +116,7 @@ class GraphvizDumper implements DumperInterface
             $transitions[] = [
                 'attributes' => ['shape' => 'box', 'regular' => false, 'height' => 0.6, 'style' => 'dotted'],
                 'name' => $transition->getName(),
-                'label' => $transition instanceof Transition ? $transition->getLabel() : $transition->getName()
+                'label' => $transition instanceof Transition ? $transition->getLabel() : $transition->getName(),
             ];
         }
 

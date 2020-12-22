@@ -18,8 +18,13 @@ use Pimcore\Logger;
 
 class DefaultMockup implements ProductInterface
 {
+    /** @var int */
     protected $id;
+
+    /** @var array */
     protected $params;
+
+    /** @var array */
     protected $relations;
 
     public function __construct($id, $params, $relations)
@@ -36,7 +41,7 @@ class DefaultMockup implements ProductInterface
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getParams()
     {
@@ -86,7 +91,7 @@ class DefaultMockup implements ProductInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -181,5 +186,16 @@ class DefaultMockup implements ProductInterface
     public function getOSProductNumber()
     {
         return $this->__call('getOSProductNumber', []);
+    }
+
+    /**
+     * returns array of categories.
+     * has to be overwritten either in pimcore object or mapped sub class.
+     *
+     * @return array
+     */
+    public function getCategories()
+    {
+        return $this->__call('getCategories', []);
     }
 }

@@ -19,19 +19,34 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\Objectbrick;
 
+/**
+ * Class ObjectBrickGetter
+ *
+ * @deprecated ObjectBrickGetter operator is deprecated since version 6.7 and will be removed in Pimcore 10
+ */
 class ObjectBrickGetter extends AbstractOperator
 {
+    /** @var string */
     private $brickAttr;
+
+    /** @var string */
     private $brickType;
+
+    /** @var string */
     private $attr;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->attr = $config->attr;
-        $this->brickType = $config->brickType;
-        $this->brickAttr = $config->brickAttr;
+        @trigger_error(
+            'ObjectBrickGetter operator is deprecated since version 6.7 and will be removed in Pimcore 10',
+            E_USER_DEPRECATED
+        );
+
+        $this->attr = $config->attr ?? '';
+        $this->brickType = $config->brickType ?? '';
+        $this->brickAttr = $config->brickAttr ?? '';
     }
 
     public function getLabeledValue($element)

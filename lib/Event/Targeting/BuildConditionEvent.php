@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Event\Targeting;
 
 use Pimcore\Targeting\Condition\ConditionInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class BuildConditionEvent extends Event
 {

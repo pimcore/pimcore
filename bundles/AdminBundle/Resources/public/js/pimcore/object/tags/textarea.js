@@ -63,11 +63,20 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             fieldLabel: this.fieldConfig.title,
-            componentCls: "object_field",
             labelWidth: labelWidth
         };
 
-        conf.width += conf.labelWidth;
+        if (!this.fieldConfig.showCharCount) {
+            conf.componentCls = "object_field object_field_type_" + this.type;
+        }
+
+        if (this.fieldConfig.labelAlign) {
+            conf.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            conf.width += conf.labelWidth;
+        }
 
         if (this.data) {
             conf.value = this.data;
@@ -97,7 +106,7 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
             this.updateCharCount(this.component, charCount);
 
             return Ext.create("Ext.Panel", {
-                cls: "object_field",
+                cls: "object_field object_field_type_" + this.type,
                 style: "margin-bottom: 10px",
                 layout: {
                     type: 'vbox',

@@ -17,11 +17,10 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Gender extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
@@ -42,5 +41,17 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         ];
 
         $this->setOptions($options);
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

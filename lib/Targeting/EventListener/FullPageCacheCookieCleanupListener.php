@@ -32,7 +32,7 @@ class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FullPageCacheEvents::PREPARE_RESPONSE => 'onPrepareFullPageCacheResponse'
+            FullPageCacheEvents::PREPARE_RESPONSE => 'onPrepareFullPageCacheResponse',
         ];
     }
 
@@ -43,10 +43,9 @@ class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
 
         $blacklist = [
             CookieStorage::COOKIE_NAME_VISITOR,
-            CookieStorage::COOKIE_NAME_SESSION
+            CookieStorage::COOKIE_NAME_SESSION,
         ];
 
-        /** @var Cookie $cookie */
         foreach ($cookies as $cookie) {
             if (in_array($cookie->getName(), $blacklist)) {
                 $response->headers->removeCookie(

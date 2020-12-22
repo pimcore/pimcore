@@ -19,7 +19,7 @@ use Pimcore\Bundle\InstallBundle\InstallerKernel;
 use Pimcore\Version;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Debug\Debug;
+use Symfony\Component\ErrorHandler\Debug;
 
 @ini_set('display_errors', 'On');
 
@@ -41,10 +41,19 @@ if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
     exit(1);
 }
 
-Bootstrap::setProjectRoot();
+define('PIMCORE_PROJECT_ROOT', $projectRoot);
+
 Bootstrap::defineConstants();
 
-Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
+Debug::enable();
+
+// Load a startup file if it exists - this is a good place to preconfigure the system
+// before the kernel is loaded - e.g. to set trusted proxies on the request object
+$startupFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/startup.php';
+if (file_exists($startupFile)) {
+    include_once $startupFile;
+}
+
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 Pimcore::setKernel($kernel);

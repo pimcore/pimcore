@@ -15,6 +15,8 @@
 pimcore.registerNS("pimcore.element.helpers.gridColumnConfig");
 pimcore.element.helpers.gridColumnConfig = {
 
+    batchJobDelay: 50,
+
     getSaveAsDialog: function () {
         var defaultName = new Date();
 
@@ -77,9 +79,21 @@ pimcore.element.helpers.gridColumnConfig = {
     },
 
     deleteGridConfigConfirmed: function (btn) {
-        if (btn == 'ok') {
+        var route = null;
+
+        if (this.gridType === 'asset') {
+            route = 'pimcore_admin_asset_assethelper_griddeletecolumnconfig';
+        }
+        else if(this.gridType === 'object') {
+            route = 'pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig';
+        }
+        else {
+            throw new Error('Type unknown');
+        }
+
+        if (btn === 'ok') {
             Ext.Ajax.request({
-                url: "/admin/" + this.gridType + "-helper/grid-delete-column-config",
+                url: Routing.generate(route),
                 method: "DELETE",
                 params: {
                     id: this.classId,
@@ -188,12 +202,12 @@ pimcore.element.helpers.gridColumnConfig = {
         }
     },
 
-    saveConfig: function (asCopy) {
+    saveConfig: function (asCopy, context) {
         if (asCopy) {
             this.getSaveAsDialog();
         } else {
             pimcore.helpers.saveColumnConfig(this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton,
-                this.columnConfigurationSavedHandler.bind(this), this.settings, this.gridType);
+                this.columnConfigurationSavedHandler.bind(this), this.settings, this.gridType, this.context);
         }
     },
 
@@ -253,9 +267,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_change"),
             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, false, false, false);
             }.bind(this, grid)
         });
         menu.add(batchAllMenu);
@@ -264,9 +278,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_change_selected"),
             iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, true, false, false);
             }.bind(this, grid)
         });
         menu.add(batchSelectedMenu);
@@ -275,9 +289,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_append_all"),
             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, true, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, false, true, false);
             }.bind(this, grid)
         });
         menu.add(batchAppendAllMenu);
@@ -286,9 +300,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_append_selected"),
             iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, true, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, true, true, false);
             }.bind(this, grid)
         });
         menu.add(batchAppendSelectedMenu);
@@ -298,9 +312,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_remove_all"),
             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false, true);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, false, false, true);
             }.bind(this, grid)
         });
         menu.add(batchRemoveAllMenu);
@@ -309,9 +323,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_remove_selected"),
             iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false, true);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, true, false, true);
             }.bind(this, grid)
         });
         menu.add(batchRemoveSelectedMenu);
@@ -348,9 +362,24 @@ pimcore.element.helpers.gridColumnConfig = {
         }.bind(this, batchAllMenu, batchSelectedMenu, grid));
     },
 
-    batchPrepare: function (columnIndex, onlySelected, append, remove) {
+    batchPrepare: function (column, onlySelected, append, remove) {
+        var dataIndexName = column.dataIndex
+        var gridColumns = this.grid.getColumns();
+        var columnIndex = -1;
+        for (let i = 0; i < gridColumns.length; i++) {
+            let dataIndex = gridColumns[i].dataIndex;
+            if (dataIndex == dataIndexName) {
+                columnIndex = i;
+                break;
+            }
+        }
+        if (columnIndex < 0) {
+            return;
+        }
+
         // no batch for system properties
-        if (this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
+
+        if (this.systemColumns.indexOf(gridColumns[columnIndex].dataIndex) > -1) {
             return;
         }
 
@@ -360,17 +389,17 @@ pimcore.element.helpers.gridColumnConfig = {
             for (var i = 0; i < selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex, jobs, append, remove, true);
+            this.batchOpen(columnIndex, jobs, append, remove, onlySelected);
 
         } else {
-            let params = this.getGridParams();
+            let params = this.getGridParams(onlySelected);
             Ext.Ajax.request({
                 url: this.batchPrepareUrl,
                 params: params,
                 success: function (columnIndex, response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs, append, remove, false);
+                        this.batchOpen(columnIndex, rdata.jobs, append, remove, onlySelected);
                     }
 
                 }.bind(this, columnIndex)
@@ -399,7 +428,7 @@ pimcore.element.helpers.gridColumnConfig = {
         }
         // HACK END
 
-        if(this.objecttype == "object") {
+        if((this.objecttype === "object") || (this.objecttype === "variant")) {
             if (!fieldInfo.layout || !fieldInfo.layout.layout) {
                 return;
             }
@@ -414,7 +443,16 @@ pimcore.element.helpers.gridColumnConfig = {
             editor.setObject(this.object);
         } else {
             var tagType = this.fieldObject[fieldInfo.dataIndex].layout.fieldtype;
-            var editor = new pimcore.asset.tags[tagType](null, this.fieldObject[fieldInfo.dataIndex].layout);
+            let layoutInfo = this.fieldObject[fieldInfo.dataIndex].layout
+            try {
+                if (typeof pimcore.asset.metadata.tags[tagType].prototype.prepareBatchEditLayout == "function") {
+                    layoutInfo = pimcore.asset.metadata.tags[tagType].prototype.prepareBatchEditLayout(layoutInfo);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+
+            var editor = new pimcore.asset.metadata.tags[tagType](null, layoutInfo);
             editor.setAsset(this.asset);
         }
 
@@ -561,7 +599,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 window.setTimeout(function () {
                     this.batchJobCurrent++;
                     this.batchProcess(jobs, append, remove);
-                }.bind(this), 400);
+                }.bind(this), this.batchJobDelay);
             }.bind(this, jobs, this.batchParameters.job)
         });
     },
@@ -572,6 +610,9 @@ pimcore.element.helpers.gridColumnConfig = {
         var fields = this.getGridConfig().columns;
         var fieldKeys = Object.keys(fields);
         params["fields[]"] = fieldKeys;
+        if (this.context) {
+            params["context"] = Ext.encode(this.context);
+        }
 
         settings = Ext.encode(settings);
         params["settings"] = settings;
@@ -628,7 +669,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 }
                 Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobErrors.join(","));
             } else {
-                pimcore.helpers.download(exportType.downloadUrl + "?fileHandle=" + fileHandle);
+                pimcore.helpers.download(exportType.getDownloadUrl(fileHandle));
             }
 
             return;
@@ -643,6 +684,7 @@ pimcore.element.helpers.gridColumnConfig = {
         this.exportParameters.classId = this.classId;
         this.exportParameters.initial = initial ? 1 : 0;
         this.exportParameters.language = this.gridLanguage;
+        this.exportParameters.context = Ext.encode(this.context);
 
         Ext.Ajax.request({
             url: this.exportProcessUrl,
@@ -666,7 +708,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 window.setTimeout(function () {
                     this.exportJobCurrent++;
                     this.exportProcess(jobs, fileHandle, fields, false, settings, exportType);
-                }.bind(this), 400);
+                }.bind(this), this.batchJobDelay);
             }.bind(this, jobs, jobs[this.exportJobCurrent])
         });
     },
@@ -677,7 +719,7 @@ pimcore.element.helpers.gridColumnConfig = {
         this.buildColumnConfigMenu();
     },
 
-    getGridParams: function () {
+    getGridParams: function (onlySelected) {
         var filters = "";
         var condition = "";
         var searchQuery = this.searchField ? this.searchField.getValue() : "";
@@ -705,15 +747,17 @@ pimcore.element.helpers.gridColumnConfig = {
             params["query"] = searchQuery;
         }
 
-        //create the ids array which contains chosen rows to export
-        ids = [];
-        var selectedRows = this.grid.getSelectionModel().getSelection();
-        for (var i = 0; i < selectedRows.length; i++) {
-            ids.push(selectedRows[i].data.id);
-        }
+        if (onlySelected !== false) {
+            //create the ids array which contains chosen rows to export
+            ids = [];
+            var selectedRows = this.grid.getSelectionModel().getSelection();
+            for (var i = 0; i < selectedRows.length; i++) {
+                ids.push(selectedRows[i].data.id);
+            }
 
-        if (ids.length > 0) {
-            params["ids[]"] = ids;
+            if (ids.length > 0) {
+                params["ids[]"] = ids;
+            }
         }
 
         //tags filter

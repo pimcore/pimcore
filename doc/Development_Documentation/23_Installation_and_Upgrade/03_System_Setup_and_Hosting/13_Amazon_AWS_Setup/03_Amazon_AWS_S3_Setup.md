@@ -23,7 +23,7 @@ composer require aws/aws-sdk-php
 
 ## Create a Custom `startup.php`
 
-Create a new file (or re-use existing) with the following code in `/app/startup.php`. 
+Create a new file (or re-use existing) with the following code in `/config/pimcore/startup.php`. 
 
 Please read the comments in the following code to better understand what it does and how to customize the settings. 
 
@@ -181,6 +181,6 @@ according to your custom configuration above.
 You can use the CLI tool [s3cmd](http://s3tools.org/) for this task.
 
 ```bash
-s3cmd sync --recursive /var/www/website/var/assets/ s3://pimcore-demo/assets/
+s3cmd sync --recursive /var/www/website/web/var/assets/ s3://pimcore-demo/assets/
 // ... also for all other contents you'd like to have on S3
 ```

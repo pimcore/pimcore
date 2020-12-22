@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\Targeting\Rule;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Tool\Targeting\Rule\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -40,5 +42,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setTargets($targets);
 
         return $targets;
+    }
+
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM targeting_rules ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

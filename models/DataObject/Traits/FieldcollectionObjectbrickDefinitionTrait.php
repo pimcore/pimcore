@@ -55,6 +55,11 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $layoutDefinitions;
 
     /**
+     * @var bool
+     */
+    public $generateTypeDeclarations = false;
+
+    /**
      * @var Data[]
      */
     protected $fieldDefinitions = [];
@@ -197,12 +202,23 @@ trait FieldcollectionObjectbrickDefinitionTrait
      */
     public function getFieldDefinition($key, $context = [])
     {
-        if (is_array($this->fieldDefinitions) && array_key_exists($key, $this->fieldDefinitions)) {
-            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-                return $this->fieldDefinitions[$key];
+        if (is_array($this->fieldDefinitions)) {
+            $fieldDefinition = null;
+            if (array_key_exists($key, $this->fieldDefinitions)) {
+                $fieldDefinition = $this->fieldDefinitions[$key];
+            } elseif (array_key_exists('localizedfields', $this->fieldDefinitions)) {
+                /** @var Data\Localizedfields $lfDef */
+                $lfDef = $this->fieldDefinitions['localizedfields'];
+                $fieldDefinition = $lfDef->getFieldDefinition($key);
             }
 
-            return $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
+            if ($fieldDefinition) {
+                if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
+                    return $fieldDefinition;
+                }
+
+                return $this->doEnrichFieldDefinition($fieldDefinition, $context);
+            }
         }
 
         return null;
@@ -244,6 +260,26 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public function setImplementsInterfaces(?string $implementsInterfaces)
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getGenerateTypeDeclarations()
+    {
+        return (bool) $this->generateTypeDeclarations;
+    }
+
+    /**
+     * @param bool $generateTypeDeclarations
+     *
+     * @return $this
+     */
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
+    {
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

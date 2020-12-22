@@ -146,7 +146,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         $resolver->setAllowedTypes('class', 'string');
 
         $resolver->setDefaults([
-            'options' => []
+            'options' => [],
         ]);
     }
 
@@ -226,7 +226,6 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
         $this->modifications = [];
         foreach ($this->getModificators() as $modificator) {
-            /* @var CartPriceModificatorInterface $modificator */
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if ($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;

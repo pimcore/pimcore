@@ -17,8 +17,8 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Pimcore\Model\DataObject\DirtyIndicatorInterface;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait OwnerAwareFieldTrait
 {
@@ -38,17 +38,74 @@ trait OwnerAwareFieldTrait
     protected $_language;
 
     /**
+     * @internal
+     *
      * @param mixed $owner
-     * @param string $fieldname
-     * @param string|null $language
+     *
+     * @return $this;
      */
-    public function setOwner($owner, string $fieldname, $language = null)
+    public function _setOwner($owner)
     {
         $this->_owner = $owner;
-        $this->_fieldname = $fieldname;
-        $this->_language = $language;
+
+        return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function _getOwner()
+    {
+        return $this->_owner;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function _getOwnerFieldname(): ?string
+    {
+        return $this->_fieldname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function _getOwnerLanguage(): ?string
+    {
+        return $this->_language;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string|null $fieldname
+     *
+     * @return $this;
+     */
+    public function _setOwnerFieldname(?string $fieldname)
+    {
+        $this->_fieldname = $fieldname;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string|null $language
+     *
+     * @return $this
+     */
+    public function _setOwnerLanguage(?string $language)
+    {
+        $this->_language = $language;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     */
     protected function markMeDirty()
     {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {

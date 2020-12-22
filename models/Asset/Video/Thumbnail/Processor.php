@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Console;
+use Symfony\Component\Lock\LockFactory;
 
 class Processor
 {
@@ -31,7 +32,7 @@ class Processor
     protected static $argumentMapping = [
         'resize' => ['width', 'height'],
         'scaleByWidth' => ['width'],
-        'scaleByHeight' => ['height']
+        'scaleByHeight' => ['height'],
     ];
 
     /**
@@ -117,7 +118,6 @@ class Processor
 
             if (!is_dir(dirname($fsPath))) {
                 File::mkdir(dirname($fsPath));
-                @chmod($thumbDir, File::getDefaultMode());
             }
 
             if (is_file($fsPath)) {
@@ -167,7 +167,7 @@ class Processor
         $customSetting[$config->getName()] = [
             'status' => 'inprogress',
             'formats' => $existingFormats,
-            'processId' => $instance->getProcessId()
+            'processId' => $instance->getProcessId(),
         ];
         $asset->setCustomSetting('thumbnails', $customSetting);
         $asset->save();
@@ -195,7 +195,8 @@ class Processor
         $conversionStatus = 'finished';
 
         // check if there is already a transcoding process running, wait if so ...
-        Model\Tool\Lock::acquire('video-transcoding', 7200, 10); // expires after 2 hrs, refreshes every 10 secs
+        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('video-transcoding', 7200);
+        $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
 
@@ -224,7 +225,7 @@ class Processor
             }
         }
 
-        Model\Tool\Lock::release('video-transcoding');
+        $lock->release();
 
         if ($asset) {
             $customSetting = $asset->getCustomSetting('thumbnails');
@@ -238,7 +239,7 @@ class Processor
 
             $customSetting[$instance->getConfig()->getName()] = [
                 'status' => $conversionStatus,
-                'formats' => $formats
+                'formats' => $formats,
             ];
             $asset->setCustomSetting('thumbnails', $customSetting);
             $asset->save();

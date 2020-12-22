@@ -21,7 +21,6 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
-use Pimcore\Model\Tool\Lock;
 use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
@@ -29,6 +28,8 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 
 class RedirectHandler implements LoggerAwareInterface
 {
@@ -57,15 +58,21 @@ class RedirectHandler implements LoggerAwareInterface
     private $config;
 
     /**
+     * @var null|LockInterface
+     */
+    private $lock = null;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param SiteResolver $siteResolver
      * @param Config $config
      */
-    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory)
     {
         $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
         $this->config = $config;
+        $this->lock = $lockFactory->createLock(self::class);
     }
 
     /**
@@ -159,7 +166,7 @@ class RedirectHandler implements LoggerAwareInterface
             } else {
                 $this->logger->error('Target of redirect {redirect} not found (Document-ID: {document})', [
                     'redirect' => $redirect->getId(),
-                    'document' => $target
+                    'document' => $target,
                 ]);
 
                 return null;
@@ -174,23 +181,34 @@ class RedirectHandler implements LoggerAwareInterface
             $url = replace_pcre_backreferences($url, $matches);
         }
 
-        if ($redirect->getTargetSite() && !preg_match('@http(s)?://@i', $url)) {
-            if ($targetSite = Site::getById($redirect->getTargetSite())) {
-                // if the target site is specified and and the target-path is starting at root (not absolute to site)
-                // the root-path will be replaced so that the page can be shown
-                $url = preg_replace('@^' . $targetSite->getRootPath() . '/@', '/', $url);
-                $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
-            } else {
-                $this->logger->error('Site with ID {targetSite} not found', [
-                    'redirect' => $redirect->getId(),
-                    'targetSite' => $redirect->getTargetSite()
-                ]);
+        if (!preg_match('@http(s)?://@i', $url)) {
+            if ($redirect->getTargetSite()) {
+                if ($targetSite = Site::getById($redirect->getTargetSite())) {
+                    // if the target site is specified and and the target-path is starting at root (not absolute to site)
+                    // the root-path will be replaced so that the page can be shown
+                    $url = preg_replace('@^' . $targetSite->getRootPath() . '/@', '/', $url);
+                    $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
+                } else {
+                    $this->logger->error('Site with ID {targetSite} not found', [
+                        'redirect' => $redirect->getId(),
+                        'targetSite' => $redirect->getTargetSite(),
+                    ]);
 
-                return null;
+                    return null;
+                }
+            } else {
+                $site = Site::getByDomain($request->getHost());
+                if ($site instanceof Site) {
+                    $redirectDomain = $request->getHost();
+                } else {
+                    $redirectDomain = $this->config['general']['domain'];
+                }
+
+                if ($redirectDomain) {
+                    // prepend the host and scheme to avoid infinite loops when using "domain" redirects
+                    $url = $request->getScheme().'://'.$redirectDomain.$url;
+                }
             }
-        } elseif (!preg_match('@http(s)?://@i', $url) && $this->config['general']['domain']) {
-            // prepend the host and scheme to avoid infinite loops when using "domain" redirects
-            $url = $request->getScheme() . '://' . $this->config['general']['domain'] . $url;
         }
 
         // pass-through parameters if specified
@@ -230,7 +248,7 @@ class RedirectHandler implements LoggerAwareInterface
         $cacheKey = 'system_route_redirect';
         if (($this->redirects = Cache::load($cacheKey)) === false) {
             // acquire lock to avoid concurrent redirect cache warm-up
-            Lock::acquire($cacheKey);
+            $this->lock->acquire(true);
 
             //check again if redirects are cached to avoid re-warming cache
             if (($this->redirects = Cache::load($cacheKey)) === false) {
@@ -248,12 +266,12 @@ class RedirectHandler implements LoggerAwareInterface
                 }
             }
 
-            Lock::release($cacheKey);
+            $this->lock->release();
         }
 
         if (!is_array($this->redirects)) {
             $this->logger->warning('Failed to load redirects', [
-                'redirects' => $this->redirects
+                'redirects' => $this->redirects,
             ]);
 
             $this->redirects = [];

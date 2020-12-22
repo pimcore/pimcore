@@ -35,6 +35,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-datatrans" in Pimcore 10.
+ */
 class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface, RecurringPaymentInterface
 {
     const TRANS_TYPE_DEBIT = '05';
@@ -104,15 +107,15 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
             $this->endpoint = array_merge($this->endpoint, [
                 'form' => 'https://pay.datatrans.com/upp/jsp/upStart.jsp',
                 'script' => 'https://pay.datatrans.com/upp/payment/js/datatrans-1.0.2.js',
-                'xmlAuthorize' => 'https://pay.datatrans.com/upp/jsp/XML_authorize.jsp',
-                'xmlProcessor' => 'https://pay.datatrans.com/upp/jsp/XML_processor.jsp',
+                'xmlAuthorize' => 'https://api.datatrans.com/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://api.datatrans.com/upp/jsp/XML_processor.jsp',
             ]);
         } else {
             $this->endpoint = array_merge($this->endpoint, [
                 'form' => 'https://pay.sandbox.datatrans.com/upp/jsp/upStart.jsp',
                 'script' => 'https://pay.sandbox.datatrans.com/upp/payment/js/datatrans-1.0.2.js',
-                'xmlAuthorize' => 'https://pay.sandbox.datatrans.com/upp/jsp/XML_authorize.jsp',
-                'xmlProcessor' => 'https://pay.sandbox.datatrans.com/upp/jsp/XML_processor.jsp',
+                'xmlAuthorize' => 'https://api.sandbox.datatrans.com/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://api.sandbox.datatrans.com/upp/jsp/XML_processor.jsp',
             ]);
         }
     }
@@ -124,7 +127,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
         $resolver->setRequired([
             'mode',
             'merchant_id',
-            'sign'
+            'sign',
         ]);
 
         $resolver
@@ -205,7 +208,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
                 'merchantId' => $this->merchantId,
                 'amount' => $paymentData['amount'],
                 'currency' => $paymentData['currency'],
-                'refno' => $config['refno']
+                'refno' => $config['refno'],
             ];
 
             $sign = hash_hmac('SHA256', implode('', $data), hex2bin($this->sign));
@@ -238,7 +241,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
         // create form
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
         $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
-            'attr' => $formAttributes
+            'attr' => $formAttributes,
         ]);
 
         $form->setAction($this->endpoint['form']);
@@ -327,7 +330,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
             'uppTransactionId' => null,
             'amount' => null,
             'currency' => null,
-            'refno' => null
+            'refno' => null,
         ];
 
         // check fields
@@ -366,7 +369,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
             [
                 'datatrans_amount' => (string)$price,
                 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode'],
-                'datatrans_response' => $response
+                'datatrans_response' => $response,
             ]
         );
     }
@@ -429,7 +432,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
     {
         return [
             static::AUTH_TYPE_AUTHORIZATION,
-            static::AUTH_TYPE_FINAL_AUTHORIZATION
+            static::AUTH_TYPE_FINAL_AUTHORIZATION,
         ];
     }
 
@@ -496,7 +499,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
             [
                 'datatrans_amount' => (string)$price,
                 'datatrans_responseXML' => $transaction->asXML(),
-                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode,
             ]
         );
 
@@ -555,7 +558,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
             [
                 'datatrans_amount' => (string)$price,
                 'datatrans_responseXML' => $transaction->asXML(),
-                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode,
             ]
         );
 
@@ -584,7 +587,6 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
         $transaction = $xml->body->transaction;
         $status = (string)$transaction->attributes()['trxStatus'];
 
-        /* @var \SimpleXMLElement $response */
         $response = $transaction->{$status};
 
         $message = null;

@@ -20,6 +20,8 @@ namespace Pimcore\Model\Document\Email;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Email $model
  */
 class Dao extends Model\Document\PageSnippet\Dao
@@ -58,7 +60,7 @@ class Dao extends Model\Document\PageSnippet\Dao
         parent::create();
 
         $this->db->insert('documents_email', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

@@ -20,6 +20,8 @@ namespace Pimcore\Model\Document\Hardlink;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Hardlink\Wrapper\Folder $model
  */
 class Dao extends Model\Document\Dao
@@ -58,7 +60,7 @@ class Dao extends Model\Document\Dao
         parent::create();
 
         $this->db->insert('documents_hardlink', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

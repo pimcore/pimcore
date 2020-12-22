@@ -16,10 +16,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use ArrayAccess;
 use Countable;
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use SeekableIterator;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * Interface OrderListInterface
@@ -32,6 +32,8 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
     const LIST_TYPE_ORDER_ITEM = 'item';
 
     /**
+     * @deprecated
+     *
      * @return QueryBuilder
      */
     public function getQuery();
@@ -122,7 +124,7 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
      * enable product query
      * table alias: product
      *
-     * @param int $classId
+     * @param string $classId
      *
      * @return $this
      */
@@ -180,5 +182,3 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
      */
     public function setUseSubItems($useSubItems);
 }
-
-class_alias(OrderListInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList');

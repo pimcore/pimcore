@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -33,7 +32,37 @@ class PageController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_page_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_page_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_page_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -56,7 +85,8 @@ class PageController extends DocumentControllerBase
         }
 
         $page = clone $page;
-        $page = $this->getLatestVersion($page);
+        $isLatestVersion = true;
+        $page = $this->getLatestVersion($page, $isLatestVersion);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
@@ -65,19 +95,20 @@ class PageController extends DocumentControllerBase
         $page->setParent(null);
 
         // unset useless data
-        $page->setElements(null);
+        $page->setEditables(null);
         $page->setChildren(null);
 
-        $this->addTranslationsData($page);
-        $this->minimizeProperties($page);
-
         $data = $page->getObjectVars();
+
+        $this->addTranslationsData($page, $data);
+        $this->minimizeProperties($page, $data);
 
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }
 
         $data['url'] = $page->getUrl();
+        $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $page);
 
@@ -89,7 +120,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -117,13 +148,6 @@ class PageController extends DocumentControllerBase
 
         $page->setUserModification($this->getAdminUser()->getId());
 
-        if ($request->get('task') == 'unpublish') {
-            $page->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $page->setPublished(true);
-        }
-
         if ($request->get('missingRequiredEditable') !== null) {
             $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
         }
@@ -131,6 +155,9 @@ class PageController extends DocumentControllerBase
         $settings = [];
         if ($request->get('settings')) {
             $settings = $this->decodeJson($request->get('settings'));
+            if ($settings['published'] ?? false) {
+                $page->setMissingRequiredEditable(null);
+            }
         }
 
         // check if settings exist, before saving meta data
@@ -148,15 +175,24 @@ class PageController extends DocumentControllerBase
         if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
             $this->setValuesToDocument($request, $page);
 
+            if ($request->get('task') == 'unpublish') {
+                $page->setPublished(false);
+            } elseif ($request->get('task') == 'publish') {
+                $page->setPublished(true);
+            }
+
             $page->save();
             $this->saveToSession($page);
 
+            $treeData = $this->getTreeNodeConfig($page);
+
             return $this->adminJson([
                 'success' => true,
+                'treeData' => $treeData,
                 'data' => [
                     'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount()
-                ]
+                    'versionCount' => $page->getVersionCount(),
+                ],
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
@@ -164,7 +200,7 @@ class PageController extends DocumentControllerBase
             $page->saveVersion();
             $this->saveToSession($page);
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData]);
         } else {
@@ -173,7 +209,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-list", methods={"GET"})
+     * @Route("/get-list", name="pimcore_admin_document_page_getlist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -187,12 +223,12 @@ class PageController extends DocumentControllerBase
 
         return $this->adminJson([
             'success' => true,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
     /**
-     * @Route("/generate-screenshot", methods={"POST"})
+     * @Route("/generate-screenshot", name="pimcore_admin_document_page_generatescreenshot", methods={"POST"})
      *
      * @param Request $request
      *
@@ -230,7 +266,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/check-pretty-url", methods={"POST"})
+     * @Route("/check-pretty-url", name="pimcore_admin_document_page_checkprettyurl", methods={"POST"})
      *
      * @param Request $request
      *
@@ -271,7 +307,7 @@ class PageController extends DocumentControllerBase
         $list = new Document\Listing();
         $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
-            $path, $path, $docId
+            $path, $path, $docId,
         ]);
 
         if ($list->getTotalCount() > 0) {
@@ -286,7 +322,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/clear-editable-data", methods={"PUT"})
+     * @Route("/clear-editable-data", name="pimcore_admin_document_page_cleareditabledata", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -303,16 +339,16 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Document not found');
         }
 
-        foreach ($doc->getElements() as $element) {
+        foreach ($doc->getEditables() as $editable) {
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
                 // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupElementPrefix($targetGroupId), '/') . '/', $element->getName())) {
-                    $doc->removeElement($element->getName());
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
                 }
             } else {
                 // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $element->getName())) {
-                    $doc->removeElement($element->getName());
+                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
                 }
             }
         }
@@ -320,8 +356,46 @@ class PageController extends DocumentControllerBase
         $this->saveToSession($doc, true);
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
+    }
+
+    /**
+     * @Route("/qr-code", name="pimcore_admin_document_page_qrcode", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function qrCodeAction(Request $request)
+    {
+        $page = Document\Page::getById($request->query->get('id'));
+
+        if (!$page) {
+            throw $this->createNotFoundException('Page not found');
+        }
+
+        $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
+
+        $code = new \Endroid\QrCode\QrCode;
+        $code->setWriterByName('png');
+        $code->setText($url);
+        $code->setSize(500);
+
+        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $code->writeFile($tmpFile);
+
+        $response = new BinaryFileResponse($tmpFile);
+        $response->headers->set('Content-Type', 'image/png');
+
+        if ($request->query->get('download')) {
+            $code->setSize(4000);
+            $response->setContentDisposition('attachment', 'qrcode-preview.png');
+        }
+
+        $response->deleteFileAfterSend(true);
+
+        return $response;
     }
 
     /**

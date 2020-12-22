@@ -19,13 +19,14 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\File;
 use Pimcore\Model;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminStyle
 {
     /**
      * @var string
      */
-    protected $elementCssClass;
+    protected $elementCssClass = '';
 
     /**
      * @var string
@@ -53,7 +54,7 @@ class AdminStyle
             if ($element->getType() == 'folder') {
                 $this->elementIconClass = 'pimcore_icon_folder';
                 $this->elementQtipConfig = [
-                    'title' => 'ID: ' . $element->getId()
+                    'title' => 'ID: ' . $element->getId(),
                 ];
             } else {
                 if ($element->getClass()->getIcon()) {
@@ -64,12 +65,12 @@ class AdminStyle
 
                 $this->elementQtipConfig = [
                     'title' => 'ID: ' . $element->getId(),
-                    'text' => 'Type: ' . $element->getClass()->getName()
+                    'text' => 'Type: ' . $element->getClass()->getName(),
                 ];
             }
         } elseif ($element instanceof Model\Asset) {
             $this->elementQtipConfig = [
-                'title' => 'ID: ' . $element->getId()
+                'title' => 'ID: ' . $element->getId(),
             ];
 
             if ($element->getType() == 'folder') {
@@ -85,7 +86,7 @@ class AdminStyle
         } elseif ($element instanceof Model\Document) {
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId(),
-                'text' => 'Type: ' . $element->getType()
+                'text' => 'Type: ' . $element->getType(),
             ];
 
             $this->elementIconClass = 'pimcore_icon_' . $element->getType();
@@ -95,7 +96,7 @@ class AdminStyle
                 $site = Model\Site::getByRootId($element->getId());
 
                 if ($site instanceof Model\Site) {
-                    $translator = \Pimcore::getContainer()->get('pimcore.translator');
+                    $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
                     $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', [], 'admin') . ': ' . $site->getId();
                 }
 
@@ -121,6 +122,18 @@ class AdminStyle
     public function setElementCssClass($elementCssClass)
     {
         $this->elementCssClass = $elementCssClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $elementCssClass
+     *
+     * @return $this
+     */
+    public function appendElementCssClass($elementCssClass)
+    {
+        $this->elementCssClass .= ' ' . $elementCssClass;
 
         return $this;
     }

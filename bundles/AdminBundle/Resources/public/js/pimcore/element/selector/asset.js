@@ -21,7 +21,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             pageSize: 50,
             proxy : {
                 type: 'ajax',
-                url: '/admin/search/search/find',
+                url: Routing.generate('pimcore_admin_searchadmin_search_find'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -198,11 +198,28 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
                 {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        if(record.data.subtype == "image") {
+                        var routes = {
+                            image: "pimcore_admin_asset_getimagethumbnail",
+                            video: "pimcore_admin_asset_getvideothumbnail",
+                            document: "pimcore_admin_asset_getdocumentthumbnail"
+                        };
+
+                        if (record.data.subtype in routes) {
+                            
+                            var route = routes[record.data.subtype];
+
+                            var params = {
+                                id: record.data.id,
+                                width: 100,
+                                height: 100,
+                                cover: true,
+                                aspectratio: true
+                            };
+
+                            var uri = Routing.generate(route, params);
+
                             return '<div name="' + t(record.data.subtype)
-                                + '"><img src="/admin/asset/get-image-thumbnail?id='
-                                + record.data.id
-                                + '&width=100&height=100&cover=true&aspectratio=true" /></div>';
+                                + '"><img src="' + uri + '" /></div>';
                         }
                     }
                 }

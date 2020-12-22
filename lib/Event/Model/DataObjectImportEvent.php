@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model;
 
 use Pimcore\Model\DataObject\Concrete;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Class DataObjectImportEvent

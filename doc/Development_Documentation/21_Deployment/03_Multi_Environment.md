@@ -155,7 +155,7 @@ default environment to use when Pimcore's debug mode is enabled but no environme
 ```php
 <?php
 
-// /app/startup.php
+// /config/pimcore/startup.php
 
 /** @var \Pimcore\Config\EnvironmentConfig $environmentConfig */
 $environmentConfig = \Pimcore\Config::getEnvironmentConfig();
@@ -166,6 +166,6 @@ $environmentConfig->setDefaultDebugModeEnvironment('prod');
 
 For examples, please see:
 
-* <https://github.com/pimcore/pimcore/tree/master/app/config> 
-* <https://github.com/pimcore/pimcore/tree/master/app/config/pimcore>
-* <https://github.com/pimcore/pimcore/tree/master/var/config>
+* <https://github.com/pimcore/demo/tree/master/app/config> 
+* <https://github.com/pimcore/demo/tree/master/app/config/pimcore>
+* <https://github.com/pimcore/demo/tree/master/var/config>

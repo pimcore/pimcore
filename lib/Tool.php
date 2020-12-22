@@ -15,6 +15,8 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
+use Pimcore\Http\RequestHelper;
+use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Tool
@@ -123,7 +125,7 @@ class Tool
                 return [];
             }
 
-            $validLanguages = str_replace(' ', '', strval($config['valid_languages']));
+            $validLanguages = str_replace(' ', '', (string)$config['valid_languages']);
             $languages = explode(',', $validLanguages);
 
             if (!is_array($languages)) {
@@ -187,7 +189,7 @@ class Tool
      */
     public static function getSupportedLocales()
     {
-        $localeService = \Pimcore::getContainer()->get('pimcore.locale');
+        $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
         $locale = $localeService->findLocale();
 
         $cacheKey = 'system_supported_locales_' . strtolower((string) $locale);
@@ -266,7 +268,7 @@ class Tool
             'cy' => 'gb-wls', 'cy-gb' => 'gb-wls', 'fy' => 'nl', 'xh' => 'za', 'yo' => 'bj', 'zu' => 'za',
             'ta' => 'lk', 'te' => 'in', 'ss' => 'za', 'sw' => 'ke', 'so' => 'so', 'si' => 'lk', 'ii' => 'cn',
             'zh-hans' => 'cn', 'sn' => 'zw', 'rm' => 'ch', 'pa' => 'in', 'fa' => 'ir', 'lv' => 'lv', 'gl' => 'es',
-            'fil' => 'ph'
+            'fil' => 'ph',
         ];
 
         if (array_key_exists($code, $languageCountryMapping)) {
@@ -280,20 +282,6 @@ class Tool
         }
 
         return $iconPath;
-    }
-
-    /**
-     * @static
-     *
-     * @return array
-     */
-    public static function getRoutingDefaults()
-    {
-        $container = \Pimcore::getContainer();
-        $routingDefaults = $container->getParameter('pimcore.routing.defaults');
-        $routingDefaults['module'] = $routingDefaults['bundle'];
-
-        return $routingDefaults;
     }
 
     /**
@@ -335,7 +323,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->isFrontendRequest($request);
     }
 
@@ -355,7 +343,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->isFrontendRequestByAdmin($request);
     }
 
@@ -382,10 +370,10 @@ class Tool
             return false;
         }
 
-        $requestKeys = array_merge([
+        $requestKeys = array_merge(
             array_keys($request->query->all()),
-            array_keys($request->request->all()),
-        ]);
+            array_keys($request->request->all())
+        );
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
         if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
@@ -516,7 +504,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->getAnonymizedClientIp($request);
     }
 

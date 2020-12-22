@@ -119,7 +119,7 @@ class InstallCommand extends Command
                 'description' => 'MySQL SSL certificate path (if empty non-ssl connection assumed)',
                 'mode' => InputOption::VALUE_OPTIONAL,
                 'default' => '',
-                'group' => 'db_credentials'
+                'group' => 'db_credentials',
             ],
             'skip-database-structure' => [
                 'description' => 'Skipping creation of database structure during install',
@@ -177,6 +177,11 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Do not abort if a <comment>system.yml</comment> file already exists'
+            )->addOption(
+                'skip-database-config',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not write a database config file: <comment>database.yml</comment>'
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -200,6 +205,10 @@ class InstallCommand extends Command
             throw new \RuntimeException(sprintf('The system.yml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
         }
 
+        if ($input->getOption('skip-database-config')) {
+            $this->installer->setSkipDatabaseConfig(true);
+        }
+
         $this->io = new PimcoreStyle($input, $output);
 
         foreach ($this->getOptions() as $name => $config) {
@@ -220,7 +229,7 @@ class InstallCommand extends Command
                     sprintf(
                         'Consider using the interactive prompt or the <comment>%s</comment> environment variable instead.',
                         $config['env']
-                    )
+                    ),
                 ]);
 
                 $this->io->newLine();
@@ -342,7 +351,7 @@ class InstallCommand extends Command
         }
 
         $this->io->writeln(sprintf(
-            'Running installation. You can find a detailed install log in <comment>var/installer/logs/%s.log</comment>',
+            'Running installation. You can find a detailed install log in <comment>var/log/%s.log</comment>',
             $this->getApplication()->getKernel()->getEnvironment()
         ));
 

@@ -80,7 +80,7 @@ class ReportBroker
         $reports = $this->buildReports();
 
         $event = new Event\ReportConfigEvent($reports);
-        $this->eventDispatcher->dispatch(PiwikEvents::GENERATE_REPORTS, $event);
+        $this->eventDispatcher->dispatch($event, PiwikEvents::GENERATE_REPORTS);
 
         $this->reports = [];
         foreach ($event->getReports() as $report) {
@@ -177,7 +177,7 @@ class ReportBroker
             'period' => 'week',
             'date' => 'yesterday',
             'idSite' => $config->getPiwikSiteId($configKey),
-            'token_auth' => $config->getReportToken()
+            'token_auth' => $config->getReportToken(),
         ], $parameters);
 
         return sprintf(

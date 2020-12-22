@@ -6,13 +6,7 @@ They are the essential part of managing content in documents.
 ## Example Usage 
 The following code makes the `<h1>` headline editable in a document: 
 
-<div class="code-section">
-
-```php 
-<h1><?= $this->input("headline") ?></h1>
-```
-
-```twig 
+```twig
 <h1>{{ pimcore_input("headline") }}</h1>
 ```
 
@@ -21,15 +15,9 @@ the editables, Pimcore can't throw exceptions there. Therefore Pimcore catches t
 
 To prevent that and to have Pimcore throw the Exception, you can call editables like:
 
-```php 
-<h1><?= $this->input("headline")->render() ?></h1>
-```
-
-```twig 
+```twig
 <h1>{{ pimcore_input("headline").render() }}</h1>
 ```
-
-</div>
 
 Pimcore automatically displays an input widget in the edit mode and renders the content when accessing the document via the frontend. 
 
@@ -43,7 +31,7 @@ Pimcore automatically displays an input widget in the edit mode and renders the 
 | [Checkbox](./08_Checkbox.md)                             | Checkbox / bool implementation for documents.                                                                                                                                                                                   |
 | [Date](./10_Date.md)                                     | Datepicker, showing the date in a specified format.                                                                                                                                                                                        |
 | [Relation](./12_Relation_(Many-To-One).md)                   | Provides possibility to create a reference to any other element in Pimcore (document, asset, object).                                                                                                                      |
-| [Relations (Many-To-Many Relation)](./13_Relations_(Many-To-Many).md)      | Provides possibility to edit multiple references to other elements in Pimcore (documents, assets. object).                                                                                                                  |
+| [Relations (Many-To-Many Relation)](./13_Relations_(Many-To-Many).md)      | Provides possibility to edit multiple references to other elements in Pimcore (documents, assets, objects).                                                                                                                  |
 | [Image](./14_Image.md)                                   | A place where you can assign an image (from the assets module).                                                                                                                                                    |
 | [Input](./16_Input.md)                                   | A single-line text-input.                                                                                                                                                               |
 | [Link](./18_Link.md)                                     | An editable link component.                                                                                                                                                             |

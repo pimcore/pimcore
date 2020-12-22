@@ -25,9 +25,10 @@ use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Modifies responses for editmode
@@ -58,10 +59,15 @@ class EditmodeListener implements EventSubscriberInterface
     protected $bundleManager;
 
     /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
      * @var array
      */
     protected $contentTypes = [
-        'text/html'
+        'text/html',
     ];
 
     /**
@@ -69,17 +75,20 @@ class EditmodeListener implements EventSubscriberInterface
      * @param DocumentResolver $documentResolver
      * @param UserLoader $userLoader
      * @param PimcoreBundleManager $bundleManager
+     * @param RouterInterface $router
      */
     public function __construct(
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver,
         UserLoader $userLoader,
-        PimcoreBundleManager $bundleManager
+        PimcoreBundleManager $bundleManager,
+        RouterInterface $router
     ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
         $this->userLoader = $userLoader;
         $this->bundleManager = $bundleManager;
+        $this->router = $router;
     }
 
     /**
@@ -89,11 +98,11 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => 'onKernelRequest',
-            KernelEvents::RESPONSE => 'onKernelResponse'
+            KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -110,7 +119,7 @@ class EditmodeListener implements EventSubscriberInterface
         $this->editmodeResolver->isEditmode($request);
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
@@ -137,7 +146,7 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         $this->logger->info('Injecting editmode assets into request {request}', [
-            'request' => $request->getPathInfo()
+            'request' => $request->getPathInfo(),
         ]);
 
         $this->addEditmodeAssets($document, $response);
@@ -256,15 +265,20 @@ class EditmodeListener implements EventSubscriberInterface
                 $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
             }
 
-            $headHtml .= '<script src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
+            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents)) . '"></script>' . "\n";
         }
+        $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
+            'language' => $language,
+            '_dc' => Version::getRevision(),
+        ]);
 
-        $headHtml .= '<script src="/admin/misc/json-translations-system?language=' . $language . '&_dc=' . Version::getRevision() . '"></script>' . "\n";
+        $headHtml .= '<script src="'.$path.'"></script>' . "\n";
+        $headHtml .= '<script src="' . $this->router->generate('fos_js_routing_js', ['callback' => 'fos.Router.setData']) . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()
         $headHtml .= '<script>
-            var editableConfigurations = [];
+            var editableDefinitions = [];
             var pimcore_document_id = ' . $document->getId() . ';
         </script>';
 
@@ -284,7 +298,7 @@ class EditmodeListener implements EventSubscriberInterface
             '/bundles/pimcoreadmin/js/pimcore/common.js',
             '/bundles/pimcoreadmin/js/lib/class.js',
             '/bundles/pimcoreadmin/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
-            '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js'
+            '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js',
         ];
     }
 
@@ -295,6 +309,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
+                '/bundles/fosjsrouting/js/router.js',
                 '/bundles/pimcoreadmin/js/pimcore/functions.js',
                 '/bundles/pimcoreadmin/js/pimcore/overrides.js',
                 '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
@@ -303,30 +318,30 @@ class EditmodeListener implements EventSubscriberInterface
                 '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
                 '/bundles/pimcoreadmin/js/pimcore/elementservice.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/edit/dnd.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tag.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/block.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/scheduledblock.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/date.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/relation.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/relations.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/checkbox.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/image.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/input.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/link.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/select.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/snippet.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/textarea.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/numeric.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/wysiwyg.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/renderlet.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/table.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/video.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/multiselect.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/areablock.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/area.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/pdf.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/embed.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js'
+                '/bundles/pimcoreadmin/js/pimcore/document/editable.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/block.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/scheduledblock.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/date.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/relation.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/relations.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/checkbox.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/image.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/input.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/link.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/select.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/snippet.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/textarea.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/numeric.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/wysiwyg.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/renderlet.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/table.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/video.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/multiselect.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/areablock.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/area.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/pdf.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/embed.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
             ],
             $this->bundleManager->getEditmodeJsPaths()
         );
@@ -340,7 +355,7 @@ class EditmodeListener implements EventSubscriberInterface
         return array_merge(
             [
                 '/bundles/pimcoreadmin/css/icons.css',
-                '/bundles/pimcoreadmin/css/editmode.css?_dc=' . time()
+                '/bundles/pimcoreadmin/css/editmode.css?_dc=' . time(),
             ],
             $this->bundleManager->getEditmodeCssPaths()
         );

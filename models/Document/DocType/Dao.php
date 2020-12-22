@@ -20,6 +20,8 @@ namespace Pimcore\Model\Document\DocType;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\DocType $model
  */
 class Dao extends Model\Dao\PhpArrayTable
@@ -65,7 +67,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['id', 'name', 'group', 'module', 'controller',
-            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate'];
+            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

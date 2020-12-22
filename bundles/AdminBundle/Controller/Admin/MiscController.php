@@ -17,18 +17,18 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
-use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/misc")
@@ -36,95 +36,30 @@ use Symfony\Component\Routing\Annotation\Route;
 class MiscController extends AdminController
 {
     /**
-     * @Route("/get-available-modules", methods={"GET"})
-     *
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableModulesAction(ControllerDataProvider $provider)
-    {
-        // convert to normal array
-        $bundles = array_values($provider->getBundles());
-
-        $result = array_map(function (BundleInterface $bundle) {
-            return [
-                'name' => $bundle->getName()
-            ];
-        }, $bundles);
-
-        sort($result);
-
-        return $this->adminJson([
-            'data' => $result
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-controllers", methods={"GET"})
+     * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
      *
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
      * @return JsonResponse
      */
-    public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
+    public function getAvailableControllerReferencesAction(Request $request, ControllerDataProvider $provider)
     {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
+        $controllerReferences = $provider->getControllerReferences();
 
         $result = array_map(function ($controller) {
             return [
-                'name' => $controller
+                'name' => $controller,
             ];
-        }, $controllers);
-
-        sort($result);
+        }, $controllerReferences);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/get-available-actions", methods={"GET"})
-     *
-     * @param Request $request
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableActionsAction(Request $request, ControllerDataProvider $provider)
-    {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        if (empty($bundle)) {
-            $bundle = $routingDefaults['bundle'];
-        }
-
-        $controller = $request->get('controllerName');
-        if (empty($controller)) {
-            $controller = $routingDefaults['controller'];
-        }
-
-        $actions = $provider->getActions($controller, $bundle);
-
-        $result = array_map(function ($action) {
-            return [
-                'name' => $action
-            ];
-        }, $actions);
-
-        sort($result);
-
-        return $this->adminJson([
-            'data' => $result
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-templates", methods={"GET"})
+     * @Route("/get-available-templates", name="pimcore_admin_misc_getavailabletemplates", methods={"GET"})
      *
      * @param ControllerDataProvider $provider
      *
@@ -134,31 +69,31 @@ class MiscController extends AdminController
     {
         $templates = $provider->getTemplates();
 
-        $result = array_map(function ($template) {
+        sort($templates, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $result = array_map(static function ($template) {
             return [
-                'path' => $template
+                'path' => $template,
             ];
         }, $templates);
 
-        sort($result);
-
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/json-translations-system", methods={"GET"})
+     * @Route("/json-translations-system", name="pimcore_admin_misc_jsontranslationssystem", methods={"GET"})
      *
      * @param Request $request
      *
      * @return Response
      */
-    public function jsonTranslationsSystemAction(Request $request)
+    public function jsonTranslationsSystemAction(Request $request, TranslatorInterface $translator)
     {
         $language = $request->get('language');
 
-        $translator = $this->get('translator');
+        /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
         $translations = $translator->getCatalogue($language)->all('admin');
@@ -172,15 +107,14 @@ class MiscController extends AdminController
             }
         }
 
-        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive();
-        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. json_encode($caseInsensitive));
+        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';');
         $response->headers->set('Content-Type', 'text/javascript');
 
         return $response;
     }
 
     /**
-     * @Route("/script-proxy", methods={"GET"})
+     * @Route("/script-proxy", name="pimcore_admin_misc_scriptproxy", methods={"GET"})
      *
      * @param Request $request
      *
@@ -227,7 +161,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/admin-css", methods={"GET"})
+     * @Route("/admin-css", name="pimcore_admin_misc_admincss", methods={"GET"})
      *
      * @param Request $request
      * @param Config $config
@@ -239,14 +173,23 @@ class MiscController extends AdminController
         // customviews config
         $cvData = Tool::getCustomViewConfig();
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.php', ['customviews' => $cvData, 'config' => $config]);
+        // languages
+        $languages = \Pimcore\Tool::getValidLanguages();
+        $adminLanguages = \Pimcore\Tool\Admin::getLanguages();
+        $languages = array_unique(array_merge($languages, $adminLanguages));
+
+        $response = $this->render('@PimcoreAdmin/Admin/Misc/admin-css.html.twig', [
+            'customviews' => $cvData,
+            'config' => $config,
+            'languages' => $languages,
+        ]);
         $response->headers->set('Content-Type', 'text/css; charset=UTF-8');
 
         return $response;
     }
 
     /**
-     * @Route("/ping", methods={"GET"})
+     * @Route("/ping", name="pimcore_admin_misc_ping", methods={"GET"})
      *
      * @param Request $request
      *
@@ -255,14 +198,14 @@ class MiscController extends AdminController
     public function pingAction(Request $request)
     {
         $response = [
-            'success' => true
+            'success' => true,
         ];
 
         return $this->adminJson($response);
     }
 
     /**
-     * @Route("/available-languages", methods={"GET"})
+     * @Route("/available-languages", name="pimcore_admin_misc_availablelanguages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -278,7 +221,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-valid-filename", methods={"GET"})
+     * @Route("/get-valid-filename", name="pimcore_admin_misc_getvalidfilename", methods={"GET"})
      *
      * @param Request $request
      *
@@ -287,14 +230,14 @@ class MiscController extends AdminController
     public function getValidFilenameAction(Request $request)
     {
         return $this->adminJson([
-            'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type'))
+            'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type')),
         ]);
     }
 
     /* FILEEXPLORER */
 
     /**
-     * @Route("/fileexplorer-tree", methods={"GET"})
+     * @Route("/fileexplorer-tree", name="pimcore_admin_misc_fileexplorertree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -321,7 +264,7 @@ class MiscController extends AdminController
                     'id' => '/fileexplorer' . str_replace(PIMCORE_PROJECT_ROOT, '', $file),
                     'text' => $item,
                     'leaf' => true,
-                    'writeable' => is_writable($file)
+                    'writeable' => is_writable($file),
                 ];
 
                 if (is_dir($file)) {
@@ -343,7 +286,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-content", methods={"GET"})
+     * @Route("/fileexplorer-content", name="pimcore_admin_misc_fileexplorercontent", methods={"GET"})
      *
      * @param Request $request
      *
@@ -361,7 +304,7 @@ class MiscController extends AdminController
             if (is_readable($file)) {
                 $content = file_get_contents($file);
                 $success = true;
-                $writeable = is_writeable($file);
+                $writeable = is_writable($file);
             }
         }
 
@@ -370,12 +313,12 @@ class MiscController extends AdminController
             'content' => $content,
             'writeable' => $writeable,
             'filename' => basename($file),
-            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file)
+            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file),
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-content-save", methods={"PUT"})
+     * @Route("/fileexplorer-content-save", name="pimcore_admin_misc_fileexplorercontentsave", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -389,7 +332,7 @@ class MiscController extends AdminController
 
         if ($request->get('content') && $request->get('path')) {
             $file = $this->getFileexplorerPath($request, 'path');
-            if (is_file($file) && is_writeable($file)) {
+            if (is_file($file) && is_writable($file)) {
                 File::put($file, $request->get('content'));
 
                 $success = true;
@@ -397,12 +340,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-add", methods={"POST"})
+     * @Route("/fileexplorer-add", name="pimcore_admin_misc_fileexploreradd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -425,7 +368,7 @@ class MiscController extends AdminController
                 throw new \Exception('not allowed');
             }
 
-            if (is_writeable(dirname($file))) {
+            if (is_writable(dirname($file))) {
                 File::put($file, '');
 
                 $success = true;
@@ -433,12 +376,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-add-folder", methods={"POST"})
+     * @Route("/fileexplorer-add-folder", name="pimcore_admin_misc_fileexploreraddfolder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -461,7 +404,7 @@ class MiscController extends AdminController
                 throw new \Exception('not allowed');
             }
 
-            if (is_writeable(dirname($file))) {
+            if (is_writable(dirname($file))) {
                 File::mkdir($file);
 
                 $success = true;
@@ -469,12 +412,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-delete", methods={"DELETE"})
+     * @Route("/fileexplorer-delete", name="pimcore_admin_misc_fileexplorerdelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -487,19 +430,19 @@ class MiscController extends AdminController
 
         if ($request->get('path')) {
             $file = $this->getFileexplorerPath($request, 'path');
-            if (is_writeable($file)) {
+            if (is_writable($file)) {
                 unlink($file);
                 $success = true;
             }
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-rename", methods={"PUT"})
+     * @Route("/fileexplorer-rename", name="pimcore_admin_misc_fileexplorerrename", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -518,7 +461,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -543,7 +486,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/maintenance", methods={"POST"})
+     * @Route("/maintenance", name="pimcore_admin_misc_maintenance", methods={"POST"})
      *
      * @param Request $request
      *
@@ -562,12 +505,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/http-error-log", methods={"POST"})
+     * @Route("/http-error-log", name="pimcore_admin_misc_httperrorlog", methods={"POST"})
      *
      * @param Request $request
      *
@@ -579,8 +522,8 @@ class MiscController extends AdminController
 
         $db = Db::get();
 
-        $limit = intval($request->get('limit'));
-        $offset = intval($request->get('start'));
+        $limit = (int)$request->get('limit');
+        $offset = (int)$request->get('start');
         $sort = $request->get('sort');
         $dir = $request->get('dir');
         $filter = $request->get('filter');
@@ -614,12 +557,12 @@ class MiscController extends AdminController
         return $this->adminJson([
             'items' => $logs,
             'total' => $total,
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/http-error-log-flush", methods={"DELETE"})
+     * @Route("/http-error-log-flush", name="pimcore_admin_misc_httperrorlogflush", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -633,20 +576,25 @@ class MiscController extends AdminController
         $db->query('TRUNCATE TABLE http_error_log');
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/http-error-log-detail", methods={"GET"})
+     * @Route("/http-error-log-detail", name="pimcore_admin_misc_httperrorlogdetail", methods={"GET"})
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @return Response
      */
-    public function httpErrorLogDetailAction(Request $request)
+    public function httpErrorLogDetailAction(Request $request, ?Profiler $profiler)
     {
         $this->checkPermission('http_errors');
+
+        if ($profiler) {
+            $profiler->disable();
+        }
 
         $db = Db::get();
         $data = $db->fetchRow('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
@@ -657,21 +605,21 @@ class MiscController extends AdminController
             }
         }
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:http-error-log-detail.html.php', ['data' => $data]);
+        $response = $this->render('@PimcoreAdmin/Admin/Misc/http-error-log-detail.html.twig', ['data' => $data]);
 
         return $response;
     }
 
     /**
-     * @Route("/country-list", methods={"GET"})
+     * @Route("/country-list", name="pimcore_admin_misc_countrylist", methods={"GET"})
      *
-     * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function countryListAction(Request $request)
+    public function countryListAction(LocaleServiceInterface $localeService)
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = $localeService->getDisplayRegions();
         asort($countries);
         $options = [];
 
@@ -679,7 +627,7 @@ class MiscController extends AdminController
             if (strlen($short) == 2) {
                 $options[] = [
                     'name' => $translation,
-                    'code' => $short
+                    'code' => $short,
                 ];
             }
         }
@@ -688,7 +636,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/language-list", methods={"GET"})
+     * @Route("/language-list", name="pimcore_admin_misc_languagelist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -702,7 +650,7 @@ class MiscController extends AdminController
         foreach ($locales as $short => $translation) {
             $options[] = [
                 'name' => $translation,
-                'code' => $short
+                'code' => $short,
             ];
         }
 
@@ -710,7 +658,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/phpinfo", methods={"GET"})
+     * @Route("/phpinfo", name="pimcore_admin_misc_phpinfo", methods={"GET"})
      *
      * @param Request $request
      * @param Profiler $profiler
@@ -737,7 +685,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-language-flag", methods={"GET"})
+     * @Route("/get-language-flag", name="pimcore_admin_misc_getlanguageflag", methods={"GET"})
      *
      * @param Request $request
      *
@@ -753,21 +701,51 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/icon-list", methods={"GET"})
-     * @TemplatePhp()
+     * @Route("/icon-list", name="pimcore_admin_misc_iconlist", methods={"GET"})
      *
      * @param Request $request
      * @param Profiler $profiler
+     *
+     * @return Response
      */
     public function iconListAction(Request $request, ?Profiler $profiler)
     {
         if ($profiler) {
             $profiler->disable();
         }
+
+        $publicDir = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin';
+        $iconDir = $publicDir . '/img';
+        $colorIcons = rscandir($iconDir . '/flat-color-icons/');
+        $whiteIcons = rscandir($iconDir . '/flat-white-icons/');
+        $twemoji = rscandir($iconDir . '/twemoji/');
+
+        //flag icons for locales
+        $locales = Tool::getSupportedLocales();
+        $languageOptions = [];
+        foreach ($locales as $short => $translation) {
+            if (!empty($short)) {
+                $languageOptions[] = [
+                    'language' => $short,
+                    'display' => $translation . " ($short)",
+                    'flag' => \Pimcore\Tool::getLanguageFlagFile($short, false),
+                ];
+            }
+        }
+
+        $iconsCss = file_get_contents($publicDir . '/css/icons.css');
+
+        return $this->render('@PimcoreAdmin/Admin/Misc/iconList.html.twig', [
+            'colorIcons' => $colorIcons,
+            'whiteIcons' => $whiteIcons,
+            'twemoji' => $twemoji,
+            'languageOptions' => $languageOptions,
+            'iconsCss' => $iconsCss,
+        ]);
     }
 
     /**
-     * @Route("/test")
+     * @Route("/test", name="pimcore_admin_misc_test")
      *
      * @param Request $request
      *

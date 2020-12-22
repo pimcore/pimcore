@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory;
@@ -21,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 class DefaultFindologic implements ProductListInterface
 {
@@ -655,13 +655,13 @@ class DefaultFindologic implements ProductListInterface
                 $field = $this->groupedValues[$fieldname];
 
                 $groups[] = [
-                    'value' => null, 'label' => null, 'count' => null, 'parameter' => $field->attributes->totalRange
+                    'value' => null, 'label' => null, 'count' => null, 'parameter' => $field->attributes->totalRange,
                 ];
             } elseif ($fieldname === SelectCategory::FIELDNAME) {
                 $rec = function (array $items) use (&$rec, &$groups) {
                     foreach ($items as $item) {
                         $groups[$item->name] = [
-                            'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters
+                            'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters,
                         ];
 
                         if ($item->items) {
@@ -685,7 +685,7 @@ class DefaultFindologic implements ProductListInterface
 
                 foreach ($hits as $item) {
                     $groups[] = [
-                        'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters
+                        'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters,
                     ];
                 }
             }
@@ -763,7 +763,7 @@ class DefaultFindologic implements ProductListInterface
     {
         // add system params
         $params = [
-            'shopkey' => $this->tenantConfig->getClientConfig('shopKey'), 'shopurl' => $this->tenantConfig->getClientConfig('shopUrl'), 'userip' => $this->userIp, 'referer' => $this->referer, 'revision' => $this->revision
+            'shopkey' => $this->tenantConfig->getClientConfig('shopKey'), 'shopurl' => $this->tenantConfig->getClientConfig('shopUrl'), 'userip' => $this->userIp, 'referer' => $this->referer, 'revision' => $this->revision,
         ] + $params;
 
         // we have different end points for search and navigation
@@ -786,7 +786,7 @@ class DefaultFindologic implements ProductListInterface
         $start = microtime(true);
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $response = $client->request('GET', $url, [
-            'timeout' => $this->timeout
+            'timeout' => $this->timeout,
         ]);
         $this->getLogger()->info('Duration: ' . number_format(microtime(true) - $start, 3));
 

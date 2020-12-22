@@ -26,6 +26,11 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             var value = data;
             var options = record.data[key + "%options"];
 
+            if (data && typeof data.options !== "undefined") {
+                options = data.options;
+                value = data.value;
+            }
+
             this.applyPermissionStyle(key, value, metaData, record);
 
             if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
@@ -44,7 +49,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            if (value) {
+                return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            }
         }.bind(this, field.key);
 
         return {
@@ -60,7 +67,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 try {
                     metaData.tdCls += " grid_value_inherited";
                 } catch (e) {
@@ -74,7 +81,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            if (value) {
+                return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            }
         }.bind(this, field.key);
 
         return {
@@ -260,12 +269,13 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             triggerAction: "all",
             editable: true,
             queryMode: 'local',
+            anyMatch: true,
             autoComplete: false,
             forceSelection: true,
             selectOnFocus: true,
             fieldLabel: this.fieldConfig.title,
             store: store,
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             width: 250,
             displayField: 'key',
             valueField: 'value',
@@ -288,7 +298,13 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             options.width = this.fieldConfig.width;
         }
 
-        options.width += options.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            options.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            options.width += options.labelWidth;
+        }
 
         if (typeof this.data == "string" || typeof this.data == "number") {
             if (in_array(this.data, validValues)) {

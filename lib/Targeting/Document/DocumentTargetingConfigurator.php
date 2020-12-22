@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Document;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -43,7 +43,7 @@ class DocumentTargetingConfigurator
     private $userLoader;
 
     /**
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     private $cache;
 
@@ -61,7 +61,7 @@ class DocumentTargetingConfigurator
         VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper,
         UserLoader $userLoader,
-        CoreHandlerInterface $cache
+        CoreCacheHandler $cache
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->requestHelper = $requestHelper;
@@ -219,7 +219,7 @@ class DocumentTargetingConfigurator
         if (!$document instanceof TargetingDocumentInterface) {
             return [];
         }
-
+        /** @var Document\TargetingDocument $document */
         $cacheKey = sprintf('document_target_groups_%d', $document->getId());
 
         if ($targetGroups = $this->cache->load($cacheKey)) {
@@ -227,8 +227,8 @@ class DocumentTargetingConfigurator
         }
 
         $targetGroups = [];
-        foreach ($document->getElements() as $key => $tag) {
-            $pattern = '/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '([0-9]+)' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX, '/') . '/';
+        foreach ($document->getEditables() as $key => $tag) {
+            $pattern = '/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '([0-9]+)' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_SUFFIX, '/') . '/';
             if (preg_match($pattern, (string) $key, $matches)) {
                 $targetGroups[] = (int)$matches[1];
             }

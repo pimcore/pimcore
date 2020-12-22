@@ -10,7 +10,7 @@ To do so, follow these steps
 Pimcore ships with a special interpreter to load all classification store attributes to the index. To use this interpreter
 add following attribute configuration into your index definition:  
 
-```yml 
+```yml
 some_field_name:
     fieldname: 'my_classification_store_field_name'
     interpreter: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultClassificationStore
@@ -70,7 +70,7 @@ with elastic search, it is not activated by default. Following steps are necessa
   the filter definition class.  
 - add following filter type mapping (see [here](../README.md) for details):
 
-```yml 
+```yml
 FilteSelectClsStoreAttributes:
     filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\SelectClassificationStoreAttributes
     template: 'product/filters/nested_attributes.html.twig'

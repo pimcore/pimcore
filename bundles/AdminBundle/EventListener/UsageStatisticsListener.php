@@ -21,7 +21,7 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Log\Simple;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class UsageStatisticsListener implements EventSubscriberInterface
@@ -53,11 +53,11 @@ class UsageStatisticsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest'
+            KernelEvents::REQUEST => 'onKernelRequest',
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -89,7 +89,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
             $request->attributes->get('_controller'),
             $request->attributes->get('_route'),
             @json_encode($request->attributes->get('_route_params')),
-            @json_encode($params)
+            @json_encode($params),
         ];
 
         Simple::log('usagelog', implode('|', $parts));

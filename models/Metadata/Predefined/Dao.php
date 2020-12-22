@@ -20,6 +20,8 @@ namespace Pimcore\Model\Metadata\Predefined;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Metadata\Predefined $model
  */
 class Dao extends Model\Dao\PhpArrayTable
@@ -73,7 +75,7 @@ class Dao extends Model\Dao\PhpArrayTable
         if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
         } else {
-            throw new \Exception('Predefined asset metadata with name: ' . $name . ' and language: ' . $language . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf('Predefined metadata config with name "%s" and language %s does not exist.', $name, $language));
         }
     }
 
@@ -91,7 +93,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['id', 'name', 'description', 'language', 'type', 'data',
-            'targetSubtype', 'config', 'creationDate', 'modificationDate'];
+            'targetSubtype', 'config', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Data\ObjectMetadata $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -53,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
             'ownername' => $ownername ? $ownername : '',
             'index' => $index ? $index : '0',
             'position' => $position ? $position : '0',
-            'type' => $type ? $type : 'object'];
+            'type' => $type ? $type : 'object', ];
 
         foreach ($this->model->getColumns() as $column) {
             $getter = 'get' . ucfirst($column);

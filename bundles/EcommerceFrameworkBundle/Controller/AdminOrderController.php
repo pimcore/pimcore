@@ -14,7 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
+use GuzzleHttp\ClientInterface;
+use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -24,10 +27,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Cache;
-use Pimcore\Controller\EventedControllerInterface;
-use Pimcore\Controller\TemplateControllerInterface;
-use Pimcore\Controller\Traits\TemplateControllerTrait;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Localization\IntlFormatter;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\Concrete;
@@ -37,29 +39,25 @@ use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Zend\Paginator\Paginator;
 
 /**
  * Class AdminOrderController
  *
  * @Route("/admin-order")
  */
-class AdminOrderController extends AdminController implements EventedControllerInterface, TemplateControllerInterface
+class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
-    use TemplateControllerTrait;
-
     /**
      * @var OrderManagerInterface
      */
     protected $orderManager;
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
         $user = $this->get(TokenStorageUserResolver::class)->getUser();
@@ -74,22 +72,17 @@ class AdminOrderController extends AdminController implements EventedControllerI
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
-
-        // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'twig');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
     }
 
     /**
      * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list", methods={"GET"})
+     *
+     * @param Request $request
+     * @param IntlFormatter $formatter
+     *
+     * @return Response
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request, IntlFormatter $formatter)
     {
         // create new order list
         $list = $this->orderManager->createOrderList();
@@ -134,7 +127,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         if ($request->query->has('from') === false && $request->query->has('till') === false) {
             // als default, nehmen wir den ersten des aktuellen monats
             $from = new \DateTime('first day of this month');
-            $request->query->set('from', $from->format('d.m.Y'));
+            $request->query->set('from', $from->format('Y-m-d'));
         }
 
         $filterDate = new OrderDateTime();
@@ -174,23 +167,31 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $paginator->setItemCountPerPage(10);
         $paginator->setCurrentPageNumber($request->get('page', 1));
 
-        return [
+        return $this->render('@PimcoreEcommerceFramework/admin_order/list.html.twig', [
             'paginator' => $paginator,
             'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
             'listPricingRule' => new \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing(),
-            'defaultCurrency' => \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance()->getEnvironment()->getDefaultCurrency(),
-            'formatter' => \Pimcore::getContainer()->get('pimcore.locale.intl_formatter')
-        ];
+            'defaultCurrency' => Factory::getInstance()->getEnvironment()->getDefaultCurrency(),
+            'formatter' => $formatter,
+        ]);
     }
 
     /**
      * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail", methods={"GET"})
      *
+     * @param Request $request
+     * @param ClientInterface $client
+     * @param IntlFormatter $formatter
+     * @param LocaleServiceInterface $localeService
+     *
      * @return Response
      */
-    public function detailAction(Request $request)
-    {
-        $dateFormatter = $this->get('pimcore.locale.intl_formatter');
+    public function detailAction(
+        Request $request,
+        ClientInterface $client,
+        IntlFormatter $formatter,
+        LocaleServiceInterface $localeService
+    ) {
         $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init
@@ -203,7 +204,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
          *
          * @return string
          */
-        $geoPoint = function (array $address) use ($pimcoreSymfonyConfig) {
+        $geoPoint = function (array $address) use ($pimcoreSymfonyConfig, $client) {
             $baseUrl = $pimcoreSymfonyConfig['maps']['geocoding_url_template'];
             $url = str_replace(
                 '{q}',
@@ -217,7 +218,6 @@ class AdminOrderController extends AdminController implements EventedControllerI
             );
 
             $json = null;
-            $client = \Pimcore::getContainer()->get('pimcore.http_client');
             try {
                 $response = $client->request('GET', $url);
                 if ($response->getStatusCode() < 300) {
@@ -265,7 +265,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
             // register
             $register = \DateTime::createFromFormat('U', $order->getCreationDate());
-            $arrCustomerAccount['created'] = $dateFormatter->formatDateTime($register, IntlFormatter::DATE_MEDIUM);
+            $arrCustomerAccount['created'] = $formatter->formatDateTime($register, IntlFormatter::DATE_MEDIUM);
 
             // mail
             if (method_exists($customer, 'getEMail')) {
@@ -296,11 +296,11 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
         // create timeline
         $arrIcons = [
-            'itemChangeAmount' => 'fa fa-pen', 'itemCancel' => 'fa fa-times', 'itemComplaint' => 'fa fa-exclamation-triangle'
+            'itemChangeAmount' => 'fa fa-pen', 'itemCancel' => 'fa fa-times', 'itemComplaint' => 'fa fa-exclamation-triangle',
         ];
 
         $arrContext = [
-            'itemChangeAmount' => 'secondary', 'itemCancel' => 'danger', 'itemComplaint' => 'warning'
+            'itemChangeAmount' => 'secondary', 'itemCancel' => 'danger', 'itemComplaint' => 'warning',
         ];
 
         $arrTimeline = [];
@@ -317,7 +317,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
             // group events
             $date->setTimestamp($note->getDate());
-            $group = $dateFormatter->formatDateTime($date, IntlFormatter::DATE_MEDIUM);
+            $group = $formatter->formatDateTime($date, IntlFormatter::DATE_MEDIUM);
 
             // load reference
             $reference = Concrete::getById($note->getCid());
@@ -337,16 +337,16 @@ class AdminOrderController extends AdminController implements EventedControllerI
                 'icon' => $arrIcons[$note->getTitle()],
                 'context' => $arrContext[$note->getTitle()] ?: 'default',
                 'type' => $note->getTitle(),
-                'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM),
+                'date' => $formatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM),
                 'avatar' => $avatar,
                 'user' => $user ? $user->getName() : null,
                 'message' => $note->getData()['message']['data'],
                 'title' => $title ?: $note->getTitle(),
-                'quantity' => $quantity
+                'quantity' => $quantity,
             ];
         }
 
-        return [
+        return $this->render('@PimcoreEcommerceFramework/admin_order/detail.html.twig', [
             'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
             'orderAgent' => $orderAgent,
             'timeLine' => $arrTimeline,
@@ -354,17 +354,20 @@ class AdminOrderController extends AdminController implements EventedControllerI
             'arrCustomerAccount' => $arrCustomerAccount,
             'geoAddressDelivery' => $geoAddressDelivery,
             'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig,
-            'formatter' => \Pimcore::getContainer()->get('pimcore.locale.intl_formatter'),
-            'locale' => \Pimcore::getContainer()->get('pimcore.locale')
-        ];
+            'formatter' => $formatter,
+            'locale' => $localeService,
+        ]);
     }
 
     /**
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel", methods={"GET", "POST"})
      *
+     * @param Request $request
+     * @param CsrfProtectionHandler $csrfProtection
+     *
      * @return Response
      */
-    public function itemCancelAction(Request $request)
+    public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
         // init
         $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -372,7 +375,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             // init
             $agent = $this->orderManager->createOrderAgent($order);
 
@@ -389,7 +392,9 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $this->redirect($url);
         }
 
-        return ['orderItem' => $orderItem];
+        return $this->render('@PimcoreEcommerceFramework/admin_order/item_cancel.html.twig', [
+            'orderItem' => $orderItem,
+        ]);
     }
 
     /**
@@ -397,7 +402,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
      *
      * @return Response
      */
-    public function itemEditAction(Request $request)
+    public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -405,7 +410,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
-            $this->checkCsrfToken($request);
+            $csrfProtectionHandler->checkCsrfToken($request);
 
             // change item
             $agent = $this->orderManager->createOrderAgent($order);
@@ -421,7 +426,9 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $this->redirect($url);
         }
 
-        return ['orderItem' => $orderItem];
+        return $this->render('@PimcoreEcommerceFramework/admin_order/item_edit.html.twig', [
+            'orderItem' => $orderItem,
+        ]);
     }
 
     /**
@@ -429,7 +436,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
      *
      * @return Response
      */
-    public function itemComplaintAction(Request $request)
+    public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -437,7 +444,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
-            $this->checkCsrfToken($request);
+            $csrfProtectionHandler->checkCsrfToken($request);
 
             // change item
             $agent = $this->orderManager->createOrderAgent($order);
@@ -453,6 +460,8 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $this->redirect($url);
         }
 
-        return ['orderItem' => $orderItem];
+        return $this->render('@PimcoreEcommerceFramework/admin_order/item_complaint.html.twig', [
+            'orderItem' => $orderItem,
+        ]);
     }
 }

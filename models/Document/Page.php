@@ -67,12 +67,8 @@ class Page extends TargetingDocument
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
     {
-        if ($this->getId() == 1) {
-            throw new \Exception('root-node cannot be deleted');
-        }
-
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
         $redirects->setCondition('target = ?', $this->getId());
@@ -86,7 +82,7 @@ class Page extends TargetingDocument
             $site->delete();
         }
 
-        parent::delete($isNested);
+        parent::doDelete();
     }
 
     /**
@@ -150,11 +146,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * Returns the full path of the document including the key (path+key)
-     *
-     * @param bool $force
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getFullPath(bool $force = false)
     {

@@ -66,7 +66,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         Ext.Ajax.request({
-            url: "/admin/class/fieldcollection-tree",
+            url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectiontree'),
             params: extraParams,
             success: this.initData.bind(this)
         });
@@ -82,7 +82,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             border: this.fieldConfig.border,
             style: "margin-bottom: 10px",
             bodyStyle: 'padding-top: 5px',
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed
         };
@@ -164,6 +164,15 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     getControls: function (blockElement, title) {
+
+        if (this.fieldConfig.noteditable) {
+            return new Ext.Toolbar({
+                items: {
+                    xtype: "tbtext",
+                    text: t(title)
+                }
+            });
+        }
 
         var menuData = this.fieldcollections;
         var collectionMenuBefore = this.buildMenu(menuData, blockElement, 'before');
@@ -394,15 +403,21 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             this.currentData = blockData;
         }
 
-        var items =  this.getRecursiveLayout(this.layoutDefinitions[type], null,
+        var items =  this.getRecursiveLayout(
+            this.layoutDefinitions[type],
+            this.fieldConfig.noteditable,
             {
                 containerType: "fieldcollection",
                 containerName: this.fieldConfig.name,
                 containerKey: type,
                 index: index,
-                applyDefaults: true
-            }, false, false, this, true).items;
-
+                applyDefaults: true,
+            },
+            false,
+            false,
+            this,
+            true
+        ).items;
 
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
@@ -411,8 +426,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             style: "margin: 0 0 10px 0;",
             manageHeight: false,
             border: true,
-            items: items,
-            disabled: this.fieldConfig.noteditable
+            items: items
         });
 
         blockElement.insert(0, this.getControls(blockElement, title));
@@ -468,7 +482,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         if(this.dataFields[name]) {
             // this is especially for localized fields which get aggregated here into one field definition
             // in the case that there are more than one localized fields in the class definition
-            // see also Object_Class::extractDataDefinitions();
+            // see also ClassDefinition::extractDataDefinitions();
             if(typeof this.dataFields[name]["addReferencedField"]){
                 this.dataFields[name].addReferencedField(field);
             }

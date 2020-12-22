@@ -21,7 +21,7 @@ use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -50,13 +50,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $columnType = 'bigint(20)';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Carbon\\Carbon';
-
-    /**
      * @var int|null
      */
     public $defaultValue;
@@ -70,7 +63,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param \DateTime $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -95,7 +88,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return \Carbon\Carbon|null
@@ -122,7 +115,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param \DateTime $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -136,7 +129,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      * @param \DateTime $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -167,7 +160,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataFromEditmode
      *
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return \Carbon\Carbon|null
@@ -225,7 +218,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i');
+            return $data->format('Y-m-d H:i:s');
         }
 
         return '';
@@ -236,7 +229,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -280,45 +273,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        return $this->getForCsvExport($object, $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return \Carbon\Carbon|null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $timestamp = strtotime($value);
-        if (empty($value)) {
-            return null;
-        }
-        if ($timestamp !== false) {
-            return $this->getDateFromTimestamp($timestamp);
-        }
-        throw new \Exception('cannot get values from web service import - invalid data');
-    }
-
-    /**
      * @return int|null
      */
     public function getDefaultValue()
@@ -333,7 +287,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if (strlen((string)$defaultValue) > 0) {
             if (is_numeric($defaultValue)) {
                 $this->defaultValue = (int)$defaultValue;
             } else {
@@ -381,7 +335,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return \Carbon\Carbon|null
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -443,7 +397,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             $db = Db::get();
 
             if ($this->getColumnType() == 'datetime') {
-                $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
+                $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
                 $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote($value);
 
                 return $condition;
@@ -482,5 +436,39 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         return null;
+    }
+
+    /**
+     * @param \DateTimeInterface|null $oldValue
+     * @param \DateTimeInterface|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
+        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
+
+        return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
     }
 }

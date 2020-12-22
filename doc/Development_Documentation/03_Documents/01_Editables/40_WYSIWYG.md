@@ -11,7 +11,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | `customConfig`  | string  | Path to JavaScript file with configuration for CKEditor                            |
 | `enterMode`     | integer | Set it to `CKEDITOR.CKEDITOR.ENTER_BR` if you don't want to add a `<p>`-tag on pressing enter key  |
 | `height`        | integer | Minimum height of the field in pixels                                              |
-| `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
+| `toolbarGroups` | mixed   | A toolbar config array or false for customConfig/CKEditor default (see below)                                                 |
 | `width`         | integer | Width of the field in pixels                                                       |
 | `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
 | `required`      | boolean | set to true to make field value required for publish                               |
@@ -29,17 +29,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 ### Basic usage
 
 `wysiwyg` helper doesn't require any additional configuration options.
-The following code specifies tje height for the rendered WYSIWYG editable (has no effect in frontend).
-
-<div class="code-section">
-
-```php
-<section id="marked-content">
-    <?= $this->wysiwyg("specialContent", [
-        "height" => 200
-    ]); ?>
-</section>
-```
+The following code specifies the height for the rendered WYSIWYG editable (has no effect in frontend).
 
 ```twig
 <section id="marked-content">
@@ -49,7 +39,6 @@ The following code specifies tje height for the rendered WYSIWYG editable (has n
     }}
 </section>
 ```
-</div>
 
 If you have a look at the editmode, you will see that our WYSIWYG is rendered with the full toolbar.
 
@@ -61,23 +50,9 @@ If you have a look at the editmode, you will see that our WYSIWYG is rendered wi
 The complete list of configuration options you can find in the [CKEditor toolbar documentation](http://docs.ckeditor.com/#!/guide/dev_toolbar).
 
 The WYSIWYG editable allows us to specify the toolbar. 
-If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.
-
-<div class="code-section">
-
-```php
-<section id="marked-content">
-    <?= $this->wysiwyg("specialContent", [
-        "height" => 200,
-        "toolbarGroups" => [
-            [
-                "name" => 'basicstyles',
-                "groups" => [ 'basicstyles', 'list', "links"]
-            ]
-        ]
-    ]); ?>
-</section>
-```
+If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.  
+There is also the option to disable the pimcore generated default toolbar by setting the option `toolbarGroups` explicitly to `false`. In this case,
+either the configuration from the customConfig-file or if absent the ckeditor default will be loaded.
 
 ```twig
 <section id="marked-content">
@@ -92,7 +67,6 @@ If you have to limit styling options (for example only basic styles like `<b>` t
     }}
 </section>
 ```
-</div>
 
 Now the user can use only the limited toolbar.
 
@@ -101,14 +75,6 @@ Now the user can use only the limited toolbar.
 
 There is also an additional way to specify the configuration by adding `customConfig`. 
 
-```php
-<section id="marked-content">
-    <?= $this->wysiwyg("specialContent", [
-        "height" => 200,
-        "customConfig" => "/custom/ckeditor_config.js"
-    ]); ?>
-</section>
-```
 ```twig
 <section id="marked-content">
     {{  pimcore_wysiwyg('specialContent', {
@@ -129,14 +95,14 @@ CKEDITOR.editorConfig = function (config) {
 
 ##### Global Configuration
 
-You can add a Global Configuration for all WYSIWYG Editors for all documents by setting `pimcore.document.tags.wysiwyg.defaultEditorConfig`.
+You can add a Global Configuration for all WYSIWYG Editors for all documents by setting `pimcore.document.editables.wysiwyg.defaultEditorConfig`.
 
 For this purpose, you can create a [Pimcore Bundle](../../20_Extending_Pimcore/13_Bundle_Developers_Guide) and add the
 configuration in a file in the `Resources/public` directory  of your bundle (e.g. `Resources/public/js/editmode.js`).
 
 ```
-pimcore.document.tags.wysiwyg.defaultEditorConfig = pimcore.document.tags.wysiwyg.defaultEditorConfig || {};
-pimcore.document.tags.wysiwyg.defaultEditorConfig.uiColor = '#AADC6E';
+pimcore.document.editables.wysiwyg.defaultEditorConfig = pimcore.document.editables.wysiwyg.defaultEditorConfig || {};
+pimcore.document.editables.wysiwyg.defaultEditorConfig.uiColor = '#AADC6E';
 ```
 
 To load that file in editmode, you need to implement `getEditmodeJsPaths` in your bundle class. Given your bundle is named
@@ -200,16 +166,6 @@ class EditmodeListener implements EventSubscriberInterface
 ### Text Output in Editmode
 
 With the following code you can get the text even in editmode:
-
-```php
-<?= $this->wysiwyg("specialContent"); ?>
-<?php if($this->editmode): ?>
-    <h4>Preview</h4>
-    <div style="border: 1px solid #000;" class="preview">
-        <?= $this->wysiwyg("specialContent")->getData(); ?>
-    </div>
-<?php endif; ?>
-```
 
 ```twig
 {{ pimcore_wysiwyg('specialContent') }}

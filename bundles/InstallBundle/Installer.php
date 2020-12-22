@@ -33,6 +33,7 @@ use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -88,6 +89,21 @@ class Installer
     private $importDatabaseDataDump = true;
 
     /**
+     * skip writing database.yml file
+     *
+     * @var bool
+     */
+    private $skipDatabaseConfig = false;
+
+    /**
+     * @param bool $skipDatabaseConfig
+     */
+    public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
+    {
+        $this->skipDatabaseConfig = $skipDatabaseConfig;
+    }
+
+    /**
      * @var array
      */
     private $stepEvents = [
@@ -100,8 +116,8 @@ class Installer
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
         'install_custom_layouts' => 'Installing custom layouts ...',
-        'migrations' => 'Mark existing migrations as done ...',
-        'complete' => 'Install complete!'
+        'migrations' => 'Marking all migrations as done ...',
+        'complete' => 'Install complete!',
     ];
 
     public function __construct(
@@ -206,7 +222,7 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch(self::EVENT_NAME_STEP, $event);
+        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
 
         return $event;
     }
@@ -274,14 +290,14 @@ class Installer
                 $dbConfig,
                 [
                     'username' => $adminUser,
-                    'password' => $adminPass
+                    'password' => $adminPass,
                 ]
             );
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
             return [
-                $e->getMessage()
+                $e->getMessage(),
             ];
         }
     }
@@ -323,7 +339,7 @@ class Installer
         $mysqlSslCertPath = $params['mysql_ssl_cert_path'];
         if (!empty($mysqlSslCertPath)) {
             $dbConfig['driverOptions'] = [
-                PDO::MYSQL_ATTR_SSL_CA => $mysqlSslCertPath
+                PDO::MYSQL_ATTR_SSL_CA => $mysqlSslCertPath,
             ];
         }
 
@@ -348,7 +364,7 @@ class Installer
             'doctrine' => [
                 'dbal' => [
                   'connections' => [
-                      'default' => $dbConfig
+                      'default' => $dbConfig,
                   ],
                 ],
             ],
@@ -360,7 +376,7 @@ class Installer
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment(true, 'dev');
-        $kernel = new \AppKernel($environment, true);
+        $kernel = new \App\Kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -376,45 +392,33 @@ class Installer
         $this->installAssets($kernel);
 
         $this->dispatchStepEvent('install_classes');
-        $this->installClasses($kernel);
+        $this->installClasses();
 
         $this->dispatchStepEvent('install_custom_layouts');
-        $this->installCustomLayouts($kernel);
+        $this->installCustomLayouts();
 
         $this->dispatchStepEvent('migrations');
-        $this->markMigrationsAsDone($kernel);
+        $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
 
         return $errors;
     }
 
-    private function markMigrationsAsDone(KernelInterface $kernel)
+    private function runCommand(array $arguments, string $taskName)
     {
-        /** @var \Pimcore\Migrations\MigrationManager $manager */
-        $manager = $kernel->getContainer()->get(\Pimcore\Migrations\MigrationManager::class);
-        $config = $manager->getConfiguration('pimcore_core');
-        $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
-        $migrations = $config->getMigrations();
-        $latest = end($migrations);
-        $manager->markVersionAsMigrated($latest);
-    }
-
-    private function installClasses(KernelInterface $kernel)
-    {
-        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:classes-rebuild']);
         $io = $this->commandLineOutput;
 
         try {
-            $arguments = [
+            array_splice($arguments, 0, 0, [
                 Console::getPhpCli(),
                 PIMCORE_PROJECT_ROOT . '/bin/console',
-                'pimcore:deployment:classes-rebuild',
-                '-c'
-            ];
+            ]);
 
             $partsBuilder = new PartsBuilder($arguments);
             $parts = $partsBuilder->getParts();
+
+            $this->logger->info('Running {command} command', ['command' => $parts]);
 
             $process = new Process($parts);
             $process->setTimeout(0);
@@ -445,59 +449,38 @@ class Installer
 
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
-            $stdErr->note('Installing classes failed. Please run the following command manually:');
+            $stdErr->note($taskName . ' failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
         }
     }
 
-    private function installCustomLayouts(KernelInterface $kernel)
+    private function markMigrationsAsDone()
     {
-        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:custom-layouts-rebuild']);
-        $io = $this->commandLineOutput;
+        $this->runCommand([
+            'doctrine:migrations:sync-metadata-storage',
+            '-q',
+        ], 'Sync migrations metadata storage');
 
-        try {
-            $arguments = [
-                Console::getPhpCli(),
-                PIMCORE_PROJECT_ROOT . '/bin/console',
-                'pimcore:deployment:custom-layouts-rebuild',
-                '-c'
-            ];
+        $this->runCommand([
+            'doctrine:migrations:version',
+            '--all', '--add', '-n', '-q',
+        ], 'Marking all migrations as done');
+    }
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
+    private function installClasses()
+    {
+        $this->runCommand([
+            'pimcore:deployment:classes-rebuild',
+            '-c',
+        ], 'Installing class definitions');
+    }
 
-            $process = new Process($parts);
-            $process->setTimeout(0);
-            $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
-            $process->run();
-
-            if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            }
-
-            if (null !== $io) {
-                $io->writeln($process->getOutput());
-            }
-        } catch (ProcessFailedException $e) {
-            $this->logger->error($e->getMessage());
-
-            if (null === $io) {
-                return;
-            }
-
-            $stdErr = $io->getErrorStyle();
-            $process = $e->getProcess();
-
-            $errorOutput = trim($process->getErrorOutput());
-            if (!empty($errorOutput)) {
-                $stdErr->write($errorOutput);
-            }
-
-            $stdErr->write($process->getOutput());
-            $stdErr->write($process->getErrorOutput());
-            $stdErr->note('Installing custom layouts failed. Please run the following command manually:');
-            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
-        }
+    private function installCustomLayouts()
+    {
+        $this->runCommand([
+            'pimcore:deployment:custom-layouts-rebuild',
+            '-c',
+        ], 'Installing custom layout definitions');
     }
 
     private function installAssets(KernelInterface $kernel)
@@ -511,7 +494,7 @@ class Installer
             $ansi = null !== $io && $io->isDecorated();
 
             $process = $assetsInstaller->install([
-                'ansi' => $ansi
+                'ansi' => $ansi,
             ]);
 
             if (null !== $io) {
@@ -542,10 +525,13 @@ class Installer
     private function createConfigFiles(array $config)
     {
         $writer = new ConfigWriter();
-        $writer->writeDbConfig($config);
+
+        if (!$this->skipDatabaseConfig) {
+            $writer->writeDbConfig($config);
+        }
+
         $writer->writeSystemConfig();
         $writer->writeDebugModeConfig();
-        $writer->generateParametersFile();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)
@@ -590,6 +576,9 @@ class Installer
                     $db->query($sql);
                 }
             }
+
+            $pdoCacheAdapter = new PdoAdapter($db);
+            $pdoCacheAdapter->createTable();
         }
 
         if ($this->importDatabaseData) {
@@ -631,7 +620,7 @@ class Installer
     {
         $defaultConfig = [
             'username' => 'admin',
-            'password' => md5(microtime())
+            'password' => md5(microtime()),
         ];
 
         $settings = array_replace_recursive($defaultConfig, $config);
@@ -641,12 +630,11 @@ class Installer
             $user->delete();
         }
 
-        /** @var User $user */
         $user = User::create([
             'parentId' => 0,
             'username' => $settings['username'],
             'password' => \Pimcore\Tool\Authentication::getPasswordHash($settings['username'], $settings['password']),
-            'active' => true
+            'active' => true,
         ]);
         $user->setAdmin(true);
         $user->save();
@@ -705,7 +693,7 @@ class Installer
             'creationDate' => time(),
             'modificationDate' => time(),
             'userOwner' => 1,
-            'userModification' => 1
+            'userModification' => 1,
         ]);
         $db->insert('documents', [
             'id' => 1,
@@ -718,15 +706,14 @@ class Installer
             'creationDate' => time(),
             'modificationDate' => time(),
             'userOwner' => 1,
-            'userModification' => 1
+            'userModification' => 1,
         ]);
         $db->insert('documents_page', [
             'id' => 1,
-            'controller' => 'default',
-            'action' => 'default',
+            'controller' => 'App\\Controller\\DefaultController::defaultAction',
             'template' => '',
             'title' => '',
-            'description' => ''
+            'description' => '',
         ]);
         $db->insert('objects', [
             'o_id' => 1,
@@ -739,14 +726,14 @@ class Installer
             'o_creationDate' => time(),
             'o_modificationDate' => time(),
             'o_userOwner' => 1,
-            'o_userModification' => 1
+            'o_userModification' => 1,
         ]);
 
         $db->insert('users', [
             'parentId' => 0,
             'name' => 'system',
             'admin' => 1,
-            'active' => 1
+            'active' => 1,
         ]);
         $db->update('users', ['id' => 0], ['name' => 'system']);
 
@@ -771,7 +758,6 @@ class Installer
             ['key' => 'plugins'],
             ['key' => 'predefined_properties'],
             ['key' => 'asset_metadata'],
-            ['key' => 'qr_codes'],
             ['key' => 'recyclebin'],
             ['key' => 'redirects'],
             ['key' => 'reports'],
@@ -782,7 +768,6 @@ class Installer
             ['key' => 'seo_document_editor'],
             ['key' => 'share_configurations'],
             ['key' => 'system_settings'],
-            ['key' => 'tag_snippet_management'],
             ['key' => 'tags_configuration'],
             ['key' => 'tags_assignment'],
             ['key' => 'tags_search'],
@@ -795,7 +780,7 @@ class Installer
             ['key' => 'web2print_settings'],
             ['key' => 'workflow_details'],
             ['key' => 'notifications'],
-            ['key' => 'notifications_send']
+            ['key' => 'notifications_send'],
         ];
 
         foreach ($userPermissions as $up) {

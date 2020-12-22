@@ -51,7 +51,9 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-        this.component = new Ext.Panel();
+        this.component = new Ext.Panel({
+            layout: "fit"
+        });
 
         this.addFallbackSlug();
         if (this.data.length > 0) {
@@ -131,7 +133,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             name: "slug",
             labelWidth: 100,
             value: siteData['slug'],
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             validator: function(value) {
 
 
@@ -175,24 +177,32 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             textConfig.labelWidth = this.fieldConfig.domainLabelWidth;
         }
 
-        textConfig.width += textConfig.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            textConfig.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            textConfig.width += textConfig.labelWidth;
+        }
 
         var text = new Ext.form.TextField(textConfig);
 
         var containerItems = [text];
 
         if (siteData['siteId'] > 0) {
-            containerItems.push({
-                xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: function (fieldContainer, siteId) {
-                    this.dirty = true;
-                    this.component.remove(fieldContainer);
-                    delete this.elements[siteId];
-                    this.updateSiteFilter();
+            if (!this.fieldConfig.noteditable) {
+                containerItems.push({
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    handler: function (fieldContainer, siteId) {
+                        this.dirty = true;
+                        this.component.remove(fieldContainer);
+                        delete this.elements[siteId];
+                        this.updateSiteFilter();
 
-                }.bind(this, fieldContainer, siteData['siteId'])
-            });
+                    }.bind(this, fieldContainer, siteData['siteId'])
+                });
+            }
         } else {
             let siteData = [];
             let allSitesStore = pimcore.globalmanager.get("sites");
@@ -204,7 +214,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                         return;
                     }
 
-                    siteData.push([id, record.get("domain")]);
+                    siteData.push([siteId, record.get("domain")]);
                 }
             }.bind(this));
 
@@ -257,14 +267,23 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
         var layout = this.getLayoutEdit();
-        this.component.setReadOnly(true);
+        for (let key in this.elements) {
+            if (this.elements.hasOwnProperty(key)) {
+                this.elements[key].setReadOnly(true);
+            }
+        }
+
+        if (this.siteCombo) {
+            this.siteCombo.hide();
+        }
+
         return layout;
     },
 
     getValue: function () {
         var value = [];
 
-        for (key in this.elements) {
+        for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
                 value.push([key, textfield.getValue(), textfield.originalValue]);
@@ -288,7 +307,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     isDirty: function () {
         var dirty = this.dirty;
 
-        for (key in this.elements) {
+        for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
                 if (textfield.isDirty()) {

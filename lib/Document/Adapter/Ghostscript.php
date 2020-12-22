@@ -27,6 +27,11 @@ class Ghostscript extends Adapter
     protected $path;
 
     /**
+     * @var string|null
+     */
+    private $version = null;
+
+    /**
      * @return bool
      */
     public function isAvailable()
@@ -53,7 +58,7 @@ class Ghostscript extends Adapter
     {
 
         // it's also possible to pass a path or filename
-        if (preg_match("/\.?pdf$/", $fileType)) {
+        if (preg_match("/\.?pdf$/i", $fileType)) {
             return true;
         }
 
@@ -125,7 +130,7 @@ class Ghostscript extends Adapter
             $path = $this->path;
         }
 
-        if (preg_match("/\.?pdf$/", $path)) { // only PDF's are supported
+        if (preg_match("/\.?pdf$/i", $path)) { // only PDF's are supported
             return $path;
         }
 
@@ -141,14 +146,49 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        $pages = Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
+        $pages = Console::exec($this->buildPageCountCommand(), null, 120);
         $pages = trim($pages);
 
-        if (!is_numeric($pages)) {
+        if (! is_numeric($pages)) {
             throw new \Exception('Unable to get page-count of ' . $this->path);
         }
 
-        return (int)$pages;
+        return (int) $pages;
+    }
+
+    /**
+     * @return string
+     *
+     * @throws \Exception
+     */
+    protected function buildPageCountCommand()
+    {
+        $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
+
+        // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
+        if (version_compare($this->getVersion(), '9.50', '>=')) {
+            $command .= " --permit-file-read='" . $this->path . "'";
+        }
+
+        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
+
+        return $command;
+    }
+
+    /**
+     * Get the version of the installed Ghostscript CLI.
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    protected function getVersion()
+    {
+        if (is_null($this->version)) {
+            $this->version = trim(Console::exec(self::getGhostscriptCli() . ' --version'));
+        }
+
+        return $this->version;
     }
 
     /**

@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method array delete(Concrete $object, $saveMode = false)
@@ -26,7 +27,7 @@ use Pimcore\Model;
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var Model\DataObject\Fieldcollection\Data\AbstractData[]
@@ -130,6 +131,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                     if (in_array($collection->getType(), $allowedTypes)) {
                         $collection->setFieldname($this->getFieldname());
                         $collection->setIndex($index++);
+                        $params['owner'] = $collection;
 
                         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
                         $collection->setObject($object);
@@ -147,11 +149,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function isEmpty()
     {
-        if (count($this->getItems()) < 1) {
-            return true;
-        }
-
-        return false;
+        return count($this->getItems()) < 1;
     }
 
     /**
@@ -297,8 +295,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                         'containerType' => 'fieldcollection',
                         'containerKey' => $type,
                         'fieldname' => $fcField,
-                        'index' => $index
-                    ]];
+                        'index' => $index,
+                    ], ];
 
                 $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
                 AbstractObject::disableDirtyDetection();

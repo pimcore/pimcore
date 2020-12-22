@@ -71,7 +71,7 @@ class ConditionFactory implements ConditionFactoryInterface
         }, ARRAY_FILTER_USE_BOTH);
 
         $event = new BuildConditionEvent($type, $this->conditions[$type], $typeConfig);
-        $this->eventDispatcher->dispatch(TargetingEvents::BUILD_CONDITION, $event);
+        $this->eventDispatcher->dispatch($event, TargetingEvents::BUILD_CONDITION);
 
         if ($event->hasCondition()) {
             return $event->getCondition();

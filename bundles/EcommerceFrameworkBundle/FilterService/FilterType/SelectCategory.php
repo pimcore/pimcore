@@ -25,11 +25,11 @@ class SelectCategory extends AbstractFilterType
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = [];
@@ -57,7 +57,7 @@ class SelectCategory extends AbstractFilterType
 
         $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
 
-        $parameters = [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
@@ -67,10 +67,8 @@ class SelectCategory extends AbstractFilterType
             'metaData' => $filterDefinition->getMetaData(),
             'rootCategory' => $filterDefinition->getRootCategory(),
             'document' => $request->get('contentDocument'),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ];
-
-        return $this->render($this->getTemplate($filterDefinition), $parameters);
     }
 
     /**

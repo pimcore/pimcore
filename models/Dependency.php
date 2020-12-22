@@ -70,7 +70,7 @@ class Dependency extends AbstractModel
     {
         $this->requires[] = [
             'type' => $type,
-            'id' => $id
+            'id' => $id,
         ];
     }
 
@@ -123,6 +123,19 @@ class Dependency extends AbstractModel
     public function getRequiredBy($offset = null, $limit = null)
     {
         return $this->getDao()->getRequiredBy($offset, $limit);
+    }
+
+    /**
+     * @param string|null $orderBy
+     * @param string|null $orderDirection
+     * @param int|null $offset
+     * @param int|null $limit
+     *
+     * @return array
+     */
+    public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
+    {
+        return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }
 
     /**
@@ -192,10 +205,6 @@ class Dependency extends AbstractModel
      */
     public function isRequired()
     {
-        if (is_array($this->getRequiredBy()) && $this->getRequiredByTotalCount() > 0) {
-            return true;
-        }
-
-        return false;
+        return $this->getRequiredByTotalCount() > 0;
     }
 }

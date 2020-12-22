@@ -59,11 +59,8 @@ pimcore:
                 # Define a custom service to handle the logic. Take a look at the Symfony docs for more details.
                 service:              ~
 
-            # Will get way over initial_place and adds the possibility to add multiple initial places.
+            # Possibility to add multiple initial places.
             initial_markings:     []
-
-            # DEPRECATED: Will be applied when the current place is empty.
-            initial_place:        null
 
             places:
 
@@ -212,7 +209,7 @@ pimcore:
                                     name:                 ~ # Required
 
                                     # The data component name/field type.
-                                    fieldType:            ~ # One of "input"; "textarea"; "select"; "datetime"; "date"; "user"; "checkbox", Required
+                                    fieldType:            ~ # One of "input"; "numeric"; "textarea"; "select"; "datetime"; "date"; "user"; "checkbox", Required
 
                                     # The label used by the field
                                     title:                ~
@@ -259,7 +256,7 @@ pimcore:
                                 mailPath:             '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig'
 
                         # Change published state of element while transition (only available for documents and data objects).
-                        changePublishedState: no_change # One of "no_change"; "force_unpublished"; "force_published"
+                        changePublishedState: no_change # One of "no_change"; "force_unpublished"; "force_published", "save_version" (since Pimcore 6.6.0)
 
             # Actions which will be added to actions button independently of the current workflow place.
             globalActions:

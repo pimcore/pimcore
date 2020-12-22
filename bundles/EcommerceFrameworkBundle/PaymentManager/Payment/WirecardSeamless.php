@@ -39,6 +39,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
+/**
+ * @deprecated since Pimcore 6.8.0 and will be removed in Pimcore 10.
+ */
 class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
@@ -55,7 +58,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     /**
      * @var EngineInterface
      */
-    protected $templatingEngine;
+    protected $template;
 
     /**
      * @var SessionInterface
@@ -131,9 +134,9 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     private $WEBSITE_URL;
     private $CHECKOUT_WINDOW_NAME = 'wirecard_checkout';
 
-    public function __construct(array $options, EngineInterface $templatingEngine, SessionInterface $session)
+    public function __construct(array $options, EngineInterface $template, SessionInterface $session)
     {
-        $this->templatingEngine = $templatingEngine;
+        $this->template = $template;
         $this->session = $session;
 
         $this->processOptions(
@@ -200,7 +203,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
             'secret',
             'password',
             'payment_methods',
-            'partial'
+            'partial',
         ]);
 
         $resolver->setAllowedTypes('payment_methods', 'array');
@@ -273,7 +276,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
             'orderIdent' => $this->encodeOrderIdent($orderIdent),
             'returnUrl' => $this->WEBSITE_URL . 'frontend/fallback_return.php',
             'language' => $config['language'] ?: 'de',
-            'javascriptScriptVersion' => 'pci3'
+            'javascriptScriptVersion' => 'pci3',
         ];
 
         $requestFingerprint = $this->generateFingerPrint($fields);
@@ -300,7 +303,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
 
         $params['wirecardFrontendScript'] = $this->js;
 
-        return $this->templatingEngine->render($this->partial, $params);
+        return $this->template->render($this->partial, $params);
     }
 
     /**
@@ -503,7 +506,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
             'paymentState' => null,
             'amount' => null,
             'currency' => null,
-            'gatewayReferenceNumber' => null
+            'gatewayReferenceNumber' => null,
         ];
 
         $authorizedData = array_intersect_key($response, $authorizedData);
@@ -524,7 +527,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
                     'seamless_amount' => '',
                     'seamless_paymentType' => 'PREPAYMENT',
                     'seamless_paymentState' => 'SUCCESS',
-                    'seamless_response' => ''
+                    'seamless_response' => '',
                 ]
             );
         }
@@ -541,7 +544,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
         // check required fields
         $required = [
             'responseFingerprintOrder' => null,
-            'responseFingerprint' => null
+            'responseFingerprint' => null,
         ];
 
         if ($response['errors'] || in_array($response['paymentState'], ['PENDING', 'CANCEL'])) {
@@ -556,7 +559,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
                     'seamless_amount' => '',
                     'seamless_paymentType' => '',
                     'seamless_paymentState' => '',
-                    'seamless_response' => json_encode($response)
+                    'seamless_response' => json_encode($response),
                 ]
             );
 
@@ -625,7 +628,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
                 'seamless_amount' => (string)$price,
                 'seamless_paymentType' => $response['paymentType'],
                 'seamless_paymentState' => $response['paymentState'],
-                'seamless_response' => print_r($response, true)
+                'seamless_response' => print_r($response, true),
             ]
         );
 
@@ -685,7 +688,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
             'language' => 'de',
             'orderNumber' => $reference,
             'amount' => round($price->getAmount()->asNumeric(), 2),
-            'currency' => $price->getCurrency()->getShortName()
+            'currency' => $price->getCurrency()->getShortName(),
         ];
 
         $requestFingerprint = $this->generateFingerprint($fields, false, true);

@@ -20,6 +20,8 @@ namespace Pimcore\Model\Element\Tag\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Element\Tag\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -57,18 +59,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @return int
-     *
-     * @todo: $amount could not be defined, so this could cause an issue
      */
     public function getTotalCount()
     {
-        $amount = 0;
-
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM tags ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM tags ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
+            return 0;
         }
-
-        return $amount;
     }
 }

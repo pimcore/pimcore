@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -42,16 +42,16 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     const DEFAULT_OPTIONS = [
         [
             'key' => 'empty',
-            'value' => self::EMPTY_VALUE_EDITMODE
+            'value' => self::EMPTY_VALUE_EDITMODE,
         ],
         [
             'key' => 'yes',
-            'value' => self::YES_VALUE
+            'value' => self::YES_VALUE,
         ],
         [
             'key' => 'no',
-            'value' => self::NO_VALUE
-        ]
+            'value' => self::NO_VALUE,
+        ],
     ];
     /**
      * Static type of this element
@@ -85,13 +85,6 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @var string
      */
     public $columnType = 'tinyint(1) null';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'boolean';
 
     /**
      * @return array
@@ -136,7 +129,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool|null
@@ -160,7 +153,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param int|bool|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
@@ -174,7 +167,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param int|bool|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
@@ -204,7 +197,13 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        if ($data === true) {
+            return $this->getYesLabel();
+        } elseif ($data === false) {
+            return $this->getNoLabel();
+        }
+
+        return '';
     }
 
     /** True if change is allowed in edit mode.
@@ -313,8 +312,8 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         if (!is_array($this->options)) {
             $this->options = [
                 ['key' => $label,
-                'value' => $value
-                ]
+                'value' => $value,
+                ],
 
             ];
         } else {
@@ -376,7 +375,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -408,19 +407,94 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if (intval($data) === 1) {
+        if ((int)$data === 1) {
             return true;
-        } elseif (intval($data) === -1) {
+        } elseif ((int)$data === -1) {
             return false;
         }
 
         return null;
+    }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $oldValue === $newValue;
+    }
+
+    /**
+     * converts object data to a simple string value or CSV Export
+     *
+     * @abstract
+     *
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getForCsvExport($object, $params = [])
+    {
+        $value = $this->getDataFromObjectParam($object, $params);
+        if ($value === null) {
+            $value = '';
+        } elseif ($value) {
+            $value = '1';
+        } else {
+            $value = '0';
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function getFromCsvImport($importValue, $object = null, $params = [])
+    {
+        if ($importValue === '1') {
+            $value = true;
+        } elseif ($importValue === '0') {
+            $value = false;
+        } else {
+            $value = null;
+        }
+
+        return $value;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'bool|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'bool|null';
     }
 }

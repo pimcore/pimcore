@@ -19,7 +19,7 @@ pimcore.document.settings_abstract = Class.create({
     },
 
     setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["module","controller","action","template"];
+        var allowedFields = ["controller", "template"];
         var form = this.getLayout().getForm();
         var element = null;
 
@@ -101,7 +101,7 @@ pimcore.document.settings_abstract = Class.create({
                                         Ext.getCmp("contentMasterDocumentPath_"
                                             + this.document.id).setValue("");
                                         Ext.Ajax.request({
-                                            url:"/admin/page/change-master-document",
+                                            url:Routing.generate('pimcore_admin_document_page_changemasterdocument'),
                                             method: 'PUT',
                                             params:{
                                                 id: this.document.id,
@@ -131,7 +131,7 @@ pimcore.document.settings_abstract = Class.create({
                                 function (buttonValue) {
                                     if (buttonValue == "yes") {
                                         Ext.Ajax.request({
-                                            url:"/admin/page/change-master-document",
+                                            url:Routing.generate('pimcore_admin_document_page_changemasterdocument'),
                                             method: 'PUT',
                                             params:{
                                                 id: this.document.id,
@@ -199,14 +199,14 @@ pimcore.document.settings_abstract = Class.create({
 
         var docTypeStore = new Ext.data.Store({
             proxy: {
-                url: '/admin/document/get-doc-types?type=' + this.document.getType(),
+                url: Routing.generate('pimcore_admin_document_document_getdoctypes', {type: this.document.getType()}),
                 type: 'ajax',
                 reader: {
                     type: 'json',
                     rootProperty: "docTypes"
                 }
             },
-            fields: ["id","module","controller","action","template",{
+            fields: ["id","controller", "template",{
                name: 'name',
                convert: function(v, rec) {
                    return (rec['data']['group'] ? t(rec['data']['group']) + ' > ' : '') + t(rec['data']['name']);
@@ -219,21 +219,6 @@ pimcore.document.settings_abstract = Class.create({
         if (docTypeValue < 1) {
             docTypeValue = "";
         }
-
-        var updateComboBoxes = function (el) {
-            var moduleEl =  Ext.getCmp("pimcore_document_settings_module_" + this.document.id);
-            var controllerEl =  Ext.getCmp("pimcore_document_settings_controller_" + this.document.id);
-            controllerEl.getStore().getProxy().extraParams.moduleName =  moduleEl.getValue();
-            controllerEl.getStore().reload();
-
-            var actionEl =  Ext.getCmp("pimcore_document_settings_action_" + this.document.id);
-            actionEl.getStore().getProxy().extraParams = {
-                moduleName: moduleEl.getValue(),
-                controllerName: controllerEl.getValue()
-            };
-            actionEl.getStore().reload();
-
-        }.bind(this);
 
         var fieldSet = new Ext.form.FieldSet({
             title: t('controller') + ", " + t('action') + " & " + t('template'),
@@ -259,93 +244,30 @@ pimcore.document.settings_abstract = Class.create({
                 },
                 {
                     xtype:'combo',
-                    fieldLabel: t('bundle') + " (" + t('optional') + ")",
-                    itemId: "bundle",
-                    displayField: 'name',
-                    valueField: 'name',
-                    name: "module",
-                    disableKeyFilter: true,
-                    store: new Ext.data.Store({
-                        autoLoad: false,
-                        autoDestroy: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: "/admin/misc/get-available-modules",
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            }
-                        },
-                        fields: ["name"]
-                    }),
-                    triggerAction: "all",
-                    id: "pimcore_document_settings_module_" + this.document.id,
-                    value: this.document.data.module,
-                    listeners: {
-                        select: updateComboBoxes
-                    }
-                },
-                {
-                    xtype:'combo',
                     fieldLabel: t('controller'),
                     displayField: 'name',
                     valueField: 'name',
                     name: "controller",
-                    disableKeyFilter: true,
+                    typeAhead: true,
+                    queryMode: "local",
+                    anyMatch: true,
+                    editable: true,
+                    forceSelection: false,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: false,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-controllers",
+                            url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
-                            },
-                            extraParams: {
-                                moduleName: this.document.data.module
                             }
                         },
                         fields: ["name"]
                     }),
                     triggerAction: "all",
-                    id: "pimcore_document_settings_controller_" + this.document.id,
                     value: this.document.data.controller,
-                    matchFieldWidth: false,
-                    listConfig: {
-                        maxWidth: 600
-                    },
-                    listeners: {
-                        select: updateComboBoxes
-                    }
-                },
-                {
-                    xtype:'combo',
-                    fieldLabel: t('action'),
-                    displayField: 'name',
-                    valueField: 'name',
-                    name: "action",
-                    disableKeyFilter: true,
-                    store: new Ext.data.Store({
-                        autoDestroy: true,
-                        autoLoad: false,
-                        proxy: {
-                            type: 'ajax',
-                            url: "/admin/misc/get-available-actions",
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            },
-                            extraParams: {
-                                moduleName: this.document.data.module,
-                                controllerName: this.document.data.controller
-                            }
-                        },
-                        fields: ["name"]
-                    }),
-                    triggerAction: "all",
-                    id: "pimcore_document_settings_action_" + this.document.id,
-                    value: this.document.data.action,
                     matchFieldWidth: false,
                     listConfig: {
                         maxWidth: 600
@@ -364,7 +286,7 @@ pimcore.document.settings_abstract = Class.create({
                         autoLoad: false,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-templates",
+                            url: Routing.generate('pimcore_admin_misc_getavailabletemplates'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -382,7 +304,7 @@ pimcore.document.settings_abstract = Class.create({
             ],
             defaults: {
                 labelWidth: 300,
-                width: 700,
+                width: 850,
                 listeners: {
                     "change": function (field, checked) {
                         Ext.getCmp("pimcore_document_settings_" + this.document.id).dirty = true;

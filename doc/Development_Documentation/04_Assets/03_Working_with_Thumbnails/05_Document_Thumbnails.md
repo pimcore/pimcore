@@ -5,8 +5,11 @@ odt, ods, odp and many others.
 
 You can of course use existing image-thumbnail configurations to create a thumbnail of your choice.
  
+> **Important**   
+> Please be aware that the processing of thumbnails for documents is done asynchronously as part of the maintenance job. 
+ 
 ##### Examples
-```php 
+```php
 $asset = Asset::getById(123);
 if($asset instanceof Asset\Document) {
  

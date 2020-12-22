@@ -15,6 +15,7 @@ use Pimcore\Kernel;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Pimcore extends Module\Symfony
@@ -41,7 +42,7 @@ class Pimcore extends Module\Symfony
             'purge_class_directory' => true,
 
             // initializes objects from definitions, only if connect_db and initialize_db
-            'setup_objects' => false
+            'setup_objects' => false,
         ]);
 
         parent::__construct($moduleContainer, $config);
@@ -111,14 +112,14 @@ class Pimcore extends Module\Symfony
         }
 
         // dispatch kernel booted event - will be used from services which need to reset state between tests
-        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(TestEvents::KERNEL_BOOTED);
+        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), TestEvents::KERNEL_BOOTED);
     }
 
     protected function setupPimcoreDirectories()
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
-            PIMCORE_ASSET_DIRECTORY
+            PIMCORE_ASSET_DIRECTORY,
         ];
 
         $filesystem = new Filesystem();
@@ -210,7 +211,7 @@ class Pimcore extends Module\Symfony
         $installer->setImportDatabaseDataDump(false);
         $installer->setupDatabase([
             'username' => 'admin',
-            'password' => microtime()
+            'password' => microtime(),
         ]);
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));

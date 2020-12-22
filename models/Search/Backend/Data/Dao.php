@@ -18,6 +18,8 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Search\Backend\Data $model
  */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
@@ -62,7 +64,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 'userOwner' => $this->model->getUserOwner(),
                 'userModification' => $this->model->getUserModification(),
                 'data' => $this->model->getData(),
-                'properties' => $this->model->getProperties()
+                'properties' => $this->model->getProperties(),
             ];
 
             $this->db->insertOrUpdate('search_backend_data', $data);
@@ -79,10 +81,28 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         if ($this->model->getId() instanceof Model\Search\Backend\Data\Id) {
             $this->db->delete('search_backend_data', [
                 'id' => $this->model->getId()->getId(),
-                'maintype' => $this->model->getId()->getType()
+                'maintype' => $this->model->getId()->getType(),
             ]);
         } else {
             Logger::alert('Cannot delete Search\\Backend\\Data, ID is empty');
+        }
+    }
+
+    public function getMinWordLengthForFulltextIndex()
+    {
+        try {
+            return $this->db->fetchOne('SELECT @@innodb_ft_min_token_size');
+        } catch (\Exception $e) {
+            return 3;
+        }
+    }
+
+    public function getMaxWordLengthForFulltextIndex()
+    {
+        try {
+            return $this->db->fetchOne('SELECT @@innodb_ft_max_token_size');
+        } catch (\Exception $e) {
+            return 84;
         }
     }
 }

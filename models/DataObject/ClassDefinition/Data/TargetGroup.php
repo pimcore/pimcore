@@ -17,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\Tool;
 
 class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
@@ -32,7 +33,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -85,7 +86,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         foreach ($targetGroups as $targetGroup) {
             $options[] = [
                 'value' => $targetGroup->getId(),
-                'key' => $targetGroup->getName()
+                'key' => $targetGroup->getName(),
             ];
         }
 
@@ -129,5 +130,17 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         }
 
         return $obj;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

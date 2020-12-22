@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
@@ -87,7 +86,7 @@ class OrderManager implements OrderManagerInterface
         array $options = []
     ) {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in Pimcore 10. ' .
             ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager::class . ' class instead.',
             E_USER_DEPRECATED
         );
@@ -120,7 +119,7 @@ class OrderManager implements OrderManagerInterface
             'order_item_class' => '\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem',
             'list_class' => Listing::class,
             'list_item_class' => Listing\Item::class,
-            'parent_order_folder' => '/order/%Y/%m/%d'
+            'parent_order_folder' => '/order/%Y/%m/%d',
         ]);
 
         foreach ($classProperties as $classProperty) {
@@ -132,7 +131,7 @@ class OrderManager implements OrderManagerInterface
      * Sets the model factory. For BC, this is currently added as extra method call. The required annotation
      * makes sure this is called via autowiring.
      *
-     * TODO Pimcore 7 set modelFactory as constructor dependency
+     * TODO Pimcore 10 set modelFactory as constructor dependency
      *
      * @required
      *
@@ -297,7 +296,6 @@ class OrderManager implements OrderManagerInterface
      * @return AbstractOrder
      *
      * @throws \Exception
-     * @throws UnsupportedException
      *
      */
     public function getOrCreateOrderFromCart(CartInterface $cart)
@@ -386,20 +384,11 @@ class OrderManager implements OrderManagerInterface
     protected function cleanupZombieOrderItems(AbstractOrder $order)
     {
         $validItemIds = [];
-        try {
-            foreach ($order->getItems() ?: [] as $item) {
-                $validItemIds[] = $item->getId();
-            }
-        } catch (UnsupportedException $e) {
-            Logger::info('getItems not implemented for ' . get_class($order));
+        foreach ($order->getItems() ?: [] as $item) {
+            $validItemIds[] = $item->getId();
         }
-
-        try {
-            foreach ($order->getGiftItems() ?: [] as $giftItem) {
-                $validItemIds[] = $giftItem->getId();
-            }
-        } catch (UnsupportedException $e) {
-            Logger::info('getGiftItems not implemented for ' . get_class($order));
+        foreach ($order->getGiftItems() ?: [] as $giftItem) {
+            $validItemIds[] = $giftItem->getId();
         }
 
         $orderItemChildren = $order->getChildren();
@@ -494,8 +483,6 @@ class OrderManager implements OrderManagerInterface
      * @param AbstractOrder $order
      *
      * @return AbstractOrder
-     *
-     * @throws UnsupportedException
      */
     protected function setCurrentCustomerToOrder(AbstractOrder $order)
     {
@@ -711,7 +698,7 @@ class OrderManager implements OrderManagerInterface
             $taxArray[] = [
                 $taxEntry->getEntry()->getName(),
                 $taxEntry->getPercent() . '%',
-                $taxEntry->getAmount()->asString()
+                $taxEntry->getAmount()->asString(),
             ];
         }
 

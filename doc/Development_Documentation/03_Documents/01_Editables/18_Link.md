@@ -6,8 +6,8 @@ The link editable is used for dynamic link creation in documents.
 
 ## Configuration
 
-You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](http://www.w3.org/TR/html401/struct/links.html#h-12.2)), 
-such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and additionally the following: 
+You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
+such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*`, `aria-*` and additionally the following: 
 
 | Name     | Type     | Description                                                             |
 |----------|----------|-------------------------------------------------------------------------|
@@ -35,21 +35,14 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and addi
 ## Examples
 
 ### Basic Usage
-<div class="code-section">
 
-```php
-<p>
-    <?= $this->translate("Visit our"); ?> 
-    <?= $this->link("blogLink"); ?>
-</p>
-```
 ```twig
 <p>
     {{ "Visit our" | trans }}
     {{ pimcore_link('blogLink') }}
 </p>
 ```
-</div>
+
 You could see the backend preview in the picture, below.
 
 ![Link editable - adminitration panel](../../img/editables_link_backend_preview.png)
@@ -64,27 +57,14 @@ And the frontend:
 
 Let's see how to make a list of links with [Block](./06_Block.md).
 
-<div class="code-section">
-
-```php
-<h3><?= $this->translate("Useful links"); ?></h3>
-<ul>
-    <?php while ($this->block("linkblock")->loop()): ?>
-        <li>
-            <?= $this->link("myLink", ["class" => "special-link-class"]); ?>
-        </li>
-    <?php endwhile; ?>
-</ul>
-```
 ```twig
 <h3>{{ "Useful links" | trans }}</h3>
 <ul>
-    {% for i in pimcore_iterate_block(pimcore_block('linkblock')) %}
+    {% for i in pimcore_block('linkblock').iterator %}
         <li>{{ pimcore_link('myLink', {'class': "special-link-class"}) }}</li>
     {% endfor %}
 </ul>
 ```
-</div>
 
 The above example renders a list of links: 
 ![The links list in the backend](../../img/editables_link_inside_block.png)

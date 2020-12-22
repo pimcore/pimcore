@@ -25,7 +25,7 @@ class Composer
 {
     protected static $options = [
         'symfony-app-dir' => 'app',
-        'symfony-web-dir' => 'web',
+        'symfony-web-dir' => 'public',
         'symfony-assets-install' => 'hard',
         'symfony-cache-warmup' => false,
     ];
@@ -82,18 +82,18 @@ class Composer
         }
 
         // execute migrations
-        $currentVersion = null;
+        $isInstalled = null;
         try {
             $process = static::executeCommand($event, $consoleDir,
-                'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);
-            $currentVersion = trim($process->getOutput());
+                'internal:migration-helpers --is-installed', 30, false);
+            $isInstalled = (bool) trim($process->getOutput());
         } catch (\Throwable $e) {
             // noting to do
         }
 
-        if (!empty($currentVersion) && is_numeric($currentVersion)) {
+        if ($isInstalled) {
             self::clearDataCache($event, $consoleDir);
-            static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -s pimcore_core -n');
+            static::executeCommand($event, $consoleDir, 'doctrine:migrations:migrate -n --prefix=' . escapeshellarg('Pimcore\\Bundle\\CoreBundle'));
             self::clearDataCache($event, $consoleDir);
         } else {
             $event->getIO()->write('<comment>Skipping migrations ... (either Pimcore is not installed yet or current status of migrations is not available)</comment>', true);
@@ -120,11 +120,8 @@ class Composer
     {
         // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
         $parameters = '';
-        $parametersYml = $rootPath . '/app/config/parameters.yml';
-        $parametersYmlExample = $rootPath . '/app/config/parameters.example.yml';
-        if (!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
-            $parameters = file_get_contents($parametersYmlExample);
-        } elseif (file_exists($parametersYml)) {
+        $parametersYml = $rootPath . '/config/services.yaml';
+        if (file_exists($parametersYml)) {
             $parameters = file_get_contents($parametersYml);
         }
 

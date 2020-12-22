@@ -43,7 +43,7 @@ class InputQuantityValue extends QuantityValue
      */
     public $queryColumnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
 
     /**
@@ -53,10 +53,8 @@ class InputQuantityValue extends QuantityValue
      */
     public $columnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
-
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
 
     /**
      * @param array $data
@@ -71,7 +69,9 @@ class InputQuantityValue extends QuantityValue
             $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $dataObject->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $dataObject->_setOwner($params['owner']);
+                $dataObject->_setOwnerFieldname($params['fieldname']);
+                $dataObject->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $dataObject;
@@ -149,44 +149,6 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|InputQuantityValueDataObject
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if (array_key_exists('value', $value) && array_key_exists('unit', $value) && array_key_exists('unitAbbreviation', $value)) {
-                $unitId = $value['unit'];
-                if ($idMapper) {
-                    $unitId = $idMapper->getMappedId('unit', $unitId);
-                }
-
-                $unit = Model\DataObject\QuantityValue\Unit::getById($unitId);
-                if ($unit && $unit->getAbbreviation() == $value['unitAbbreviation']) {
-                    return $this->getNewDataObject($value, $unitId);
-                } elseif (!$unit && is_null($value['unit'])) {
-                    return $this->getNewDataObject($value);
-                } else {
-                    throw new \Exception(get_class($this).': cannot get values from web service import - unit id and unit abbreviation do not match with local database');
-                }
-            } else {
-                throw new \Exception(get_class($this).': cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
-    /**
      * @param mixed $value
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
@@ -195,9 +157,9 @@ class InputQuantityValue extends QuantityValue
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($params['blockmode'] && is_array($value)) {
+        if (($params['blockmode'] ?? false) && is_array($value)) {
             return $this->getNewDataObject($value['value'], $value['value2']);
-        } elseif ($params['simple']) {
+        } elseif ($params['simple'] ?? false) {
             return $value;
         } elseif (is_array($value)) {
             return [
@@ -219,5 +181,25 @@ class InputQuantityValue extends QuantityValue
     protected function getNewDataObject($value = null, $unitId = null)
     {
         return new InputQuantityValueDataObject($value, $unitId);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 }

@@ -20,7 +20,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     tabPanelDefaultConfig: {
         monitorResize: true,
-        cls: "object_field",
+        cls: "object_field object_field_type_localizedfields",
         activeTab: 0,
         height: "auto",
         items: [],
@@ -193,6 +193,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                             item.labelWidth = this.fieldConfig.labelWidth;
                         }
 
+                        if (this.fieldConfig.labelAlign) {
+                            item.labelAlign = this.fieldConfig.labelAlign;
+                        }
+
                         if (side == "left") {
                             item.style = "border-right: 1px dotted #DDD;";
                         }
@@ -354,7 +358,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     var dataProvider = this.getDataProvider(currentLanguage);
                     this.languageElements[currentLanguage] = [];
 
-                    var editable = (pimcore.currentuser.admin ||
+                    var editable = !showMode && (pimcore.currentuser.admin ||
                         this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
 
                     var runtimeContext = Ext.clone(this.context);
@@ -433,9 +437,12 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                                 for (var i = 0; i < l.childs.length; i++) {
                                     var childConfig = l.childs[i];
 
-                                    // inherit label width from localized fields configuration
+                                    // inherit label width/align from localized fields configuration
                                     if (this.fieldConfig.labelWidth) {
                                         childConfig.labelWidth = this.fieldConfig.labelWidth;
+                                    }
+                                    if (this.fieldConfig.labelAlign) {
+                                        childConfig.labelAlign = this.fieldConfig.labelAlign;
                                     }
 
                                     var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, false, dataProvider, true);

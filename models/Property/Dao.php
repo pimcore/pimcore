@@ -20,27 +20,12 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Property $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @return mixed
-     */
-    public function getRawData()
-    {
-        $cid = $this->model->getCid();
-        $type = $this->model->getType();
-        $name = $this->model->getName();
-        $raw = null;
-        if ($cid) {
-            $data = $this->db->fetchRow('SELECT * FROM properties WHERE type=? AND cid = ? AND name=?', [$type, $cid, $name]);
-            $raw = $data['data'];
-        }
-
-        return $raw;
-    }
-
     /**
      * Save object to database
      */
@@ -67,7 +52,7 @@ class Dao extends Model\Dao\AbstractDao
             'name' => $this->model->getName(),
             'type' => $this->model->getType(),
             'inheritable' => (int)$this->model->getInheritable(),
-            'data' => $data
+            'data' => $data,
         ];
 
         $this->db->insertOrUpdate('properties', $saveData);

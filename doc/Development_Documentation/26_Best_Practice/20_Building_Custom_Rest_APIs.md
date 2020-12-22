@@ -1,9 +1,8 @@
 # How to Build a Custom REST API Endpoint
 
-Pimcore offers an extensive [REST web service](../24_Web_Services/README.md) for many entities of the system, 
-such as assets, documents, objects, class definitions, translations, etc.
+Pimcore offers a bundle called [Datahub](https://github.com/pimcore/data-hub), offering a highly configurable GraphQL interface on most Pimcore entities.
 
-A common use case for applications build with Pimcore is integrating with external systems, 
+However a common use case for applications build with Pimcore is integrating with external systems, 
 which requires custom response from API endpoints.
  
 One way to achieve this requirement is to build custom controller action that exposes just the right data 
@@ -11,7 +10,7 @@ in the desired format.
 
 ### Example
 
-```php 
+```php
 <?php
 
 namespace AppBundle\Controller;
@@ -20,17 +19,17 @@ use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Pimcore\Bundle\AdminBundle\Controller\Rest\AbstractRestController;
+use \Pimcore\Controller\FrontendController;
 
 
-class CustomRestController extends AbstractRestController
+class CustomRestController extends FrontendController
 {
     /**
-     * @Route("/webservice/rest/get-products")
+     * @Route("/custom-pimcore-webservice/rest/get-products")
      */
     public function defaultAction(Request $request)
     {
-        $this->checkPermission('objects'); //check if user has permission on objects
+        // do some authorization here ...
 
         $blogs = new DataObject\BlogArticle\Listing();
 
@@ -41,7 +40,7 @@ class CustomRestController extends AbstractRestController
                 "tags" => $blog->getTags());
         }
 
-        return $this->adminJson(["success" => true, "data" => $data]);
+        return $this->json(["success" => true, "data" => $data]);
     }
 }
 

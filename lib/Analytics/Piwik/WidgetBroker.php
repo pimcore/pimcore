@@ -23,7 +23,7 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Dto\WidgetConfig;
 use Pimcore\Analytics\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -45,7 +45,7 @@ class WidgetBroker
     private $apiClient;
 
     /**
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     private $cache;
 
@@ -72,7 +72,7 @@ class WidgetBroker
     public function __construct(
         ConfigProvider $configProvider,
         ApiClient $apiClient,
-        CoreHandlerInterface $cache,
+        CoreCacheHandler $cache,
         UserLoader $userLoader,
         LoggerInterface $logger,
         array $options = []
@@ -95,7 +95,7 @@ class WidgetBroker
             'cache' => true,
             'cache_interval' => 'PT3H',
             'exclude_categories' => [
-                'About Piwik'
+                'About Piwik',
             ],
             'exclude_subcategories' => [],
         ]);
@@ -298,7 +298,7 @@ class WidgetBroker
             'method' => 'API.getWidgetMetadata',
             'format' => 'JSON',
             'idSite' => $config->getPiwikSiteId($configKey),
-            'token_auth' => $config->getReportToken()
+            'token_auth' => $config->getReportToken(),
         ];
 
         if (null !== $locale) {
@@ -318,7 +318,7 @@ class WidgetBroker
             'date' => 'yesterday',
             'disableLink' => 1,
             'idSite' => $config->getPiwikSiteId($configKey),
-            'token_auth' => $config->getReportToken()
+            'token_auth' => $config->getReportToken(),
         ], $urlParams);
 
         $params['moduleToWidgetize'] = $widget['module'];

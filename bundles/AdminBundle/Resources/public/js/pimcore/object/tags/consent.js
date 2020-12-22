@@ -40,7 +40,7 @@ pimcore.object.tags.consent = Class.create(pimcore.object.tags.abstract, {
                 this.applyPermissionStyle(key, value, metaData, record);
 
                 try {
-                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
                     }
                     if (noteditable) {
@@ -105,7 +105,7 @@ pimcore.object.tags.consent = Class.create(pimcore.object.tags.abstract, {
             combineErrors: false,
             width: width,
             items: [this.checkBox, this.textLabel],
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             isDirty: function() {
                 return this.checkBox.isDirty()
             }.bind(this)

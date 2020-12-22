@@ -141,7 +141,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
                     'parentCategoryIds' => ',' . implode(',', $parentCategoryIds) . ',',
                     'priceSystemName' => $object->getPriceSystemName(),
                     'active' => $object->isActive(),
-                    'inProductList' => $object->isActive(true)
+                    'inProductList' => $object->isActive(true),
                 ];
 
                 $relationData = [];

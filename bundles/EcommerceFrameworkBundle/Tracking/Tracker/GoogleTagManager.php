@@ -46,7 +46,7 @@ class GoogleTagManager extends Tracker implements
     const DEFERRED_DIMENSION_IMPRESSIONS = 'impressions';
 
     const DEFERRED_DIMENSIONS = [
-        self::DEFERRED_DIMENSION_IMPRESSIONS
+        self::DEFERRED_DIMENSION_IMPRESSIONS,
     ];
 
     /** @var string[] */
@@ -60,7 +60,7 @@ class GoogleTagManager extends Tracker implements
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/tagManager',
+            'template_prefix' => '@PimcoreEcommerceFramework/Tracking/analytics/tagManager',
         ]);
     }
 
@@ -96,11 +96,12 @@ class GoogleTagManager extends Tracker implements
 
     public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
-        $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity = 1);
+        $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity);
 
         $productArray = $this->transformProductAction($item);
 
         $call = [
+            'event' => 'addToCart',
             'ecommerce' => [
                 'add' => [
                     'products' => [
@@ -122,6 +123,7 @@ class GoogleTagManager extends Tracker implements
         $productArray = $this->transformProductAction($item);
 
         $call = [
+            'event' => 'removeFromCart',
             'ecommerce' => [
                 'remove' => [
                     'products' => [
@@ -296,7 +298,7 @@ class GoogleTagManager extends Tracker implements
      */
     private function formatPrice($price = null)
     {
-        return Decimal::fromNumeric($price)->asString();
+        return is_scalar($price) ? Decimal::fromNumeric($price)->asString() : '';
     }
 
     /**

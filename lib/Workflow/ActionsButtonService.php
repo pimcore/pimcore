@@ -15,7 +15,7 @@
 namespace Pimcore\Workflow;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\Workflow\Workflow;
 
 class ActionsButtonService
@@ -32,11 +32,11 @@ class ActionsButtonService
 
     /**
      * @param Workflow $workflow
-     * @param AbstractElement $element
+     * @param ElementInterface $element
      *
      * @return array
      */
-    public function getAllowedTransitions(Workflow $workflow, AbstractElement $element)
+    public function getAllowedTransitions(Workflow $workflow, ElementInterface $element)
     {
         $allowedTransitions = [];
 
@@ -53,7 +53,7 @@ class ActionsButtonService
                 'label' => $transition->getLabel(),
                 'iconCls' => $transition->getIconClass(),
                 'objectLayout' => $transition->getObjectLayout(),
-                'notes' => $notes
+                'notes' => $notes,
             ];
         }
 
@@ -62,11 +62,11 @@ class ActionsButtonService
 
     /**
      * @param Workflow $workflow
-     * @param AbstractElement $element
+     * @param ElementInterface $element
      *
      * @return array
      */
-    public function getGlobalActions(Workflow $workflow, AbstractElement $element)
+    public function getGlobalActions(Workflow $workflow, ElementInterface $element)
     {
         $globalActions = [];
         foreach ($this->workflowManager->getGlobalActions($workflow->getName()) as $globalAction) {
@@ -80,7 +80,7 @@ class ActionsButtonService
                     'label' => $globalAction->getLabel(),
                     'iconCls' => $globalAction->getIconClass(),
                     'objectLayout' => $globalAction->getObjectLayout(),
-                    'notes' => $notes
+                    'notes' => $notes,
                 ];
             }
         }

@@ -19,9 +19,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, \JsonSerializable
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -35,7 +37,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * Available options to select
      *
-     * @var array
+     * @var array|null
      */
     public $options;
 
@@ -82,13 +84,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @var string
      */
     public $columnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
 
     /**
      * @var bool
@@ -199,7 +194,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -217,7 +212,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -235,7 +230,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -253,7 +248,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -269,7 +264,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -283,7 +278,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -597,5 +592,48 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @param array|null $value1
+     * @param array|null $value2
+     *
+     * @return bool
+     */
+    public function isEqual($value1, $value2): bool
+    {
+        return $this->isEqualArray($value1, $value2);
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'array|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'array|null';
     }
 }

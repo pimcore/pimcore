@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\SynonymProviderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
 
 /**
@@ -41,6 +42,13 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      * @return AbstractElasticSearch
      */
     public function getTenantWorker();
-}
 
-class_alias(ElasticSearchConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig');
+    /**
+     * Get an associative array of configured synonym providers.
+     *  - key: the name of the synonym provider configuration, which is equivalent to the name of the configured filter
+     *  - value: the synonym provider
+     *
+     * @return SynonymProviderInterface[]
+     */
+    public function getSynonymProviders(): array;
+}

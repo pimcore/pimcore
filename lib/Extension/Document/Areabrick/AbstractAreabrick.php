@@ -15,15 +15,31 @@
 namespace Pimcore\Extension\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Pimcore\Model\Document\Editable;
+use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Tag;
-use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabrickInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
+
+    /**
+     * @var EditableRenderer
+     */
+    protected $editableRenderer;
+
+    /**
+     * Called in AreabrickPass
+     *
+     * @param EditableRenderer $editableRenderer
+     */
+    public function setEditableRenderer(EditableRenderer $editableRenderer)
+    {
+        $this->editableRenderer = $editableRenderer;
+    }
 
     /**
      * @var string
@@ -90,25 +106,9 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * @inheritDoc
      */
-    public function hasViewTemplate()
+    public function hasTemplate()
     {
         return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasEditTemplate()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditTemplate()
-    {
-        return null;
     }
 
     /**
@@ -134,7 +134,17 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      */
     public function getHtmlTagOpen(Info $info)
     {
-        return '<div class="pimcore_area_' . $info->getId() . ' pimcore_area_content">';
+        return '<div class="pimcore_area_' . $info->getId() . ' pimcore_area_content '. $this->getOpenTagCssClass($info) .'">';
+    }
+
+    /**
+     * @param Info $info
+     *
+     * @return string|null
+     */
+    protected function getOpenTagCssClass(Info $info)
+    {
+        return null;
     }
 
     /**
@@ -149,14 +159,13 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      * @param PageSnippet $document
      * @param string $type
      * @param string $inputName
+     * @param string $inputName
      * @param array $options
      *
-     * @return Tag|null
+     * @return Editable\EditableInterface
      */
-    protected function getDocumentTag(PageSnippet $document, $type, $inputName, array $options = [])
+    protected function getDocumentEditable(PageSnippet $document, $type, $inputName, array $options = [])
     {
-        $tagRenderer = $this->container->get('pimcore.templating.tag_renderer');
-
-        return $tagRenderer->getTag($document, $type, $inputName, $options);
+        return $this->editableRenderer->getEditable($document, $type, $inputName, $options);
     }
 }

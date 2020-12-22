@@ -148,8 +148,6 @@ class TrackingManager implements TrackingManagerInterface
     /**
      * Track product impression
      *
-     * @implements IProductImpression
-     *
      * @param ProductInterface $product
      * @param string $list
      */
@@ -209,23 +207,6 @@ class TrackingManager implements TrackingManagerInterface
     }
 
     /**
-     * Track product add to cart
-     *
-     * @deprecated Use CartProductActionAddInterface::trackCartProductActionAdd instead
-     *
-     * @param ProductInterface $product
-     * @param int|float $quantity
-     */
-    public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
-    {
-        foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof IProductActionAdd) {
-                $tracker->trackProductActionAdd($product, $quantity);
-            }
-        }
-    }
-
-    /**
      * Track product remove from cart
      *
      * @param CartInterface $cart
@@ -237,23 +218,6 @@ class TrackingManager implements TrackingManagerInterface
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof CartProductActionRemoveInterface) {
                 $tracker->trackCartProductActionRemove($cart, $product, $quantity);
-            }
-        }
-    }
-
-    /**
-     * Track product remove from cart
-     *
-     * @deprecated Use CartProductActionRemoveInterface::trackCartProductActionRemove instead
-     *
-     * @param ProductInterface $product
-     * @param int|float $quantity
-     */
-    public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
-    {
-        foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof IProductActionRemove) {
-                $tracker->trackProductActionRemove($product, $quantity);
             }
         }
     }
@@ -322,7 +286,7 @@ class TrackingManager implements TrackingManagerInterface
         $result = '';
         foreach ($this->getTrackers() as $tracker) {
             if ($tracker instanceof TrackingCodeAwareInterface) {
-                if (sizeof($tracker->getTrackedCodes())) {
+                if (count($tracker->getTrackedCodes())) {
                     $result .= implode(PHP_EOL, $tracker->getTrackedCodes()).PHP_EOL.PHP_EOL;
                 }
             }
@@ -337,7 +301,7 @@ class TrackingManager implements TrackingManagerInterface
 
         foreach ($this->getTrackers() as $tracker) {
             if ($tracker instanceof TrackingCodeAwareInterface) {
-                if (sizeof($tracker->getTrackedCodes())) {
+                if (count($tracker->getTrackedCodes())) {
                     $trackedCodes[get_class($tracker)] = $tracker->getTrackedCodes();
                 }
             }

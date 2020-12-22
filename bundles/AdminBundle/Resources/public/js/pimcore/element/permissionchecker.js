@@ -117,7 +117,7 @@ pimcore.element.permissionchecker = Class.create({
                     listeners: {
                         "click": function () {
                             Ext.Ajax.request({
-                                url: "/admin/element/analyze-permissions",
+                                url: Routing.generate('pimcore_admin_element_analyzepermissions'),
                                 method: "post",
                                 params: {
                                     userId: this.userId,

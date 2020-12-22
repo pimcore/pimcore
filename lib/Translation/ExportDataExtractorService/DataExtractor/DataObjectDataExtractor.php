@@ -156,7 +156,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                     }
                 }
 
-                if (!empty($content)) {
+                if (!empty($content) && is_string($content)) {
                     $result->addAttribute(Attribute::TYPE_LOCALIZED_FIELD, $definition->getName(), $content, false, $targetContent);
                 }
             }
@@ -206,7 +206,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                         }
                     }
 
-                    if (!empty($content)) {
+                    if (!empty($content) && is_string($content)) {
                         $name = $definition->getName() . self::BLOCK_DELIMITER . $index . self::BLOCK_DELIMITER . $blockElement->getName() . self::BLOCK_DELIMITER . $locale;
                         $result->addAttribute(Attribute::TYPE_BLOCK_IN_LOCALIZED_FIELD, $name, $content, false, $targetContent);
                     }
@@ -355,6 +355,12 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                         if ($fd instanceof Data\Relations\AbstractRelations) {
                             continue;
                         }
+
+                        // check allowed data-types
+                        if (!in_array($fd->getFieldtype(), self::EXPORTABLE_TAGS)) {
+                            continue;
+                        }
+
                         $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
 
                         $targetContent = [];
@@ -438,6 +444,12 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                         if ($fd instanceof Data\Relations\AbstractRelations) {
                             continue;
                         }
+
+                        // check allowed data-types
+                        if (!in_array($fd->getFieldtype(), self::EXPORTABLE_TAGS)) {
+                            continue;
+                        }
+
                         $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
 
                         $targetContent = [];
@@ -447,7 +459,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                             }
                         }
 
-                        if (!empty($content)) {
+                        if (!empty($content) && is_string($content)) {
                             $name = $fieldDefinition->getName() . self::FIELD_COLLECTIONS_DELIMITER . $item->getIndex() . self::FIELD_COLLECTIONS_DELIMITER . $fd->getName();
                             $result->addAttribute(Attribute::TYPE_FIELD_COLLECTION_LOCALIZED_FIELD, $name, $content, false, $targetContent);
                         }

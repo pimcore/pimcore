@@ -197,7 +197,7 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
 
     gridRowDblClickHandler: function(component, record) {
         var subtype = record.get('subtype');
-        if (record.get('type') === "object" && record.get('subtype') !== "folder") {
+        if (record.get('type') === "object" && record.get('subtype') !== "folder" && record.get('subtype') !== null) {
             subtype = "object";
         }
         pimcore.helpers.openElement(record.get('id'), record.get('type'), subtype);

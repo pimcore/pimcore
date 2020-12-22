@@ -31,6 +31,10 @@ pimcore.object.helpers.edit = {
 
         context.objectId = this.object.id;
 
+        if (this.object.data.currentLayoutId) {
+            context.layoutId = this.object.data.currentLayoutId;
+        }
+
         var panelListenerConfig = {};
 
         var tabpanelCorrection = function (panel) {
@@ -127,7 +131,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
-            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border", "tabPosition"];
+            "labelWidth", "labelAlign", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border", "tabPosition"];
 
         var tmpItems;
 
@@ -145,6 +149,9 @@ pimcore.object.helpers.edit = {
                         var childConfig = l.childs[i];
                         if (typeof childConfig.labelWidth == "undefined" && l.labelWidth != "undefined") {
                             childConfig.labelWidth = l.labelWidth;
+                        }
+                        if (typeof childConfig.labelAlign == "undefined" && l.labelAlign != "undefined") {
+                            childConfig.labelAlign = l.labelAlign;
                         }
 
                         if (typeof childConfig.fieldLabel == "undefined" && l.fieldLabel != "undefined") {
@@ -223,9 +230,9 @@ pimcore.object.helpers.edit = {
                 }
             }
 
-            if (l.fieldtype == "iframe") {
-                var iframe = new pimcore.object.layout.iframe(l, context);
-                newConfig = iframe.getLayout();
+            if (pimcore.object.layout[l.fieldtype] !== undefined) {
+                var layout = new pimcore.object.layout[l.fieldtype](l, context);
+                newConfig = layout.getLayout();
             } else {
                 newConfig = Object.assign(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
                 if (typeof newConfig.labelWidth != "undefined") {
@@ -233,7 +240,12 @@ pimcore.object.helpers.edit = {
                         defaults: {}
                     });
                     newConfig.defaults.labelWidth = newConfig.labelWidth;
-
+                }
+                if (typeof newConfig.labelAlign != "undefined") {
+                    newConfig = Ext.applyIf(newConfig, {
+                        defaults: {}
+                    });
+                    newConfig.defaults.labelAlign = newConfig.labelAlign;
                 }
 
                 newConfig.forceLayout = true;
@@ -317,9 +329,12 @@ pimcore.object.helpers.edit = {
                     field.finishSetup();
                 }
 
-
                 if (typeof l.labelWidth != "undefined") {
                     field.labelWidth = l.labelWidth;
+                }
+
+                if (typeof l.labelAlign != "undefined") {
+                    field.labelAlign = l.labelAlign;
                 }
 
                 dataProvider.addToDataFields(field, l.name);
@@ -404,9 +419,16 @@ pimcore.object.helpers.edit = {
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
+                                    var tooltipHtml = field.tooltip;
+
+                                    // classification-store tooltips are already translated
+                                    if (context.type != "classificationstore") {
+                                        tooltipHtml = t(tooltipHtml);
+                                    }
+
                                     new Ext.ToolTip({
                                         target: el,
-                                        html: nl2br(t(field.tooltip)),
+                                        html: nl2br(tooltipHtml),
                                         trackMouse:true,
                                         showDelay: 200,
                                         dismissDelay: 0

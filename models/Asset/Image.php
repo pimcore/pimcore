@@ -165,7 +165,7 @@ class Image extends Model\Asset
                         'x' => $Px,
                         'y' => $Py,
                         'width' => $Pw,
-                        'height' => $Ph
+                        'height' => $Ph,
                     ];
                 }
 
@@ -224,6 +224,13 @@ class Image extends Model\Asset
         if (class_exists('Imagick')) {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+
+            if (!stream_is_local($path)) {
+                // imagick is only able to deal with local files
+                // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
+                $path = $this->getTemporaryFile();
+            }
+
             $imagick = new \Imagick($path);
             $imagick->setImageFormat('jpg');
             $imagick->setOption('jpeg:extent', '1kb');
@@ -270,9 +277,9 @@ EOT;
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
-            'frontendPath' => $path
+            'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -317,10 +324,14 @@ EOT;
      */
     public function clearThumbnails($force = false)
     {
-        if ($this->getDataChanged() || $force) {
-            $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
-            foreach ($files as $file) {
-                recursiveDelete($file);
+        if (($this->getDataChanged() || $force) && is_dir($this->getImageThumbnailSavePath())) {
+            $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
+            $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
+                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0;
+            });
+            /** @var \SplFileInfo $fileInfo */
+            foreach ($filterIterator as $fileInfo) {
+                recursiveDelete($fileInfo->getPathname());
             }
         }
     }
@@ -426,7 +437,7 @@ EOT;
             if ($width && $height) {
                 return [
                     'width' => $width,
-                    'height' => $height
+                    'height' => $height,
                 ];
             }
         }
@@ -443,7 +454,7 @@ EOT;
             if ($imageSize && $imageSize[0] && $imageSize[1]) {
                 $dimensions = [
                     'width' => $imageSize[0],
-                    'height' => $imageSize[1]
+                    'height' => $imageSize[1],
                 ];
             }
         }
@@ -458,7 +469,7 @@ EOT;
 
             $dimensions = [
                 'width' => $image->getWidth(),
-                'height' => $image->getHeight()
+                'height' => $image->getHeight(),
             ];
         }
 
@@ -467,12 +478,12 @@ EOT;
             $exif = @exif_read_data($path);
             if (is_array($exif)) {
                 if (array_key_exists('Orientation', $exif)) {
-                    $orientation = intval($exif['Orientation']);
+                    $orientation = (int)$exif['Orientation'];
                     if (in_array($orientation, [5, 6, 7, 8])) {
                         // flip height & width
                         $dimensions = [
                             'width' => $dimensions['height'],
-                            'height' => $dimensions['width']
+                            'height' => $dimensions['width'],
                         ];
                     }
                 }

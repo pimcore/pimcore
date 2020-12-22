@@ -45,7 +45,7 @@ class Processor
      */
     private $blockedTags = [
         'a', 'script', 'style', 'code', 'pre', 'textarea', 'acronym',
-        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     ];
 
     /**
@@ -79,7 +79,7 @@ class Processor
         }
 
         $options = array_merge([
-            'limit' => -1
+            'limit' => -1,
         ], $options);
 
         if ($this->editmodeResolver->isEditmode()) {
@@ -220,15 +220,13 @@ class Processor
 
         // prepare data
         foreach ($data as $d) {
-            if (!($d['link'] || $d['abbr'] || $d['acronym'])) {
+            if (!($d['link'] || $d['abbr'])) {
                 continue;
             }
 
             $r = $d['text'];
             if ($d['abbr']) {
                 $r = '<abbr class="pimcore_glossary" title="' . $d['abbr'] . '">' . $r . '</abbr>';
-            } elseif ($d['acronym']) {
-                $r = '<acronym class="pimcore_glossary" title="' . $d['acronym'] . '">' . $r . '</acronym>';
             }
 
             $linkType = '';
@@ -238,7 +236,7 @@ class Processor
                 $linkType = 'external';
                 $linkTarget = $d['link'];
 
-                if (intval($d['link'])) {
+                if ((int)$d['link']) {
                     if ($doc = Document::getById($d['link'])) {
                         $d['link'] = $doc->getFullPath();
 
@@ -265,7 +263,7 @@ class Processor
                 'replace' => $r,
                 'search' => $d['text'],
                 'linkType' => $linkType,
-                'linkTarget' => $linkTarget
+                'linkTarget' => $linkTarget,
             ];
         }
 

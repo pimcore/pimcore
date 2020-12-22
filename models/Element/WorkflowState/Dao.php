@@ -20,6 +20,8 @@ namespace Pimcore\Model\Element\WorkflowState;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Element\WorkflowState $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -71,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->delete('element_workflow_state', [
             'cid' => $this->model->getCid(),
-            'ctype' => $this->model->getCtype()
+            'ctype' => $this->model->getCtype(),
         ]);
     }
 }

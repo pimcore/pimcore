@@ -18,12 +18,13 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -39,14 +40,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/object")
  */
-class DataObjectController extends ElementControllerBase implements EventedControllerInterface
+class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
@@ -68,7 +68,32 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     private $metaData;
 
     /**
-     * @Route("/tree-get-childs-by-id", methods={"GET"})
+     * @Route("/tree-get-root", name="pimcore_admin_dataobject_dataobject_treegetroot", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function treeGetRootAction(Request $request)
+    {
+        return parent::treeGetRootAction($request);
+    }
+
+    /**
+     * @Route("/delete-info", name="pimcore_admin_dataobject_dataobject_deleteinfo", methods={"GET"})
+     *
+     * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @return JsonResponse
+     */
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    {
+        return parent::deleteInfoAction($request, $eventDispatcher);
+    }
+
+    /**
+     * @Route("/tree-get-childs-by-id", name="pimcore_admin_dataobject_dataobject_treegetchildsbyid", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -141,10 +166,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $condition .= ' AND (
-                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                $condition .= ' AND
+                (
+                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
                     OR
-                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(objects.o_path,objects.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(objects.o_path,objects.o_key))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
                 )';
             }
 
@@ -156,11 +182,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
+
             if ($object->getChildrenSortBy() === 'index') {
                 $childsList->setOrderKey('objects.o_index ASC', false);
             } else {
                 $childsList->setOrderKey(
-                    sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
+                    sprintf(
+                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
+                        $object->getChildrenSortBy(), $object->getChildrenSortOrder() ?? 'ASC'
+                    ),
                     false
                 );
             }
@@ -170,9 +200,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $childsList,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
             /** @var DataObject\Listing $childsList */
             $childsList = $beforeListLoadEvent->getArgument('list');
 
@@ -197,7 +227,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $event = new GenericEvent($this, [
             'objects' => $objects,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA);
+
         $objects = $event->getArgument('objects');
 
         if ($limit) {
@@ -207,9 +238,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'total' => $total,
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $objects,
-                'fromPaging' => intval($request->get('fromPaging')),
+                'fromPaging' => (int)$request->get('fromPaging'),
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch'))
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         }
 
@@ -221,21 +252,23 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return array
      */
-    protected function getTreeNodeConfig($element)
+    protected function getTreeNodeConfig($element): array
     {
         $child = $element;
 
         $tmpObject = [
             'id' => $child->getId(),
-            'idx' => intval($child->getIndex()),
+            'idx' => (int)$child->getIndex(),
+            'key' => $child->getKey(),
             'sortBy' => $child->getChildrenSortBy(),
+            'sortOrder' => $child->getChildrenSortOrder(),
             'text' => htmlspecialchars($child->getKey()),
             'type' => $child->getType(),
             'path' => $child->getRealFullPath(),
             'basePath' => $child->getRealPath(),
             'elementType' => 'object',
             'locked' => $child->isLocked(),
-            'lockOwner' => $child->getLocked() ? true : false
+            'lockOwner' => $child->getLocked() ? true : false,
         ];
 
         $allowedTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
@@ -294,7 +327,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/get-id-path-paging-info", methods={"GET"})
+     * @Route("/get-id-path-paging-info", name="pimcore_admin_dataobject_dataobject_getidpathpaginginfo", methods={"GET"})
      *
      * @param Request $request
      *
@@ -324,7 +357,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $total = $list->getTotalCount();
 
             $info = [
-                'total' => $total
+                'total' => $total,
             ];
 
             if ($total > $limit) {
@@ -345,7 +378,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/get", methods={"GET"})
+     * @Route("/get", name="pimcore_admin_dataobject_dataobject_get", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -403,12 +436,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['o_locked'] = $objectFromDatabase->isLocked();
             $objectData['general']['php'] = [
                 'classes' => array_merge([get_class($objectFromDatabase)], array_values(class_parents($objectFromDatabase))),
-                'interfaces' => array_values(class_implements($objectFromDatabase))
+                'interfaces' => array_values(class_implements($objectFromDatabase)),
             ];
             $objectData['general']['allowInheritance'] = $objectFromDatabase->getClass()->getAllowInherit();
             $objectData['general']['allowVariants'] = $objectFromDatabase->getClass()->getAllowVariants();
             $objectData['general']['showVariants'] = $objectFromDatabase->getClass()->getShowVariants();
             $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();
+            $objectData['general']['showFieldLookup'] = $objectFromDatabase->getClass()->getShowFieldLookup();
             if ($objectFromDatabase instanceof DataObject\Concrete) {
                 $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
             }
@@ -517,7 +551,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
 
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+            $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
@@ -634,9 +668,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
 
-            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)
-                && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
-            ) {
+            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
@@ -655,60 +687,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $layout
-     * @param array $allowedView
-     * @param array $allowedEdit
-     */
-    protected function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
-    {
-        if ($layout->{'fieldtype'} == 'localizedfields' || $layout->{'fieldtype'} == 'classificationstore') {
-            if (is_array($allowedView) && count($allowedView) > 0) {
-                $haveAllowedViewDefault = null;
-                if ($layout->{'fieldtype'} == 'localizedfields') {
-                    $haveAllowedViewDefault = isset($allowedView['default']);
-                    if ($haveAllowedViewDefault) {
-                        unset($allowedView['default']);
-                    }
-                }
-                if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    $layout->{'permissionView'} = Tool\Admin::reorderWebsiteLanguages(
-                        Tool\Admin::getCurrentUser(),
-                        array_keys($allowedView),
-                        true
-                    );
-                }
-            }
-            if (is_array($allowedEdit) && count($allowedEdit) > 0) {
-                $haveAllowedEditDefault = null;
-                if ($layout->{'fieldtype'} == 'localizedfields') {
-                    $haveAllowedEditDefault = isset($allowedEdit['default']);
-                    if ($haveAllowedEditDefault) {
-                        unset($allowedEdit['default']);
-                    }
-                }
-
-                if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    $layout->{'permissionEdit'} = Tool\Admin::reorderWebsiteLanguages(
-                        Tool\Admin::getCurrentUser(),
-                        array_keys($allowedEdit),
-                        true
-                    );
-                }
-            }
-        } else {
-            if (method_exists($layout, 'getChilds')) {
-                $children = $layout->getChilds();
-                if (is_array($children)) {
-                    foreach ($children as $child) {
-                        $this->setLayoutPermission($child, $allowedView, $allowedEdit);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * @Route("/get-folder", methods={"GET"})
+     * @Route("/get-folder", name="pimcore_admin_dataobject_dataobject_getfolder", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -723,7 +702,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
-        $object = DataObject::getById(intval($request->get('id')));
+        $object = DataObject::getById((int)$request->get('id'));
         if ($object->isAllowed('view')) {
             $objectData = [];
 
@@ -765,7 +744,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'data' => $objectData,
                 'object' => $object,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+            $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $objectData = $event->getArgument('data');
 
             return $this->adminJson($objectData);
@@ -794,13 +773,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/add", methods={"POST"})
+     * @Route("/add", name="pimcore_admin_dataobject_dataobject_add", methods={"POST"})
      *
      * @param Request $request
+     * @param Model\FactoryInterface $modelFactory
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, Model\FactoryInterface $modelFactory)
     {
         $success = false;
 
@@ -814,7 +794,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if (!DataObject\Service::pathExists($intendedPath)) {
                 /** @var DataObject\Concrete $object */
-                $object = $this->get('pimcore.model.factory')->build($className);
+                $object = $modelFactory->build($className);
                 $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {
@@ -858,18 +838,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'success' => $success,
                 'id' => $object->getId(),
                 'type' => $object->getType(),
-                'message' => $message
+                'message' => $message,
             ]);
         } else {
             return $this->adminJson([
                 'success' => $success,
-                'message' => $message
+                'message' => $message,
             ]);
         }
     }
 
     /**
-     * @Route("/add-folder", methods={"POST"})
+     * @Route("/add-folder", name="pimcore_admin_dataobject_dataobject_addfolder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -888,7 +868,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     'o_userOwner' => $this->getAdminUser()->getId(),
                     'o_userModification' => $this->getAdminUser()->getId(),
                     'o_key' => $request->get('key'),
-                    'o_published' => true
+                    'o_published' => true,
                 ]);
 
                 $folder->setCreationDate(time());
@@ -910,7 +890,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_admin_dataobject_dataobject_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -924,8 +904,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $parentObject = DataObject::getById($request->get('id'));
 
             $list = new DataObject\Listing();
-            $list->setCondition('o_path LIKE ' . $list->quote($parentObject->getRealFullPath() . '/%'));
-            $list->setLimit(intval($request->get('amount')));
+            $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(o_path)', false);
             $list->setOrder('DESC');
 
@@ -958,7 +938,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/change-children-sort-by", methods={"PUT"})
+     * @Route("/change-children-sort-by", name="pimcore_admin_dataobject_dataobject_changechildrensortby", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -971,6 +951,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object = DataObject::getById($request->get('id'));
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
+            $object->setChildrenSortOrder($request->get('childrenSortOrder'));
             $object->save();
 
             return $this->json(['success' => true]);
@@ -980,7 +961,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/update", methods={"PUT"})
+     * @Route("/update", name="pimcore_admin_dataobject_dataobject_update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1128,7 +1109,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         "','", [
                             DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
                             DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
-                            DataObject\AbstractObject::OBJECT_TYPE_FOLDER
+                            DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
                         ]
                     ).'\')
                             ORDER BY o_index, o_id=?
@@ -1140,7 +1121,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         $newIndex,
                         $updatedObject->getId(),
                         $updatedObject->getParentId(),
-                        $updatedObject->getId()
+                        $updatedObject->getId(),
                     ]
                 );
 
@@ -1185,7 +1166,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/save", methods={"POST", "PUT"})
+     * @Route("/save", name="pimcore_admin_dataobject_dataobject_save", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1248,7 +1229,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // do not allow all values to be set, will cause problems (eg. icon)
             if (is_array($general) && count($general) > 0) {
                 foreach ($general as $key => $value) {
-                    if (!in_array($key, ['o_id', 'o_classId', 'o_className', 'o_type', 'icon', 'o_userOwner', 'o_userModification'])) {
+                    if (!in_array($key, ['o_id', 'o_classId', 'o_className', 'o_type', 'icon', 'o_userOwner', 'o_userModification', 'o_modificationDate'])) {
                         $object->setValue($key, $value);
                     }
                 }
@@ -1258,10 +1239,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $this->assignPropertiesFromEditmode($request, $object);
         $this->applySchedulerDataToElement($request, $object);
 
-        if ($request->get('task') == 'unpublish') {
+        if ($request->get('task') == 'unpublish' && $object->isAllowed('unpublish')) {
             $object->setPublished(false);
         }
-        if ($request->get('task') == 'publish') {
+        if ($request->get('task') == 'publish' && $object->isAllowed('publish')) {
             $object->setPublished(true);
         }
 
@@ -1286,9 +1267,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'success' => true,
                 'general' => ['o_modificationDate' => $object->getModificationDate(),
                     'versionDate' => $newObject->getModificationDate(),
-                    'versionCount' => $newObject->getVersionCount()
+                    'versionCount' => $newObject->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($request->get('task') == 'session') {
             DataObject\Service::saveElementToSession($object);
@@ -1315,9 +1296,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'success' => true,
                 'general' => ['o_modificationDate' => $object->getModificationDate(),
                     'versionDate' => $newObject->getModificationDate(),
-                    'versionCount' => $newObject->getVersionCount()
+                    'versionCount' => $newObject->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         }
 
@@ -1362,7 +1343,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/save-folder", methods={"PUT"})
+     * @Route("/save-folder", name="pimcore_admin_dataobject_dataobject_savefolder", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1436,7 +1417,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/publish-version", methods={"POST"})
+     * @Route("/publish-version", name="pimcore_admin_dataobject_dataobject_publishversion", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1460,7 +1441,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     [
                         'success' => true,
                         'general' => ['o_modificationDate' => $object->getModificationDate() ],
-                        'treeData' => $treeData]
+                        'treeData' => $treeData, ]
                 );
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -1471,20 +1452,19 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/preview-version", methods={"GET"})
+     * @Route("/preview-version", name="pimcore_admin_dataobject_dataobject_previewversion", methods={"GET"})
      *
      * @param Request $request
-     * @TemplatePhp()
      *
      * @throws \Exception
      *
-     * @return array
+     * @return Response
      */
     public function previewVersionAction(Request $request)
     {
         DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
 
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
@@ -1492,7 +1472,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         if ($object) {
             if ($object->isAllowed('versions')) {
-                return ['object' => $object];
+                return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/previewVersion.html.twig',
+                    [
+                        'object' => $object,
+                        'validLanguages' => Tool::getValidLanguages(),
+                    ]);
             } else {
                 throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
             }
@@ -1502,14 +1486,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/diff-versions/from/{from}/to/{to}", methods={"GET"})
-     * @TemplatePhp()
+     * @Route("/diff-versions/from/{from}/to/{to}", name="pimcore_admin_dataobject_dataobject_diffversions", methods={"GET"})
      *
      * @param Request $request
      * @param int $from
      * @param int $to
      *
-     * @return array
+     * @return Response
      *
      * @throws \Exception
      */
@@ -1517,8 +1500,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
 
-        $id1 = intval($from);
-        $id2 = intval($to);
+        $id1 = (int)$from;
+        $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
         $object1 = $version1->loadData();
@@ -1530,10 +1513,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         if ($object1 && $object2) {
             if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return [
-                    'object1' => $object1,
-                    'object2' => $object2
-                ];
+                return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig',
+                    [
+                        'object1' => $object1,
+                        'object2' => $object2,
+                        'validLanguages' => Tool::getValidLanguages(),
+                    ]);
             } else {
                 throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }
@@ -1543,29 +1528,42 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/grid-proxy", methods={"GET", "POST", "PUT"})
+     * @Route("/grid-proxy", name="pimcore_admin_dataobject_dataobject_gridproxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
      * @param GridHelperService $gridHelperService
+     * @param LocaleServiceInterface $localeService
+     * @param CsrfProtectionHandler $csrfProtection
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
-    {
+    public function gridProxyAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher,
+        GridHelperService $gridHelperService,
+        LocaleServiceInterface $localeService,
+        CsrfProtectionHandler $csrfProtection
+    ) {
         $allParams = array_merge($request->request->all(), $request->query->all());
+        $csvMode = $allParams['csvMode'] ?? false;
+
+        if (isset($allParams['context']) && $allParams['context']) {
+            $allParams['context'] = json_decode($allParams['context'], true);
+        } else {
+            $allParams['context'] = [];
+        }
 
         $filterPrepareEvent = new GenericEvent($this, [
-            'requestParams' => $allParams
+            'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
-                //                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
         } else {
@@ -1573,7 +1571,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         if (isset($allParams['data']) && $allParams['data']) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);
@@ -1699,7 +1697,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                     if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
-                                            $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                                            $currentLocale = $localeService->findLocale();
                                             if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
                                                 continue;
                                             }
@@ -1718,7 +1716,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
 
                     $object->setValues($objectData);
-                    if (!isset($data['published']) || !$data['published']) {
+                    if ($object->getPublished() == false) {
                         $object->setOmitMandatoryCheck(true);
                     }
 
@@ -1735,9 +1733,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
             /** @var DataObject\Listing\Concrete $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -1745,7 +1743,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $objects = [];
             foreach ($list->getObjects() as $object) {
-                $o = DataObject\Service::gridObjectData($object, $allParams['fields'] ?? null, $requestedLanguage);
+                if ($csvMode) {
+                    $o = DataObject\Service::getCsvDataForObject($object, $requestedLanguage, $request->get('fields'), DataObject\Service::getHelperDefinitions(), $localeService, false, $allParams['context']);
+                } else {
+                    $o = DataObject\Service::gridObjectData($object, $allParams['fields'] ?? null, $requestedLanguage,
+                        ['csvMode' => $csvMode]);
+                }
+
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
                 if ($object->isAllowed('list')) {
                     $objects[] = $o;
@@ -1756,9 +1760,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $afterListLoadEvent = new GenericEvent($this, [
                 'list' => $result,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD);
             $result = $afterListLoadEvent->getArgument('list');
 
             return $this->adminJson($result);
@@ -1806,7 +1810,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/copy-info", methods={"GET"})
+     * @Route("/copy-info", name="pimcore_admin_dataobject_dataobject_copyinfo", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1826,21 +1830,21 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             // first of all the new parent
             $pasteJobs[] = [[
-                'url' => '/admin/object/copy',
+                'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
                     'type' => 'child',
                     'transactionId' => $transactionId,
-                    'saveParentId' => true
-                ]
+                    'saveParentId' => true,
+                ],
             ]];
 
             if ($object->hasChildren([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT])) {
                 // get amount of children
                 $list = new DataObject\Listing();
-                $list->setCondition('o_path LIKE ' . $list->quote($object->getRealFullPath() . '/%'));
+                $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
                 $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
@@ -1849,15 +1853,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/object/copy',
+                            'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copy'),
                             'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
                                 'targetParentId' => $request->get('targetId'),
                                 'sourceParentId' => $request->get('sourceId'),
                                 'type' => 'child',
-                                'transactionId' => $transactionId
-                            ]
+                                'transactionId' => $transactionId,
+                            ],
                         ]];
                     }
                 }
@@ -1866,12 +1870,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($request->get('type') == 'recursive-update-references') {
                     for ($i = 0; $i < (count($childIds) + 1); $i++) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/object/copy-rewrite-ids',
+                            'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copyrewriteids'),
                             'method' => 'PUT',
                             'params' => [
                                 'transactionId' => $transactionId,
-                                '_dc' => uniqid()
-                            ]
+                                '_dc' => uniqid(),
+                            ],
                         ]];
                     }
                 }
@@ -1879,24 +1883,24 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => '/admin/object/copy',
+                'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
                     'type' => $request->get('type'),
-                    'transactionId' => $transactionId
-                ]
+                    'transactionId' => $transactionId,
+                ],
             ]];
         }
 
         return $this->adminJson([
-            'pastejobs' => $pasteJobs
+            'pastejobs' => $pasteJobs,
         ]);
     }
 
     /**
-     * @Route("/copy-rewrite-ids", methods={"PUT"})
+     * @Route("/copy-rewrite-ids", name="pimcore_admin_dataobject_dataobject_copyrewriteids", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1934,12 +1938,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         return $this->adminJson([
             'success' => true,
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
     /**
-     * @Route("/copy", methods={"POST"})
+     * @Route("/copy", name="pimcore_admin_dataobject_dataobject_copy", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1948,13 +1952,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     public function copyAction(Request $request)
     {
         $message = '';
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = DataObject::getById($sourceId);
 
         $session = Tool\Session::get('pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
             $sourceParent = DataObject::getById($request->get('sourceParentId'));
 
@@ -2007,7 +2011,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/preview", methods={"GET"})
+     * @Route("/preview", name="pimcore_admin_dataobject_dataobject_preview", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2151,13 +2155,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     protected function getLatestVersion(DataObject\Concrete $object)
     {
-        $modificationDate = $object->getModificationDate();
         $latestVersion = $object->getLatestVersion();
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
                 $object = $latestObj;
-                $object->setModificationDate($modificationDate); // set de modification-date from published version to compare it in js-frontend
             }
         }
 
@@ -2165,9 +2167,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -2178,13 +2180,5 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $this->checkPermission('objects');
 
         $this->_objectService = new DataObject\Service($this->getAdminUser());
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

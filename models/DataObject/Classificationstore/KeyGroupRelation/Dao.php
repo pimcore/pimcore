@@ -20,6 +20,8 @@ namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -58,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->delete(self::TABLE_NAME_RELATIONS, [
             'keyId' => $this->model->getKeyId(),
-            'groupId' => $this->model->getGroupId()
+            'groupId' => $this->model->getGroupId(),
         ]);
     }
 

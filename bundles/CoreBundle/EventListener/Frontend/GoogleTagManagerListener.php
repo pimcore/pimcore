@@ -29,7 +29,7 @@ use Pimcore\Event\Analytics\GoogleTagManagerEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Templating\EngineInterface;
 
 class GoogleTagManagerListener
@@ -65,7 +65,7 @@ class GoogleTagManagerListener
      */
     private $headBlocks = [
         self::BLOCK_HEAD_BEFORE_SCRIPT_TAG,
-        self::BLOCK_HEAD_AFTER_SCRIPT_TAG
+        self::BLOCK_HEAD_AFTER_SCRIPT_TAG,
     ];
 
     /**
@@ -73,7 +73,7 @@ class GoogleTagManagerListener
      */
     private $bodyBlocks = [
         self::BLOCK_BODY_BEFORE_NOSCRIPT_TAG,
-        self::BLOCK_BODY_AFTER_NOSCRIPT_TAG
+        self::BLOCK_BODY_AFTER_NOSCRIPT_TAG,
     ];
 
     public function __construct(
@@ -86,7 +86,7 @@ class GoogleTagManagerListener
         $this->templatingEngine = $templatingEngine;
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (!$this->isEnabled()) {
             return;
@@ -133,7 +133,7 @@ class GoogleTagManagerListener
             '@PimcoreCore/Google/TagManager/codeHead.html.twig',
             $this->headBlocks,
             [
-                'containerId' => $containerId
+                'containerId' => $containerId,
             ]
         );
 
@@ -142,7 +142,7 @@ class GoogleTagManagerListener
             '@PimcoreCore/Google/TagManager/codeBody.html.twig',
             $this->bodyBlocks,
             [
-                'containerId' => $containerId
+                'containerId' => $containerId,
             ]
         );
 
@@ -174,7 +174,7 @@ class GoogleTagManagerListener
 
         $event = new CodeEvent($data, $blocks, $template);
 
-        $this->eventDispatcher->dispatch($eventName, $event);
+        $this->eventDispatcher->dispatch($event, $eventName);
 
         return $this->renderTemplate($event);
     }

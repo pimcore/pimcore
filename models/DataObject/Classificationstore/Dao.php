@@ -22,6 +22,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Classificationstore $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -86,7 +88,7 @@ class Dao extends Model\Dao\AbstractDao
                         'keyId' => $keyId,
                         'fieldname' => $fieldname,
                         'language' => $language,
-                        'type' => $keyConfig->getType()
+                        'type' => $keyConfig->getType(),
                     ];
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Password) {
@@ -101,7 +103,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     $value = $fd->marshal($value, $object);
 
-                    $data['value'] = $value['value'];
+                    $data['value'] = isset($value['value']) ? $value['value'] : '';
                     $data['value2'] = isset($value['value2']) ? $value['value2'] : '';
 
                     $this->db->insertOrUpdate($dataTable, $data);
@@ -119,7 +121,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = [
                         'o_id' => $objectId,
                         'groupId' => $activeGroupId,
-                        'fieldname' => $fieldname
+                        'fieldname' => $fieldname,
                     ];
                     $this->db->insertOrUpdate($groupsTable, $data);
                 }
@@ -144,7 +146,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load()
     {
-        /** @var DataObject\Classificationstore $classificationStore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();
@@ -179,7 +180,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $value = [
                 'value' => $item['value'],
-                'value2' => $item['value2']
+                'value2' => $item['value2'],
             ];
 
             $keyConfig = DefinitionCache::get($keyId);
@@ -213,9 +214,7 @@ class Dao extends Model\Dao\AbstractDao
             `o_id` BIGINT(20) NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
-            PRIMARY KEY (`groupId`, `o_id`, `fieldname`),
-            INDEX `o_id` (`o_id`),
-            INDEX `fieldname` (`fieldname`)
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`)
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
@@ -228,10 +227,8 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
             `type` VARCHAR(50) NULL,
-            PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`),
-            INDEX `o_id` (`o_id`),
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`),
             INDEX `keyId` (`keyId`),
-            INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)
         ) DEFAULT CHARSET=utf8mb4;');
 

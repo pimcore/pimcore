@@ -8,6 +8,52 @@ add Ext components to the user interface or execute any other JavaScript require
 All JavaScript and CSS which should be included, needs to be defined in your bundle class, as described in 
 [Pimcore Bundles](./05_Pimcore_Bundles). 
 
+Alternatively, you can setup this via an Eventlistener:
+
+```yaml
+services:
+  # adds additional static files to admin backend
+  AppBundle\EventListener\PimcoreAdminListener:
+    tags:
+      - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.css, method: addCSSFiles }
+      - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.js, method: addJSFiles }
+```
+
+```php
+<?php
+namespace AppBundle\EventListener;
+
+use Pimcore\Event\BundleManager\PathsEvent;
+
+class PimcoreAdminListener
+{
+    public function addCSSFiles(PathsEvent $event)
+    {
+        $event->setPaths(
+            array_merge(
+                $event->getPaths(),
+                [
+                    '/admin-static/css/admin-style.css'
+                ]
+            )
+        );
+    }
+
+    public function addJSFiles(PathsEvent $event)
+    {
+        $event->setPaths(
+            array_merge(
+                $event->getPaths(),
+                [
+                    '/admin-static/js/startup.js'
+                ]
+            )
+        );
+    }
+}
+```
+
+
 These scripts are loaded last upon Pimcore startup. They are loaded in the same order as specified in the bundle class.
 
 Starting point for javascript development is the javascript plugin class (`plugin.js`). An instance of this class 
@@ -41,29 +87,32 @@ var samplePlugin = new pimcore.plugin.sample();
 The broker then will notify each plugin upon the events described below. For registering to these events just add a 
 corresponding method to the javascript plugin class. 
 
-| Name | Description |
-| ---- | ----------- |
-| uninstall | is called when the corresponding plugin is uninstalled via Pimcore backend UI |
-| pimcoreReady | Pimcore backend UI is loaded, viewport is passed as parameter |
-| preOpenAsset | before asset is opened, asset and type are passed as parameters |
-| postOpenAsset | after asset is opened, asset and type are passed as parameters |
-| preSaveAsset | before asset is saved, asset id is passed as parameter |
-| postSaveAsset | after asset is saved, asset id is passed as parameter |
-| preOpenDocument | before document is opened, document and type are passed as parameters |
-| postOpenDocument | after document is opened, document and type are passed as parameters |
-| preSaveDocument | before document is saved, document, type, task and onlySaveVersion are passed as parameters |
-| postSaveDocument | after document is saved, document, type, task and onlySaveVersion are passed as parameters |
-| postAddDocumentTree | after the decument is successfully created in the tree, document id is passed as parameter |
-| preOpenObject | before object is opened, object and type are passed as parameters |
-| postOpenObject | after object is opened, object and type are passed as parameters |
-| preSaveObject | before object is saved, object and type are passed as parameters |
-| postSaveObject | after object is saved, object is passed as parameter |
-| postAddObjectTree | after the object is successfully created in the tree, object id is passed as parameter |
-| prepareAssetTreeContextMenu | before context menu is opened, menu, tree class and asset record are passed as parameters |
-| prepareObjectTreeContextMenu | before context menu is opened, menu, tree class and object record are passed as parameters |
-| prepareDocumentTreeContextMenu | before context menu is opened, menu, tree and document record are passed as parameters |
-| prepareClassLayoutContextMenu | before context menu is opened, allowedTypes array is passed as parameters |
-| prepareOnRowContextmenu | before context menu is opened object folder grid, menu, folder class and object record are passed as parameters |
+| Name                                 | Description                                                                                                     | Notes    |
+|--------------------------------------|-----------------------------------------------------------------------------------------------------------------|----------|
+| uninstall                            | is called when the corresponding plugin is uninstalled via Pimcore backend UI                                   |          |
+| pimcoreReady                         | Pimcore backend UI is loaded, viewport is passed as parameter                                                   |          |
+| preOpenAsset                         | before asset is opened, asset and type are passed as parameters                                                 |          |
+| postOpenAsset                        | after asset is opened, asset and type are passed as parameters                                                  |          |
+| preSaveAsset                         | before asset is saved, asset id is passed as parameter                                                          |          |
+| postSaveAsset                        | after asset is saved, asset id is passed as parameter                                                           |          |
+| preOpenDocument                      | before document is opened, document and type are passed as parameters                                           |          |
+| postOpenDocument                     | after document is opened, document and type are passed as parameters                                            |          |
+| preSaveDocument                      | before document is saved, document, type, task and onlySaveVersion are passed as parameters                     |          |
+| postSaveDocument                     | after document is saved, document, type, task and onlySaveVersion are passed as parameters                      |          |
+| postAddDocumentTree                  | after the document is successfully created in the tree, document id is passed as parameter                      |          |
+| preOpenObject                        | before object is opened, object and type are passed as parameters                                               |          |
+| postOpenObject                       | after object is opened, object and type are passed as parameters                                                |          |
+| preSaveObject                        | before object is saved, object and type are passed as parameters                                                |          |
+| postSaveObject                       | after object is saved, object is passed as parameter                                                            |          |
+| postAddObjectTree                    | after the object is successfully created in the tree, object id is passed as parameter                          |          |
+| preCreateMenuOption                  | called before navigation menu is created                                                                         |          |
+| preCreateAssetMetadataEditor         | fired when asset metadata editor tab is created                                                                 | internal |
+| prepareAssetMetadataGridConfigurator | before opening the grid config dialog, url returning the metadata definitions is passed as parameter            |          |
+| prepareAssetTreeContextMenu          | before context menu is opened, menu, tree class and asset record are passed as parameters                       |          |
+| prepareObjectTreeContextMenu         | before context menu is opened, menu, tree class and object record are passed as parameters                      |          |
+| prepareDocumentTreeContextMenu       | before context menu is opened, menu, tree and document record are passed as parameters                          |          |
+| prepareClassLayoutContextMenu        | before context menu is opened, allowedTypes array is passed as parameters                                       |          |
+| prepareOnRowContextmenu              | before context menu is opened object folder grid, menu, folder class and object record are passed as parameters |          |
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to remove plugin features from the UI 
 after uninstall.

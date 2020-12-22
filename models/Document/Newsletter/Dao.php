@@ -20,6 +20,8 @@ namespace Pimcore\Model\Document\Newsletter;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Newsletter $model
  */
 class Dao extends Model\Document\PageSnippet\Dao
@@ -54,7 +56,7 @@ class Dao extends Model\Document\PageSnippet\Dao
         parent::create();
 
         $this->db->insert('documents_newsletter', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

@@ -94,7 +94,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             bodyStyle: 'background: #fff',
             style: "margin-bottom: 10px",
             manageHeight: false,
-            cls: "object_field"
+            cls: "object_field object_field_type_" + this.type
         };
 
         if(this.fieldConfig.width) {
@@ -297,7 +297,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
-                uri = "/admin/asset/get-image-thumbnail?id=" + id + "&width=" + defaultWidth + "&aspectratio=true";
+                uri = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: id, width: defaultWidth, aspectration: true});
 
                 if(typeof node.data.imageWidth != "undefined") {
                     if(node.data.imageWidth < defaultWidth

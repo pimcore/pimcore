@@ -19,15 +19,18 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class Merge extends AbstractOperator
 {
+    /** @var bool */
     private $flatten;
+
+    /** @var bool */
     private $unique;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->flatten = $config->flatten;
-        $this->unique = $config->unique;
+        $this->flatten = $config->flatten ?? false;
+        $this->unique = $config->unique ?? false;
     }
 
     public function getLabeledValue($element)
@@ -41,7 +44,7 @@ class Merge extends AbstractOperator
 
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
-            $childValues = $childResult->value;
+            $childValues = $childResult->value ?? null;
 
             if ($this->flatten) {
                 if (is_array($childValues)) {

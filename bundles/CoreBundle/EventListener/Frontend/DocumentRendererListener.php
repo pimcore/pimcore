@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Templating\Helper\Placeholder\ContainerService;
+use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -40,7 +40,7 @@ class DocumentRendererListener implements EventSubscriberInterface
     {
         return [
             DocumentEvents::RENDERER_PRE_RENDER => 'onPreRender',
-            DocumentEvents::RENDERER_POST_RENDER => 'onPostRender'
+            DocumentEvents::RENDERER_POST_RENDER => 'onPostRender',
         ];
     }
 

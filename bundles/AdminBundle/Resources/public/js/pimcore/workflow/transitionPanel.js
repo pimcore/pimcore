@@ -26,7 +26,7 @@ pimcore.workflow.transitionPanel = Class.create({
         this.elementEditor = elementEditor;
         this.workflowName = workflowName;
         this.transitionConfig = transitionConfig;
- 
+
         //build the window and in turn this will create the form panels etc
         this.getTransitionWindow();
 
@@ -230,7 +230,7 @@ pimcore.workflow.transitionPanel = Class.create({
         Ext.each(additional, function(a) {
             //add a new field
             var field = {};
-            var supportedTags = ['input', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'];
+            var supportedTags = ['input', 'numeric', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'];
 
             var c = a.fieldTypeSettings;
             c.name = 'workflow[additional][' + a.name + ']';
@@ -289,7 +289,7 @@ pimcore.workflow.transitionPanel = Class.create({
 
         //send a request to the server with the current form data
         Ext.Ajax.request({
-            url : this.transitionConfig.isGlobalAction ? '/admin/workflow/submit-global-action' : '/admin/workflow/submit-workflow-transition',
+            url : this.transitionConfig.isGlobalAction ? Routing.generate('pimcore_admin_workflow_submitglobal') : Routing.generate('pimcore_admin_workflow_submitworkflowtransition'),
             method: 'post',
             params: formvars,
             success: this.onSubmitWorkflowTransitionResponse.bind(this),
@@ -313,11 +313,11 @@ pimcore.workflow.transitionPanel = Class.create({
             }
 
         } else {
-            this.getWorkflowFormPanel().getComponent('workflowMessage').setHtml(
-                [
-                    '<div class="action_error">' + data.message + '</div>',
-                    '<div class="action_reason">' + data.reason + '</div>'
-                ].join(''));
+                this.getWorkflowFormPanel().getComponent('workflowMessage').setHtml(
+                    [
+                        '<div class="action_error">' + t(data.message) + '</div>',
+                        '<div class="action_reason">' + data.reasons.map(function(reason){ return t(reason); }).join('<br>') + '</div>'
+                    ].join(''));
 
             this.getWorkflowFormPanel().scrollTo(0, 0);
 

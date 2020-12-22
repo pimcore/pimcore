@@ -29,7 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Data implements ResourcePersistenceAwareInterface
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
 
@@ -71,13 +71,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @var string
      */
     public $columnType = 'LONGBLOB';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -191,7 +184,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
@@ -207,7 +200,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
             $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
 
             if (isset($params['owner'])) {
-                $field->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $field->_setOwner($params['owner']);
+                $field->_setOwnerFieldname($params['fieldname']);
+                $field->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $field;
@@ -220,7 +215,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -242,7 +237,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
@@ -304,7 +299,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param Model\DataObject\Data\RgbaColor $data
+     * @param Model\DataObject\Data\EncryptedField|null $data
      *
      * @return bool
      */
@@ -313,52 +308,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
-            $result = $fd->isEmpty($data);
 
-            return $result;
-        }
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return string|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
-
-        if ($data instanceof Model\DataObject\Data\RgbaColor) {
-            return $this->getDataForEditmode($data, $object, $params);
+            return $fd->isEmpty($data);
         }
 
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        // not implemented
-        return null;
+        return true;
     }
 
     /**
@@ -404,7 +358,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -431,7 +385,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -459,7 +413,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -528,14 +482,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     public function setDelegateDatatype($delegateDatatype)
     {
         $this->delegateDatatype = $delegateDatatype;
-    }
-
-    /**
-     * @param string $phpdocType
-     */
-    public function setPhpdocType($phpdocType)
-    {
-        $this->phpdocType = $phpdocType;
     }
 
     /**
@@ -616,19 +562,50 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->delegate ? $this->delegate->getPhpdocType() : null;
-    }
-
-    /**
      * @inheritDoc
      */
     public function getDataForSearchIndex($object, $params = [])
     {
         // encrypted data shouldn't be in search index
         return '';
+    }
+
+    /**
+     * @param Model\DataObject\Data\EncryptedField|null $oldValue
+     * @param Model\DataObject\Data\EncryptedField|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $fd = $this->getDelegateDatatypeDefinition();
+        if ($fd instanceof Model\DataObject\ClassDefinition\Data) {
+            $oldValue = $oldValue instanceof Model\DataObject\Data\EncryptedField ? $oldValue->getPlain() : null;
+            $newValue = $newValue instanceof Model\DataObject\Data\EncryptedField ? $newValue->getPlain() : null;
+
+            return $fd->isEqual($oldValue, $newValue);
+        }
+
+        return false;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return $this->delegate ? $this->delegate->getParameterTypeDeclaration() : null;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return $this->delegate ? $this->delegate->getReturnTypeDeclaration() : null;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return $this->delegate ? $this->delegate->getPhpdocInputType() : null;
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
     }
 }

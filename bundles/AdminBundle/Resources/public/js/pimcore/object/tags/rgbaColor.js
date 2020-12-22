@@ -35,7 +35,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -120,7 +120,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
             },
             layout: 'hbox',
             width: width,
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             items: [this.colorField, this.selector,
                 {
                 xtype: "button",

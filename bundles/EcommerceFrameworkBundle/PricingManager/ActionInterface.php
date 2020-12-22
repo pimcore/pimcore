@@ -42,5 +42,3 @@ interface ActionInterface
      */
     public function fromJSON($string);
 }
-
-class_alias(ActionInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction');

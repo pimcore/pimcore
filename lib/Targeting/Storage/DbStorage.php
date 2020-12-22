@@ -18,8 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -56,7 +57,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'tableName' => 'targeting_storage'
+            'tableName' => 'targeting_storage',
         ]);
 
         $resolver->setRequired(['tableName']);
@@ -86,11 +87,12 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchAll();
-
         $data = [];
-        foreach ($result as $row) {
-            $data[$row['name']] = json_decode($row['value'], true);
+
+        if ($stmt instanceof Result) {
+            while ($row = $stmt->fetchAssociative()) {
+                $data[$row['name']] = json_decode($row['value'], true);
+            }
         }
 
         return $data;
@@ -119,7 +121,11 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $result = (int)$stmt->fetchColumn();
+        $result = 0;
+
+        if ($stmt instanceof Result) {
+            $result = (int)$stmt->fetchOne();
+        }
 
         return 1 === $result;
     }
@@ -177,7 +183,11 @@ EOF;
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchColumn();
+        $result = false;
+
+        if ($stmt instanceof Result) {
+            $result = $stmt->fetchOne();
+        }
 
         if (!$result) {
             return $default;
@@ -201,7 +211,7 @@ EOF;
             $this->db->executeQuery(
                 'DELETE FROM ' . $this->tableName . ' WHERE visitorId = :visitorId',
                 [
-                    'visitorId' => $visitorInfo->getVisitorId()
+                    'visitorId' => $visitorInfo->getVisitorId(),
                 ]
             );
         } else {
@@ -209,7 +219,7 @@ EOF;
                 'DELETE FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope',
                 [
                     'visitorId' => $visitorInfo->getVisitorId(),
-                    'scope' => $scope
+                    'scope' => $scope,
                 ]
             );
         }
@@ -292,9 +302,12 @@ EOF;
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $date = $this->convertToDateTime($stmt->fetchColumn());
 
-        return $date;
+        if ($stmt instanceof Result) {
+            return $this->convertToDateTime($stmt->fetchOne());
+        }
+
+        return null;
     }
 
     private function convertToDateTime($result = null)
@@ -303,7 +316,7 @@ EOF;
             return null;
         }
 
-        $dateTime = $this->db->convertToPHPValue($result, Type::DATETIME);
+        $dateTime = $this->db->convertToPHPValue($result, Types::DATETIME_MUTABLE);
 
         return \DateTimeImmutable::createFromMutable($dateTime);
     }
@@ -334,9 +347,10 @@ EOF;
                 'value' => 1,
                 'creationDate' => $timestamps['createdAt'],
                 'modificationDate' => $timestamps['updatedAt'],
-            ], [
-                'creationDate' => Type::DATETIME,
-                'modificationDate' => Type::DATETIME,
+            ],
+            [
+                'creationDate' => Types::DATETIME_MUTABLE,
+                'modificationDate' => Types::DATETIME_MUTABLE,
             ]
         );
     }
@@ -373,7 +387,7 @@ EOF;
             'DELETE FROM ' . $this->tableName . ' WHERE scope = :scope AND modificationDate < (NOW() - INTERVAL :expiry SECOND)',
             [
                 'scope' => $scope,
-                'expiry' => $expiry
+                'expiry' => $expiry,
             ]
         );
     }

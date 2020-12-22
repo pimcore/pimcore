@@ -65,7 +65,7 @@ class InstallerKernel extends Kernel
      */
     public function getLogDir()
     {
-        return $this->projectRoot . '/var/logs';
+        return $this->projectRoot . '/var/log';
     }
 
     /**
@@ -84,7 +84,7 @@ class InstallerKernel extends Kernel
         $bundles = [
             new FrameworkBundle(),
             new MonologBundle(),
-            new PimcoreInstallBundle()
+            new PimcoreInstallBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'])) {

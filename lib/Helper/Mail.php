@@ -129,17 +129,17 @@ CSS;
      */
     protected static function formatDebugReceivers(array $receivers)
     {
-        $tmpString = '';
-        foreach ($receivers as $mail => $name) {
-            $tmpString .= $mail;
-            if (isset($name)) {
-                $tmpString .= ' (' . $name . ')';
-            }
-            $tmpString .= ', ';
-        }
-        $tmpString = substr($tmpString, 0, strrpos($tmpString, ','));
+        $formatedReceiversArray = [];
 
-        return $tmpString;
+        foreach ($receivers as $mail => $name) {
+            if (strlen(trim($name)) > 0) {
+                $formatedReceiversArray[] = $name . ' <' . $mail . '>';
+            } else {
+                $formatedReceiversArray[] = $mail;
+            }
+        }
+
+        return implode(', ', $formatedReceiversArray);
     }
 
     /**
@@ -318,7 +318,7 @@ CSS;
                 } elseif (strpos($path, 'http') === 0) {
                     $fileContent = \Pimcore\Tool::getHttpData($path);
                     $fileInfo = [
-                        'fileUrlNormalized' => $path
+                        'fileUrlNormalized' => $path,
                     ];
                 }
 

@@ -20,14 +20,16 @@ namespace Pimcore\Model\Element\Note\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Element\Note\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of static routes for the specicifies parameters, returns an array of Element\Note elements
+     * Loads a list of static routes for the specified parameters, returns an array of Element\Note elements
      *
-     * @return array
+     * @return Model\Element\Note[]
      */
     public function load()
     {
@@ -57,18 +59,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @return int
-     *
-     * @todo: $amount could not be defined, so this could cause an issue
      */
     public function getTotalCount()
     {
-        $amount = 0;
-
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM notes ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM notes ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
+            return 0;
         }
-
-        return $amount;
     }
 }

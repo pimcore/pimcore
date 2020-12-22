@@ -15,9 +15,10 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Tool\Email\Log;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -27,12 +28,12 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @package GDPRDataExtractorBundle\Controller
  */
-class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
+class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -43,11 +44,11 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
     }
 
     /**
+     * @Route("/export", name="pimcore_admin_gdpr_sentmail_exportdataobject", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @Route("/export", methods={"GET"})
      */
     public function exportDataObjectAction(Request $request)
     {
@@ -61,7 +62,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
 
         $json = $this->encodeJson($sentMailArray, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
         $jsonResponse = new JsonResponse($json, 200, [
-            'Content-Disposition' => 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"'
+            'Content-Disposition' => 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"',
         ], true);
 
         return $jsonResponse;

@@ -78,7 +78,7 @@ pimcore.layout.toolbar = Class.create({
                 });
 
                 Ext.Ajax.request({
-                    url: "/admin/portal/dashboard-list",
+                    url: Routing.generate('pimcore_admin_portal_dashboardlist'),
                     success: function (response) {
                         var data = Ext.decode(response.responseText);
                         for (var i = 0; i < data.length; i++) {
@@ -105,7 +105,7 @@ pimcore.layout.toolbar = Class.create({
                                     function (button, value, object) {
                                         if (button == "ok") {
                                             Ext.Ajax.request({
-                                                url: "/admin/portal/create-dashboard",
+                                                url: Routing.generate('pimcore_admin_portal_createdashboard'),
                                                 method: 'POST',
                                                 params: {
                                                     key: value
@@ -427,16 +427,6 @@ pimcore.layout.toolbar = Class.create({
                         );
                     }
 
-                    if (perspectiveCfg.inToolbar("extras.systemtools.serverinfo")) {
-                        systemItems.push(
-                            {
-                                text: t("server_info"),
-                                iconCls: "pimcore_nav_icon_server_info",
-                                handler: this.showServerInfo
-                            }
-                        );
-                    }
-
                     if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
                         systemItems.push(
                             {
@@ -497,22 +487,6 @@ pimcore.layout.toolbar = Class.create({
                     text: t("reports"),
                     iconCls: "pimcore_nav_icon_reports",
                     handler: this.showReports.bind(this, null)
-                });
-            }
-
-            if (user.isAllowed("tag_snippet_management") && perspectiveCfg.inToolbar("marketing.tagmanagement")) {
-                marketingItems.push({
-                    text: t("tag_snippet_management"),
-                    iconCls: "pimcore_nav_icon_tag",
-                    handler: this.showTagManagement
-                });
-            }
-
-            if (user.isAllowed("qr_codes")) {
-                marketingItems.push({
-                    text: t("qr_codes"),
-                    iconCls: "pimcore_nav_icon_qrcode",
-                    handler: this.showQRCode
                 });
             }
 
@@ -612,7 +586,7 @@ pimcore.layout.toolbar = Class.create({
                         // create a promise which is resolved if the request succeeds
                         var promise = new Ext.Promise(function (resolve, reject) {
                             Ext.Ajax.request({
-                                url: "/admin/reports/piwik/iframe-integration",
+                                url: Routing.generate('pimcore_admin_reports_piwik_iframeintegration'),
                                 ignoreErrors: true, // do not pop up error window on failure
                                 success: function (response) {
                                     var data = {};
@@ -1027,7 +1001,7 @@ pimcore.layout.toolbar = Class.create({
                     iconCls: "pimcore_nav_icon_icons",
                     text: t('icon_library'),
                     handler: function() {
-                        pimcore.helpers.openGenericIframeWindow("icon-library", "/admin/misc/icon-list", "pimcore_icon_icons", t("icon_library"));
+                        pimcore.helpers.openGenericIframeWindow("icon-library", Routing.generate('pimcore_admin_misc_iconlist'), "pimcore_icon_icons", t("icon_library"));
                     }
                 });
             }
@@ -1368,12 +1342,12 @@ pimcore.layout.toolbar = Class.create({
     },
 
     openPerspective: function(name) {
-        location.href = "/admin/?perspective=" + name;
+        location.href = Routing.generate('pimcore_admin_index', {perspective: name});
     },
 
     generatePagePreviews: function ()  {
         Ext.Ajax.request({
-            url: '/admin/page/get-list',
+            url: Routing.generate('pimcore_admin_document_page_getlist'),
             success: function (res) {
                 var data = Ext.decode(res.responseText);
                 if(data && data.success) {
@@ -1440,24 +1414,6 @@ pimcore.layout.toolbar = Class.create({
             }
         } catch (e) {
             console.log(e);
-        }
-    },
-
-    showTagManagement: function () {
-        try {
-            pimcore.globalmanager.get("tagmanagement").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
-        }
-    },
-
-    showQRCode: function () {
-        try {
-            pimcore.globalmanager.get("qrcode").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
         }
     },
 
@@ -1640,7 +1596,7 @@ pimcore.layout.toolbar = Class.create({
         Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/admin/settings/clear-cache',
+                    url: Routing.generate('pimcore_admin_settings_clearcache'),
                     method: "DELETE",
                     params: params
                 });
@@ -1650,7 +1606,7 @@ pimcore.layout.toolbar = Class.create({
 
     clearOutputCache: function () {
         Ext.Ajax.request({
-            url: '/admin/settings/clear-output-cache',
+            url: Routing.generate('pimcore_admin_settings_clearoutputcache'),
             method: 'DELETE'
         });
     },
@@ -1659,7 +1615,7 @@ pimcore.layout.toolbar = Class.create({
         Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/admin/settings/clear-temporary-files',
+                    url: Routing.generate('pimcore_admin_settings_cleartemporaryfiles'),
                     method: "DELETE"
                 });
             }
@@ -1716,23 +1672,19 @@ pimcore.layout.toolbar = Class.create({
     },
 
     showPhpInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("phpinfo", "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info");
-    },
-
-    showServerInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("serverinfo", "/admin/external_linfo", "pimcore_icon_server_info", "Server Info");
+        pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
     },
 
     showOpcacheStatus: function () {
-        pimcore.helpers.openGenericIframeWindow("opcachestatus", "/admin/external_opcache", "pimcore_icon_reports", "PHP OPcache Status");
+        pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_admin_external_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
     },
 
     showSystemRequirementsCheck: function () {
-        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", "/admin/install/check", "pimcore_icon_systemrequirements", "System-Requirements Check");
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
     },
 
     showAdminer: function () {
-        pimcore.helpers.openGenericIframeWindow("adminer", "/admin/external_adminer/adminer", "pimcore_icon_mysql", "Database Admin");
+        pimcore.helpers.openGenericIframeWindow("adminer", Routing.generate('pimcore_admin_external_adminer_adminer'), "pimcore_icon_mysql", "Database Admin");
     },
 
     showElementHistory: function() {

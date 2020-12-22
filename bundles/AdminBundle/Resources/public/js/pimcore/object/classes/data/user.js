@@ -55,6 +55,18 @@ pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data
         this.specificPanel.removeAll();
         return this.layout;
     },
+    
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    unique: source.datax.unique
+                });
+        }
+    },
 
     supportsUnique: function() {
         return true;

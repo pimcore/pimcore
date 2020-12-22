@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Lock\LockFactory;
 
 class ImageThumbnail
 {
@@ -67,9 +68,9 @@ class ImageThumbnail
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
-            'frontendPath' => $path
+            'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -126,7 +127,8 @@ class ImageThumbnail
 
                 if (!is_file($path)) {
                     $lockKey = 'video_image_thumbnail_' . $this->asset->getId() . '_' . $timeOffset;
-                    Model\Tool\Lock::acquire($lockKey);
+                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
+                    $lock->acquire(true);
 
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
                     if (!is_file($path)) {
@@ -134,7 +136,7 @@ class ImageThumbnail
                         $generated = true;
                     }
 
-                    Model\Tool\Lock::release($lockKey);
+                    $lock->release();
                 }
 
                 if ($this->getConfig()) {
@@ -166,10 +168,11 @@ class ImageThumbnail
                 $this->filesystemPath = $path;
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::VIDEO_IMAGE_THUMBNAIL, new GenericEvent($this, [
+            $event = new GenericEvent($this, [
                 'deferred' => $deferred,
-                'generated' => $generated
-            ]));
+                'generated' => $generated,
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
         }
     }
 
@@ -192,14 +195,6 @@ class ImageThumbnail
      */
     protected function createConfig($selector)
     {
-        $config = Image\Thumbnail\Config::getByAutoDetect($selector);
-        if ($config) {
-            $format = strtolower($config->getFormat());
-            if ($format == 'source') {
-                $config->setFormat('PNG');
-            }
-        }
-
-        return $config;
+        return Image\Thumbnail\Config::getByAutoDetect($selector);
     }
 }

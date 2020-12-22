@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -61,7 +60,7 @@ class ServiceControllersPass implements CompilerPassInterface
                 continue;
             }
 
-            if ($reflector->isSubclassOf(AbstractController::class) || $reflector->isSubclassOf(Controller::class)) {
+            if ($reflector->isSubclassOf(AbstractController::class)) {
                 $serviceControllers[$id] = $definition->getClass();
             }
         }

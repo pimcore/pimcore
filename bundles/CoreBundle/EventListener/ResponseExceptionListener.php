@@ -22,12 +22,11 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -37,7 +36,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @var ActionRenderer
+     * @var DocumentRenderer
      */
     protected $documentRenderer;
 
@@ -75,13 +74,13 @@ class ResponseExceptionListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::EXCEPTION => 'onKernelException'
+            KernelEvents::EXCEPTION => 'onKernelException',
         ];
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
 
         // handle ResponseException (can be used from any context)
         if ($exception instanceof ResponseException) {
@@ -100,13 +99,13 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
     }
 
-    protected function handleErrorPage(GetResponseForExceptionEvent $event)
+    protected function handleErrorPage(ExceptionEvent $event)
     {
         if (\Pimcore::inDebugMode()) {
             return;
         }
 
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
 
         $statusCode = 500;
         $headers = [];
@@ -142,7 +141,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         try {
             $response = $this->documentRenderer->render($document, [
-                'exception' => $exception
+                'exception' => $exception,
+                PimcoreContextListener::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING => true,
             ]);
         } catch (\Exception $e) {
             // we are even not able to render the error page, so we send the client a unicorn
@@ -169,7 +169,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
                 'cookies' => serialize($_COOKIE),
                 'serverVars' => serialize($_SERVER),
                 'date' => time(),
-                'count' => 1
+                'count' => 1,
             ]);
         }
     }

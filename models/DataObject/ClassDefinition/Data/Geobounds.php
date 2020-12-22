@@ -16,11 +16,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
-class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -41,7 +40,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         'NElongitude' => 'double',
         'NElatitude' => 'double',
         'SWlongitude' => 'double',
-        'SWlatitude' => 'double'
+        'SWlatitude' => 'double',
     ];
 
     /**
@@ -53,21 +52,14 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         'NElongitude' => 'double',
         'NElatitude' => 'double',
         'SWlongitude' => 'double',
-        'SWlatitude' => 'double'
+        'SWlatitude' => 'double',
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Geobounds';
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Geobounds $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -79,7 +71,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
                 $this->getName() . '__NElongitude' => $data->getNorthEast()->getLongitude(),
                 $this->getName() . '__NElatitude' => $data->getNorthEast()->getLatitude(),
                 $this->getName() . '__SWlongitude' => $data->getSouthWest()->getLongitude(),
-                $this->getName() . '__SWlatitude' => $data->getSouthWest()->getLatitude()
+                $this->getName() . '__SWlatitude' => $data->getSouthWest()->getLatitude(),
             ];
         }
 
@@ -87,7 +79,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $this->getName() . '__NElongitude' => null,
             $this->getName() . '__NElatitude' => null,
             $this->getName() . '__SWlongitude' => null,
-            $this->getName() . '__SWlatitude' => null
+            $this->getName() . '__SWlatitude' => null,
         ];
     }
 
@@ -95,7 +87,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Geobounds|null
@@ -109,7 +101,9 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $geobounds = new DataObject\Data\Geobounds($ne, $sw);
 
             if (isset($params['owner'])) {
-                $geobounds->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $geobounds->_setOwner($params['owner']);
+                $geobounds->_setOwnerFieldname($params['fieldname']);
+                $geobounds->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $geobounds;
@@ -122,7 +116,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Geobounds $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -136,7 +130,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Geobounds $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -148,7 +142,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
                 'NElongitude' => $data->getNorthEast()->getLongitude(),
                 'NElatitude' => $data->getNorthEast()->getLatitude(),
                 'SWlongitude' => $data->getSouthWest()->getLongitude(),
-                'SWlatitude' => $data->getSouthWest()->getLatitude()
+                'SWlatitude' => $data->getSouthWest()->getLatitude(),
             ];
         }
 
@@ -171,7 +165,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Geobounds|null
@@ -259,60 +253,6 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         return '';
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof DataObject\Data\Geobounds) {
-            return [
-                'NElongitude' => $data->getNorthEast()->getLongitude(),
-                'NElatitude' => $data->getNorthEast()->getLatitude(),
-                'SWlongitude' => $data->getSouthWest()->getLongitude(),
-                'SWlatitude' => $data->getSouthWest()->getLatitude()
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if ($value['NElongitude'] !== null && $value['NElatitude'] !== null && $value['SWlongitude'] !== null && $value['SWlatitude'] !== null) {
-                $ne = new DataObject\Data\Geopoint($value['NElongitude'], $value['NElatitude']);
-                $sw = new DataObject\Data\Geopoint($value['SWlongitude'], $value['SWlatitude']);
-
-                return new DataObject\Data\Geobounds($ne, $sw);
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -326,7 +266,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -336,14 +276,14 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         if ($value) {
             return [
                 'value' => json_encode([$value[$this->getName() . '__NElatitude'], $value[$this->getName() . '__NElongitude']]),
-                'value2' => json_encode([$value[$this->getName() . '__SWlatitude'], $value[$this->getName() . '__SWlongitude']])
+                'value2' => json_encode([$value[$this->getName() . '__SWlatitude'], $value[$this->getName() . '__SWlongitude']]),
             ];
         }
     }
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -362,5 +302,66 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
             return $result;
         }
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Geobounds|null $oldValue
+     * @param DataObject\Data\Geobounds|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Geobounds
+            || !$newValue instanceof DataObject\Data\Geobounds) {
+            return false;
+        }
+
+        $oldValue = [
+            'NElongitude' => $oldValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $oldValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $oldValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $oldValue->getSouthWest()->getLatitude(),
+        ];
+
+        $newValue = [
+            'NElongitude' => $newValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $newValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $newValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $newValue->getSouthWest()->getLatitude(),
+        ];
+
+        foreach ($oldValue as $key => $oValue) {
+            if ($oValue !== $newValue[$key]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Geobounds::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Geobounds::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Geobounds::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
 }

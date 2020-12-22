@@ -21,11 +21,12 @@ use DeviceDetector\Cache\PSR6Bridge;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
-use Pimcore\Cache\Core\CoreHandlerInterface;
-use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
+
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Device implements DataProviderInterface
@@ -40,14 +41,14 @@ class Device implements DataProviderInterface
     /**
      * The cache handler caching detected results
      *
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     private $cache;
 
     /**
      * The cache pool which is passed to the DeviceDetector
      *
-     * @var PimcoreCacheItemPoolInterface
+     * @var TagAwareAdapterInterface
      */
     private $cachePool;
 
@@ -56,12 +57,12 @@ class Device implements DataProviderInterface
         $this->logger = $logger;
     }
 
-    public function setCache(CoreHandlerInterface $cache)
+    public function setCache(CoreCacheHandler $cache)
     {
         $this->cache = $cache;
     }
 
-    public function setCachePool(PimcoreCacheItemPoolInterface $cachePool)
+    public function setCachePool(TagAwareAdapterInterface $cachePool)
     {
         $this->cachePool = $cachePool;
     }
@@ -97,20 +98,20 @@ class Device implements DataProviderInterface
 
         if (isset($overrides['hardwarePlatform']) && !empty($overrides['hardwarePlatform'])) {
             $result['device'] = array_merge($result['device'] ?? [], [
-                'type' => $overrides['hardwarePlatform']
+                'type' => $overrides['hardwarePlatform'],
             ]);
         }
 
         if (isset($overrides['operatingSystem']) && !empty($overrides['operatingSystem'])) {
             $result['os'] = array_merge($result['os'] ?? [], [
-                'short_name' => $overrides['operatingSystem']
+                'short_name' => $overrides['operatingSystem'],
             ]);
         }
 
         if (isset($overrides['browser']) && !empty($overrides['browser'])) {
             $result['client'] = array_merge($result['client'] ?? [], [
                 'type' => 'browser',
-                'name' => $overrides['browser']
+                'name' => $overrides['browser'],
             ]);
         }
 

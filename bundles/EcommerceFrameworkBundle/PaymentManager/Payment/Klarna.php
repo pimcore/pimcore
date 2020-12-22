@@ -24,6 +24,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPayme
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-klarna" in Pimcore 10.
+ */
 class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     /**
@@ -75,7 +78,7 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
         $resolver->setRequired([
             'mode',
             'eid',
-            'shared_secret_key'
+            'shared_secret_key',
         ]);
 
         $resolver
@@ -118,7 +121,7 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
         $required = [
             'purchase_country' => null,
             'locale' => null,
-            'merchant_reference' => null
+            'merchant_reference' => null,
         ];
 
         $check = array_intersect_key($config, $required);
@@ -161,11 +164,11 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
     {
         // check required fields
         $required = [
-            'klarna_order' => null
+            'klarna_order' => null,
         ];
 
         $authorizedData = [
-            'klarna_order' => null
+            'klarna_order' => null,
         ];
 
         // check fields
@@ -182,7 +185,7 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
         $order->fetch();
 
         $statMap = [
-            'checkout_complete' => StatusInterface::STATUS_AUTHORIZED, 'created' => StatusInterface::STATUS_CLEARED
+            'checkout_complete' => StatusInterface::STATUS_AUTHORIZED, 'created' => StatusInterface::STATUS_CLEARED,
         ];
 
         return new Status(
@@ -196,7 +199,7 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
                 'klarna_amount' => $order['cart']['total_price_including_tax'],
                 'klarna_marshal' => json_encode($order->marshal()),
                 'klarna_reservation' => $order['reservation'],
-                'klarna_reference' => $order['reference']
+                'klarna_reference' => $order['reference'],
             ]
         );
     }
@@ -233,7 +236,7 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
 
             if ($order['status'] == 'checkout_complete') {
                 $order->update([
-                    'status' => 'created'
+                    'status' => 'created',
                 ]);
             }
 
@@ -246,7 +249,7 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
                     : StatusInterface::STATUS_CANCELLED,
                 [
                     'klarna_amount' => $order['cart']['total_price_including_tax'],
-                    'klarna_marshal' => json_encode($order->marshal())
+                    'klarna_marshal' => json_encode($order->marshal()),
                 ]
             );
         }

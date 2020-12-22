@@ -25,11 +25,13 @@ use Pimcore\Model\DataObject\Concrete;
  * @method Dao getDao()
  * @method void save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
     use Model\Element\ElementDumpStateTrait;
 
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var int
@@ -170,8 +172,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                            && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

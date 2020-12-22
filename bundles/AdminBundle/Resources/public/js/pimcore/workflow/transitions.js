@@ -17,7 +17,7 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
 
 
     Ext.Ajax.request({
-        url :  transition.isGlobalAction ? '/admin/workflow/submit-global-action' : '/admin/workflow/submit-workflow-transition',
+        url : transition.isGlobalAction ? Routing.generate('pimcore_admin_workflow_submitglobal') : Routing.generate('pimcore_admin_workflow_submitworkflowtransition'),
         method: 'post',
         params: {
             ctype: ctype,
@@ -30,12 +30,12 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
 
             if (data.success) {
 
-                pimcore.helpers.showNotification(t("workflow_transition_applied_successfully"), transition.label, "success");
+                pimcore.helpers.showNotification(t("workflow_transition_applied_successfully"), t(transition.label), "success");
 
                 elementEditor.reload({layoutId: transition.objectLayout});
 
             } else {
-                Ext.MessageBox.alert(data.message, data.reason);
+                Ext.MessageBox.alert(t(data.message), data.reasons.map(function(reason){ return t(reason); }).join('<br>'));
             }
 
 

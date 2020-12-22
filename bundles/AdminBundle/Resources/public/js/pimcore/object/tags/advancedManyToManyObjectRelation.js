@@ -131,9 +131,15 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 fc.layout = field;
                 fc.editor = null;
                 fc.sortable = false;
-                if(fc.layout.key === "fullpath") {
+
+                if (fc.layout.key === "fullpath") {
                     fc.renderer = this.fullPathRenderCheck.bind(this);
+                } else if(fc.layout.layout.fieldtype == "select" || fc.layout.layout.fieldtype == "multiselect") {
+                    fc.layout.layout.options.forEach(option => {
+                        option.key = t(option.key);
+                    });
                 }
+
                 columns.push(fc);
             }
         }
@@ -156,52 +162,74 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 cellEditor = function() {
                     return new Ext.form.TextField({});
                 };
-            } else if (this.fieldConfig.columns[i].type == "select" && !readOnly) {
-               var selectData = [];
+            } else if (this.fieldConfig.columns[i].type == "select") {
+                if(!readOnly) {
+                    var selectData = [];
 
-                if (this.fieldConfig.columns[i].value) {
-                    var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
+                    if (this.fieldConfig.columns[i].value) {
+                        var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
 
-                    for (var j = 0; j < selectDataRaw.length; j++) {
-                        selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
+                        for (var j = 0; j < selectDataRaw.length; j++) {
+                            selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
+                        }
                     }
+
+                    cellEditor = function(selectData) {
+                        return new Ext.form.ComboBox({
+                            typeAhead: true,
+                            queryDelay: 0,
+                            queryMode: "local",
+                            forceSelection: true,
+                            triggerAction: 'all',
+                            lazyRender: false,
+                            mode: 'local',
+
+                            store: new Ext.data.ArrayStore({
+                                fields: [
+                                    'value',
+                                    'label'
+                                ],
+                                data: selectData
+                            }),
+                            valueField: 'value',
+                            displayField: 'label'
+                        });
+                    }.bind(this, selectData);
                 }
 
-                cellEditor = function(selectData) {
-                    return new Ext.form.ComboBox({
-                        typeAhead: true,
-                        queryDelay: 0,
-                        queryMode: "local",
-                        forceSelection: true,
-                        triggerAction: 'all',
-                        lazyRender: false,
-                        mode: 'local',
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    return t(value);
+                }
+            } else if(this.fieldConfig.columns[i].type == "multiselect") {
+                if(!readOnly) {
+                    cellEditor =  function(fieldInfo) {
+                        return new pimcore.object.helpers.metadataMultiselectEditor({
+                            fieldInfo: fieldInfo
+                        });
+                    }.bind(this, this.fieldConfig.columns[i]);
+                }
 
-                        store: new Ext.data.ArrayStore({
-                            fields: [
-                                'value',
-                                'label'
-                            ],
-                            data: selectData
-                        }),
-                        valueField: 'value',
-                        displayField: 'label'
-                    });
-                }.bind(this, selectData);
-            } else if(this.fieldConfig.columns[i].type == "multiselect" && !readOnly) {
-                cellEditor =  function(fieldInfo) {
-                    return new pimcore.object.helpers.metadataMultiselectEditor({
-                        fieldInfo: fieldInfo
-                    });
-                }.bind(this, this.fieldConfig.columns[i]);
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    if (Ext.isString(value)) {
+                        value = value.split(',');
+                    }
+
+                    if (Ext.isArray(value)) {
+                        return value.map(function (str) {
+                            return t(str);
+                        }).join(',')
+                    } else {
+                        return value;
+                    }
+                }
             } else if (this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    if (value) {
-                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
-                    } else {
-                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
+                    if (this.fieldConfig.noteditable) {
+                        metaData.tdCls += ' grid_cbx_noteditable';
                     }
-                };
+
+                    return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn {0}" style=""></div></div>', value ? 'x-grid-checkcolumn-checked' : '');
+                }.bind(this);
 
                 listeners = {
                     "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
@@ -215,13 +243,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         renderer: renderer
                     }));
                     continue;
-                }
-
-            }
-
-            if(this.fieldConfig.columns[i].type == "select") {
-                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    return t(value);
                 }
             }
 
@@ -351,6 +372,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             selModel: {
                 selType: (this.fieldConfig.enableBatchEdit ? 'checkboxmodel': 'rowmodel')
             },
+            multiSelect: true,
             columnLines: true,
             stripeRows: true,
             columns: {
@@ -378,15 +400,15 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         }
                     }.bind(this),
                     // see https://github.com/pimcore/pimcore/issues/979
-                    // probably a ExtJS 6.0 bug. withou this, dropdowns not working anymore if plugin is enabled
+                    // probably a ExtJS 6.0 bug. without this, dropdowns not working anymore if plugin is enabled
                     // TODO: investigate if there this is already fixed 6.2
                     cellmousedown: function (element, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                        if (cellIndex >= visibleFields.length) {
+                        if (this.fieldConfig.noteditable == true || cellIndex >= visibleFields.length) {
                             return false;
                         } else {
                             return true;
                         }
-                    }
+                    }.bind(this)
                 }
             },
             componentCls: cls,
@@ -585,9 +607,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     getCellEditValue: function () {
         return this.getValue();
-    }
+    },
 
 });
 
-// @TODO BC layer, to be removed in v7.0
+// @TODO BC layer, to be removed in Pimcore 10
 pimcore.object.tags.objectsMetadata = pimcore.object.tags.advancedManyToManyObjectRelation;

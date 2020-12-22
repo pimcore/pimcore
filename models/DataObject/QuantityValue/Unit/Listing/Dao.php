@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\QuantityValue\Unit\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -47,12 +49,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getTotalCount()
     {
-        $amount = $this->db->fetchRow('SELECT COUNT(*) as amount FROM `' . DataObject\QuantityValue\Unit\Dao::TABLE_NAME . '`' . $this->getCondition());
-
-        return $amount['amount'];
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM '.DataObject\QuantityValue\Unit\Dao::TABLE_NAME.' ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }
