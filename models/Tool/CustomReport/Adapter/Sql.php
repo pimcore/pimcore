@@ -164,14 +164,10 @@ class Sql extends AbstractAdapter
         $db = Db::get();
         $condition = ['1 = 1'];
 
-        $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
-
-        $data = '';
-
         if ($filters) {
             if (is_array($filters)) {
                 foreach ($filters as $filter) {
-                    $value = $filter['value'] ;
+                    $value = $filter['value'];
                     $type = $filter['type'];
                     $operator = $filter['operator'];
                     $maxValue = null;
@@ -184,7 +180,7 @@ class Sql extends AbstractAdapter
 
                     switch ($operator) {
                         case 'like':
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+                            $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value . '%');
                             break;
                         case 'lt':
                         case 'gt':
@@ -211,15 +207,20 @@ class Sql extends AbstractAdapter
             }
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
-            $condition = implode(' AND ', $condition);
+        $condition = implode(' AND ', $condition);
 
-            $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+        $config = $this->config;
+        $config->where = !empty($config->where) ? $config->where . ' AND ' . $condition : $condition;
+
+        $sql = $this->buildQueryString($config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
+
+        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+            $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz';
 
             if ($fields) {
-                $data = 'SELECT `' . implode('`, `', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $data = 'SELECT `' . implode('`, `', $fields) . '` FROM (' . $sql . ') AS somerandxyz';
             } else {
-                $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $data = $sql;
             }
         } else {
             return null;
