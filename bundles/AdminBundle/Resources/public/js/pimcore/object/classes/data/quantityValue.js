@@ -49,16 +49,21 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("unit_width"),
                 name: "unitWidth",
                 value: this.datax.unitWidth
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             },
             {
                 xtype: "numberfield",

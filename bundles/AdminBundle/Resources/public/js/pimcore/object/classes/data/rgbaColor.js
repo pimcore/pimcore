@@ -62,10 +62,15 @@ pimcore.object.classes.data.rgbaColor = Class.create(pimcore.object.classes.data
     getSpecificPanelItems: function (datax, inEncryptedField) {
         return [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             }
         ];
 

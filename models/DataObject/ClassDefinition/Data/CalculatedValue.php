@@ -35,7 +35,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public $elementType = 'input';
 
     /**
-     * @var int
+     * @var string|int
      */
     public $width = 0;
 
@@ -81,7 +81,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -89,11 +89,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
-        $this->width = (int)$width;
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
     }
 
     /**

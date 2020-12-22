@@ -60,14 +60,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $title;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -75,9 +75,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $maxTabs;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $labelWidth;
+    public $labelWidth = 0;
 
     /** @var bool */
     public $localized;
@@ -828,19 +828,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param string|int|null $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -928,19 +931,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -1090,15 +1096,18 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $labelWidth
+     * @param string|int $labelWidth
      */
     public function setLabelWidth($labelWidth)
     {
-        $this->labelWidth = (int) $labelWidth;
+        if (is_numeric($labelWidth)) {
+            $labelWidth = (int)$labelWidth;
+        }
+        $this->labelWidth = $labelWidth;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getLabelWidth()
     {

@@ -105,7 +105,20 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
         };
 
         possibleOptions = new Ext.ux.form.MultiSelect(options);
-        return [possibleOptions];
+        return [
+            {
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            possibleOptions
+        ];
     },
 
     applySpecialData: function(source) {

@@ -185,13 +185,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         else
             eConfig.removePlugins = "tableresize";
 
-        if (intval(this.fieldConfig.width) > 1) {
-            eConfig.width = this.fieldConfig.width;
-        }
-        if (intval(this.fieldConfig.height) > 1) {
-            eConfig.height = this.fieldConfig.height;
-        }
-
         if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
             eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);
         }

@@ -341,8 +341,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     },
 
     getLayoutEdit: function () {
-
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = null;
         }
 
@@ -591,9 +590,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
 
     getLayoutShow: function () {
-
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
 

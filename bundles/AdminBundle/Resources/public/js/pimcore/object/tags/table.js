@@ -100,7 +100,6 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-
         var options = {};
         options.name = this.fieldConfig.name;
         options.border = true;
@@ -110,6 +109,9 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         options.componentCls = "object_field object_field_type_" + this.type;
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
+        }
+        if (this.fieldConfig.height) {
+            options.height = this.fieldConfig.height;
         }
 
         if (!this.component) {

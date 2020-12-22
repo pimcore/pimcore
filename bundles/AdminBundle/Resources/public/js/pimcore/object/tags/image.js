@@ -68,11 +68,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-
-        if (intval(this.fieldConfig.width) < 1) {
+        if (!this.fieldConfig.width) {
             this.fieldConfig.width = 300;
         }
-        if (intval(this.fieldConfig.height) < 1) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = 300;
         }
 
@@ -166,10 +165,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutShow: function () {
-        if (intval(this.fieldConfig.width) < 1) {
+        if (!this.fieldConfig.width) {
             this.fieldConfig.width = 300;
         }
-        if (intval(this.fieldConfig.height) < 1) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = 300;
         }
 

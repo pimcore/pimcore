@@ -70,9 +70,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -112,9 +110,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -189,7 +185,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            options.width += options.labelWidth;
+            options.width = this.sumWidths(options.width, options.labelWidth);
         }
 
         if (typeof this.data == "string" || typeof this.data == "number") {

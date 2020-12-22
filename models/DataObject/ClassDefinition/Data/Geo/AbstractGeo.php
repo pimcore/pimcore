@@ -37,14 +37,14 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
     public $zoom = 1;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var string
@@ -112,7 +112,7 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -120,19 +120,22 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -140,12 +143,15 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data impleme
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
         $this->height = $height;
 
         return $this;

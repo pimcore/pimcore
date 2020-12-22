@@ -40,9 +40,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public $fieldtype = 'manyToOneRelation';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string
@@ -350,7 +350,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -358,13 +358,16 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }

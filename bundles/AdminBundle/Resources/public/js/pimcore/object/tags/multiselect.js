@@ -172,7 +172,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            options.width += options.labelWidth;
+            options.width = this.sumWidths(options.width, options.labelWidth);
         }
 
         if (this.fieldConfig.height) {

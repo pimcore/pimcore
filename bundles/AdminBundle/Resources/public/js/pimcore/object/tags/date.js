@@ -79,7 +79,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            date.width += date.labelWidth;
+            date.width = this.sumWidths(date.width, date.labelWidth);
         }
 
         if (this.data) {
