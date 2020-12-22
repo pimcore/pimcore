@@ -360,4 +360,24 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
     {
         return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch5($this->tenantConfig);
     }
+
+    /**
+     * Blocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function blockIndexWrite(string $indexName)
+    {
+        // Currently not tested in Elasticsearch < 6 and therefore disabled
+    }
+
+    /**
+     * Blocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function unblockIndexWrite(string $indexName)
+    {
+        // Currently not tested in Elasticsearch < 6 and therefore disabled
+    }
 }

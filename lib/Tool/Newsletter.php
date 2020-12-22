@@ -360,7 +360,6 @@ class Newsletter
         }
 
         $object->setNewsletterActive(true);
-        $object->setCreationDate(time());
         $object->setModificationDate(time());
         $object->setUserModification(0);
         $object->setUserOwner(0);
@@ -368,6 +367,7 @@ class Newsletter
         $object->setKey(File::getValidFilename(uniqid($object->getEmail(), true)));
 
         if (!$onlyCreateVersion) {
+            $object->setCreationDate(time());
             $object->save();
         }
 
