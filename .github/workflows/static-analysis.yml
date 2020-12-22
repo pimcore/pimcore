@@ -1,0 +1,53 @@
+
+name: "Static Analysis"
+
+on:
+    pull_request:
+        branches:
+            - "*.*"
+            - "master"
+    push:
+        branches:
+            - "*.*"
+            - "master"
+            - "*_actions"
+
+env:
+    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
+    PIMCORE_ENVIRONMENT: test
+    PIMCORE_TEST: 1
+
+jobs:
+    static-analysis-phpstan:
+        name: "Static Analysis with PHPStan"
+        runs-on: "ubuntu-20.04"
+
+        strategy:
+            matrix:
+                dependencies:
+                    - "lowest"
+                    - "highest"
+                php-version:
+                    - "7.4"
+
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: "${{ matrix.php-version }}"
+
+            - name: "Setup Pimcore environment"
+              run: |
+                  .github/ci/scripts/setup-pimcore-environment.sh
+
+            - name: "Install dependencies with Composer"
+              uses: "ramsey/composer-install@v1"
+              with:
+                  dependency-versions: "${{ matrix.dependencies }}"
+
+            - name: "Run a static analysis with phpstan/phpstan"
+              run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1"
