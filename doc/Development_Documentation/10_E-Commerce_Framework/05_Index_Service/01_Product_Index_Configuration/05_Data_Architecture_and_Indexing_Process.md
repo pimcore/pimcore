@@ -51,7 +51,7 @@ that should be used.
 - After every update of a Pimcore object, the changes are written into the store table and all child objects of the 
 updated object are added to the so called preparation queue (see later). As a consequence a periodic full update 
 should not be necessary any more.
-- Used for optimized mysql, elastic search, ...
+- Used for optimized mysql, elasticsearch, ...
 
 ![productindex-optimized](../../../img/productindex-optimized.png)
 

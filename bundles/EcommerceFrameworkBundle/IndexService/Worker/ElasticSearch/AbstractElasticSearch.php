@@ -25,9 +25,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
 
 /**
  * @property ElasticSearch $tenantConfig
@@ -78,28 +77,29 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected $indexStoreMetaData = [];
 
     /**
-     * @var LockInterface|null
+     * @var int
      */
-    protected $lock = null;
+    protected $lastLockLogTimestamp = 0;
+
 
     /**
-     * @var LockFactory|null
+     * name for routing param for ES bulk requests
+     *
+     * @var string
      */
-    protected $lockFactory = null;
+    protected $routingParamName = 'routing';
 
     /**
-     * @param LockFactory $lockFactory
      * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      * @param EventDispatcherInterface $eventDispatcher
      * @param string|null $workerMode
      */
-    public function __construct(LockFactory $lockFactory, ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
-        $this->lockFactory = $lockFactory;
     }
 
     /**
@@ -433,10 +433,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             if ($metadata !== null && $routingId != $metadata) {
                 //routing has changed, need to delete old ES entry
-                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $metadata]];
+                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $metadata]];
             }
 
-            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
+            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
                 return $value !== null;
             }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
@@ -634,7 +634,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     'index' => $this->getIndexNameVersion(),
                     'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
-                    'routing' => $storeEntry['o_virtualProductId'],
+                    $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
             } catch (\Exception $e) {
                 //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
@@ -700,12 +700,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
     }
 
-    // type will be removed in ES 7
-    protected function getMappingParams($type = null)
+    protected function getMappingParams()
     {
         $params = [
             'index' => $this->getIndexNameVersion(),
-            'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
             'body' => [
                 'properties' => $this->createMappingAttributes(),
             ],
@@ -830,6 +828,54 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     }
 
     /**
+     * Blocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function blockIndexWrite(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Block write index '.$indexName.'.');
+            $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index.blocks.write' => true,
+                ],
+            ]);
+
+            $esClient->indices()->refresh([
+                'index' => $indexName,
+            ]);
+        }
+    }
+
+    /**
+     * Unblocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function unblockIndexWrite(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Unlock write index '.$indexName.'.');
+            $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index.blocks.write' => false,
+                ],
+            ]);
+
+            $esClient->indices()->refresh([
+                'index' => $indexName,
+            ]);
+        }
+    }
+
+    /**
      * Get the next index version, e.g. if currently 13, then 14 will be returned.
      *
      * @return int
@@ -908,7 +954,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $this->createEsIndex($nextIndexName);
             $this->putIndexMapping($nextIndexName);
 
+            $this->blockIndexWrite($currentIndexName);
             $this->performReindex($currentIndexName, $nextIndexName);
+            $this->unblockIndexWrite($currentIndexName);
 
             $this->indexVersion = $nextIndex;
 
@@ -1050,20 +1098,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     }
 
     /**
-     * @var int
-     */
-    protected $lastLockLogTimestamp = 0;
-
-    protected function getLock(): LockInterface
-    {
-        if (!$this->lock) {
-            $this->lock = $this->lockFactory->createLock(self::REINDEXING_LOCK_KEY, 60 * 10);
-        }
-
-        return $this->lock;
-    }
-
-    /**
      * Verify if the index is currently locked.
      *
      * @param bool $throwException if set to false then no exception will be thrown if index is locked
@@ -1074,7 +1108,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected function checkIndexLock(bool $throwException = true): bool
     {
-        if (!$this->getLock()->acquire()) {
+        if (TmpStore::get(self::REINDEXING_LOCK_KEY)) {
             $errorMessage = sprintf('Index is currently locked by "%s" as reindex is in progress.', self::REINDEXING_LOCK_KEY);
             if ($throwException) {
                 throw new \Exception($errorMessage);
@@ -1094,12 +1128,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     protected function activateIndexLock()
     {
-        $this->getLock()->acquire();
+        TmpStore::set(self::REINDEXING_LOCK_KEY, 1, null, 60 * 10);
     }
 
     protected function releaseIndexLock()
     {
-        $this->getLock()->release();
+        TmpStore::delete(self::REINDEXING_LOCK_KEY);
         $this->lastLockLogTimestamp = 0;
     }
 }
