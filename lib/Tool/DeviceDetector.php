@@ -183,8 +183,6 @@ class DeviceDetector
             return;
         }
 
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-
         $type = null;
 
         // check CloudFront headers
@@ -199,34 +197,13 @@ class DeviceDetector
             }
         }
 
-        if (!$type) {
-            // android devices
-            if (stripos($userAgent, 'android') !== false) {
-                // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!
-                if (stripos($userAgent, 'mobile') !== false) {
-                    $type = 'phone';
-                } else {
-                    $type = 'tablet';
-                }
-            }
-
-            // ios devices
-            if (stripos($userAgent, 'ipad') !== false) {
+        if (!$type && isset($_SERVER['HTTP_USER_AGENT'])) {
+            $browser = new \Browser($_SERVER['HTTP_USER_AGENT']);
+            if ($browser->isMobile()) {
+                $type = 'phone';
+            } elseif ($browser->isTablet()) {
                 $type = 'tablet';
             }
-            if (stripos($userAgent, 'iphone') !== false) {
-                $type = 'phone';
-            }
-
-            // all other vendors, like blackberry, ...
-            if (!$type && stripos($userAgent, 'mobile') !== false) {
-                $type = 'phone';
-            }
-        }
-
-        // default is desktop
-        if (!$type) {
-            $type = $this->default;
         }
 
         // check for a forced type
@@ -252,6 +229,11 @@ class DeviceDetector
                     setcookie('forceDeviceType', $type);
                 }
             }
+        }
+
+        // default is desktop
+        if (!$type) {
+            $type = $this->default;
         }
 
         $this->{'is'.ucfirst($type)} = true;
