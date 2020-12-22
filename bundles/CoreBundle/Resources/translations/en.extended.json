@@ -493,6 +493,8 @@
   "classificationstore_mbx_enterstore_prompt": "Enter store name",
   "classificationstore_error_addstore_msg": "Error creating store",
   "search_for_key": "Search Key",
+  "width_explanation": "The width of this component. A numeric value will be interpreted as the number of pixels; a string value will be treated as a CSS value with units.",
+  "height_explanation": "The height of this component. A numeric value will be interpreted as the number of pixels; a string value will be treated as a CSS value with units.",
   "web2print_enable_in_default_view": "Enable Web2Print documents in default documents view",
   "web2print_enable_in_default_view_txt": "Enables Web2Print documents in default documents view in default perspective. Either activate this or create custom views and perspectives for managing Web2Print documents.",
   "web2print_tool": "Tool",

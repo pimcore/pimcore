@@ -82,16 +82,26 @@ pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layou
                             value: this.datax.handler
                         },
                         {
-                            xtype: "numberfield",
+                            xtype: "textfield",
                             fieldLabel: t("width"),
                             name: "width",
                             value: this.datax.width
                         },
                         {
-                            xtype: "numberfield",
+                            xtype: "displayfield",
+                            hideLabel: true,
+                            value: t('width_explanation')
+                        },
+                        {
+                            xtype: "textfield",
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height
+                        },
+                        {
+                            xtype: "displayfield",
+                            hideLabel: true,
+                            value: t('height_explanation')
                         }
                     ]
                 }

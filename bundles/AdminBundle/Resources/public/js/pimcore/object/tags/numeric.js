@@ -105,7 +105,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            input.width += input.labelWidth;
+            input.width = this.sumWidths(input.width, input.labelWidth);
         }
 
         if (this.fieldConfig["unsigned"]) {

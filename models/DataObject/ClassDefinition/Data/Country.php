@@ -29,6 +29,11 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      */
     public $fieldtype = 'country';
 
+    /**
+     * @var string|int
+     */
+    public $width = 0;
+
     /** Restrict selection to comma-separated list of countries.
      * @var string|null
      */
@@ -69,7 +74,30 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param string|null $restrictTo
+     * @return string|int
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param string|int $width
+     *
+     * @return $this
+     */
+    public function setWidth($width)
+    {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
+
+        return $this;
+    }
+
+    /**
+     * @param array|string|null $restrictTo
      */
     public function setRestrictTo($restrictTo)
     {

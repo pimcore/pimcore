@@ -33,9 +33,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public $fieldtype = 'rgbaColor';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
@@ -57,7 +57,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     ];
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -65,12 +65,15 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;
