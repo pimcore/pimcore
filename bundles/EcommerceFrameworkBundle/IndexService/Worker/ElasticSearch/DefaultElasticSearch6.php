@@ -35,7 +35,7 @@ class DefaultElasticSearch6 extends AbstractElasticSearch
     {
         $params = [
             'index' => $this->getIndexNameVersion(),
-            'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
+            'type' => $this->tenantConfig->getElasticSearchClientParams()['indexType'],
             'body' => [
                 'properties' => $this->createMappingAttributes(),
             ],
