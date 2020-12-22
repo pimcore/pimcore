@@ -138,6 +138,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->clientConfig = $options['client_config'];
         $this->indexSettings = $options['index_settings'];
         $this->elasticSearchClientParams = $options['es_client_params'];
+
+        //add default type for elasticsearch
+        if(empty($this->elasticSearchClientParams['indexType'])) {
+            $this->elasticSearchClientParams['indexType'] = '_doc';
+        }
     }
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)

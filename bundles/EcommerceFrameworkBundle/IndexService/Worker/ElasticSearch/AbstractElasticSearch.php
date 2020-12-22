@@ -82,6 +82,14 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected $lock = null;
 
+
+    /**
+     * name for routing param for ES bulk requests
+     *
+     * @var string
+     */
+    protected $routingParamName = 'routing';
+
     /**
      * @var LockFactory|null
      */
@@ -433,10 +441,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             if ($metadata !== null && $routingId != $metadata) {
                 //routing has changed, need to delete old ES entry
-                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $metadata]];
+                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $metadata]];
             }
 
-            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
+            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
                 return $value !== null;
             }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
@@ -634,7 +642,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     'index' => $this->getIndexNameVersion(),
                     'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
-                    'routing' => $storeEntry['o_virtualProductId'],
+                    $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
             } catch (\Exception $e) {
                 //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
@@ -700,12 +708,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
     }
 
-    // type will be removed in ES 7
-    protected function getMappingParams($type = null)
+    protected function getMappingParams()
     {
         $params = [
             'index' => $this->getIndexNameVersion(),
-            'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
             'body' => [
                 'properties' => $this->createMappingAttributes(),
             ],
