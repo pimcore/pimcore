@@ -76,7 +76,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected $indexStoreMetaData = [];
 
-
     /**
      * @var int
      */
@@ -836,12 +835,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $esClient->indices()->putSettings([
                 'index' => $indexName,
                 'body' => [
-                    'index.blocks.write' => true
-                ]
+                    'index.blocks.write' => true,
+                ],
             ]);
 
             $esClient->indices()->refresh([
-                'index' => $indexName
+                'index' => $indexName,
             ]);
         }
     }
@@ -860,12 +859,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $esClient->indices()->putSettings([
                 'index' => $indexName,
                 'body' => [
-                    'index.blocks.write' => false
-                ]
+                    'index.blocks.write' => false,
+                ],
             ]);
 
             $esClient->indices()->refresh([
-                'index' => $indexName
+                'index' => $indexName,
             ]);
         }
     }
@@ -1092,7 +1091,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return $indexPart;
     }
 
-
     /**
      * Verify if the index is currently locked.
      *
@@ -1124,7 +1122,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     protected function activateIndexLock()
     {
-        TmpStore::set(self::REINDEXING_LOCK_KEY, 1, null, 60*10);
+        TmpStore::set(self::REINDEXING_LOCK_KEY, 1, null, 60 * 10);
     }
 
     protected function releaseIndexLock()
