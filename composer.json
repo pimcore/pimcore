@@ -100,13 +100,12 @@
   },
   "conflict": {
     "monolog/monolog": ">=2",
-    "symfony/monolog-bundle": "3.6.0",
-    "codeception/module-symfony": "1.5.1"
+    "symfony/monolog-bundle": "3.6.0"
   },
   "require-dev": {
     "cache/integration-tests": "dev-master",
     "codeception/codeception": "^4.1.12",
-    "codeception/module-symfony": "^1.5.0",
+    "codeception/module-symfony": "^1.6.0",
     "codeception/phpunit-wrapper": "^9",
     "phpstan/phpstan": "^0.12.56",
     "phpstan/phpstan-symfony": "^0.12.11",

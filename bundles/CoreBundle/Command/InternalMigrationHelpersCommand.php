@@ -15,12 +15,22 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InternalMigrationHelpersCommand extends AbstractCommand
 {
+    private FilteredTableMetadataStorage $metadataStorage;
+
+    public function __construct(FilteredTableMetadataStorage $metadataStorage, ?string $name = null)
+    {
+        parent::__construct($name);
+
+        $this->metadataStorage = $metadataStorage;
+    }
+
     protected function configure()
     {
         $this
@@ -42,7 +52,10 @@ class InternalMigrationHelpersCommand extends AbstractCommand
     {
         if ($input->getOption('is-installed')) {
             try {
-                $output->write((string) \Pimcore::isInstalled());
+                if(\Pimcore::isInstalled()) {
+                    $this->metadataStorage->ensureInitialized();
+                    $output->write(1);
+                }
             } catch (\Throwable $e) {
                 // nothing to do
             }

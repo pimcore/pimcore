@@ -113,31 +113,6 @@ Useful examples:
 
 See [Codeception Commands](https://codeception.com/docs/reference/Commands) for more options.
 
-## Travis
-
-Pimcore uses [Travis CI](https://travis-ci.com/) for continuous integration.
-Open https://travis-ci.com/pimcore/pimcore for the current build status. 
-
-### Test Matrix
-
-The build matrix (which can change at any time) consists of a mixture of
-
-* different PHP versions (7.3, 7.4)
-* different Composer dependencies (lowest, highest)
-
-In addition it
-* verifies the state of the documentation (broken links, etc) 
-* runs [PHPStan](https://github.com/phpstan/phpstan) (PHP Static Analysis Tool). For a list verification performed by
-PHPStan see this [list](https://gist.github.com/carusogabriel/62698312f451589afd956eddac2dc07a). Current level 1. 
-
-### Build Artifacts
-
-Travis will automatically upload build artifacts to Amazon S3 (currently everything in `var/log`).
-
-Look for something like this in your job output and open it in your web browser.
-
-![Artifact](../../img/travis_artifact.png)
-
 ## Providing new tests & extending existing ones
 
 In general, contributions in form extending and improving tests is highly appreciated.
@@ -168,10 +143,8 @@ TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse -c phpstan.local.neon ve
 
 where `/tmp/[dedicateddir]` must be a writable temporary directory.
 
-> Note regarding PRs: Please try to meet all 
-level 3 requirements (run it with `-l 3` instead) for all files you touch or add.
+> Note regarding PRs: Your code has to meet level 3 requirements (run it with `-l 3` instead) for all files you touch or add.
 
-Travis also performs level 2 tests but allows them to fail in case that not all rules are satisfied.
 
 ![PHPStan Job](../../img/phpstan1.png)
 
@@ -185,10 +158,10 @@ PHPStan can create a baseline file, which contain all current errors. See this [
  
 To generate a new baseline file you have to execute following command:
 ```sh
-vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
+vendor/bin/phpstan analyse -c phpstan.local.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
 ```
 
-With this baseline file include, Travis can detect new errors without having to fix all errors first.
+With this baseline file include, we can detect new errors without having to fix all errors first.
 
 ## PHPStan Level Overview
 

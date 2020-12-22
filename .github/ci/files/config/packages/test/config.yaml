@@ -1,10 +1,16 @@
 imports:
-    - { resource: ../dev/config.yaml }
+    - { resource: ../../config.yaml }
 
 # this cache is used during tests when setting up pimcore
-pimcore:
+framework:
     cache:
-        pool_service_id: pimcore.cache.core.pool.array
+        pools:
+            pimcore.cache.pool:
+                public: true
+                tags: true
+                default_lifetime: 31536000  # 1 year
+                adapter: cache.adapter.array
+
 
 doctrine:
     dbal:
