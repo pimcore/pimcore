@@ -80,6 +80,12 @@ services:
         arguments:
             $workerMode: '%pimcore_ecommerce.index_service.worker_mode%'
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch7:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+        arguments:
+            $workerMode: '%pimcore_ecommerce.index_service.worker_mode%'
+
+
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
         arguments:

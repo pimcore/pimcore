@@ -17,32 +17,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSea
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 
 /**
- *  Use this for ES Version >= 6
+ *  Use this for ES Version >= 7
  */
-class DefaultElasticSearch6 extends AbstractElasticSearch
+class DefaultElasticSearch7 extends AbstractElasticSearch
 {
-    /**
-     * name for routing param for ES bulk requests
-     *
-     * @var string
-     */
-    protected $routingParamName = '_routing';
-
-    // type will be removed in ES 7
-    protected function getMappingParams($type = null)
-    {
-        $params = [
-            'index' => $this->getIndexNameVersion(),
-            'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
-            'body' => [
-                'properties' => $this->createMappingAttributes(),
-            ],
-        ];
-
-        return $params;
-    }
-
-
     /**
      * returns product list implementation valid and configured for this worker/tenant
      *
@@ -50,6 +28,6 @@ class DefaultElasticSearch6 extends AbstractElasticSearch
      */
     public function getProductList()
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch6($this->tenantConfig);
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch7($this->tenantConfig);
     }
 }
