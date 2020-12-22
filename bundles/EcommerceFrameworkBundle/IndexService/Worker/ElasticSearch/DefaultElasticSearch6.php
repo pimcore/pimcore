@@ -14,10 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 
 /**
  *  Use this for ES Version >= 6
+ * @property ElasticSearch $tenantConfig
  */
 class DefaultElasticSearch6 extends AbstractElasticSearch
 {
