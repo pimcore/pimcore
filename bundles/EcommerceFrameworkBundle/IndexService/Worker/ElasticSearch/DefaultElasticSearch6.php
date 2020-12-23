@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 
 /**
  *  Use this for ES Version >= 6
+ *
  * @property ElasticSearch $tenantConfig
  */
 class DefaultElasticSearch6 extends AbstractElasticSearch
@@ -43,7 +44,6 @@ class DefaultElasticSearch6 extends AbstractElasticSearch
 
         return $params;
     }
-
 
     /**
      * returns product list implementation valid and configured for this worker/tenant

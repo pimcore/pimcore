@@ -52,7 +52,7 @@ class InternalMigrationHelpersCommand extends AbstractCommand
     {
         if ($input->getOption('is-installed')) {
             try {
-                if(\Pimcore::isInstalled()) {
+                if (\Pimcore::isInstalled()) {
                     $this->metadataStorage->ensureInitialized();
                     $output->write(1);
                 }

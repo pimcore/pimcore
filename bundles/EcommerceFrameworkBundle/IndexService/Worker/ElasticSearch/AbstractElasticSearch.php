@@ -82,7 +82,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected $lock = null;
 
-
     /**
      * name for routing param for ES bulk requests
      *
