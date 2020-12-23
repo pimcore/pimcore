@@ -311,6 +311,7 @@ class Pimcore extends Module\Symfony
         DataObject\AbstractObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
     }
+
     public function makeHtmlSnapshot($name = null)
     {
         // TODO: Implement makeHtmlSnapshot() method.
