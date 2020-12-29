@@ -83,7 +83,8 @@ pimcore.notification.helper.showNotifications = function (notifications) {
             height: 150,
             closable: true,
             autoClose: false,
-            tools: tools
+            tools: tools,
+            align: "br"
         });
         notification.show();
     }

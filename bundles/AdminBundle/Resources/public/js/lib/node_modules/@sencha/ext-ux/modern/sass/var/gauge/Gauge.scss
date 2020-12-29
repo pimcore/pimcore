@@ -1,0 +1,7 @@
+$gauge-track-fill: dynamic($progress-background-color);
+
+$gauge-track-stroke: dynamic($slider-track-border-color);
+
+$gauge-value-fill: dynamic($progress-bar-background-color);
+
+$gauge-needle-fill: dynamic(darken($slider-track-border-color, 40%));

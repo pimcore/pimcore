@@ -51,41 +51,58 @@ Ext.Loader.setConfig({
 });
 Ext.enableAriaButtons = false;
 
-Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/ext/ux');
+Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-ux/classic/src');
+Ext.Loader.setPath('Ext', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src');
+Ext.Loader.setPath('Ext.chart', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-charts/src/chart');
 
 Ext.require([
-    'Ext.button.Split',
-    'Ext.container.Viewport',
-    'Ext.data.JsonStore',
-    'Ext.grid.column.Action',
-    'Ext.grid.plugin.CellEditing',
-    'Ext.form.field.ComboBox',
-    'Ext.form.field.Hidden',
-    'Ext.grid.column.Check',
-    'Ext.grid.property.Grid',
-    'Ext.form.field.Time',
-    'Ext.form.FieldSet',
-    'Ext.form.Label',
-    'Ext.form.Panel',
-    'Ext.grid.feature.Grouping',
-    'Ext.grid.Panel',
-    'Ext.grid.plugin.DragDrop',
-    'Ext.layout.container.Accordion',
-    'Ext.layout.container.Border',
-    'Ext.tip.QuickTipManager',
-    'Ext.tab.Panel',
-    'Ext.toolbar.Paging',
-    'Ext.toolbar.Spacer',
-    'Ext.tree.plugin.TreeViewDragDrop',
-    'Ext.tree.Panel',
+    // 'Ext.form.field.Date',
+    // 'Ext.form.field.Date',
+    // 'Ext.data.JsonStore',
+    // 'Ext.button.Split',
+    // 'Ext.container.Viewport',
+    // 'Ext.data.JsonStore',
+    // 'Ext.grid.column.Action',
+    // 'Ext.grid.plugin.CellEditing',
+    // 'Ext.form.field.ComboBox',
+    // 'Ext.form.field.Hidden',
+    // 'Ext.grid.column.Check',
+    // 'Ext.grid.property.Grid',
+    // 'Ext.form.field.Time',
+    // 'Ext.form.FieldSet',
+    // 'Ext.form.Label',
+    // 'Ext.form.Panel',
+    // 'Ext.grid.feature.Grouping',
+    // 'Ext.grid.Panel',
+    // 'Ext.grid.plugin.DragDrop',
+    // 'Ext.layout.container.Accordion',
+    // 'Ext.layout.container.Border',
+    // 'Ext.tip.QuickTipManager',
+    // 'Ext.tab.Panel',
+    // 'Ext.toolbar.Paging',
+    // 'Ext.toolbar.Spacer',
+    // 'Ext.tree.plugin.TreeViewDragDrop',
+    // 'Ext.tree.Panel',
     'Ext.ux.colorpick.Field',
     'Ext.ux.colorpick.SliderAlpha',
-    'Ext.ux.DataTip',
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
     'Ext.ux.TabReorderer',
     'Ext.ux.grid.SubTable',
-    'Ext.window.Toast'
+    'Ext.window.Toast',
+    'Ext.slider.Single',
+    'Ext.form.field.Tag',
+
+    // charts
+    'Ext.chart.interactions.ItemHighlight',
+    'Ext.chart.axis.Numeric',
+    'Ext.chart.axis.Category',
+    'Ext.chart.series.Line',
+    'Ext.chart.PolarChart',
+    'Ext.chart.series.Pie',
+    'Ext.chart.theme.DefaultGradients',
+    'Ext.chart.interactions.Rotate',
+    'Ext.chart.series.Bar',
 ]);
 
 
@@ -619,7 +636,7 @@ Ext.onReady(function () {
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
                                     Ext.create('Ext.ux.TabReorderer', {}),
-                                    Ext.create('Ext.ux.TabMiddleButtonClose', {})
+                                    //TODO EXTJS7, Ext.create('Ext.ux.TabMiddleButtonClose', {})
                                 ]
                         })
                         ,

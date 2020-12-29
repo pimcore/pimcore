@@ -557,7 +557,8 @@ pimcore.helpers.showNotification = function (title, text, type, detailText, hide
             autoShow: true,
             width: 'auto',
             maxWidth: 350,
-            closeable: true
+            closeable: true,
+            align: "br"
         });
         notification.show(document);
     }

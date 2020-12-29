@@ -1,0 +1,14 @@
+//$rating-picker-color: dynamic(rgb(96, 169, 23));
+//$rating-picker-color: dynamic(#FFE850);
+$rating-picker-color: dynamic(#ccc);
+
+$rating-picker-hover-color: dynamic($rating-picker-color);
+
+//$rating-picker-selected-color: dynamic(inherit);
+$rating-picker-selected-color: dynamic(#FFE850);
+
+$rating-picker-selected-hover-color: dynamic(inherit);
+
+$rating-picker-opacity: dynamic(0.8);
+
+$rating-picker-hover-opacity: dynamic(1);

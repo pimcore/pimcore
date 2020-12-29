@@ -1,0 +1,62 @@
+.#{$prefix}statusbar .#{$prefix}status-text {
+    cursor: default;
+}
+.#{$prefix}statusbar .#{$prefix}status-busy {
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+
+.#{$prefix}statusbar .#{$prefix}status-text-panel {
+    border: 0 none;
+    padding: 2px 8px 2px 5px;
+}
+
+.#{$prefix}statusbar .#{$prefix}status-error {
+    cursor: pointer;
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+.#{$prefix}statusbar .#{$prefix}status-valid {
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+.#{$prefix}status-error-list {
+    font: 11px tahoma,arial,verdana,sans-serif;
+    position: absolute;
+    z-index: 9999;
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+    padding: 5px 10px;
+}
+.#{$prefix}status-error-list li {
+    cursor: pointer;
+    list-style: disc;
+    margin-left: 10px;
+}
+.#{$prefix}status-error-list li a {
+    text-decoration: none;
+}
+.#{$prefix}status-error-list li a:hover {
+    text-decoration: underline;
+}
+
+.#{$prefix}statusbar .#{$prefix}status-busy {
+    background-image: theme-background-image('statusbar/loading', 'gif');
+}
+
+.#{$prefix}statusbar .#{$prefix}status-error {
+    color: #C33;
+    background-image: theme-background-image('statusbar/exclamation', 'gif');
+}
+.#{$prefix}statusbar .#{$prefix}status-valid {
+    background-image: theme-background-image('statusbar/accept', 'png');
+}
+.#{$prefix}status-error-list {
+    border-color: #C33;
+    background: white;
+}
+.#{$prefix}status-error-list li a {
+    color: #15428B;
+}
