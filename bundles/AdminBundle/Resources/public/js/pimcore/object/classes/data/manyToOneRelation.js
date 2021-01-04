@@ -154,11 +154,16 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                 labelWidth: 100,
                 items :[
                     {
-                        xtype: "numberfield",
+                        xtype: "textfield",
                         fieldLabel: t("width"),
                         name: "width",
                         value: this.datax.width
-                    } ,
+                    },
+                    {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: t('width_explanation')
+                    },
                     {
                         xtype: 'textfield',
                         width: 600,

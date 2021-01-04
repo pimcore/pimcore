@@ -35,9 +35,9 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $fieldtype = 'input';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string|null
@@ -81,7 +81,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $showCharCount;
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -89,12 +89,15 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;

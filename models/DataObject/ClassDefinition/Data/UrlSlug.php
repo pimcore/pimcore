@@ -37,9 +37,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public $fieldtype = 'urlSlug';
 
     /**
-     * @var int|null
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var int|null
@@ -55,7 +55,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public $availableSites;
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -63,12 +63,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param int|null $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;

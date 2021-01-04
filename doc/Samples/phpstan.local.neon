@@ -5,7 +5,7 @@ includes:
 
 parameters:
 
-    #bootstrap: veondor/pimcore/pimcore/.travis/phpstan-bootstrap.php # optional when running in project scope
+    #bootstrap: veondor/pimcore/pimcore/.github/ci/files/phpstan-bootstrap.php # optional when running in project scope
     reportUnmatchedIgnoredErrors: false
 
     bootstrap: phpstan-bootstrap-local.php

@@ -50,16 +50,16 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var string
@@ -130,7 +130,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -138,15 +138,18 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -154,10 +157,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      */
     public function setHeight($height)
     {
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
         $this->height = $height;
     }
 

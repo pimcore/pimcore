@@ -58,9 +58,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -81,8 +79,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.labelWidth) {
             labelWidth = this.fieldConfig.labelWidth;
         }
-        width += labelWidth;
-
+        width = this.sumWidths(width, labelWidth);
 
         this.selector = new Ext.ux.colorpick.Selector(
             {
