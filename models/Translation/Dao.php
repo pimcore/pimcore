@@ -20,7 +20,7 @@ namespace Pimcore\Model\Translation;
 use Pimcore\Model;
 
 /**
- * @property \Pimcore\Model\Translation $model
+ * @property \Pimcore\Model\Translation\Translation $model
  */
 class Dao extends Model\Dao\AbstractDao
 {

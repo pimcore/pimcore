@@ -21,8 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Translation\AbstractTranslation\Listing\Dao getDao()
- * @method Model\Translation[] load()
- * @method Model\Translation current()
+ * @method Model\Translation\Translation[] load()
+ * @method Model\Translation\Translation current()
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
  *
@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @var string
      */
-    protected static $domain = Model\Translation::DOMAIN_DEFAULT;
+    protected static $domain = Model\Translation\Translation::DOMAIN_DEFAULT;
 
     /**
      * @return string
