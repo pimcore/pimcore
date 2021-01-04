@@ -14,36 +14,41 @@
 pimcore.registerNS("pimcore.document.editables.numeric");
 pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
-
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if ('number' !== typeof data && !data) {
             data = "";
         }
 
-        options.value = data;
-        options.name = id + "_editable";
-        options.decimalPrecision = 20;
+        config.value = data;
+        config.name = id + "_editable";
+        config.decimalPrecision = 20;
 
-        this.element = new Ext.form.field.Number(options);
-        this.element.render(id);
-
-
-        if(options["required"]) {
-            this.required = options["required"];
+        if(config["required"]) {
+            this.required = config["required"];
         }
 
-        this.checkValue();
+        this.config = config;
+    },
 
+    render: function () {
+        this.setupWrapper();
+        this.element = new Ext.form.field.Number(this.config);
+        this.element.render(this.id);
+
+        this.checkValue();
         this.element.on("blur", this.checkValue.bind(this, true));
     },
 
     getValue: function () {
-        return this.element.getValue();
+        if(this.element) {
+            return this.element.getValue();
+        }
+
+        return this.config.value;
     },
 
     getType: function () {

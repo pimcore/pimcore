@@ -20,6 +20,8 @@ namespace Pimcore\Model\Translation\AbstractTranslation;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Translation\AbstractTranslation $model
  */
 abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
@@ -31,13 +33,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function getByKey($key)
     {
-        $caseInsensitive = \Pimcore::getContainer()->getParameter('pimcore.config')['translations']['case_insensitive'];
-
-        $condition = '`key` = ?';
-        if ($caseInsensitive) {
-            $condition = 'LOWER(`key`) = LOWER(?)';
-        }
-        $data = $this->db->fetchAll('SELECT * FROM ' . static::getTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
+        $data = $this->db->fetchAll('SELECT * FROM ' . static::getTableName() . ' WHERE `key` = ? ORDER BY `creationDate` ', [$key]);
 
         if (!empty($data)) {
             foreach ($data as $d) {

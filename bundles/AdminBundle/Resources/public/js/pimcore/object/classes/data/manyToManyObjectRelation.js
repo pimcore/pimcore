@@ -63,17 +63,28 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
 
         this.specificPanel.add([
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
-            },{
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
+            },
+            {
                 xtype: "numberfield",
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
@@ -226,5 +237,5 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
 
 });
 
-// @TODO BC layer, to be removed in v7.0
+// @TODO BC layer, to be removed in Pimcore 10
 pimcore.object.classes.data.objects = pimcore.object.classes.data.manyToManyObjectRelation;

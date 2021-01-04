@@ -14,37 +14,36 @@
 pimcore.registerNS("pimcore.document.editables.snippet");
 pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
         this.data = {};
-
-        if (!data) {
-            data = {};
+        if (data) {
+            this.data = data;
         }
 
         // height management                
         this.defaultHeight = 100;
-        if (this.options.defaultHeight) {
-            this.defaultHeight = this.options.defaultHeight;
+        if (this.config.defaultHeight) {
+            this.defaultHeight = this.config.defaultHeight;
         }
-        if (!this.options.height && !data.path) {
-            this.options.height = this.defaultHeight;
+        if (!this.config.height && !this.data.path) {
+            this.config.height = this.defaultHeight;
         }
 
+        this.config.name = id + "_editable";
+        this.config.border = false;
+        this.config.bodyStyle = "min-height: 40px;";
+    },
+
+    render: function () {
         this.setupWrapper();
 
-        this.options.name = id + "_editable";
-        this.options.border = false;
-        this.options.bodyStyle = "min-height: 40px;";
-
-        this.element = new Ext.Panel(this.options);
+        this.element = new Ext.Panel(this.config);
 
         this.element.on("render", function (el) {
             try {
-                // register at global DnD manager
-                //TODO EXTJS 5
                 if (typeof dndManager != "undefined") {
                     dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
                 }
@@ -57,8 +56,8 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                 body.setStyle(style);
                 body.getFirstChild().setStyle(style);
 
-                body.insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget"></div>');
-                body.addCls("pimcore_tag_snippet_empty");
+                body.insertHtml("beforeEnd", '<div class="pimcore_editable_droptarget"></div>');
+                body.addCls("pimcore_editable_snippet_empty");
 
                 el.getEl().on("contextmenu", this.onContextMenu.bind(this));
             } catch (e) {
@@ -67,15 +66,10 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
         }.bind(this));
 
-        this.element.render(id);
+        this.element.render(this.id);
 
-
-        // insert snippet content
-        if (data) {
-            this.data = data;
-            if (this.data.path) {
-                this.updateContent(this.data.path);
-            }
+        if (this.data.path) {
+            this.updateContent(this.data.path);
         }
     },
 
@@ -93,7 +87,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             this.data.id = data.id;
             this.data.path = uri;
 
-            if (this.options.reload) {
+            if (this.config.reload) {
                 this.reloadDocument();
             } else {
                 this.updateContent(uri);
@@ -131,7 +125,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
     updateContent: function (path) {
 
-        var params = this.options;
+        var params = this.config;
         params.pimcore_admin = true;
 
         Ext.Ajax.request({
@@ -140,7 +134,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             success: function (response) {
                 var body = this.getBody();
                 body.getFirstChild().dom.innerHTML = response.responseText;
-                body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+                body.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
                 this.updateDimensions();
             }.bind(this),
             params: params
@@ -152,7 +146,6 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
         var parent = body.getParent();
         body.setStyle("height", "auto");
         parent.setStyle("height", "auto");
-        body.removeCls("pimcore_tag_snippet_empty");
         body.removeCls("pimcore_editable_snippet_empty");
     },
 
@@ -167,7 +160,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                 handler: function (item) {
                     item.parentMenu.destroy();
 
-                    var height = this.options.height;
+                    var height = this.config.height;
                     if (!height) {
                         height = this.defaultHeight;
                     }
@@ -177,11 +170,11 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                     this.data = {};
                     var body = this.getBody();
                     body.getFirstChild().dom.innerHTML = '';
-                    body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget  pimcore_editable_droptarget"></div>');
-                    body.addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
+                    body.insertHtml("beforeEnd",'<div class=" pimcore_editable_droptarget"></div>');
+                    body.addCls("pimcore_editable_snippet_empty");
                     body.setStyle(height + "px");
 
-                    if (this.options.reload) {
+                    if (this.config.reload) {
                         this.reloadDocument();
                     }
 
@@ -248,7 +241,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             this.data.id = item.id;
             this.data.path = uri;
 
-            if (this.options.reload) {
+            if (this.config.reload) {
                 this.reloadDocument();
             } else {
                 this.updateContent(uri);

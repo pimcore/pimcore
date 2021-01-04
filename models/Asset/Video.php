@@ -193,7 +193,7 @@ class Video extends Model\Asset
             'filesystemPath' => $fullPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
 
         return $event->getArgument('frontendPath');
     }

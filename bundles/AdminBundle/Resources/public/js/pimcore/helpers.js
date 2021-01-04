@@ -305,7 +305,7 @@ pimcore.helpers.recordElement = function (id, type, name) {
 };
 
 pimcore.helpers.openElement = function (idOrPath, type, subtype) {
-    if (typeof subtype != "undefined") {
+    if (typeof subtype != "undefined" && subtype !== null) {
         if (type == "document") {
             pimcore.helpers.openDocument(idOrPath, subtype);
         }
@@ -2586,6 +2586,8 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
             }
         }.bind(this)
     });
+
+    return true;
 };
 
 pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, responseData) {
@@ -2798,13 +2800,6 @@ pimcore.helpers.reports = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("reports")) {
         pimcore.layout.toolbar.prototype.showReports(null);
-    }
-};
-
-pimcore.helpers.tagManager = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("tag_snippet_management")) {
-        pimcore.layout.toolbar.prototype.showTagManagement();
     }
 };
 

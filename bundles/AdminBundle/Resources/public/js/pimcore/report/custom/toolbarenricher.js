@@ -64,7 +64,7 @@ pimcore.report.custom.toolbarenricher = Class.create(pimcore.plugin.admin, {
 
                                             if(!groupToolbarMenuEntries[report["group"]]) {
                                                 groupToolbarMenuEntries[report["group"]] = new Ext.menu.Item({
-                                                    text: report["group"],
+                                                    text: t(report["group"]),
                                                     iconCls: report["groupIconClass"],
                                                     menu: []
                                                 });
@@ -75,12 +75,12 @@ pimcore.report.custom.toolbarenricher = Class.create(pimcore.plugin.admin, {
                                         }
 
                                         parentMenuEntry.add({
-                                            text: report["niceName"],
+                                            text: t(report["niceName"]),
                                             iconCls: report["iconClass"],
                                             handler: function (report, reportClass) {
                                                 toolbar.showReports(reportClass, {
                                                     name: report["name"],
-                                                    text: report["niceName"],
+                                                    text: t(report["niceName"]),
                                                     niceName: report["niceName"],
                                                     iconCls: report["iconClass"]
                                                 });

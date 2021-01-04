@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Model\Dependency;
 use Pimcore\Model\ModelInterface;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule\Task;
@@ -143,6 +144,42 @@ interface ElementInterface extends ModelInterface
     public function getProperties();
 
     /**
+     * @param Property[] $properties
+     *
+     * @return $this
+     */
+    public function setProperties(array $properties);
+
+    /**
+     * Get specific property data or the property object itself ($asContainer=true) by its name, if the
+     * property doesn't exists return null
+     *
+     * @param string $name
+     * @param bool $asContainer
+     *
+     * @return mixed
+     */
+    public function getProperty($name, $asContainer = false);
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
+     * @param bool $inherited
+     * @param bool $inheritable
+     *
+     * @return $this
+     */
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false);
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasProperty($name);
+
+    /**
      * returns true if the element is locked
      *
      * @return bool
@@ -237,4 +274,14 @@ interface ElementInterface extends ModelInterface
      * @return Version[]
      */
     public function getVersions();
+
+    /**
+     * @return Dependency
+     */
+    public function getDependencies();
+
+    /**
+     * @return string
+     */
+    public function __toString();
 }

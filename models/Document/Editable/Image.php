@@ -32,56 +32,56 @@ class Image extends Model\Document\Editable
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * The ALT text of the image
      *
      * @var string
      */
-    public $alt;
+    protected $alt;
 
     /**
      * Contains the imageobject itself
      *
-     * @var Asset\Image
+     * @var Asset\Image|null
      */
-    public $image;
+    protected $image;
 
     /**
      * @var bool
      */
-    public $cropPercent = false;
+    protected $cropPercent = false;
 
     /**
      * @var float
      */
-    public $cropWidth;
+    protected $cropWidth;
 
     /**
      * @var float
      */
-    public $cropHeight;
+    protected $cropHeight;
 
     /**
      * @var float
      */
-    public $cropTop;
+    protected $cropTop;
 
     /**
      * @var float
      */
-    public $cropLeft;
+    protected $cropLeft;
 
     /**
      * @var array
      */
-    public $hotspots = [];
+    protected $hotspots = [];
 
     /**
      * @var array
      */
-    public $marker = [];
+    protected $marker = [];
 
     /**
      * @see EditableInterface::getType
@@ -134,7 +134,7 @@ class Image extends Model\Document\Editable
     /**
      * Converts the data so it's suitable for the editmode
      *
-     * @return array
+     * @return array|null
      */
     public function getDataEditmode()
     {
@@ -176,7 +176,7 @@ class Image extends Model\Document\Editable
                 'cropLeft' => $this->cropLeft,
                 'hotspots' => $hotspots,
                 'marker' => $marker,
-                'predefinedDataTemplates' => $this->getOptions()['predefinedDataTemplates'] ?? null,
+                'predefinedDataTemplates' => $this->getConfig()['predefinedDataTemplates'] ?? null,
             ];
         }
 
@@ -186,23 +186,23 @@ class Image extends Model\Document\Editable
     /**
      * @return array
      */
-    public function getOptions()
+    public function getConfig()
     {
-        $options = parent::getOptions();
-        if (isset($options['thumbnail']) && !isset($options['focal_point_context_menu_item'])) {
-            $thumbConfig = Asset\Image\Thumbnail\Config::getByAutoDetect($options['thumbnail']);
+        $config = parent::getConfig();
+        if (isset($config['thumbnail']) && !isset($config['focal_point_context_menu_item'])) {
+            $thumbConfig = Asset\Image\Thumbnail\Config::getByAutoDetect($config['thumbnail']);
             if ($thumbConfig) {
                 foreach ($thumbConfig->getItems() as $item) {
                     if ($item['method'] == 'cover') {
-                        $options['focal_point_context_menu_item'] = true;
-                        $this->options['focal_point_context_menu_item'] = true;
+                        $config['focal_point_context_menu_item'] = true;
+                        $this->config['focal_point_context_menu_item'] = true;
                         break;
                     }
                 }
             }
         }
 
-        return $options;
+        return $config;
     }
 
     /**
@@ -212,14 +212,14 @@ class Image extends Model\Document\Editable
      */
     public function frontend()
     {
-        if (!is_array($this->options)) {
-            $this->options = [];
+        if (!is_array($this->config)) {
+            $this->config = [];
         }
 
         $image = $this->getImage();
 
         if ($image instanceof Asset) {
-            $thumbnailName = $this->options['thumbnail'] ?? null;
+            $thumbnailName = $this->config['thumbnail'] ?? null;
             if ($thumbnailName || $this->cropPercent) {
                 // create a thumbnail first
                 $autoName = false;
@@ -234,8 +234,8 @@ class Image extends Model\Document\Editable
                     $autoName = true;
                 }
 
-                if (isset($this->options['highResolution']) && $this->options['highResolution'] > 1) {
-                    $thumbConfig->setHighResolution($this->options['highResolution']);
+                if (isset($this->config['highResolution']) && $this->config['highResolution'] > 1) {
+                    $thumbConfig->setHighResolution($this->config['highResolution']);
                 }
 
                 // autogenerate a name for the thumbnail because it's different from the original
@@ -245,8 +245,8 @@ class Image extends Model\Document\Editable
                 }
 
                 $deferred = true;
-                if (isset($this->options['deferred'])) {
-                    $deferred = $this->options['deferred'];
+                if (isset($this->config['deferred'])) {
+                    $deferred = $this->config['deferred'];
                 }
 
                 $thumbnail = $image->getThumbnail($thumbConfig, $deferred);
@@ -255,19 +255,21 @@ class Image extends Model\Document\Editable
                 $thumbnail = $image->getThumbnail();
             }
 
-            $attributes = array_merge($this->options, [
+            $attributes = array_merge($this->config, [
                 'alt' => $this->alt,
                 'title' => $this->alt,
             ]);
 
             $removeAttributes = [];
-            if (isset($this->options['removeAttributes']) && is_array($this->options['removeAttributes'])) {
-                $removeAttributes = $this->options['removeAttributes'];
+            if (isset($this->config['removeAttributes']) && is_array($this->config['removeAttributes'])) {
+                $removeAttributes = $this->config['removeAttributes'];
             }
 
             // thumbnail's HTML is always generated by the thumbnail itself
-            return $thumbnail->getHtml($attributes, $removeAttributes);
+            return $thumbnail->getHtml($attributes);
         }
+
+        return '';
     }
 
     /**
@@ -409,7 +411,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @return Asset\Image
+     * @return Asset\Image|null
      */
     public function getImage()
     {
@@ -421,7 +423,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @param Asset\Image $image
+     * @param Asset\Image|null $image
      *
      * @return Model\Document\Editable\Image
      */
@@ -605,46 +607,6 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id !== null) {
-            $this->alt = $data->alt;
-            $this->id = $data->id;
-
-            if ($idMapper) {
-                $this->id = $idMapper->getMappedId('asset', $data->id);
-            }
-
-            if (is_numeric($this->id)) {
-                $image = $this->getImage();
-                if (!$image instanceof Asset\Image) {
-                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure('document', $this->getDocumentId(), 'asset', $data->id);
-                    } else {
-                        throw new \Exception('cannot get values from web service import - referenced image with id [ ' . $this->id . ' ] is unknown');
-                    }
-                }
-            } else {
-                if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                    $idMapper->recordMappingFailure('document', $this->getDocumentId(), 'asset', $data->id);
-                } else {
-                    throw new \Exception('cannot get values from web service import - id is not valid');
-                }
-            }
-        }
-    }
-
-    /**
      * @param float $cropHeight
      *
      * @return $this
@@ -818,5 +780,3 @@ class Image extends Model\Document\Editable
         return $finalVars;
     }
 }
-
-class_alias(Image::class, 'Pimcore\Model\Document\Tag\Image');

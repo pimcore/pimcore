@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -274,7 +274,7 @@ class AbstractObject extends Model\Element\AbstractElement
             return null;
         }
 
-        $id = intval($id);
+        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
@@ -284,9 +284,9 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        try {
-            if ($force || !($object = Cache::load($cacheKey))) {
-                $object = new Model\DataObject();
+        if ($force || !($object = Cache::load($cacheKey))) {
+            $object = new Model\DataObject();
+            try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
                 if ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder') {
@@ -313,11 +313,11 @@ class AbstractObject extends Model\Element\AbstractElement
                 } else {
                     throw new \Exception('No entry for object id ' . $id);
                 }
-            } else {
-                Runtime::set($cacheKey, $object);
+            } catch (Model\Exception\NotFoundException $e) {
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
+        } else {
+            Runtime::set($cacheKey, $object);
         }
 
         if (!$object || !static::typeMatch($object)) {
@@ -342,7 +342,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $object->getDao()->getByPath($path);
 
             return static::getById($object->getId(), $force);
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -361,7 +361,9 @@ class AbstractObject extends Model\Element\AbstractElement
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
             /** @var Concrete $tmpObject */
             $tmpObject = new static();
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            if ($tmpObject instanceof Concrete) {
+                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            }
         }
 
         if (is_array($config)) {
@@ -548,7 +550,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -571,7 +573,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->rollBack();
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, $failureEvent);
+            \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
 
             Logger::crit($e);
             throw $e;
@@ -583,7 +585,7 @@ class AbstractObject extends Model\Element\AbstractElement
         //clear object from registry
         Runtime::set(self::getCacheKey($this->getId()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
     }
 
     /**
@@ -607,10 +609,10 @@ class AbstractObject extends Model\Element\AbstractElement
             $preEvent = new DataObjectEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_UPDATE);
             } else {
                 self::disableDirtyDetection();
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, DataObjectEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -673,11 +675,13 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     if ($e instanceof UniqueConstraintViolationException) {
                         throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    } elseif ($e instanceof DeadlockException) {
+                    }
+
+                    if ($e instanceof RetryableException) {
                         // we try to start the transaction $maxRetries times again (deadlocks, ...)
                         if ($retries < ($maxRetries - 1)) {
                             $run = $retries + 1;
-                            $waitTime = rand(1, 5) * 100000; // microseconds
+                            $waitTime = random_int(1, 5) * 100000; // microseconds
                             Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
                             usleep($waitTime); // wait specified time until we restart the transaction
@@ -709,10 +713,10 @@ class AbstractObject extends Model\Element\AbstractElement
                 if ($differentOldPath) {
                     $updateEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, $updateEvent);
+                \Pimcore::getEventDispatcher()->dispatch($updateEvent, DataObjectEvents::POST_UPDATE);
             } else {
                 self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD, new DataObjectEvent($this));
+                \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::POST_ADD);
             }
 
             return $this;
@@ -720,9 +724,9 @@ class AbstractObject extends Model\Element\AbstractElement
             $failureEvent = new DataObjectEvent($this);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -1116,10 +1120,12 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array|null $children
+     * @param array $objectTypes
+     * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         if ($children === null) {
             // unset all cached children
@@ -1127,7 +1133,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         } elseif (is_array($children)) {
             //default cache key
-            $cacheKey = $this->getListingCacheKey();
+            $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
             $this->o_children[$cacheKey] = $children;
             $this->o_hasChildren[$cacheKey] = (bool) count($children);
         }
@@ -1184,13 +1190,11 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param Model\Property[] $o_properties
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function setProperties($o_properties)
+    public function setProperties(array $properties)
     {
-        $this->o_properties = $o_properties;
+        $this->o_properties = $properties;
 
         return $this;
     }

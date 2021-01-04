@@ -21,7 +21,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool\Frontend;
 
 class Processor
 {
@@ -52,11 +51,6 @@ class Processor
         'brightnessSaturation' => ['brightness', 'saturation', 'hue'],
         'mirror' => ['mode'],
     ];
-
-    /**
-     * @var null|bool
-     */
-    protected static $hasWebpSupport = null;
 
     /**
      * @param string $format
@@ -100,7 +94,9 @@ class Processor
         $generated = false;
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
-        $contentOptimizedFormat = false;
+        // Optimize if allowed to strip info.
+        $optimizeContent = (!$config->isPreserveColor() && !$config->isPreserveMetaData());
+        $optimizedFormat = false;
 
         if (self::containsTransformationType($config, '1x1_pixel')) {
             return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -114,14 +110,17 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
+            $optimizedFormat = true;
             $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
             if ($format === 'jpeg') {
                 $format = 'pjpeg';
             }
-            $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
         if ($format == 'print') {
+            // Don't optimize images for print as we assume we want images as
+            // untouched as possible.
+            $optimizedFormat = $optimizeContent = false;
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
             if (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
@@ -134,6 +133,7 @@ class Processor
                 return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
+            $optimizedFormat = $optimizeContent = false;
             if (\Pimcore\Tool::isFrontendRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
@@ -142,11 +142,6 @@ class Processor
         }
 
         $image = Asset\Image::getImageTransformInstance();
-
-        if ($contentOptimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
-            $format = 'webp';
-        }
-
         $thumbDir = $asset->getImageThumbnailSavePath() . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
 
@@ -203,6 +198,8 @@ class Processor
         // transform image
         $image->setPreserveColor($config->isPreserveColor());
         $image->setPreserveMetaData($config->isPreserveMetaData());
+        $image->setPreserveAnimation($config->getPreserveAnimation());
+
         if (!$image->load($fileSystemPath, ['asset' => $asset])) {
             return self::returnPath($errorImage, $returnAbsolutePath);
         }
@@ -217,7 +214,7 @@ class Processor
             $exif = @exif_read_data($fileSystemPath);
             if (is_array($exif)) {
                 if (array_key_exists('Orientation', $exif)) {
-                    $orientation = intval($exif['Orientation']);
+                    $orientation = (int)$exif['Orientation'];
 
                     if ($orientation > 1) {
                         $angleMappings = [
@@ -269,6 +266,7 @@ class Processor
             }
 
             $highResFactor = $config->getHighResolution();
+            $imageCropped = false;
 
             $calculateMaxFactor = function ($factor, $original, $new) {
                 $newFactor = $factor * $original / $new;
@@ -289,6 +287,15 @@ class Processor
 
                     if (is_string($transformation['method'])) {
                         $mapping = self::$argumentMapping[$transformation['method']];
+
+                        if (in_array($transformation['method'], ['cropPercent'])) {
+                            //avoid double cropping in case of $highResFactor re-calculation (goto prepareTransformations)
+                            if ($imageCropped) {
+                                continue;
+                            }
+                            $imageCropped = true;
+                        }
+
                         if (is_array($transformation['arguments'])) {
                             foreach ($transformation['arguments'] as $key => $value) {
                                 $position = array_search($key, $mapping);
@@ -350,7 +357,7 @@ class Processor
             }
         }
 
-        if ($contentOptimizedFormat && !self::hasWebpSupport()) {
+        if ($optimizedFormat) {
             $format = $image->getContentOptimizedFormat();
         }
 
@@ -360,7 +367,7 @@ class Processor
 
         $generated = true;
 
-        if ($contentOptimizedFormat) {
+        if ($optimizeContent) {
             $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
             $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
             TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
@@ -418,30 +425,5 @@ class Processor
         }
 
         return $path;
-    }
-
-    /**
-     * @param bool|null $webpSupport
-     *
-     * @return bool|null
-     */
-    public static function setHasWebpSupport(?bool $webpSupport): ?bool
-    {
-        $prevValue = self::$hasWebpSupport;
-        self::$hasWebpSupport = $webpSupport;
-
-        return $prevValue;
-    }
-
-    /**
-     * @return bool
-     */
-    protected static function hasWebpSupport(): bool
-    {
-        if (self::$hasWebpSupport !== null) {
-            return self::$hasWebpSupport;
-        }
-
-        return Frontend::hasWebpSupport();
     }
 }

@@ -14,36 +14,38 @@
 pimcore.registerNS("pimcore.document.editables.image");
 pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
         this.datax = {};
         this.inherited = inherited;
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
 
         this.originalDimensions = {
-            width: this.options.width,
-            height: this.options.height
+            width: this.config.width,
+            height: this.config.height
         };
 
         if (data) {
             this.datax = data;
         }
+    },
 
+    render: function () {
         this.setupWrapper();
 
-        this.element = Ext.get(id);
+        this.element = Ext.get(this.id);
 
-        if (this.options["width"]) {
-            this.element.setStyle("width", this.options["width"] + "px");
+        if (this.config["width"]) {
+            this.element.setStyle("width", this.config["width"] + "px");
         }
 
-        if (!this.options["height"]) {
-            if (this.options["defaultHeight"]){
-                this.element.setStyle("min-height", this.options["defaultHeight"] + "px");
+        if (!this.config["height"]) {
+            if (this.config["defaultHeight"]){
+                this.element.setStyle("min-height", this.config["defaultHeight"] + "px");
             }
         } else {
-            this.element.setStyle("height", this.options["height"] + "px");
+            this.element.setStyle("height", this.config["height"] + "px");
         }
 
         // contextmenu
@@ -55,13 +57,13 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         }
 
         // tooltip
-        if(this.options["title"]) {
+        if(this.config["title"]) {
             new Ext.ToolTip({
                 target: this.element,
                 showDelay: 100,
                 hideDelay: 0,
                 trackMouse: true,
-                html: this.options["title"]
+                html: this.config["title"]
             });
         }
 
@@ -70,7 +72,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.element.appendChild(this.altBar);
 
         this.altBar = Ext.get(this.altBar);
-        this.altBar.addCls("pimcore_tag_image_alt");
+        this.altBar.addCls("pimcore_editable_image_alt");
         this.altBar.setStyle({
             opacity: 0.8,
             display: "none"
@@ -78,7 +80,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         this.altInput = new Ext.form.TextField({
             name: "altText",
-            width: this.options.width
+            width: this.config.width
         });
         this.altInput.render(this.altBar);
 
@@ -86,7 +88,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.altInput.setValue(this.datax.alt);
         }
 
-        if (this.options.hidetext == true) {
+        if (this.config.hidetext === true) {
             this.altBar.setStyle({
                 display: "none",
                 visibility: "hidden"
@@ -94,8 +96,8 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         }
 
         // add additional drop targets
-        if (this.options["dropClass"]) {
-            var extra_drop_targets = Ext.query('.' + this.options.dropClass);
+        if (this.config["dropClass"]) {
+            var extra_drop_targets = Ext.query('.' + this.config.dropClass);
 
             for (var i = 0; i < extra_drop_targets.length; ++i) {
                 var drop_el = Ext.get(extra_drop_targets[i]);
@@ -104,10 +106,10 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             }
         }
 
-        if(this.options["disableInlineUpload"] !== true) {
-            this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget_upload"></div>');
-            this.element.addCls("pimcore_tag_image_empty");
-            pimcore.helpers.registerAssetDnDSingleUpload(this.element.dom, this.options["uploadPath"], 'path', function (e) {
+        if(this.config["disableInlineUpload"] !== true) {
+            this.element.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget_upload"></div>');
+            this.element.addCls("pimcore_editable_image_empty");
+            pimcore.helpers.registerAssetDnDSingleUpload(this.element.dom, this.config["uploadPath"], 'path', function (e) {
                 if (e['asset']['type'] === "image" && !this.inherited) {
                     this.resetData();
                     this.datax.id = e['asset']['id'];
@@ -121,8 +123,8 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                 }
             }.bind(this), null, this.getContext());
         } else {
-            this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-            this.element.addCls("pimcore_tag_image_no_upload_empty");
+            this.element.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
+            this.element.addCls("pimcore_editable_image_no_upload_empty");
         }
 
         // insert image
@@ -137,7 +139,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         if(this.datax.id) {
 
-            if(this.options['focal_point_context_menu_item']) {
+            if(this.config['focal_point_context_menu_item']) {
                 menu.add(new Ext.menu.Item({
                     text: t('set_focal_point'),
                     iconCls: "pimcore_icon_focal_point",
@@ -207,7 +209,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             }.bind(this)
         }));
 
-        if(this.options["disableInlineUpload"] !== true) {
+        if(this.config["disableInlineUpload"] !== true) {
             menu.add(new Ext.menu.Item({
                 text: t('upload'),
                 cls: "pimcore_inline_upload",
@@ -224,7 +226,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
     },
 
     uploadDialog: function () {
-        pimcore.helpers.assetSingleUploadDialog(this.options["uploadPath"], "path", function (res) {
+        pimcore.helpers.assetSingleUploadDialog(this.config["uploadPath"], "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"] && data["type"] == "image") {
@@ -315,7 +317,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.resetData();
 
         this.updateImage();
-        this.element.addCls("pimcore_tag_image_empty");
+        this.element.addCls("pimcore_editable_image_empty");
         this.altBar.setStyle({
             display: "none"
         });
@@ -344,27 +346,27 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         }
 
 
-        if (!this.options["thumbnail"]) {
+        if (!this.config["thumbnail"]) {
             if(!this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'width': this.element.getWidth(),
                     'aspectratio': true
                 }));
             } else if (this.originalDimensions["width"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'width': this.originalDimensions["width"],
                     'aspectratio': true
                 }));
             } else if (this.originalDimensions["height"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'height': this.originalDimensions["height"],
                     'aspectratio': true
                 }));
             }
-        } else if (typeof this.options.thumbnail == "string" || typeof this.options.thumbnail == "object") {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+        } else if (typeof this.config.thumbnail == "string" || typeof this.config.thumbnail == "object") {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'height': this.originalDimensions["height"],
-                    'thumbnail': this.options.thumbnail,
+                    'thumbnail': this.config.thumbnail,
                     'pimcore_editmode': '1'
                 }));
         }
@@ -379,14 +381,14 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             display: "block"
         });
 
-        this.element.removeCls("pimcore_tag_image_empty");
+        this.element.removeCls("pimcore_editable_image_empty");
 
         this.updateCounter = 0;
         this.updateDimensionsInterval = window.setInterval(this.updateDimensions.bind(this), 1000);
     },
 
     reload : function () {
-        if (this.options.reload) {
+        if (this.config.reload) {
             this.reloadDocument();
         }
     },
@@ -410,13 +412,13 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             }
 
             var dimensionError = false;
-            if(typeof this.options.minWidth != "undefined") {
-                if(width < this.options.minWidth) {
+            if(typeof this.config.minWidth != "undefined") {
+                if(width < this.config.minWidth) {
                     dimensionError = true;
                 }
             }
-            if(typeof this.options.minHeight != "undefined") {
-                if(height < this.options.minHeight) {
+            if(typeof this.config.minHeight != "undefined") {
+                if(height < this.config.minHeight) {
                     dimensionError = true;
                 }
             }
@@ -463,9 +465,9 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
     openEditWindow: function() {
 
         var config = {};
-        if(this.options["ratioX"] && this.options["ratioY"]) {
-            config["ratioX"] = this.options["ratioX"];
-            config["ratioY"] = this.options["ratioY"];
+        if(this.config["ratioX"] && this.config["ratioY"]) {
+            config["ratioX"] = this.config["ratioX"];
+            config["ratioY"] = this.config["ratioY"];
         }
 
         var editor = pimcore.helpers.openImageCropper(this.datax.id, this.datax, function (data) {
@@ -496,7 +498,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                     cropLeft: this.datax.cropLeft,
                     cropPercent: this.datax.cropPercent
                 },
-                predefinedDataTemplates : this.options.predefinedDataTemplates
+                predefinedDataTemplates : this.config.predefinedDataTemplates
             }
 
         );
@@ -506,7 +508,9 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
     getValue: function () {
 
         // alt alt value
-        this.datax.alt = this.altInput.getValue();
+        if(this.altInput) {
+            this.datax.alt = this.altInput.getValue();
+        }
 
         return this.datax;
     },

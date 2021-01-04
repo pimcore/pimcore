@@ -110,7 +110,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
     getLayoutEdit: function () {
 
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
 
@@ -423,5 +423,5 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
 
 });
 
-// @TODO BC layer, to be removed in v7.0
+// @TODO BC layer, to be removed in Pimcore 10
 pimcore.object.tags.nonownerobjects = pimcore.object.tags.reverseManyToManyObjectRelation;

@@ -15,16 +15,15 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
 
     use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-    use Pimcore\Controller\EventedControllerInterface;
+    use Pimcore\Controller\KernelControllerEventInterface;
     use Pimcore\Tool\Session;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
-    use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-    use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+    use Symfony\Component\HttpKernel\Event\ControllerEvent;
     use Symfony\Component\HttpKernel\Profiler\Profiler;
     use Symfony\Component\Routing\Annotation\Route;
 
-    class AdminerController extends AdminController implements EventedControllerInterface
+    class AdminerController extends AdminController implements KernelControllerEventInterface
     {
         /**
          * @var string
@@ -112,9 +111,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         }
 
         /**
-         * @param FilterControllerEvent $event
+         * @param ControllerEvent $event
          */
-        public function onKernelController(FilterControllerEvent $event)
+        public function onKernelControllerEvent(ControllerEvent $event)
         {
             $isMasterRequest = $event->isMasterRequest();
             if (!$isMasterRequest) {
@@ -136,14 +135,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         }
 
         /**
-         * @param FilterResponseEvent $event
-         */
-        public function onKernelResponse(FilterResponseEvent $event)
-        {
-            // nothing to do
-        }
-
-        /**
          * Merges http-headers set from Adminer via headers function
          * to the Symfony Response Object
          *
@@ -157,7 +148,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                 $headersRaw = headers_list();
 
                 foreach ($headersRaw as $header) {
-                    $header = explode(':', $header);
+                    $header = explode(':', $header, 2);
                     list($headerKey, $headerValue) = $header;
 
                     if ($headerKey && $headerValue) {
@@ -248,18 +239,18 @@ namespace {
                  */
                 public function credentials()
                 {
-                    $db = \Pimcore\Db::get();
+                    $params = \Pimcore\Db::get()->getParams();
 
-                    $host = $db->getHost();
-                    if ($db->getPort()) {
-                        $host .= ':' . $db->getPort();
+                    $host = $params['host'] ?? null;
+                    if ($port = $params['port'] ?? null) {
+                        $host .= ':' . $port;
                     }
 
                     // server, username and password for connecting to database
                     $result = [
                         $host,
-                        $db->getUsername(),
-                        $db->getPassword(),
+                        $params['user'] ?? null,
+                        $params['password'] ?? null,
                     ];
 
                     return $result;

@@ -82,5 +82,3 @@ interface IndexableInterface
      */
     public function getClassId();
 }
-
-class_alias(IndexableInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable');

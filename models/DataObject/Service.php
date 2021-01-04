@@ -29,6 +29,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -172,9 +173,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
+        $event = new DataObjectEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_COPY);
 
         return $new;
     }
@@ -225,9 +227,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete object cloning
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
+        $event = new DataObjectEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_COPY);
 
         return $new;
     }
@@ -358,7 +361,7 @@ class Service extends Model\Element\Service
                         /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                    } else {
+                    } elseif ($brickClass instanceof Objectbrick\Definition) {
                         $def = $brickClass->getFieldDefinition($brickKey, $context);
                     }
                 }
@@ -443,7 +446,7 @@ class Service extends Model\Element\Service
 
                     if ($needLocalizedPermissions) {
                         if (!$user->isAdmin()) {
-                            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
                             $permissionTypes = ['View', 'Edit'];
                             foreach ($permissionTypes as $permissionType) {
@@ -1052,7 +1055,7 @@ class Service extends Model\Element\Service
     /**
      * @param ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
      */
-    public static function createSuperLayout(&$layout)
+    public static function createSuperLayout($layout)
     {
         if ($layout instanceof ClassDefinition\Data) {
             $layout->setInvisible(false);
@@ -1060,9 +1063,8 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Fieldcollections) {
-            unset($layout->disallowAddRemove);
-            unset($layout->disallowReorder);
-            $layout->layoutId = -1;
+            $layout->setDisallowAddRemove(false);
+            $layout->setDisallowReorder(false);
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -1401,7 +1403,7 @@ class Service extends Model\Element\Service
      * Enriches the layout definition before it is returned to the admin interface.
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
-     * @param Concrete $object
+     * @param Concrete|null $object
      * @param array $context additional contextual data
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
@@ -1414,7 +1416,7 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             $user = AdminTool::getCurrentUser();
-            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig') {
+            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
                 $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
@@ -1450,23 +1452,25 @@ class Service extends Model\Element\Service
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             if (is_array($allowedView) && count($allowedView) > 0) {
                 $haveAllowedViewDefault = null;
-                if ($layout->{'fieldtype'} === 'localizedfields') {
+                if ($layout->getFieldtype() === 'localizedfields') {
                     $haveAllowedViewDefault = isset($allowedView['default']);
                     if ($haveAllowedViewDefault) {
                         unset($allowedView['default']);
                     }
                 }
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    $layout->{'permissionView'} = AdminTool::reorderWebsiteLanguages(
-                        AdminTool::getCurrentUser(),
-                        array_keys($allowedView),
-                        true
+                    $layout->setPermissionView(
+                        AdminTool::reorderWebsiteLanguages(
+                            AdminTool::getCurrentUser(),
+                            array_keys($allowedView),
+                            true
+                        )
                     );
                 }
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
                 $haveAllowedEditDefault = null;
-                if ($layout->{'fieldtype'} === 'localizedfields') {
+                if ($layout->getFieldtype() === 'localizedfields') {
                     $haveAllowedEditDefault = isset($allowedEdit['default']);
                     if ($haveAllowedEditDefault) {
                         unset($allowedEdit['default']);
@@ -1474,10 +1478,12 @@ class Service extends Model\Element\Service
                 }
 
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    $layout->{'permissionEdit'} = AdminTool::reorderWebsiteLanguages(
-                        AdminTool::getCurrentUser(),
-                        array_keys($allowedEdit),
-                        true
+                    $layout->setPermissionEdit(
+                        AdminTool::reorderWebsiteLanguages(
+                            AdminTool::getCurrentUser(),
+                            array_keys($allowedEdit),
+                            true
+                        )
                     );
                 }
             }
@@ -1525,24 +1531,15 @@ class Service extends Model\Element\Service
         }
         $className = $fd->getCalculatorClass();
         $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-        if (!$className || $calculator === null) {
-            Logger::error('Class does not exist: ' . $className);
+        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+            Logger::error('Class does not exist or is not valid: ' . $className);
 
             return null;
         }
 
-        if (!$calculator instanceof Model\DataObject\ClassDefinition\CalculatorClassInterface) {
-            @trigger_error('Using a calculator class which does not implement '.Model\DataObject\ClassDefinition\CalculatorClassInterface::class.' is deprecated', \E_USER_DEPRECATED);
-        }
-
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
-
-        if (method_exists($calculator, 'getCalculatedValueForEditMode')) {
-            $result = call_user_func([$calculator, 'getCalculatedValueForEditMode'], $object, $data);
-        } else {
-            $result = self::getCalculatedFieldValue($object, $data);
-        }
+        $result = $calculator->getCalculatedValueForEditMode($object, $data);
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
         return $result;
@@ -1578,27 +1575,24 @@ class Service extends Model\Element\Service
         }
         $className = $fd->getCalculatorClass();
         $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-        if (!$className || $calculator === null) {
-            Logger::error('Calculator class "' . $className.'" does not exist -> '.$fieldname.'=null');
+        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+            Logger::error('Class does not exist or is not valid: ' . $className);
 
             return null;
         }
 
-        if (method_exists($calculator, 'compute')) {
-            $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
-            Model\DataObject\Concrete::setGetInheritedValues(true);
-
-            if ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData
-                || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
-                $object = $object->getObject();
-            }
-            $result = call_user_func([$calculator, 'compute'], $object, $data);
-            Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
-
-            return $result;
+        $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
+        Model\DataObject\Concrete::setGetInheritedValues(true);
+        if (
+            $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
+            $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
+        ) {
+            $object = $object->getObject();
         }
+        $result = $calculator->compute($object, $data);
+        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
-        return null;
+        return $result;
     }
 
     /**
@@ -1753,7 +1747,7 @@ class Service extends Model\Element\Service
             'returnMappedFieldNames' => $returnMappedFieldNames,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_CSV_ITEM_EXPORT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_CSV_ITEM_EXPORT);
         $objectData = $event->getArgument('objectData');
 
         return $objectData;

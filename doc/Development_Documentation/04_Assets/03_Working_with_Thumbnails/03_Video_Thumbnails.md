@@ -22,7 +22,7 @@ if($asset instanceof Asset\Video) {
 ```
 
 ##### Examples - Video Transcoding
-```php 
+```php
 $asset = Asset::getById(123);
 if($asset instanceof Asset\Video) {
  

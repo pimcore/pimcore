@@ -521,7 +521,6 @@ class TestDataHelper extends Module
         $user = User::getByName($username);
 
         if (!$user) {
-            /** @var User $user */
             $user = User::create([
                 'parentId' => 0,
                 'username' => $username,
@@ -1187,14 +1186,13 @@ class TestDataHelper extends Module
      */
     protected function assertObjectMetadataEqual($expected, $value)
     {
-        $this->assertInternalType('array', $expected);
-        $this->assertInternalType('array', $value);
+        // see https://github.com/sebastianbergmann/phpunit/commit/50ad7e1c4e74dce3beff17bf9c9f5a458cbe9958
+        $this->assertTrue(is_array($expected), 'expected an array');
+        $this->assertTrue(is_array($value), 'expected an array');
 
         $this->assertCount(count($expected), $value);
 
-        /** @var DataObject\Data\ObjectMetadata $expectedMetadata */
         foreach ($expected as $i => $expectedMetadata) {
-            /** @var DataObject\Data\ObjectMetadata $valueMetadata */
             $valueMetadata = $value[$i];
 
             $this->assertEquals($expectedMetadata->getColumns(), $valueMetadata->getColumns());

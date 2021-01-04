@@ -19,7 +19,7 @@ use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
@@ -252,7 +252,7 @@ class Manager
         $transition = $this->getTransitionByName($workflow->getName(), $transition);
         $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
-        if ($saveSubject && $subject instanceof AbstractElement) {
+        if ($saveSubject && $subject instanceof ElementInterface) {
             if (method_exists($subject, 'getPublished')
                 && (!$subject->getPublished() || $changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION)) {
                 $subject->saveVersion();
@@ -289,7 +289,7 @@ class Manager
             'additionalData' => $additionalData,
         ]);
 
-        $this->eventDispatcher->dispatch(WorkflowEvents::PRE_GLOBAL_ACTION, $event);
+        $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
 
@@ -302,10 +302,10 @@ class Manager
             $markingStore->setMarking($subject, new Marking($places));
         }
 
-        $this->eventDispatcher->dispatch(WorkflowEvents::POST_GLOBAL_ACTION, $event);
+        $this->eventDispatcher->dispatch($event, WorkflowEvents::POST_GLOBAL_ACTION);
         $this->notesSubscriber->setAdditionalData([]);
 
-        if ($saveSubject && $subject instanceof AbstractElement) {
+        if ($saveSubject && $subject instanceof ElementInterface) {
             $subject->save();
         }
 

@@ -27,7 +27,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
     /**
      * @inheritDoc
      */
-    public function getViewTemplate()
+    public function getTemplate()
     {
         // return null by default = auto-discover
         return null;
@@ -46,6 +46,6 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
      */
     public function getTemplateSuffix()
     {
-        return static::TEMPLATE_SUFFIX_PHP;
+        return static::TEMPLATE_SUFFIX_TWIG;
     }
 }

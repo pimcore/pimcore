@@ -359,7 +359,7 @@ class InheritanceHelper
             $objectsWithBrickIds = [];
             $objectsWithBricks = $this->db->fetchAll('SELECT ' . $this->idField . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
             foreach ($objectsWithBricks as $item) {
-                $objectsWithBrickIds[] = $item['id'];
+                $objectsWithBrickIds[] = $item[$this->idField];
             }
 
             $currentQueryItems = $this->db->fetchAll('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');

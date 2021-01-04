@@ -21,6 +21,8 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\User\Permission\Definition $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -28,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         try {
-            $this->db->insert('users_permission_definitions', [
+            $this->db->insertOrUpdate('users_permission_definitions', [
                 'key' => $this->model->getKey(),
                 'category' => $this->model->getCategory() ? $this->model->getCategory() : '',
             ]);

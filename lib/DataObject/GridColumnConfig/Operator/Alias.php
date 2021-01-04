@@ -39,7 +39,7 @@ class Alias extends AbstractOperator
             $valueArray = [];
 
             $childResult = $c->getLabeledValue($element);
-            $isArrayType = $childResult->isArrayType;
+            $isArrayType = $childResult->isArrayType ?? null;
             $childValues = $childResult->value;
             if ($childValues && !$isArrayType) {
                 $childValues = [$childValues];
@@ -56,7 +56,7 @@ class Alias extends AbstractOperator
             if ($isArrayType) {
                 $result->value = $valueArray;
             } else {
-                $result->value = $valueArray[0];
+                $result->value = $valueArray[0] ?? null;
             }
         }
 

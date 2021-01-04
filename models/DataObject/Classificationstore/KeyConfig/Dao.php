@@ -20,6 +20,8 @@ namespace Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Classificationstore\KeyConfig $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -66,10 +68,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow($stmt);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('KeyConfig with name: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf('Classification store key config with name "%s" does not exist.', $name));
         }
     }
 

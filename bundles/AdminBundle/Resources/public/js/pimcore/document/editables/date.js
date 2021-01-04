@@ -14,37 +14,44 @@
 pimcore.registerNS("pimcore.document.editables.date");
 pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
-
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
+        this.config = this.parseConfig(config);
+        this.config.name = id + "_editable";
+
+        this.data = null;
+        if(data) {
+            this.data = new Date(intval(data) * 1000);
+        }
+    },
+
+    render: function () {
         this.setupWrapper();
-        options = this.parseOptions(options);
 
-        if (options.format) {
+        if (this.config.format) {
             // replace any % prefixed parts from strftime format
-            options.format = options.format.replace(/%([a-zA-Z])/g, '$1');
+            this.config.format = this.config.format.replace(/%([a-zA-Z])/g, '$1');
         }
 
-        if (data) {
-            var tmpDate = new Date(intval(data) * 1000);
-            options.value = tmpDate;
+        if(this.data) {
+            this.config.value = this.data;
         }
 
-        options.name = id + "_editable";
-
-
-
-        this.element = new Ext.form.DateField(options);
-        if (options["reload"]) {
+        this.element = new Ext.form.DateField(this.config);
+        if (this.config["reload"]) {
             this.element.on("change", this.reloadDocument);
         }
 
-        this.element.render(id);
+        this.element.render(this.id);
     },
 
     getValue: function () {
-        return this.element.getValue();
+        if(this.element) {
+            return this.element.getValue();
+        } else if (this.data) {
+            return Ext.Date.format(this.data, "Y-m-d\\TH:i:s");
+        }
     },
 
     getType: function () {

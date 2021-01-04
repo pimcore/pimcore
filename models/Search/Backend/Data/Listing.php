@@ -25,13 +25,6 @@ use Pimcore\Model\Search\Backend\Data;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
-     * @var Data[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $entries = null;
-
-    /**
      * @return Data[]
      */
     public function getEntries()
@@ -55,6 +48,5 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     public function __construct()
     {
         $this->initDao(__CLASS__);
-        $this->entries = & $this->data;
     }
 }

@@ -427,16 +427,6 @@ pimcore.layout.toolbar = Class.create({
                         );
                     }
 
-                    if (perspectiveCfg.inToolbar("extras.systemtools.serverinfo")) {
-                        systemItems.push(
-                            {
-                                text: t("server_info"),
-                                iconCls: "pimcore_nav_icon_server_info",
-                                handler: this.showServerInfo
-                            }
-                        );
-                    }
-
                     if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
                         systemItems.push(
                             {
@@ -497,22 +487,6 @@ pimcore.layout.toolbar = Class.create({
                     text: t("reports"),
                     iconCls: "pimcore_nav_icon_reports",
                     handler: this.showReports.bind(this, null)
-                });
-            }
-
-            if (user.isAllowed("tag_snippet_management") && perspectiveCfg.inToolbar("marketing.tagmanagement")) {
-                marketingItems.push({
-                    text: t("tag_snippet_management"),
-                    iconCls: "pimcore_nav_icon_tag",
-                    handler: this.showTagManagement
-                });
-            }
-
-            if (user.isAllowed("qr_codes")) {
-                marketingItems.push({
-                    text: t("qr_codes"),
-                    iconCls: "pimcore_nav_icon_qrcode",
-                    handler: this.showQRCode
                 });
             }
 
@@ -1443,24 +1417,6 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    showTagManagement: function () {
-        try {
-            pimcore.globalmanager.get("tagmanagement").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
-        }
-    },
-
-    showQRCode: function () {
-        try {
-            pimcore.globalmanager.get("qrcode").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
-        }
-    },
-
     showCustomReports: function () {
         try {
             pimcore.globalmanager.get("custom_reports_settings").activate();
@@ -1717,10 +1673,6 @@ pimcore.layout.toolbar = Class.create({
 
     showPhpInfo: function () {
         pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
-    },
-
-    showServerInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("serverinfo", Routing.generate('pimcore_admin_external_linfo_index'), "pimcore_icon_server_info", "Server Info");
     },
 
     showOpcacheStatus: function () {

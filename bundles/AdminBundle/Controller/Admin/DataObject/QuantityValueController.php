@@ -124,7 +124,12 @@ class QuantityValueController extends AdminController
                 if (isset($data['baseunit']) && $data['baseunit'] === -1) {
                     $data['baseunit'] = null;
                 }
-                unset($data['id']);
+
+                $id = $data['id'];
+                if (Unit::getById($id)) {
+                    throw new \Exception('unit with ID [' . $id . '] already exists');
+                }
+
                 $unit = new Unit();
                 $unit->setValues($data);
                 $unit->save();
@@ -177,7 +182,6 @@ class QuantityValueController extends AdminController
 
         $units = $list->getUnits();
 
-        /** @var Unit $unit */
         foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
@@ -250,7 +254,6 @@ class QuantityValueController extends AdminController
         $convertedValues = [];
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        /** @var Unit $targetUnit */
         foreach ($units as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);

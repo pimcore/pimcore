@@ -16,28 +16,28 @@ services:
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce:
         arguments:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-            - '@templating.engine.delegating'
+
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce:
         arguments:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-            - '@templating.engine.delegating'
+
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce:
         arguments:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-            - '@templating.engine.delegating'
+
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager:
         arguments:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-            - '@templating.engine.delegating'
+
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik:
         arguments:
             - '@Pimcore\Analytics\Piwik\Tracker'
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-            - '@templating.engine.delegating'
+
 
 
     #

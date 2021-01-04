@@ -19,11 +19,14 @@ namespace Pimcore\Model\DataObject\Listing\Concrete;
 
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Listing\Concrete $model
  */
 class Dao extends Model\DataObject\Listing\Dao
@@ -145,7 +148,7 @@ class Dao extends Model\DataObject\Listing\Dao
         }
 
         if (!$language) {
-            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             if (Tool::isValidLanguage((string)$locale)) {
                 $language = (string)$locale;
             }
@@ -184,7 +187,7 @@ class Dao extends Model\DataObject\Listing\Dao
                     }
 
                     if (!$language) {
-                        $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                        $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
                         if (Tool::isValidLanguage((string)$locale)) {
                             $language = (string)$locale;
                         }
@@ -249,6 +252,10 @@ CONDITION;
         $objectbricks = $this->model->getObjectbricks();
         if (!empty($objectbricks)) {
             foreach ($objectbricks as $ob) {
+                $brickDefinition = DataObject\Objectbrick\Definition::getByKey($ob);
+                if (!$brickDefinition instanceof DataObject\Objectbrick\Definition) {
+                    continue;
+                }
 
                 // join info
                 $table = 'object_brick_query_' . $ob . '_' . $this->model->getClassId();
@@ -265,7 +272,6 @@ CONDITION
                     ''
                 );
 
-                $brickDefinition = DataObject\Objectbrick\Definition::getByKey($ob);
                 if ($brickDefinition->getFieldDefinition('localizedfields')) {
                     $langugage = $this->getLocalizedBrickLanguage();
                     //TODO wrong pattern

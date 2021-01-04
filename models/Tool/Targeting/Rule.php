@@ -92,7 +92,7 @@ class Rule extends Model\AbstractModel
             $targetId = (int) $target;
         }
 
-        if (array_key_exists('_ptc', $_GET) && intval($targetId) == intval($_GET['_ptc'])) {
+        if (array_key_exists('_ptc', $_GET) && (int)$targetId == (int)$_GET['_ptc']) {
             return true;
         }
 
@@ -110,7 +110,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->getDao()->getById(intval($id));
+            $target->getDao()->getById((int)$id);
 
             return $target;
         } catch (\Exception $e) {
@@ -122,6 +122,8 @@ class Rule extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -130,7 +132,7 @@ class Rule extends Model\AbstractModel
             $target->getDao()->getByName($name);
 
             return $target;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

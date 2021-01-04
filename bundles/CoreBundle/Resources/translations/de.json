@@ -557,7 +557,7 @@
     "print_format": "Druck-Format",
     "office_format": "Office-Format",
     "change_password": "Passwort ändern",
-    "file_is_bigger_that_upload_limit": "Die folgende Datei ist größer als die aktuell zugelassene Uploadlimite deines Servers:",
+    "file_is_bigger_that_upload_limit": "Die folgende Datei ist größer als das aktuell zugelassene Upload-Limit deines Servers:",
     "send_test_email_success": "Ihre Test-E-Mail wurde versendet. Möchten Sie dieses Fenster geöffnet lassen, um das E-Mail erneut zu versenden?",
     "press_crtl_and_select_to_compare": "Vergleichen: CTRL drücken + Version anklicken",
     "clear_filters": "Filter leeren",
@@ -957,5 +957,8 @@
     "different_number_of_columns": "Unterschiedliche Anzahl von Spalten",
     "brick_limit_reached": "Limit ({bricklimit}) für Brick erreicht: {brickname}",
     "generate_type_declarations": "Typdeklarationen generieren",
-    "batch_change_language": "Batch-Update-Sprache"
+    "batch_change_language": "Batch-Update-Sprache",
+    "preview_item": "Vorschau des Elements",
+    "by_key_reverse": "Schlüssel (Z bis A)",
+    "deprecated": "Veraltet"
 }

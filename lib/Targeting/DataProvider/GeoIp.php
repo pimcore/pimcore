@@ -19,7 +19,7 @@ namespace Pimcore\Targeting\DataProvider;
 
 use GeoIp2\Model\City;
 use GeoIp2\ProviderInterface;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
@@ -43,7 +43,7 @@ class GeoIp implements DataProviderInterface
     private $logger;
 
     /**
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     private $cache;
 
@@ -55,7 +55,7 @@ class GeoIp implements DataProviderInterface
         $this->logger = $logger;
     }
 
-    public function setCache(CoreHandlerInterface $cache)
+    public function setCache(CoreCacheHandler $cache)
     {
         $this->cache = $cache;
     }

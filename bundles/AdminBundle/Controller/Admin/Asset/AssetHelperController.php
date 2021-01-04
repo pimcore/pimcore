@@ -278,7 +278,7 @@ class AssetHelperController extends AdminController
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
-        $context = $gridConfig['context'];
+        $context = $gridConfig['context'] ?? null;
         if ($context) {
             $context = json_decode($context, true);
         }
@@ -667,7 +667,6 @@ class AssetHelperController extends AdminController
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
         $language = str_replace('default', '', $request->get('language'));
 
-        /** @var \Pimcore\Model\Asset\Listing $list */
         $list = new Asset\Listing();
 
         $quotedIds = [];
@@ -752,7 +751,7 @@ class AssetHelperController extends AdminController
                         $data = $asset->getMetadata($field, $language, true);
                     }
 
-                    if ($data instanceof Element\AbstractElement) {
+                    if ($data instanceof Element\ElementInterface) {
                         $data = $data->getFullPath();
                     }
                     $dataRows[] = $data;
@@ -873,7 +872,6 @@ class AssetHelperController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
         $metadataItems = [];
         $tmp = [];
-        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
             //only allow unique metadata columns with subtypes
             $uniqueKey = $item->getName().'_'.$item->getTargetSubtype();
@@ -950,7 +948,7 @@ class AssetHelperController extends AdminController
                     'processed' => false,
                 ]);
 
-                $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE, $updateEvent);
+                $eventDispatcher->dispatch($updateEvent, AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE);
 
                 $processed = $updateEvent->getArgument('processed');
 

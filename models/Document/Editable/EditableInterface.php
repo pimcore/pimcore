@@ -17,23 +17,14 @@
 
 namespace Pimcore\Model\Document\Editable;
 
-use Pimcore\Model\Document\PageSnippet;
-
 interface EditableInterface
 {
     /**
-     * Return the data for direct output to the frontend, can also contain HTML code!
+     * Renders the editable, calls either frontend() or admin() depending on the context
      *
-     * @return string|void
+     * @return mixed
      */
-    public function frontend();
-
-    /**
-     * Return the data for the admin, can also contain HTML code!
-     *
-     * @return string|void
-     */
-    public function admin();
+    public function render();
 
     /**
      * Get the current data stored for the element
@@ -69,22 +60,7 @@ interface EditableInterface
     public function setDataFromResource($data);
 
     /**
-     * Returns the current editable's data for web service export
-     *
-     * @deprecated
-     *
-     * @param PageSnippet|null $document
-     * @param array $params
-     * @abstract
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($document = null, $params = []);
-
-    /**
      * @return bool
      */
     public function isEmpty();
 }
-
-class_alias(EditableInterface::class, 'Pimcore\Model\Document\Tag\TagInterface');

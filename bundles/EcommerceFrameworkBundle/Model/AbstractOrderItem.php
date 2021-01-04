@@ -14,217 +14,129 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection;
 
 /**
  * Abstract base class for order item pimcore objects
  */
-class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
+abstract class AbstractOrderItem extends Concrete
 {
     /**
-     * @throws UnsupportedException
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
+     * @return CheckoutableInterface
      */
-    public function getProduct()
-    {
-        throw new UnsupportedException('getProduct is not implemented for ' . get_class($this));
-    }
+    abstract public function getProduct();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface $product
-     *
-     * @throws UnsupportedException
+     * @param CheckoutableInterface $product
      */
-    public function setProduct($product)
-    {
-        throw new UnsupportedException('setProduct is not implemented for ' . get_class($this));
-    }
+    abstract public function setProduct($product);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return string
      */
-    public function getProductNumber()
-    {
-        throw new UnsupportedException('getProductNumber is not implemented for ' . get_class($this));
-    }
+    abstract public function getProductNumber();
 
     /**
      * @param string $productNumber
-     *
-     * @throws UnsupportedException
      */
-    public function setProductNumber($productNumber)
-    {
-        throw new UnsupportedException('setProductNumber is not implemented for ' . get_class($this));
-    }
+    abstract public function setProductNumber($productNumber);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return string
      */
-    public function getProductName()
-    {
-        throw new UnsupportedException('getProductName is not implemented for ' . get_class($this));
-    }
+    abstract public function getProductName();
 
     /**
      * @param string $productName
-     *
-     * @throws UnsupportedException
      */
-    public function setProductName($productName)
-    {
-        throw new UnsupportedException('setProductName is not implemented for ' . get_class($this));
-    }
+    abstract public function setProductName($productName);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return float
      */
-    public function getAmount()
-    {
-        throw new UnsupportedException('getAmount is not implemented for ' . get_class($this));
-    }
+    abstract public function getAmount();
 
     /**
      * @param float $amount
-     *
-     * @throws UnsupportedException
      */
-    public function setAmount($amount)
-    {
-        throw new UnsupportedException('setAmount is not implemented for ' . get_class($this));
-    }
+    abstract public function setAmount($amount);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return float
      */
-    public function getTotalPrice()
-    {
-        throw new UnsupportedException('getTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function getTotalPrice();
 
     /**
-     * @throws UnsupportedException
-     *
      * @param float $totalPrice
      */
-    public function setTotalPrice($totalPrice)
-    {
-        throw new UnsupportedException('setTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function setTotalPrice($totalPrice);
 
     /**
-     * Should return a float
-     *
-     * @return void
+     * @return float
      */
-    public function getTotalNetPrice()
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
-    }
+    abstract public function getTotalNetPrice();
 
     /**
      * @param float $totalNetPrice
      */
-    public function setTotalNetPrice($totalNetPrice)
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
-    }
+    abstract public function setTotalNetPrice($totalNetPrice);
 
     /**
-     * Should return an array
-     *
-     * @return void
+     * @return array
      */
-    public function getTaxInfo()
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTaxInfo not implemented for ' . get_class($this));
-    }
+    abstract public function getTaxInfo();
 
     /**
      * @param array $taxInfo
      */
-    public function setTaxInfo($taxInfo)
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTaxInfo not implemented for ' . get_class($this));
-    }
+    abstract public function setTaxInfo($taxInfo);
 
     /**
      * @return AbstractOrderItem[]
-     *
-     * @throws UnsupportedException
      */
-    public function getSubItems()
-    {
-        throw new UnsupportedException('getSubItems is not implemented for ' . get_class($this));
-    }
+    abstract public function getSubItems();
 
     /**
      * @param AbstractOrderItem[] $subItems
-     *
-     * @throws UnsupportedException
      */
-    public function setSubItems($subItems)
-    {
-        throw new UnsupportedException('setSubItems is not implemented for ' . get_class($this));
-    }
+    abstract public function setSubItems($subItems);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection
      */
-    public function getPricingRules()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getPricingRules();
 
     /**
-     * @param \Pimcore\Model\DataObject\Fieldcollection $pricingRules
-     *
-     * @throws UnsupportedException
+     * @param Fieldcollection $pricingRules
      *
      * @return $this
      */
-    public function setPricingRules($pricingRules)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setPricingRules($pricingRules);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return string
      */
-    public function getOrderState()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getOrderState();
 
     /**
      * @param string $orderState
      *
-     * @throws UnsupportedException
+     * @return $this
+     */
+    abstract public function setOrderState($orderState);
+
+    /**
+     * @return string
+     */
+    abstract public function getComment();
+
+    /**
+     * @param string $comment
      *
      * @return $this
      */
-    public function setOrderState($orderState)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setComment($comment);
 
     /**
      * is the order item cancel able

@@ -22,4 +22,50 @@ interface ElementEventInterface
      * @return ElementInterface
      */
     public function getElement();
+
+    /**
+     * Get argument by key.
+     *
+     * @param string $key Key
+     *
+     * @return mixed Contents of array key
+     *
+     * @throws \InvalidArgumentException If key is not found.
+     */
+    public function getArgument($key);
+
+    /**
+     * Add argument to event.
+     *
+     * @param string $key   Argument name
+     * @param mixed  $value Value
+     *
+     * @return $this
+     */
+    public function setArgument($key, $value);
+
+    /**
+     * Getter for all arguments.
+     *
+     * @return array
+     */
+    public function getArguments();
+
+    /**
+     * Set args property.
+     *
+     * @param array $args Arguments
+     *
+     * @return $this
+     */
+    public function setArguments(array $args = []);
+
+    /**
+     * Has argument.
+     *
+     * @param string $key Key of arguments array
+     *
+     * @return bool
+     */
+    public function hasArgument($key);
 }

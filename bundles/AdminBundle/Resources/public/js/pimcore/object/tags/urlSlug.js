@@ -34,9 +34,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -51,7 +49,9 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-        this.component = new Ext.Panel();
+        this.component = new Ext.Panel({
+            layout: "fit"
+        });
 
         this.addFallbackSlug();
         if (this.data.length > 0) {
@@ -175,7 +175,13 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             textConfig.labelWidth = this.fieldConfig.domainLabelWidth;
         }
 
-        textConfig.width += textConfig.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            textConfig.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            textConfig.width = this.sumWidths(textConfig.width, textConfig.labelWidth);
+        }
 
         var text = new Ext.form.TextField(textConfig);
 

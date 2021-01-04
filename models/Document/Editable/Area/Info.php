@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document\Editable\Area;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
-use Pimcore\Templating\Model\ViewModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Info
@@ -30,12 +29,6 @@ class Info
     public $id;
 
     /**
-     *
-     * @deprecated since v6.8 and will be removed in 7.
-     */
-    public $tag;
-
-    /**
      * @var Editable|Editable\Area|Editable\Areablock
      */
     public $editable;
@@ -43,17 +36,12 @@ class Info
     /**
      * @var array
      */
-    public $params;
+    public $params = [];
 
     /**
      * @var Request
      */
     public $request;
-
-    /**
-     * @var ViewModelInterface
-     */
-    public $view;
 
     /**
      * @var string
@@ -64,11 +52,6 @@ class Info
      * @var int
      */
     public $index;
-
-    public function __construct()
-    {
-        $this->tag = & $this->editable;
-    }
 
     /**
      * @return string
@@ -88,26 +71,6 @@ class Info
         $this->id = $id;
 
         return $this;
-    }
-
-    /**
-     * @return Editable|Editable\Area|Editable\Areablock
-     *
-     * @deprecated since v6.8 and will be removed in 7. use getEditable() instead.
-     */
-    public function getTag()
-    {
-        return $this->getEditable();
-    }
-
-    /**
-     * @param Editable $tag
-     *
-     * @deprecated since v6.8 and will be removed in 7. use setEditable() instead.
-     */
-    public function setTag(Editable $tag)
-    {
-        $this->setEditable($tag);
     }
 
     /**
@@ -169,6 +132,19 @@ class Info
     }
 
     /**
+     * @param string $name
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function setParam(string $name, $value)
+    {
+        $this->params[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * @param array $params
      *
      * @return $this
@@ -201,26 +177,6 @@ class Info
     }
 
     /**
-     * @return ViewModelInterface
-     */
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    /**
-     * @param ViewModelInterface $view
-     *
-     * @return $this
-     */
-    public function setView(ViewModelInterface $view)
-    {
-        $this->view = $view;
-
-        return $this;
-    }
-
-    /**
      * @param int $index
      *
      * @return $this
@@ -245,15 +201,7 @@ class Info
      */
     public function getDocument()
     {
-        $document = null;
-
-        if ($this->view && isset($this->view->document)) {
-            $document = $this->view->document;
-        } else {
-            $document = $this->editable->getDocument();
-        }
-
-        return $document;
+        return $this->editable->getDocument();
     }
 
     /**
@@ -277,5 +225,3 @@ class Info
         return $editable;
     }
 }
-
-class_alias(Info::class, 'Pimcore\Model\Document\Tag\Area\Info');

@@ -28,6 +28,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 use Pimcore\Tool;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Localizedfield $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -98,9 +100,10 @@ class Dao extends Model\Dao\AbstractDao
         // if inside a field collection a delete is not necessary as the fieldcollection deletes all entries anyway
         // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
 
+        $forceUpdate = false;
         if ((isset($params['newParent']) && $params['newParent']) || DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
             ) || $context['containerType'] == 'fieldcollection') {
-            $this->delete(false, true);
+            $forceUpdate = $this->delete(false, true);
         }
 
         $object = $this->model->getObject();
@@ -120,7 +123,9 @@ class Dao extends Model\Dao\AbstractDao
             throw new \Exception('need owner from container implementation');
         }
 
-        $this->model->setOwner($params['owner'], 'localizedfields');
+        $this->model->_setOwner($params['owner']);
+        $this->model->_setOwnerFieldname('localizedfields');
+        $this->model->_setOwnerLanguage(null);
 
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
         $localizedfields = $container->getFieldDefinition('localizedfields');
@@ -134,9 +139,11 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
-            if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !$this->model->isLanguageDirty(
-                    $language
-                )) {
+            if (empty($params['newParent'])
+                && !empty($params['isUpdate'])
+                && !$this->model->isLanguageDirty($language)
+                && !$forceUpdate
+            ) {
                 continue;
             }
             $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
@@ -166,11 +173,14 @@ class Dao extends Model\Dao\AbstractDao
                     $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate, 'context' => $context]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        $saveLocalizedRelations = $params['saveRelationalData']['saveLocalizedRelations'] ?? false;
+                        $saveLocalizedRelations = $forceUpdate || ($params['saveRelationalData']['saveLocalizedRelations'] ?? false);
                         if (($saveLocalizedRelations && $container instanceof DataObject\Fieldcollection\Definition)
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
                                 || $saveLocalizedRelations)) {
+                            if ($saveLocalizedRelations) {
+                                $childParams['forceSave'] = true;
+                            }
                             $fd->save($this->model, $childParams);
                         }
                     } else {
@@ -209,7 +219,9 @@ class Dao extends Model\Dao\AbstractDao
                 if (strpos($e->getMessage(), 'exist')) {
                     $this->db->rollBack();
                     $this->createUpdateTable();
-                    throw new \Exception('missing table created, start next run ... ;-)');
+
+                    // throw exception which gets caught in AbstractObject::save() -> retry saving
+                    throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                 }
                 throw $e;
             }
@@ -248,7 +260,7 @@ class Dao extends Model\Dao\AbstractDao
                         $this->createUpdateTable();
 
                         // at this point we throw an exception so that the transaction gets repeated in DataObject::save()
-                        throw new \Exception('missing table created, start next run ... ;-)');
+                        throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                     }
                 }
 
@@ -405,11 +417,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param bool $deleteQuery
      * @param bool $isUpdate
+     *
+     * @return bool force update
      */
     public function delete($deleteQuery = true, $isUpdate = true)
     {
         if ($isUpdate && !DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
-            return;
+            return false;
         }
         $object = $this->model->getObject();
         $context = $this->model->getContext();
@@ -471,7 +485,7 @@ class Dao extends Model\Dao\AbstractDao
         // remove relations
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
             if (!$this->model->hasDirtyFields()) {
-                return;
+                return false;
             }
         }
 
@@ -510,11 +524,16 @@ class Dao extends Model\Dao\AbstractDao
                 ).$dirtyLanguageCondition;
 
             $this->db->deleteWhere('object_relations_'.$object->getClassId(), $sql);
+            if ($container instanceof DataObject\Fieldcollection\Definition) {
+                return true;
+            }
         } else {
             $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
                 )->getId().$dirtyLanguageCondition;
             $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
         }
+
+        return false;
     }
 
     /**
@@ -576,7 +595,9 @@ class Dao extends Model\Dao\AbstractDao
             throw new \Exception('need owner from container implementation');
         }
 
-        $this->model->setOwner($params['owner'], 'localizedfields');
+        $this->model->_setOwner($params['owner']);
+        $this->model->_setOwnerFieldname('localizedfields');
+        $this->model->_setOwnerLanguage(null);
 
         foreach ($data as $row) {
             /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
@@ -784,24 +805,25 @@ QUERY;
 
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
-        foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-            if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
-                /** @var DataObject\ClassDefinition\Data & ResourcePersistenceAwareInterface $value */
-                if ($value->getColumnType()) {
-                    $key = $value->getName();
+        if ($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+            foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
+                if ($value instanceof ResourcePersistenceAwareInterface) {
+                    if ($value->getColumnType()) {
+                        $key = $value->getName();
 
-                    if (is_array($value->getColumnType())) {
-                        // if a datafield requires more than one column
-                        foreach ($value->getColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                            $protectedColumns[] = $key . '__' . $fkey;
+                        if (is_array($value->getColumnType())) {
+                            // if a datafield requires more than one column
+                            foreach ($value->getColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                                $protectedColumns[] = $key . '__' . $fkey;
+                            }
+                        } elseif ($value->getColumnType()) {
+                            $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
+                            $protectedColumns[] = $key;
                         }
-                    } elseif ($value->getColumnType()) {
-                        $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
-                        $protectedColumns[] = $key;
-                    }
 
-                    $this->addIndexToField($value, $table, 'getColumnType', true, true);
+                        $this->addIndexToField($value, $table, 'getColumnType', true, true);
+                    }
                 }
             }
         }
@@ -834,16 +856,21 @@ QUERY;
 
                 DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$queryTable]);
 
+                $fieldDefinitions = [];
                 if ($container instanceof DataObject\Objectbrick\Definition) {
                     $containerKey = $context['containerKey'];
                     $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
+
                     /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
                     $localizedfields = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
                     $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
                 } else {
                     /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
                     $localizedfields = $this->model->getClass()->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
-                    $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
+
+                    if ($localizedfields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                        $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
+                    }
                 }
 
                 // add non existing columns in the table

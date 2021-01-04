@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Token[] load()
@@ -26,18 +26,6 @@ use Zend\Paginator\AdapterAggregateInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
-    /**
-     * @var Token[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $tokens;
-
-    public function __construct()
-    {
-        $this->tokens = & $this->data;
-    }
-
     /**
      * @param string $key
      *
@@ -79,21 +67,21 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
                 $this->addConditionParam('length = ?', $filter['length']);
             }
 
-            if ($filter['creation_from']) {
+            if (isset($filter['creation_from'])) {
                 $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
             }
 
-            if ($filter['creation_to']) {
+            if (isset($filter['creation_to'])) {
                 $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             }
 
-            if ($this->isValidOrderKey($filter['sort_criteria'])) {
+            if ($this->isValidOrderKey($filter['sort_criteria'] ?? '')) {
                 $this->setOrderKey($filter['sort_criteria']);
             } else {
                 $this->setOrderKey('timestamp');
             }
 
-            if ($filter['sort_order'] == 'ASC') {
+            if (($filter['sort_order'] ?? false) == 'ASC') {
                 $this->setOrder('ASC');
             } else {
                 $this->setOrder('DESC');
@@ -157,13 +145,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $tmp = new self();
-        if ($tmp->isValidOrderKey($params['sort_criteria'])) {
+        if ($tmp->isValidOrderKey($params['sort_criteria'] ?? '')) {
             $query .= ' ORDER BY ' . $params['sort_criteria'];
         } else {
             $query .= ' ORDER BY timestamp';
         }
 
-        if ($params['sort_order'] == 'ASC') {
+        if (($params['sort_order'] ?? false) == 'ASC') {
             $query .= ' ASC';
         } else {
             $query .= ' DESC';
@@ -358,6 +346,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
 
     /**
      * @param array $tokens
+     *
+     * @return static
      */
     public function setTokens($tokens)
     {

@@ -496,7 +496,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         if(!this.panel) {
             this.panel = new Ext.Panel({
-                title: this.config["niceName"],
+                title: t(this.config["niceName"]),
                 layout: "fit",
                 border: false,
                 items: []
@@ -539,6 +539,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     createCsv: function (btn, exportFile, offset) {
         let filterData = this.store.getFilters().items;
+        let proxy = this.store.getProxy();
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_reports_customreport_createcsv'),
             params: {

@@ -14,8 +14,6 @@
 
 namespace Pimcore\Cache\Core;
 
-use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
-
 class CacheQueueItem
 {
     /**
@@ -27,11 +25,6 @@ class CacheQueueItem
      * @var mixed
      */
     protected $data;
-
-    /**
-     * @var PimcoreCacheItemInterface
-     */
-    protected $cacheItem;
 
     /**
      * @var array
@@ -88,6 +81,14 @@ class CacheQueueItem
     }
 
     /**
+     * @param mixed $data
+     */
+    public function setData($data): void
+    {
+        $this->data = $data;
+    }
+
+    /**
      * @return array
      */
     public function getTags()
@@ -117,25 +118,5 @@ class CacheQueueItem
     public function isForce()
     {
         return $this->force;
-    }
-
-    /**
-     * @param PimcoreCacheItemInterface $cacheItem
-     *
-     * @return $this
-     */
-    public function setCacheItem(PimcoreCacheItemInterface $cacheItem)
-    {
-        $this->cacheItem = $cacheItem;
-
-        return $this;
-    }
-
-    /**
-     * @return PimcoreCacheItemInterface
-     */
-    public function getCacheItem()
-    {
-        return $this->cacheItem;
     }
 }

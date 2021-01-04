@@ -1,6 +1,6 @@
 # Logging
 
-There are several different kinds of logs in Pimcore. All of them are located under `/var/logs/` and get rotated
+There are several different kinds of logs in Pimcore. All of them are located under `/var/log` and get rotated
 as well as compressed automatically on every day (7 days retention) by the maintenance command. 
  
 ## <env>.log
@@ -12,8 +12,6 @@ For details see [Symfonys monolog docs](http://symfony.com/doc/3.4/logging.html)
 ## php.log
 By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.
 You can change this using constant `PIMCORE_PHP_ERROR_LOG` that is used to set PHP's [error_log Configuration](http://php.net/manual/en/errorfunc.configuration.php#ini.error-log).
-
-You can additionally use the Constant `PIMCORE_PHP_ERROR_REPORTING` to set PHP's [error_reporting](http://php.net/manual/en/errorfunc.configuration.php#ini.error-reporting)
 
 ## usagelog.log
 In this log you can find every action done within the Pimcore Backend Interface. It can be deactivated in system settings.
@@ -55,7 +53,7 @@ function like this:
 \Pimcore\Log\Simple::log($name, $message);
 ```
 
-The `$name` variable defines the filename of the log file, "mylog" will write a file to `/var/logs/mylog.log` 
+The `$name` variable defines the filename of the log file, "mylog" will write a file to `/var/log/mylog.log` 
 (extension is added automatically). If the file does not yet exist it will be created on the fly. 
 
 The message is the line that will be written to the log. A date and time will also be prepended 

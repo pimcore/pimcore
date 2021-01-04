@@ -108,10 +108,6 @@ class IncludeRenderer
                     $cacheParams['target_group'] = $include->getUseTargetGroup();
                 }
 
-                if (Frontend::hasWebpSupport()) {
-                    $cacheParams['webp'] = true;
-                }
-
                 $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
                 if ($content = Cache::load($cacheKey)) {
                     return $content;
@@ -156,9 +152,7 @@ class IncludeRenderer
      */
     protected function renderAction(PageSnippet $include, $params)
     {
-        $controller = $this->actionRenderer->createDocumentReference($include, $params);
-
-        return $this->actionRenderer->render($controller);
+        return $this->actionRenderer->render($include, $params);
     }
 
     /**
@@ -173,7 +167,7 @@ class IncludeRenderer
      */
     protected function modifyEditmodeContent(PageSnippet $include, $content)
     {
-        $editmodeClass = ' pimcore_editable pimcore_tag_inc pimcore_editable_inc ';
+        $editmodeClass = ' pimcore_editable pimcore_editable_inc ';
 
         // this is if the content that is included does already contain markup/html
         // this is needed by the editmode to highlight included documents

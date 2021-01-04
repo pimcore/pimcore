@@ -10,4 +10,4 @@ For high traffic websites, we recommend the following software and configuration
   - [mysqltuner.pl](https://github.com/rackerhacker/MySQLTuner-perl)
   - [mysqlprimer](https://launchpad.net/mysql-tuning-primer)
   - [MariaDB](http://mariadb.org/) / [Percona Server](http://www.percona.com/software/percona-server/) (if improvements are expected => test it on your stage-environment).
-- Make use of [in-template caching](../../02_MVC/02_Template/02_Templating_Helpers/README.md).
+- Make use of [in-template caching](../../02_MVC/02_Template/02_Template_Extensions/README.md).

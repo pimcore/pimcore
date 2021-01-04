@@ -14,14 +14,13 @@
 pimcore.registerNS("pimcore.document.editables.link");
 pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         if (!data) {
             data = {};
         }
 
         this.defaultData = {
-            type: "internal",
             path: "",
             parameters: "",
             anchor: "",
@@ -37,14 +36,16 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
+        this.config = this.parseConfig(config);
+    },
+
+    render: function() {
         this.setupWrapper();
-        this.options = this.parseOptions(options);
 
-
-        Ext.get(id).setStyle({
+        Ext.get(this.id).setStyle({
             display:"inline"
         });
-        Ext.get(id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text pimcore_editable_link_text">' + this.getLinkContent() + '</span>');
+        Ext.get(this.id).insertHtml("beforeEnd",'<span class="pimcore_editable_link_text">' + this.getLinkContent() + '</span>');
 
         var editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
@@ -70,8 +71,8 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             }
         });
 
-        openButton.render(id);
-        editButton.render(id);
+        openButton.render(this.id);
+        editButton.render(this.id);
     },
 
     openEditor: function () {
@@ -96,7 +97,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             text = this.data.path;
         }
         if (this.data.path) {
-            return '<a href="' + this.data.path + '" class="' + this.options["class"] + ' ' + this.data["class"] + '">' + text + '</a>';
+            return '<a href="' + this.data.path + '" class="' + this.config["class"] + ' ' + this.data["class"] + '">' + text + '</a>';
         }
         return text;
     },
@@ -119,7 +120,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
     },
 
     reload : function () {
-        if (this.options.reload) {
+        if (this.config.reload) {
             this.reloadDocument();
         }
     },

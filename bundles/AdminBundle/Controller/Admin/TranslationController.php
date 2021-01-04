@@ -36,6 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/translation")
@@ -333,7 +334,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function translationsAction(Request $request, Translator $translator)
+    public function translationsAction(Request $request, TranslatorInterface $translator)
     {
         $admin = $request->get('admin');
 
@@ -517,7 +518,7 @@ class TranslationController extends AdminController
                     foreach ($joins as $join) {
                         $fieldname = $join['language'];
 
-                        if ($alreadyJoined[$fieldname]) {
+                        if (isset($alreadyJoined[$fieldname])) {
                             continue;
                         }
                         $alreadyJoined[$fieldname] = 1;
@@ -737,7 +738,7 @@ class TranslationController extends AdminController
                 }
 
                 if (isset($element['relations']) && $element['relations']) {
-                    if (!$el instanceof Element\AbstractElement) {
+                    if (!$el instanceof Element\ElementInterface) {
                         $el = Element\Service::getElementById($element['type'], $element['id']);
                     }
 
@@ -766,7 +767,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/translation/' . $type . '-export',
+                'url' => $request->getBaseUrl() . '/admin/translation/' . $type . '-export',
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,

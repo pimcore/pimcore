@@ -6,7 +6,7 @@
 
 ```php
 <?php
-    $object = DataObject::getById(1234);
+    $object = AbstractObject::getById(1234);
     print_r($object->getMyVideo());
 ?>
 ```
@@ -64,13 +64,13 @@ Pimcore\Model\DataObject\Data\Video Object
 <?php
  
  
-$object = DataObject::getById(1234);
+$object = AbstractObject::getById(1234);
 $v = $object->getMyVideo();
 $videoData = $v->getData();
  
 if($videoData) {
     $video = new \Pimcore\Model\Document\Editable\Video();
-    $video->setOptions([
+    $video->setConfig([
         "thumbnail" => "myVideoThumb", // specify your thumbnail here - IMPORTANT!
         "width" => "100%",
         "height" => 480,
@@ -96,7 +96,7 @@ if($videoData) {
  
 // asset video with poster image
  
-$object = DataObject::getById(789);
+$object = AbstractObject::getById(789);
 $assetVideo = Asset::getById(123);
 $assetImage = Asset::getById(456);
  

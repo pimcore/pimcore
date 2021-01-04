@@ -23,5 +23,3 @@ interface CheckoutManagerFactoryInterface
 {
     public function createCheckoutManager(CartInterface $cart): CheckoutManagerInterface;
 }
-
-class_alias(CheckoutManagerFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory');

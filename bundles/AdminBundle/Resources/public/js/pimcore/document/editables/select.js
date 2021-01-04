@@ -14,39 +14,47 @@
 pimcore.registerNS("pimcore.document.editables.select");
 pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
 
-        this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
-        options.listeners = {};
+        config.listeners = {};
 
         // onchange event
-        if (options.onchange) {
-            options.listeners.select = eval(options.onchange);
+        if (config.onchange) {
+            config.listeners.select = eval(config.onchange);
         }
 
-        if (options["reload"]) {
-            options.listeners.select = this.reloadDocument;
+        if (config["reload"]) {
+            config.listeners.select = this.reloadDocument;
         }
 
-        if(options["defaultValue"] && data === null) {
-            data = options["defaultValue"];
+        if(typeof config["defaultValue"] !== "undefined" && data === null) {
+            data = config["defaultValue"];
         }
 
-        options.name = id + "_editable";
-        options.triggerAction = 'all';
-        options.editable = false;
-        options.value = data;
+        config.name = id + "_editable";
+        config.triggerAction = 'all';
+        config.editable = false;
+        config.value = data;
 
-        this.element = new Ext.form.ComboBox(options);
-        this.element.render(id);
+        this.config = config;
+    },
+
+    render: function() {
+        this.setupWrapper();
+        this.element = new Ext.form.ComboBox(this.config);
+        this.element.render(this.id);
     },
 
     getValue: function () {
-        return this.element.getValue();
+        if(this.element) {
+            return this.element.getValue();
+        }
+
+        return this.config.value;
     },
 
     getType: function () {

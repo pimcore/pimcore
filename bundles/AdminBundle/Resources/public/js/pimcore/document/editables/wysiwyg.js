@@ -17,59 +17,59 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
     type: "wysiwyg",
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
-        this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if (!data) {
             data = "";
         }
         this.data = data;
-        this.options = options;
+        this.config = config;
         this.inherited = inherited;
 
-        var textareaId = id + "_textarea";
+        if(config["required"]) {
+            this.required = config["required"];
+        }
+    },
+
+    render: function () {
+        this.setupWrapper();
+
         this.textarea = document.createElement("div");
         this.textarea.setAttribute("contenteditable","true");
 
-        Ext.get(id).appendChild(this.textarea);
+        Ext.get(this.id).appendChild(this.textarea);
+        Ext.get(this.id).insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
 
-        Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+        this.textarea.id = this.id + "_textarea";
+        this.textarea.innerHTML = this.data;
 
-        this.textarea.id = textareaId;
-        this.textarea.innerHTML = data;
-
-        var textareaHeight = 100;
-        if (options.height) {
-            textareaHeight = options.height;
+        let textareaHeight = 100;
+        if (this.config.height) {
+            textareaHeight = this.config.height;
         }
-        if (options.placeholder) {
-            this.textarea.setAttribute('data-placeholder', options["placeholder"]);
+        if (this.config.placeholder) {
+            this.textarea.setAttribute('data-placeholder', this.config["placeholder"]);
         }
 
-        var inactiveContainerWidth = options.width + "px";
-        if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
-            inactiveContainerWidth = options.width;
+        let inactiveContainerWidth = this.config.width + "px";
+        if (typeof this.config.width == "string" && this.config.width.indexOf("%") >= 0) {
+            inactiveContainerWidth = this.config.width;
         }
 
         Ext.get(this.textarea).addCls("pimcore_wysiwyg");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
-                                                                                                + "px;");
+            + "px;");
 
         // register at global DnD manager
         if (typeof dndManager !== 'undefined') {
-            dndManager.addDropTarget(Ext.get(id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+            dndManager.addDropTarget(Ext.get(this.id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
         }
 
         this.startCKeditor();
-
-        if(options["required"]) {
-            this.required = options["required"];
-        }
-
         this.checkValue();
     },
 
@@ -78,11 +78,11 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         try {
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
             var eConfig = {};
-            var specificConfig = Object.assign({}, this.options);
+            var specificConfig = Object.assign({}, this.config);
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
-            if(!this.options["toolbarGroups"] && this.options['toolbarGroups'] !== false){
+            if(!this.config["toolbarGroups"] && this.config['toolbarGroups'] !== false){
                 eConfig.toolbarGroups = [
                     { name: 'basicstyles', groups: [ 'undo', "find", 'basicstyles', 'list'] },
                     '/',

@@ -157,7 +157,7 @@ class Scheduledblock extends Block implements BlockInterface
             $this->start();
         }
 
-        if ($this->current < count($elements) && $this->current < $this->options['limit']) {
+        if ($this->current < count($elements) && $this->current < $this->config['limit']) {
             $this->blockConstruct();
             $this->blockStart();
 
@@ -176,8 +176,8 @@ class Scheduledblock extends Block implements BlockInterface
      */
     public function start()
     {
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $options = $this->getEditmodeConfig();
+        $this->outputEditmodeConfig($options);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
@@ -265,5 +265,3 @@ class Scheduledblock extends Block implements BlockInterface
         $this->cachedCurrentElement = null;
     }
 }
-
-class_alias(Scheduledblock::class, 'Pimcore\Model\Document\Tag\Scheduledblock');

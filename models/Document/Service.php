@@ -175,9 +175,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
+        $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -223,7 +224,7 @@ class Service extends Model\Element\Service
             $new->setPrettyUrl(null);
         }
 
-        if ($enableInheritance && ($new instanceof Document\PageSnippet)) {
+        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
             $new->setEditables([]);
             $new->setContentMasterDocumentId($source->getId());
         }
@@ -242,9 +243,10 @@ class Service extends Model\Element\Service
         }
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
+        $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -270,7 +272,6 @@ class Service extends Model\Element\Service
             $target->setEditables($source->getEditables());
 
             $target->setTemplate($source->getTemplate());
-            $target->setAction($source->getAction());
             $target->setController($source->getController());
 
             if ($source instanceof Document\Page) {

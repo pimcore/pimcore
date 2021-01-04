@@ -500,8 +500,9 @@ class DataObjectHelperController extends AdminController
                             'key' => $key,
                             'type' => 'system',
                             'label' => $key,
-                            'locked' => $sc['locked'],
-                            'position' => $sc['position'], ];
+                            'locked' => $sc['locked'] ?? null,
+                            'position' => $sc['position'],
+                        ];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
                         }
@@ -551,6 +552,7 @@ class DataObjectHelperController extends AdminController
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
+                            $fd = null;
                             if ($brickClass instanceof DataObject\Objectbrick\Definition) {
                                 if ($brickDescriptor) {
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
@@ -562,7 +564,7 @@ class DataObjectHelperController extends AdminController
                                 }
                             }
 
-                            if (!empty($fd)) {
+                            if ($fd !== null) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $keyPrefix, $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
@@ -598,8 +600,9 @@ class DataObjectHelperController extends AdminController
                                         if (isset($sc['width'])) {
                                             $fieldConfig['width'] = $sc['width'];
                                         }
-
-                                        $fieldConfig['locked'] = $sc['locked'];
+                                        if (isset($sc['locked'])) {
+                                            $fieldConfig['locked'] = $sc['locked'];
+                                        }
                                         $availableFields[] = $fieldConfig;
                                     }
                                 }
@@ -767,12 +770,12 @@ class DataObjectHelperController extends AdminController
                 if ($bf instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $localizedFieldDefinitions = $bf->getFieldDefinitions();
 
-                    $context = [
+                    $localizedContext = [
                         'containerKey' => $brickType,
                         'fieldname' => $field->getName(),
                     ];
 
-                    $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $context);
+                    $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $localizedContext);
                 } else {
                     if ($context) {
                         $context['brickfield'] = $bf->getName();
@@ -1414,7 +1417,7 @@ class DataObjectHelperController extends AdminController
             $eventData->setAdditionalData($additionalData);
             $eventData->setContext($context);
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PREVIEW);
 
             $context = $eventData->getContext();
 
@@ -1423,8 +1426,9 @@ class DataObjectHelperController extends AdminController
             $paramsBag['object1'] = $object1;
             $paramsBag['object2'] = $object2;
             $paramsBag['isImportPreview'] = true;
+            $paramsBag['validLanguages'] = Tool::getValidLanguages();
 
-            $response = $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.php', $paramsBag);
+            $response = $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig', $paramsBag);
 
             return $response;
         } catch (\Exception $e) {
@@ -1573,11 +1577,9 @@ class DataObjectHelperController extends AdminController
             } elseif ($nbFields === count($fields)) {
                 $rows++;
             } else {
-                $translator = $this->get('translator');
-
                 return $this->adminJson([
                     'success' => false,
-                    'message' => $translator->trans('different_number_of_columns', [], 'admin'),
+                    'message' => $this->trans('different_number_of_columns', [], 'admin'),
                 ]);
             }
         }
@@ -1693,7 +1695,7 @@ class DataObjectHelperController extends AdminController
         $eventData->setContext($context);
 
         if ($job == 1) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::BEFORE_START, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::BEFORE_START);
 
             if (!copy($originalFile, $file)) {
                 throw new \Exception('failed to copy file');
@@ -1733,7 +1735,6 @@ class DataObjectHelperController extends AdminController
                 $configData->classId = $request->get('classId');
                 $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
-                /** @var DataObject\Concrete $object */
                 $object = $resolver->resolve($configData, $parentId, $rowData);
 
                 $context = $eventData->getContext();
@@ -1743,15 +1744,15 @@ class DataObjectHelperController extends AdminController
                 $eventData->setObject($object);
                 $eventData->setRowData($rowData);
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PRE_SAVE);
 
                 $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::POST_SAVE);
 
                 if ($job >= $importJobTotal) {
-                    $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                    $eventDispatcher->dispatch($eventData, DataObjectImportEvents::DONE);
                 }
 
                 return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
@@ -2067,7 +2068,6 @@ class DataObjectHelperController extends AdminController
                             $requestedLanguage = $params['language'];
                             if ($requestedLanguage) {
                                 if ($requestedLanguage != 'default') {
-                                    //                $this->get('translator')->setLocale($requestedLanguage);
                                     $request->setLocale($requestedLanguage);
                                 }
                             } else {

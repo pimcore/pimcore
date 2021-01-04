@@ -16,8 +16,10 @@ namespace Pimcore\Document\Editable;
 
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\ResponseStack;
 use Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface;
@@ -25,16 +27,16 @@ use Pimcore\HttpKernel\WebPathResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Templating\Model\ViewModel;
-use Pimcore\Templating\Model\ViewModelInterface;
-use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
+class EditableHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -59,11 +61,6 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
     protected $webPathResolver;
 
     /**
-     * @var ActionRenderer
-     */
-    protected $actionRenderer;
-
-    /**
      * @var RequestHelper
      */
     protected $requestHelper;
@@ -83,6 +80,16 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     protected $brickTemplateCache = [];
 
+    /**
+     * @var EditmodeResolver
+     */
+    protected $editmodeResolver;
+
+    /**
+     * @var HttpKernelRuntime
+     */
+    protected $httpKernelRuntime;
+
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
     /**
@@ -90,37 +97,32 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
-     * @param ActionRenderer $actionRenderer
      * @param RequestHelper $requestHelper
      * @param TranslatorInterface $translator
      * @param ResponseStack $responseStack
+     * @param EditmodeResolver $editmodeResolver
+     * @param HttpKernelRuntime $httpKernelRuntime
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
         EngineInterface $templating,
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
-        ActionRenderer $actionRenderer,
         RequestHelper $requestHelper,
         TranslatorInterface $translator,
-        ResponseStack $responseStack
+        ResponseStack $responseStack,
+        EditmodeResolver $editmodeResolver,
+        HttpKernelRuntime $httpKernelRuntime
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
         $this->bundleLocator = $bundleLocator;
         $this->webPathResolver = $webPathResolver;
-        $this->actionRenderer = $actionRenderer;
         $this->requestHelper = $requestHelper;
         $this->translator = $translator;
         $this->responseStack = $responseStack;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($view)
-    {
-        return $view instanceof ViewModelInterface;
+        $this->editmodeResolver = $editmodeResolver;
+        $this->httpKernelRuntime = $httpKernelRuntime;
     }
 
     /**
@@ -140,9 +142,6 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
     {
-        /** @var ViewModel $view */
-        $view = $editable->getView();
-
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
             // don't show disabled bricks
@@ -161,6 +160,8 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
             $icon = $brick->getIcon();
             $limit = $options['limits'][$brick->getId()] ?? null;
 
+            $hasDialogBoxConfiguration = $brick instanceof EditableDialogBoxInterface;
+
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
@@ -174,12 +175,11 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
                     }
                 } catch (\Exception $e) {
-                    $iconPath = '';
                     $icon = '';
                 }
             }
 
-            if ($view->getEditmode) {
+            if ($this->editmodeResolver->isEditmode()) {
                 $name = $this->translator->trans($name);
                 $desc = $this->translator->trans($desc);
             }
@@ -190,6 +190,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
+                'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
             ];
         }
 
@@ -201,34 +202,21 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     public function renderAreaFrontend(Info $info)
     {
-        $editable = $info->getEditable();
-        $params = $info->getParams();
-
-        /** @var ViewModelInterface $view */
-        $view = $editable->getView();
         $brick = $this->brickManager->getBrick($info->getId());
 
-        $info->setView($view);
         $request = $this->requestHelper->getCurrentRequest();
         $brickInfoRestoreValue = $request->attributes->get(self::ATTRIBUTE_AREABRICK_INFO);
         $request->attributes->set(self::ATTRIBUTE_AREABRICK_INFO, $info);
 
         $info->setRequest($request);
 
-        // assign parameters to view
-        $view->getParameters()->add($params);
-        $view->getParameters()->add([
-            'brick' => $info, // alias of `info` for compatibility reasons
-            'info' => $info,
-            'instance' => $brick,
-        ]);
-
         // call action
         $this->handleBrickActionResult($brick->action($info));
 
-        if (!$brick->hasViewTemplate()) {
-            return;
-        }
+        $params = $info->getParams();
+        $params['brick'] = $info;
+        $params['info'] = $info;
+        $params['instance'] = $brick;
 
         // check if view template exists and throw error before open tag is rendered
         $viewTemplate = $this->resolveBrickTemplate($brick, 'view');
@@ -245,39 +233,19 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         }
 
         // general parameters
-        $editmode = $view->get('editmode');
-        $forceEditInView = array_key_exists('forceEditInView', $params) && $params['forceEditInView'];
-
-        // view parameters
-        $viewParameters = array_merge($view->getParameters()->all(), [
-            // enable editmode if editmode is active and the brick has no edit template or edit in view is forced
-            'editmode' => $editmode ? (!$brick->hasEditTemplate() || $forceEditInView) : false,
-        ]);
-
-        // edit parameters
-        $editTemplate = null;
-        $editParameters = [];
-
-        if ($brick->hasEditTemplate() && $editmode) {
-            $editTemplate = $this->resolveBrickTemplate($brick, 'edit');
-            $editParameters = array_merge($view->getParameters()->all(), [
-                'editmode' => true,
-            ]);
-        }
+        $editmode = $this->editmodeResolver->isEditmode();
 
         // render complete areabrick
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
         // instead of actually parsing the php template
-        echo $this->templating->render('PimcoreCoreBundle:Areabrick:wrapper.html.twig', [
+        echo $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', [
             'brick' => $brick,
             'info' => $info,
             'templating' => $this->templating,
             'editmode' => $editmode,
             'viewTemplate' => $viewTemplate,
-            'viewParameters' => $viewParameters,
-            'editTemplate' => $editTemplate,
-            'editParameters' => $editParameters,
+            'viewParameters' => $params,
         ]);
 
         if ($brickInfoRestoreValue === null) {
@@ -319,9 +287,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
 
         $template = null;
         if ($type === 'view') {
-            $template = $brick->getViewTemplate();
-        } elseif ($type === 'edit') {
-            $template = $brick->getEditTemplate();
+            $template = $brick->getTemplate();
         }
 
         if (null === $template) {
@@ -379,24 +345,41 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
+    public function renderAction($controller, array $attributes = [], array $query = [])
     {
         $document = $attributes['document'] ?? null;
         if ($document && $document instanceof PageSnippet) {
             unset($attributes['document']);
-            $attributes = $this->actionRenderer->addDocumentAttributes($document, $attributes);
+            $attributes = $this->addDocumentAttributes($document, $attributes);
         }
 
-        $uri = $this->actionRenderer->createControllerReference(
-            $parent,
-            $controller,
-            $action,
-            $attributes,
-            $query
-        );
+        $uri = new ControllerReference($controller, $attributes, $query);
 
-        return $this->actionRenderer->render($uri, $options);
+        return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+    }
+
+    /**
+     * @param PageSnippet $document
+     * @param array $attributes
+     *
+     * @return array
+     */
+    public function addDocumentAttributes(PageSnippet $document, array $attributes = [])
+    {
+        // The CMF dynamic router sets the 2 attributes contentDocument and contentTemplate to set
+        // a route's document and template. Those attributes are later used by controller listeners to
+        // determine what to render. By injecting those attributes into the sub-request we can rely on
+        // the same rendering logic as in the routed request.
+        $attributes[DynamicRouter::CONTENT_KEY] = $document;
+
+        if ($document->getTemplate()) {
+            $attributes[DynamicRouter::CONTENT_TEMPLATE] = $document->getTemplate();
+        }
+
+        if ($language = $document->getProperty('language')) {
+            $attributes['_locale'] = $language;
+        }
+
+        return $attributes;
     }
 }
-
-class_alias(EditableHandler::class, 'Pimcore\Document\Tag\TagHandler');

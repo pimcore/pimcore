@@ -20,7 +20,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class DependenciesTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -38,7 +38,6 @@ class DependenciesTest extends ModelTestCase
         $count = $db->fetchOne("SELECT count(*) from dependencies WHERE sourceType = 'object' AND sourceID = " . $sourceId);
         $this->assertEquals(0, $count);
 
-        /** @var Unittest[] $targets */
         $targets = TestHelper::createEmptyObjects('', true, 5);
         $source->setMultihref([$targets[0], $targets[1]]);
         $source->save();
@@ -78,7 +77,9 @@ class DependenciesTest extends ModelTestCase
         $source = TestHelper::createEmptyObject();
 
         /** @var Unittest[] $targets */
-        $targets = TestHelper::createEmptyObjects('', true, 3);
+        for ($i = 0; $i <= 2; $i++) {
+            $targets[] = TestHelper::createEmptyObject($i);
+        }
         $this->saveElementDependencies($source, $targets);
 
         //Reload source object
@@ -89,7 +90,7 @@ class DependenciesTest extends ModelTestCase
         $requires = $dependencies->getRequires();
         $requiredBy = $dependencies->getRequiredBy();
 
-        $this->assertEquals(3, count($requires), 'DataObject: requires dependencies not saved or loaded properly');
+        $this->assertCount(3, $requires, 'DataObject: requires dependencies not saved or loaded properly');
         $this->assertEquals($targets[0]->getId(), $requires[0]['id'], 'DataObject: requires dependency not saved or loaded properly');
         $this->assertEquals($targets[2]->getId(), $requiredBy[0]['id'], 'DataObject: requiredBy dependency not saved or loaded properly');
     }
@@ -100,10 +101,11 @@ class DependenciesTest extends ModelTestCase
      */
     public function testDocumentDependencies()
     {
-        /** @var Document $source */
         $source = TestHelper::createEmptyDocumentPage();
         /** @var Unittest[] $targets */
-        $targets = TestHelper::createEmptyObjects('', true, 3);
+        for ($i = 0; $i <= 2; $i++) {
+            $targets[] = TestHelper::createEmptyObject($i);
+        }
         $this->saveElementDependencies($source, $targets);
 
         //Reload source document
@@ -114,7 +116,7 @@ class DependenciesTest extends ModelTestCase
         $requires = $dependencies->getRequires();
         $requiredBy = $dependencies->getRequiredBy();
 
-        $this->assertEquals(3, count($requires), 'Document: requires dependencies not saved or loaded properly');
+        $this->assertCount(3, $requires, 'Document: requires dependencies not saved or loaded properly');
         $this->assertEquals($targets[0]->getId(), $requires[0]['id'], 'Document: requires dependency not saved or loaded properly');
         $this->assertEquals($targets[2]->getId(), $requiredBy[0]['id'], 'Document: requiredBy dependency not saved or loaded properly');
     }
@@ -125,10 +127,13 @@ class DependenciesTest extends ModelTestCase
      */
     public function testAssetDependencies()
     {
-        /** @var Asset $source */
         $source = TestHelper::createImageAsset();
         /** @var Unittest[] $targets */
-        $targets = TestHelper::createEmptyObjects('', true, 3);
+        $targets = [];
+        for ($i = 0; $i <= 2; $i++) {
+            $targets[] = TestHelper::createEmptyObject($i);
+        }
+
         $this->saveElementDependencies($source, $targets);
 
         //Reload source asset
@@ -139,7 +144,7 @@ class DependenciesTest extends ModelTestCase
         $requires = $dependencies->getRequires();
         $requiredBy = $dependencies->getRequiredBy();
 
-        $this->assertEquals(3, count($requires), 'Asset: requires dependencies not saved or loaded properly');
+        $this->assertCount(3, $requires, 'Asset: requires dependencies not saved or loaded properly');
         $this->assertEquals($targets[0]->getId(), $requires[0]['id'], 'Asset: requires dependency not saved or loaded properly');
         $this->assertEquals($targets[2]->getId(), $requiredBy[0]['id'], 'Asset: requiredBy dependency not saved or loaded properly');
     }

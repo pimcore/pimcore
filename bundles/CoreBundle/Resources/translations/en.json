@@ -1,5 +1,6 @@
 {
   "validation_failed": "Validation Failed!",
+  "deprecated": "Deprecated",
   "access_denied": "Access Denied!",
   "access_denied_description": "You don't have sufficient permissions to open the element or perform the desired action.",
   "quicksearch": "Quick Search",
@@ -125,7 +126,6 @@
   "attributes": "Attributes",
   "code": "Code",
   "tags": "Tags",
-  "tag_snippet_management": "Tag & Snippet Management",
   "Click here to proceed": "Click here to proceed",
   "Your browser is not supported. Please install the latest version of one of the following browsers.": "Your browser is not supported. Please install the latest version of one of the following browsers.",
   "open_in_new_window": "Open in new Window",
@@ -433,7 +433,6 @@
   "link": "Link",
   "links": "Links",
   "abbr": "Abbr.",
-  "acronym": "Acronym",
   "stop": "Stop",
   "dependencies": "Dependencies",
   "requires": "Requires",

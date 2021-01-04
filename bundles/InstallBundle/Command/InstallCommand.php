@@ -351,7 +351,7 @@ class InstallCommand extends Command
         }
 
         $this->io->writeln(sprintf(
-            'Running installation. You can find a detailed install log in <comment>var/logs/%s.log</comment>',
+            'Running installation. You can find a detailed install log in <comment>var/log/%s.log</comment>',
             $this->getApplication()->getKernel()->getEnvironment()
         ));
 

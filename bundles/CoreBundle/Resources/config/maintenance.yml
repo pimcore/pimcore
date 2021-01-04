@@ -91,12 +91,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanupbrokenviews }
 
-    Pimcore\Maintenance\Tasks\CacheCleanupTask:
-        arguments:
-            - '@Pimcore\Cache\Core\CoreHandlerInterface'
-        tags:
-            - { name: pimcore.maintenance.task, type: cleanupcache }
-
     Pimcore\Maintenance\Tasks\TmpStoreCleanupTask:
         arguments:
             - '@doctrine.dbal.default_connection'
@@ -128,12 +122,6 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: low_quality_image_preview }
-
-    Pimcore\Maintenance\Tasks\TagsExpireTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: markexpiredtagsdisabled }
 
     Pimcore\Maintenance\Tasks\CheckErrorLogsDbTask:
         arguments:

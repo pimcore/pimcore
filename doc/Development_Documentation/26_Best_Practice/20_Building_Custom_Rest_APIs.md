@@ -1,6 +1,6 @@
 # How to Build a Custom REST API Endpoint
 
-Pimcore offers a bundle called [Data-Hub](https://github.com/pimcore/data-hub), offering a highly configurable GraphQL interface on most Pimcore entities.
+Pimcore offers a bundle called [Datahub](https://github.com/pimcore/data-hub), offering a highly configurable GraphQL interface on most Pimcore entities.
 
 However a common use case for applications build with Pimcore is integrating with external systems, 
 which requires custom response from API endpoints.
@@ -10,7 +10,7 @@ in the desired format.
 
 ### Example
 
-```php 
+```php
 <?php
 
 namespace AppBundle\Controller;

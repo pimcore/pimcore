@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Console;
+use Symfony\Component\Lock\LockFactory;
 
 class Processor
 {
@@ -217,7 +218,8 @@ class Processor
         $conversionStatus = 'finished';
 
         // check if there is already a transcoding process running, wait if so ...
-        Model\Tool\Lock::acquire('video-transcoding', 7200, 10); // expires after 2 hrs, refreshes every 10 secs
+        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('video-transcoding', 7200);
+        $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
 
@@ -259,7 +261,7 @@ class Processor
             }
         }
 
-        Model\Tool\Lock::release('video-transcoding');
+        $lock->release();
 
         if ($asset) {
             $customSetting = $asset->getCustomSetting('thumbnails');

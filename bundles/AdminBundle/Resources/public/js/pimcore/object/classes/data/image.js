@@ -54,17 +54,28 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
-            }, {
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
+            },
+            {
                 fieldLabel: t("upload_path"),
                 name: "uploadPath",
                 fieldCls: "input_drop_target",

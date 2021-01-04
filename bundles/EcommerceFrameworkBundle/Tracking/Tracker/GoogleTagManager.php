@@ -60,7 +60,7 @@ class GoogleTagManager extends Tracker implements
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/tagManager',
+            'template_prefix' => '@PimcoreEcommerceFramework/Tracking/analytics/tagManager',
         ]);
     }
 
@@ -298,7 +298,7 @@ class GoogleTagManager extends Tracker implements
      */
     private function formatPrice($price = null)
     {
-        return Decimal::fromNumeric($price)->asString();
+        return is_scalar($price) ? Decimal::fromNumeric($price)->asString() : '';
     }
 
     /**

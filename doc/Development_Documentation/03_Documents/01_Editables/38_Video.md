@@ -50,17 +50,6 @@ Output returned by `getPosterAsset`:
 
 To create a container for local video files you can just use the `$this->video` helperwithout any options.
 
-<div class="code-section">
-
-```php
-<section id="campaign_video">
-    <?= $this->video("campaignVideo", [
-        "width" => 700,
-        "height" => 400
-    ]); ?>
-</section>
-```
-
 ```twig
 <section id="campaign_video">
     {{ pimcore_video('campaignVideo', {
@@ -69,8 +58,6 @@ To create a container for local video files you can just use the `$this->video` 
     }) }}
 </section>
 ```
-
-</div>
 
 In the editmode, there is now a container available where you can assign an asset path and a video poster. 
 
@@ -91,25 +78,6 @@ Have a look at the frontend preview:
 
 In the configuration, you could also specify additional options for external services.
 
-<div class="code-section">
-
-```php
-<section id="campaign_video">
-    <?= $this->video("campaignVideo", [
-        "width" => 700,
-        "height" => 400,
-        "youtube" => [
-            "autoplay" => 1,
-            "modestbranding" => 1
-        ],
-        "vimeo" => [
-            "autoplay" => 1,
-            "loop" => 1
-        ]
-    ]); ?>
-</section>
-```
-
 ```twig
 <section id="campaign_video">
     {{ pimcore_video('campaignVideo', {
@@ -128,31 +96,8 @@ In the configuration, you could also specify additional options for external ser
 </section>
 ```
 
-</div>
 
 ### HTML5 with Automatic Video Transcoding (using video.js)
-
-<div class="code-section">
-
-```php
-<!DOCTYPE HTML>
-<html>
-<head>
-    <link href="http://vjs.zencdn.net/5.4.4/video-js.css" rel="stylesheet">
-</head>
-<body>
- 
-    <?= $this->video("myVideo", array(
-        "thumbnail" => "example", // NOTE: don't forget to create a video thumbnail
-        "width" => 400,
-        "height" => 300,
-        "attributes" => ["class" => "video-js custom-class", "preload" => "auto", "controls" => "", "data-custom-attr" => "my-test"]
-    )); ?>
- 
-    <script src="http://vjs.zencdn.net/5.4.4/video.js"></script>
-</body>
-</html>
-```
 
 ```twig
 <!DOCTYPE HTML>
@@ -179,7 +124,6 @@ In the configuration, you could also specify additional options for external ser
 </html>
 ```
 
-</div>
 
 Read more about [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md).
 

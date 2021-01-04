@@ -11,7 +11,7 @@ Below is the configuration for a Nginx server (just the server part, the http et
 Assumptions - change them to match your environment/distro:
 
 - Pimcore was installed into: `/var/www/pimcore`; therefore, the Document-Root is: `/var/www/pimcore/web`
-- Logfiles are written to the default location `/var/log/nginx`. If you prefer to have the logs together with the Pimcore Logs: these are in `/var/www/pimcore/var/logs`.
+- Logfiles are written to the default location `/var/log/nginx`. If you prefer to have the logs together with the Pimcore Logs: these are in `/var/www/pimcore/var/log`.
 - PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
 - Before you change the order of location blocks, read [Understanding Nginx Server and Location Block Selection Algorithms](https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms)
 - Assets are set to expire after 14 days; adjust all `expires` directives to suit your needs.
@@ -109,7 +109,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin/asset/webdav/)(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -292,13 +292,15 @@ server {
     # Referrer Policy
     add_header Referrer-Policy same-origin;
 
-    # Feature Policy
-    # Browsers feature a set of functionality that could be used
+    # Feature Policy && Permissions Policy
+    # Note that Feature Policy is to be replaced with Permissions Policy
+    # See W3C Document regarding setup: https://github.com/w3c/webappsec-permissions-policy/blob/master/permissions-policy-explainer.md
+    # 
     # Please check how to properly evaluate, define and include to your needs
     # Thanks to: https://fearby.com/article/set-up-feature-policy-referrer-policy-and-content-security-policy-headers-in-nginx/
     # For pre-writing these.
-    # Note: Mobile functionalities were explicitly not included.gi
     add_header Feature-Policy "geolocation 'none';midi 'none';sync-xhr 'none';microphone 'none';camera 'none';magnetometer 'none';gyroscope 'none';fullscreen 'self';payment 'none';";
+    add_header Permissions-Policy "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(self), payment=()";
 
     # set X-Frame-Options
     add_header X-Frame-Options "SAMEORIGIN" always;
@@ -382,7 +384,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin/asset/webdav/)(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;

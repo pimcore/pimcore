@@ -15,7 +15,7 @@ Via the configuration, following options can be set to modify the behaviour of t
 
 For Details see configuration reference as follows: 
 
-```yml 
+```yml
 # Default configuration for "PimcoreAdminBundle"
 pimcore_admin:
     gdpr_data_extractor:

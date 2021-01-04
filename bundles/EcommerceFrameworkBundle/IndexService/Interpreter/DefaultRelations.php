@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class DefaultRelations implements RelationInterpreterInterface
@@ -36,7 +36,7 @@ class DefaultRelations implements RelationInterpreterInterface
 
                 $result[] = ['dest' => $v->getId(), 'type' => Service::getElementType($v)];
             }
-        } elseif ($value instanceof AbstractElement) {
+        } elseif ($value instanceof ElementInterface) {
             $result[] = ['dest' => $value->getId(), 'type' => Service::getElementType($value)];
         }
 

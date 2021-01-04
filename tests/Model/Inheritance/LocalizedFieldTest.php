@@ -11,7 +11,7 @@ use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -31,7 +31,6 @@ class LocalizedFieldTest extends ModelTestCase
     {
         // According to the bootstrap file en and de are valid website languages
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -41,7 +40,6 @@ class LocalizedFieldTest extends ModelTestCase
         $one->setInput('parenttextDE', 'de');
         $one->save();
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
@@ -50,7 +48,6 @@ class LocalizedFieldTest extends ModelTestCase
         $two->setInput('childtextDE', 'de');
         $two->save();
 
-        /** @var Inheritance $three */
         $three = new Inheritance();
         $three->setKey('three');
         $three->setParentId($two->getId());
@@ -168,11 +165,9 @@ class LocalizedFieldTest extends ModelTestCase
         $class->save();
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testInvalidLocaleList()
     {
+        $this->expectException(\Exception::class);
         $this->markTestSkipped('TODO: the following test should fail, but no exception is thrown');
 
         // invalid locale
@@ -187,21 +182,18 @@ class LocalizedFieldTest extends ModelTestCase
     {
         // create root -> one -> two -> three
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
         $one->setPublished(true);
         $one->save();
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
         $two->setPublished(true);
         $two->save();
 
-        /** @var Inheritance $three */
         $three = new Inheritance();
         $three->setKey('three');
         $three->setParentId($two->getId());

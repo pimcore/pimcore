@@ -20,6 +20,9 @@ namespace Pimcore\Tests\Unit\Tool;
 use Pimcore\DependencyInjection\ConfigMerger;
 use Pimcore\Tests\Test\TestCase;
 
+/**
+ * @deprecated will be removed in Pimcore 10
+ */
 class ConfigMergerTest extends TestCase
 {
     /**
@@ -30,7 +33,7 @@ class ConfigMergerTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -110,7 +113,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
             'access_control' => [
@@ -173,7 +175,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
             'access_control' => [
@@ -322,7 +323,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
         ];
@@ -358,7 +358,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
         ];

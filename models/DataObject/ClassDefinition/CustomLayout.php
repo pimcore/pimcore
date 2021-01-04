@@ -113,16 +113,15 @@ class CustomLayout extends Model\AbstractModel
      * @param string $name
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByName(string $name)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByName($name);
-        if ($id) {
-            return self::getById($id);
-        }
 
-        return null;
+        return self::getById($id);
     }
 
     /**
@@ -130,16 +129,15 @@ class CustomLayout extends Model\AbstractModel
      * @param string $classId
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByNameAndClassId(string $name, $classId)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByNameAndClassId($name, $classId);
-        if ($id) {
-            return self::getById($id);
-        }
 
-        return null;
+        return self::getById($id);
     }
 
     /**
@@ -200,9 +198,9 @@ class CustomLayout extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_UPDATE, new CustomLayoutEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_ADD, new CustomLayoutEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_ADD);
         }
 
         $this->setModificationDate(time());

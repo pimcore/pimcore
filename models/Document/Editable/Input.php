@@ -29,7 +29,7 @@ class Input extends Model\Document\Editable
      *
      * @var string
      */
-    public $text = '';
+    protected $text = '';
 
     /**
      * @see EditableInterface::getType
@@ -52,16 +52,24 @@ class Input extends Model\Document\Editable
     }
 
     /**
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->getData();
+    }
+
+    /**
      * @see EditableInterface::frontend
      *
      * @return string
      */
     public function frontend()
     {
-        $options = $this->getOptions();
+        $config = $this->getConfig();
 
         $text = $this->text;
-        if (!isset($options['htmlspecialchars']) || $options['htmlspecialchars'] !== false) {
+        if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
             $text = htmlspecialchars($this->text);
         }
 
@@ -109,26 +117,4 @@ class Input extends Model\Document\Editable
     {
         return !(bool) strlen($this->text);
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->text === null or is_string($data->text)) {
-            $this->text = $data->text;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
 }
-
-class_alias(Input::class, 'Pimcore\Model\Document\Tag\Input');

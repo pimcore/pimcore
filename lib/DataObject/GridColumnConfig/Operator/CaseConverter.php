@@ -45,7 +45,7 @@ class CaseConverter extends AbstractOperator
 
             $childResult = $c->getLabeledValue($element);
 
-            $childValues = $childResult->value;
+            $childValues = $childResult->value ?? null;
             $isArrayType = is_array($childValues);
 
             if ($childValues && !is_array($childValues)) {
@@ -71,7 +71,6 @@ class CaseConverter extends AbstractOperator
             } else {
                 $result->value = $valueArray[0];
             }
-            $result->$valueArray;
         }
 
         return $result;
