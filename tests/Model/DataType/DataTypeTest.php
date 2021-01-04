@@ -20,7 +20,9 @@ class DataTypeTest extends AbstractDataTypeTestCase
     protected function createTestObject($fields = [])
     {
         $object = TestHelper::createEmptyObject('local', true, true);
-        $this->fillObject($object, $fields);
+        if ($fields) {
+            $this->fillObject($object, $fields);
+        }
 
         $object->save();
 

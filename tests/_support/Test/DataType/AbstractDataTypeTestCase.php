@@ -3,11 +3,14 @@
 namespace Pimcore\Tests\Test\DataType;
 
 use Pimcore\Cache;
+use Pimcore\DataObject\Consent\Service;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\Consent;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Unittest;
+use Pimcore\Model\Element\Note;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -163,6 +166,36 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->testDataHelper->assertCheckbox($this->testObject, 'checkbox', $this->seed);
     }
+
+    public function testConsent()
+    {
+        $this->createTestObject();
+
+        $service = \Pimcore::getContainer()->get(Service::class);
+        $service->giveConsent($this->testObject, "consent", "some consent content");
+
+        $this->refreshObject();
+
+        /** @var Consent $consent */
+        $consent = $this->testObject->getConsent();
+
+        $this->assertNotNull($consent, "Consent must not be null");
+        $this->assertTrue($consent->getConsent(), "Consent given but still false");
+
+        /** @var Note $consentNote */
+        $consentNote = $consent->getNote();
+        $this->assertEquals($consentNote->getDescription(), "some consent content");
+
+        // now revoke the consent
+        $service->revokeConsent($this->testObject, "consent");
+
+        $this->refreshObject();
+
+        $consent = $this->testObject->getConsent();
+        $this->assertNotNull($consent, "Consent must not be null");
+        $this->assertFalse($consent->getConsent(), "Consent given but still false");
+    }
+
 
     public function testCountry()
     {

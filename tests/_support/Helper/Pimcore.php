@@ -72,7 +72,7 @@ class Pimcore extends Module\Symfony
         return $this->kernel->getContainer();
     }
 
-    public function _initialize()
+    public function _initialize(): void
     {
         Config::setEnvironment($this->config['environment']);
 
@@ -279,7 +279,7 @@ class Pimcore extends Module\Symfony
     /**
      * @inheritDoc
      */
-    public function _before(\Codeception\TestInterface $test)
+    public function _before(\Codeception\TestInterface $test) : void
     {
         parent::_before($test);
 

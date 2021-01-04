@@ -395,6 +395,8 @@ class Model extends AbstractDefinitionHelper
             $calculatedValue->setCalculatorClass("@test.calculatorservice");
             $panel->addChild($calculatedValue);
 
+            $panel->addChild($this->createDataChild('consent'));
+
             $panel->addChild($this->createDataChild('date'));
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
