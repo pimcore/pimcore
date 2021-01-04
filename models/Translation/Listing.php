@@ -15,18 +15,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Translation\AbstractTranslation;
+namespace Pimcore\Model\Translation;
 
 use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Translation\AbstractTranslation\Listing\Dao getDao()
- * @method Model\Translation\AbstractTranslation[] load()
- * @method Model\Translation\AbstractTranslation current()
+ * @method Model\Translation[] load()
+ * @method Model\Translation current()
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
  *
- * @deprecated
  */
 class Listing extends Model\Listing\AbstractListing
 {
@@ -34,15 +33,24 @@ class Listing extends Model\Listing\AbstractListing
     protected static $cacheLimit = 5000;
 
     /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
+     * @var string
      */
-    protected $translations = null;
+    protected static $domain = Model\Translation::DOMAIN_DEFAULT;
 
-    public function __construct()
+    /**
+     * @return string
+     */
+    public static function getDomain(): string
     {
-        $this->translations = & $this->data;
+        return self::$domain;
+    }
+
+    /**
+     * @param string $domain
+     */
+    public static function setDomain(string $domain): void
+    {
+        self::$domain = $domain;
     }
 
     /**
@@ -56,7 +64,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param array $translations
      *
-     * @return static
+     * @return \Pimcore\Model\Translation\Listing
      */
     public function setTranslations($translations)
     {

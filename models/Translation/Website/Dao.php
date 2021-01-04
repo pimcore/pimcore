@@ -21,13 +21,15 @@ use Pimcore\Model;
 
 /**
  * @property \Pimcore\Model\Translation\Website $model
+ *
+ * @deprecated
  */
 class Dao extends Model\Translation\AbstractTranslation\Dao
 {
     /**
      * @var string
      */
-    public static $_tableName = 'translations_website';
+    public static $_tableName = 'translations_messages';
 
     /**
      * @return mixed

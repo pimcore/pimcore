@@ -15,17 +15,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Translation\AbstractTranslation;
+namespace Pimcore\Model\Translation;
 
 use Pimcore\Model;
 
 /**
- * @property \Pimcore\Model\Translation\AbstractTranslation $model
- *
- * @deprecated
+ * @property \Pimcore\Model\Translation $model
  */
-abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
+class Dao extends Model\Dao\AbstractDao
 {
+    /**
+     * @var string
+     */
+    public static $_tablePrefix = 'translations_';
+
+    /**
+     * @return mixed
+     */
+    public function getTableName()
+    {
+        return static::$_tablePrefix . $this->model->getDomain();
+    }
+
     /**
      * @param string $key
      *
@@ -39,7 +50,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
         if ($caseInsensitive) {
             $condition = 'LOWER(`key`) = LOWER(?)';
         }
-        $data = $this->db->fetchAll('SELECT * FROM ' . static::getTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
+        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
 
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -58,6 +69,9 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function save()
     {
+        //Create Domain table if doesn't exist
+        $this->createOrUpdateTable();
+
         if ($this->model->getKey() !== '') {
             foreach ($this->model->getTranslations() as $language => $text) {
                 $data = [
@@ -67,7 +81,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
                     'modificationDate' => $this->model->getModificationDate(),
                     'creationDate' => $this->model->getCreationDate(),
                 ];
-                $this->db->insertOrUpdate(static::getTableName(), $data);
+                $this->db->insertOrUpdate($this->getTableName(), $data);
             }
         }
     }
@@ -77,8 +91,9 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function delete()
     {
-        $this->db->delete(static::getTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
+        $this->db->delete($this->getTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
     }
+
 
     /**
      * Returns a array containing all available languages
@@ -87,7 +102,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function getAvailableLanguages()
     {
-        $l = $this->db->fetchAll('SELECT * FROM ' . static::getTableName()  . '  GROUP BY `language`;');
+        $l = $this->db->fetchAll('SELECT * FROM ' . $this->getTableName()  . '  GROUP BY `language`;');
         $languages = [];
 
         foreach ($l as $values) {
@@ -95,5 +110,20 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
         }
 
         return $languages;
+    }
+
+    public function createOrUpdateTable()
+    {
+        $table = $this->getTableName();
+
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+                          `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+                          `language` varchar(10) NOT NULL DEFAULT '',
+                          `text` text DEFAULT NULL,
+                          `creationDate` int(11) unsigned DEFAULT NULL,
+                          `modificationDate` int(11) unsigned DEFAULT NULL,
+                          PRIMARY KEY (`key`,`language`),
+                          KEY `language` (`language`)
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
     }
 }

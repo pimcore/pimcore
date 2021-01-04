@@ -15,18 +15,32 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Translation\AbstractTranslation\Listing;
+namespace Pimcore\Model\Translation\Listing;
 
 use Pimcore\Cache;
 use Pimcore\Model;
 
 /**
- * @property \Pimcore\Model\Translation\AbstractTranslation\Listing $model
- *
- * @deprecated
+ * @property \Pimcore\Model\Translation\Listing $model
  */
-abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
+class Dao extends Model\Listing\Dao\AbstractDao
 {
+    /**
+     * @return string
+     */
+    public static function getTableName()
+    {
+        return Model\Translation\Dao::$_tablePrefix . Model\Translation\Listing::getDomain();
+    }
+
+    /**
+     * @return string
+     */
+    public static function getItemClass()
+    {
+        return '\\Pimcore\\Model\\Translation';
+    }
+
     /**
      * @var \Closure
      */
@@ -111,7 +125,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
-                    $translations[$t['key']] = new $itemClass();
+                    $translations[$t['key']] = new $itemClass($this->model->getDomain());
                     $translations[$t['key']]->setKey($t['key']);
                 }
 

@@ -1,0 +1,134 @@
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @category   Pimcore
+ * @package    Translation
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+namespace Pimcore\Model\Translation;
+
+/**
+ * @method \Pimcore\Model\Translation\AbstractTranslation\Dao getDao()
+ *
+ * @deprecated use \Pimcore\Model\Translation\Translation with domain instead
+ */
+abstract class AbstractTranslation extends Translation
+{
+    /**
+     * @deprecated
+     *
+     * @param array $data
+     */
+    public function getFromWebserviceImport($data)
+    {
+        foreach ($data as $key => $value) {
+            $setter = 'set' . ucfirst($key);
+            $this->$setter($value);
+        }
+    }
+
+    /**
+     * @deprecated
+     *
+     * @return array
+     */
+    public function getForWebserviceExport()
+    {
+        $data = get_object_vars($this);
+        unset($data['dao']);
+
+        return $data;
+    }
+
+    /**
+     * @param string $id
+     * @param bool $create
+     * @param bool $returnIdIfEmpty
+     *
+     * @return static|null
+     */
+    public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
+    {
+        $cacheKey = 'translation_' . $id;
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            return \Pimcore\Cache\Runtime::get($cacheKey);
+        }
+
+        $translation = new static();
+        $idOriginal = $id;
+        $languages = static::getLanguages();
+
+        try {
+            $translation->getDao()->getByKey($id);
+        } catch (\Exception $e) {
+            if (!$create) {
+                return null;
+            } else {
+                $translation->setKey($id);
+                $translation->setCreationDate(time());
+                $translation->setModificationDate(time());
+
+                $translations = [];
+                foreach ($languages as $lang) {
+                    $translations[$lang] = '';
+                }
+                $translation->setTranslations($translations);
+                $translation->save();
+            }
+        }
+
+        if ($returnIdIfEmpty) {
+            $translations = $translation->getTranslations();
+            foreach ($languages as $language) {
+                if (!array_key_exists($language, $translations) || empty($translations[$language])) {
+                    $translations[$language] = $idOriginal;
+                }
+            }
+            $translation->setTranslations($translations);
+        }
+
+        // add to key cache
+        \Pimcore\Cache\Runtime::set($cacheKey, $translation);
+
+        return $translation;
+    }
+
+    /**
+     * Static Helper to get the translation of the current locale
+     *
+     * @static
+     *
+     * @param string $id - translation key
+     * @param bool $create - creates an empty translation entry if the key doesn't exists
+     * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
+    {
+        if (!$language) {
+            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            if (!$language) {
+                return null;
+            }
+        }
+
+        $translationItem = self::getByKey($id, $create, $returnIdIfEmpty);
+        if ($translationItem instanceof self) {
+            return $translationItem->getTranslation($language);
+        }
+
+        return null;
+    }
+}
