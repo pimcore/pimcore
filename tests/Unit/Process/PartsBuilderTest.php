@@ -21,6 +21,7 @@ use Pimcore\Process\PartsBuilder;
 use Pimcore\Tests\Test\TestCase;
 
 /**
+ * @deprecated
  * @covers PartsBuilder
  */
 class PartsBuilderTest extends TestCase

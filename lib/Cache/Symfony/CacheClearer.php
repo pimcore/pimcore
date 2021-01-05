@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Symfony;
 
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -118,10 +117,7 @@ class CacheClearer
             $command,
         ], $arguments);
 
-        $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts = $partsBuilder->getParts();
-
-        $process = new Process($parts);
+        $process = new Process($arguments);
         $process
             ->setTimeout($this->processTimeout)
             ->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
