@@ -395,7 +395,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     protected function addAsset(Request $request, Config $config)
     {
-        $success = false;
         $defaultUploadPath = $config['assets']['default_upload_path'] ?? '/';
 
         if (array_key_exists('Filedata', $_FILES)) {
@@ -477,28 +476,29 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
         $asset = null;
 
-        if ($parentAsset->isAllowed('create')) {
-            if (is_file($sourcePath) && filesize($sourcePath) < 1) {
-                throw new \Exception('File is empty!');
-            } elseif (!is_file($sourcePath)) {
-                throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
-            }
-
-            $asset = Asset::create($parentId, [
-                'filename' => $filename,
-                'sourcePath' => $sourcePath,
-                'userOwner' => $this->getAdminUser()->getId(),
-                'userModification' => $this->getAdminUser()->getId(),
-            ]);
-            $success = true;
-
-            @unlink($sourcePath);
-        } else {
-            Logger::debug('prevented creating asset because of missing permissions, parent asset is ' . $parentAsset->getRealFullPath());
+        if (!$parentAsset->isAllowed('create')) {
+            throw $this->createAccessDeniedHttpException(
+                'Missing the permission to create new assets in the folder: ' . $parentAsset->getRealFullPath()
+            );
         }
 
+        if (is_file($sourcePath) && filesize($sourcePath) < 1) {
+            throw new \Exception('File is empty!');
+        } elseif (!is_file($sourcePath)) {
+            throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
+        }
+
+        $asset = Asset::create($parentId, [
+            'filename' => $filename,
+            'sourcePath' => $sourcePath,
+            'userOwner' => $this->getAdminUser()->getId(),
+            'userModification' => $this->getAdminUser()->getId(),
+        ]);
+
+        @unlink($sourcePath);
+
         return [
-            'success' => $success,
+            'success' => true,
             'asset' => $asset,
         ];
     }
