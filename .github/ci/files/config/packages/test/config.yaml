@@ -22,6 +22,9 @@ doctrine:
                 dbname: ~
                 user: ~
                 password: ~
+                mapping_types:
+                    enum: string
+                    bit: boolean
 
 parameters:
     pimcore_test.db.dsn: '%env(PIMCORE_TEST_DB_DSN)%'
