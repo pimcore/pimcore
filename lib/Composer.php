@@ -85,7 +85,7 @@ class Composer
         $isInstalled = null;
         try {
             $process = static::executeCommand($event, $consoleDir,
-                'internal:migration-helpers --is-installed', 30, false);
+                ['internal:migration-helpers', '--is-installed'], 30, false);
             $isInstalled = (bool) trim($process->getOutput());
         } catch (\Throwable $e) {
             // noting to do
@@ -93,7 +93,7 @@ class Composer
 
         if ($isInstalled) {
             self::clearDataCache($event, $consoleDir);
-            static::executeCommand($event, $consoleDir, 'doctrine:migrations:migrate -n --prefix=' . escapeshellarg('Pimcore\\Bundle\\CoreBundle'));
+            static::executeCommand($event, $consoleDir, ['doctrine:migrations:migrate', '-n', '--prefix', 'Pimcore\\Bundle\\CoreBundle']);
             self::clearDataCache($event, $consoleDir);
         } else {
             $event->getIO()->write('<comment>Skipping migrations ... (either Pimcore is not installed yet or current status of migrations is not available)</comment>', true);
@@ -107,7 +107,7 @@ class Composer
     public static function clearDataCache($event, $consoleDir)
     {
         try {
-            static::executeCommand($event, $consoleDir, 'pimcore:cache:clear', 60);
+            static::executeCommand($event, $consoleDir, ['pimcore:cache:clear'], 60);
         } catch (\Throwable $e) {
             $event->getIO()->write('<comment>Unable to perform command pimcore:cache:clear</comment>');
         }
@@ -150,16 +150,21 @@ class Composer
     /**
      * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
      */
-    protected static function executeCommand(Event $event, $consoleDir, $cmd, $timeout = 900, $writeBuffer = true)
+    protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true)
     {
-        $php = escapeshellarg(static::getPhp(false));
-        $phpArgs = implode(' ', array_map('escapeshellarg', static::getPhpArguments()));
-        $console = escapeshellarg($consoleDir.'/console');
+        $command = [static::getPhp(false)];
+        $command = array_merge($command, static::getPhpArguments());
+
+        $command[] = $consoleDir.'/console';
         if ($event->getIO()->isDecorated()) {
-            $console .= ' --ansi';
+            $command[] = '--ansi';
         }
 
-        $process = new Process($php.($phpArgs ? ' '.$phpArgs : '').' '.$console.' '.$cmd, null, null, null, $timeout);
+        $command = array_merge($command, $cmd);
+
+        //$event->getIO()->write('Run command: ' . implode(' ', $command), false);
+
+        $process = new Process($command, null, null, null, $timeout);
         $process->run(function ($type, $buffer) use ($event, $writeBuffer) {
             if ($writeBuffer) {
                 $event->getIO()->write($buffer, false);
@@ -283,20 +288,22 @@ class Composer
             return;
         }
 
+        $command = ['assets:install'];
         $webDir = $options['symfony-web-dir'];
 
-        $symlink = '';
         if ('symlink' == $options['symfony-assets-install']) {
-            $symlink = '--symlink ';
+            $command[] = '--symlink';
         } elseif ('relative' == $options['symfony-assets-install']) {
-            $symlink = '--symlink --relative ';
+            array_push($command, '--symlink', '--relative');
         }
 
         if (!static::hasDirectory($event, 'symfony-web-dir', $webDir, 'install assets')) {
             return;
         }
 
-        static::executeCommand($event, $consoleDir, 'assets:install '.$symlink.escapeshellarg($webDir), $options['process-timeout']);
+        $command[] = $webDir;
+
+        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
     }
 
     /**
@@ -315,11 +322,11 @@ class Composer
             return;
         }
 
-        $warmup = '';
+        $command = ['cache:clear'];
         if (!$options['symfony-cache-warmup']) {
-            $warmup = ' --no-warmup';
+            $command[] = '--no-warmup';
         }
 
-        static::executeCommand($event, $consoleDir, 'cache:clear'.$warmup, $options['process-timeout']);
+        static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);
     }
 }
