@@ -35,22 +35,22 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @var string
      */
-    protected static $domain = Model\Translation\Translation::DOMAIN_DEFAULT;
+    protected $domain = Model\Translation\Translation::DOMAIN_DEFAULT;
 
     /**
      * @return string
      */
-    public static function getDomain(): string
+    public function getDomain(): string
     {
-        return self::$domain;
+        return $this->domain;
     }
 
     /**
      * @param string $domain
      */
-    public static function setDomain(string $domain): void
+    public function setDomain(string $domain): void
     {
-        self::$domain = $domain;
+        $this->domain = $domain;
     }
 
     /**

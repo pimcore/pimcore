@@ -28,17 +28,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return string
      */
-    public static function getTableName()
+    protected function getDatabaseTableName(): string
     {
-        return Model\Translation\Dao::$_tablePrefix . Model\Translation\Listing::getDomain();
-    }
-
-    /**
-     * @return string
-     */
-    public static function getItemClass()
-    {
-        return '\\Pimcore\\Model\\Translation';
+        return Model\Translation\Dao::TABLE_PREFIX . $this->model->getDomain();
     }
 
     /**
@@ -53,8 +45,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = $this->db->select();
         $select->from(
-            [ static::getTableName()],
-            static::getTableName() . '.key'
+            [ $this->getDatabaseTableName()],
+            $this->getDatabaseTableName() . '.key'
         );
         $this->addConditions($select);
         $this->addGroupBy($select);
@@ -81,8 +73,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $select = $this->db->select();
         $select->from(
-            [ static::getTableName()],
-            static::getTableName() . '.key'
+            [ $this->getDatabaseTableName()],
+            $this->getDatabaseTableName() . '.key'
         );
         $this->addConditions($select);
         $this->addGroupBy($select);
@@ -104,16 +96,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getAllTranslations()
     {
-        $cacheKey = static::getTableName().'_data';
+        $cacheKey = $this->getDatabaseTableName().'_data';
         if (!$translations = Cache::load($cacheKey)) {
-            $itemClass = static::getItemClass();
             $translations = [];
 
             $select = $this->db->select();
 
             // create base
             $select->from(
-                [ static::getTableName()]
+                [ $this->getDatabaseTableName()]
             );
 
             if ($this->onCreateQueryCallback) {
@@ -125,7 +116,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
-                    $translations[$t['key']] = new $itemClass($this->model->getDomain());
+                    $translations[$t['key']] = new Model\Translation\Translation();
+                    $translations[$t['key']]->setDomain($this->model->getDomain());
                     $translations[$t['key']]->setKey($t['key']);
                 }
 
@@ -153,7 +145,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = $this->db->select();
         $select->from(
-            [ static::getTableName()]
+            [ $this->getDatabaseTableName()]
         );
         $this->addConditions($select);
         $this->addGroupBy($select);
@@ -179,12 +171,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $allTranslations = $this->getAllTranslations();
         $translations = [];
-        $this->model->setGroupBy(static::getTableName() . '.key', false);
+        $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
         $select = $this->db->select();
         $select->from(
-            [ static::getTableName()],
-            static::getTableName() . '.key'
+            [ $this->getDatabaseTableName()],
+            $this->getDatabaseTableName() . '.key'
         );
         $this->addConditions($select);
         $this->addGroupBy($select);
@@ -212,7 +204,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function isCacheable()
     {
-        $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . static::getTableName());
+        $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->getDatabaseTableName());
         $cacheLimit = Model\Translation\AbstractTranslation\Listing::getCacheLimit();
         if ($count > $cacheLimit) {
             return false;
@@ -223,9 +215,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function cleanup()
     {
-        $keysToDelete = $this->db->fetchCol('SELECT `key` FROM ' . static::getTableName() . ' as tbl1 WHERE
-               (SELECT count(*) FROM ' . static::getTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
-               = (SELECT count(*) FROM " . static::getTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
+        $keysToDelete = $this->db->fetchCol('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
+               (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
+               = (SELECT count(*) FROM " . $this->getDatabaseTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
 
         if (is_array($keysToDelete) && !empty($keysToDelete)) {
             $preparedKeys = [];
@@ -234,7 +226,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             }
 
             if (!empty($preparedKeys)) {
-                $this->db->deleteWhere(static::getTableName(), '`key` IN (' . implode(',', $preparedKeys) . ')');
+                $this->db->deleteWhere($this->getDatabaseTableName(), '`key` IN (' . implode(',', $preparedKeys) . ')');
             }
         }
     }

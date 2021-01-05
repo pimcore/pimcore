@@ -26,16 +26,5 @@ use Pimcore\Model;
  */
 class Dao extends Model\Translation\AbstractTranslation\Dao
 {
-    /**
-     * @var string
-     */
-    public static $_tableName = 'translations_messages';
 
-    /**
-     * @return mixed
-     */
-    public static function getTableName()
-    {
-        return Model\Translation\Website\Dao::$_tableName;
-    }
 }

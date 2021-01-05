@@ -26,4 +26,8 @@ use Pimcore\Model;
  */
 class Listing extends Model\Translation\AbstractTranslation\Listing
 {
+    /**
+     * @var string
+     */
+    protected $domain = Model\Translation\Translation::DOMAIN_ADMIN;
 }

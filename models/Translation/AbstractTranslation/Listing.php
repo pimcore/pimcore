@@ -28,11 +28,8 @@ use Pimcore\Model;
  *
  * @deprecated
  */
-class Listing extends Model\Listing\AbstractListing
+class Listing extends \Pimcore\Model\Translation\Listing
 {
-    /** @var int maximum number of cacheable items */
-    protected static $cacheLimit = 5000;
-
     /**
      * @var array|null
      *
@@ -43,39 +40,5 @@ class Listing extends Model\Listing\AbstractListing
     public function __construct()
     {
         $this->translations = & $this->data;
-    }
-
-    /**
-     * @return \Pimcore\Model\Translation\AbstractTranslation[]
-     */
-    public function getTranslations()
-    {
-        return $this->getData();
-    }
-
-    /**
-     * @param array $translations
-     *
-     * @return static
-     */
-    public function setTranslations($translations)
-    {
-        return $this->setData($translations);
-    }
-
-    /**
-     * @return int
-     */
-    public static function getCacheLimit()
-    {
-        return self::$cacheLimit;
-    }
-
-    /**
-     * @param int $cacheLimit
-     */
-    public static function setCacheLimit($cacheLimit)
-    {
-        self::$cacheLimit = $cacheLimit;
     }
 }

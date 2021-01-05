@@ -27,14 +27,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @var string
      */
-    public static $_tablePrefix = 'translations_';
+    const TABLE_PREFIX = 'translations_';
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getTableName()
+    protected function getDatabaseTableName(): string
     {
-        return static::$_tablePrefix . $this->model->getDomain();
+        return self::TABLE_PREFIX . $this->model->getDomain();
     }
 
     /**
@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($caseInsensitive) {
             $condition = 'LOWER(`key`) = LOWER(?)';
         }
-        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
+        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
 
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -81,7 +81,7 @@ class Dao extends Model\Dao\AbstractDao
                     'modificationDate' => $this->model->getModificationDate(),
                     'creationDate' => $this->model->getCreationDate(),
                 ];
-                $this->db->insertOrUpdate($this->getTableName(), $data);
+                $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
             }
         }
     }
@@ -91,7 +91,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete($this->getTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
+        $this->db->delete($this->getDatabaseTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
     }
 
 
@@ -102,7 +102,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages()
     {
-        $l = $this->db->fetchAll('SELECT * FROM ' . $this->getTableName()  . '  GROUP BY `language`;');
+        $l = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
         $languages = [];
 
         foreach ($l as $values) {
@@ -114,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function createOrUpdateTable()
     {
-        $table = $this->getTableName();
+        $table = $this->getDatabaseTableName();
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',

@@ -64,43 +64,12 @@ abstract class AbstractTranslation extends Translation
             return \Pimcore\Cache\Runtime::get($cacheKey);
         }
 
-        $translation = new static();
-        $idOriginal = $id;
-        $languages = static::getLanguages();
-
-        try {
-            $translation->getDao()->getByKey($id);
-        } catch (\Exception $e) {
-            if (!$create) {
-                return null;
-            } else {
-                $translation->setKey($id);
-                $translation->setCreationDate(time());
-                $translation->setModificationDate(time());
-
-                $translations = [];
-                foreach ($languages as $lang) {
-                    $translations[$lang] = '';
-                }
-                $translation->setTranslations($translations);
-                $translation->save();
-            }
+        $domain = 'messages';
+        if(static::class === Admin::class) {
+            $domain = 'admin';
         }
 
-        if ($returnIdIfEmpty) {
-            $translations = $translation->getTranslations();
-            foreach ($languages as $language) {
-                if (!array_key_exists($language, $translations) || empty($translations[$language])) {
-                    $translations[$language] = $idOriginal;
-                }
-            }
-            $translation->setTranslations($translations);
-        }
-
-        // add to key cache
-        \Pimcore\Cache\Runtime::set($cacheKey, $translation);
-
-        return $translation;
+        return parent::getByKey($id, $domain, $create, $returnIdIfEmpty);
     }
 
     /**
