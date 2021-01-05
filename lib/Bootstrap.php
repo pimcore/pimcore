@@ -181,26 +181,22 @@ class Bootstrap
         } elseif (file_exists($dotEnvFile)) {
             // load all the .env files
             $dotEnv = new Dotenv();
-            if (method_exists($dotEnv, 'loadEnv')) {
-                // Symfony => 4.2 style
-                $envVarName = 'APP_ENV';
-                foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $varName) {
-                    if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
-                        $envVarName = $varName;
-                        break;
-                    }
-
-                    if (isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
-                        $envVarName = 'REDIRECT_' . $varName;
-                        break;
-                    }
+            // Symfony => 4.2 style
+            $envVarName = 'APP_ENV';
+            foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $varName) {
+                if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
+                    $envVarName = $varName;
+                    break;
                 }
 
-                $defaultEnvironment = Config::getEnvironmentConfig()->getDefaultEnvironment();
-                $dotEnv->loadEnv($dotEnvFile, $envVarName, $defaultEnvironment);
-            } else {
-                $dotEnv->load($dotEnvFile);
+                if (isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
+                    $envVarName = 'REDIRECT_' . $varName;
+                    break;
+                }
             }
+
+            $defaultEnvironment = Config::getEnvironmentConfig()->getDefaultEnvironment();
+            $dotEnv->loadEnv($dotEnvFile, $envVarName, $defaultEnvironment);
         }
 
         $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['APP_ENV'] = Config::getEnvironment();
