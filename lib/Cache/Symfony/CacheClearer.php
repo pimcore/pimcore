@@ -111,13 +111,17 @@ class CacheClearer
 
     private function buildProcess(string $command, array $arguments = [], array $options = []): Process
     {
-        $arguments = array_merge([
+        $arguments = array_map(function ($var) {
+            return '--' . $var;
+        }, $arguments);
+
+        $cmd = array_merge([
             Console::getPhpCli(),
             'bin/console',
             $command,
         ], $arguments);
 
-        $process = new Process($arguments);
+        $process = new Process($cmd);
         $process
             ->setTimeout($this->processTimeout)
             ->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
