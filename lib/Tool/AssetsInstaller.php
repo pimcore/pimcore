@@ -65,7 +65,7 @@ class AssetsInstaller
      *
      * @return Process
      */
-    public function buildProcess(array $options = []): Process
+    protected function buildProcess(array $options = []): Process
     {
         $arguments = [
             Console::getPhpCli(),
@@ -74,7 +74,11 @@ class AssetsInstaller
             'web',
         ];
 
-        $arguments = array_merge($arguments, $this->resolveOptions($options));
+        $options = array_map(function ($var) {
+            return '--' . $var;
+        }, $this->resolveOptions($options));
+
+        $arguments = array_merge($arguments, $options);
 
         $process = new Process($arguments);
         $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
