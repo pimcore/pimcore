@@ -360,6 +360,11 @@ class Installer
             unset($dbConfig['driverOptions']);
         }
 
+        $dbConfig['mapping_types'] = [
+            'enum' => 'string',
+            'bit' => 'boolean',
+        ];
+
         $this->createConfigFiles([
             'doctrine' => [
                 'dbal' => [

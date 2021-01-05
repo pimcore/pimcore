@@ -50,9 +50,6 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_general_ci
-                mapping_types:
-                    enum: string
-                    bit: boolean
 
 # Monolog Configuration
 monolog:
