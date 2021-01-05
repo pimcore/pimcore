@@ -25,8 +25,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertBooleanSelect(Concrete $object, $field, $seed = 1)
     {
@@ -39,8 +39,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertBricks(Concrete $object, $field, $seed = 1)
     {
@@ -80,8 +80,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertCheckbox(Concrete $object, $field, $seed = 1)
     {
@@ -95,8 +95,23 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param mixed $expected
+     * @param mixed $value
+     *
+     */
+    private function assertIsEqual($object, $field, $expected, $value)
+    {
+        $fd = $object->getClass()->getFieldDefinition($field);
+        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
+        }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
     public function assertCountry(Concrete $object, $field, $seed = 1)
     {
@@ -110,8 +125,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertCountryMultiSelect(Concrete $object, $field, $seed = 1)
     {
@@ -124,8 +139,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertDate(Concrete $object, $field, $seed = 1)
     {
@@ -151,8 +166,23 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertEmail(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        $value = $object->$getter();
+        $expected = 'john@doe.com' . $seed;
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
     public function assertFieldCollection(Concrete $object, $field, $seed = 1)
     {
@@ -207,9 +237,40 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
+     * @param string $field
+     * @param int $seed
+     * @param string|null $language
+     */
+    public function assertFirstname(Concrete $object, $field, $seed = 1, $language = null) {
+        $this->assertInput($object, $field, $seed, $language);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     * @param string|null $language
+     */
+    public function assertInput(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $getter = 'get' . ucfirst($field);
+        if ($language) {
+            $value = $object->$getter($language);
+        } else {
+            $value = $object->$getter();
+        }
+
+        $expected = $language . 'content' . $seed;
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
      * @param Concrete $comparisonObject
-     * @param int      $seed
+     * @param int $seed
      */
     public function assertGeobounds(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
@@ -239,9 +300,20 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @return DataObject\Data\Geobounds
+     */
+    protected function getGeoboundsFixture()
+    {
+        return new DataObject\Data\Geobounds(
+            new DataObject\Data\Geopoint(150.96588134765625, -33.704920213014425),
+            new DataObject\Data\Geopoint(150.60333251953125, -33.893217379440884)
+        );
+    }
+
+    /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertGeopoint(Concrete $object, $field, $seed = 1)
     {
@@ -260,10 +332,22 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @return DataObject\Data\Geopoint
+     */
+    protected function getGeopointFixture()
+    {
+        $longitude = 2.2008440814678;
+        $latitude = 102.25112915039;
+        $point = new DataObject\Data\Geopoint($longitude, $latitude);
+
+        return $point;
+    }
+
+    /**
      * @param Concrete $object
-     * @param string   $field
+     * @param string $field
      * @param          $comparisonObject
-     * @param int      $seed
+     * @param int $seed
      */
     public function assertGeopolygon(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
@@ -300,9 +384,21 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @return DataObject\Data\Geopoint[]
+     */
+    protected function getGeopolygonFixture()
+    {
+        return [
+            new DataObject\Data\Geopoint(150.54428100585938, -33.464671118242684),
+            new DataObject\Data\Geopoint(150.73654174804688, -33.913733814316245),
+            new DataObject\Data\Geopoint(151.2542724609375, -33.9946115848146),
+        ];
+    }
+
+    /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertHotspotImage(Concrete $object, $field, $seed = 1)
     {
@@ -325,29 +421,40 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @return array
      */
-    public function assertHref(Concrete $object, $field, $seed = 1)
+    private function createHotspots()
     {
-        $getter = 'get' . ucfirst($field);
-        $value = $object->$getter();
-        $objects = $this->getObjectList();
-        $expected = $objects[0];
+        $result = [];
 
-        $this->assertNotNull($value);
-        $this->assertInstanceOf(AbstractObject::class, $value);
-        $this->assertIsEqual($object, $field, $expected, $value);
-        $this->assertObjectsEqual($expected, $value);
+        $hotspot1 = [
+            'name' => 'hotspot1',
+            'width' => 10,
+            'height' => 20,
+            'top' => 30,
+            'left' => 40,
+        ];
+        $result[] = $hotspot1;
+
+        $hotspot2 = [
+            'name' => 'hotspot2',
+            'width' => 10,
+            'height' => 50,
+            'top' => 20,
+            'left' => 40,
+        ];
+
+        $result[] = $hotspot2;
+
+        return $result;
     }
 
-    public function assertObjectsEqual(AbstractObject $obj1, AbstractObject $obj2)
+    public function assertAssetsEqual(Asset $asset1, Asset $asset2)
     {
-        $this->assertElementsEqual($obj1, $obj2);
+        $this->assertElementsEqual($asset1, $asset2);
 
-        $str1 = TestHelper::createObjectComparisonString($obj1);
-        $str2 = TestHelper::createObjectComparisonString($obj2);
+        $str1 = TestHelper::createAssetComparisonString($asset1);
+        $str2 = TestHelper::createAssetComparisonString($asset2);
 
         $this->assertNotNull($str1);
         $this->assertNotNull($str2);
@@ -365,8 +472,55 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertHref(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        $value = $object->$getter();
+        $objects = $this->getObjectList();
+        $expected = $objects[0];
+
+        $this->assertNotNull($value);
+        $this->assertInstanceOf(AbstractObject::class, $value);
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertObjectsEqual($expected, $value);
+    }
+
+    /**
+     * @param string|null $condition
+     *
+     * @return Concrete[]
+     */
+    private function getObjectList($condition = null)
+    {
+        $list = new DataObject\Listing();
+        $list->setOrderKey('o_id');
+        $list->setCondition($condition);
+
+        $objects = $list->load();
+
+        return $objects;
+    }
+
+    public function assertObjectsEqual(AbstractObject $obj1, AbstractObject $obj2)
+    {
+        $this->assertElementsEqual($obj1, $obj2);
+
+        $str1 = TestHelper::createObjectComparisonString($obj1);
+        $str2 = TestHelper::createObjectComparisonString($obj2);
+
+        $this->assertNotNull($str1);
+        $this->assertNotNull($str2);
+
+        $this->assertEquals($str1, $str2);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
     public function assertImage(Concrete $object, $field, $seed = 1)
     {
@@ -381,55 +535,6 @@ class TestDataHelper extends Module
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertAssetsEqual($expected, $value);
-    }
-
-    public function assertAssetsEqual(Asset $asset1, Asset $asset2)
-    {
-        $this->assertElementsEqual($asset1, $asset2);
-
-        $str1 = TestHelper::createAssetComparisonString($asset1);
-        $str2 = TestHelper::createAssetComparisonString($asset2);
-
-        $this->assertNotNull($str1);
-        $this->assertNotNull($str2);
-
-        $this->assertEquals($str1, $str2);
-    }
-
-    /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
-     * @param string|null $language
-     */
-    public function assertInput(Concrete $object, $field, $seed = 1, $language = null)
-    {
-        $getter = 'get' . ucfirst($field);
-        if ($language) {
-            $value = $object->$getter($language);
-        } else {
-            $value = $object->$getter();
-        }
-
-        $expected = $language . 'content' . $seed;
-
-        $this->assertIsEqual($object, $field, $expected, $value);
-        $this->assertEquals($expected, $value);
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param mixed $expected
-     * @param mixed $value
-     *
-     */
-    private function assertIsEqual($object, $field, $expected, $value)
-    {
-        $fd = $object->getClass()->getFieldDefinition($field);
-        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
-            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
-        }
     }
 
     /**
@@ -459,6 +564,16 @@ class TestDataHelper extends Module
         $expected = ['1', '3'];
 
         $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     * @param string|null $language
+     */
+    public function assertLastname(Concrete $object, $field, $seed = 1, $language = null) {
+        $this->assertInput($object, $field, $seed, $language);
     }
 
     /**
@@ -647,6 +762,28 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @param string $field
+     * @param int $seed
+     *
+     * @return DataObject\Data\ObjectMetadata[]
+     */
+    public function getObjectsWithMetadataFixture($field, $seed)
+    {
+        $objects = $this->getObjectList("o_type = 'object' AND o_className = 'unittest'");
+        $objects = array_slice($objects, 0, 4);
+
+        $metaobjects = [];
+        foreach ($objects as $o) {
+            $mo = new DataObject\Data\ObjectMetadata($field, ['meta1', 'meta2'], $o);
+            $mo->setMeta1('value1' . $seed);
+            $mo->setMeta2('value2' . $seed);
+            $metaobjects[] = $mo;
+        }
+
+        return $metaobjects;
+    }
+
+    /**
      * @param DataObject\Data\ObjectMetadata[] $expected
      * @param DataObject\Data\ObjectMetadata[] $value
      */
@@ -749,6 +886,27 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @param int $seed
+     *
+     * @return DataObject\Data\StructuredTable
+     */
+    private function getStructuredTableData($seed = 1)
+    {
+        $data['row1']['col1'] = 1 + $seed;
+        $data['row2']['col1'] = 2 + $seed;
+        $data['row3']['col1'] = 3 + $seed;
+
+        $data['row1']['col2'] = 'text_a_' . $seed;
+        $data['row2']['col2'] = 'text_b_' . $seed;
+        $data['row3']['col2'] = 'text_c_' . $seed;
+
+        $st = new DataObject\Data\StructuredTable();
+        $st->setData($data);
+
+        return $st;
+    }
+
+    /**
      * @param Concrete $object
      * @param string   $field
      * @param Concrete $comparisonObject
@@ -773,6 +931,16 @@ class TestDataHelper extends Module
         $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
 
         $this->assertEquals($expectedData, $valueData);
+    }
+
+    /**
+     * @param int $seed
+     *
+     * @return array
+     */
+    protected function getTableDataFixture($seed)
+    {
+        return [['eins', 'zwei', 'drei'], [$seed, 2, 3], ['a', 'b', 'c']];
     }
 
     /**
@@ -953,6 +1121,17 @@ class TestDataHelper extends Module
      * @param string   $field
      * @param int      $seed
      */
+    public function fillEmail(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter('john@doe.com' . $seed);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string   $field
+     * @param int      $seed
+     */
     public function fillFieldCollection(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -970,6 +1149,32 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
+    public function fillFirstname(Concrete $object, $field, $seed = 1, $language = null) {
+        $this->fillInput($object, $field, $seed, $language);
+    }
+
+    /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
+    public function fillInput(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $setter = 'set' . ucfirst($field);
+        if ($language) {
+            $object->$setter($language . 'content' . $seed, $language);
+        } else {
+            $object->$setter('content' . $seed);
+        }
+    }
+
+    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
@@ -978,17 +1183,6 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeoboundsFixture());
-    }
-
-    /**
-     * @return DataObject\Data\Geobounds
-     */
-    protected function getGeoboundsFixture()
-    {
-        return new DataObject\Data\Geobounds(
-            new DataObject\Data\Geopoint(150.96588134765625, -33.704920213014425),
-            new DataObject\Data\Geopoint(150.60333251953125, -33.893217379440884)
-        );
     }
 
     /**
@@ -1003,18 +1197,6 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @return DataObject\Data\Geopoint
-     */
-    protected function getGeopointFixture()
-    {
-        $longitude = 2.2008440814678;
-        $latitude = 102.25112915039;
-        $point = new DataObject\Data\Geopoint($longitude, $latitude);
-
-        return $point;
-    }
-
-    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
@@ -1023,18 +1205,6 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeopolygonFixture());
-    }
-
-    /**
-     * @return DataObject\Data\Geopoint[]
-     */
-    protected function getGeopolygonFixture()
-    {
-        return [
-            new DataObject\Data\Geopoint(150.54428100585938, -33.464671118242684),
-            new DataObject\Data\Geopoint(150.73654174804688, -33.913733814316245),
-            new DataObject\Data\Geopoint(151.2542724609375, -33.9946115848146),
-        ];
     }
 
     /**
@@ -1059,35 +1229,6 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @return array
-     */
-    private function createHotspots()
-    {
-        $result = [];
-
-        $hotspot1 = [
-            'name' => 'hotspot1',
-            'width' => 10,
-            'height' => 20,
-            'top' => 30,
-            'left' => 40,
-        ];
-        $result[] = $hotspot1;
-
-        $hotspot2 = [
-            'name' => 'hotspot2',
-            'width' => 10,
-            'height' => 50,
-            'top' => 20,
-            'left' => 40,
-        ];
-
-        $result[] = $hotspot2;
-
-        return $result;
-    }
-
-    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
@@ -1097,22 +1238,6 @@ class TestDataHelper extends Module
         $setter = 'set' . ucfirst($field);
         $objects = $this->getObjectList();
         $object->$setter($objects[0]);
-    }
-
-    /**
-     * @param string|null $condition
-     *
-     * @return Concrete[]
-     */
-    private function getObjectList($condition = null)
-    {
-        $list = new DataObject\Listing();
-        $list->setOrderKey('o_id');
-        $list->setCondition($condition);
-
-        $objects = $list->load();
-
-        return $objects;
     }
 
     /**
@@ -1135,22 +1260,6 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
-     * @param string|null $language
-     */
-    public function fillInput(Concrete $object, $field, $seed = 1, $language = null)
-    {
-        $setter = 'set' . ucfirst($field);
-        if ($language) {
-            $object->$setter($language . 'content' . $seed, $language);
-        } else {
-            $object->$setter('content' . $seed);
-        }
-    }
-
-    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
@@ -1170,6 +1279,16 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(['1', '2']);
+    }
+
+    /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
+    public function fillLastname(Concrete $object, $field, $seed = 1, $language = null) {
+        $this->fillInput($object, $field, $seed, $language);
     }
 
     /**
@@ -1286,28 +1405,6 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param string $field
-     * @param int $seed
-     *
-     * @return DataObject\Data\ObjectMetadata[]
-     */
-    public function getObjectsWithMetadataFixture($field, $seed)
-    {
-        $objects = $this->getObjectList("o_type = 'object' AND o_className = 'unittest'");
-        $objects = array_slice($objects, 0, 4);
-
-        $metaobjects = [];
-        foreach ($objects as $o) {
-            $mo = new DataObject\Data\ObjectMetadata($field, ['meta1', 'meta2'], $o);
-            $mo->setMeta1('value1' . $seed);
-            $mo->setMeta2('value2' . $seed);
-            $metaobjects[] = $mo;
-        }
-
-        return $metaobjects;
-    }
-
-    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
@@ -1352,27 +1449,6 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param int $seed
-     *
-     * @return DataObject\Data\StructuredTable
-     */
-    private function getStructuredTableData($seed = 1)
-    {
-        $data['row1']['col1'] = 1 + $seed;
-        $data['row2']['col1'] = 2 + $seed;
-        $data['row3']['col1'] = 3 + $seed;
-
-        $data['row1']['col2'] = 'text_a_' . $seed;
-        $data['row2']['col2'] = 'text_b_' . $seed;
-        $data['row3']['col2'] = 'text_c_' . $seed;
-
-        $st = new DataObject\Data\StructuredTable();
-        $st->setData($data);
-
-        return $st;
-    }
-
-    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
@@ -1381,16 +1457,6 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getTableDataFixture($seed));
-    }
-
-    /**
-     * @param int $seed
-     *
-     * @return array
-     */
-    protected function getTableDataFixture($seed)
-    {
-        return [['eins', 'zwei', 'drei'], [$seed, 2, 3], ['a', 'b', 'c']];
     }
 
     /**

@@ -398,6 +398,18 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('consent'));
 
             $panel->addChild($this->createDataChild('date'));
+
+            $panel->addChild($this->createDataChild('email'));
+
+            $panel->addChild($this->createDataChild('firstname'));
+
+            $panel->addChild($this->createDataChild('datetime'));
+
+            $panel->addChild($this->createDataChild('geopoint', 'point'));
+            $panel->addChild($this->createDataChild('geobounds', 'bounds'));
+            $panel->addChild($this->createDataChild('geopolygon', 'poly'));
+            $panel->addChild($this->createDataChild('input'));
+
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
@@ -420,24 +432,21 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses([]));
 
-            //TODO add test
-
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'objectswithmetadata')
                 ->setAllowedClassId($name)
                 ->setClasses([])
                 ->setColumns([ ['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'label1'],
                     ['position' => 2, 'key' => 'meta2', 'type' => 'text', 'label' => 'label2'], ]));
 
+            $panel->addChild($this->createDataChild('lastname'));
+
             $panel->addChild($this->createDataChild('slider'));
             $panel->addChild($this->createDataChild('numeric', 'number'));
-            $panel->addChild($this->createDataChild('geopoint', 'point'));
-            $panel->addChild($this->createDataChild('geobounds', 'bounds'));
-            $panel->addChild($this->createDataChild('geopolygon', 'poly'));
-            $panel->addChild($this->createDataChild('datetime'));
-            $panel->addChild($this->createDataChild('time'));
-            $panel->addChild($this->createDataChild('input'));
+
             $panel->addChild($this->createDataChild('password'));
             $panel->addChild($this->createDataChild('textarea'));
+            $panel->addChild($this->createDataChild('time'));
+
             $panel->addChild($this->createDataChild('wysiwyg'));
             $panel->addChild($this->createDataChild('select')->setOptions([
                 ['key' => 'Selection 1', 'value' => '1'],

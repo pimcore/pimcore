@@ -110,6 +110,15 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
+    /**
+     * @param array|string $fields
+     *
+     * @return Unittest
+     */
+    abstract protected function createTestObject($fields = []);
+
+    public abstract function refreshObject();
+
     public function testBricks()
     {
         $this->createTestObject([
@@ -196,7 +205,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertFalse($consent->getConsent(), "Consent given but still false");
     }
 
-
     public function testCountry()
     {
         $this->createTestObject('country');
@@ -239,6 +247,14 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertDate($this->testObject, 'datetime', $this->seed);
     }
 
+    public function testEmail()
+    {
+        $this->createTestObject('email');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertEmail($this->testObject, 'email', $this->seed);
+    }
+
     public function testFieldCollection()
     {
         $this->createTestObject([
@@ -250,6 +266,14 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertFieldCollection($this->testObject, 'myfieldcollection', $this->seed);
+    }
+
+    public function testFirstname()
+    {
+        $this->createTestObject('firstname');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertFirstname($this->testObject, 'firstname', $this->seed);
     }
 
     public function testGeobounds()
@@ -341,13 +365,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertInput($this->testObject, 'input', $this->seed);
     }
 
-    /**
-     * @param array|string $fields
-     *
-     * @return Unittest
-     */
-    abstract protected function createTestObject($fields = []);
-
     public function testLanguage()
     {
         $this->createTestObject([
@@ -372,6 +389,14 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
+    }
+
+    public function testLastname()
+    {
+        $this->createTestObject('lastname');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertLastname($this->testObject, 'lastname', $this->seed);
     }
 
     public function testLazyLocalizedMultihref()
@@ -654,6 +679,4 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
-
-    public abstract function refreshObject();
 }
