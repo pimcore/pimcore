@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Pimcore\Process\PartsBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -75,12 +74,9 @@ class AssetsInstaller
             'web',
         ];
 
-        $options = $this->resolveOptions($options);
+        $arguments = array_merge($arguments, $this->resolveOptions($options));
 
-        $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts = $partsBuilder->getParts();
-
-        $process = new Process($parts);
+        $process = new Process($arguments);
         $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
 
         return $process;
