@@ -113,7 +113,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     public function encrypt($data, $object, $params = [])
     {
         if (!is_null($data)) {
-            $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+            $container = \Pimcore::getContainer();
+            $key = $container->getParameter('pimcore.encryption.secret');
 
             try {
                 $key = Key::loadFromAsciiSafeString($key);
@@ -591,21 +592,21 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return $this->delegate ? $this->delegate->getParameterTypeDeclaration() : null;
+        return null;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return $this->delegate ? $this->delegate->getReturnTypeDeclaration() : null;
+        return null;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocInputType() : null;
+        return $this->delegate ? 'mixed|null' : null;
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
+        return $this->delegate ? 'mixed|null' : null;
     }
 }
