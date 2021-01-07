@@ -236,6 +236,3 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
     }
 
 });
-
-// @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.classes.data.objects = pimcore.object.classes.data.manyToManyObjectRelation;
