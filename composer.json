@@ -69,7 +69,7 @@
     "myclabs/deep-copy": "^1.7",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
-    "ocramius/package-versions": "^1.2",
+    "ocramius/package-versions": "^2.0",
     "pear/net_url2": "^2.2",
     "phive/twig-extensions-deferred": "^2.0",
     "matomo/device-detector": "^3.9",
