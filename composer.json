@@ -42,6 +42,7 @@
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
+    "composer-runtime-api": "^2.0",
     "psr/simple-cache": "^1.0.0",
     "amnuts/opcache-gui": "^3.0.1",
     "cbschuld/browser.php": "^1.9.6",
