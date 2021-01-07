@@ -30,7 +30,7 @@ use Pimcore\Cache;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -68,7 +68,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         }
 
         // enable inherited values
-        AbstractObject::setGetInheritedValues(true);
+        DataObject::setGetInheritedValues(true);
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();

@@ -101,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
         // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
 
         $forceUpdate = false;
-        if ((isset($params['newParent']) && $params['newParent']) || DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
+        if ((isset($params['newParent']) && $params['newParent']) || DataObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
             ) || $context['containerType'] == 'fieldcollection') {
             $forceUpdate = $this->delete(false, true);
         }
@@ -146,8 +146,8 @@ class Dao extends Model\Dao\AbstractDao
             ) {
                 continue;
             }
-            $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
-            DataObject\AbstractObject::setGetInheritedValues(false);
+            $inheritedValues = DataObject::doGetInheritedValues();
+            DataObject::setGetInheritedValues(false);
 
             $insertData = [
                 'ooo_id' => $this->model->getObject()->getId(),
@@ -408,7 +408,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->inheritanceHelper->resetFieldsToCheck();
             }
 
-            DataObject\AbstractObject::setGetInheritedValues($inheritedValues);
+            DataObject::setGetInheritedValues($inheritedValues);
         } // foreach language
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
         DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
@@ -422,7 +422,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete($deleteQuery = true, $isUpdate = true)
     {
-        if ($isUpdate && !DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+        if ($isUpdate && !DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return false;
         }
         $object = $this->model->getObject();
@@ -483,7 +483,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove relations
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+        if (!DataObject::isDirtyDetectionDisabled()) {
             if (!$this->model->hasDirtyFields()) {
                 return false;
             }

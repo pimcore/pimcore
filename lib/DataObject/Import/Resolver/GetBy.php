@@ -17,9 +17,9 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use Pimcore\Model\DataObject;
 use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\Concrete;
@@ -78,7 +78,7 @@ class GetBy extends AbstractResolver
         /** @var Listing $list */
         $list = $this->modelFactory->build($listClassName);
 
-        $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT]);
+        $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT]);
         $list->setCondition($attribute . ' = ' . $list->quote($cellData));
         $list->setLimit(1);
         $list = $list->load();

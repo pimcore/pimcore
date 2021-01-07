@@ -1252,7 +1252,7 @@ class TestDataHelper extends Module
 
         Cache::clearAll();
         Runtime::clear();
-        $object = AbstractObject::getById($object->getId());
+        $object = DataObject::getById($object->getId());
         $value = $object->$getter();
         $value = $value->getItems();
 
@@ -1327,7 +1327,7 @@ class TestDataHelper extends Module
 
         Cache::clearAll();
         Runtime::clear();
-        $object = AbstractObject::getById($object->getId());
+        $object = DataObject::getById($object->getId());
         $value = $object->$getter();
         $value = $value->getItems();
 

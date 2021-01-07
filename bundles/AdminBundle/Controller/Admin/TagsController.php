@@ -282,7 +282,7 @@ class TagsController extends AdminController
         $idList = [];
         switch ($elementType) {
             case 'object':
-                $object = \Pimcore\Model\DataObject\AbstractObject::getById($elementId);
+                $object = \Pimcore\Model\DataObject::getById($elementId);
                 if ($object) {
                     $idList = $this->getSubObjectIds($object, $eventDispatcher);
                 }

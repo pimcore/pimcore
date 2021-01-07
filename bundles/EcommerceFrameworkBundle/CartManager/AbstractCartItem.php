@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements CartItemInterface
 {
@@ -106,7 +106,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
             return $this->product;
         }
 
-        $product = AbstractObject::getById($this->productId);
+        $product = DataObject::getById($this->productId);
 
         if ($product instanceof CheckoutableInterface) {
             $this->product = $product;
