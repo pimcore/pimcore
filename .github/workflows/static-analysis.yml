@@ -4,13 +4,10 @@ name: "Static Analysis"
 on:
     pull_request:
         branches:
-            - "*.*"
-            - "master"
+            - "6.*"
     push:
         branches:
-            - "*.*"
-            - "master"
-            - "*_actions"
+            - "6.*"
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}

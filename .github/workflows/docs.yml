@@ -4,13 +4,10 @@ name: "Documentation"
 on:
     pull_request:
         branches:
-            - "*.*"
-            - "master"
+            - "6.*"
     push:
         branches:
-            - "*.*"
-            - "master"
-            - "*_actions"
+            - "6.*"
 
 jobs:
     docs:

@@ -8,7 +8,6 @@ on:
     push:
         branches:
             - "6.*"
-            - "*_actions"
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
