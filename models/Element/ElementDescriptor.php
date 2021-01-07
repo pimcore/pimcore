@@ -86,6 +86,3 @@ class ElementDescriptor
         return $this->getType() . '_' . $this->getId();
     }
 }
-
-//TODO: remove in Pimcore 10
-class_alias(ElementDescriptor::class, 'Pimcore\Model\Version\ElementDescriptor');
