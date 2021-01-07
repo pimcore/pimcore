@@ -112,8 +112,8 @@ class CacheClearer
     private function buildProcess(string $command, array $arguments = [], array $options = []): Process
     {
         $preparedOptions = [];
-        foreach($arguments as $optionKey => $optionValue) {
-            if($optionValue === false || $optionValue === null) {
+        foreach ($arguments as $optionKey => $optionValue) {
+            if ($optionValue === false || $optionValue === null) {
                 continue;
             }
 
