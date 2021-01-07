@@ -187,6 +187,3 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
 
 
 });
-
-// @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.classes.data.nonownerobjects = pimcore.object.classes.data.reverseManyToManyObjectRelation;

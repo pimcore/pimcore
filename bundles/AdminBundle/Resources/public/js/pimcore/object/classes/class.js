@@ -267,13 +267,6 @@ pimcore.object.classes.klass = Class.create({
         // get available data types
         var dataMenu = [];
         var dataComps = Object.keys(pimcore.object.classes.data);
-
-        // @TODO: ignoredAliases are there for BC reasons, to be removed in Pimcore 10
-        var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href','nonownerobjects'];
-        ignoredAliases.forEach(function (item) {
-            dataComps = array_remove_value(dataComps, item);
-        });
-
         var parentRestrictions;
         var groups = [];
         var groupNames = ["text","numeric","date","select","media","relation","geo","crm","structured","other"];
