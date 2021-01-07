@@ -720,10 +720,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
-            $code .= "\t" . 'if (!$isEqual) {' . "\n";
-            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
-            $code .= "\t" . '}' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+                $code .= "\t" . 'if (!$isEqual) {' . "\n";
+                $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+                $code .= "\t" . '}' . "\n";
+            } else {
+                $code .= "\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            }
         }
 
         if (method_exists($this, 'preSetData')) {
@@ -839,10 +843,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . 'if($class && $class->getAllowInherit()) {' . "\n";
             $code .= "\t\t" . '$this->getObject()::setGetInheritedValues($inheritValues);'."\n";
             $code .= "\t" . '}' . "\n";
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
-            $code .= "\t" . 'if (!$isEqual) {' . "\n";
-            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
-            $code .= "\t" . '}' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+                $code .= "\t" . 'if (!$isEqual) {' . "\n";
+                $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+                $code .= "\t" . '}' . "\n";
+            } else {
+                $code .= "\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            }
         }
 
         if (method_exists($this, 'preSetData')) {
@@ -941,10 +949,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
-            $code .= "\t" . 'if (!$isEqual) {' . "\n";
-            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
-            $code .= "\t" . '}' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+                $code .= "\t" . 'if (!$isEqual) {' . "\n";
+                $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+                $code .= "\t" . '}' . "\n";
+            } else {
+                $code .= "\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            }
         }
 
         if (method_exists($this, 'preSetData')) {
@@ -1061,7 +1073,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+            } else {
+                $code .= "\t" . '$isEqual = false;' . "\n";
+            }
 
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
@@ -1488,20 +1504,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function supportsDirtyDetection()
     {
-        return false;
-    }
-
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue)
-    {
-        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
-            'Implement `' . DataObject\ClassDefinition\Data\EqualComparisonInterface::class . '` instead.', E_USER_DEPRECATED);
-
         return false;
     }
 
