@@ -18,7 +18,7 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Translation\AbstractTranslation;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class TranslationEvent extends Event implements ElementEventInterface
+class TranslationEvent extends Event
 {
     use ArgumentsAwareTrait;
 
@@ -53,15 +53,5 @@ class TranslationEvent extends Event implements ElementEventInterface
     public function setTranslation(AbstractTranslation $translation)
     {
         $this->translation = $translation;
-    }
-
-    /**
-     * @deprecated use getTranslation() instead - will be removed in Pimcore 10
-     *
-     * @return AbstractTranslation
-     */
-    public function getElement()
-    {
-        return $this->getTranslation();
     }
 }
