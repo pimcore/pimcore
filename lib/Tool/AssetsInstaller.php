@@ -74,7 +74,7 @@ class AssetsInstaller
         ];
 
         $preparedOptions = [];
-        foreach($options as $optionKey => $optionValue) {
+        foreach($this->resolveOptions($options) as $optionKey => $optionValue) {
             if($optionValue === false || $optionValue === null) {
                 continue;
             }
