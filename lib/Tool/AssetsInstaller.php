@@ -71,14 +71,20 @@ class AssetsInstaller
             Console::getPhpCli(),
             PIMCORE_PROJECT_ROOT . '/bin/console',
             'assets:install',
-            PIMCORE_WEB_ROOT,
         ];
 
-        $options = array_map(function ($var) {
-            return '--' . $var;
-        }, $this->resolveOptions($options));
+        $preparedOptions = [];
+        foreach($options as $optionKey => $optionValue) {
+            if($optionValue === false || $optionValue === null) {
+                continue;
+            }
 
-        $arguments = array_merge($arguments, $options);
+            $preparedOptions[] = '--' . $optionKey . (($optionValue === true) ? '' : '=' . $optionValue);
+        }
+
+        $arguments = array_merge($arguments, $preparedOptions);
+
+        $arguments[] = PIMCORE_WEB_ROOT;
 
         $process = new Process($arguments);
         $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
