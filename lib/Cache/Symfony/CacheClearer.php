@@ -111,15 +111,20 @@ class CacheClearer
 
     private function buildProcess(string $command, array $arguments = [], array $options = []): Process
     {
-        $arguments = array_map(function ($var) {
-            return '--' . $var;
-        }, $arguments);
+        $preparedOptions = [];
+        foreach($arguments as $optionKey => $optionValue) {
+            if($optionValue === false || $optionValue === null) {
+                continue;
+            }
+
+            $preparedOptions[] = '--' . $optionKey . (($optionValue === true) ? '' : '=' . $optionValue);
+        }
 
         $cmd = array_merge([
             Console::getPhpCli(),
             'bin/console',
             $command,
-        ], $arguments);
+        ], $preparedOptions);
 
         $process = new Process($cmd);
         $process
