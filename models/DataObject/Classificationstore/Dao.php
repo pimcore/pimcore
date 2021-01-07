@@ -56,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+        if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return;
         }
         $object = $this->model->getObject();

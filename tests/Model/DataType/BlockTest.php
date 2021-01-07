@@ -3,7 +3,7 @@
 namespace Pimcore\Tests\Model\DataType;
 
 use Pimcore\Cache;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
@@ -127,11 +127,11 @@ class BlockTest extends ModelTestCase
         Cache\Runtime::clear();
 
         //reload from cache and save again
-        $objectRef = AbstractObject::getById($object->getId());
+        $objectRef = DataObject::getById($object->getId());
         $objectRef->save(); //block data should retain here
 
         //reload from db
-        $object = AbstractObject::getById($objectRef->getId(), true);
+        $object = DataObject::getById($objectRef->getId(), true);
 
         $loadedData = $object->getTestblock();
 
@@ -178,11 +178,11 @@ class BlockTest extends ModelTestCase
         Cache\Runtime::clear();
 
         //reload from cache and save again
-        $objectRef = AbstractObject::getById($object->getId());
+        $objectRef = DataObject::getById($object->getId());
         $objectRef->save(); //block data should retain here
 
         //reload from db
-        $object = AbstractObject::getById($objectRef->getId(), true);
+        $object = DataObject::getById($objectRef->getId(), true);
         $loadedData = $object->getLtestblock('de');
 
         $loadedLink = $loadedData[0]['lblocklink']->getData();
@@ -229,7 +229,7 @@ class BlockTest extends ModelTestCase
         $source->save();
 
         //reload target and fetch source
-        $target = AbstractObject::getById($target->getId(), true);
+        $target = DataObject::getById($target->getId(), true);
         $sourceFromRef = $target->getHref();
 
         $loadedReference = $sourceFromRef->getLtestblock('de')[0]['blockmanyToManyRelations']->getData();

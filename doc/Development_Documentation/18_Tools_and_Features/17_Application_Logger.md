@@ -224,7 +224,7 @@ class TestController
     public function testAction(ApplicationLogger $logger)
     {
         $fileObject = new FileObject('some interesting data');
-        $myObject   = AbstractObject::getById(73);
+        $myObject   = DataObject::getById(73);
         
         $logger->error('my error message', [
             'fileObject'    => $fileObject,
