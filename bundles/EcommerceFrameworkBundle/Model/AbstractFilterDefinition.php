@@ -77,7 +77,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
     public function preGetValue(string $key)
     {
         if ($this->getClass()->getAllowInherit()
-            && DataObject\AbstractObject::doGetInheritedValues()
+            && DataObject::doGetInheritedValues()
             && $this->getClass()->getFieldDefinition($key) instanceof DataObject\ClassDefinition\Data\Fieldcollections
         ) {
             $checkInheritanceKey = $key . 'Inheritance';

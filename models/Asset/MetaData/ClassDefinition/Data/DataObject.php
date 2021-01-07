@@ -143,7 +143,7 @@ class DataObject extends Data
     public function getDataForListfolderGrid($data, $params = [])
     {
         if (is_numeric($data)) {
-            $data = AbstractObject::getById($data);
+            $data = \Pimcore\Model\DataObject::getById($data);
         }
 
         if ($data instanceof AbstractObject) {
@@ -185,7 +185,7 @@ class DataObject extends Data
      */
     public function getDataFromListfolderGrid($data, $params = [])
     {
-        $data = AbstractObject::getByPath($data);
+        $data = \Pimcore\Model\DataObject::getByPath($data);
         if ($data instanceof ElementInterface) {
             return $data->getId();
         }

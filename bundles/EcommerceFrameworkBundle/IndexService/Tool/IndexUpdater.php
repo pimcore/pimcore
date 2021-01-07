@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
 use Pimcore\Console\CliTrait;
 use Pimcore\Log\Simple;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Listing\Concrete;
 
 /**
@@ -83,7 +83,7 @@ class IndexUpdater
         /** @var Concrete $products */
         $products = new $objectListClass();
         $products->setUnpublished(true);
-        $products->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_VARIANT]);
+        $products->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT]);
         $products->setIgnoreLocalizedFields(true);
         $products->setCondition($condition);
 

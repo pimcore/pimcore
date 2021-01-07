@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Helper;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
@@ -13,7 +13,7 @@ class Model extends AbstractDefinitionHelper
      */
     public function _beforeSuite($settings = [])
     {
-        AbstractObject::setHideUnpublished(false);
+        DataObject::setHideUnpublished(false);
         parent::_beforeSuite($settings);
     }
 

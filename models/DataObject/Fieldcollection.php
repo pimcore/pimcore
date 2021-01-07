@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
@@ -298,11 +299,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                         'index' => $index,
                     ], ];
 
-                $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-                AbstractObject::disableDirtyDetection();
+                $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+                DataObject::disableDirtyDetection();
 
                 $data = $fieldDef->load($item, $params);
-                AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
                 $item->setObjectVar($field, $data);
             }
             $item->markLazyKeyAsLoaded($field);

@@ -51,13 +51,13 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
  
-$object = DataObject\AbstractObject::getById(12345);
+$object = DataObject::getById(12345);
  
 $object->setMyManyToOneField(Document::getById(23));
 
 $object->setMyManyToManyField([
     Asset::getById(350),
-    DataObject\AbstractObject::getByPath("/products/testproduct")
+    DataObject::getByPath("/products/testproduct")
 ]);
 
 $object->setMyManyToManyObjectField([
@@ -84,11 +84,11 @@ Internally the setter sets the value to an empty array, regardless if an empty a
 Related items that are unpublished are normally not returned. You can disable this behavior like this:
 ```php
 //also include unpublished relations form now on
-DataObject\AbstractObject::setHideUnpublished(false);
+DataObject::setHideUnpublished(false);
 //get a related object that is either published or unpublished
 $relationObject = $relation->getObject();
 //return to normal behavior
-DataObject\AbstractObject::setHideUnpublished(true);
+DataObject::setHideUnpublished(true);
 ```
 
 
@@ -116,7 +116,7 @@ All the other functionality is the same as with the normal objects data type.
 ```php
 use Pimcore\Model\DataObject;
 
-$object = DataObject\AbstractObject::getById(73585);
+$object = DataObject::getById(73585);
 
 //getting list of assigned objects with metadata (array of DataObject\Data\ObjectMetadata)
 $objects = $object->getMetadata();
@@ -145,7 +145,7 @@ $object->save();
 use Pimcore\Model\DataObject;
 
 //load your object (in this object we save the metadata objects)
-$object = DataObject\AbstractObject::getById(73585);
+$object = DataObject::getById(73585);
 
 //create a empty array for your metadata objects
 $objectArray = [];

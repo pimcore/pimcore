@@ -72,9 +72,9 @@ class ObjectbrickTest extends ModelTestCase
         $id2 = $two->getId();
         $id3 = $three->getId();
 
-        $one = AbstractObject::getById($id1);
-        $two = AbstractObject::getById($id2);
-        $three = AbstractObject::getById($id3);
+        $one = DataObject::getById($id1);
+        $two = DataObject::getById($id2);
+        $three = DataObject::getById($id3);
 
         //get inherited brick value from first & second level child
         $this->assertEquals('parenttext', $two->getMybricks()->getUnittestBrick()->getBrickinput());
@@ -97,17 +97,17 @@ class ObjectbrickTest extends ModelTestCase
         $class->setAllowInherit(false);
         $class->save();
 
-        $one = AbstractObject::getById($id1);
-        $two = AbstractObject::getById($id2);
-        $three = AbstractObject::getById($id3);
+        $one = DataObject::getById($id1);
+        $two = DataObject::getById($id2);
+        $three = DataObject::getById($id3);
 
         // save both objects again
         $one->save();
         $two->save();
         $three->save();
 
-        $two = AbstractObject::getById($id2);
-        $three = AbstractObject::getById($id3);
+        $two = DataObject::getById($id2);
+        $three = DataObject::getById($id3);
 
         //get inherited brick value from first & second level child
         $this->assertEquals(null, $two->getMybricks()->getUnittestBrick()->getBrickinput());

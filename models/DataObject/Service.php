@@ -161,9 +161,9 @@ class Service extends Model\Element\Service
         $this->_copyRecursiveIds[] = $new->getId();
 
         $children = $source->getChildren([
-            AbstractObject::OBJECT_TYPE_OBJECT,
-            AbstractObject::OBJECT_TYPE_VARIANT,
-            AbstractObject::OBJECT_TYPE_FOLDER,
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER,
         ], true);
 
         foreach ($children as $child) {
@@ -189,8 +189,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source)
     {
-        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-        AbstractObject::setDisableDirtyDetection(true);
+        $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+        DataObject::setDisableDirtyDetection(true);
 
         //load properties
         $source->getProperties();
@@ -222,7 +222,7 @@ class Service extends Model\Element\Service
 
         $new->save();
 
-        AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
         $this->updateChildren($target, $new);
 
@@ -889,7 +889,7 @@ class Service extends Model\Element\Service
         $path = Element\Service::correctPath($path);
 
         try {
-            $object = new AbstractObject();
+            $object = new DataObject();
 
             $pathElements = explode('/', $path);
             $keyIdx = count($pathElements) - 1;
@@ -1144,7 +1144,7 @@ class Service extends Model\Element\Service
      */
     public static function getCustomGridFieldDefinitions($classId, $objectId)
     {
-        $object = AbstractObject::getById($objectId);
+        $object = DataObject::getById($objectId);
 
         $class = ClassDefinition::getById($classId);
         $masterFieldDefinition = $class->getFieldDefinitions();
@@ -1371,7 +1371,7 @@ class Service extends Model\Element\Service
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT]);
+        $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT]);
         $key = Element\Service::getValidKey($item->getKey(), 'object');
         if (!$key) {
             throw new \Exception('No item key set.');

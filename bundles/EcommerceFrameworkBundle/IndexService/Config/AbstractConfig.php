@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Config\Config;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 
 abstract class AbstractConfig implements ConfigInterface
 {
@@ -334,7 +334,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getObjectById($objectId, $onlyMainObject = false)
     {
-        return AbstractObject::getById($objectId);
+        return DataObject::getById($objectId);
     }
 
     /**

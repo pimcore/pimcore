@@ -474,15 +474,15 @@ class Data extends \Pimcore\Model\AbstractModel
             $this->published = true;
         } elseif ($element instanceof DataObject\AbstractObject) {
             if ($element instanceof DataObject\Concrete) {
-                $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
-                DataObject\AbstractObject::setGetInheritedValues(true);
+                $getInheritedValues = DataObject::doGetInheritedValues();
+                DataObject::setGetInheritedValues(true);
 
                 $this->published = $element->isPublished();
                 foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
                     $this->data .= ' ' . $value->getDataForSearchIndex($element);
                 }
 
-                DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
+                DataObject::setGetInheritedValues($getInheritedValues);
             } elseif ($element instanceof DataObject\Folder) {
                 $this->published = true;
             }

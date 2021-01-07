@@ -98,13 +98,13 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
-            DataObject\AbstractObject::setHideUnpublished(false);
+            DataObject::setHideUnpublished(false);
             DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
             \Pimcore::unsetAdminMode();
             Document::setHideUnpublished(true);
-            DataObject\AbstractObject::setHideUnpublished(true);
-            DataObject\AbstractObject::setGetInheritedValues(true);
+            DataObject::setHideUnpublished(true);
+            DataObject::setGetInheritedValues(true);
             DataObject\Localizedfield::setGetFallbackValues(true);
         }
     }

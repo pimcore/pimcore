@@ -6,7 +6,7 @@
 
 ```php
 <?php
-    $object = AbstractObject::getById(1234);
+    $object = DataObject::getById(1234);
     print_r($object->getMyVideo());
 ?>
 ```
@@ -64,7 +64,7 @@ Pimcore\Model\DataObject\Data\Video Object
 <?php
  
  
-$object = AbstractObject::getById(1234);
+$object = DataObject::getById(1234);
 $v = $object->getMyVideo();
 $videoData = $v->getData();
  
@@ -96,7 +96,7 @@ if($videoData) {
  
 // asset video with poster image
  
-$object = AbstractObject::getById(789);
+$object = DataObject::getById(789);
 $assetVideo = Asset::getById(123);
 $assetImage = Asset::getById(456);
  
