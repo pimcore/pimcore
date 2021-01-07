@@ -255,6 +255,22 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertEmail($this->testObject, 'email', $this->seed);
     }
 
+    public function testEncrypted()
+    {
+        $this->createTestObject('encryptedField');
+
+        $this->refreshObject();
+
+        $this->testDataHelper->assertEncrypted($this->testObject, 'encryptedField', $this->seed);
+
+        $db = Db::get();
+        $result = $db->fetchOne("select encryptedField from object_store_" . $this->testObject->getClassId() . " where oo_id=" .  $this->testObject->getId());
+        $this->assertNotNull($result);
+
+        $this->assertFalse(strpos($result, "content"));
+    }
+
+
     public function testFieldCollection()
     {
         $this->createTestObject([

@@ -266,6 +266,30 @@ class TestDataHelper extends Module
         $this->assertEquals($expected, $value);
     }
 
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     * @param string|null $language
+     */
+    public function assertEncrypted(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $getter = 'get' . ucfirst($field);
+        if ($language) {
+            $value = $object->$getter($language);
+        } else {
+            $value = $object->$getter();
+        }
+
+
+        $expected = $language . 'content' . $seed;
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+    }
+
+
     /**
      * @param Concrete $object
      * @param string $field
@@ -1173,6 +1197,23 @@ class TestDataHelper extends Module
             $object->$setter('content' . $seed);
         }
     }
+
+    /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
+    public function fillEncryptedField(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $setter = 'set' . ucfirst($field);
+        if ($language) {
+            $object->$setter($language . 'content' . $seed, $language);
+        } else {
+            $object->$setter('content' . $seed);
+        }
+    }
+
 
     /**
      * @param Concrete $object

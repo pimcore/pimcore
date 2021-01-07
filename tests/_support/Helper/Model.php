@@ -401,6 +401,11 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('email'));
 
+            /** @var ClassDefinition\Data\EncryptedField $encryptedField */
+            $encryptedField = $this->createDataChild('encryptedField');
+            $encryptedField->setDelegateDatatype("input");
+            $panel->addChild($encryptedField);
+
             $panel->addChild($this->createDataChild('firstname'));
 
             $panel->addChild($this->createDataChild('datetime'));
