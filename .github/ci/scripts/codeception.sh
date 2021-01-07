@@ -6,6 +6,10 @@ export PIMCORE_PROJECT_ROOT="${PWD}"
 
 CMD="vendor/bin/codecept run -c . -vvv"
 
+#debug
+echo "debug PIMCORE_TEST_SUITE: ";
+echo $PIMCORE_TEST_SUITE;
+
 # add suite if configured
 if [[ -n "$PIMCORE_TEST_SUITE" ]]; then
     CMD="$CMD $PIMCORE_TEST_SUITE"
