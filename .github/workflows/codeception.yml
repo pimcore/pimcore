@@ -18,6 +18,7 @@ env:
     PIMCORE_TEST: 1
     PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
     PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
+    PIMCORE_TEST_URL: "http://pimcore-test.dev"
 
 jobs:
     codeception-tests:
