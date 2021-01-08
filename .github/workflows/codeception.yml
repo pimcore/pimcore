@@ -147,3 +147,4 @@ jobs:
 
             - name: "Run Codeception"
               run: ".github/ci/scripts/codeception.sh"
+              env: ${{matrix.env }}
