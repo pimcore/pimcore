@@ -817,7 +817,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         if ($request->query->has('allowedTypes')) {
             $allowedTypes = explode(',', $request->get('allowedTypes'));
         }
-        $object = DataObject\AbstractObject::getById($request->get('object_id'));
+        $object = DataObject::getById($request->get('object_id'));
 
         $currentLayoutId = $request->get('layoutId', null);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -930,7 +930,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         'outerFieldname' => $request->get('field_name'),
                     ];
 
-                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
+                    $object = DataObject::getById($request->get('object_id'));
 
                     DataObject\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
 
@@ -1198,7 +1198,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $fieldname = null;
         $className = null;
 
-        $object = DataObject\AbstractObject::getById($request->get('object_id'));
+        $object = DataObject::getById($request->get('object_id'));
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
@@ -1350,7 +1350,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     'outerFieldname' => $request->get('field_name'),
                 ];
 
-                $object = DataObject\AbstractObject::getById($request->get('object_id'));
+                $object = DataObject::getById($request->get('object_id'));
 
                 DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
                 $type->setLayoutDefinitions($layout);

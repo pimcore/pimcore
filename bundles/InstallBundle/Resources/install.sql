@@ -55,6 +55,8 @@ CREATE TABLE `assets_metadata` (
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
+
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
 	`id` VARCHAR(50) NOT NULL,

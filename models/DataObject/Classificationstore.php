@@ -383,7 +383,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         // check for inherited value
-        $doGetInheritedValues = AbstractObject::doGetInheritedValues();
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
         if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
             $object = $this->getObject();
             $class = $object->getClass();

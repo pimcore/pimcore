@@ -8,24 +8,12 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Element\DeepCopy;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
-use DeepCopy\TypeMatcher\TypeMatcher;
-
-class UnmarshalMatcher extends TypeMatcher
+class DefaultElasticSearch7 extends AbstractElasticSearch
 {
-    /**
-     * UnmarshalMatcher constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct(\Pimcore\Model\Element\ElementDescriptor::class);
-    }
 }

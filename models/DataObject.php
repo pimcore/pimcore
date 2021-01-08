@@ -15,14 +15,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-// the following is for IDEs to support auto-complete
-
 namespace Pimcore\Model;
 
-class_exists(DataObject\AbstractObject::class);
-
-if (false) {
-    class DataObject extends \Pimcore\Model\DataObject\AbstractObject
-    {
-    }
+class DataObject extends \Pimcore\Model\DataObject\AbstractObject
+{
 }

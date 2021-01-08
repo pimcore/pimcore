@@ -17,10 +17,12 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Model\DataObject;
+
 /**
  * @method \Pimcore\Model\DataObject\Folder\Dao getDao()
  */
-class Folder extends AbstractObject
+class Folder extends DataObject
 {
     /**
      * @var string

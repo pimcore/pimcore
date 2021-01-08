@@ -163,7 +163,7 @@ class DefaultMockup implements ProductInterface
     {
         Logger::notice("Getting original object {$this->id}.");
 
-        return \Pimcore\Model\DataObject\AbstractObject::getById($this->id);
+        return \Pimcore\Model\DataObject::getById($this->id);
     }
 
     /**

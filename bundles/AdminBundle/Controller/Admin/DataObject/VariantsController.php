@@ -213,7 +213,7 @@ class VariantsController extends AdminController
 
                 $list = $gridHelperService->prepareListingForGrid($allParams, $request->getLocale(), $this->getAdminUser());
 
-                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject::OBJECT_TYPE_VARIANT]);
 
                 $list->load();
 
