@@ -33,7 +33,7 @@ jobs:
                         dependencies: highest
                         experimental: false
                         database: "mariadb:10.1"
-                        database-options: "mariadb:10.1 --innodb-large-prefix=1"
+                        database-options: "--innodb-large-prefix=1"
                         symfony-version: "^3.4"
 
                     -   name: "All Tests - PHP 7.3 | Symfony 3.4 | MariaDB 10.2"
@@ -69,7 +69,7 @@ jobs:
                         dependencies: highest
                         experimental: false
                         database: "percona:5.6"
-                        database-options: "percona:5.6 --innodb-large-prefix=1 --innodb-file-format=Barracuda"
+                        database-options: "--innodb-large-prefix=1 --innodb-file-format=Barracuda"
                         symfony-version: "^4.0"
 
                     -   name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"
@@ -77,7 +77,6 @@ jobs:
                         dependencies: highest
                         experimental: false
                         database: "mysql:8.0"
-                        database-options: "mysql:8.0 --innodb-large-prefix=1 --innodb-file-format=Barracuda --default_authentication_plugin=mysql_native_password"
                         symfony-version: "^3.4"
                         env:
                             - PIMCORE_TEST_SUITE=Rest
@@ -97,15 +96,18 @@ jobs:
                 image: redis
                 ports:
                     - 63379:6379
-            mariadb:
-                image: "${{ matrix.database }}"
-                ports:
-                    - 33006:3306
-                options: -e "MYSQL_ALLOW_EMPTY_PASSWORD=yes" ${{ matrix.database-options }}
+#            db:
+#                image: "${{ matrix.database }}"
+#                ports:
+#                    - 33006:3306
+#                env:
+#                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+#                options: -d ${{ matrix.database-options }}
 
         steps:
-            - name: "Checkout code"
-              uses: "actions/checkout@v2"
+            - name: Initialize DB service container
+              run: |
+                  docker run --network-alias db -p 33006:3306 -e "MYSQL_ALLOW_EMPTY_PASSWORD=yes" -e GITHUB_ACTIONS=true -e CI=true -d "${{ matrix.database }}"
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"
