@@ -19,10 +19,10 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
-use Pimcore\Model\DataObject;
 
 /**
  * @method Localizedfield\Dao getDao()*

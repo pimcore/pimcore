@@ -13,12 +13,12 @@ use Pimcore\Model\DataObject;
  */
 final class Version20210107103923 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $list = new DataObject\ClassDefinition\Listing();
         $list = $list->load();
@@ -43,7 +43,7 @@ final class Version20210107103923 extends AbstractMigration
         }
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $this->write(sprintf('Please restore your class definition files in %s and run bin/console pimcore:deployment:classes-rebuild manually.', PIMCORE_CLASS_DIRECTORY));
     }
