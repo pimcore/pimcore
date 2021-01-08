@@ -57,16 +57,16 @@ class ExtJSCommand extends AbstractCommand
         $dest = $input->getArgument('dest');
 
         if (!$src) {
-            $src = 'dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/js/ext-js/pimcore-ext-all.json';
+            $src = 'dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/extjs/js/pimcore-ext-all.json';
         }
 
         if (!$dest) {
-            $dest = 'dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/js/lib/ext/ext-all';
+            $dest = 'dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/extjs/js/ext-all';
         }
 
         $absoluteManifest = getcwd() . "/" . $src;
 
-        $bootstrapFile = getcwd() . "/dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/js/ext-js/bootstrap-ext-all.js";
+        $bootstrapFile = getcwd() . "/dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/extjs/js/bootstrap-ext-all.js";
         $bootstrap = file_get_contents($bootstrapFile);
         if (!$bootstrap) {
             throw new \Exception("bootstrap file not found");
@@ -96,6 +96,7 @@ class ExtJSCommand extends AbstractCommand
             foreach ($loadOrder as $loadOrderIdx => $loadOrderItem) {
                 $count++;
                 $relativePath = $loadOrderItem["path"];
+
                 $fullPath = PIMCORE_WEB_ROOT . $relativePath;
 
                 if (is_file($fullPath)) {
