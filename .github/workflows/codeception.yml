@@ -107,7 +107,7 @@ jobs:
         steps:
             - name: Initialize DB service container
               run: |
-                  docker run --network-alias db -p 33006:3306 -e "MYSQL_ALLOW_EMPTY_PASSWORD=yes" -e GITHUB_ACTIONS=true -e CI=true -d "${{ matrix.database }}"
+                  docker run --network-alias db -p 33006:3306 -e "MYSQL_ALLOW_EMPTY_PASSWORD=yes" -e GITHUB_ACTIONS=true -e CI=true -d ${{ matrix.database }} ${{ matrix.database-options }}
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"
