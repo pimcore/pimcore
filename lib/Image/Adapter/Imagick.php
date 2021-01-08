@@ -111,10 +111,6 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePath;
 
-            if (strpos($imagePathLoad, ':') !== false) {
-                $imagePathLoad = ':' . $imagePathLoad;
-            }
-
             $imagePathLoad = $imagePathLoad . '[0]';
 
             if (!$i->readImage($imagePathLoad) || !filesize($imagePath)) {
