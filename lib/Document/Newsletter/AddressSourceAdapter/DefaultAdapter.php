@@ -205,7 +205,7 @@ class DefaultAdapter implements AddressSourceAdapterInterface
         $containers = [];
 
         foreach ($objects as $object) {
-            if(method_exists($object, 'getEmail')) {
+            if (method_exists($object, 'getEmail')) {
                 $containers[] = new SendingParamContainer($object->getEmail(), [
                     'gender' => method_exists($object, 'getGender') ? $object->getGender() : '',
                     'firstname' => method_exists($object, 'getFirstname') ? $object->getFirstname() : '',

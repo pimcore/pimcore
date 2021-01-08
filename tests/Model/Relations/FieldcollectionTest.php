@@ -3,7 +3,6 @@
 namespace Pimcore\Tests\Model\Relations;
 
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;

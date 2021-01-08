@@ -22,11 +22,11 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
-use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()

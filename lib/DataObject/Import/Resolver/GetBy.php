@@ -17,9 +17,9 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
-use Pimcore\Model\DataObject;
 use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\Concrete;
