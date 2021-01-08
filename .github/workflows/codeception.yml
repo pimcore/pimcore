@@ -70,8 +70,8 @@ jobs:
                         database: "percona:5.6"
                         symfony-version: "^4.0"
 
-                    -   name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"
-                        php-version: 7.2
+                    -   name: "REST Tests - PHP 7.4 | Symfony 3.4 | MySQL 8.0"
+                        php-version: 7.4
                         dependencies: highest
                         experimental: false
                         database: "mysql:8.0"
