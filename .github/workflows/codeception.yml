@@ -148,4 +148,4 @@ jobs:
                   ./bin/console pimcore:system:requirements:check
 
             - name: "Run Codeception"
-              run: "vendor/bin/codecept run -c . -vvv ${{ test-options }} --json"
+              run: "vendor/bin/codecept run -c . -vvv ${{ matrix.test-options }} --json"
