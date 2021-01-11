@@ -35,6 +35,7 @@ class ExtJSCommand extends AbstractCommand
     {
         $this
             ->setName('pimcore:extjs')
+            ->setHidden(true)
             ->setDescription('Regenerate minified ext-js file')
             ->addArgument(
                 'src',
