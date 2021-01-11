@@ -65,6 +65,7 @@ Ext.require([
     'Ext.form.field.Tag'
 ]);
 
+Ext.ariaWarn = Ext.emptyFn;
 
 Ext.onReady(function () {
 
