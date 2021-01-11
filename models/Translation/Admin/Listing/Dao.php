@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @property \Pimcore\Model\Translation\Admin\Listing $model
+ *
+ * @deprecated
  */
 class Dao extends Model\Translation\AbstractTranslation\Listing\Dao
 {

@@ -15,19 +15,24 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Translation;
+namespace Pimcore\Model;
 
+use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
-use Pimcore\Model;
+use Pimcore\Model\Translation\TranslationInterface;
 use Pimcore\Tool;
 
 /**
- * @method \Pimcore\Model\Translation\AbstractTranslation\Dao getDao()
+ * @method \Pimcore\Model\Translation\Dao getDao()
  */
-abstract class AbstractTranslation extends Model\AbstractModel implements TranslationInterface
+class Translation extends AbstractModel implements TranslationInterface
 {
+    const DOMAIN_DEFAULT = 'messages';
+    const DOMAIN_ADMIN = 'admin';
+
     /**
      * @var string
      */
@@ -49,11 +54,26 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public $modificationDate;
 
     /**
+     * @var string
+     */
+    protected $domain = self::DOMAIN_DEFAULT;
+
+    /**
      * @inheritDoc
+     *
+     * @deprecated
      */
     public static function isValidLanguage($locale): bool
     {
-        return in_array($locale, (array)static::getLanguages());
+        return static::IsAValidLanguage(static::DOMAIN_DEFAULT, $locale);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function IsAValidLanguage(string $domain, string $locale): bool
+    {
+        return in_array($locale, (array)static::getValidLanguages($domain));
     }
 
     /**
@@ -149,6 +169,45 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
+     * @return string
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
+    /**
+     * @param string $domain
+     */
+    public function setDomain(string $domain): void
+    {
+        $this->domain = $domain;
+    }
+
+    /**
+     * @param string $domain
+     * @return array
+     */
+    public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
+    {
+        if ($domain == "admin") {
+            return \Pimcore\Tool\Admin::getLanguages();
+        }
+
+        return Tool::getValidLanguages();
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @deprecated
+     */
+    public static function getLanguages(): array
+    {
+        return static::getValidLanguages();
+    }
+
+    /**
      * @param string $language
      * @param string $text
      */
@@ -179,26 +238,32 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     public static function clearDependentCache()
     {
-        \Pimcore\Cache::clearTags(['translator', 'translate']);
+        Cache::clearTags(['translator', 'translate']);
     }
 
     /**
      * @param string $id
-     * @param bool $create
-     * @param bool $returnIdIfEmpty
      *
      * @return static|null
+     *
+     * @throws \Exception
      */
-    public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
+    public static function getByKey($id /*, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false */)
     {
+        $args = func_get_args();
+        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
+        $create = $args[2] ?? false;
+        $returnIdIfEmpty = $args[3] ?? false;
+
         $cacheKey = 'translation_' . $id;
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            return \Pimcore\Cache\Runtime::get($cacheKey);
+        if (Runtime::isRegistered($cacheKey)) {
+            return Runtime::get($cacheKey);
         }
 
         $translation = new static();
+        $translation->setDomain($domain);
         $idOriginal = $id;
-        $languages = static::getLanguages();
+        $languages = static::getValidLanguages($domain);
 
         try {
             $translation->getDao()->getByKey($id);
@@ -230,25 +295,43 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         // add to key cache
-        \Pimcore\Cache\Runtime::set($cacheKey, $translation);
+        Runtime::set($cacheKey, $translation);
 
         return $translation;
     }
 
     /**
-     * Static Helper to get the translation of the current locale
-     *
-     * @static
-     *
-     * @param string $id - translation key
-     * @param bool $create - creates an empty translation entry if the key doesn't exists
-     * @param bool $returnIdIfEmpty - returns $id if no translation is available
-     * @param string $language
+     * @param string $id
      *
      * @return string|null
+     *
+     * @throws \Exception
      */
-    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
+    public static function getByKeyLocalized($id /*, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $language = null */)
     {
+        $args = func_get_args();
+        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
+        $create = $args[2] ?? false;
+        $returnIdIfEmpty = $args[3] ?? false;
+        $language = $args[4] ?? null;
+
+        if ($domain == "admin") {
+            if ($user = Tool\Admin::getCurrentUser()) {
+                $language = $user->getLanguage();
+            } elseif ($user = Tool\Authentication::authenticateSession()) {
+                $language = $user->getLanguage();
+            }
+
+            if (!$language) {
+                $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            }
+
+            if (!in_array($language, Tool\Admin::getLanguages())) {
+                $config = \Pimcore\Config::getSystemConfiguration('general');
+                $language = $config['language'] ?? null;
+            }
+        }
+
         if (!$language) {
             $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
             if (!$language) {
@@ -256,7 +339,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             }
         }
 
-        $translationItem = self::getByKey($id, $create, $returnIdIfEmpty);
+        $translationItem = self::getByKey($id, $domain, $create, $returnIdIfEmpty);
         if ($translationItem instanceof self) {
             return $translationItem->getTranslation($language);
         }
@@ -300,21 +383,24 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @static
      *
      * @param string $file - path to the csv file
-     * @param bool $replaceExistingTranslations
-     * @param array $languages
-     * @param array $dialect
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null, $dialect = null)
+    public static function importTranslationsFromFile($file /*, $domain = self::DOMAIN_DEFAULT, $replaceExistingTranslations = true, $languages = null, $dialect = null */)
     {
+        $args = func_get_args();
+        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
+        $replaceExistingTranslations = $args[2] ?? true;
+        $languages = $args[3] ?? null;
+        $dialect = $args[4] ?? null;
+
         $delta = [];
 
         if (is_readable($file)) {
             if (!$languages || empty($languages) || !is_array($languages)) {
-                $languages = static::getLanguages();
+                $languages = static::getValidLanguages($domain);
             }
 
             //read import data
@@ -364,7 +450,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
                     $textKey = $keyValueArray['key'];
                     if ($textKey) {
-                        $t = static::getByKey($textKey, true);
+                        $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
                         foreach ($keyValueArray as $key => $value) {
                             if (in_array($key, $languages)) {
@@ -402,7 +488,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                         }
                     }
                 }
-                Model\Translation\AbstractTranslation::clearDependentCache();
+                static::clearDependentCache();
             } else {
                 throw new \Exception('less than 2 rows of data - nothing to import');
             }
@@ -413,29 +499,4 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $delta;
     }
 
-    /**
-     * @deprecated
-     *
-     * @param array $data
-     */
-    public function getFromWebserviceImport($data)
-    {
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            $this->$setter($value);
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    public function getForWebserviceExport()
-    {
-        $data = get_object_vars($this);
-        unset($data['dao']);
-
-        return $data;
-    }
 }

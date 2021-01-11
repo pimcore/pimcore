@@ -17,12 +17,17 @@
 
 namespace Pimcore\Model\Translation;
 
+/**
+ * @deprecated Will be removed in Pimcore 10, as there's only one Translation class left
+ */
 interface TranslationInterface
 {
     /**
      * Returns a list of valid languages
      *
      * @return array
+     *
+     * @deprecated use getValidLanguages with domain param
      */
     public static function getLanguages(): array;
 
@@ -32,6 +37,8 @@ interface TranslationInterface
      * @param string $locale
      *
      * @return bool
+     *
+     * @deprecated use IsAValidLanguage with domain & $locale params
      */
     public static function isValidLanguage($locale): bool;
 

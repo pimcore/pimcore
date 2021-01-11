@@ -23,6 +23,7 @@
 - Config option `pimcore.translations.case_insensitive` has been deprecated and will be removed in Pimcore 10. 
 - `PageSnippet::$elements` property visibility changed from `protected` to `private`
 - `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private`
+- `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been deprecated and will be removed in Pimcore 10. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
