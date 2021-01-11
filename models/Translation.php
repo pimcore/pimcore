@@ -23,13 +23,12 @@ use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\Translation\TranslationInterface;
 use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
  */
-class Translation extends AbstractModel implements TranslationInterface
+class Translation extends AbstractModel
 {
     const DOMAIN_DEFAULT = 'messages';
     const DOMAIN_ADMIN = 'admin';
