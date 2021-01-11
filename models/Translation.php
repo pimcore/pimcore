@@ -223,18 +223,16 @@ class Translation extends AbstractModel
 
     /**
      * @param string $id
+     * @param string $domain
+     * @param bool $create
+     * @param bool $returnIdIfEmpty
      *
      * @return static|null
      *
      * @throws \Exception
      */
-    public static function getByKey($id /*, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false */)
+    public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false)
     {
-        $args = func_get_args();
-        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
-        $create = $args[2] ?? false;
-        $returnIdIfEmpty = $args[3] ?? false;
-
         $cacheKey = 'translation_' . $id;
         if (Runtime::isRegistered($cacheKey)) {
             return Runtime::get($cacheKey);
@@ -282,19 +280,17 @@ class Translation extends AbstractModel
 
     /**
      * @param string $id
+     * @param string $domain
+     * @param bool $create - creates an empty translation entry if the key doesn't exists
+     * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @param string|null $language
      *
      * @return string|null
      *
      * @throws \Exception
      */
-    public static function getByKeyLocalized($id /*, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $language = null */)
+    public static function getByKeyLocalized(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $language = null)
     {
-        $args = func_get_args();
-        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
-        $create = $args[2] ?? false;
-        $returnIdIfEmpty = $args[3] ?? false;
-        $language = $args[4] ?? null;
-
         if ($domain == "admin") {
             if ($user = Tool\Admin::getCurrentUser()) {
                 $language = $user->getLanguage();
@@ -363,19 +359,17 @@ class Translation extends AbstractModel
      * @static
      *
      * @param string $file - path to the csv file
+     * @param string $domain
+     * @param bool $replaceExistingTranslations
+     * @param array|null $languages
+     * @param array|null $dialect
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public static function importTranslationsFromFile($file /*, $domain = self::DOMAIN_DEFAULT, $replaceExistingTranslations = true, $languages = null, $dialect = null */)
+    public static function importTranslationsFromFile(string $file, $domain = self::DOMAIN_DEFAULT, $replaceExistingTranslations = true, $languages = null, $dialect = null)
     {
-        $args = func_get_args();
-        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
-        $replaceExistingTranslations = $args[2] ?? true;
-        $languages = $args[3] ?? null;
-        $dialect = $args[4] ?? null;
-
         $delta = [];
 
         if (is_readable($file)) {

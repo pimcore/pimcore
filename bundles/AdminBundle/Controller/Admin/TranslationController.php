@@ -160,12 +160,11 @@ class TranslationController extends AdminController
         $admin = $request->get('admin');
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
-        $class = '\\Pimcore\\Model\\Translation';
         $domain = Translation::DOMAIN_DEFAULT;
         if ($admin) {
             $domain = Translation::DOMAIN_ADMIN;
         }
-        $translation = new $class();
+        $translation = new Translation();
         $translation->setDomain($domain);
         $tableName = $translation->getDao()->getTableName();
 
@@ -339,13 +338,12 @@ class TranslationController extends AdminController
 
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
-        $class = '\\Pimcore\\Model\\Translation';
         $domain = Translation::DOMAIN_DEFAULT;
         if ($admin) {
             $domain = Translation::DOMAIN_ADMIN;
         }
 
-        $translation = new $class();
+        $translation = new Translation();
         $translation->setDomain($domain);
         $tableName = $translation->getDao()->getTableName();
 
@@ -356,12 +354,12 @@ class TranslationController extends AdminController
             $data = $this->decodeJson($request->get('data'));
 
             if ($request->get('xaction') == 'destroy') {
-                $t = $class::getByKey($data['key'], $domain);
+                $t = Translation::getByKey($data['key'], $domain);
                 $t->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
-                $t = $class::getByKey($data['key'], $domain);
+                $t = Translation::getByKey($data['key'], $domain);
 
                 foreach ($data as $key => $value) {
                     $key = preg_replace('/^_/', '', $key, 1);
@@ -1226,13 +1224,12 @@ class TranslationController extends AdminController
 
         $dataList = json_decode($request->get('data'), true);
 
-        $classname = '\\Pimcore\\Model\\Translation';
         $domain = Translation::DOMAIN_DEFAULT;
         if ($translationType == "admin") {
             $domain = Translation::DOMAIN_ADMIN;
         }
         foreach ($dataList as $data) {
-            $t = $classname::getByKey($data['key'], $domain, true);
+            $t = Translation::getByKey($data['key'], $domain, true);
             $newValue = htmlspecialchars_decode($data['current']);
             $t->addTranslation($data['lg'], $newValue);
             $t->setModificationDate(time());
