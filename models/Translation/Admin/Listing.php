@@ -29,5 +29,5 @@ class Listing extends Model\Translation\AbstractTranslation\Listing
     /**
      * @var string
      */
-    protected $domain = Model\Translation\Translation::DOMAIN_ADMIN;
+    protected $domain = Model\Translation::DOMAIN_ADMIN;
 }

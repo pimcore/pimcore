@@ -116,7 +116,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
-                    $translations[$t['key']] = new Model\Translation\Translation();
+                    $translations[$t['key']] = new Model\Translation();
                     $translations[$t['key']]->setDomain($this->model->getDomain());
                     $translations[$t['key']]->setKey($t['key']);
                 }

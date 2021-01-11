@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\Translation\Translation;
+use Pimcore\Model\Translation;
 use Symfony\Component\EventDispatcher\Event;
 
 class TranslationEvent extends Event implements ElementEventInterface

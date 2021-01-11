@@ -20,7 +20,7 @@ namespace Pimcore\Model\Translation;
 /**
  * @method \Pimcore\Model\Translation\AbstractTranslation\Dao getDao()
  *
- * @deprecated use \Pimcore\Model\Translation\Translation with domain instead
+ * @deprecated use \Pimcore\Model\Translation with domain instead
  */
 abstract class AbstractTranslation extends Translation
 {

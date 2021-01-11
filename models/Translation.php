@@ -15,16 +15,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Translation;
+namespace Pimcore\Model;
 
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Translation\TranslationInterface;
-use Pimcore\Model\Translation\Website;
 use Pimcore\Tool;
 
 /**
