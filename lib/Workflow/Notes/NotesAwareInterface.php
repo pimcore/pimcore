@@ -29,4 +29,6 @@ interface NotesAwareInterface
     public function getNotesTitle(): string;
 
     public function getNotesAdditionalFields(): array;
+
+    public function getCustomHtmlService() : ?CustomHtmlServiceInterface;
 }

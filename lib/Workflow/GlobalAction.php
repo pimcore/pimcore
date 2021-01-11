@@ -17,6 +17,7 @@ namespace Pimcore\Workflow;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
 use Symfony\Component\Workflow\Workflow;
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 
 class GlobalAction implements NotesAwareInterface
 {
@@ -40,12 +41,13 @@ class GlobalAction implements NotesAwareInterface
     /** @var string */
     private $workflowName;
 
-    public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName)
+    public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->name = $name;
         $this->options = $options;
         $this->expressionService = $expressionService;
         $this->workflowName = $workflowName;
+        $this->setCustomHtmlService($customHtmlService);
     }
 
     /**
