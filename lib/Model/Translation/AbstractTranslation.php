@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\Model\Translation;
+
 /**
  * @method \Pimcore\Model\Translation\AbstractTranslation\Dao getDao()
  *
