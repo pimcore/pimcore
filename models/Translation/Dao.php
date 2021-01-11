@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @return string
      */
-    protected function getDatabaseTableName(): string
+    public function getDatabaseTableName(): string
     {
         return self::TABLE_PREFIX . $this->model->getDomain();
     }

@@ -166,7 +166,7 @@ class TranslationController extends AdminController
         }
         $translation = new Translation();
         $translation->setDomain($domain);
-        $tableName = $translation->getDao()->getTableName();
+        $tableName = $translation->getDao()->getDatabaseTableName();
 
         // clear translation cache
         Translation::clearDependentCache();
@@ -345,7 +345,7 @@ class TranslationController extends AdminController
 
         $translation = new Translation();
         $translation->setDomain($domain);
-        $tableName = $translation->getDao()->getTableName();
+        $tableName = $translation->getDao()->getDatabaseTableName();
 
         // clear translation cache
         Translation::clearDependentCache();
@@ -383,12 +383,12 @@ class TranslationController extends AdminController
 
                 return $this->adminJson(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
-                $t = $class::getByKey($data['key']);
+                $t = Translation::getByKey($data['key']);
                 if ($t) {
                     throw new \Exception($translator->trans('identifier_already_exists', [], $domain));
                 }
 
-                $t = new $class();
+                $t = new Translation();
                 $t->setDomain($domain);
                 $t->setKey($data['key']);
                 $t->setCreationDate(time());
