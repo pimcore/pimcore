@@ -107,7 +107,7 @@ class GlobalAction implements NotesAwareInterface
 
     /**
      * @param Workflow $workflow
-     * @param $subject
+     * @param mixed $subject
      *
      * @return bool
      */
