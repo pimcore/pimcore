@@ -299,7 +299,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                             } else if (key == "published") {
                                 return Ext.String.format('<div style="text-align: left"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
                             } else {
-                                var layout = Ext.clone(record.data.layout);
+                                var layout = Ext.clone(record.data.layout) || {};
                                 var fieldType = record.data.dataType;
 
                                 try {
@@ -454,6 +454,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                     allowed = allowed && realOverModel.data.isChildAllowed(realOverModel, sourceNode);
                                 }
 
+                                if(realOverModel.data.maxChildCount) {
+                                    if (realOverModel.childNodes.length >= realOverModel.data.maxChildCount) {
+                                        allowed = false;
+                                    }
+                                }
+
                                 if (typeof sourceNode.data.isParentAllowed == "function") {
                                     console.log("parent not allowed");
                                     allowed = allowed && sourceNode.data.isParentAllowed(realOverModel, sourceNode);
@@ -472,6 +478,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
                                     if (typeof targetNode.data.isChildAllowed == "function") {
                                         allowed = allowed && targetNode.data.isChildAllowed(targetNode, sourceNode);
+                                    }
+
+                                    if(targetNode.data.maxChildCount) {
+                                        if (targetNode.childNodes.length >= targetNode.data.maxChildCount) {
+                                            allowed = false;
+                                        }
                                     }
 
                                     if (typeof sourceNode.data.isParentAllowed == "function") {
@@ -555,7 +567,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
         var operators = Object.keys(pimcore.object.gridcolumn.operator);
         var operatorGroups = [];
         // var childs = [];
-        for (var i = 0; i < operators.length; i++) {
+        for (let i = 0; i < operators.length; i++) {
             var operator = operators[i];
             if (!this.availableOperators || this.availableOperators.indexOf(operator) >= 0) {
                 var nodeConfig = pimcore.object.gridcolumn.operator[operator].prototype;
@@ -576,7 +588,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
         }
 
         var operatorGroupKeys = [];
-        for (k in operatorGroups) {
+        for (let k in operatorGroups) {
             if (operatorGroups.hasOwnProperty(k)) {
                 operatorGroupKeys.push(k);
             }
@@ -584,7 +596,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
         operatorGroupKeys.sort();
         var result = [];
         var len = operatorGroupKeys.length;
-        for (i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {
             var operatorGroupName = operatorGroupKeys[i];
             var groupNodes = operatorGroups[operatorGroupName];
             result.push(this.getOperatorTree(operatorGroupName, groupNodes));

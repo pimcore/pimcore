@@ -26,11 +26,11 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  * to know which kind of users to load (className) and which field to query for the
  * username (usernameField).
  *
- * Example DI configuration loading from the AppBundle\Model\DataObject\User class and searching by username:
+ * Example DI configuration loading from the App\Model\DataObject\User class and searching by username:
  *
  *      website_demo.security.user_provider:
  *          class: Pimcore\Security\User\ObjectUserProvider
- *          arguments: ['AppBundle\Model\DataObject\User', 'username']
+ *          arguments: ['App\Model\DataObject\User', 'username']
  */
 class ObjectUserProvider implements UserProviderInterface
 {

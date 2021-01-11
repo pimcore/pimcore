@@ -37,6 +37,7 @@
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Twig\Extension\RuntimeExtensionInterface;
 
 /**
@@ -58,6 +59,8 @@ use Twig\Extension\RuntimeExtensionInterface;
  */
 abstract class AbstractExtension implements \IteratorAggregate, \Countable, \ArrayAccess, RuntimeExtensionInterface
 {
+    use HelperCharsetTrait;
+
     /**
      * @var ContainerService
      */

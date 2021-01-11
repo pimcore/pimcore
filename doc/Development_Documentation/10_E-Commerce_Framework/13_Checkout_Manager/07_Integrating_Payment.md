@@ -8,7 +8,6 @@ in [Committing Orders](./05_Committing_Orders.md), a few more steps are necessar
 After all checkout steps are completed, the payment can be started. This is done as follows: 
 
 ```php
-<?php
 /**
  * @Route("/checkout-init-payment", name="shop-checkout-init-payment")
  */
@@ -31,7 +30,10 @@ public function initPaymentAction(Request $request, Factory $factory) {
  
     // depending on response type handle start payment response - e.g. render form, render snippet, etc.
     $paymentForm = $startPaymentResponse->getForm();
-    $this->view->form = $paymentForm->getForm()->createView();
+    
+    return $this->render('payment/init_payment.html.twig', [
+        'form' => $paymentForm->getForm()->createView() 
+    ]);
 }
 ```
 
@@ -54,7 +56,6 @@ as follows. If payment handling was successful, the order needs to be committed.
 A client side handling could look like as follows: 
 
 ```php
-<?php
 /**
  * @Route("/checkout-payment-response", name="shop-checkout-payment-response")
  */
@@ -78,15 +79,17 @@ public function paymentResponseAction(Request $request, Factory $factory, Sessio
         // $orderAgent->updatePayment($paymentStatus);
  
         $session->set("last_order_id", $order->getId());
-        $this->view->goto = $this->generateUrl('shop-checkout-completed');
+        $goto = $this->generateUrl('shop-checkout-completed');
          
     } catch (\Exception $e) {
  
         $this->addFlash('danger', $e->getMessage());
-        $this->view->goto = $this->generateUrl('shop-checkout-address');
+        $goto = $this->generateUrl('shop-checkout-address');
  
     }
 
+    return $this->render('payment/payment_response.html.twig', ['goto' => $goto]);
+}
 ```
 
 A server side handling could look as follows: 

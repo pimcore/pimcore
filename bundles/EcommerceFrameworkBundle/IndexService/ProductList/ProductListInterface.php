@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * Interface for product list which works based on the product index of the online shop framework
@@ -284,5 +284,3 @@ interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggre
      */
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
 }
-
-class_alias(ProductListInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList');

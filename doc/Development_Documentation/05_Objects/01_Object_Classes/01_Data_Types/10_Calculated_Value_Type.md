@@ -64,7 +64,7 @@ You can also provide a Symfony service as calculator class via `@` prefix (e.g. 
 
 Getter methods on the object class are generated as usual. The code to retrieve the values would then be: 
 ```php
-$object = Object_Abstract::getByPath("/demoobject");
+$object = DataObject::getByPath("/demoobject");
 $valueDe =  $object->getSum("de");   // => 38
 $valueEn =  $object->getSum("en");   // => 11
 ```

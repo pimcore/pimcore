@@ -124,5 +124,3 @@ interface PriceInterface
      */
     public function setTaxEntryCombinationMode(string $taxEntryCombinationMode);
 }
-
-class_alias(PriceInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice');

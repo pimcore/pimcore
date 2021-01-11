@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Symfony;
 
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -112,16 +111,22 @@ class CacheClearer
 
     private function buildProcess(string $command, array $arguments = [], array $options = []): Process
     {
-        $arguments = array_merge([
+        $preparedOptions = [];
+        foreach ($arguments as $optionKey => $optionValue) {
+            if ($optionValue === false || $optionValue === null) {
+                continue;
+            }
+
+            $preparedOptions[] = '--' . $optionKey . (($optionValue === true) ? '' : '=' . $optionValue);
+        }
+
+        $cmd = array_merge([
             Console::getPhpCli(),
             'bin/console',
             $command,
-        ], $arguments);
+        ], $preparedOptions);
 
-        $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts = $partsBuilder->getParts();
-
-        $process = new Process($parts);
+        $process = new Process($cmd);
         $process
             ->setTimeout($this->processTimeout)
             ->setWorkingDirectory(PIMCORE_PROJECT_ROOT);

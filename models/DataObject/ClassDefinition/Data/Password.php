@@ -25,7 +25,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
@@ -37,9 +36,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $fieldtype = 'password';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
@@ -54,13 +53,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public $columnType = 'varchar(255)';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
 
     /**
      * @var string
@@ -78,7 +70,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $saltlocation = '';
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -86,13 +78,16 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
@@ -442,5 +437,25 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;
         $this->saltlocation = $masterDefinition->saltlocation;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
     }
 }

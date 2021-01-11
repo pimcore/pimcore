@@ -33,20 +33,11 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 abstract class PageSnippet extends Model\Document
 {
     use Document\Traits\ScheduledTasksTrait;
-    /**
-     * @var string
-     */
-    protected $module;
 
     /**
      * @var string
      */
-    protected $controller = 'default';
-
-    /**
-     * @var string
-     */
-    protected $action = 'default';
+    protected $controller;
 
     /**
      * @var string
@@ -254,22 +245,10 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return string
      */
-    public function getAction()
-    {
-        if (empty($this->action)) {
-            return 'default';
-        }
-
-        return $this->action;
-    }
-
-    /**
-     * @return string
-     */
     public function getController()
     {
         if (empty($this->controller)) {
-            return 'default';
+            $this->controller = \Pimcore::getContainer()->getParameter('pimcore.documents.default_controller');
         }
 
         return $this->controller;
@@ -281,18 +260,6 @@ abstract class PageSnippet extends Model\Document
     public function getTemplate()
     {
         return $this->template;
-    }
-
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-
-        return $this;
     }
 
     /**
@@ -317,26 +284,6 @@ abstract class PageSnippet extends Model\Document
         $this->template = $template;
 
         return $this;
-    }
-
-    /**
-     * @param string $module
-     *
-     * @return $this
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getModule()
-    {
-        return $this->module;
     }
 
     /**

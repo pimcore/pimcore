@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
@@ -82,12 +83,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/delete-info", name="pimcore_admin_dataobject_dataobject_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -103,7 +105,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filter = $request->get('filter');
-        $object = DataObject\AbstractObject::getById($request->get('node'));
+        $object = DataObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
         $cv = false;
@@ -112,12 +114,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object instanceof DataObject\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
-                $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT];
+                $objectTypes = [DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT];
             }
         }
 
         if (!$objectTypes) {
-            $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
+            $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
         }
 
         $filteredTotalCount = 0;
@@ -236,9 +238,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'total' => $total,
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $objects,
-                'fromPaging' => intval($request->get('fromPaging')),
+                'fromPaging' => (int)$request->get('fromPaging'),
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch')),
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         }
 
@@ -256,7 +258,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $tmpObject = [
             'id' => $child->getId(),
-            'idx' => intval($child->getIndex()),
+            'idx' => (int)$child->getIndex(),
             'key' => $child->getKey(),
             'sortBy' => $child->getChildrenSortBy(),
             'sortOrder' => $child->getChildrenSortOrder(),
@@ -269,9 +271,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             'lockOwner' => $child->getLocked() ? true : false,
         ];
 
-        $allowedTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
+        $allowedTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
         if ($child instanceof DataObject\Concrete && $child->getClass()->getShowVariants()) {
-            $allowedTypes[] = DataObject\AbstractObject::OBJECT_TYPE_VARIANT;
+            $allowedTypes[] = DataObject::OBJECT_TYPE_VARIANT;
         }
 
         $hasChildren = $child->hasChildren($allowedTypes);
@@ -700,7 +702,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
-        $object = DataObject::getById(intval($request->get('id')));
+        $object = DataObject::getById((int)$request->get('id'));
         if ($object->isAllowed('view')) {
             $objectData = [];
 
@@ -774,10 +776,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/add", name="pimcore_admin_dataobject_dataobject_add", methods={"POST"})
      *
      * @param Request $request
+     * @param Model\FactoryInterface $modelFactory
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, Model\FactoryInterface $modelFactory)
     {
         $success = false;
 
@@ -791,7 +794,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if (!DataObject\Service::pathExists($intendedPath)) {
                 /** @var DataObject\Concrete $object */
-                $object = $this->get('pimcore.model.factory')->build($className);
+                $object = $modelFactory->build($className);
                 $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {
@@ -810,8 +813,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $object->setUserModification($this->getAdminUser()->getId());
                 $object->setPublished(false);
 
-                if ($request->get('objecttype') == DataObject\AbstractObject::OBJECT_TYPE_OBJECT
-                    || $request->get('objecttype') == DataObject\AbstractObject::OBJECT_TYPE_VARIANT) {
+                if ($request->get('objecttype') == DataObject::OBJECT_TYPE_OBJECT
+                    || $request->get('objecttype') == DataObject::OBJECT_TYPE_VARIANT) {
                     $object->setType($request->get('objecttype'));
                 }
 
@@ -902,7 +905,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $list = new DataObject\Listing();
             $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
-            $list->setLimit(intval($request->get('amount')));
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(o_path)', false);
             $list->setOrder('DESC');
 
@@ -1104,9 +1107,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         (SELECT @n := -1) variable
                         WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
                         "','", [
-                            DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
-                            DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
-                            DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
+                            DataObject::OBJECT_TYPE_OBJECT,
+                            DataObject::OBJECT_TYPE_VARIANT,
+                            DataObject::OBJECT_TYPE_FOLDER,
                         ]
                     ).'\')
                             ORDER BY o_index, o_id=?
@@ -1138,7 +1141,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $sibling['o_versionCount'], $index);
                     $index++;
 
-                    DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);
+                    DataObject::clearDependentCacheByObjectId($sibling['o_id']);
                 }
 
                 Db::get()->commit();
@@ -1258,7 +1261,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $object->save();
             $treeData = $this->getTreeNodeConfig($object);
 
-            $newObject = DataObject\AbstractObject::getById($object->getId(), true);
+            $newObject = DataObject::getById($object->getId(), true);
 
             return $this->adminJson([
                 'success' => true,
@@ -1287,7 +1290,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $treeData = $this->getTreeNodeConfig($object);
 
-            $newObject = DataObject\AbstractObject::getById($object->getId(), true);
+            $newObject = DataObject::getById($object->getId(), true);
 
             return $this->adminJson([
                 'success' => true,
@@ -1459,17 +1462,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function previewVersionAction(Request $request)
     {
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
+        DataObject::setDoNotRestoreKeyAndPath(true);
 
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(false);
+        DataObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object) {
             if ($object->isAllowed('versions')) {
-                return $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:previewVersion.html.twig',
+                return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/previewVersion.html.twig',
                     [
                         'object' => $object,
                         'validLanguages' => Tool::getValidLanguages(),
@@ -1495,10 +1498,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function diffVersionsAction(Request $request, $from, $to)
     {
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
+        DataObject::setDoNotRestoreKeyAndPath(true);
 
-        $id1 = intval($from);
-        $id2 = intval($to);
+        $id1 = (int)$from;
+        $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
         $object1 = $version1->loadData();
@@ -1506,11 +1509,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version2 = Model\Version::getById($id2);
         $object2 = $version2->loadData();
 
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(false);
+        DataObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object1 && $object2) {
             if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.twig',
+                return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig',
                     [
                         'object1' => $object1,
                         'object2' => $object2,
@@ -1531,6 +1534,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @param EventDispatcherInterface $eventDispatcher
      * @param GridHelperService $gridHelperService
      * @param LocaleServiceInterface $localeService
+     * @param CsrfProtectionHandler $csrfProtection
      *
      * @return JsonResponse
      */
@@ -1538,7 +1542,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         GridHelperService $gridHelperService,
-        LocaleServiceInterface $localeService
+        LocaleServiceInterface $localeService,
+        CsrfProtectionHandler $csrfProtection
     ) {
         $allParams = array_merge($request->request->all(), $request->query->all());
         $csvMode = $allParams['csvMode'] ?? false;
@@ -1559,7 +1564,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
-                //                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
         } else {
@@ -1567,7 +1571,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         if (isset($allParams['data']) && $allParams['data']) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);
@@ -1837,13 +1841,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 ],
             ]];
 
-            if ($object->hasChildren([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT])) {
+            if ($object->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
                 // get amount of children
                 $list = new DataObject\Listing();
                 $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
-                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT]);
                 $childIds = $list->loadIdList();
 
                 if (count($childIds) > 0) {
@@ -1948,13 +1952,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function copyAction(Request $request)
     {
         $message = '';
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = DataObject::getById($sourceId);
 
         $session = Tool\Session::get('pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
             $sourceParent = DataObject::getById($request->get('sourceParentId'));
 

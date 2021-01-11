@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -85,12 +85,12 @@ class LogController extends AdminController implements KernelControllerEventInte
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
             $qb->andWhere('timestamp > :fromDate');
-            $qb->setParameter('fromDate', $fromDate, Type::DATETIME);
+            $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
         if ($toDate = $this->parseDateObject($request->get('toDate'), $request->get('toTime'))) {
             $qb->andWhere('timestamp <= :toDate');
-            $qb->setParameter('toDate', $toDate, Type::DATETIME);
+            $qb->setParameter('toDate', $toDate, Types::DATETIME_MUTABLE);
         }
 
         if (!empty($component = $request->get('component'))) {
@@ -232,9 +232,13 @@ class LogController extends AdminController implements KernelControllerEventInte
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
-        $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
-        $filePath = realpath($filePath);
-        $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
+            $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
+            $filePath = realpath($filePath);
+            $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        } else {
+            $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
+        }
 
         if (!preg_match('@^' . $fileObjectPath . '@', $filePath)) {
             throw new AccessDeniedHttpException('Accessing file out of scope');

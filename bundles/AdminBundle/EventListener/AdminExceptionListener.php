@@ -89,7 +89,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         }
     }
 
-    private function getResponseData(\Exception $ex, int $defaultStatusCode = 500): array
+    private function getResponseData(\Throwable $ex, int $defaultStatusCode = 500): array
     {
         $code = $defaultStatusCode;
         $headers = [];
@@ -148,11 +148,11 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      *
-     * @return \Exception
+     * @return \Throwable
      */
-    protected function getInnerStack(\Exception $e)
+    protected function getInnerStack(\Throwable $e)
     {
         while ($e->getPrevious()) {
             $e = $e->getPrevious();

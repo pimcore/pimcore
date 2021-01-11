@@ -14,12 +14,12 @@
 
 namespace Pimcore\Google;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
@@ -168,7 +168,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         $this->setRaw($googleResponse);
 
         // set search results
-        $total = intval($googleResponse->getSearchInformation()->getTotalResults());
+        $total = (int)$googleResponse->getSearchInformation()->getTotalResults();
         if ($total > 100) {
             $total = 100;
         }

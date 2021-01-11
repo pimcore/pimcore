@@ -36,6 +36,8 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array $gridconfigFavourites
+     *
+     * @return static
      */
     public function setGridconfigFavourites($gridconfigFavourites)
     {

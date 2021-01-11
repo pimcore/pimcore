@@ -8,13 +8,11 @@ framework:
     serializer:
         enabled: true
     router:
-        resource: "%kernel.root_dir%/config/routing.yml"
+        resource: "%kernel.project_dir%/config/routes.yaml"
         strict_requirements: ~
     form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
-    templating:
-        engines: ['php', 'twig']
     web_link:
         enabled: true
     default_locale:  "%locale%"
@@ -24,6 +22,7 @@ framework:
         handler_id:  null
     php_errors:
         log: true
+    assets: ~
 
 # Twig Configuration
 twig:
@@ -33,7 +32,9 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
-        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener'
+        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
+    paths:
+        '%kernel.project_dir%/templates': App
 
 # Doctrine Configuration
 doctrine:
@@ -49,9 +50,6 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_general_ci
-                mapping_types:
-                    enum: string
-                    bit: boolean
 
 # Monolog Configuration
 monolog:
@@ -251,13 +249,13 @@ pimcore:
             app:
                 name: Migrations
                 namespace: App\Migrations
-                directory: "%kernel.root_dir%/Migrations"
+                directory: "%kernel.project_dir%/Migrations"
 
             # this is the core migration set used for Composer post-package-update event
             pimcore_core:
                 name: Pimcore Core Migrations
                 namespace: Pimcore\Bundle\CoreBundle\Migrations
-                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
+                directory: "%kernel.project_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
 
     sitemaps:
         generators:

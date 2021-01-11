@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
@@ -72,12 +73,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      * @Route("/delete-info", name="pimcore_admin_asset_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -222,7 +224,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $asset = Asset::getById($allParams['node']);
 
         $filter = $request->get('filter');
-        $limit = intval($allParams['limit']);
+        $limit = (int)$allParams['limit'];
         if (!is_null($filter)) {
             if (substr($filter, -1) != '*') {
                 $filter .= '*';
@@ -235,7 +237,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $limit = 100000000;
         }
 
-        $offset = isset($allParams['start']) ? intval($allParams['start']) : 0;
+        $offset = isset($allParams['start']) ? (int)$allParams['start'] : 0;
 
         $filteredTotalCount = 0;
 
@@ -310,7 +312,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $assets,
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch')),
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         } else {
             return $this->adminJson($assets);
@@ -393,7 +395,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     protected function addAsset(Request $request, Config $config)
     {
-        $success = false;
         $defaultUploadPath = $config['assets']['default_upload_path'] ?? '/';
 
         if (array_key_exists('Filedata', $_FILES)) {
@@ -469,34 +470,35 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
         }
 
-        $parentAsset = Asset::getById(intval($parentId));
+        $parentAsset = Asset::getById((int)$parentId);
 
         // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
         $asset = null;
 
-        if ($parentAsset->isAllowed('create')) {
-            if (is_file($sourcePath) && filesize($sourcePath) < 1) {
-                throw new \Exception('File is empty!');
-            } elseif (!is_file($sourcePath)) {
-                throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
-            }
-
-            $asset = Asset::create($parentId, [
-                'filename' => $filename,
-                'sourcePath' => $sourcePath,
-                'userOwner' => $this->getAdminUser()->getId(),
-                'userModification' => $this->getAdminUser()->getId(),
-            ]);
-            $success = true;
-
-            @unlink($sourcePath);
-        } else {
-            Logger::debug('prevented creating asset because of missing permissions, parent asset is ' . $parentAsset->getRealFullPath());
+        if (!$parentAsset->isAllowed('create')) {
+            throw $this->createAccessDeniedHttpException(
+                'Missing the permission to create new assets in the folder: ' . $parentAsset->getRealFullPath()
+            );
         }
 
+        if (is_file($sourcePath) && filesize($sourcePath) < 1) {
+            throw new \Exception('File is empty!');
+        } elseif (!is_file($sourcePath)) {
+            throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
+        }
+
+        $asset = Asset::create($parentId, [
+            'filename' => $filename,
+            'sourcePath' => $sourcePath,
+            'userOwner' => $this->getAdminUser()->getId(),
+            'userModification' => $this->getAdminUser()->getId(),
+        ]);
+
+        @unlink($sourcePath);
+
         return [
-            'success' => $success,
+            'success' => true,
             'asset' => $asset,
         ];
     }
@@ -546,11 +548,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
         if ($newType != $asset->getType()) {
-            $translator = $this->get('translator');
-
             return $this->adminJson([
                 'success' => false,
-                'message' => sprintf($translator->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),
+                'message' => sprintf($this->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),
             ]);
         }
 
@@ -596,7 +596,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function addFolderAction(Request $request)
     {
         $success = false;
-        $parentAsset = Asset::getById(intval($request->get('parentId')));
+        $parentAsset = Asset::getById((int)$request->get('parentId'));
         $equalAsset = Asset::getByPath($parentAsset->getRealFullPath() . '/' . $request->get('name'));
 
         if ($parentAsset->isAllowed('create')) {
@@ -630,7 +630,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $list = new Asset\Listing();
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
-            $list->setLimit(intval($request->get('amount')));
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
 
@@ -1073,7 +1073,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function showVersionAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
         if (!$version) {
             throw $this->createNotFoundException('Version not found');
@@ -1087,7 +1087,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
         return $this->render(
-            'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.twig',
+            '@PimcoreAdmin/Admin/Asset/showVersion' . ucfirst($asset->getType()) . '.html.twig',
             [
                 'asset' => $asset,
                 'loader' => $loader,
@@ -1248,7 +1248,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getAssetAction(Request $request)
     {
-        $image = Asset::getById(intval($request->get('id')));
+        $image = Asset::getById((int)$request->get('id'));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
@@ -1276,7 +1276,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getImageThumbnailAction(Request $request)
     {
         $fileinfo = $request->get('fileinfo');
-        $image = Asset\Image::getById(intval($request->get('id')));
+        $image = Asset\Image::getById((int)$request->get('id'));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
@@ -1358,7 +1358,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $video = null;
 
         if ($request->get('id')) {
-            $video = Asset\Video::getById(intval($request->get('id')));
+            $video = Asset\Video::getById((int)$request->get('id'));
         } elseif ($request->get('path')) {
             $video = Asset\Video::getByPath($request->get('path'));
         }
@@ -1379,7 +1379,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $time = null;
         if ($request->get('time')) {
-            $time = intval($request->get('time'));
+            $time = (int)$request->get('time');
         }
 
         if ($request->get('settime')) {
@@ -1390,7 +1390,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $image = null;
         if ($request->get('image')) {
-            $image = Asset::getById(intval($request->get('image')));
+            $image = Asset::getById((int)$request->get('image'));
         }
 
         if ($request->get('setimage') && $image) {
@@ -1419,7 +1419,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getDocumentThumbnailAction(Request $request)
     {
-        $document = Asset\Document::getById(intval($request->get('id')));
+        $document = Asset\Document::getById((int)$request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('could not load document asset');
@@ -1553,18 +1553,18 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             if ($thumbnail['status'] == 'finished') {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.twig',
+                    '@PimcoreAdmin/Admin/Asset/getPreviewVideoDisplay.html.twig',
                     $previewData
                 );
             } else {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.twig',
+                    '@PimcoreAdmin/Admin/Asset/getPreviewVideoError.html.twig',
                     $previewData
                 );
             }
         } else {
             return $this->render(
-                'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.twig',
+                '@PimcoreAdmin/Admin/Asset/getPreviewVideoError.html.twig',
                 $previewData
             );
         }
@@ -1619,7 +1619,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         return $this->render(
-            'PimcoreAdminBundle:Admin/Asset:imageEditor.html.twig',
+            '@PimcoreAdmin/Admin/Asset/imageEditor.html.twig',
             ['asset' => $asset]
         );
     }
@@ -1842,13 +1842,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function copyAction(Request $request)
     {
         $success = false;
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = Asset::getById($sourceId);
 
         $session = Tool\Session::get('pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
             $sourceParent = Asset::getById($request->get('sourceParentId'));
 
@@ -2054,7 +2054,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                             }
 
                             // add the file with the relative path to the parent directory
-                            $zip->addFromString($pathInZip, file_get_contents($fileSystemPath));
+                            if (stream_is_local($a->getFileSystemPath())) {
+                                $zip->addFile($a->getFileSystemPath(), preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()));
+                            } else {
+                                $zip->addFromString($pathInZip, file_get_contents($fileSystemPath));
+                            }
                         }
                     }
                 }
@@ -2348,7 +2352,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data = Tool::getHttpData($request->get('url'));
         $filename = basename($request->get('url'));
         $parentId = $request->get('id');
-        $parentAsset = Asset::getById(intval($parentId));
+        $parentAsset = Asset::getById((int)$parentId);
 
         if (!$parentAsset) {
             throw $this->createNotFoundException('Parent asset not found');
@@ -2410,10 +2414,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      * @Route("/grid-proxy", name="pimcore_admin_asset_gridproxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
+     * @param CsrfProtectionHandler $csrfProtection
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService, CsrfProtectionHandler $csrfProtection)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -2429,7 +2436,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
         if (isset($allParams['data']) && $allParams['data']) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);

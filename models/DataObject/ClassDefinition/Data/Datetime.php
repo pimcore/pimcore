@@ -27,7 +27,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -49,13 +48,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public $columnType = 'bigint(20)';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Carbon\\Carbon';
 
     /**
      * @var int|null
@@ -295,7 +287,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if (strlen((string)$defaultValue) > 0) {
             if (is_numeric($defaultValue)) {
                 $this->defaultValue = (int)$defaultValue;
             } else {
@@ -458,5 +450,25 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
 
         return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
     }
 }

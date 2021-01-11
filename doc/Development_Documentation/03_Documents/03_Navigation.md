@@ -58,8 +58,6 @@ Having set up the navigation container as shown above, you can easily use it to 
 
 ### Meta Navigation - Multilevel
 
-<div class="code-section">
-
 ```twig
 <div class="my-menu">
     {# you can use array for ulClass to provide depth level classes #}
@@ -81,8 +79,6 @@ Having set up the navigation container as shown above, you can easily use it to 
         }) }}
 </div>
 ```
-
-</div>
 
 ### Breadcrumbs
 
@@ -355,6 +351,7 @@ class NavigationExtension extends AbstractExtension
 }
 
 ?>
+```
 
 ```twig
 {% set mainNav = pimcore_build_nav({
@@ -482,8 +479,8 @@ pimcore_build_nav({active: document, root: navStartNode, cache: 'yourindividualk
 
 You can disable the navigation cache by setting the 5th argument to `false`.
 
-```php
-$this->navigation()->build(['active' => $this->document, 'root' => $mainNavStartNode, 'cache' => false]);
+```twig
+pimcore_build_nav({active: document, root: navStartNode, cache: false})
 ```
 
 ## FAQ

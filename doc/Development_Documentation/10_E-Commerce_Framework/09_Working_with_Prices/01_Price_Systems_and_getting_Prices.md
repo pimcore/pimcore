@@ -99,9 +99,8 @@ this `PriceInfo` can be retrieved by calling `getOSPriceInfo()` method of the pr
 
 A sample for printing the price on a product detail page is: 
 
-```php
-<?php ?>
+```twig
 <p class="price">
-   <span><?= $this->product->getOSPrice() ?></span>
+   <span>{{ product.OSPrice }}</span>
 </p>
 ```

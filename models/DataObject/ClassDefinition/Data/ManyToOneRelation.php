@@ -40,9 +40,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public $fieldtype = 'manyToOneRelation';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string
@@ -63,13 +63,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         'id' => 'int(11)',
         'type' => "enum('document','asset','object')",
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject';
 
     /**
      *
@@ -357,7 +350,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -365,13 +358,16 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
@@ -506,7 +502,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
+        if (DataObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }
@@ -600,7 +596,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(false));
     }
@@ -667,13 +663,13 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /** @inheritDoc */
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\Pimcore\Model\Element\AbstractElement';
+        return '?\\' . Element\AbstractElement::class;
     }
 
     /** @inheritDoc */
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\Pimcore\Model\Element\AbstractElement';
+        return '?\\' . Element\AbstractElement::class;
     }
 
     /**
@@ -710,7 +706,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getPhpdocReturnType(): ?string
     {
         if ($this->getPhpdocType()) {
-            return $this->getPhpdocType() . '|null';
+            return '\\' . $this->getPhpdocType() . '|null';
         }
 
         return null;

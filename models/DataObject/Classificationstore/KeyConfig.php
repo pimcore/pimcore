@@ -99,7 +99,7 @@ class KeyConfig extends Model\AbstractModel
     public static function getById($id)
     {
         try {
-            $id = intval($id);
+            $id = (int)$id;
             if (self::$cacheEnabled && self::$cache[$id]) {
                 return self::$cache[$id];
             }
@@ -148,6 +148,8 @@ class KeyConfig extends Model\AbstractModel
      * @param int $storeId
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $storeId = 1)
     {
@@ -178,7 +180,7 @@ class KeyConfig extends Model\AbstractModel
             Cache::save($config, $cacheKey, [], null, 0, true);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

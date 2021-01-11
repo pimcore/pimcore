@@ -141,7 +141,7 @@ class Dao extends Model\Dao\AbstractDao
     protected function prepareLoggingData($key, $value)
     {
         $class = new \stdClass();
-        $class->key = strval($key); // key has to be a string otherwise the treeGrid won't work
+        $class->key = (string)$key; // key has to be a string otherwise the treeGrid won't work
 
         if (is_string($value) || is_int($value) || is_null($value)) {
             $class->data = ['type' => 'simple',

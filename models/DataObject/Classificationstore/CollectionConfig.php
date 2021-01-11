@@ -69,7 +69,7 @@ class CollectionConfig extends Model\AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->getById(intval($id));
+            $config->getDao()->getById((int)$id);
 
             return $config;
         } catch (\Exception $e) {
@@ -82,6 +82,8 @@ class CollectionConfig extends Model\AbstractModel
      * @param int $storeId
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $storeId = 1)
     {
@@ -92,7 +94,7 @@ class CollectionConfig extends Model\AbstractModel
             $config->getDao()->getByName();
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

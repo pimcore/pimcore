@@ -40,7 +40,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
- * @deprecated since Pimcore 6.8.0 and will be removed in Pimcore 7.
+ * @deprecated since Pimcore 6.8.0 and will be removed in Pimcore 10.
  */
 class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
@@ -58,7 +58,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     /**
      * @var EngineInterface
      */
-    protected $templatingEngine;
+    protected $template;
 
     /**
      * @var SessionInterface
@@ -134,9 +134,9 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     private $WEBSITE_URL;
     private $CHECKOUT_WINDOW_NAME = 'wirecard_checkout';
 
-    public function __construct(array $options, EngineInterface $templatingEngine, SessionInterface $session)
+    public function __construct(array $options, EngineInterface $template, SessionInterface $session)
     {
-        $this->templatingEngine = $templatingEngine;
+        $this->template = $template;
         $this->session = $session;
 
         $this->processOptions(
@@ -303,7 +303,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
 
         $params['wirecardFrontendScript'] = $this->js;
 
-        return $this->templatingEngine->render($this->partial, $params);
+        return $this->template->render($this->partial, $params);
     }
 
     /**

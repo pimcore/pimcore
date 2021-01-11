@@ -13,10 +13,10 @@
 {% if previewImage is defined %}
     <div class="full-preview">
         <img src="{{ previewImage }}" onload="this.parentNode.className += ' complete';">
-        {% include 'PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:info-table.html.twig' with {'element': element} %}
+        {% include '@PimcoreAdmin/SearchAdmin/Search/Quicksearch/info-table.html.twig' with {'element': element} %}
     </div>
 {% else %}
     <div class="mega-icon {{ iconCls }}"></div>
-    {% include 'PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:info-table.html.twig' with {'element': element} %}
+    {% include '@PimcoreAdmin/SearchAdmin/Search/Quicksearch/info-table.html.twig' with {'element': element} %}
 {% endif %}
 

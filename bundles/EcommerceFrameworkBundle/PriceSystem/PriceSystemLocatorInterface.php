@@ -23,5 +23,3 @@ interface PriceSystemLocatorInterface
 
     public function hasPriceSystem(string $name): bool;
 }
-
-class_alias(PriceSystemLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator');

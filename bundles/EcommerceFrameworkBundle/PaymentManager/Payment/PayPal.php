@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated since v6.8.0 and will be removed in Pimcore 7.
+ * @deprecated since v6.8.0 and will be removed in Pimcore 10.
  */
 class PayPal extends AbstractPayment
 {
@@ -340,8 +340,6 @@ class PayPal extends AbstractPayment
      * @param null|AbstractOrder $order
      *
      * @return \stdClass
-     *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
     protected function createPaymentDetails(PriceInterface $price, ?AbstractOrder $order = null)
     {

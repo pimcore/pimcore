@@ -159,7 +159,11 @@
 
 {# define stylesheets #}
 
+{% set debugSuffix = '' %}
+
 {# SCRIPT LIBRARIES #}
+{% set debugSuffix = '' %}
+
 {% if settings.disableMinifyJs %}
     {% set debugSuffix = "-debug" %}
 {% endif %}
@@ -528,8 +532,6 @@
     "pimcore/object/gridcolumn/operator/Trimmer.js",
     "pimcore/object/gridcolumn/operator/Alias.js",
     "pimcore/object/gridcolumn/operator/WorkflowState.js",
-    "pimcore/object/gridcolumn/value/Href.js",
-    "pimcore/object/gridcolumn/value/Objects.js",
     "pimcore/object/gridcolumn/value/DefaultValue.js",
     "pimcore/object/gridcolumn/operator/GeopointRenderer.js",
     "pimcore/object/gridcolumn/operator/ImageRenderer.js",
@@ -719,14 +721,7 @@
     <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
     {% endfor %}
 {% else %}
-    {% set scriptContents = "" %}
-    {% for scriptUrl in scripts %}
-        {% set scriptContent = source(constant('PIMCORE_WEB_ROOT') ~ "/bundles/pimcoreadmin/js/" ~ scriptUrl, ignore_missing = true) %}
-        {% if scriptContent|length > 0 %}
-            {% set scriptContents = scriptContents ~ scriptContent ~ "\n\n\n" %}
-        {% endif %}
-    {% endfor %}
-    {#{% set minimizedScriptParams = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false); %}#}
+    {% set minimizedScriptParams = pimcore_minimize_scripts(scripts) %}
     <script src="{{ path('pimcore_admin_misc_scriptproxy', minimizedScriptParams) }}"></script>
 {% endif %}
 

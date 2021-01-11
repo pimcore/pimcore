@@ -193,89 +193,6 @@ class Newsletter
     }
 
     /**
-     * @param Model\Document\Newsletter $newsletter
-     * @param DataObject\Concrete $object
-     * @param string|null $emailAddress
-     * @param string|null $hostUrl
-     *
-     * @throws Exception
-     *
-     * @deprecated Pimcore\Tool\Newsletter::sendMail is deprecated and will be removed with 7.0,
-     * please use the internal:newsletter-document-send command instead.
-     */
-    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null): void
-    {
-        trigger_error(
-            sprintf(
-                '%s::%s is deprecated and will be removed with 7.0, please use the %s command instead.',
-                static::class,
-                __METHOD__,
-                'internal:newsletter-document-send'
-            ),
-            E_USER_DEPRECATED
-        );
-
-        $config = Config::getSystemConfiguration('newsletter');
-
-        $params = [
-            'gender' => $object->getGender(),
-            'firstname' => $object->getFirstname(),
-            'lastname' => $object->getLastname(),
-            'email' => $object->getEmail(),
-            'token' => $object->getProperty('token'),
-            'object' => $object,
-        ];
-
-        $mail = new Mail();
-        $mail->setIgnoreDebugMode(true);
-
-        if ($config['use_specific']) {
-            $mail->init('newsletter');
-        }
-
-        if ($hostUrl) {
-            $mail->setHostUrl($hostUrl);
-        }
-
-        if ($emailAddress) {
-            $mail->addTo($emailAddress);
-        } else {
-            $mail->addTo($object->getEmail());
-        }
-        $mail->setDocument(Document::getById($newsletter->getDocument()));
-        $mail->setParams($params);
-
-        // render the document and rewrite the links (if analytics is enabled)
-        if ($newsletter->getGoogleAnalytics() && $content = $mail->getBodyHtmlRendered()) {
-            $html = str_get_html($content);
-            if ($html) {
-                $links = $html->find('a');
-                foreach ($links as $link) {
-                    if (preg_match('/^(mailto)/i', trim($link->href))) {
-                        continue;
-                    }
-
-                    $glue = strpos($link->href, '?') ? '&' : '?';
-
-                    $link->href .= sprintf(
-                        '%sutm_source=Newsletter&utm_medium=Email&utm_campaign=%s',
-                        $glue,
-                        $newsletter->getName()
-                    );
-                }
-                $content = $html->save();
-
-                $html->clear();
-                unset($html);
-            }
-
-            $mail->setBodyHtml($content);
-        }
-
-        $mail->send();
-    }
-
-    /**
      * @param string $classId
      *
      * @throws Exception
@@ -359,8 +276,9 @@ class Newsletter
             $object->setParentId(1);
         }
 
-        $object->setNewsletterActive(true);
-        $object->setCreationDate(time());
+        if (method_exists($object, 'setNewsletterActive')) {
+            $object->setNewsletterActive(true);
+        }
         $object->setModificationDate(time());
         $object->setUserModification(0);
         $object->setUserOwner(0);
@@ -368,6 +286,7 @@ class Newsletter
         $object->setKey(File::getValidFilename(uniqid($object->getEmail(), true)));
 
         if (!$onlyCreateVersion) {
+            $object->setCreationDate(time());
             $object->save();
         }
 
@@ -401,18 +320,34 @@ class Newsletter
     public function sendConfirmationMail($object, $mailDocument, $params = []): void
     {
         $defaultParameters = [
-            'gender' => $object->getGender(),
-            'firstname' => $object->getFirstname(),
-            'lastname' => $object->getLastname(),
-            'email' => $object->getEmail(),
+            'gender' => null,
+            'firstname' => null,
+            'lastname' => null,
+            'email' => null,
             'token' => $object->getProperty('token'),
             'object' => $object,
         ];
 
+        if (method_exists($object, 'getGender')) {
+            $defaultParameters['gender'] = $object->getGender();
+        }
+
+        if (method_exists($object, 'getFirstname')) {
+            $defaultParameters['firstname'] = $object->getFirstname();
+        }
+
+        if (method_exists($object, 'getLastname')) {
+            $defaultParameters['lastname'] = $object->getLastname();
+        }
+
+        if (method_exists($object, 'getEmail')) {
+            $defaultParameters['email'] = $object->getEmail();
+        }
+
         $params = array_merge($defaultParameters, $params);
 
         $mail = new Mail();
-        $mail->addTo($object->getEmail());
+        $mail->addTo($params['email']);
         $mail->setDocument($mailDocument);
         $mail->setParams($params);
         $mail->send();
@@ -459,7 +394,9 @@ class Newsletter
                 $object->setPublished(true);
             }
 
-            $object->setNewsletterConfirmed(true);
+            if (method_exists($object, 'setNewsletterConfirmed')) {
+                $object->setNewsletterConfirmed(true);
+            }
             $object->save();
 
             $this->addNoteOnObject($object, 'confirm');
@@ -511,16 +448,18 @@ class Newsletter
     }
 
     /**
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return bool
      *
      * @throws Exception
      */
-    public function unsubscribe(DataObject\AbstractObject $object): bool
+    public function unsubscribe(DataObject\Concrete $object): bool
     {
         if ($object) {
-            $object->setNewsletterActive(false);
+            if (method_exists($object, 'setNewsletterActive')) {
+                $object->setNewsletterActive(false);
+            }
             $object->save();
 
             $this->addNoteOnObject($object, 'unsubscribe');

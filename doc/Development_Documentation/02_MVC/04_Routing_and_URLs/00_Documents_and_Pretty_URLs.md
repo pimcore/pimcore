@@ -33,20 +33,20 @@ The default route is also responsible to assemble the URL's for documents.
 #### Example 
 
 ###### Simple Link to Different Document
-```php
-<a href="<?= Document::getById(2) ?>">Test-Link</a>
+```twig
+<a href="{{ pimcore_document(2) }}">Test-Link</a>
 
-// OR
+/* OR */
 
-<?php $document = Document::getById(2); ?>
-<a href="<?= $document->getFullPath() ?>">Test-Link</a>
+{% set document = pimcore_document(2) %}
+<a href="{{ document.fullpath }}">Test-Link</a>
 ```
 
 Links to `/about`
 
 ######  Link to Same Document (The Request Came From) Adding Parameters
-```php
-<a href="<?= $this->pimcoreUrl(["key" => "value"]); ?>">Test-Link</a>
+```twig
+<a href="{{ pimcore_url({'key': 'value'}) }}">Test-Link</a>
 ```
 
 Links to `/about?key=value`

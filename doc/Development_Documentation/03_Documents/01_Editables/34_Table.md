@@ -23,26 +23,6 @@ The table editable provides the ability to edit a table structure.
 
 ### Basic usage
 
-<div class="code-section">
-
-```php
-<h4><?= $this->translate("Product Attributes"); ?></h4>
-<?= $this->table("productProperties", [
-    "width" => 700,
-    "height" => 400,
-    "defaults" => [
-        "cols" => 2,
-        "rows" => 3,
-        "data" => [
-            ["Attribute name", "Value"], // headers line
-            ["Color", "Black"],
-            ["Size", "Large"],
-            ["Availability", "Out of stock"]
-        ]
-    ]
-]); ?>
-```
-
 ```twig
 {{ pimcore_table("productProperties", {
     "width": 700,
@@ -61,8 +41,6 @@ The table editable provides the ability to edit a table structure.
 }}
 ```
 
-</div>
-
 You're now able to change columns and the predefined data in the editmode.
 
 ![Table editable rendered in the editmode](../../img/editables_table_editmode.png)
@@ -71,32 +49,6 @@ You're now able to change columns and the predefined data in the editmode.
 
 Sometimes you need use only the data from a filled table. 
 You would just use the `getData()` method instead of rendering the entire HTML of the table.
-
-<div class="code-section">
-
-```php
-<?php if($this->editmode):
-echo $this->table("productProperties", [
-    "width" => 700,
-    "height" => 400,
-    "defaults" => [
-        "cols" => 2,
-        "rows" => 3,
-        "data" => [
-            ["Attribute name", "Value"], // headers line
-            ["Color", "Black"],
-            ["Size", "Large"],
-            ["Availability", "Out of stock"]
-        ]
-    ]
-]);
-else:
-    $data = $this->table("productProperties")->getData();
-    // returns the data as an array
-    // do something with it ;-) 
-endif;
-?>
-```
 
 ```twig
 {% if editmode %}
@@ -121,8 +73,6 @@ endif;
     {# do something with it ;-) #}
 {% endif %}
 ```
-
-</div>
 
 The output from `getData()`:
 

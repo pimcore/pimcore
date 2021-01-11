@@ -129,9 +129,7 @@ class EmailController extends AdminController
         $emailLog = Tool\Email\Log::getById($request->get('id'));
 
         if ($request->get('type') == 'text') {
-            $templatingEnginePhp = $this->get('pimcore.templating.engine.php');
-
-            return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $templatingEnginePhp->escape($emailLog->getTextLog()) . '</pre></body></html>');
+            return $this->render('@PimcoreAdmin/Admin/Email/text.html.twig', ['log' => $emailLog->getTextLog()]);
         } elseif ($request->get('type') == 'html') {
             return new Response($emailLog->getHtmlLog(), 200, [
                 'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'",

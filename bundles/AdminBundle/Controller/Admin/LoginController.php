@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
-use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
@@ -85,13 +85,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login", name="pimcore_admin_login")
      * @Route("/login/", name="pimcore_admin_login_fallback")
      */
-    public function loginAction(Request $request, CsrfProtectionListener $csrfProtectionListener, Config $config)
+    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config)
     {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         $user = $this->getAdminUser();
         if ($user instanceof UserInterface) {
@@ -116,18 +116,18 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $params['browserSupported'] = $this->detectBrowser();
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:login.html.twig', $params);
+        return $this->render('@PimcoreAdmin/Admin/Login/login.html.twig', $params);
     }
 
     /**
      * @Route("/login/csrf-token", name="pimcore_admin_login_csrf_token")
      */
-    public function csrfTokenAction(Request $request, CsrfProtectionListener $csrfProtectionListener)
+    public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         return $this->json([
-           'csrfToken' => $csrfProtectionListener->getCsrfToken(),
+           'csrfToken' => $csrfProtection->getCsrfToken(),
         ]);
     }
 
@@ -155,7 +155,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -214,9 +214,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:lostpassword.html.twig', $params);
+        return $this->render('@PimcoreAdmin/Admin/Login/lostpassword.html.twig', $params);
     }
 
     /**
@@ -241,7 +241,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 return $this->redirect($url);
             } elseif ($queryString) {
-                return $this->render('PimcoreAdminBundle:Admin/Login:deeplink.html.twig', [
+                return $this->render('@PimcoreAdmin/Admin/Login/deeplink.html.twig', [
                     'tab' => $deeplink,
                     'perspective' => $perspective,
                 ]);
@@ -284,7 +284,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $params['error'] = 'No session available, it either timed out or cookies are not enabled.';
         }
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:twoFactorAuthentication.html.twig', $params);
+        return $this->render('@PimcoreAdmin/Admin/Login/twoFactorAuthentication.html.twig', $params);
     }
 
     /**
@@ -305,16 +305,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $browser = new \Browser();
         $browserVersion = (int)$browser->getVersion();
 
-        if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
+        if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 72) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
+        if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 84) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 10) {
+        if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 13.1) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 42) {
+        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 67) {
             $supported = true;
         }
 

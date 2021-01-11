@@ -79,6 +79,8 @@ class DocumentEditableExtension extends AbstractExtension
      * @param array $options
      *
      * @return \Pimcore\Model\Document\Editable|string
+     *
+     * @throws \Exception
      */
     public function renderEditable($context, $name, $inputName, array $options = [])
     {
@@ -100,8 +102,6 @@ class DocumentEditableExtension extends AbstractExtension
      */
     public function getBlockIterator(BlockInterface $block): \Generator
     {
-        while ($block->loop()) {
-            yield $block->getCurrentIndex();
-        }
+        return $block->getIterator();
     }
 }

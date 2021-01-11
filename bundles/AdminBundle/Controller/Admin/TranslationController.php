@@ -518,7 +518,7 @@ class TranslationController extends AdminController
                     foreach ($joins as $join) {
                         $fieldname = $join['language'];
 
-                        if ($alreadyJoined[$fieldname]) {
+                        if (isset($alreadyJoined[$fieldname])) {
                             continue;
                         }
                         $alreadyJoined[$fieldname] = 1;
@@ -708,13 +708,13 @@ class TranslationController extends AdminController
                     if ($el instanceof DataObject\AbstractObject) {
                         // inlcude variants
                         $list->setObjectTypes(
-                            [DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
-                                DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
-                                DataObject\AbstractObject::OBJECT_TYPE_FOLDER, ]
+                            [DataObject::OBJECT_TYPE_VARIANT,
+                                DataObject::OBJECT_TYPE_OBJECT,
+                                DataObject::OBJECT_TYPE_FOLDER, ]
                         );
                     }
                     $list->setCondition(
-                        ($el instanceof DataObject\AbstractObject ? 'o_' : '') . 'path LIKE ?',
+                        ($el instanceof DataObject ? 'o_' : '') . 'path LIKE ?',
                         [$list->escapeLike($el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '')) . '%']
                     );
                     $childs = $list->load();
@@ -767,7 +767,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/translation/' . $type . '-export',
+                'url' => $request->getBaseUrl() . '/admin/translation/' . $type . '-export',
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,

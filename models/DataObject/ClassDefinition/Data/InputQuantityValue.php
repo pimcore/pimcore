@@ -56,8 +56,6 @@ class InputQuantityValue extends QuantityValue
         'unit' => 'bigint(20)',
     ];
 
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
-
     /**
      * @param array $data
      * @param Model\DataObject\Concrete|null $object
@@ -71,7 +69,9 @@ class InputQuantityValue extends QuantityValue
             $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $dataObject->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $dataObject->_setOwner($params['owner']);
+                $dataObject->_setOwnerFieldname($params['fieldname']);
+                $dataObject->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $dataObject;
@@ -181,5 +181,25 @@ class InputQuantityValue extends QuantityValue
     protected function getNewDataObject($value = null, $unitId = null)
     {
         return new InputQuantityValueDataObject($value, $unitId);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 }

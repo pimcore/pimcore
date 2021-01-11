@@ -28,6 +28,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class FrontendController extends Controller
 {
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
+        $services[DocumentResolver::class] = '?'.DocumentResolver::class;
+        $services[ResponseHeaderResolver::class] = '?'.ResponseHeaderResolver::class;
+        $services[EditableRenderer::class] = '?'.EditableRenderer::class;
+
+        return $services;
+    }
+
     /**
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
@@ -91,7 +102,7 @@ abstract class FrontendController extends Controller
      * @param array $options
      * @param Document\PageSnippet|null $document
      *
-     * @return null|Document\Editable
+     * @return Document\Editable\EditableInterface
      */
     public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {

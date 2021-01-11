@@ -316,6 +316,7 @@ pimcore.settings.system = Class.create({
                                     valueField: 'language',
                                     forceSelection: true,
                                     typeAhead: true,
+                                    anyMatch: true,
                                     width: 450
                                 }, {
                                     xtype: "button",
@@ -451,6 +452,11 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('log_config_archive_alternative_database'),
                                 name: 'applicationlog.archive_alternative_database',
                                 value: this.getValue("applicationlog.archive_alternative_database")
+                            },
+                            {
+                                fieldLabel: t('log_config_delete_archive_threshold'),
+                                name: 'applicationlog.delete_archive_threshold',
+                                value: this.getValue("applicationlog.delete_archive_threshold") ? this.getValue("applicationlog.delete_archive_threshold") : '6'
                             },
                             {
                                 xtype: "displayfield",

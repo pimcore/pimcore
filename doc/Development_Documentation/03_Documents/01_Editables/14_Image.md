@@ -15,7 +15,6 @@ The biggest advantages of using that instead of (for example) the relation edita
 
 | Name                           | Type    | Description                                                                                                                                                                                                                              |
 |--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `title`                        | string  | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip.                                                                                                               |
 | `width`                        | integer | Width of the image in pixel                                                                                                                                                                                                              |
 | `height`                       | integer | Height of the image in pixel                                                                                                                                                                                                             |
 | `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                                    |
@@ -25,24 +24,17 @@ The biggest advantages of using that instead of (for example) the relation edita
 | `minHeight`                    | integer | Min. height of the image (in pixel)                                                                                                                                                                                                      |
 | `ratioX`                       | integer | Set width in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioY.                                                                                                                         |
 | `ratioY`                       | integer | Set height in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioX.                                                                                                                        |
-| `attributes`                   | array   | Custom attributes for the `<img />` tag - this can be used to pass custom attributes (not w3c)                                                                                                                                             |
-| `removeAttributes`             | array   | You can remove standard attributes using this configuration, e.g. `"removeAttributes" => ["controls","poster"]`                                                                                                                          |
 | `uploadPath`                   | string  | Target path for (inline) uploaded images                                                                                                                                                                                                 |
 | `disableInlineUpload`          | boolean | Disable the inline upload. If set to true, the inline upload functionality will be disabled.                                                                                                                                             |
 | `highResolution`               | float   | Factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for *Retina* displays, print, ...)                                                                 |
-| `disableWidthHeightAttributes` | bool    | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                                   |
-| `disableAutoTitle`             | bool    | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                               |
-| `disableAutoAlt`               | bool    | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                        |
-| `disableAutoCopyright`         | bool    | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                                |
 | `dropClass`                    | string  | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
 | `deferred`                     | bool    | Set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                         |
 | `class`                        | string  | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
-| `lowQualityPlaceholder`        | bool    | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`. (requires [SQIP](https://github.com/technopagan/sqip) or [Imagick](http://php.net/imagick), details see [setup of additional tools](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)|
 | `predefinedDataTemplates`      | array   | Add predefined config sets for hotspots and images                                                                                                                                                                                       |
 | `cacheBuster`                  | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
-| `pictureAttributes`            | array   | Custom attributes for the <picture> tag (if thumbnail definition has media queries defined)                                                                                                                                              |
 
-You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
+Additionally you can also pass [any valid attribute for `Thumbnail::getHtml()`](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
+as well as every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
 
 ## Methods
 
@@ -60,17 +52,9 @@ You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w
 
 ### Basic usage
 
-<div class="code-section">
-
-```php
-<?= $this->image("myImage"); ?>
-```
-
 ```twig
 {{ pimcore_image("myImage") }}
 ```
-
-</div>
 
 The code above generates an image area in the backend and displays the image at the frontend.
 
@@ -87,17 +71,6 @@ Note that if you use the thumbnail argument, the rendered image on the frontend 
 
 Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 
-<div class="code-section">
-
-```php
-<?= $this->image("myImage", [
-    "title" => "Drag your image here",
-    "width" => 200,
-    "height" => 200,
-    "thumbnail" => "contentimages"
-]); ?>
-```
-
 ```twig
 {{ pimcore_image("myImage", {
     "title": "Drag your image here",
@@ -107,8 +80,6 @@ Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_
 }) }}
 ```
 
-</div>
-
 ###### Backend Preview
 
 ![Image with title and specified size - the backend preview](../../img/image_preview_backend3.png)
@@ -116,22 +87,6 @@ Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_
 ### An Example with a Direct Thumbnail Configuration
 
 You can also change the thumbnail configuration:
-
-<div class="code-section">
-
-```php
-<?= $this->image("myImage", [
-    "title" => "Drag your image here",
-    "width" => 200,
-    "height" => 200,
-    "thumbnail" => [
-        "width" => 200,
-        "height" => 200,
-        "interlace" => true,
-        "quality" => 90
-    ]
-]); ?>
-```
 
 ```twig
 {{ pimcore_image("myImage", {
@@ -147,21 +102,7 @@ You can also change the thumbnail configuration:
 }) }}
 ```
 
-</div>
-
 ### An Example Using Custom Attributes
-
-<div class="code-section">
-
-```php
-<?= $this->image("myImage", [
-    "thumbnail" => "content",
-    "attributes" => [
-        "custom-attr" => "value",
-        "data-role" => "image"
-    ]
-]) ?>
-```
 
 ```twig
 {{ pimcore_image("myImage", {
@@ -173,51 +114,9 @@ You can also change the thumbnail configuration:
 }) }}
 ```
 
-</div>
-
 And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other Advanced Examples
-
-<div class="code-section">
-
-```php
-
-// get retina image
-<?= $this->image("myImage", [
-    "thumbnail" => [
-        "width" => 200,
-        "height" => 200
-    ],    
-    "highResolution" => 2
-]); ?>
-
-
-// will output<img src="/var/thumb_9999__auto_xxxxxxxx@2x.png" width="200" height="200" /> <!-- but the real image size is 400x400 pixel -->
-
-// custom image tag (thumbnail objects)
-<?php if($this->editmode): ?>
-    <?= $this->image("myImage", ["thumbnail" => "myThumbnail"]); ?>
-<?php else: ?>
-    <?php $thumbnail = $this->image("myImage")->getThumbnail("myThumbnail"); ?>
-    <img src="<?= $thumbnail; ?>" width="<?= $thumbnail->getWidth(); ?>" height="<?= $thumbnail->getHeight(); ?>" data-custom="xxxx" />
-<?php endif; ?>
- 
- 
-// disable automatic width and height attributes
-<?= $this->image("myImage", [
-    "thumbnail" => "exampleScaleWidth",
-    "disableWidthHeightAttributes" => true
-]) ?>
-  
-// custom drop targets
-<div class="myCustomImageDropTarget anotherClass">My first alternative drop target</div>
-<?= $this->image("image", [
-    "thumbnail" => "contentfullimage",
-    "dropClass" => "myCustomImageDropTarget"
-]) ?>
-<div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
-```
 
 ```twig
 {# Get retina image #}
@@ -257,8 +156,6 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 <div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
 ```
 
-</div>
-
 ## Field-specific Image Cropping for Documents
 
 ### Backend Usage
@@ -287,71 +184,6 @@ All dimensions are in percent and therefore independent from the image size, you
  
 ### Code Usage Example
 
-<div class="code-section">
- 
-```php
-<div>
- <p>
-        <?= $this->image("myImage", [
-            "title" => "Drag your image here",
-            "width" => 400,
-            "height" => 400,
-            "thumbnail" => "content",
-            /* 
-            //adds predefined config sets
-            "predefinedDataTemplates" => [
-                            "marker" => [
-                                [
-                                    "menuName" => "marker config 1",
-                                    "name" => "marker name",
-                                    "data" => [
-                                        [
-                                            "name" => "my textfield",
-                                            "type" => "textfield"
-                                        ],
-                                        [
-                                            "name" => "my asset href",
-                                            "type" => "asset",
-                                            "value" => "/testimage1.jpg"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            "hotspot" => [
-                                [
-                                    "menuName" => "hotspot config 1",
-                                    "name" => "hotspot name",
-                                    "data" => [
-                                        [
-                                            "name" => "my textfield",
-                                            "type" => "textfield"
-                                        ],
-                                        [
-                                            "name" => "my asset href",
-                                            "type" => "asset",
-                                            "value" => "/testimage1.jpg"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]*/
-        ]); ?>
-        
-        <?php if(!$this->editmode): ?>
-            <?php
-            // outside the editmode: do something with the data
-            if($this->image("myImage")->getHotspots()) {
-                dump($this->image("myImage")->getHotspots());
-            }
-            if($this->image("myImage")->getMarker()) {
-                dump($this->image("myImage")->getMarker());
-            }
-            ?>
-        <?php endif; ?>
- </p>
-</div>
-```
-
 ```twig
 <div>
     <p>
@@ -374,8 +206,6 @@ All dimensions are in percent and therefore independent from the image size, you
     </p>
 </div>
 ```
-
-</div>
 
 `getHotspots` output:
 

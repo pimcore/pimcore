@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db\ConnectionInterface;
@@ -143,9 +143,9 @@ class SettingsController extends AdminController
      */
     public function metadataAction(Request $request)
     {
-        if ($request->get('data')) {
-            $this->checkPermission('asset_metadata');
+        $this->checkPermission('asset_metadata');
 
+        if ($request->get('data')) {
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
@@ -236,7 +236,6 @@ class SettingsController extends AdminController
         $subType = $request->get('subType');
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
-        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
             $item->expand();
             $result[] = $item;
@@ -529,6 +528,7 @@ class SettingsController extends AdminController
                 ],
                 'archive_treshold' => $values['applicationlog.archive_treshold'],
                 'archive_alternative_database' => $values['applicationlog.archive_alternative_database'],
+                'delete_archive_threshold' => $values['applicationlog.delete_archive_threshold'],
             ],
         ];
 
@@ -704,7 +704,7 @@ class SettingsController extends AdminController
      * @param Request $request
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CoreHandlerInterface $cache
+     * @param CoreCacheHandler $cache
      * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
@@ -715,7 +715,7 @@ class SettingsController extends AdminController
         Request $request,
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
-        CoreHandlerInterface $cache,
+        CoreCacheHandler $cache,
         ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
@@ -733,8 +733,7 @@ class SettingsController extends AdminController
             // empty document cache
             $cache->clearAll();
 
-            $db->query('truncate table cache_tags');
-            $db->query('truncate table cache');
+            $db->query('truncate table cache_items');
 
             if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
                 $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
@@ -1010,8 +1009,8 @@ class SettingsController extends AdminController
                 $glossary->save();
 
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1036,8 +1035,8 @@ class SettingsController extends AdminController
                 $glossary->save();
 
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1067,8 +1066,8 @@ class SettingsController extends AdminController
             $glossaries = [];
             foreach ($list->getGlossary() as $glossary) {
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1597,9 +1596,9 @@ class SettingsController extends AdminController
      */
     public function websiteSettingsAction(Request $request)
     {
-        if ($request->get('data')) {
-            $this->checkPermission('website_settings');
+        $this->checkPermission('website_settings');
 
+        if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
 
             if (is_array($data)) {
@@ -1804,7 +1803,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('web2print_settings');
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Settings:testWeb2print.html.twig');
+        $response = $this->render('@PimcoreAdmin/Admin/Settings/testWeb2print.html.twig');
         $html = $response->getContent();
 
         $adapter = \Pimcore\Web2Print\Processor::getInstance();

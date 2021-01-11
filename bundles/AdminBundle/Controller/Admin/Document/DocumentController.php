@@ -68,12 +68,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
      * @Route("/delete-info", name="pimcore_admin_document_document_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -128,8 +129,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filter = $request->get('filter');
-        $limit = intval($allParams['limit'] ?? 100000000);
-        $offset = intval($allParams['start'] ?? 0);
+        $limit = (int)($allParams['limit'] ?? 100000000);
+        $offset = (int)($allParams['start'] ?? 0);
 
         if (!is_null($filter)) {
             if (substr($filter, -1) != '*') {
@@ -217,7 +218,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 'total' => $document->getChildAmount($this->getAdminUser()),
                 'nodes' => $documents,
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch')),
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         } else {
             return $this->adminJson($documents);
@@ -237,7 +238,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $errorMessage = '';
 
         // check for permission
-        $parentDocument = Document::getById(intval($request->get('parentId')));
+        $parentDocument = Document::getById((int)$request->get('parentId'));
         $document = null;
         if ($parentDocument->isAllowed('create')) {
             $intendedPath = $parentDocument->getRealFullPath() . '/' . $request->get('key');
@@ -252,20 +253,16 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
 
                 // check for a docType
-                $docType = Document\DocType::getById(intval($request->get('docTypeId')));
+                $docType = Document\DocType::getById((int)$request->get('docTypeId'));
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
-                    $createValues['action'] = $docType->getAction();
-                    $createValues['module'] = $docType->getModule();
                 } elseif ($request->get('translationsBaseDocument')) {
                     $translationsBaseDocument = Document\PageSnippet::getById($request->get('translationsBaseDocument'));
                     $createValues['template'] = $translationsBaseDocument->getTemplate();
                     $createValues['controller'] = $translationsBaseDocument->getController();
-                    $createValues['action'] = $translationsBaseDocument->getAction();
-                    $createValues['module'] = $translationsBaseDocument->getModule();
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
-                    $createValues += Tool::getRoutingDefaults();
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
                 }
 
                 if ($request->get('inheritanceSource')) {
@@ -382,7 +379,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             $list = new Document\Listing();
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
-            $list->setLimit(intval($request->get('amount')));
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
 
@@ -614,7 +611,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         };
 
         // if changed the index change also all documents on the same level
-        $newIndex = intval($newIndex);
+        $newIndex = (int)$newIndex;
         $document->saveIndex($newIndex);
 
         $list = new Document\Listing();
@@ -797,9 +794,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $domains = str_replace(' ', '', $domains);
         $domains = explode("\n", $domains);
 
-        if (!$site = Site::getByRootId(intval($request->get('id')))) {
+        if (!$site = Site::getByRootId((int)$request->get('id'))) {
             $site = Site::create([
-                'rootId' => intval($request->get('id')),
+                'rootId' => (int)$request->get('id'),
             ]);
         }
 
@@ -822,7 +819,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function removeSiteAction(Request $request)
     {
-        $site = Site::getByRootId(intval($request->get('id')));
+        $site = Site::getByRootId((int)$request->get('id'));
         $site->delete();
 
         return $this->adminJson(['success' => true]);
@@ -982,11 +979,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function copyAction(Request $request)
     {
         $success = false;
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = Document::getById($sourceId);
         $session = Session::get('pimcore_copy');
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
 
         $sessionBag = $session->get($request->get('transactionId'));
 
@@ -1064,7 +1061,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         // return with error if prerequisites do not match
         if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
-            return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions-unsupported.html.twig');
+            return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions-unsupported.html.twig');
         }
 
         $versionFrom = Version::getById($from);
@@ -1109,7 +1106,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $image2->clear();
         $image2->destroy();
 
-        return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions.html.twig', $viewParams);
+        return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions.html.twig', $viewParams);
     }
 
     /**

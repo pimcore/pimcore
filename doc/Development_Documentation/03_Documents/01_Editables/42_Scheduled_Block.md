@@ -39,29 +39,12 @@ In editmode, additional block items can be added and their timestamp can be conf
 
 ## Basic Usage
 
-Please use the `loop()` method to iterate through all block items. This makes sure the correct indices are set internally
-to reference the right elements within a block.
-
-As Twig does not provide a `while` construct, there's a specialized function `pimcore_iterate_block` which allows you
-to iterate through all block elements.
-
-<div class="code-section">
-
-```php
-<?php while($this->scheduledblock("block")->loop()) { ?>
-    <h2><?= $this->input("blockinput") ?><h2>
-    <?= $this->image("myimage") ?>
-<?php } ?>
-```
-
 ```twig
-{% for i in pimcore_iterate_block(pimcore_scheduledblock('block')) %}
+{% for i in pimcore_scheduledblock('block').iterator %}
     <h2>{{ pimcore_input('blockinput') }}</h2>
     {{ pimcore_image('myimage') }}
 {% endfor %}
 ```
-
-</div>
 
 The result in editmode should looks like to following: 
 ![Scheduled Block in editmode](../../img/scheduledblock_editmode.jpg)

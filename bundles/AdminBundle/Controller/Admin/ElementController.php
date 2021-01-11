@@ -317,8 +317,8 @@ class ElementController extends AdminController
         $success = false;
         $hasHidden = false;
         $total = 0;
-        $limit = intval($request->get('limit', 50));
-        $offset = intval($request->get('start', 0));
+        $limit = (int)$request->get('limit', 50);
+        $offset = (int)$request->get('start', 0);
 
         if ($element instanceof Element\ElementInterface) {
             $total = $element->getDependencies()->getRequiredByTotalCount();
@@ -587,7 +587,7 @@ class ElementController extends AdminController
      */
     public function getVersionsAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
 
@@ -873,25 +873,6 @@ class ElementController extends AdminController
                         'fd' => $fd,
                         'context' => $context,
                     ]);
-                } elseif (method_exists($formatter, 'formatPath')) {
-                    @trigger_error(
-                        sprintf(
-                            'Static PathFormatters are deprecated since Pimcore 5.5 and will be removed in 6.0. Please use %s instead',
-                            DataObject\ClassDefinition\PathFormatterInterface::class
-                        ),
-                        E_USER_DEPRECATED
-                    );
-
-                    $result = call_user_func(
-                        $formatter . '::formatPath',
-                        $result,
-                        $source,
-                        $targets,
-                        [
-                            'fd' => $fd,
-                            'context' => $context,
-                        ]
-                    );
                 }
             }
         }

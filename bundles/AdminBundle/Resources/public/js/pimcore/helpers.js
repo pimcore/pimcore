@@ -305,7 +305,7 @@ pimcore.helpers.recordElement = function (id, type, name) {
 };
 
 pimcore.helpers.openElement = function (idOrPath, type, subtype) {
-    if (typeof subtype != "undefined") {
+    if (typeof subtype != "undefined" && subtype !== null) {
         if (type == "document") {
             pimcore.helpers.openDocument(idOrPath, subtype);
         }
@@ -2586,6 +2586,8 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
             }
         }.bind(this)
     });
+
+    return true;
 };
 
 pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, responseData) {

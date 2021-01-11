@@ -50,11 +50,11 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 
 ##### Redis Cache tests
 
-For Redis, the `PIMCORE_TEST_CACHE_REDIS_DATABASE` option is mandatory. Set to a value that does not conflict to any
+For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. Set to a value that does not conflict to any
 other Redis DBs on your system.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_CACHE_REDIS_DATABASE=1 vendor/bin/codecept run -c vendor/pimcore/pimcore cache    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore cache    
 ```
 
 
@@ -65,15 +65,7 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 | PIMCORE_ENVIRONMENT                       | test             | Test environment                                                                                                               |
 | PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
 | PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_TEST_CACHE_REDIS_DATABASE         | 1                | **required for REDIS tests**                                                                                                   |
-| PIMCORE_TEST_CACHE_REDIS_PORT             | defaults to 6379 | Redis port                                                                                                                     |
-| PIMCORE_TEST_CACHE_REDIS_PERSISTENT       |                  |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_FORCE_STANDALONE | 0                |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_CONNECT_RETRIES  | defaults to 1    |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_TIMEOUT          | defaults to 2.5  |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_READ_TIMEOUT     | defaults to 0    |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_PASSWORD         |                  |                                                                                                                                |
-| ...                                       |                  |                                                                                                                                |                        
+| PIMCORE_TEST_REDIS_DSN                    | redis://localhost| **required for REDIS tests**                                                                                                   |
 
 #### Suites
 
@@ -121,31 +113,6 @@ Useful examples:
 
 See [Codeception Commands](https://codeception.com/docs/reference/Commands) for more options.
 
-## Travis
-
-Pimcore uses [Travis CI](https://travis-ci.com/) for continuous integration.
-Open https://travis-ci.com/pimcore/pimcore for the current build status. 
-
-### Test Matrix
-
-The build matrix (which can change at any time) consists of a mixture of
-
-* different PHP versions (7.2, 7.3, 7.4)
-* different Symfony versions (3.4 and 4)
-
-In addition it
-* verifies the state of the documentation (broken links, etc) 
-* runs [PHPStan](https://github.com/phpstan/phpstan) (PHP Static Analysis Tool). For a list verification performed by
-PHPStan see this [list](https://gist.github.com/carusogabriel/62698312f451589afd956eddac2dc07a). Current level 1. 
-
-### Build Artifacts
-
-Travis will automatically upload build artifacts to Amazon S3 (currently everything in `var/logs`).
-
-Look for something like this in your job output and open it in your web browser.
-
-![Artifact](../../img/travis_artifact.png)
-
 ## Providing new tests & extending existing ones
 
 In general, contributions in form extending and improving tests is highly appreciated.
@@ -176,10 +143,8 @@ TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse -c phpstan.local.neon ve
 
 where `/tmp/[dedicateddir]` must be a writable temporary directory.
 
-> Note regarding PRs: Please try to meet all 
-level 3 requirements (run it with `-l 3` instead) for all files you touch or add.
+> Note regarding PRs: Your code has to meet level 3 requirements (run it with `-l 3` instead) for all files you touch or add.
 
-Travis also performs level 2 tests but allows them to fail in case that not all rules are satisfied.
 
 ![PHPStan Job](../../img/phpstan1.png)
 
@@ -193,10 +158,10 @@ PHPStan can create a baseline file, which contain all current errors. See this [
  
 To generate a new baseline file you have to execute following command:
 ```sh
-vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
+vendor/bin/phpstan analyse -c phpstan.local.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
 ```
 
-With this baseline file include, Travis can detect new errors without having to fix all errors first.
+With this baseline file include, we can detect new errors without having to fix all errors first.
 
 ## PHPStan Level Overview
 

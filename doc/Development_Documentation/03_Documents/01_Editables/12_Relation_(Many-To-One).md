@@ -31,16 +31,9 @@ In frontend-mode this editable returns the path of the linked element.
 
 You can just create the code line like, below:
 
-<div class="code-section">
-
-```php
-<?= $this->relation("myRelation"); ?>
-```
-
 ```twig
 {{ pimcore_relation("myRelation") }}
 ```
-</div>
 
 After, the view in the administration panel changes like in the picture:
 
@@ -53,19 +46,6 @@ options in the editable configuration.
 
 ##### Example
 
-<div class="code-section">
-
-```php
-<?= $this->relation("myRelation", [
-    "types" => ["asset","object"],
-    "subtypes" => [
-        "asset" => ["video","image"],
-        "object" => ["object"]
-     ],
-    "classes" => ["person"],
-]); ?>
-```
-
 ```twig
 {{ pimcore_relation("myRelation",{
     "types": ["asset","object"],
@@ -76,8 +56,6 @@ options in the editable configuration.
     "classes": ["person"]
 }) }}
 ```
-
-</div>
 
 
 We restricted the `myRelation` editable to the following entities: 
@@ -92,18 +70,6 @@ As you see in the picture below, it's impossible to drop any other type to that 
 
 Another useful use-case for the relation editable is a download link. 
 
-<div class="code-section">
-
-```php
-<?php if ($this->editmode): ?>
-    <?= $this->relation("myRelation"); ?>
-<?php else: ?>
-    <?php if ($this->relation("myRelation")->getElement() instanceof Asset): ?>
-        <a href="<?= $this->relation("myRelation")->getFullPath() ?>"><?= $this->translate("Download") ?></a>
-    <?php endif; ?>
-<?php endif; ?>
-```
-
 ```twig
 {% if editmode %}
     {{ pimcore_relation("myRelation") }}
@@ -113,5 +79,3 @@ Another useful use-case for the relation editable is a download link.
     {% endif %}
 {% endif %}
 ```
-
-</div>

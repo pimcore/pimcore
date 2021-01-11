@@ -35,13 +35,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $fieldtype = 'classificationstore';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Classificationstore';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -67,14 +60,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $title;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -82,9 +75,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $maxTabs;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $labelWidth;
+    public $labelWidth = 0;
 
     /** @var bool */
     public $localized;
@@ -381,8 +374,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /pimcore/modules/admin/views/scripts/object/preview-version.php
-        return $data;
+        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        return 'CLASSIFICATIONSTORE';
     }
 
     /**
@@ -637,19 +630,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param string|int|null $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -737,19 +733,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -773,7 +772,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
         $subItems = [];
-        $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
+        $getInheritedValues = DataObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems > 0 && count($activeGroups) > $this->maxItems) {
@@ -791,16 +790,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     $keyGroupRelations = $groupDefinition->getRelations();
 
-                    /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                     foreach ($keyGroupRelations as $keyGroupRelation) {
                         foreach ($validLanguages as $validLanguage) {
                             $keyId = $keyGroupRelation->getKeyId();
 
                             $object = $data->getObject();
                             if ($object->getClass()->getAllowInherit()) {
-                                DataObject\AbstractObject::setGetInheritedValues(true);
+                                DataObject::setGetInheritedValues(true);
                                 $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
-                                DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
+                                DataObject::setGetInheritedValues($getInheritedValues);
                             } else {
                                 $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
@@ -900,15 +898,18 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $labelWidth
+     * @param string|int $labelWidth
      */
     public function setLabelWidth($labelWidth)
     {
-        $this->labelWidth = (int) $labelWidth;
+        if (is_numeric($labelWidth)) {
+            $labelWidth = (int)$labelWidth;
+        }
+        $this->labelWidth = $labelWidth;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getLabelWidth()
     {
@@ -1056,7 +1057,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $groupList->setOrder(['ASC', 'ASC']);
         $groupList = $groupList->load();
 
-        /** @var DataObject\Classificationstore\GroupConfig $group */
         foreach ($groupList as $group) {
             $keyList = [];
 
@@ -1065,7 +1065,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
             $relation = $relation->load();
-            /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
             foreach ($relation as $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
@@ -1119,7 +1118,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation = $relation->load();
 
             $sorting = [];
-            /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
             foreach ($relation as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }
@@ -1238,5 +1236,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->disallowAddRemove = $disallowAddRemove;
 
         return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Classificationstore::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Classificationstore::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Classificationstore::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Classificationstore::class . '|null';
     }
 }

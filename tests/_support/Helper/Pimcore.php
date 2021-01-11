@@ -5,6 +5,7 @@ namespace Pimcore\Tests\Helper;
 use Codeception\Exception\ModuleException;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
+use Codeception\TestInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Installer;
@@ -72,7 +73,7 @@ class Pimcore extends Module\Symfony
         return $this->kernel->getContainer();
     }
 
-    public function _initialize()
+    public function _initialize(): void
     {
         Config::setEnvironment($this->config['environment']);
 
@@ -279,7 +280,7 @@ class Pimcore extends Module\Symfony
     /**
      * @inheritDoc
      */
-    public function _before(\Codeception\TestInterface $test)
+    public function _before(TestInterface $test): void
     {
         parent::_before($test);
 
@@ -294,8 +295,8 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
-        DataObject\AbstractObject::setHideUnpublished(false);
-        DataObject\AbstractObject::setGetInheritedValues(false);
+        DataObject::setHideUnpublished(false);
+        DataObject::setGetInheritedValues(false);
         DataObject\Localizedfield::setGetFallbackValues(false);
     }
 
@@ -306,8 +307,13 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
-        DataObject\AbstractObject::setHideUnpublished(true);
-        DataObject\AbstractObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+        DataObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
+    }
+
+    public function makeHtmlSnapshot($name = null)
+    {
+        // TODO: Implement makeHtmlSnapshot() method.
     }
 }
