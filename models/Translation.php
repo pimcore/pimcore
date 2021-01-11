@@ -61,16 +61,6 @@ class Translation extends AbstractModel implements TranslationInterface
 
     /**
      * @inheritDoc
-     *
-     * @deprecated
-     */
-    public static function isValidLanguage($locale): bool
-    {
-        return static::IsAValidLanguage(static::DOMAIN_DEFAULT, $locale);
-    }
-
-    /**
-     * @inheritDoc
      */
     public static function IsAValidLanguage(string $domain, string $locale): bool
     {
@@ -196,16 +186,6 @@ class Translation extends AbstractModel implements TranslationInterface
         }
 
         return Tool::getValidLanguages();
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @deprecated
-     */
-    public static function getLanguages(): array
-    {
-        return static::getValidLanguages();
     }
 
     /**
