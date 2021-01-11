@@ -164,6 +164,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+        unset($vars['options']);
+        return array_keys($vars);
+    }
+
     /**
      * @return bool
      */

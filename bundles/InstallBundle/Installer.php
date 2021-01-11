@@ -27,7 +27,6 @@ use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
@@ -428,10 +427,7 @@ class Installer
                 '-c',
             ];
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
-
-            $process = new Process($parts);
+            $process = new Process($arguments);
             $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();
@@ -478,10 +474,7 @@ class Installer
                 '-c',
             ];
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
-
-            $process = new Process($parts);
+            $process = new Process($arguments);
             $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();

@@ -48,6 +48,7 @@ class PropertyGetter extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = $element->getProperty($this->getPropertyName());
+
         return $result;
     }
 
