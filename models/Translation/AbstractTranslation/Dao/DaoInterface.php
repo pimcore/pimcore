@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Translation\AbstractTranslation\Dao;
 
+/**
+ * @deprecated
+ */
 interface DaoInterface
 {
     public static function getTableName();

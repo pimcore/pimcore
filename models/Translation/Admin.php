@@ -22,6 +22,8 @@ use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Translation\Admin\Dao getDao()
+ *
+ * @deprecated use \Pimcore\Model\Translation with domain "admin" instead
  */
 class Admin extends AbstractTranslation
 {

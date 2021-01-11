@@ -168,7 +168,7 @@ class TranslationController extends AdminController
         $tableName = call_user_func($class . '\\Dao::getTableName');
 
         // clear translation cache
-        Translation\AbstractTranslation::clearDependentCache();
+        Translation::clearDependentCache();
 
         if ($admin) {
             $list = new Translation\Admin\Listing();

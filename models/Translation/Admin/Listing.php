@@ -21,7 +21,13 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Translation\Admin\Listing\Dao getDao()
+ *
+ * @deprecated
  */
 class Listing extends Model\Translation\AbstractTranslation\Listing
 {
+    /**
+     * @var string
+     */
+    protected $domain = Model\Translation::DOMAIN_ADMIN;
 }

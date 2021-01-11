@@ -23,6 +23,8 @@ use Pimcore\Model;
  * @internal
  *
  * @property \Pimcore\Model\Translation\Admin $model
+ *
+ * @deprecated
  */
 class Dao extends Model\Translation\AbstractTranslation\Dao
 {
@@ -30,12 +32,4 @@ class Dao extends Model\Translation\AbstractTranslation\Dao
      * @var string
      */
     public static $_tableName = 'translations_admin';
-
-    /**
-     * @return string
-     */
-    public static function getTableName()
-    {
-        return Model\Translation\Admin\Dao::$_tableName;
-    }
 }
