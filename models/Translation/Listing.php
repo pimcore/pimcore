@@ -22,6 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Translation\Listing\Dao getDao()
  * @method Model\Translation[] load()
+ * @method array loadRaw()
  * @method Model\Translation current()
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
