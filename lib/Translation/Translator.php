@@ -379,6 +379,8 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
      * @param string $domain
      *
      * @return string|null
+     *
+     * @deprecated will be removed in Pimcore 10
      */
     protected function getBackendForDomain($domain)
     {

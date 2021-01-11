@@ -26,6 +26,8 @@ return [
     'Pimcore\\Model\\Translation\\AbstractTranslation\\Listing' => 'Pimcore\\Model\\Translation\\AbstractTranslation\\Listing\\Dao',
     'Pimcore\\Model\\Translation\\Admin' => 'Pimcore\\Model\\Translation\\Admin\\Dao',
     'Pimcore\\Model\\Translation\\Website' => 'Pimcore\\Model\\Translation\\Website\\Dao',
+    'Pimcore\\Model\\Translation' => 'Pimcore\\Model\\Translation\\Dao',
+    'Pimcore\\Model\\Translation\\Listing' => 'Pimcore\\Model\\Translation\\Listing\\Dao',
     'Pimcore\\Model\\Glossary\\Listing' => 'Pimcore\\Model\\Glossary\\Listing\\Dao',
     'Pimcore\\Model\\Document\\Link' => 'Pimcore\\Model\\Document\\Link\\Dao',
     'Pimcore\\Model\\Document\\Hardlink' => 'Pimcore\\Model\\Document\\Hardlink\\Dao',
