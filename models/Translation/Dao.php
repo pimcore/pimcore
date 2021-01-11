@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByKey($key)
     {
-        $caseInsensitive = \Pimcore::getContainer()->getParameter('pimcore.config')['translations']['case_insensitive'];
+        $caseInsensitive = \Pimcore::getContainer()->getParameter('pimcore.config')['translations']['case_insensitive'] ?? false;
 
         $condition = '`key` = ?';
         if ($caseInsensitive) {

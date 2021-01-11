@@ -355,7 +355,9 @@ class TranslationController extends AdminController
 
             if ($request->get('xaction') == 'destroy') {
                 $t = Translation::getByKey($data['key'], $domain);
-                $t->delete();
+                if ($t instanceof Translation) {
+                    $t->delete();
+                }
 
                 return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
@@ -383,7 +385,7 @@ class TranslationController extends AdminController
 
                 return $this->adminJson(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
-                $t = Translation::getByKey($data['key']);
+                $t = Translation::getByKey($data['key'], $domain);
                 if ($t) {
                     throw new \Exception($translator->trans('identifier_already_exists', [], $domain));
                 }
