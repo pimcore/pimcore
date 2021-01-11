@@ -2055,7 +2055,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
                             // add the file with the relative path to the parent directory
                             if (stream_is_local($a->getFileSystemPath())) {
-                                $zip->addFile($a->getFileSystemPath(), preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()));
+                                $zip->addFile($pathInZip, $a->getRealFullPath());
                             } else {
                                 $zip->addFromString($pathInZip, file_get_contents($fileSystemPath));
                             }
