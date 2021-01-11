@@ -1842,4 +1842,7 @@ parameters:
 			count: 2
 			path: lib/Controller/KernelResponseEventInterface.php
 
-
+		-
+			message: "#^Method Pimcore\\\\Templating\\\\Model\\\\ViewModel\\:\\:getIterator\\(\\) should return ArrayIterator but returns Traversable\\<string, mixed\\>\\.$#"
+			count: 1
+			path: lib/Templating/Model/ViewModel.php
