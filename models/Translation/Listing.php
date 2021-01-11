@@ -20,7 +20,7 @@ namespace Pimcore\Model\Translation;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Translation\AbstractTranslation\Listing\Dao getDao()
+ * @method \Pimcore\Model\Translation\Listing\Dao getDao()
  * @method Model\Translation[] load()
  * @method Model\Translation current()
  * @method int getTotalCount()

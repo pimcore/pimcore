@@ -22,6 +22,7 @@ return [
     'Pimcore\\Model\\Search\\Backend\\Data' => 'Pimcore\\Model\\Search\\Backend\\Data\\Dao',
     'Pimcore\\Model\\Search\\Backend\\Data\\Listing' => 'Pimcore\\Model\\Search\\Backend\\Data\\Listing\\Dao',
     'Pimcore\\Model\\Translation' => 'Pimcore\\Model\\Translation\\Dao',
+    'Pimcore\\Model\\Translation\\Listing' => 'Pimcore\\Model\\Translation\\Listing\\Dao',
     'Pimcore\\Model\\Glossary\\Listing' => 'Pimcore\\Model\\Glossary\\Listing\\Dao',
     'Pimcore\\Model\\Document\\Link' => 'Pimcore\\Model\\Document\\Link\\Dao',
     'Pimcore\\Model\\Document\\Hardlink' => 'Pimcore\\Model\\Document\\Hardlink\\Dao',
