@@ -24,6 +24,7 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool\Console;
 use Pimcore\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\StatusInfo;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -275,6 +276,67 @@ class WorkflowController extends AdminController implements KernelControllerEven
         $response->headers->set('Content-Type', 'image/svg+xml');
 
         return $response;
+    }
+
+    /**
+     * Get custom HTML for the workflow transition submit modal, depending whether it is configured or not.
+     *
+     * @Route("/modal-custom-html", name="pimcore_admin_workflow_modal_custom_html", methods={"POST"})
+     *
+     * @param Request $request
+     * @param Registry $workflowRegistry
+     * @param Manager $manager
+     *
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function getModalCustomHtml(Request $request, Registry $workflowRegistry, Manager $manager) {
+
+        $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
+
+        if ($request->get('isGlobalAction') == 'true') {
+            $globalAction = $manager->getGlobalAction($workflow->getName(), $request->get('transition'));
+            if ($globalAction) {
+                return $this->customHtmlResponse($globalAction->getCustomHtmlService());
+            }
+
+        } elseif ($workflow->can($this->element, $request->get('transition'))) {
+
+            $enabledTransitions = $workflow->getEnabledTransitions($this->element);
+            $transition = null;
+            foreach ($enabledTransitions as $_transition) {
+                if ($_transition->getName() === $request->get('transition')) {
+                    $transition = $_transition;
+                }
+            }
+
+            if ($transition instanceof Transition) {
+                return $this->customHtmlResponse($transition->getCustomHtmlService());
+            }
+        }
+
+        $data = [
+            'success' => false,
+            'message' => 'error validating the action on this element, element cannot peform this action'
+        ];
+
+        return new JsonResponse($data);
+    }
+
+    private function customHtmlResponse(CustomHtmlServiceInterface $customHtmlService = null) : JsonResponse {
+        $data = [
+            'success' => true,
+            'customHtml' => []
+        ];
+
+        if ($customHtmlService) {
+            foreach (['top', 'center', 'bottom'] as $position) {
+                $data['customHtml'][$position] = $customHtmlService->renderHtmlForRequestedPosition($this->element, $position);
+            }
+        }
+
+        return new JsonResponse($data);
     }
 
     /**
