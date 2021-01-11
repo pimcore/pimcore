@@ -54,7 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return \Pimcore\Model\Translation\AbstractTranslation[]
+     * @return \Pimcore\Model\Translation[]
      */
     public function getTranslations()
     {
