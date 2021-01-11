@@ -41,13 +41,23 @@ class GlobalAction implements NotesAwareInterface
     /** @var string */
     private $workflowName;
 
+    /**
+     * @param string $name
+     * @param array $options
+     * @param ExpressionService $expressionService
+     * @param string $workflowName
+     * @param CustomHtmlServiceInterface|null $customHtmlService
+     *
+     */
     public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->name = $name;
         $this->options = $options;
         $this->expressionService = $expressionService;
         $this->workflowName = $workflowName;
-        $this->setCustomHtmlService($customHtmlService);
+        if ($customHtmlService instanceof CustomHtmlServiceInterface) {
+            $this->setCustomHtmlService($customHtmlService);
+        }
     }
 
     /**
@@ -96,6 +106,9 @@ class GlobalAction implements NotesAwareInterface
     }
 
     /**
+     * @param Workflow $workflow
+     * @param $subject
+     *
      * @return bool
      */
     public function isGuardValid(Workflow $workflow, $subject): bool
