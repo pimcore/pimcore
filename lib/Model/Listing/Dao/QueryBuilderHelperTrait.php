@@ -50,22 +50,48 @@ trait QueryBuilderHelperTrait
 
     private function applyConditionsToQueryBuilder(QueryBuilder $queryBuilder): void
     {
-        // @TODO
+        $condition = $this->model->getCondition();
+
+        if ($condition) {
+            $queryBuilder->where($condition);
+        }
     }
 
     private function applyGroupByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
-        // @TODO
+        $groupBy = $this->model->getGroupBy();
+        if ($groupBy) {
+            $queryBuilder->addGroupBy($groupBy);
+        }
     }
 
     private function applyOrderByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
-        // @TODO
+        $orderKey = $this->model->getOrderKey();
+        $order = $this->model->getOrder();
+
+        if (!empty($order) || !empty($orderKey)) {
+            $c = 0;
+            $lastOrder = $order[0] ?? null;
+
+            if (is_array($orderKey)) {
+                foreach ($orderKey as $key) {
+                    if (!empty($order[$c])) {
+                        $lastOrder = $order[$c];
+                    }
+
+                    $queryBuilder->addOrderBy($key, $lastOrder);
+
+                    $c++;
+                }
+            }
+        }
     }
 
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
-        // @TODO
+        $queryBuilder->setFirstResult($this->model->getOffset());
+        $queryBuilder->setMaxResults($this->model->getLimit());
     }
 
     private function getConditionParametersArray(): array
