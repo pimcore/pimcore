@@ -149,17 +149,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             return [];
         }
 
-        $brickTypes = [];
-        foreach ($this->brickGetters as $brickType) {
+        return array_filter($this->brickGetters, function($brickType) {
             $getter = 'get' . ucfirst($brickType);
-
-            // necessary because when data object gets serialized and later unserialized `$this->brickGetters` property gets restored to the state of serialization -> if bricks got removed meanwhile the getter might not exist anymore
-            if (method_exists($this, $getter)) {
-                $brickTypes[] = $brickType;
-            }
-        }
-
-        return $brickTypes;
+            return method_exists($this, $getter);
+        });
     }
 
     /**
