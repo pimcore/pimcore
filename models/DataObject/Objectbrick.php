@@ -135,7 +135,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public function getBrickGetters()
     {
-        return array_map(function($brickType) {
+        return array_map(static function($brickType) {
             return 'get'.ucfirst($brickType);
         }, $this->getAllowedBrickTypes());
     }
