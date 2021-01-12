@@ -277,7 +277,7 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by path (system field)
      *
-     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return static
@@ -292,7 +292,7 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by key (system field)
      *
-     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return static
@@ -307,7 +307,7 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by id (system field)
      *
-     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return static
@@ -322,7 +322,7 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by published (system field)
      *
-     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return static
@@ -337,7 +337,7 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by creationDate (system field)
      *
-     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return static
@@ -352,7 +352,7 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * Filter by modificationDate (system field)
      *
-     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return static

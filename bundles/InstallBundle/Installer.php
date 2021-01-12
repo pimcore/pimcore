@@ -27,12 +27,12 @@ use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -359,6 +359,11 @@ class Installer
             unset($dbConfig['driverOptions']);
         }
 
+        $dbConfig['mapping_types'] = [
+            'enum' => 'string',
+            'bit' => 'boolean',
+        ];
+
         $this->createConfigFiles([
             'doctrine' => [
                 'dbal' => [
@@ -375,7 +380,7 @@ class Installer
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment(true, 'dev');
-        $kernel = new \AppKernel($environment, true);
+        $kernel = new \App\Kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -414,12 +419,9 @@ class Installer
                 PIMCORE_PROJECT_ROOT . '/bin/console',
             ]);
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
+            $this->logger->info('Running {command} command', ['command' => $arguments]);
 
-            $this->logger->info('Running {command} command', ['command' => $parts]);
-
-            $process = new Process($parts);
+            $process = new Process($arguments);
             $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();
@@ -531,7 +533,6 @@ class Installer
 
         $writer->writeSystemConfig();
         $writer->writeDebugModeConfig();
-        $writer->generateParametersFile();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)
@@ -576,6 +577,9 @@ class Installer
                     $db->query($sql);
                 }
             }
+
+            $pdoCacheAdapter = new PdoAdapter($db);
+            $pdoCacheAdapter->createTable();
         }
 
         if ($this->importDatabaseData) {
@@ -627,7 +631,6 @@ class Installer
             $user->delete();
         }
 
-        /** @var User $user */
         $user = User::create([
             'parentId' => 0,
             'username' => $settings['username'],
@@ -708,7 +711,7 @@ class Installer
         ]);
         $db->insert('documents_page', [
             'id' => 1,
-            'controller' => 'AppBundle\\Controller\\DefaultController::defaultAction',
+            'controller' => 'App\\Controller\\DefaultController::defaultAction',
             'template' => '',
             'title' => '',
             'description' => '',

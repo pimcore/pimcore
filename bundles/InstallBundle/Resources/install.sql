@@ -55,22 +55,7 @@ CREATE TABLE `assets_metadata` (
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `cache`;
-CREATE TABLE `cache` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `data` longblob,
-  `mtime` INT(11) UNSIGNED DEFAULT NULL,
-  `expire` INT(11) UNSIGNED DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `cache_tags`;
-CREATE TABLE `cache_tags` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `tag` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`,`tag`),
-  INDEX `tag` (`tag`)
-) DEFAULT CHARSET=ascii;
+DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
@@ -323,6 +308,8 @@ CREATE TABLE `lock_keys` (
   PRIMARY KEY (`key_id`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `migration_versions`; /* table is created using doctrine:migrations:sync-metadata-storage command */
+
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -570,8 +557,8 @@ CREATE TABLE `translations_admin` (
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `translations_website`;
-CREATE TABLE `translations_website` (
+DROP TABLE IF EXISTS `translations_messages`;
+CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,

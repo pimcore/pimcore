@@ -26,7 +26,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -36,16 +35,16 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $fieldtype = 'video';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * Type for the column to query
@@ -62,14 +61,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Video';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -77,19 +69,22 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -97,13 +92,16 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -121,7 +119,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
-            $data->setOwner(null, '');
+            $data->_setOwner(null);
+            $data->_setOwnerFieldname('');
+            $data->_setOwnerLanguage(null);
 
             if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
@@ -167,7 +167,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($raw['data']) {
                 $video = new DataObject\Data\Video();
                 if (isset($params['owner'])) {
-                    $video->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                    $video->_setOwner($params['owner']);
+                    $video->_setOwnerFieldname($params['fieldname']);
+                    $video->_setOwnerLanguage($params['language'] ?? null);
                 }
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
@@ -629,5 +631,25 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
     }
 }

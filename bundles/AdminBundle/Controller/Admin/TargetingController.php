@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Event\Model\TargetGroupEvent;
 use Pimcore\Event\TargetGroupEvents;
@@ -49,7 +49,6 @@ class TargetingController extends AdminController implements KernelControllerEve
         $list->setOrderKey('prio');
         $list->setOrder('ASC');
 
-        /** @var Targeting\Rule $target */
         foreach ($list->load() as $target) {
             $targets[] = [
                 'id' => $target->getId(),
@@ -203,7 +202,6 @@ class TargetingController extends AdminController implements KernelControllerEve
             ];
         }
 
-        /** @var TargetGroup $targetGroup */
         foreach ($list->load() as $targetGroup) {
             $targetGroups[] = [
                 'id' => $targetGroup->getId(),
@@ -220,12 +218,12 @@ class TargetingController extends AdminController implements KernelControllerEve
      * @Route("/target-group/add", name="pimcore_admin_targeting_targetgroupadd", methods={"POST"})
      *
      * @param Request $request
-     * @param CoreHandlerInterface $cache
+     * @param CoreCacheHandler $cache
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupAddAction(Request $request, CoreHandlerInterface $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupAddAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
@@ -244,12 +242,12 @@ class TargetingController extends AdminController implements KernelControllerEve
      * @Route("/target-group/delete", name="pimcore_admin_targeting_targetgroupdelete", methods={"DELETE"})
      *
      * @param Request $request
-     * @param CoreHandlerInterface $cache
+     * @param CoreCacheHandler $cache
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupDeleteAction(Request $request, CoreHandlerInterface $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupDeleteAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
     {
         $success = false;
 
@@ -287,12 +285,12 @@ class TargetingController extends AdminController implements KernelControllerEve
      * @Route("/target-group/save", name="pimcore_admin_targeting_targetgroupsave", methods={"PUT"})
      *
      * @param Request $request
-     * @param CoreHandlerInterface $cache
+     * @param CoreCacheHandler $cache
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupSaveAction(Request $request, CoreHandlerInterface $cache, EventDispatcherInterface $eventDispatcher)
+    public function targetGroupSaveAction(Request $request, CoreCacheHandler $cache, EventDispatcherInterface $eventDispatcher)
     {
         $data = $this->decodeJson($request->get('data'));
 

@@ -37,9 +37,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public $fieldtype = 'urlSlug';
 
     /**
-     * @var int|null
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var int|null
@@ -55,14 +55,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public $availableSites;
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\UrlSlug[]';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -70,12 +63,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param int|null $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;
@@ -181,7 +177,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 if (strlen($slug) > 0) {
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
-                        throw new Model\Element\ValidationException('Found conflict with docucment path "' . $slug . '"');
+                        throw new Model\Element\ValidationException('Found conflict with document path "' . $slug . '"');
                     }
 
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
@@ -763,6 +759,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $result;
     }
 
+    public function supportsInheritance()
+    {
+        return false;
+    }
+
     /** @inheritDoc */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -775,8 +776,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return '?array';
     }
 
-    public function supportsInheritance()
+    public function getPhpdocInputType(): ?string
     {
-        return false;
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 }

@@ -521,7 +521,6 @@ class TestDataHelper extends Module
         $user = User::getByName($username);
 
         if (!$user) {
-            /** @var User $user */
             $user = User::create([
                 'parentId' => 0,
                 'username' => $username,
@@ -1193,9 +1192,7 @@ class TestDataHelper extends Module
 
         $this->assertCount(count($expected), $value);
 
-        /** @var DataObject\Data\ObjectMetadata $expectedMetadata */
         foreach ($expected as $i => $expectedMetadata) {
-            /** @var DataObject\Data\ObjectMetadata $valueMetadata */
             $valueMetadata = $value[$i];
 
             $this->assertEquals($expectedMetadata->getColumns(), $valueMetadata->getColumns());
@@ -1255,7 +1252,7 @@ class TestDataHelper extends Module
 
         Cache::clearAll();
         Runtime::clear();
-        $object = AbstractObject::getById($object->getId());
+        $object = DataObject::getById($object->getId());
         $value = $object->$getter();
         $value = $value->getItems();
 
@@ -1330,7 +1327,7 @@ class TestDataHelper extends Module
 
         Cache::clearAll();
         Runtime::clear();
-        $object = AbstractObject::getById($object->getId());
+        $object = DataObject::getById($object->getId());
         $value = $object->$getter();
         $value = $value->getItems();
 

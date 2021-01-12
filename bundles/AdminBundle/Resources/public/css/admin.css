@@ -1113,7 +1113,7 @@ span.warning {
 }
 
 [class^="pimcore_tag_"], [class*=" pimcore_tag_"] {
-    --deprecated: "Warning! pimcore_tag_* class selectors are deprecated and will be removed in Pimcore 7. Use .pimcore_editable_* instead";
+    --deprecated: "Warning! pimcore_tag_* class selectors are deprecated and will be removed in Pimcore 10. Use .pimcore_editable_* instead";
 }
 
 .pimcore_tag_wysiwyg,
@@ -2295,7 +2295,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 /** END notifications **/
 
 .x-body .sf-minitoolbar {
-    left:0;
+    left:12px;
     right:auto;
     bottom: 195px;
     background: #0C0F12;

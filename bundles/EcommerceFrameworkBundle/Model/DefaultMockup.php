@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Logger;
 
 class DefaultMockup implements ProductInterface
@@ -164,7 +163,7 @@ class DefaultMockup implements ProductInterface
     {
         Logger::notice("Getting original object {$this->id}.");
 
-        return \Pimcore\Model\DataObject\AbstractObject::getById($this->id);
+        return \Pimcore\Model\DataObject::getById($this->id);
     }
 
     /**
@@ -192,8 +191,6 @@ class DefaultMockup implements ProductInterface
     /**
      * returns array of categories.
      * has to be overwritten either in pimcore object or mapped sub class.
-     *
-     * @throws UnsupportedException
      *
      * @return array
      */

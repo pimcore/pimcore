@@ -23,6 +23,8 @@ use Pimcore\Model;
  * @internal
  *
  * @property \Pimcore\Model\Translation\Website\Listing $model
+ *
+ * @deprecated
  */
 class Dao extends Model\Translation\AbstractTranslation\Listing\Dao
 {

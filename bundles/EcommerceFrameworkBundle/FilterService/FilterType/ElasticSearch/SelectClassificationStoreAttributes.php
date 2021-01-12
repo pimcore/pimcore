@@ -85,10 +85,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
         $keysField = $field . '.keys';
@@ -118,13 +115,13 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
 
         $keyCollection = $this->sortResult($filterDefinition, $keyCollection);
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'label' => $filterDefinition->getLabel(),
             'fieldname' => $field,
             'currentValue' => $currentFilter[$field],
             'values' => $keyCollection,
             'metaData' => $filterDefinition->getMetaData(),
-        ]);
+        ];
     }
 
     /**

@@ -91,7 +91,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     createLayout: function (readOnly) {
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
 
@@ -946,6 +946,3 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         return this.getValue();
     }
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.tags.multihrefMetadata = pimcore.object.tags.advancedManyToManyRelation;

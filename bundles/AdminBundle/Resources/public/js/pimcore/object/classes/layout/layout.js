@@ -92,16 +92,26 @@ pimcore.object.classes.layout.layout = Class.create({
 
         items = items.concat([
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
             },
             {
                 xtype: "checkbox",

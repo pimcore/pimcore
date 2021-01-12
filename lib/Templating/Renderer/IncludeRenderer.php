@@ -108,10 +108,6 @@ class IncludeRenderer
                     $cacheParams['target_group'] = $include->getUseTargetGroup();
                 }
 
-                if (Frontend::hasWebpSupport()) {
-                    $cacheParams['webp'] = true;
-                }
-
                 $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
                 if ($content = Cache::load($cacheKey)) {
                     return $content;

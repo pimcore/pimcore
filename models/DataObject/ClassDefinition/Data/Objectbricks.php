@@ -33,13 +33,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public $fieldtype = 'objectbricks';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\' . Objectbrick::class;
-
-    /**
      * @var array
      */
     public $allowedTypes = [];
@@ -271,10 +264,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
             }
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
-                $backup = DataObject\AbstractObject::getGetInheritedValues();
-                DataObject\AbstractObject::setGetInheritedValues(true);
+                $backup = DataObject::getGetInheritedValues();
+                DataObject::setGetInheritedValues(true);
                 $parentItem = $parent->{'get' . ucfirst($this->getName())}()->$getter();
-                DataObject\AbstractObject::setGetInheritedValues($backup);
+                DataObject::setGetInheritedValues($backup);
                 if (!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $params);
                 }
@@ -966,5 +959,25 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
             }
         }
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Objectbrick::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Objectbrick::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Objectbrick::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Objectbrick::class . '|null';
     }
 }

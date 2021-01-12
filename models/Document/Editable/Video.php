@@ -392,7 +392,7 @@ class Video extends Model\Document\Editable
                     return $this->getProgressCode($image);
                 }
 
-                return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
+                return $this->getErrorCode('The video conversion failed, please see the log files in /var/log for more details.');
             }
 
             return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailConfig . "'");

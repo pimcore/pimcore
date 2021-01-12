@@ -168,7 +168,7 @@ class TranslationController extends AdminController
         $tableName = call_user_func($class . '\\Dao::getTableName');
 
         // clear translation cache
-        Translation\AbstractTranslation::clearDependentCache();
+        Translation::clearDependentCache();
 
         if ($admin) {
             $list = new Translation\Admin\Listing();
@@ -708,13 +708,13 @@ class TranslationController extends AdminController
                     if ($el instanceof DataObject\AbstractObject) {
                         // inlcude variants
                         $list->setObjectTypes(
-                            [DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
-                                DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
-                                DataObject\AbstractObject::OBJECT_TYPE_FOLDER, ]
+                            [DataObject::OBJECT_TYPE_VARIANT,
+                                DataObject::OBJECT_TYPE_OBJECT,
+                                DataObject::OBJECT_TYPE_FOLDER, ]
                         );
                     }
                     $list->setCondition(
-                        ($el instanceof DataObject\AbstractObject ? 'o_' : '') . 'path LIKE ?',
+                        ($el instanceof DataObject ? 'o_' : '') . 'path LIKE ?',
                         [$list->escapeLike($el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '')) . '%']
                     );
                     $childs = $list->load();

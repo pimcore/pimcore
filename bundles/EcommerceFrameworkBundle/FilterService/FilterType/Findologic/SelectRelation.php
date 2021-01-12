@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFil
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation;
 
 class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
@@ -33,11 +33,11 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
 
@@ -53,12 +53,12 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         foreach ($values as $v) {
             if (empty($availableRelations) || $availableRelations[$v['label']] === true) {
-                $objects[$v['label']] = AbstractObject::getById($v['label']);
+                $objects[$v['label']] = DataObject::getById($v['label']);
             }
         }
         Logger::info('done.');
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
@@ -66,7 +66,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'objects' => $objects,
             'fieldname' => $field,
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     /**

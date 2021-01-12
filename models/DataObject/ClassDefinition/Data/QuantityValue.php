@@ -30,7 +30,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -40,12 +39,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public $fieldtype = 'quantityValue';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
     public $unitWidth;
 
@@ -96,14 +95,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     ];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\QuantityValue';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -111,15 +103,18 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getUnitWidth()
     {
@@ -127,10 +122,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $unitWidth
+     * @param string|int $unitWidth
      */
     public function setUnitWidth($unitWidth)
     {
+        if (is_numeric($unitWidth)) {
+            $unitWidth = (int)$unitWidth;
+        }
         $this->unitWidth = $unitWidth;
     }
 
@@ -262,7 +260,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             $quantityValue = new Model\DataObject\Data\QuantityValue($value !== null ? (float)$value : null, $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $quantityValue->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $quantityValue->_setOwner($params['owner']);
+                $quantityValue->_setOwnerFieldname($params['fieldname']);
+                $quantityValue->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $quantityValue;
@@ -415,11 +415,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Model\DataObject\Data\QuantityValue) {
-            if ($unit = $data->getUnit()) {
-                return $data->getValue() . ' ' . $unit->getAbbreviation();
-            }
-
-            return $data->getValue();
+            return (string) $data;
         }
 
         return '';
@@ -572,7 +568,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                     $list->setOrderKey('abbreviation');
                     $list->setOrder('asc');
                     $list = $list->load();
-                    /** @var Model\DataObject\QuantityValue\Unit $item */
                     foreach ($list as $item) {
                         $table[$item->getId()] = $item;
                     }
@@ -700,5 +695,25 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return $unitId;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 }

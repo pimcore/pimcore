@@ -16,7 +16,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
     allowedInType: 'fieldcollection',
     disallowedDataTypes: ["reverseManyToManyObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
-        "objectsMetadata"],
+        "advancedManyToManyObjectRelation"],
 
     uploadRoute: 'pimcore_admin_dataobject_class_importfieldcollection',
     exportRoute: 'pimcore_admin_dataobject_class_exportfieldcollection',
@@ -160,7 +160,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 if (res.message) {
                     pimcore.helpers.showNotification(t("error"), res.message, "error");
                 } else {
-                    throw "save was not successful, see log files in /var/logs";
+                    throw "save was not successful, see log files in /var/log";
                 }
             }
         } catch (e) {

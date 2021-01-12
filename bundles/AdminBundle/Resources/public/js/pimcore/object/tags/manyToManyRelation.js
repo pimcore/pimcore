@@ -101,9 +101,8 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     },
 
     getLayoutEdit: function () {
-
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
         var cls = 'object_field object_field_type_' + this.type;
@@ -739,6 +738,3 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     }
 
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.tags.multihref = pimcore.object.tags.manyToManyRelation;

@@ -7,7 +7,7 @@ The main benefit is that you have only one single translator for all your transl
 
 It automatically uses the locale specified on a document or from a fallback mechanism. 
 
-For more information, please also check out [Symfony's Translations Component](http://symfony.com/doc/3.4/translation.html). 
+For more information, please also check out [Symfony's Translations Component](http://symfony.com/doc/current/translation.html). 
 
 ![Shared Translations](../img/localization-translations.png)
 
@@ -19,14 +19,6 @@ Translations are case sensitive by default. You can
 reconfigure Pimcore to handle website and admin translations as case insensitive, however as this implies a performance
 hit (translations might be looked up twice) and it does not  conform with Symfony's translators you're encouraged to reference
 translation keys with the same casing as they were saved.
-
-You can turn case insensitive handling on by setting the following config setting (see [#2005](https://github.com/pimcore/pimcore/pull/2005)):
-  
-```yaml
-pimcore:
-  translations:
-      case_insensitive: true
-```
 
 ## Working with Shared Translations / the Translator in Code
   

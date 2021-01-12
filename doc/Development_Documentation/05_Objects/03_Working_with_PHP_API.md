@@ -3,7 +3,7 @@
 Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities 
 provided by Pimcore and for each Pimcore object class Pimcore generates corresponding PHP classes for working
 with these objects via a comfortable PHP API and take full advantage of a IDE (e.g. code completion etc.). 
-    
+
 ## CRUD Operations
 The following code snippet indicates how to access, create and modify an object programmatically:
 
@@ -46,7 +46,7 @@ $object = DataObject::getByPath("/path/to/the/object");
 $myObject->setName("My Name");
 $myObject->save();
 
- 
+
 //deleting objects
 $city->delete();
 ```
@@ -314,10 +314,10 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 <?php
 
 // revert to the default API behaviour, and setUnpublished can be used as usually
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(true);
+\Pimcore\Model\DataObject::setHideUnpublished(true);
 
 // force to return all objects including unpublished ones, even if setUnpublished is set to false
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(false);
+\Pimcore\Model\DataObject::setHideUnpublished(false);
 ```
 
 ### Filter Objects by attributes from Field Collections

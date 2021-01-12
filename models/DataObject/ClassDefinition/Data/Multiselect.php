@@ -26,7 +26,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -43,14 +42,14 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public $options;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -87,13 +86,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @var bool
      */
     public $dynamicOptions = false;
@@ -119,7 +111,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -127,19 +119,22 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param array $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -147,13 +142,16 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param array $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -623,5 +621,25 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         }
 
         return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'array|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'array|null';
     }
 }

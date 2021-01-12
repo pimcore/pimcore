@@ -36,16 +36,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $fieldtype = 'manyToManyObjectRelation';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -58,13 +58,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @var string
      */
     public $queryColumnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
 
     /**
      * @var bool
@@ -298,7 +291,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -306,19 +299,22 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -326,13 +322,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -352,6 +351,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
+
             foreach ($data as $o) {
                 if (empty($o)) {
                     continue;
@@ -472,7 +473,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -673,7 +674,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }

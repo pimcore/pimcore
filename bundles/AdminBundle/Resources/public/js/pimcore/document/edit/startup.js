@@ -96,7 +96,7 @@ Ext.onReady(function () {
     try {
         //TODO EXT5
         Ext.getBody().applyStyles("min-height:" +
-        parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px");
+            parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px");
     } catch (e) {
         console.log(e);
     }
@@ -110,7 +110,7 @@ Ext.onReady(function () {
     }
 
     body.on("click", function () {
-       parent.Ext.menu.MenuMgr.hideAll();
+        parent.Ext.menu.MenuMgr.hideAll();
         editWindow.toggleTagHighlighting(false);
     });
 
@@ -118,26 +118,33 @@ Ext.onReady(function () {
     Ext.MessageBox.minPromptWidth = 500;
 
     function getEditable(definition) {
+        let type = definition.type
         let name = definition.name;
         let inherited = false;
         if(typeof definition["inherited"] != "undefined") {
             inherited = definition["inherited"];
         }
 
-        if (definition.inDialogBox && typeof pimcore.document.editables[definition.type].prototype['render'] !== 'function') {
+        let EditableClass = pimcore.document.editables[type];
+
+        if (typeof EditableClass !== 'function') {
+            throw 'Editable of type `' + type + '` with name `' + name + '` could not be found.';
+        }
+
+        if (definition.inDialogBox && typeof EditableClass.prototype['render'] !== 'function') {
             throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
         }
 
-        if(in_array(name,editableNames)) {
+        if (in_array(name, editableNames)) {
             pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + name, "error");
         }
         editableNames.push(name);
 
-        let editable = new pimcore.document.editables[definition.type](definition.id, name, definition.config, definition.data, inherited);
+        let editable = new EditableClass(definition.id, name, definition.config, definition.data, inherited);
         editable.setRealName(definition.realName);
         editable.setInDialogBox(definition.inDialogBox);
 
-        if(!definition.inDialogBox) {
+        if (!definition.inDialogBox) {
             if (typeof editable['render'] === 'function') {
                 editable.render();
             }
@@ -188,18 +195,20 @@ Ext.onReady(function () {
         var tmpEl;
         for (var e=0; e<editablesForTooltip.length; e++) {
             tmpEl = Ext.get(editablesForTooltip[e]);
-            if(tmpEl) {
-                if(tmpEl.hasCls("pimcore_editable_inc") || tmpEl.hasCls("pimcore_editable_href")
-                                    || tmpEl.hasCls("pimcore_editable_image") || tmpEl.hasCls("pimcore_editable_renderlet")
-                                    || tmpEl.hasCls("pimcore_editable_snippet")) {
-                    new Ext.ToolTip({
-                        target: tmpEl,
-                        showDelay: 100,
-                        hideDelay: 0,
-                        trackMouse: true,
-                        html: t("click_right_for_more_options")
-                    });
-                }
+
+            if (tmpEl && tmpEl.hasCls("pimcore_editable_inc")
+                || tmpEl.hasCls("pimcore_editable_href")
+                || tmpEl.hasCls("pimcore_editable_image")
+                || tmpEl.hasCls("pimcore_editable_renderlet")
+                || tmpEl.hasCls("pimcore_editable_snippet")
+            ) {
+                new Ext.ToolTip({
+                    target: tmpEl,
+                    showDelay: 100,
+                    hideDelay: 0,
+                    trackMouse: true,
+                    html: t("click_right_for_more_options")
+                });
             }
         }
 
@@ -219,7 +228,7 @@ Ext.onReady(function () {
                             handler: function (item) {
                                 item.parentMenu.destroy();
                                 pimcore.helpers.openDocument(this.getAttribute("pimcore_id"),
-                                                                                this.getAttribute("pimcore_type"));
+                                    this.getAttribute("pimcore_type"));
                             }.bind(this)
                         }));
 
@@ -241,8 +250,3 @@ Ext.onReady(function () {
         editWindow.loadMask.hide();
     }
 });
-
-
-
-
-

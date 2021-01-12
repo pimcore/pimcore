@@ -4,6 +4,7 @@ namespace Pimcore\Tests\Util;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
@@ -159,7 +160,7 @@ class TestHelper
                 foreach ($editables as $key => $value) {
                     if ($value instanceof Document\Editable\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->getType() . '_' . $value->getId();
                     } elseif (!$value instanceof Document\Editable\Block) {
                         $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
@@ -765,7 +766,7 @@ class TestHelper
         }
 
         if ($cleanObjects) {
-            static::cleanUpTree(AbstractObject::getById(1), 'object');
+            static::cleanUpTree(DataObject::getById(1), 'object');
             codecept_debug(sprintf('Number of objects is: %d', static::getObjectCount()));
         }
 

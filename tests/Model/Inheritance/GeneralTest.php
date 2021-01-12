@@ -3,7 +3,7 @@
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Db\Connection;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Inheritance;
@@ -14,7 +14,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class GeneralTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -34,7 +34,6 @@ class GeneralTest extends ModelTestCase
     {
         // According to the bootstrap file en and de are valid website languages
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -43,7 +42,6 @@ class GeneralTest extends ModelTestCase
         $one->setNormalInput('parenttext');
         $one->save();
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
@@ -54,8 +52,8 @@ class GeneralTest extends ModelTestCase
         $id1 = $one->getId();
         $id2 = $two->getId();
 
-        $one = AbstractObject::getById($id1);
-        $two = AbstractObject::getById($id2);
+        $one = DataObject::getById($id1);
+        $two = DataObject::getById($id2);
 
         $this->assertEquals('parenttext', $one->getNormalInput());
         // not inherited
@@ -64,7 +62,7 @@ class GeneralTest extends ModelTestCase
         // null it out
         $two->setNormalInput(null);
         $two->save();
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals('parenttext', $two->getNormalInput());
 
         $list = new Inheritance\Listing();
@@ -76,7 +74,7 @@ class GeneralTest extends ModelTestCase
         // set it back
         $two->setNormalInput('childtext');
         $two->save();
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
 
         $list = new Inheritance\Listing();
         $list->setCondition("normalinput LIKE '%parenttext%'");
@@ -87,19 +85,19 @@ class GeneralTest extends ModelTestCase
         // null it out
         $two->setNormalInput(null);
         $two->save();
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals('parenttext', $two->getNormalInput());
 
         // disable inheritance
-        $getInheritedValues = AbstractObject::getGetInheritedValues();
-        AbstractObject::setGetInheritedValues(false);
+        $getInheritedValues = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(false);
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals(null, $two->getNormalInput());
 
         // enable inheritance
-        AbstractObject::setGetInheritedValues($getInheritedValues);
-        $two = AbstractObject::getById($id2);
+        DataObject::setGetInheritedValues($getInheritedValues);
+        $two = DataObject::getById($id2);
         $this->assertEquals('parenttext', $two->getNormalInput());
 
         // now move it out
@@ -121,7 +119,7 @@ class GeneralTest extends ModelTestCase
         $one->setNormalInput('parenttext2');
         $one->save();
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         // check that child objects has been updated as well
         $this->assertEquals('parenttext2', $two->getNormalInput());
 
@@ -145,7 +143,6 @@ class GeneralTest extends ModelTestCase
         $target->setSomeAttribute('Some content 1');
         $target->save();
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -157,7 +154,6 @@ class GeneralTest extends ModelTestCase
 
         // create child "two", inherit relation from "one"
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('one');
         $two->setParentId($one->getId());
@@ -166,29 +162,29 @@ class GeneralTest extends ModelTestCase
         $two->setNormalInput('parenttext');
         $two->save();
 
-        $inheritanceEnabled = AbstractObject::getGetInheritedValues();
+        $inheritanceEnabled = DataObject::getGetInheritedValues();
 
-        AbstractObject::setGetInheritedValues(true);
+        DataObject::setGetInheritedValues(true);
         $fetchedTarget = $two->getRelation();
         $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
 
-        AbstractObject::setGetInheritedValues(false);
+        DataObject::setGetInheritedValues(false);
         $fetchedTarget = $two->getRelation();
         $this->assertNull($fetchedTarget, 'target should not be inherited');
 
         // enable inheritance and set the target
-        AbstractObject::setGetInheritedValues(true);
+        DataObject::setGetInheritedValues(true);
         $two = Concrete::getById($two->getId(), true);
         $two->setRelation($target);
         $two->save();
 
         // disable inheritance and check that the relation has been set on "two"
-        AbstractObject::setGetInheritedValues(false);
+        DataObject::setGetInheritedValues(false);
         $two = Concrete::getById($two->getId(), true);
         $fetchedTarget = $two->getRelation();
         $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
 
-        AbstractObject::setGetInheritedValues($inheritanceEnabled);
+        DataObject::setGetInheritedValues($inheritanceEnabled);
     }
 
     /**

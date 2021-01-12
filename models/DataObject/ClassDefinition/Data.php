@@ -19,9 +19,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
-use ProxyManager\Proxy\LazyLoadingInterface;
 
-abstract class Data
+abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
@@ -54,13 +53,6 @@ abstract class Data
      * @var int
      */
     public $index;
-
-    /**
-     * @deprecated implement getPhpdocInputType() and getPhpdocReturnType() instead
-     *
-     * @var string
-     */
-    public $phpdocType;
 
     /**
      * @var bool
@@ -388,16 +380,6 @@ abstract class Data
     }
 
     /**
-     * @deprecated use getPhpdocInputType() and getPhpdocReturnType() instead
-     *
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->phpdocType;
-    }
-
-    /**
      *
      * @return string
      */
@@ -627,54 +609,6 @@ abstract class Data
     }
 
     /**
-     * @return string|null
-     */
-    public function getParameterTypeDeclaration(): ?string
-    {
-        if ($this->getPhpdocInputType()) {
-            return '?' . $this->getPhpdocInputType();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getReturnTypeDeclaration(): ?string
-    {
-        if ($this->getPhpdocReturnType()) {
-            return '?' . $this->getPhpdocReturnType();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPhpdocInputType(): ?string
-    {
-        if ($this->getPhpdocType()) {
-            return $this->getPhpdocType();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPhpdocReturnType(): ?string
-    {
-        if ($this->getPhpdocType()) {
-            return $this->getPhpdocType();
-        }
-
-        return null;
-    }
-
-    /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
      * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
@@ -685,7 +619,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -747,7 +681,7 @@ abstract class Data
 
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -815,7 +749,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($brickClass->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -865,7 +799,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($brickClass->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -934,7 +868,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -976,7 +910,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -1036,7 +970,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -1087,7 +1021,7 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
-        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -1317,102 +1251,6 @@ abstract class Data
     public function getUnique()
     {
         return false;
-    }
-
-    /**
-     *  @internal
-     *
-     * @param mixed $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
-     *
-     * @throws \Exception
-     */
-    protected function setDataToObject($data, $container, $params = [])
-    {
-        $context = $params['context'] ?? null;
-
-        if (isset($context['containerType'])) {
-            if ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'block') {
-                if ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield) {
-                    $fieldname = $context['fieldname'];
-
-                    if ($container instanceof DataObject\Concrete) {
-                        $containerGetter = 'get' . ucfirst($fieldname);
-                        $parentContainer = $container->$containerGetter();
-
-                        if ($parentContainer) {
-                            $originalIndex = $context['oIndex'] ?? null;
-
-                            // field collection or block items
-                            if ($originalIndex !== null) {
-                                if ($context['containerType'] === 'block') {
-                                    $items = $parentContainer;
-                                } else {
-                                    $items = $parentContainer->getItems();
-                                }
-
-                                if ($items && count($items) > $originalIndex) {
-                                    $item = $items[$originalIndex];
-
-                                    if ($context['containerType'] === 'block') {
-                                        $data = $item[$this->getName()] ?? null;
-                                        if ($data instanceof DataObject\Data\BlockElement) {
-                                            $data->setData($data);
-                                        }
-                                    } else {
-                                        if ($container instanceof DataObject\Localizedfield) {
-                                            $item->setLocalizedValue($this->getName(), $data, $params['language']);
-                                        } else {
-                                            $setter = 'set' . ucfirst($this->getName());
-                                            $item->$setter($data);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } elseif ($container instanceof DataObject\Localizedfield) {
-                        $container->setLocalizedValue($this->getName(), $data, $params['language']);
-                    }
-                }
-            } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield)) {
-                $fieldname = $context['fieldname'];
-
-                if ($container instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $parentContainer = $container->$containerGetter();
-                    if ($parentContainer) {
-                        $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        $brickData = $parentContainer->$brickGetter();
-
-                        if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
-                            $brickData->set('localizedfields', $data);
-                        }
-                    }
-                } elseif ($container instanceof DataObject\Localizedfield) {
-                    $container->setLocalizedValue($this->getName(), $data, $params['language']);
-                }
-            } elseif ($context['containerType'] === 'classificationstore') {
-                $fieldname = $context['fieldname'];
-                $getter = 'get' . ucfirst($fieldname);
-                if (method_exists($container, $getter)) {
-                    $groupId = $context['groupId'];
-                    $keyId = $context['keyId'];
-                    $language = $context['language'];
-
-                    /** @var DataObject\Classificationstore $classificationStoreData */
-                    $classificationStoreData = $container->$getter();
-                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyId, $data, $language);
-                }
-            }
-        }
-
-        $setter = 'set' . ucfirst($this->getName());
-        if (method_exists($container, $setter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
-            $container->$setter($data);
-        } elseif ($container instanceof DataObject\Localizedfield) {
-            $container->setLocalizedValue($this->getName(), $data, $params['language']);
-        }
     }
 
     /**
@@ -1661,14 +1499,14 @@ abstract class Data
      */
     public function isEqual($oldValue, $newValue)
     {
-        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Implement `' . DataObject\ClassDefinition\Data\EqualComparisonInterface::class . '` instead.', E_USER_DEPRECATED);
 
         return false;
     }
 
     /**
-     * @param LazyLoadingInterface $object
+     * @param DataObject\Concrete $object
      */
     public function markLazyloadedFieldAsLoaded($object)
     {
@@ -1688,9 +1526,9 @@ abstract class Data
     }
 
     /**
-     * @param DataObject\Listing            $listing
-     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
-     * @param string                        $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @param DataObject\Listing $listing
+     * @param string|int|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return DataObject\Listing
      */

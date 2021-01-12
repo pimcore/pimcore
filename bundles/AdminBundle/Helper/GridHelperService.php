@@ -593,7 +593,7 @@ class GridHelperService
         if (!empty($requestParams['query'])) {
             $query = $this->filterQueryParam($requestParams['query']);
             if (!empty($query)) {
-                $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
+                $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE maintype = "object" AND MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
             }
         }
 
@@ -643,7 +643,7 @@ class GridHelperService
         }
 
         if ($class->getShowVariants()) {
-            $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+            $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT]);
         }
 
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureAndSlugFilters);

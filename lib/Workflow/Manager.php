@@ -24,6 +24,7 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
@@ -95,13 +96,13 @@ class Manager
      * @param string $workflowName
      * @param string $action
      * @param array $actionConfig
-     *
+     * @param CustomHtmlServiceInterface $customHtmlService
      * @return $this
      */
-    public function addGlobalAction(string $workflowName, string $action, array $actionConfig)
+    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
-        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName);
+        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName, $customHtmlService);
 
         return $this;
     }

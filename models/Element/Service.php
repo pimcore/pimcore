@@ -261,7 +261,7 @@ class Service extends Model\AbstractModel
     public static function getDependedElement($config)
     {
         if ($config['type'] == 'object') {
-            return AbstractObject::getById($config['id']);
+            return DataObject::getById($config['id']);
         } elseif ($config['type'] == 'asset') {
             return Asset::getById($config['id']);
         } elseif ($config['type'] == 'document') {
@@ -278,7 +278,7 @@ class Service extends Model\AbstractModel
      */
     public static function doHideUnpublished($element)
     {
-        return ($element instanceof AbstractObject && AbstractObject::doHideUnpublished())
+        return ($element instanceof AbstractObject && DataObject::doHideUnpublished())
             || ($element instanceof Document && Document::doHideUnpublished());
     }
 
@@ -313,7 +313,7 @@ class Service extends Model\AbstractModel
      */
     public static function filterUnpublishedAdvancedElements($data)
     {
-        if (DataObject\AbstractObject::doHideUnpublished() && is_array($data)) {
+        if (DataObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
             $mapping = [];
             foreach ($data as $advancedElement) {
@@ -404,7 +404,7 @@ class Service extends Model\AbstractModel
         if ($type == 'asset') {
             $element = Asset::getByPath($path);
         } elseif ($type == 'object') {
-            $element = AbstractObject::getByPath($path);
+            $element = DataObject::getByPath($path);
         } elseif ($type == 'document') {
             $element = Document::getByPath($path);
         }
@@ -510,7 +510,7 @@ class Service extends Model\AbstractModel
         if ($type === 'asset') {
             $element = Asset::getById($id, $force);
         } elseif ($type === 'object') {
-            $element = AbstractObject::getById($id, $force);
+            $element = DataObject::getById($id, $force);
         } elseif ($type === 'document') {
             $element = Document::getById($id, $force);
         }
@@ -795,7 +795,7 @@ class Service extends Model\AbstractModel
                             $data->setKey($originalElement->getKey());
                         }
 
-                        if (!DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
+                        if (!DataObject::doNotRestoreKeyAndPath()) {
                             $data->setPath($originalElement->getRealPath());
                         }
                     }

@@ -25,43 +25,20 @@ use Pimcore\Model;
  * @method Model\Translation\AbstractTranslation current()
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
+ *
+ * @deprecated
  */
-class Listing extends Model\Listing\AbstractListing
+class Listing extends \Pimcore\Model\Translation\Listing
 {
-    /** @var int maximum number of cacheable items */
-    protected static $cacheLimit = 5000;
-
     /**
-     * @return \Pimcore\Model\Translation\AbstractTranslation[]
-     */
-    public function getTranslations()
-    {
-        return $this->getData();
-    }
-
-    /**
-     * @param array $translations
+     * @var array|null
      *
-     * @return static
+     * @deprecated use getter/setter methods or $this->data
      */
-    public function setTranslations($translations)
-    {
-        return $this->setData($translations);
-    }
+    protected $translations = null;
 
-    /**
-     * @return int
-     */
-    public static function getCacheLimit()
+    public function __construct()
     {
-        return self::$cacheLimit;
-    }
-
-    /**
-     * @param int $cacheLimit
-     */
-    public static function setCacheLimit($cacheLimit)
-    {
-        self::$cacheLimit = $cacheLimit;
+        $this->translations = & $this->data;
     }
 }

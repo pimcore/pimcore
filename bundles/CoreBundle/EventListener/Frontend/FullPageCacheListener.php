@@ -263,7 +263,7 @@ class FullPageCacheListener
         } catch (\Exception $e) {
             Logger::error($e);
 
-            $this->disable('ERROR: Exception (see log files in /var/logs)');
+            $this->disable('ERROR: Exception (see log files in /var/log)');
 
             return;
         }
@@ -294,10 +294,6 @@ class FullPageCacheListener
             if (is_array($tags)) {
                 $appendKey = '_' . implode('_', $tags);
             }
-        }
-
-        if (Tool\Frontend::hasWebpSupport()) {
-            $appendKey .= 'webp';
         }
 
         if ($request->isXmlHttpRequest()) {

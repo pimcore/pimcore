@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
@@ -36,13 +35,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @var string
      */
     public $fieldtype = 'localizedfields';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Localizedfield';
 
     /**
      * @var array
@@ -70,14 +62,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $title;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -585,7 +577,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function preGetData($container, $params = [])
     {
         if (!$container instanceof DataObject\Concrete && !$container instanceof DataObject\Fieldcollection\Data\AbstractData
-                    && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
             throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
@@ -820,19 +812,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param int|string|null $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -914,19 +909,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param int|string|null $width
+     * @param int|string $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|string
      */
     public function getWidth()
     {
@@ -965,8 +963,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             if ($data->getObject()->getClass()->getAllowInherit()) {
                                 //try again with parent data when inheritance is activated
                                 try {
-                                    $getInheritedValues = AbstractObject::doGetInheritedValues();
-                                    AbstractObject::setGetInheritedValues(true);
+                                    $getInheritedValues = DataObject::doGetInheritedValues();
+                                    DataObject::setGetInheritedValues(true);
 
                                     $value = null;
                                     $context = $data->getContext();
@@ -983,7 +981,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     }
 
                                     $fd->checkValidity($value, $omitMandatoryCheck);
-                                    AbstractObject::setGetInheritedValues($getInheritedValues);
+                                    DataObject::setGetInheritedValues($getInheritedValues);
                                 } catch (\Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
@@ -1369,6 +1367,26 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function setTabPosition($tabPosition): void
     {
         $this->tabPosition = $tabPosition;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Localizedfield::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Localizedfield::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\'. DataObject\Localizedfield::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Localizedfield::class . '|null';
     }
 
     /**

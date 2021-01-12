@@ -28,7 +28,7 @@
     "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
-    "php": "^7.3 || ^8.0 ",
+    "php": "^7.4 || ^8.0 ",
     "ext-SimpleXML": "*",
     "ext-dom": "*",
     "ext-exif": "*",
@@ -50,7 +50,7 @@
     "defuse/php-encryption": "^2.2.0",
     "doctrine/annotations": "^1.6.0",
     "doctrine/collections": "^1.5.0",
-    "doctrine/common": "^2.13.0",
+    "doctrine/persistence": "^2.1.0",
     "doctrine/dbal": "^2.11.0",
     "doctrine/doctrine-bundle": "^2.2.1",
     "doctrine/doctrine-migrations-bundle": "^3.0.1",
@@ -69,7 +69,7 @@
     "myclabs/deep-copy": "^1.7",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
-    "ocramius/package-versions": "^1.2",
+    "ocramius/package-versions": "^2.0",
     "pear/net_url2": "^2.2",
     "phive/twig-extensions-deferred": "^2.0",
     "matomo/device-detector": "^3.9",
@@ -82,7 +82,7 @@
     "symfony/contracts": "^2.0",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.5.0",
-    "symfony/symfony": "^5.1.1",
+    "symfony/symfony": "^5.2.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.10",
@@ -94,8 +94,8 @@
     "laminas/laminas-servicemanager": "^3.2",
     "scheb/two-factor-bundle": "^3.26",
     "phpoffice/phpspreadsheet": "^1.9",
-    "html2text/html2text": "^4.2.1",
-    "webmozarts/console-parallelization": "^1.1.0",
+    "soundasleep/html2text": "^1.1.0",
+    "webmozarts/console-parallelization": "^1.2.0",
     "onnov/detect-encoding": "^1.2"
   },
   "conflict": {
@@ -103,16 +103,16 @@
     "symfony/monolog-bundle": "3.6.0"
   },
   "require-dev": {
-    "cache/integration-tests": "^0.16.0",
+    "cache/integration-tests": "dev-master",
     "codeception/codeception": "^4.1.12",
-    "codeception/module-symfony": "^1.3.0",
-    "codeception/phpunit-wrapper": "^7.8.1",
+    "codeception/module-symfony": "^1.6.0",
+    "codeception/phpunit-wrapper": "^9",
     "phpstan/phpstan": "^0.12.56",
     "phpstan/phpstan-symfony": "^0.12.11",
-    "phpunit/phpunit": "^7.5",
+    "phpunit/phpunit": "^9",
     "heidelpay/heidelpay-php": "^1.2.5.1",
     "klarna/checkout": "^3.0.0",
-    "elasticsearch/elasticsearch": "^6",
+    "elasticsearch/elasticsearch": "^6 || ^7",
     "paypal/paypal-checkout-sdk": "^1",
     "mpay24/mpay24-php": "^4.2",
     "composer/composer": "*"
@@ -150,7 +150,7 @@
       "Pimcore\\Tests\\": "tests"
     },
     "files": [
-      "app/AppKernel.php"
+      "src/Kernel.php"
     ]
   },
   "scripts": {
@@ -173,7 +173,7 @@
     "symfony-app-dir": "app",
     "symfony-bin-dir": "bin",
     "symfony-var-dir": "var",
-    "symfony-web-dir": "web",
+    "symfony-web-dir": "public",
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {

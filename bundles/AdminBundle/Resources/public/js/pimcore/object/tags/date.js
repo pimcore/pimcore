@@ -42,7 +42,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -79,7 +79,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            date.width += date.labelWidth;
+            date.width = this.sumWidths(date.width, date.labelWidth);
         }
 
         if (this.data) {

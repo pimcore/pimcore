@@ -41,7 +41,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.tdCls += " grid_value_inherited";
             }
 
@@ -486,7 +486,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             pimcore.helpers.requestNicePathData(
                 {
                     type: "object",
-                    id: this.data.id
+                    id: this.object.id
                 },
                 targets,
                 {
@@ -523,6 +523,3 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         }
     }
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.tags.href = pimcore.object.tags.manyToOneRelation;

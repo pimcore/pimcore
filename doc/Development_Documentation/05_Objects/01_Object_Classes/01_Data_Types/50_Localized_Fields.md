@@ -58,10 +58,10 @@ $languages = \Pimcore\Tool::getValidLanguages();
 
 ### Disable Fallback languages ###
 
-You can disable the Fallbacklanguages
+You can disable the Fallback languages
 
 ```php
-    \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(false);
+\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(false);
 ```
 
 ### Accessing the data
@@ -75,7 +75,7 @@ $object->getInput1(); // will return the en_US data for the field "input1"
  
  
 // get specific localized data, regardless which locale is globally registered
-$object->getInput1("de") // will return the German value for the field "input1"
+$object->getInput1("de"); // will return the German value for the field "input1"
 ```
 
 ### Setting data

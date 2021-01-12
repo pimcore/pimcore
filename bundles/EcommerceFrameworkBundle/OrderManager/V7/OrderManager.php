@@ -18,7 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\OrderUpdateNotPossibleException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
@@ -64,7 +63,6 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
      * @return AbstractOrder
      *
      * @throws \Exception
-     * @throws UnsupportedException
      *
      */
     public function getOrCreateOrderFromCart(CartInterface $cart)
@@ -178,8 +176,6 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
      * @param AbstractOrder $order
      *
      * @return bool
-     *
-     * @throws UnsupportedException
      */
     public function orderNeedsUpdate(CartInterface $cart, AbstractOrder $order): bool
     {

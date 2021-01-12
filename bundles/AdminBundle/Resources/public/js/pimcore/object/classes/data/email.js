@@ -73,10 +73,15 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
 
         var specificItems = [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             }
         ];
 
@@ -97,7 +102,7 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
 
         return specificItems;
     },
-    
+
     applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {

@@ -21,7 +21,7 @@ use Pimcore\DependencyInjection\ConfigMerger;
 use Pimcore\Tests\Test\TestCase;
 
 /**
- * @deprecated will be removed in Pimcore 7
+ * @deprecated will be removed in Pimcore 10
  */
 class ConfigMergerTest extends TestCase
 {
@@ -33,7 +33,7 @@ class ConfigMergerTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -35,7 +35,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -58,9 +58,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -81,8 +79,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.labelWidth) {
             labelWidth = this.fieldConfig.labelWidth;
         }
-        width += labelWidth;
-
+        width = this.sumWidths(width, labelWidth);
 
         this.selector = new Ext.ux.colorpick.Selector(
             {
