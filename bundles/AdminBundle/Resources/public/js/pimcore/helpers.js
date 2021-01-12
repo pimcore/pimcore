@@ -1113,8 +1113,7 @@ pimcore.helpers.treeNodeThumbnailLastClose = 0;
 
 pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, index, e, eOpts) {
 
-    if (typeof record.data["thumbnail"] != "undefined" ||
-        typeof record.data["thumbnails"] != "undefined") {
+    if (typeof record.data["thumbnail"] != "undefined") {
 
         // only display thumbnails when dnd is not active
         if (Ext.dd.DragDropMgr.dragCurrent) {
@@ -1124,16 +1123,6 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
         var imageHtml = "";
         var uriPrefix = window.location.protocol + "//" + window.location.host;
 
-        var thumbnails = record.data["thumbnails"];
-        if (thumbnails && thumbnails.length) {
-            imageHtml += '<div class="thumbnails">';
-            for (var i = 0; i < thumbnails.length; i++) {
-                imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i]
-                    + '" onload="this.parentNode.className += \' complete\';" /></div>';
-            }
-            imageHtml += '</div>';
-        }
-
         var thumbnail = record.data["thumbnail"];
         if (thumbnail) {
             var srcset = thumbnail + ' 1x';
@@ -1142,7 +1131,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
                     srcset += ', ' + thumbnailHdpi + " 2x";
             }
 
-            imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
+            imageHtml = '<div class="thumb"><img src="' + uriPrefix + thumbnail
                 + '" onload="this.parentNode.className += \' complete\';" srcset="' + srcset + '" /></div>';
         }
 
@@ -1189,13 +1178,8 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
             imageHtml =
                 '<style type="text/css">' +
                 'body { margin:0; padding: 0; } ' +
-                '.thumbnails { width: 410px; } ' +
-                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; } ' +
-                '.big { min-height: 300px; } ' +
-                '.complete { border:none; border-radius: 0; background:none; }' +
-                '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
-                '.small.complete img { min-width: 100%; max-height: 100%; } ' +
-                '.big.complete img { max-width: 100%; } ' +
+                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; min-height: 300px; } ' +
+                '.complete { border:none; border-radius: 0; background:none; max-width: 100%; }' +
                 '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
                 '</style>' +
                 imageHtml;
