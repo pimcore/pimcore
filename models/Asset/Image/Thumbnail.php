@@ -396,6 +396,12 @@ class Thumbnail
      */
     protected function createConfig($selector)
     {
-        return Thumbnail\Config::getByAutoDetect($selector);
+        $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
+
+        if(!empty($selector) && $thumbnailConfig === null) {
+            throw new \Exception('Thumbnail definition "' . (is_string($selector)? $selector:'') . '" does not exist');
+        }
+
+        return $thumbnailConfig;
     }
 }
