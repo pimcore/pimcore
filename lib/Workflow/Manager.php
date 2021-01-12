@@ -97,6 +97,7 @@ class Manager
      * @param string $action
      * @param array $actionConfig
      * @param CustomHtmlServiceInterface $customHtmlService
+     *
      * @return $this
      */
     public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null)

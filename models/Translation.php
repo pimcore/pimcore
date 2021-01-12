@@ -187,11 +187,12 @@ class Translation extends AbstractModel implements TranslationInterface
 
     /**
      * @param string $domain
+     *
      * @return array
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
-        if ($domain == "admin") {
+        if ($domain == 'admin') {
             return \Pimcore\Tool\Admin::getLanguages();
         }
 
@@ -316,7 +317,7 @@ class Translation extends AbstractModel implements TranslationInterface
         $returnIdIfEmpty = $args[3] ?? false;
         $language = $args[4] ?? null;
 
-        if ($domain == "admin") {
+        if ($domain == 'admin') {
             if ($user = Tool\Admin::getCurrentUser()) {
                 $language = $user->getLanguage();
             } elseif ($user = Tool\Authentication::authenticateSession()) {
