@@ -7,7 +7,7 @@ The main benefit is that you have only one single translator for all your transl
 
 It automatically uses the locale specified on a document or from a fallback mechanism. 
 
-For more information, please also check out [Symfony's Translations Component](http://symfony.com/doc/3.4/translation.html). 
+For more information, please also check out [Symfony's Translations Component](http://symfony.com/doc/current/translation.html). 
 
 ![Shared Translations](../img/localization-translations.png)
 

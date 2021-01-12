@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Model\Element;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -63,7 +63,7 @@ class RecyclebinTest extends ModelTestCase
         //restore asserts
         $recycledItems->current()->restore();
 
-        $restoredObject = AbstractObject::getById($objectId);
+        $restoredObject = DataObject::getById($objectId);
         $this->assertIsObject($restoredObject, 'Restored simple object');
     }
 
@@ -98,13 +98,13 @@ class RecyclebinTest extends ModelTestCase
         $recycledContent = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
 
         $this->assertEquals($parentId, $recycledContent->getId(), 'Expected recycled parent object ID');
-        $this->assertCount(1, $recycledContent->getChildren([AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT, AbstractObject::OBJECT_TYPE_OBJECT], true), 'Expected recycled child object');
+        $this->assertCount(1, $recycledContent->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true), 'Expected recycled child object');
 
         //restore deleted items (parent + child)
         $recycledItems->current()->restore();
 
-        $restoredParent = AbstractObject::getById($parentId);
-        $restoredChild = AbstractObject::getById($childId);
+        $restoredParent = DataObject::getById($parentId);
+        $restoredChild = DataObject::getById($childId);
 
         $this->assertIsObject($restoredParent, 'Expected restored parent object');
         $this->assertIsObject($restoredChild, 'Expected restored child object');
@@ -142,7 +142,7 @@ class RecyclebinTest extends ModelTestCase
         $recycledItems->current()->restore();
 
         //load relation and check if relation loads correctly
-        $restoredSourceObject = AbstractObject::getById($sourceObjectId);
+        $restoredSourceObject = DataObject::getById($sourceObjectId);
         $restoredRelation = $restoredSourceObject->getLobjects();
         $restoredLocalizedRelation = $restoredSourceObject->getLobjects();
 

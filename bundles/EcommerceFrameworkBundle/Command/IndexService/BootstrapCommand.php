@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Listing;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -124,7 +124,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             );
         }
 
-        if ($object = AbstractObject::getById($productId)) {
+        if ($object = DataObject::getById($productId)) {
             if ($object instanceof IndexableInterface) {
                 $indexService->updateIndex($object);
             } else {

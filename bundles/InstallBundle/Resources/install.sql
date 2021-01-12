@@ -55,6 +55,8 @@ CREATE TABLE `assets_metadata` (
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
+
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
 	`id` VARCHAR(50) NOT NULL,
@@ -555,8 +557,8 @@ CREATE TABLE `translations_admin` (
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `translations_website`;
-CREATE TABLE `translations_website` (
+DROP TABLE IF EXISTS `translations_messages`;
+CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,

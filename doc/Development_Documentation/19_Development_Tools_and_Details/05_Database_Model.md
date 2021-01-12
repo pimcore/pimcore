@@ -62,7 +62,7 @@ These tables are created during Pimcore install and are always the same.
 | tmp_store | Pimcore internal tmp store | 
 | tracking_events | |
 | translations_admin | Backend translations |
-| translations_website | Frontend translations |
+| translations_messages | Frontend translations |
 | tree_locks | Locks in the tree of Pimcore backend interface | 
 | users | Backend users |
 | users_permission_definitions | List of globally assignable user permissions |

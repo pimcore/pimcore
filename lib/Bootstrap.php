@@ -80,8 +80,8 @@ class Bootstrap
         // activate inheritance for cli-scripts
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
-        DataObject\AbstractObject::setHideUnpublished(true);
-        DataObject\AbstractObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+        DataObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
 
         // CLI has no memory/time limits
@@ -159,15 +159,6 @@ class Bootstrap
         }
     }
 
-    /**
-     * @deprecated Pimcore 10 Typo in name; use Bootstrap::bootstrap() instead
-     * @see Bootstrap::bootstrap()
-     */
-    public static function boostrap()
-    {
-        self::bootstrap();
-    }
-
     protected static function prepareEnvVariables()
     {
         // load .env file if available
@@ -181,26 +172,22 @@ class Bootstrap
         } elseif (file_exists($dotEnvFile)) {
             // load all the .env files
             $dotEnv = new Dotenv();
-            if (method_exists($dotEnv, 'loadEnv')) {
-                // Symfony => 4.2 style
-                $envVarName = 'APP_ENV';
-                foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $varName) {
-                    if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
-                        $envVarName = $varName;
-                        break;
-                    }
-
-                    if (isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
-                        $envVarName = 'REDIRECT_' . $varName;
-                        break;
-                    }
+            // Symfony => 4.2 style
+            $envVarName = 'APP_ENV';
+            foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $varName) {
+                if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
+                    $envVarName = $varName;
+                    break;
                 }
 
-                $defaultEnvironment = Config::getEnvironmentConfig()->getDefaultEnvironment();
-                $dotEnv->loadEnv($dotEnvFile, $envVarName, $defaultEnvironment);
-            } else {
-                $dotEnv->load($dotEnvFile);
+                if (isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
+                    $envVarName = 'REDIRECT_' . $varName;
+                    break;
+                }
             }
+
+            $defaultEnvironment = Config::getEnvironmentConfig()->getDefaultEnvironment();
+            $dotEnv->loadEnv($dotEnvFile, $envVarName, $defaultEnvironment);
         }
 
         $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['APP_ENV'] = Config::getEnvironment();

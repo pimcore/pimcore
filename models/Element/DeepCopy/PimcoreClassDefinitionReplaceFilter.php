@@ -56,6 +56,3 @@ class PimcoreClassDefinitionReplaceFilter implements Filter
         $reflectionProperty->setValue($object, $value);
     }
 }
-
-//TODO: remove in Pimcore 10
-class_alias(PimcoreClassDefinitionReplaceFilter::class, 'Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter');
