@@ -15,7 +15,7 @@
 namespace Pimcore\Translation;
 
 use Pimcore\Cache;
-use Pimcore\Model\Translation\AbstractTranslation;
+use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -84,12 +84,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         if (null === $domain) {
-            $domain = 'messages';
+            $domain = Translation::DOMAIN_DEFAULT;
         }
 
         $id = (string) $id;
 
-        if ($domain === 'admin' && !empty($this->adminTranslationMapping)) {
+        if ($domain === Translation::DOMAIN_ADMIN && !empty($this->adminTranslationMapping)) {
             if (null === $locale) {
                 $locale = $this->getLocale();
             }
@@ -164,9 +164,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         $this->initializedCatalogues[$cacheKey] = true;
-        $backend = $this->getBackendForDomain($domain);
 
-        if ($backend) {
+        if (!empty($domain)) {
             $catalogue = null;
 
             if (!$catalogue = Cache::load($cacheKey)) {
@@ -198,8 +197,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     }
                 }
 
-                $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend) . '\\Listing';
-                $list = new $listClass();
+                $list = new Translation\Listing();
+                $list->setDomain($domain);
 
                 $list->setCondition('language = ?', [$locale]);
                 $translations = $list->loadRaw();
@@ -273,18 +272,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 if ($translated != $normalizedId) {
                     return $translated;
                 }
-            } elseif ($backend = $this->getBackendForDomain($domain)) {
+            } elseif (!empty($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
-                $class = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend);
-
                 // no translation found create key
-                if ($class::isValidLanguage($locale)) {
-
-                    /** @var AbstractTranslation|null $t */
-                    $t = $class::getByKey($id);
+                if (Translation::IsAValidLanguage($domain, $locale)) {
+                    $t = Translation::getByKey($id, $domain);
                     if ($t) {
                         if (!$t->hasTranslation($locale)) {
                             $t->addTranslation($locale, '');
@@ -293,12 +288,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                             return $id;
                         }
                     } else {
-                        /** @var AbstractTranslation $t */
-                        $t = new $class();
+                        $t = new Translation();
+                        $t->setDomain($domain);
                         $t->setKey($id);
 
                         // add all available languages
-                        $availableLanguages = (array)$class::getLanguages();
+                        $availableLanguages = (array)Translation::getValidLanguages();
                         foreach ($availableLanguages as $language) {
                             $t->addTranslation($language, '');
                         }
@@ -335,25 +330,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         return $translated;
-    }
-
-    /**
-     * @param string $domain
-     *
-     * @return string|null
-     */
-    protected function getBackendForDomain($domain)
-    {
-        $backends = [
-            'messages' => 'website',
-            'admin' => 'admin',
-        ];
-
-        if (isset($backends[$domain])) {
-            return $backends[$domain];
-        }
-
-        return null;
     }
 
     /**

@@ -20,8 +20,9 @@ namespace Pimcore\Model\Translation;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Translation\AbstractTranslation\Listing\Dao getDao()
+ * @method \Pimcore\Model\Translation\Listing\Dao getDao()
  * @method Model\Translation[] load()
+ * @method array loadRaw()
  * @method Model\Translation current()
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
@@ -54,7 +55,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return \Pimcore\Model\Translation\AbstractTranslation[]
+     * @return \Pimcore\Model\Translation[]
      */
     public function getTranslations()
     {

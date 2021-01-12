@@ -28,7 +28,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return string
      */
-    protected function getDatabaseTableName(): string
+    public function getDatabaseTableName(): string
     {
         return Model\Translation\Dao::TABLE_PREFIX . $this->model->getDomain();
     }
@@ -205,7 +205,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function isCacheable()
     {
         $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->getDatabaseTableName());
-        $cacheLimit = Model\Translation\AbstractTranslation\Listing::getCacheLimit();
+        $cacheLimit = Model\Translation\Listing::getCacheLimit();
         if ($count > $cacheLimit) {
             return false;
         }
