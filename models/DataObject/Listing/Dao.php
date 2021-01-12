@@ -17,16 +17,20 @@
 
 namespace Pimcore\Model\DataObject\Listing;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
  * @property \Pimcore\Model\DataObject\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+
     /**
      * @var \Closure
      */
@@ -76,6 +80,19 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         return $select;
+    }
+
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
+    {
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from('assets');
+
+        // apply joins
+        $this->applyJoins($queryBuilder);
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
     }
 
     /**
@@ -186,6 +203,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
      * @return $this
      */
     protected function addJoins(QueryBuilder $select)
+    {
+        return $this;
+    }
+
+    /**
+     * @param DoctrineQueryBuilder $queryBuilder
+     *
+     * @return $this
+     */
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
     {
         return $this;
     }

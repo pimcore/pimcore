@@ -19,6 +19,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
+use Pimcore\Model\DataObject;
 
 trait QueryBuilderHelperTrait
 {
@@ -35,7 +36,11 @@ trait QueryBuilderHelperTrait
         $this->onCreateQueryBuilderCallback = $callback;
     }
 
-    protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder): void
+    /**
+     * @param DoctrineQueryBuilder $queryBuilder
+     * @param bool $join
+     */
+    protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder, bool $join = false): void
     {
         $this->applyConditionsToQueryBuilder($queryBuilder);
         $this->applyGroupByToQueryBuilder($queryBuilder);
@@ -51,6 +56,27 @@ trait QueryBuilderHelperTrait
     private function applyConditionsToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $condition = $this->model->getCondition();
+
+        if ($this->model instanceof \Pimcore\Model\DataObject\Listing) {
+            $objectTypes = $this->model->getObjectTypes();
+
+            $tableName = $this->getTableName();
+
+            if (!empty($objectTypes)) {
+                if (!empty($condition)) {
+                    $condition .= ' AND ';
+                }
+                $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
+            }
+
+            if ($condition) {
+                if (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+                    $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
+                }
+            } elseif (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+                $condition = $tableName . '.o_published = 1';
+            }
+        }
 
         if ($condition) {
             $queryBuilder->where($condition);
@@ -101,8 +127,11 @@ trait QueryBuilderHelperTrait
 
     /**
      * @internal
+     *
      * @deprecated
-     * @param @param array|string|Expression $columns $columns
+     *
+     * @param array|string|Expression $columns $columns
+     *
      * @return ZendCompatibilityQueryBuilder|QueryBuilder
      */
     protected function getQueryBuilderCompatibility($columns = '*')
