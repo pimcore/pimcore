@@ -145,18 +145,61 @@ trait QueryBuilderHelperTrait
         }
     }
 
-    protected function prepareQueryBuilderForTotalCount($queryBuilder): void
+    protected function prepareQueryBuilderForTotalCount(&$queryBuilder): void
     {
-        if($queryBuilder instanceof DoctrineQueryBuilder) {
+        if ($queryBuilder instanceof DoctrineQueryBuilder) {
             $queryBuilder->select('COUNT(*)');
             $queryBuilder->resetQueryPart('orderBy');
             $queryBuilder->setMaxResults(null);
             $queryBuilder->setFirstResult(0);
+
+            if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
+                $queryBuilder->distinct();
+            }
+
+            if (method_exists($this->model, 'isQueryBuilderPartinUse')) {
+                if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
+                    $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
+                } else {
+                    $queryBuilder->reset(ZendCompatibilityQueryBuilder::COLUMNS);
+
+                    $countIdentifier = '*';
+                    if ($this->isQueryPartinUse($queryBuilder, ZendCompatibilityQueryBuilder::DISTINCT)) {
+                        $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
+                    }
+
+                    $queryBuilder->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
+                }
+            }
         } elseif ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
             $queryBuilder->columns([new Expression('COUNT(*)')]);
             $queryBuilder->reset(ZendCompatibilityQueryBuilder::LIMIT_COUNT);
             $queryBuilder->reset(ZendCompatibilityQueryBuilder::LIMIT_OFFSET);
             $queryBuilder->reset(ZendCompatibilityQueryBuilder::ORDER);
+
+            if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
+                $queryBuilder->distinct(true);
+            }
+
+            if (method_exists($this->model, 'isQueryPartinUse')) {
+                if ($this->isQueryPartinUse($queryBuilder, ZendCompatibilityQueryBuilder::GROUP) || $this->isQueryPartinUse($queryBuilder, ZendCompatibilityQueryBuilder::HAVING)) {
+                    $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
+                } else {
+                    $queryBuilder->reset(ZendCompatibilityQueryBuilder::COLUMNS);
+
+                    $countIdentifier = '*';
+                    if ($this->isQueryPartinUse($queryBuilder, ZendCompatibilityQueryBuilder::DISTINCT)) {
+                        $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
+                    }
+
+                    $queryBuilder->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
+                }
+            }
         }
+    }
+
+    protected function getQueryBuilderPart($queryBuilder): void
+    {
+
     }
 }

@@ -18,7 +18,7 @@
 namespace Pimcore\Model\DataObject\Listing\Concrete;
 
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
@@ -44,18 +44,15 @@ class Dao extends Model\DataObject\Listing\Dao
     protected $totalCount = 0;
 
     /**
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
-
-    /**
      * get select query
      *
      * @param array|string|Expression|bool $columns
      *
-     * @return QueryBuilder
+     * @return ZendCompatibilityQueryBuilder
      *
      * @throws \Exception
+     *
+     * @deprecated use getQueryBuilder() instead.
      */
     public function getQuery($columns = '*')
     {
@@ -206,11 +203,11 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param QueryBuilder $select
+     * @param ZendCompatibilityQueryBuilder $select
      *
      * @return $this
      */
-    protected function addJoins(QueryBuilder $select)
+    protected function addJoins(ZendCompatibilityQueryBuilder $select)
     {
         // add fielcollection's
         $fieldCollections = $this->model->getFieldCollections();
@@ -290,13 +287,5 @@ CONDITION
         }
 
         return $this;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        $this->onCreateQueryCallback = $callback;
     }
 }

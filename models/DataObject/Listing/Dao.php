@@ -17,9 +17,9 @@
 
 namespace Pimcore\Model\DataObject\Listing;
 
-use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
@@ -32,6 +32,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     use QueryBuilderHelperTrait;
 
     /**
+     * @deprecated
+     *
      * @var \Closure
      */
     protected $onCreateQueryCallback;
@@ -47,9 +49,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param array|string|Expression $columns
      *
-     * @return QueryBuilder
+     * @return ZendCompatibilityQueryBuilder
      *
      * @throws \Exception
+     *
+     * @deprecated use getQueryBuilder() instead.
      */
     public function getQuery($columns = '*')
     {
@@ -82,6 +86,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $select;
     }
 
+    /**
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
+     *
+     * @throws \Exception
+     */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
         $queryBuilder = $this->db->createQueryBuilder();
@@ -123,36 +134,35 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $query = $this->getQuery();
+        $queryBuilder = $this->getQueryBuilderCompatibility();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        if ($this->model->addDistinct()) {
-            $query->distinct(true);
-        }
-
-        $query->reset(QueryBuilder::LIMIT_COUNT);
-        $query->reset(QueryBuilder::LIMIT_OFFSET);
-        $query->reset(QueryBuilder::ORDER);
-
-        if ($this->isQueryPartinUse($query, QueryBuilder::GROUP) || $this->isQueryPartinUse($query, QueryBuilder::HAVING)) {
-            $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
-        } else {
-            $query->reset(QueryBuilder::COLUMNS);
-
-            $countIdentifier = '*';
-            if ($this->isQueryPartinUse($query, QueryBuilder::DISTINCT)) {
-                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-            }
-
-            $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
-        }
-
-        $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $totalCount = $this->db->fetchOne($queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return (int) $totalCount;
     }
 
     /**
-     * @param QueryBuilder $query
+     * @param DoctrineQueryBuilder $query
+     * @param string $part
+     *
+     * @return bool
+     */
+    private function isQueryBuilderPartinUse($query, $part)
+    {
+        try {
+            if ($query->getQueryPart($part)) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // do nothing
+        }
+
+        return false;
+    }
+
+    /**
+     * @param ZendCompatibilityQueryBuilder $query
      * @param string $part
      *
      * @return bool
@@ -198,11 +208,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param QueryBuilder $select
+     * @param ZendCompatibilityQueryBuilder $select
      *
      * @return $this
+     *
      */
-    protected function addJoins(QueryBuilder $select)
+    protected function addJoins(ZendCompatibilityQueryBuilder $select)
     {
         return $this;
     }
@@ -218,11 +229,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param QueryBuilder $select
+     * @param ZendCompatibilityQueryBuilder $select
      *
      * @return $this
      */
-    protected function addConditions(QueryBuilder $select)
+    protected function addConditions(ZendCompatibilityQueryBuilder $select)
     {
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();
