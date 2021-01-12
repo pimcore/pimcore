@@ -23,6 +23,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Translation;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -145,7 +146,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 }
             }
 
-            $groupName = \Pimcore\Model\Translation\Admin::getByKeyLocalized($groupName, true, true);
+            $groupName = Translation::getByKeyLocalized($groupName, Translation::DOMAIN_ADMIN, true, true);
 
             if (!isset($groups[$groupName])) {
                 $groups[$groupName] = [

@@ -23,13 +23,12 @@ use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\Translation\TranslationInterface;
 use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
  */
-class Translation extends AbstractModel implements TranslationInterface
+class Translation extends AbstractModel
 {
     const DOMAIN_DEFAULT = 'messages';
     const DOMAIN_ADMIN = 'admin';
@@ -58,16 +57,6 @@ class Translation extends AbstractModel implements TranslationInterface
      * @var string
      */
     protected $domain = self::DOMAIN_DEFAULT;
-
-    /**
-     * @inheritDoc
-     *
-     * @deprecated
-     */
-    public static function isValidLanguage($locale): bool
-    {
-        return static::IsAValidLanguage(static::DOMAIN_DEFAULT, $locale);
-    }
 
     /**
      * @inheritDoc
@@ -200,16 +189,6 @@ class Translation extends AbstractModel implements TranslationInterface
     }
 
     /**
-     * @inheritDoc
-     *
-     * @deprecated
-     */
-    public static function getLanguages(): array
-    {
-        return static::getValidLanguages();
-    }
-
-    /**
      * @param string $language
      * @param string $text
      */
@@ -245,18 +224,16 @@ class Translation extends AbstractModel implements TranslationInterface
 
     /**
      * @param string $id
+     * @param string $domain
+     * @param bool $create
+     * @param bool $returnIdIfEmpty
      *
      * @return static|null
      *
      * @throws \Exception
      */
-    public static function getByKey($id /*, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false */)
+    public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false)
     {
-        $args = func_get_args();
-        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
-        $create = $args[2] ?? false;
-        $returnIdIfEmpty = $args[3] ?? false;
-
         $cacheKey = 'translation_' . $id;
         if (Runtime::isRegistered($cacheKey)) {
             return Runtime::get($cacheKey);
@@ -304,19 +281,17 @@ class Translation extends AbstractModel implements TranslationInterface
 
     /**
      * @param string $id
+     * @param string $domain
+     * @param bool $create - creates an empty translation entry if the key doesn't exists
+     * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @param string|null $language
      *
      * @return string|null
      *
      * @throws \Exception
      */
-    public static function getByKeyLocalized($id /*, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $language = null */)
+    public static function getByKeyLocalized(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $language = null)
     {
-        $args = func_get_args();
-        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
-        $create = $args[2] ?? false;
-        $returnIdIfEmpty = $args[3] ?? false;
-        $language = $args[4] ?? null;
-
         if ($domain == 'admin') {
             if ($user = Tool\Admin::getCurrentUser()) {
                 $language = $user->getLanguage();
@@ -385,19 +360,17 @@ class Translation extends AbstractModel implements TranslationInterface
      * @static
      *
      * @param string $file - path to the csv file
+     * @param string $domain
+     * @param bool $replaceExistingTranslations
+     * @param array|null $languages
+     * @param array|null $dialect
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public static function importTranslationsFromFile($file /*, $domain = self::DOMAIN_DEFAULT, $replaceExistingTranslations = true, $languages = null, $dialect = null */)
+    public static function importTranslationsFromFile(string $file, $domain = self::DOMAIN_DEFAULT, $replaceExistingTranslations = true, $languages = null, $dialect = null)
     {
-        $args = func_get_args();
-        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
-        $replaceExistingTranslations = $args[2] ?? true;
-        $languages = $args[3] ?? null;
-        $dialect = $args[4] ?? null;
-
         $delta = [];
 
         if (is_readable($file)) {
