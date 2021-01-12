@@ -1,0 +1,28 @@
+/* Styles used by Ext.ux.form.ItemSelector */
+
+.#{$prefix}form-multiselect-body .#{$prefix}boundlist .#{$prefix}mask {
+    background: none;
+}
+
+.#{$prefix}form-itemselector-body .#{$prefix}form-item {
+    margin: 0;
+}
+
+.#{$prefix}form-itemselector-top {
+    background-image: theme-background-image('itemselector/top', 'gif');
+}
+.#{$prefix}form-itemselector-up {
+    background-image: theme-background-image('itemselector/up', 'gif');
+}
+.#{$prefix}form-itemselector-add {
+    background-image: theme-background-image('itemselector/right', 'gif');
+}
+.#{$prefix}form-itemselector-remove {
+    background-image: theme-background-image('itemselector/left', 'gif');
+}
+.#{$prefix}form-itemselector-down {
+    background-image: theme-background-image('itemselector/down', 'gif');
+}
+.#{$prefix}form-itemselector-bottom {
+    background-image: theme-background-image('itemselector/bottom', 'gif');
+}

@@ -18,33 +18,35 @@ use Pimcore\Model\Element\ElementInterface;
 
 abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
 {
-    protected $transitionName = "";
+    protected $transitionName = '';
 
-    protected $actionName = "";
+    protected $actionName = '';
 
     protected $isGlobalAction = false;
 
     protected $position;
 
-    public function __construct(string $actionOrTransitionName, bool $isGlobalAction, string $position = "")
+    public function __construct(string $actionOrTransitionName, bool $isGlobalAction, string $position = '')
     {
-        $this->actionName = $isGlobalAction ? $actionOrTransitionName : "";
-        $this->transitionName = !$isGlobalAction ? $actionOrTransitionName : "";
+        $this->actionName = $isGlobalAction ? $actionOrTransitionName : '';
+        $this->transitionName = !$isGlobalAction ? $actionOrTransitionName : '';
         $this->isGlobalAction = $isGlobalAction;
         $this->position = $position;
     }
 
-    public function renderHtmlForRequestedPosition(ElementInterface $element, string $requestedPosition) : string {
+    public function renderHtmlForRequestedPosition(ElementInterface $element, string $requestedPosition): string
+    {
         if ($this->getPosition() === $requestedPosition) {
             return $this->renderHtml($element);
         }
-        return "";
+
+        return '';
     }
 
     /**
      * @return string
      */
-    public final function getTransitionName(): string
+    final public function getTransitionName(): string
     {
         return $this->transitionName;
     }
@@ -52,7 +54,7 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
     /**
      * @return string
      */
-    public final function getActionName(): string
+    final public function getActionName(): string
     {
         return $this->actionName;
     }
@@ -60,7 +62,7 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
     /**
      * @return bool
      */
-    public final function isGlobalAction(): bool
+    final public function isGlobalAction(): bool
     {
         return $this->isGlobalAction;
     }
@@ -68,9 +70,8 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
     /**
      * @return string
      */
-    public final function getPosition(): string
+    final public function getPosition(): string
     {
         return $this->position;
     }
-
 }

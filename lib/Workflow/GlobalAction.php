@@ -14,10 +14,10 @@
 
 namespace Pimcore\Workflow;
 
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
 use Symfony\Component\Workflow\Workflow;
-use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 
 class GlobalAction implements NotesAwareInterface
 {
@@ -41,13 +41,23 @@ class GlobalAction implements NotesAwareInterface
     /** @var string */
     private $workflowName;
 
+    /**
+     * @param string $name
+     * @param array $options
+     * @param ExpressionService $expressionService
+     * @param string $workflowName
+     * @param CustomHtmlServiceInterface|null $customHtmlService
+     *
+     */
     public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->name = $name;
         $this->options = $options;
         $this->expressionService = $expressionService;
         $this->workflowName = $workflowName;
-        $this->setCustomHtmlService($customHtmlService);
+        if ($customHtmlService instanceof CustomHtmlServiceInterface) {
+            $this->setCustomHtmlService($customHtmlService);
+        }
     }
 
     /**
@@ -96,6 +106,9 @@ class GlobalAction implements NotesAwareInterface
     }
 
     /**
+     * @param Workflow $workflow
+     * @param mixed $subject
+     *
      * @return bool
      */
     public function isGuardValid(Workflow $workflow, $subject): bool

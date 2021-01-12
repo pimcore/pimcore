@@ -176,11 +176,12 @@ class Translation extends AbstractModel
 
     /**
      * @param string $domain
+     *
      * @return array
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
-        if ($domain == "admin") {
+        if ($domain == 'admin') {
             return \Pimcore\Tool\Admin::getLanguages();
         }
 
@@ -291,7 +292,7 @@ class Translation extends AbstractModel
      */
     public static function getByKeyLocalized(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $language = null)
     {
-        if ($domain == "admin") {
+        if ($domain == 'admin') {
             if ($user = Tool\Admin::getCurrentUser()) {
                 $language = $user->getLanguage();
             } elseif ($user = Tool\Authentication::authenticateSession()) {

@@ -13,7 +13,7 @@
 
 @font-face {
     font-family: 'Open Sans';
-    src: url('/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/fonts/OpenSans-Regular.ttf');
+    src: url('/bundles/pimcoreadmin/extjs/font/fonts/OpenSans-Regular.ttf');
     font-weight: 300;
     font-style: normal;
 }
