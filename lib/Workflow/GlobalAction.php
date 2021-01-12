@@ -14,10 +14,10 @@
 
 namespace Pimcore\Workflow;
 
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
 use Symfony\Component\Workflow\Workflow;
-use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 
 class GlobalAction implements NotesAwareInterface
 {

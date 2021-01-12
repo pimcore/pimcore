@@ -101,7 +101,6 @@ class WorkflowPass implements CompilerPassInterface
                         $transition->addMethodCall('setCustomHtmlService', [$customHtmlServiceDefinition]);
                     }
                 }
-
             }
 
             $places = [];

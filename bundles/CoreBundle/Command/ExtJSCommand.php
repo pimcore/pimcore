@@ -50,7 +50,8 @@ class ExtJSCommand extends AbstractCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $io = new SymfonyStyle($input, $output);
         $io->newLine();
 
@@ -65,12 +66,12 @@ class ExtJSCommand extends AbstractCommand
             $dest = 'dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/extjs/js/ext-all';
         }
 
-        $absoluteManifest = getcwd() . "/" . $src;
+        $absoluteManifest = getcwd() . '/' . $src;
 
-        $bootstrapFile = getcwd() . "/dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/extjs/js/bootstrap-ext-all.js";
+        $bootstrapFile = getcwd() . '/dev/pimcore/pimcore/bundles/AdminBundle/Resources/public/extjs/js/bootstrap-ext-all.js';
         $bootstrap = file_get_contents($bootstrapFile);
         if (!$bootstrap) {
-            throw new \Exception("bootstrap file not found");
+            throw new \Exception('bootstrap file not found');
         }
 
         $scriptContents = $bootstrap . "\n\n";
@@ -80,14 +81,14 @@ class ExtJSCommand extends AbstractCommand
             $manifestContents = file_get_contents($absoluteManifest);
             $manifestContents = json_decode($manifestContents, true);
 
-            $loadOrder = $manifestContents["loadOrder"];
+            $loadOrder = $manifestContents['loadOrder'];
 
             $count = 0;
 
             // build dependencies
             $main = $loadOrder[count($loadOrder) - 1];
             $list = [
-                $main["idx"] => $main
+                $main['idx'] => $main,
             ];
 
             $this->populate($loadOrder, $list, $main);
@@ -96,13 +97,12 @@ class ExtJSCommand extends AbstractCommand
             // replace this with loadOrder if we want to load the entire list
             foreach ($loadOrder as $loadOrderIdx => $loadOrderItem) {
                 $count++;
-                $relativePath = $loadOrderItem["path"];
+                $relativePath = $loadOrderItem['path'];
 
                 $fullPath = PIMCORE_WEB_ROOT . $relativePath;
 
                 if (is_file($fullPath)) {
                     $includeContents = file_get_contents($fullPath);
-
 
                     $minify = new JS($includeContents);
                     $includeContentsMinfified = $minify->minify();
@@ -112,35 +112,33 @@ class ExtJSCommand extends AbstractCommand
                     $includeContents .= "\r\n;\r\n";
                     $scriptContents .= $includeContents;
                 } else {
-                    throw new \Exception("file does not exist: " . $fullPath);
+                    throw new \Exception('file does not exist: ' . $fullPath);
                 }
             }
-
         } else {
-            throw new \Exception("manifest does not exist: " . $absoluteManifest);
+            throw new \Exception('manifest does not exist: ' . $absoluteManifest);
         }
 
+        $scriptPath = getcwd() . '/' . $dest;
+        file_put_contents($scriptPath . '.js', $scriptContentsMinified);
+        file_put_contents($scriptPath . '-debug.js', $scriptContents);
 
-        $scriptPath =  getcwd() . '/' . $dest;
-        file_put_contents($scriptPath . ".js", $scriptContentsMinified);
-        file_put_contents($scriptPath . "-debug.js", $scriptContents);
-
-        $io->writeln("writing to " . $scriptPath);
+        $io->writeln('writing to ' . $scriptPath);
 
         $io->success('Done');
 
         return 0;
     }
 
-    public function populate($loadOrder, &$list, $item) {
-
-        $depth  = count(debug_backtrace());;
+    public function populate($loadOrder, &$list, $item)
+    {
+        $depth = count(debug_backtrace());
         if ($depth > 100) {
             Logger::error($depth);
         }
 
-        if (is_array($item["requires"])) {
-            foreach ($item["requires"] as $itemId) {
+        if (is_array($item['requires'])) {
+            foreach ($item['requires'] as $itemId) {
                 if (isset($list[$itemId])) {
                     continue;
                 }
@@ -150,9 +148,8 @@ class ExtJSCommand extends AbstractCommand
             }
         }
 
-
-        if (is_array($item["uses"])) {
-            foreach ($item["uses"] as $itemId) {
+        if (is_array($item['uses'])) {
+            foreach ($item['uses'] as $itemId) {
                 if (isset($list[$itemId])) {
                     continue;
                 }

@@ -94,7 +94,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete($this->getDatabaseTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
     }
 
-
     /**
      * Returns a array containing all available languages
      *
