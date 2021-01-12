@@ -135,12 +135,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public function getBrickGetters()
     {
-        $getters = [];
-        foreach ($this->brickGetters as $bg) {
-            $getters[] = 'get' . ucfirst($bg);
-        }
-
-        return $getters;
+        return array_map(function($brickType) {
+            return 'get'.ucfirst($brickType);
+        }, $this->getAllowedBrickTypes());
     }
 
     /**
@@ -148,7 +145,21 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public function getAllowedBrickTypes()
     {
-        return is_array($this->brickGetters) ? $this->brickGetters : [];
+        if(!is_array($this->brickGetters)) {
+            return [];
+        }
+
+        $brickTypes = [];
+        foreach ($this->brickGetters as $brickType) {
+            $getter = 'get' . ucfirst($brickType);
+
+            // necessary because when data object gets serialized and later unserialized `$this->brickGetters` property gets restored to the state of serialization -> if bricks got removed meanwhile the getter might not exist anymore
+            if (method_exists($this, $getter)) {
+                $brickTypes[] = $brickType;
+            }
+        }
+
+        return $brickTypes;
     }
 
     /**
