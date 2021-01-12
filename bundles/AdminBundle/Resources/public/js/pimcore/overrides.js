@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+Ext.setVersion("ext", "7.0.0.159");
+Ext.setVersion("core", "7.0.0.159");
+
 if(typeof window['t'] !== 'function') {
     // for compatibility reasons
     window.t = function(v) { return v; };
@@ -132,6 +135,8 @@ Ext.define('pimcore.filters', {
 });
 
 // See https://www.sencha.com/forum/showthread.php?288385
+// Column renderer will give no metadata parameter after change a value of cell.
+// It happens because column renderer method is invoked with null second parameter here
 Ext.define('Ext.overrides.grid.View', {
         extend: 'Ext.grid.View',
 
@@ -230,11 +235,6 @@ Ext.define('Ext.overrides.grid.View', {
                 }
             }
         }
-    }, function() {
-        if (!Ext.getVersion().match('6.0.0.640')) {
-            console.warn('This patch has not been tested with this version of ExtJS');
-        }
-
     }
 );
 
@@ -364,7 +364,7 @@ Ext.define('pimcore.data.PagingTreeStore', {
 
 
             var response = operation.getResponse();
-            var data = Ext.decode(response.responseText);
+            var data = response.responseJson;
 
             node.fromPaging = data.fromPaging;
             node.filter = data.filter;
@@ -987,11 +987,12 @@ Ext.define('EXTJS-17231.ext.dom.Element.validIdRe', {
 // use only native scroll bar, the touch-scroller causes issues on hybrid touch devices when using with a mouse
 // this ist fixed in ExtJS 6.2.0 since there's no TouchScroller anymore, see:
 // http://docs.sencha.com/extjs/6.2.0/guides/whats_new/extjs_upgrade_guide.html
-Ext.define('Ext.scroll.TouchScroller', {
-    extend: 'Ext.scroll.DomScroller',
-    alias: 'scroller.touch'
-});
-Ext.supports.touchScroll = 0;
+//TODO EXTJS7 not needed anymore
+// Ext.define('Ext.scroll.TouchScroller', {
+//     extend: 'Ext.scroll.DomScroller',
+//     alias: 'scroller.touch'
+// });
+// Ext.supports.touchScroll = 0;
 
 /**
  * Fieldtype date is not able to save the correct value (before 1951) #1329

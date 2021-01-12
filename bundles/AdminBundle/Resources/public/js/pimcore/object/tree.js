@@ -138,8 +138,9 @@ pimcore.object.tree = Class.create({
                 type: "left",
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
-            }],
-            root: rootNodeConfig
+            }]
+            // ,
+            // root: rootNodeConfig
         });
 
         store.on("nodebeforeexpand", function (node) {
