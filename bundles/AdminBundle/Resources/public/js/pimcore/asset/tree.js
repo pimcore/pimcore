@@ -141,7 +141,7 @@ pimcore.asset.tree = Class.create({
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
             }],
-            root: rootNodeConfig,
+            // root: rootNodeConfig,
             listeners: this.getTreeNodeListeners()
         });
 
