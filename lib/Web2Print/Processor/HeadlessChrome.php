@@ -95,9 +95,11 @@ class HeadlessChrome extends Processor
         $output = $converter->convert();
 
         if($returnFilePath) {
+            /** @var FileOutput $output */
             $output->store($path);
             return $path;
         }
+        /** @var StringOutput $output */
         return $output->get();
     }
 
