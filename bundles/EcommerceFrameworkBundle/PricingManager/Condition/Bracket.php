@@ -62,14 +62,14 @@ class Bracket implements BracketInterface
         // check all conditions
         foreach ($this->conditions as $num => $condition) {
             /* @var ConditionInterface $condition */
-            
+
+            // test condition
+            $check = $condition->check($environment);
+
             if ($num === 0) {
                 $state = $check;
                 continue;
             }
-
-            // test condition
-            $check = $condition->check($environment);
 
             // check
             switch ($this->operator[$num]) {
