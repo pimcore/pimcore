@@ -1346,7 +1346,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($request->get('id')) {
             $folder = Asset\Folder::getById((int)$request->get('id'));
-            if($folder instanceof  Asset\Folder) {
+            if ($folder instanceof  Asset\Folder) {
                 if (!$folder->isAllowed('view')) {
                     throw $this->createAccessDeniedException('not allowed to view thumbnail');
                 }
