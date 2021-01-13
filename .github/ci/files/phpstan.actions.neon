@@ -1,0 +1,9 @@
+includes:
+    - ../../../vendor/phpstan/phpstan-symfony/extension.neon
+    - ../../../phpstan.neon
+
+parameters:
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    symfony:
+        container_xml_path: ../../../var/cache/test/appTestDebugProjectContainer.xml

@@ -1846,3 +1846,8 @@ parameters:
 			message: "#^Cannot access property \\$type on string\\.$#"
 			count: 2
 			path: lib/Twig/Extension/Templating/HeadMeta.php
+
+		-
+			message: "#^Method Pimcore\\\\Templating\\\\Model\\\\ViewModel\\:\\:getIterator\\(\\) should return ArrayIterator but returns Traversable\\<string, mixed\\>\\.$#"
+			count: 1
+			path: lib/Templating/Model/ViewModel.php

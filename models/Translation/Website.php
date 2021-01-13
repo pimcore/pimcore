@@ -19,6 +19,8 @@ namespace Pimcore\Model\Translation;
 
 /**
  * @method \Pimcore\Model\Translation\Website\Dao getDao()
+ *
+ * @deprecated use \Pimcore\Model\Translation with domain "messages" instead
  */
 class Website extends AbstractTranslation
 {

@@ -2,7 +2,6 @@
 
 set -euv
 
-rm -rf tmp-docs
 git clone https://github.com/pimcore/pimcore-docs.git tmp-docs/pimcore-docs
 cd tmp-docs/pimcore-docs
 
@@ -16,3 +15,5 @@ composer install  --no-interaction --optimize-autoloader
 
 # prepare docs
 bin/console prepare --config-file=./config/pimcore-6.json --repository-version=master --repository-version-label=master --repository-version-maintained=true --version-map-file=./versionmap-pimcore.json --version-switch-path-prefix=./ ../../doc
+
+bin/console generate
