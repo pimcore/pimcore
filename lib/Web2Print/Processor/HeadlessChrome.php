@@ -26,7 +26,6 @@ class HeadlessChrome extends Processor
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
-        $this->config = $config;
         $web2printConfig = Config::getWeb2PrintConfig();
         $web2printConfig = $web2printConfig["headlessChromeSettings"];
         $web2printConfig = json_decode($web2printConfig, true);
