@@ -92,7 +92,6 @@ class HeadlessChrome extends Processor
         }
         $converter->setOptions($params);
 
-        /** @var StringOutput $output */
         $output = $converter->convert();
 
         if($returnFilePath) {
