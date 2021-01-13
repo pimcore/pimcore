@@ -198,7 +198,7 @@ class ImageThumbnail
         $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
 
         if (!empty($selector) && $thumbnailConfig === null) {
-            throw new \Exception('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+            throw new Model\Exception\NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
         }
 
         return $thumbnailConfig;
