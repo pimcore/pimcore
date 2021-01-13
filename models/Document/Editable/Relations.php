@@ -159,6 +159,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     {
         if (is_array($data)) {
             $this->elementIds = $data;
+            $this->elements = [];
         }
 
         return $this;

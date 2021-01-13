@@ -70,19 +70,19 @@ pimcore.asset.metadata.grid = Class.create({
                         name: "title",
                         type: "input",
                         language: "",
-                        value: ""
+                        data: ""
                     });
                     this.dataProvider.getData().push({
                         name: "alt",
                         type: "input",
                         language: "",
-                        value: ""
+                        data: ""
                     });
                     this.dataProvider.getData().push({
                         name: "copyright",
                         type: "input",
                         language: "",
-                        value: ""
+                        data: ""
                     });
                 }
             }
