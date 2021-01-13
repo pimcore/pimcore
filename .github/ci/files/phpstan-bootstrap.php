@@ -2,8 +2,8 @@
 
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     include __DIR__ . '/../vendor/autoload.php';
-} elseif (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
-    include __DIR__ . '/../../../../vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../../../../../../vendor/autoload.php')) {
+    include __DIR__ . '/../../../../../../vendor/autoload.php';
 } elseif (getenv('PIMCORE_PROJECT_ROOT') != '' && file_exists(getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php')) {
     include getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php';
 } elseif (getenv('PIMCORE_PROJECT_ROOT') != '') {

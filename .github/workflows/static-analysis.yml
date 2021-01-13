@@ -1,0 +1,59 @@
+
+name: "Static Analysis"
+
+on:
+    pull_request:
+        branches:
+            - "6.8"
+            - "6.9"
+    push:
+        branches:
+            - "6.8"
+            - "6.9"
+            - "*_actions_6x"
+
+env:
+    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
+    PIMCORE_ENVIRONMENT: test
+    PIMCORE_TEST: 1
+
+jobs:
+    static-analysis-phpstan:
+        name: "Static Analysis with PHPStan"
+        runs-on: "ubuntu-20.04"
+
+        strategy:
+            matrix:
+                include:
+                    -   name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4"
+                        php-version: 7.4
+                        dependencies: ["lowest", "highest"]
+                        symfony-version: "^3.4"
+
+                    -   name: "PHPStan Level 3 - PHP 7.4 Symfony 4"
+                        php-version: 7.4
+                        dependencies: ["lowest", "highest"]
+                        symfony-version: "^4.0"
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: "${{ matrix.php-version }}"
+
+            - name: "Setup Pimcore environment"
+              run: |
+                  .github/ci/scripts/setup-pimcore-environment.sh
+
+            - name: Install Composer dependencies
+              run: |
+                    composer require symfony/symfony:${{ matrix.symfony-version }} --no-interaction --no-update --no-scripts
+                    composer install --no-interaction --optimize-autoloader
+
+            - name: "Run a static analysis with phpstan/phpstan"
+              env:
+                  SYMFONY_VERSION: ${{ matrix.symfony-version }}
+              run: ".github/ci/scripts/static-analysis.sh"
