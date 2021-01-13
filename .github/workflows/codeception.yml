@@ -1,0 +1,213 @@
+
+name: "Codeception Tests"
+
+on:
+    pull_request:
+        branches:
+            - "6.8"
+            - "6.9"
+    push:
+        branches:
+            - "6.8"
+            - "6.9"
+            - "*_actions_6x"
+
+env:
+    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
+    PIMCORE_ENVIRONMENT: test
+    PIMCORE_TEST: 1
+    PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
+    PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
+
+jobs:
+    codeception-tests:
+        name: "Codeception tests"
+        runs-on: "ubuntu-18.04"
+        continue-on-error: ${{ matrix.experimental }}
+
+        strategy:
+            matrix:
+                include:
+                    -   name: "All Tests - PHP 7.2 | Symfony 3.4 | MariaDB 10.1"
+                        php-version: 7.2
+                        dependencies: highest
+                        experimental: false
+                        database: "mariadb:10.1"
+                        symfony-version: "^3.4"
+
+                    -   name: "All Tests - PHP 7.3 | Symfony 3.4 | MariaDB 10.2"
+                        php-version: 7.3
+                        dependencies: highest
+                        experimental: false
+                        database: "mariadb:10.2"
+                        symfony-version: "^3.4"
+
+                    -   name: "All Tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
+                        php-version: 7.4
+                        dependencies: highest
+                        experimental: false
+                        database: "mysql:5.7"
+                        symfony-version: "^3.4"
+
+                    -   name: "All Tests - PHP 7.2 | Symfony 4 | MariaDB 10.3"
+                        php-version: 7.2
+                        dependencies: highest
+                        experimental: false
+                        database: "mariadb:10.3"
+                        symfony-version: "^4.0"
+
+                    -   name: "All Tests - PHP 7.3 | Symfony 4 | MariaDB 10.4"
+                        php-version: 7.3
+                        dependencies: highest
+                        experimental: false
+                        database: "mariadb:10.4"
+                        symfony-version: "^4.0"
+
+                    -   name: "All Tests - PHP 7.4 | Symfony 4 | Percona 5.6"
+                        php-version: 7.4
+                        dependencies: highest
+                        experimental: false
+                        database: "percona:5.6"
+                        symfony-version: "^4.0"
+        services:
+            redis:
+                image: redis
+                ports:
+                    - 63379:6379
+            db:
+                image: "${{ matrix.database }}"
+                ports:
+                    - 33006:3306
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  extensions: imagick
+                  ini-values: display_errors=On, display_startup_errors=On, error_reporting=32767
+                  php-version: "${{ matrix.php-version }}"
+
+            - name: "Verify DB connection"
+              run: |
+                  cp .github/ci/files/.my.cnf ~/.my.cnf
+                  while ! mysqladmin ping --silent; do
+                    sleep 1
+                  done
+
+            - if: matrix.database == 'mariadb:10.1' || matrix.database == 'percona:5.6'
+              name: "Update DB requirements"
+              run: |
+                  mysql -e "SET GLOBAL innodb_file_format=Barracuda;"
+                  mysql -e "SET GLOBAL innodb_large_prefix=1;"
+
+            - name: "Setup Pimcore environment"
+              run: |
+                  mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
+                  .github/ci/scripts/setup-pimcore-environment.sh
+
+            - run: |
+                    composer require symfony/symfony:${{ matrix.symfony-version }} --no-interaction --no-update --no-scripts
+
+            -   name: "Install dependencies with Composer"
+                uses: "ramsey/composer-install@v1"
+                with:
+                    dependency-versions: "${{ matrix.dependencies }}"
+
+            - name: "Test environment infos"
+              run: |
+                  mysql -e "SELECT VERSION();"
+                  php -i
+                  ./bin/console pimcore:system:requirements:check
+
+            - name: "Run Codeception"
+              run: "vendor/bin/codecept run -c . -vvv --json"
+
+    codeception-rest-tests:
+        name: "Codeception REST tests"
+        runs-on: "ubuntu-16.04"
+        continue-on-error: ${{ matrix.experimental }}
+
+        env:
+            PIMCORE_TEST_URL: "http://127.0.0.1:8080"
+            PIMCORE_TEST_PHP_VERSION: ${{ matrix.php-version }}
+
+        strategy:
+            matrix:
+                include:
+                    -   name: "REST Tests - PHP 7.4 | Symfony 3.4 | MySQL 8.0"
+                        php-version: 7.4
+                        dependencies: highest
+                        experimental: false
+                        database: "mysql:8.0"
+                        symfony-version: "^3.4"
+
+                    -   name: "REST Tests - PHP 7.3 | Symfony 3.4"
+                        php-version: 7.3
+                        dependencies: highest
+                        experimental: false
+                        database: "mariadb:10.4"
+                        symfony-version: "^3.4"
+
+        services:
+            redis:
+                image: redis
+                ports:
+                    - 63379:6379
+            db:
+                image: "${{ matrix.database }}"
+                ports:
+                    - 33006:3306
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        steps:
+            -   name: "Checkout code"
+                uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  extensions: imagick
+                  ini-values: display_errors=On, display_startup_errors=On, error_reporting=32767
+                  php-version: "${{ matrix.php-version }}"
+
+            - name: "Verify DB connection"
+              run: |
+                  cp .github/ci/files/.my.cnf ~/.my.cnf
+                  while ! mysqladmin ping --silent; do
+                    sleep 1
+                  done
+
+            -   name: "Setup Pimcore environment"
+                run: |
+                    mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
+                    .github/ci/scripts/setup-pimcore-environment.sh
+
+            -   name: "Setup Webserver"
+                run: |
+                    .github/ci/scripts/setup-server.sh
+
+            -   name: "Update symfony/symfony requirement in composer.json"
+                run: |
+                    composer require symfony/symfony:${{ matrix.symfony-version }} --no-interaction --no-update --no-scripts
+
+            -   name: "Install dependencies with Composer"
+                uses: "ramsey/composer-install@v1"
+                with:
+                    dependency-versions: "${{ matrix.dependencies }}"
+
+            -   name: "Test environment infos"
+                run: |
+                    mysql -e "SELECT VERSION();"
+                    php -i
+                    ./bin/console pimcore:system:requirements:check
+
+            -   name: "Run Codeception"
+                run: |
+                    php vendor/bin/codecept run -c . -vvv Rest --env http --json
