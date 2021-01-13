@@ -60,7 +60,7 @@ Ext.define('pimcore.settings.translationEditor', {
         } else {
             this.editableDivId = "translationeditor_" + uniqid();
 
-            var html = '<div class="pimcore_tag_wysiwyg pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.oldValue + '</div>';
+            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.oldValue + '</div>';
             var pConf = {
                 title: innerTitle,
                 html: html,

@@ -42,5 +42,3 @@ interface DateRangeInterface extends ConditionInterface
      */
     public function getEnding();
 }
-
-class_alias(DateRangeInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IDateRange');

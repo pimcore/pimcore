@@ -81,7 +81,6 @@ class VariantsController extends AdminController
             $requestedLanguage = $allParams['language'] ?? null;
             if ($requestedLanguage) {
                 if ($requestedLanguage != 'default') {
-                    //                $this->get('translator')->setLocale($requestedLanguage);
                     $request->setLocale($requestedLanguage);
                 }
             } else {
@@ -214,7 +213,7 @@ class VariantsController extends AdminController
 
                 $list = $gridHelperService->prepareListingForGrid($allParams, $request->getLocale(), $this->getAdminUser());
 
-                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject::OBJECT_TYPE_VARIANT]);
 
                 $list->load();
 

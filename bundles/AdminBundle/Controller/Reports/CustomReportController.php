@@ -254,7 +254,6 @@ class CustomReportController extends ReportsControllerBase
         $list = new CustomReport\Config\Listing();
         $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
 
-        /** @var CustomReport\Config $report */
         foreach ($items as $report) {
             $reports[] = [
                 'name' => $report->getName(),
@@ -384,7 +383,7 @@ class CustomReportController extends ReportsControllerBase
 
         $sort = $request->get('sort');
         $dir = $request->get('dir');
-        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
+        $filters = $request->get('filter') ? json_decode(urldecode($request->get('filter')), true) : null;
         $drillDownFilters = $request->get('drillDownFilters', null);
         $includeHeaders = $request->get('headers', false);
 

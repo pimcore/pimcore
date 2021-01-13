@@ -225,14 +225,19 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
         this.selectionModel = valueGrid.getSelectionModel();
 
-        var items = [];
-
-        items.push({
-            xtype: "numberfield",
-            fieldLabel: t("width"),
-            name: "width",
-            value: datax.width
-        });
+        var items = [
+            {
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            }
+        ];
 
         if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
             items.push({

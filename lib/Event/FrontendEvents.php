@@ -122,7 +122,7 @@ final class FrontendEvents
     const STATICROUTE_PATH = 'pimcore.frontend.path.staticroute';
 
     /**
-     * Subject: 	\Pimcore\Templating\Helper\HeadLink
+     * Subject: 	\Pimcore\Twig\Extension\Templating\HeadLink
      * Arguments:
      *  - item | stdClass
      *
@@ -133,7 +133,7 @@ final class FrontendEvents
     const VIEW_HELPER_HEAD_LINK = 'pimcore.frontend.view.helper.head-link';
 
     /**
-     * Subject: 	\Pimcore\Templating\Helper\HeadScript
+     * Subject: 	\Pimcore\Twig\Extension\Templating\HeadScript
      * Arguments:
      *  - item | stdClass
      *

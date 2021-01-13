@@ -54,7 +54,7 @@ class StoreConfig extends Model\AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->getById(intval($id));
+            $config->getDao()->getById((int)$id);
 
             return $config;
         } catch (\Exception $e) {
@@ -66,6 +66,8 @@ class StoreConfig extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -74,7 +76,7 @@ class StoreConfig extends Model\AbstractModel
             $config->getDao()->getByName($name);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -139,9 +141,9 @@ class StoreConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE, new StoreConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE);
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE, new StoreConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE);
     }
 
     /**
@@ -153,17 +155,17 @@ class StoreConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD);
         }
 
         $model = $this->getDao()->save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD);
         }
 
         return $model;

@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Model\Relations;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
@@ -17,13 +17,13 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class FieldcollectionTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         TestHelper::cleanUp();
         parent::tearDown();
@@ -73,7 +73,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
 
         /** @var Fieldcollection $fc */
         $fc = $object->getFieldcollection();
@@ -83,7 +83,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $rel = $loadedFieldcollectionItem->getFieldRelation();
         $this->assertEquals($target1->getId(), $rel[0]->getId());
@@ -97,7 +97,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
 
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $rel = $loadedFieldcollectionItem->getFieldRelation();
@@ -144,7 +144,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
 
         /** @var Fieldcollection $fc */
         $fc = $object->getFieldcollection();
@@ -154,7 +154,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $rel = $loadedFieldcollectionItem->getLRelation('en');
         $this->assertEquals($target1->getId(), $rel->getId());
@@ -168,7 +168,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
 
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $lrel = $loadedFieldcollectionItem->getLRelation('en');

@@ -174,7 +174,7 @@ class ConfigWriter
     {
         if (count($config)) {
             $content = Yaml::dump($config);
-            $configFile = PIMCORE_APP_ROOT.'/config/local/database.yml';
+            $configFile = PIMCORE_PROJECT_ROOT .'/config/local/database.yaml';
             File::put($configFile, $content);
         }
     }
@@ -186,23 +186,5 @@ class ConfigWriter
             'ip' => '',
             'devmode' => false,
         ]));
-    }
-
-    public function generateParametersFile(string $secret = null)
-    {
-        if (null === $secret) {
-            $secret = generateRandomSymfonySecret();
-        }
-
-        // generate parameters.yml
-        $parametersFilePath = PIMCORE_APP_ROOT . '/config/parameters.yml';
-        if (file_exists($parametersFilePath)) {
-            return;
-        }
-
-        $parameters = file_get_contents(PIMCORE_APP_ROOT . '/config/parameters.example.yml');
-        $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', $secret, $parameters);
-
-        File::put($parametersFilePath, $parameters);
     }
 }

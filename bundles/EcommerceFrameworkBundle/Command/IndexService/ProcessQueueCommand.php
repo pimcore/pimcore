@@ -19,7 +19,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
 /**
@@ -69,7 +69,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         @trigger_error(
-            'Command ProcessQueueCommand is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Command ProcessQueueCommand is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-preparation-queue or ecommerce:indexservice:process-update-queue instead.',
             E_USER_DEPRECATED
         );

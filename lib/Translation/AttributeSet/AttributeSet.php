@@ -14,7 +14,6 @@
 
 namespace Pimcore\Translation\AttributeSet;
 
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
 class AttributeSet
@@ -58,11 +57,11 @@ class AttributeSet
     }
 
     /**
-     * @param ElementInterface $translationItem
+     * @param TranslationItem $translationItem
      *
      * @return AttributeSet
      */
-    public function setTranslationItem(ElementInterface $translationItem): AttributeSet
+    public function setTranslationItem(TranslationItem $translationItem): AttributeSet
     {
         $this->translationItem = $translationItem;
 

@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Editable\Area;
 
-
 abstract class AbstractArea
 {
     /**
@@ -118,5 +117,3 @@ abstract class AbstractArea
         return $this->brick;
     }
 }
-
-class_alias(AbstractArea::class, 'Pimcore\Model\Document\Tag\Area\AbstractArea');

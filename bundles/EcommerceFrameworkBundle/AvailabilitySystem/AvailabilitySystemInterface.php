@@ -29,5 +29,3 @@ interface AvailabilitySystemInterface
      */
     public function getAvailabilityInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null);
 }
-
-class_alias(AvailabilitySystemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem');

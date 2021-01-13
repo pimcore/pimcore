@@ -227,7 +227,7 @@ class Log extends Model\AbstractModel
      */
     public static function getById($id)
     {
-        $id = intval($id);
+        $id = (int)$id;
         if ($id < 1) {
             return null;
         }

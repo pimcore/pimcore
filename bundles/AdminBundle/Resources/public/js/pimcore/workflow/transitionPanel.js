@@ -43,6 +43,10 @@ pimcore.workflow.transitionPanel = Class.create({
             itemId: 'workflowMessage',
             html: ''
         },{
+            xtype: 'container',
+            itemId: 'customHtmlTop',
+            html: ''
+        },{
             xtype: 'hiddenfield',
             name: 'cid',
             value: this.elementId
@@ -59,7 +63,12 @@ pimcore.workflow.transitionPanel = Class.create({
             },
             items: [],
             hidden: true
-        }];
+        },{
+            xtype: 'container',
+            itemId: 'customHtmlCenter',
+            html: ''
+        }
+        ];
 
         if(this.transitionConfig.notes.commentEnabled) {
 
@@ -84,6 +93,12 @@ pimcore.workflow.transitionPanel = Class.create({
             });
         }
 
+        items.push({
+            xtype: 'container',
+            itemId: 'customHtmlBottom',
+            html: ''
+        });
+
         return items;
     },
 
@@ -107,6 +122,8 @@ pimcore.workflow.transitionPanel = Class.create({
 
 
             this.setAdditionalFields(this.transitionConfig.notes.additionalFields);
+
+            this.loadCustomHtml();
         }
 
         return this.workflowFormPanel
@@ -149,7 +166,7 @@ pimcore.workflow.transitionPanel = Class.create({
     {
 
         if (!this.transitionWindow) {
-            var height = 510;
+            var height = this.getNotesField() ? 510 : 200;
             this.transitionWindow = new Ext.Window({
                 width: 530,
                 height: height,
@@ -199,7 +216,8 @@ pimcore.workflow.transitionPanel = Class.create({
      */
     getNotesField: function()
     {
-        return this.getWorkflowFormPanel().getComponent('notesFieldset').getComponent('notesField');
+        return this.getWorkflowFormPanel().getComponent('notesFieldset') ?
+            this.getWorkflowFormPanel().getComponent('notesFieldset').getComponent('notesField') : null;
     },
 
 
@@ -230,7 +248,7 @@ pimcore.workflow.transitionPanel = Class.create({
         Ext.each(additional, function(a) {
             //add a new field
             var field = {};
-            var supportedTags = ['input', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'];
+            var supportedTags = ['input', 'numeric', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'];
 
             var c = a.fieldTypeSettings;
             c.name = 'workflow[additional][' + a.name + ']';
@@ -278,7 +296,8 @@ pimcore.workflow.transitionPanel = Class.create({
      */
     submitWorkflowTransition: function()
     {
-        if(!this.getNotesField().validate()) {
+        var notesField = this.getNotesField();
+        if(notesField && !notesField.validate()) {
             return; //ui will handle the error
         }
 
@@ -313,11 +332,11 @@ pimcore.workflow.transitionPanel = Class.create({
             }
 
         } else {
-            this.getWorkflowFormPanel().getComponent('workflowMessage').setHtml(
-                [
-                    '<div class="action_error">' + data.message + '</div>',
-                    '<div class="action_reason">' + data.reason + '</div>'
-                ].join(''));
+                this.getWorkflowFormPanel().getComponent('workflowMessage').setHtml(
+                    [
+                        '<div class="action_error">' + t(data.message) + '</div>',
+                        '<div class="action_reason">' + data.reasons.map(function(reason){ return t(reason); }).join('<br>') + '</div>'
+                    ].join(''));
 
             this.getWorkflowFormPanel().scrollTo(0, 0);
 
@@ -328,5 +347,44 @@ pimcore.workflow.transitionPanel = Class.create({
 
     reloadObject: function() {
         this.elementEditor.reload({layoutId: this.transitionConfig.objectLayout});
+    },
+
+    loadCustomHtml: function() {
+
+        var formvars = this.getWorkflowFormPanelValues();
+        formvars['isGlobalAction'] = this.transitionConfig.isGlobalAction;
+
+        //send a request to the server with the current form data
+        Ext.Ajax.request({
+            url : Routing.generate('pimcore_admin_workflow_modal_custom_html'),
+            method: 'post',
+            params: formvars,
+            success: this.onCustomHtmlResponse.bind(this),
+            failure: this.genericError.bind(this)
+        });
+    },
+
+    onCustomHtmlResponse: function(response) {
+
+        var customHeight = 0;
+        var data = Ext.decode(response.responseText);
+        if (data.success && data.customHtml) {
+            for (var position in data.customHtml) {
+                if (this.getCustomHtmlPositions().includes(position)) {
+                    var containerName = 'customHtml' + position.charAt(0).toUpperCase() + position.slice(1);
+                    var customHtmlContainer = this.workflowFormPanel.getComponent(containerName);
+                    customHtmlContainer.setHtml(data.customHtml[position]);
+                    customHeight += customHtmlContainer.getHeight();
+                }
+            }
+        }
+
+        // dynamic height, with a max of 650
+        var height = Math.min((this.getNotesField() ? 510 : 200) + customHeight, 650);
+        this.transitionWindow.setHeight(height);
+    },
+
+    getCustomHtmlPositions: function() {
+        return ['top', 'center', 'bottom']
     }
 });

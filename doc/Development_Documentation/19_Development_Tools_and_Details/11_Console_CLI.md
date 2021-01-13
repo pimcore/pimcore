@@ -61,6 +61,15 @@ class AwesomeCommand extends AbstractCommand
         
         // Output as white text on red background.
         $this->writeError('oh noes!');
+
+        // Output as green text.
+        $this->writeInfo('info');
+
+        // Output as blue text.
+        $this->writeComment('comment');
+
+        // Output as yellow text.
+        $this->writeQuestion('question');
     }
 }
 ```

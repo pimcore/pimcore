@@ -30,5 +30,3 @@ interface CartAmountInterface extends ConditionInterface
      */
     public function getLimit();
 }
-
-class_alias(CartAmountInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartAmount');

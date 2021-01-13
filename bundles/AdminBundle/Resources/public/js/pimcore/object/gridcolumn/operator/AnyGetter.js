@@ -35,7 +35,6 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                     text: nodeLabel,
                     configAttributes: configAttributes,
                     isTarget: true,
-                    maxChildCount: 1,
                     expanded: true,
                     leaf: false,
                     expandable: false
@@ -51,7 +50,6 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                     text: this.getDefaultText(),
                     configAttributes: configAttributes,
                     isTarget: true,
-                    maxChildCount: 1,
                     leaf: true
                 };
             }
@@ -66,7 +64,6 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 text: source.data.cssClass,
                 isTarget: true,
                 leaf: false,
-                maxChildCount: 1,
                 expanded: true,
                 isOperator: true,
                 configAttributes: {

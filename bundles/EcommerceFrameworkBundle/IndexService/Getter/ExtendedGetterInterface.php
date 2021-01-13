@@ -23,5 +23,3 @@ interface ExtendedGetterInterface extends GetterInterface
 {
     public function get($object, $config = null, $subObjectId = null, ConfigInterface $tenantConfig = null);
 }
-
-class_alias(ExtendedGetterInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IExtendedGetter');

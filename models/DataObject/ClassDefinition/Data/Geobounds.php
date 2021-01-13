@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
@@ -55,13 +54,6 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         'SWlongitude' => 'double',
         'SWlatitude' => 'double',
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Geobounds';
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -109,7 +101,9 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $geobounds = new DataObject\Data\Geobounds($ne, $sw);
 
             if (isset($params['owner'])) {
-                $geobounds->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $geobounds->_setOwner($params['owner']);
+                $geobounds->_setOwnerFieldname($params['fieldname']);
+                $geobounds->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $geobounds;
@@ -259,60 +253,6 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         return '';
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof DataObject\Data\Geobounds) {
-            return [
-                'NElongitude' => $data->getNorthEast()->getLongitude(),
-                'NElatitude' => $data->getNorthEast()->getLatitude(),
-                'SWlongitude' => $data->getSouthWest()->getLongitude(),
-                'SWlatitude' => $data->getSouthWest()->getLatitude(),
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if ($value['NElongitude'] !== null && $value['NElatitude'] !== null && $value['SWlongitude'] !== null && $value['SWlatitude'] !== null) {
-                $ne = new DataObject\Data\Geopoint($value['NElongitude'], $value['NElatitude']);
-                $sw = new DataObject\Data\Geopoint($value['SWlongitude'], $value['SWlatitude']);
-
-                return new DataObject\Data\Geobounds($ne, $sw);
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -403,5 +343,25 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Geobounds::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Geobounds::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Geobounds::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
 }

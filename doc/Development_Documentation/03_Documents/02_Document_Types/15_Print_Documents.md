@@ -103,8 +103,8 @@ Additionally, two settings can be used to add header and footer by the content o
 
 If PDF rendering doesn't work properly, following log files should give you a hit for the reason.
 
-* `var/logs/dev.log` or `var/logs/prod.log` - contains general logging information for rendering process at INFO level
-* `var/logs/web2print-output.log` - contains output of rendering PHP process (if any). It is recreated on every rendering process.
+* `var/log/dev.log` or `var/log/prod.log` - contains general logging information for rendering process at INFO level
+* `var/log/web2print-output.log` - contains output of rendering PHP process (if any). It is recreated on every rendering process.
 
 ## Color management and images
 

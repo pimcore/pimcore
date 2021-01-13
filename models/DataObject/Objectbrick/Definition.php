@@ -525,7 +525,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= 'public function get' . ucfirst($brickKey) . "() { \n";
 
                     if ($class->getAllowInherit()) {
-                        $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject\\AbstractObject::doGetInheritedValues($this->getObject())) { ' . "\n";
+                        $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject::doGetInheritedValues($this->getObject())) { ' . "\n";
                         $cd .= "\t\t" . 'try {' . "\n";
                         $cd .= "\t\t\t" . '$brickContainer = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
                         $cd .= "\t\t\t" . 'if(!empty($brickContainer)) {' . "\n";
@@ -617,7 +617,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
-                if (!$processedClasses[$cl['classname']]) {
+                if (!isset($processedClasses[$cl['classname']])) {
                     $class = DataObject\ClassDefinition::getByName($cl['classname']);
                     $this->getDao()->delete($class);
                     $processedClasses[$cl['classname']] = true;

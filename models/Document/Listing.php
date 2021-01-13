@@ -17,10 +17,10 @@
 
 namespace Pimcore\Model\Document;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Document[] load()
@@ -42,21 +42,9 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     public $objectTypeDocument = false;
 
     /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $documents = null;
-
-    /**
      * @var bool
      */
     public $unpublished = false;
-
-    public function __construct()
-    {
-        $this->documents = & $this->data;
-    }
 
     /**
      * @return Document[]

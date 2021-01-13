@@ -23,5 +23,3 @@ interface CartPriceCalculatorFactoryInterface
 {
     public function create(EnvironmentInterface $environment, CartInterface $cart): CartPriceCalculatorInterface;
 }
-
-class_alias(CartPriceCalculatorFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculatorFactory');

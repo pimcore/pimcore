@@ -279,7 +279,7 @@ EOT;
             'filesystemPath' => $fsPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -478,7 +478,7 @@ EOT;
             $exif = @exif_read_data($path);
             if (is_array($exif)) {
                 if (array_key_exists('Orientation', $exif)) {
-                    $orientation = intval($exif['Orientation']);
+                    $orientation = (int)$exif['Orientation'];
                     if (in_array($orientation, [5, 6, 7, 8])) {
                         // flip height & width
                         $dimensions = [

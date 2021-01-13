@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 
 /**
@@ -60,8 +61,6 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
     /**
      * defines the name of the availability system for this product.
      * for offline tool there are no availability systems implemented
-     *
-     * @throws UnsupportedException
      *
      * @return string
      */
@@ -160,7 +159,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
      */
     public static function getById($id, $force = false)
     {
-        $object = AbstractObject::getById($id, $force);
+        $object = DataObject::getById($id, $force);
 
         if ($object instanceof AbstractOfferToolProduct) {
             return $object;

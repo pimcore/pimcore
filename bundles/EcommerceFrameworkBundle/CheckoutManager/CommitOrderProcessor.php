@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
 use Pimcore\Logger;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommitOrderProcessor implements CommitOrderProcessorInterface
@@ -49,7 +49,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     public function __construct(LockFactory $lockFactory, OrderManagerLocatorInterface $orderManagers, array $options = [])
     {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in Pimcore 10. ' .
             ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor::class . ' class instead.',
             E_USER_DEPRECATED
         );

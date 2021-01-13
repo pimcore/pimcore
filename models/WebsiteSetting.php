@@ -16,6 +16,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
@@ -88,7 +89,7 @@ class WebsiteSetting extends AbstractModel
         } catch (\Exception $e) {
             try {
                 $setting = new self();
-                $setting->getDao()->getById(intval($id));
+                $setting->getDao()->getById((int)$id);
                 \Pimcore\Cache\Runtime::set($cacheKey, $setting);
             } catch (\Exception $e) {
                 return null;
@@ -105,6 +106,8 @@ class WebsiteSetting extends AbstractModel
      * @param string|null $fallbackLanguage fallback language
      *
      * @return null|WebsiteSetting
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $siteId = null, $language = null, $fallbackLanguage = null)
     {
@@ -120,7 +123,7 @@ class WebsiteSetting extends AbstractModel
 
         try {
             $setting->getDao()->getByName($name, $siteId, $language);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             if ($language != $fallbackLanguage) {
                 $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);
 

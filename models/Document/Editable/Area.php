@@ -48,8 +48,8 @@ class Area extends Model\Document\Editable
      */
     public function admin()
     {
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $options = $this->getEditmodeConfig();
+        $this->outputEditmodeConfig($options);
 
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
@@ -68,7 +68,7 @@ class Area extends Model\Document\Editable
     {
         $config = $this->getConfig();
 
-        // TODO inject area handler via DI when tags are built through container
+        // TODO inject area handler via DI when editables are built by container
         $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
 
         // don't show disabled bricks
@@ -146,12 +146,10 @@ class Area extends Model\Document\Editable
     public function getElement(string $name)
     {
         $document = $this->getDocument();
-        $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
-
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
-        $id = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
+        $id = Model\Document\Editable::buildChildElementTagName($name, 'area', $parentBlockNames, 1);
         $editable = $document->getEditable($id);
 
         if ($editable) {
@@ -161,5 +159,3 @@ class Area extends Model\Document\Editable
         return $editable;
     }
 }
-
-class_alias(Area::class, 'Pimcore\Model\Document\Tag\Area');

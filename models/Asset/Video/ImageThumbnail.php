@@ -24,7 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 
 class ImageThumbnail
 {
@@ -70,7 +70,7 @@ class ImageThumbnail
             'filesystemPath' => $fsPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -168,10 +168,11 @@ class ImageThumbnail
                 $this->filesystemPath = $path;
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::VIDEO_IMAGE_THUMBNAIL, new GenericEvent($this, [
+            $event = new GenericEvent($this, [
                 'deferred' => $deferred,
                 'generated' => $generated,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
         }
     }
 

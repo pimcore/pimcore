@@ -15,10 +15,10 @@ pimcore.registerNS("pimcore.document.editables.date");
 pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
     initialize: function(id, name, config, data, inherited) {
-
         this.id = id;
         this.name = name;
         this.config = this.parseConfig(config);
+        this.config.name = id + "_editable";
 
         this.data = null;
         if(data) {
@@ -37,8 +37,6 @@ pimcore.document.editables.date = Class.create(pimcore.document.editable, {
         if(this.data) {
             this.config.value = this.data;
         }
-
-        this.config.name = id + "_editable";
 
         this.element = new Ext.form.DateField(this.config);
         if (this.config["reload"]) {

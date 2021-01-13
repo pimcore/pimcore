@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Asset\Video\Thumbnail\Config\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable

@@ -16,11 +16,15 @@ trait AllowObjectRelationTrait
      */
     protected function allowObjectRelation($object)
     {
+        if (!$object instanceof DataObject\AbstractObject || $object->getId() <= 0) {
+            return false;
+        }
+
         $allowedClasses = $this->getClasses();
         $allowed = true;
         if (!$this->getObjectsAllowed()) {
             $allowed = false;
-        } elseif ($this->getObjectsAllowed() and count($allowedClasses) > 0) {
+        } elseif ($this->getObjectsAllowed() && count($allowedClasses) > 0) {
             $allowedClassnames = [];
             foreach ($allowedClasses as $c) {
                 $allowedClassnames[] = $c['classes'];

@@ -51,7 +51,7 @@ creating a bundle. Please don't activate it in production systems!
 
 What exactly does the dev mode:
 * Loading the source javascript files (uncompressed & commented)
-* Disables some caches (Webservice Cache, ...)
+* Disables some caches (Cache, ...)
 * extensive logging into log files
 * ... and some more little things
 
@@ -62,18 +62,6 @@ Settings for default values of Mails sent via `Pimcore\Mail`.
 
 ## Website
 System settings about the CMS part of Pimcore.
-
-### EU Cookie Policy Notice
-Pimcore has a default implementation for EU cookie policy that looks like as follows. 
-
-![Cookie Policy](../img/system-settings-sample.png)
-
-
-You can specify your own texts and add your custom detail link using the "Shared Translations".
-Just search for "cookie-" in Shared Translations, then you get listed the predefined keys for the cookie 
-texts and links:
-
-![Cookie Policy Translation](../img/system-settings2.png)
 
 ##### Use a Custom Template Code
 

@@ -22,7 +22,7 @@ use Pimcore\Targeting\Storage\Cookie\CookieSaveHandlerInterface;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -211,7 +211,7 @@ class CookieStorage implements TargetingStorageInterface
         $this->changed = true;
 
         // adds a response listener setting the storage cookie
-        $listener = function (FilterResponseEvent $event) use ($visitorInfo) {
+        $listener = function (ResponseEvent $event) use ($visitorInfo) {
             // only handle event for the visitor info which triggered the save
             if ($event->getRequest() !== $visitorInfo->getRequest()) {
                 return;

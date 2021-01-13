@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -32,34 +33,16 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 abstract class PageSnippet extends Model\Document
 {
     use Document\Traits\ScheduledTasksTrait;
-    /**
-     * @var string
-     */
-    protected $module;
 
     /**
      * @var string
      */
-    protected $controller = 'default';
-
-    /**
-     * @var string
-     */
-    protected $action = 'default';
+    protected $controller;
 
     /**
      * @var string
      */
     protected $template;
-
-    /**
-     * Contains all content-elements of the document
-     *
-     * @var array
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->editables
-     */
-    protected $elements = null;
 
     /**
      * Contains all content-editables of the document
@@ -95,21 +78,8 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @var array
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->inheritedEditables
-     */
-    protected $inheritedElements = [];
-
-    /**
-     * @var array
      */
     protected $inheritedEditables = [];
-
-    public function __construct()
-    {
-        $this->elements = & $this->editables;
-        $this->inheritedElements = & $this->inheritedEditables;
-    }
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
@@ -165,9 +135,10 @@ abstract class PageSnippet extends Model\Document
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
+                $preUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
-                ]));
+                ]);
+                \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
             }
 
             // set date
@@ -193,17 +164,19 @@ abstract class PageSnippet extends Model\Document
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
+                $postUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
-                ]));
+                ]);
+                \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, new DocumentEvent($this, [
+            $postUpdateFailureEvent = new DocumentEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }
@@ -272,22 +245,10 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return string
      */
-    public function getAction()
-    {
-        if (empty($this->action)) {
-            return 'default';
-        }
-
-        return $this->action;
-    }
-
-    /**
-     * @return string
-     */
     public function getController()
     {
         if (empty($this->controller)) {
-            return 'default';
+            $this->controller = \Pimcore::getContainer()->getParameter('pimcore.documents.default_controller');
         }
 
         return $this->controller;
@@ -299,18 +260,6 @@ abstract class PageSnippet extends Model\Document
     public function getTemplate()
     {
         return $this->template;
-    }
-
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-
-        return $this;
     }
 
     /**
@@ -335,42 +284,6 @@ abstract class PageSnippet extends Model\Document
         $this->template = $template;
 
         return $this;
-    }
-
-    /**
-     * @param string $module
-     *
-     * @return $this
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
-     * Set raw data of an element (eg. for editmode)
-     *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setRawEditable() instead.
-     */
-    public function setRawElement($name, $type, $data)
-    {
-        return $this->setRawEditable($name, $type, $data);
     }
 
     /**
@@ -406,44 +319,16 @@ abstract class PageSnippet extends Model\Document
     /**
      * Set an element with the given key/name
      *
-     * @param string $name
-     * @param Editable $data
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditable() instead.
-     */
-    public function setElement($name, $data)
-    {
-        return $this->setEditable($name, $data);
-    }
-
-    /**
-     * Set an element with the given key/name
-     *
-     * @param string $name
-     * @param Editable $data
+     * @param Editable $editable
      *
      * @return $this
      */
-    public function setEditable(string $name, Editable $data)
+    public function setEditable(Editable $editable)
     {
         $this->getEditables();
-        $this->editables[$name] = $data;
+        $this->editables[$editable->getName()] = $editable;
 
         return $this;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use removeEditable() instead.
-     */
-    public function removeElement($name)
-    {
-        return $this->removeEditable($name);
     }
 
     /**
@@ -459,20 +344,6 @@ abstract class PageSnippet extends Model\Document
         }
 
         return $this;
-    }
-
-    /**
-     * Get an element with the given key/name
-     *
-     * @param string $name
-     *
-     * @return Editable|null
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
-     */
-    public function getElement($name)
-    {
-        return $this->getEditable($name);
     }
 
     /**
@@ -580,32 +451,10 @@ abstract class PageSnippet extends Model\Document
      * @param string $name
      *
      * @return bool
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use hasEditable() instead.
-     */
-    public function hasElement($name)
-    {
-        return $this->hasEditable($name);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
      */
     public function hasEditable(string $name)
     {
         return $this->getEditable($name) !== null;
-    }
-
-    /**
-     * @return Editable[]
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getEditables() instead.
-     */
-    public function getElements()
-    {
-        return $this->getEditables();
     }
 
     /**
@@ -618,18 +467,6 @@ abstract class PageSnippet extends Model\Document
         }
 
         return $this->editables;
-    }
-
-    /**
-     * @param array $elements
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditables() instead.
-     */
-    public function setElements($elements)
-    {
-        return $this->setEditables($elements);
     }
 
     /**
@@ -684,7 +521,7 @@ abstract class PageSnippet extends Model\Document
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['inheritedElements'];
+        $blockedVars = ['inheritedEditables'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
@@ -707,7 +544,7 @@ abstract class PageSnippet extends Model\Document
     {
         if (!$scheme) {
             $scheme = 'http://';
-            $requestHelper = \Pimcore::getContainer()->get('pimcore.http.request_helper');
+            $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
             if ($requestHelper->hasMasterRequest()) {
                 $scheme = $requestHelper->getMasterRequest()->getScheme() . '://';
             }

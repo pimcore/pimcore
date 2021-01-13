@@ -16,8 +16,8 @@ namespace Pimcore\Extension\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Model\Document\Editable;
+use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -32,9 +32,11 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     protected $editableRenderer;
 
     /**
+     * Called in AreabrickPass
+     *
      * @param EditableRenderer $editableRenderer
      */
-    public function __construct(EditableRenderer $editableRenderer)
+    public function setEditableRenderer(EditableRenderer $editableRenderer)
     {
         $this->editableRenderer = $editableRenderer;
     }
@@ -110,32 +112,6 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     }
 
     /**
-     * @inheritDoc
-     */
-    public function hasViewTemplate()
-    {
-        @trigger_error(sprintf('%s is deprecated, use hasTemplate() instead', __METHOD__), E_USER_DEPRECATED);
-
-        return $this->hasTemplate();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasEditTemplate()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditTemplate()
-    {
-        return null;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function action(Info $info)
@@ -183,24 +159,10 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      * @param PageSnippet $document
      * @param string $type
      * @param string $inputName
-     * @param array $options
-     *
-     * @return Editable|null
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use getDocumentEditable() instead.
-     */
-    protected function getDocumentTag(PageSnippet $document, $type, $inputName, array $options = [])
-    {
-        return $this->getDocumentEditable($document, $type, $inputName, $options);
-    }
-
-    /**
-     * @param PageSnippet $document
-     * @param string $type
      * @param string $inputName
      * @param array $options
      *
-     * @return Editable|null
+     * @return Editable\EditableInterface
      */
     protected function getDocumentEditable(PageSnippet $document, $type, $inputName, array $options = [])
     {

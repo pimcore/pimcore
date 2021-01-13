@@ -51,7 +51,7 @@ class SitesManager
     private $translator;
 
     /**
-     * @var Config
+     * @var PimcoreConfig
      */
     private $pimcoreConfig;
 

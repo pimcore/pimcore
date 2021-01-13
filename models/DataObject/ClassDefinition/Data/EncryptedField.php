@@ -32,7 +32,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
@@ -72,13 +71,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @var string
      */
     public $columnType = 'LONGBLOB';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -208,7 +200,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
 
             if (isset($params['owner'])) {
-                $field->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $field->_setOwner($params['owner']);
+                $field->_setOwnerFieldname($params['fieldname']);
+                $field->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $field;
@@ -319,48 +313,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
 
         return true;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
-
-        if ($data instanceof Model\DataObject\Data\RgbaColor) {
-            return $this->getDataForEditmode($data, $object, $params);
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        // not implemented
-        return null;
     }
 
     /**
@@ -533,14 +485,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param string $phpdocType
-     */
-    public function setPhpdocType($phpdocType)
-    {
-        $this->phpdocType = $phpdocType;
-    }
-
-    /**
      * @return Model\DataObject\ClassDefinition\Data
      */
     public function getDelegateDatatypeDefinition()
@@ -618,14 +562,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->delegate ? $this->delegate->getPhpdocType() : null;
-    }
-
-    /**
      * @inheritDoc
      */
     public function getDataForSearchIndex($object, $params = [])
@@ -651,5 +587,25 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
 
         return false;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return $this->delegate ? $this->delegate->getParameterTypeDeclaration() : null;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return $this->delegate ? $this->delegate->getReturnTypeDeclaration() : null;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return $this->delegate ? $this->delegate->getPhpdocInputType() : null;
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
     }
 }

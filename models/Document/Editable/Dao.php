@@ -20,6 +20,8 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Editable\Areablock $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -39,16 +41,14 @@ class Dao extends Model\Dao\AbstractDao
             'type' => $this->model->getType(),
         ];
 
-        $this->db->insertOrUpdate('documents_elements', $element);
+        $this->db->insertOrUpdate('documents_editables', $element);
     }
 
     public function delete()
     {
-        $this->db->delete('documents_elements', [
+        $this->db->delete('documents_editables', [
             'documentId' => $this->model->getDocumentId(),
             'name' => $this->model->getName(),
         ]);
     }
 }
-
-class_alias(Dao::class, 'Pimcore\Model\Document\Tag\Dao');

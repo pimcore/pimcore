@@ -60,7 +60,7 @@ class ListHelper
 
         $offset = 0;
 
-        $pageLimit = isset($params['perPage']) ? intval($params['perPage']) : null;
+        $pageLimit = isset($params['perPage']) ? (int)$params['perPage'] : null;
         if (!$pageLimit) {
             $pageLimit = $filterDefinition->getPageLimit();
         }
@@ -73,7 +73,7 @@ class ListHelper
         }
 
         if (isset($params['page'])) {
-            $params['currentPage'] = intval($params['page']);
+            $params['currentPage'] = (int)$params['page'];
             $offset = $pageLimit * ($params['page'] - 1);
         }
         if ($filterDefinition->getAjaxReload()) {

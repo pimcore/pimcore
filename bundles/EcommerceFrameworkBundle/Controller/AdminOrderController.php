@@ -15,7 +15,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use GuzzleHttp\ClientInterface;
+use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -25,10 +27,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Cache;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -37,17 +39,15 @@ use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Zend\Paginator\Paginator;
 
 /**
  * Class AdminOrderController
  *
  * @Route("/admin-order")
  */
-class AdminOrderController extends AdminController implements EventedControllerInterface
+class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var OrderManagerInterface
@@ -55,9 +55,9 @@ class AdminOrderController extends AdminController implements EventedControllerI
     protected $orderManager;
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
         $user = $this->get(TokenStorageUserResolver::class)->getUser();
@@ -68,17 +68,10 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         // enable inherited values
-        AbstractObject::setGetInheritedValues(true);
+        DataObject::setGetInheritedValues(true);
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
     }
 
     /**
@@ -369,9 +362,12 @@ class AdminOrderController extends AdminController implements EventedControllerI
     /**
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel", methods={"GET", "POST"})
      *
+     * @param Request $request
+     * @param CsrfProtectionHandler $csrfProtection
+     *
      * @return Response
      */
-    public function itemCancelAction(Request $request)
+    public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
         // init
         $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -379,7 +375,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             // init
             $agent = $this->orderManager->createOrderAgent($order);
 
@@ -397,7 +393,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/item_cancel.html.twig', [
-            'orderItem' => $orderItem
+            'orderItem' => $orderItem,
         ]);
     }
 
@@ -406,7 +402,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
      *
      * @return Response
      */
-    public function itemEditAction(Request $request)
+    public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -414,7 +410,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
-            $this->checkCsrfToken($request);
+            $csrfProtectionHandler->checkCsrfToken($request);
 
             // change item
             $agent = $this->orderManager->createOrderAgent($order);
@@ -431,7 +427,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/item_edit.html.twig', [
-            'orderItem' => $orderItem
+            'orderItem' => $orderItem,
         ]);
     }
 
@@ -440,7 +436,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
      *
      * @return Response
      */
-    public function itemComplaintAction(Request $request)
+    public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -448,7 +444,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
-            $this->checkCsrfToken($request);
+            $csrfProtectionHandler->checkCsrfToken($request);
 
             // change item
             $agent = $this->orderManager->createOrderAgent($order);
@@ -465,7 +461,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/item_complaint.html.twig', [
-            'orderItem' => $orderItem
+            'orderItem' => $orderItem,
         ]);
     }
 }

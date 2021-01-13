@@ -23,6 +23,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Element\Note $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -60,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             } elseif ($type == 'object') {
                 if ($data) {
-                    $data = DataObject\AbstractObject::getById($data);
+                    $data = DataObject::getById($data);
                 }
             } elseif ($type == 'date') {
                 if ($data > 0) {

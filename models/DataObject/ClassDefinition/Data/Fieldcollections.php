@@ -20,26 +20,15 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\Webservice;
-use Pimcore\Tool\Cast;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-
     /**
      * Static type of this element
      *
      * @var string
      */
     public $fieldtype = 'fieldcollections';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Fieldcollection';
 
     /**
      * @var array
@@ -59,9 +48,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @var bool
      */
-    public $disallowAddRemove;
+    public $disallowAddRemove = false;
 
-    public $disallowReorder;
+    /**
+     * @var bool
+     */
+    public $disallowReorder = false;
 
     /**
      * @var bool
@@ -393,129 +385,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $wsData = [];
-
-        if ($data instanceof DataObject\Fieldcollection) {
-            foreach ($data as $item) {
-                if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
-                    continue;
-                }
-
-                $wsDataItem = new Webservice\Data\DataObject\Element();
-                $wsDataItem->value = [];
-                $wsDataItem->type = $item->getType();
-
-                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $el = new Webservice\Data\DataObject\Element();
-                        $el->name = $fd->getName();
-                        $el->type = $fd->getFieldType();
-                        $el->value = $fd->getForWebserviceExport($item, $params);
-                        if ($el->value == null && self::$dropNullValues) {
-                            continue;
-                        }
-
-                        $wsDataItem->value[] = $el;
-                    }
-
-                    $wsData[] = $wsDataItem;
-                }
-            }
-        }
-
-        return $wsData;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|DataObject\Fieldcollection
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($data, $object = null, $params = [], $idMapper = null)
-    {
-        $values = [];
-        $count = 0;
-
-        if (is_array($data)) {
-            foreach ($data as $collectionRaw) {
-                if ($collectionRaw instanceof \stdClass) {
-                    $collectionRaw = Cast::castToClass('\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Element', $collectionRaw);
-                }
-                if (!$collectionRaw instanceof Webservice\Data\DataObject\Element) {
-                    throw new \Exception('invalid data in fieldcollections [' . $this->getName() . ']');
-                }
-
-                $fieldcollection = $collectionRaw->type;
-                $collectionData = [];
-                $collectionDef = DataObject\Fieldcollection\Definition::getByKey($fieldcollection);
-
-                if (!$collectionDef) {
-                    throw new \Exception('Unknown fieldcollection in webservice import [' . $fieldcollection . ']');
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    foreach ($collectionRaw->value as $field) {
-                        if ($field instanceof \stdClass) {
-                            $field = Cast::castToClass('\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Element', $field);
-                        }
-                        if (!$field instanceof Webservice\Data\DataObject\Element) {
-                            throw new \Exception('invalid data in fieldcollections [' . $this->getName() . ']');
-                        } elseif ($field->name == $fd->getName()) {
-                            if ($field->type != $fd->getFieldType()) {
-                                throw new \Exception('Type mismatch for fieldcollection field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
-                            }
-
-                            $params = [
-                                'context' => [
-                                    'object' => $object,
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $fieldcollection,
-                                    'fieldname' => $fd->getName(),
-                                    'index' => $count,
-                                ], ];
-
-                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $params, $idMapper);
-                            break;
-                        }
-                    }
-                }
-
-                $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollection);
-                /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
-                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
-                $collection->setValues($collectionData);
-                $collection->setIndex($count);
-                $collection->setFieldname($this->getName());
-
-                $values[] = $collection;
-
-                $count++;
-            }
-        }
-
-        $container = new DataObject\Fieldcollection($values, $this->getName());
-
-        return $container;
-    }
-
-    /**
      * @param DataObject\Fieldcollection|null $data
      *
      * @return array
@@ -788,18 +657,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param array $data
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDiffDataFromEditmode($data, $object = null, $params = [])
-    {
-        return parent::getDiffDataFromEditmode($data, $object, $params);
-    }
-
-    /**
      * Rewrites id from source to target, $idMapping contains
      * array(
      *  "document" => array(
@@ -988,5 +845,25 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function supportsInheritance()
     {
         return false;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Fieldcollection::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Fieldcollection::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Fieldcollection::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 }

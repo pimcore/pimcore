@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Model\LazyLoading;
 
 use Pimcore\Cache;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
@@ -297,15 +298,37 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
     public function testLocalizedBrickAttributes()
     {
         //prepare data object
-        $relationObject = $this->loadSingleRelation();
-
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
-        $brick->getLocalizedfields()->setLocalizedValue('lrelation', $relationObject);
+
+        $relations = $this->loadRelations()->load();
+        $relation = $relations[0];
+
+        $brick->getLocalizedfields()->setLocalizedValue('lrelation', $relation, 'en');
+        $brick->getLocalizedfields()->setLocalizedValue('lrelation', $relation, 'de');
+
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
+
+        $object = Concrete::getById($object->getId(), true);
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('en'));
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('de'));
+
+        $object = Concrete::getById($object->getId(), true);
+        $newRelation = $relations[1];
+
+        $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
+        $lFields = $brick->getLocalizedfields();
+
+        // change one language and make sure that it does not affect the other one
+        $lFields->setLocalizedValue('lrelations', $newRelation, 'de');
+        $object->save();
+
+        $object = Concrete::getById($object->getId(), true);
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('en'));
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('de'));
 
         foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
@@ -323,7 +346,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             //load relation and check if relation loads correctly
             $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
             $loadedRelation = $brick->getLocalizedFields()->getLocalizedValue('lrelation');
-            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
+            $this->assertEquals($relation->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);

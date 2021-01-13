@@ -36,5 +36,3 @@ interface DiscountInterface extends CartPriceModificatorInterface
      */
     public function getAmount(): Decimal;
 }
-
-class_alias(DiscountInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IDiscount');

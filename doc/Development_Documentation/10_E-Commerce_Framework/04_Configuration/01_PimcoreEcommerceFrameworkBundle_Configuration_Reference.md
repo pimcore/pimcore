@@ -281,7 +281,7 @@ pimcore_ecommerce_framework:
                         # Defines object attribute field name, can be omitted if the same like name of index attribute
                         field_name:           null
 
-                        # Type of index attribute (database column or elastic search data type)
+                        # Type of index attribute (database column or elasticsearch data type)
                         type:                 null
 
                         # Locale for localized fields, can be omitted if not necessary

@@ -49,7 +49,8 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 minValue: 0,
                 allowDecimals: true,
                 incrementValue: 0.01
-            }, {
+            },
+            {
                 xtype: 'numberfield',
                 fieldLabel: t('longitude'),
                 name: 'lng',
@@ -58,7 +59,8 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 minValue: 0,
                 allowDecimals: true,
                 incrementValue: 0.01
-            }, {
+            },
+            {
                 xtype: 'numberfield',
                 fieldLabel: t('zoom_level'),
                 name: 'zoom',
@@ -66,22 +68,32 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 decimalPrecision: 0,
                 minValue: 1,
                 incrementValue: 1
-            }, {
-                xtype: "numberfield",
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
-                minValue: 180,
-                value: this.datax.height
+                value: this.datax.height || 180
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
             }
         ];
     },
-    
+
     applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
@@ -97,5 +109,5 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 });
         }
     }
-    
+
 });

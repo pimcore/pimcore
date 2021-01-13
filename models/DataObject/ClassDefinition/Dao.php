@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\ClassDefinition $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -61,6 +63,8 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $name
      *
      * @return string|null
+     *
+     * @throws \Exception
      */
     public function getIdByName($name)
     {
@@ -70,6 +74,12 @@ class Dao extends Model\Dao\AbstractDao
                 $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
         } catch (\Exception $e) {
+        }
+
+        if (empty($id)) {
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Data object class definition with with name "%s" does not exist.', $name
+            ));
         }
 
         return $id;
@@ -157,9 +167,8 @@ class Dao extends Model\Dao\AbstractDao
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                     // if a datafield requires more than one column in the datastore table => only for non-relation types
-                    /** @var Data&DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value */
                     if (!$value->isRelationType()) {
                         if (is_array($value->getColumnType())) {
                             foreach ($value->getColumnType() as $fkey => $fvalue) {

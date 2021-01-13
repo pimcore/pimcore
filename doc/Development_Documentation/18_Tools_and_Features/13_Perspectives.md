@@ -33,7 +33,7 @@ You can restrict the access to certain perspectives via the user settings.
 
 ## The Configuration File
 
-Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/master/app/config/pimcore/perspectives.example.php) 
+Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/master/config/pimcore/perspectives.example.php) 
 for further details on how this can be set up.
 
 You can find out there how the default view is prepared and how to add a special perspective.

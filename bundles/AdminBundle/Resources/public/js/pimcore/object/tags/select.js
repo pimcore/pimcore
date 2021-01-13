@@ -67,7 +67,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 try {
                     metaData.tdCls += " grid_value_inherited";
                 } catch (e) {
@@ -298,7 +298,13 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             options.width = this.fieldConfig.width;
         }
 
-        options.width += options.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            options.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            options.width = this.sumWidths(options.width, options.labelWidth);
+        }
 
         if (typeof this.data == "string" || typeof this.data == "number") {
             if (in_array(this.data, validValues)) {

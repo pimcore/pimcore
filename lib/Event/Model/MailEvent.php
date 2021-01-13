@@ -16,7 +16,7 @@ namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Mail;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MailEvent extends Event
 {

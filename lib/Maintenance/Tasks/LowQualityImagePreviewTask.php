@@ -17,7 +17,7 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
 final class LowQualityImagePreviewTask implements TaskInterface
@@ -46,9 +46,8 @@ final class LowQualityImagePreviewTask implements TaskInterface
      */
     public function execute()
     {
-        if (!$this->lock->isAcquired() && date('H') <= 4) {
+        if (date('H') <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
-            $this->lock->acquire();
             $this->logger->debug('Execute low quality image preview generation');
 
             $listing = new Asset\Listing();

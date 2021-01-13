@@ -25,19 +25,6 @@ The textarea editable is very similar to the [Input](./16_Input.md) editable, th
 
 ## Example
 
-<div class="code-section">
-
-```php
-<p class="product-description">
-    <?= $this->textarea("product_description", [
-        "nl2br" => true,
-        "height" => 300,
-        "placeholder" =>
-            "Product Description"
-    ]); ?>
-</p>
-```
-
 ```twig
 <p class="product-description">
     {{ pimcore_textarea("product_description",{
@@ -47,8 +34,6 @@ The textarea editable is very similar to the [Input](./16_Input.md) editable, th
     }) }}
 </p>
 ```
-
-</div>
 
 In the editmode, you can see the textarea and the predefined `placeholder`.
  

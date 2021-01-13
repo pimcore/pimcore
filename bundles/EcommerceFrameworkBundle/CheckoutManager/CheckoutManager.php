@@ -122,7 +122,7 @@ class CheckoutManager implements CheckoutManagerInterface
         PaymentInterface $paymentProvider = null
     ) {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in Pimcore 10. ' .
             ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager::class . ' class instead.',
             E_USER_DEPRECATED
         );
@@ -184,7 +184,7 @@ class CheckoutManager implements CheckoutManagerInterface
         }
 
         $event = new CheckoutManagerStepsEvent($this, $this->currentStep);
-        $this->eventDispatcher->dispatch(CheckoutManagerEvents::INITIALIZE_STEP_STATE, $event);
+        $this->eventDispatcher->dispatch($event, CheckoutManagerEvents::INITIALIZE_STEP_STATE);
         $this->currentStep = $event->getCurrentStep();
     }
 
@@ -471,7 +471,7 @@ class CheckoutManager implements CheckoutManagerInterface
         $this->validateCheckoutSteps();
 
         $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
-        $this->eventDispatcher->dispatch(CheckoutManagerEvents::PRE_COMMIT_STEP, $event);
+        $this->eventDispatcher->dispatch($event, CheckoutManagerEvents::PRE_COMMIT_STEP);
         $data = $event->getArgument('data');
 
         // get index of current step and index of step to commit
@@ -515,7 +515,7 @@ class CheckoutManager implements CheckoutManagerInterface
         }
 
         $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
-        $this->eventDispatcher->dispatch(CheckoutManagerEvents::POST_COMMIT_STEP, $event);
+        $this->eventDispatcher->dispatch($event, CheckoutManagerEvents::POST_COMMIT_STEP);
 
         return $result;
     }

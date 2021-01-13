@@ -27,13 +27,6 @@ class EditableRenderer implements LoggerAwareInterface
 
     /**
      * @var EditableLoaderInterface
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use $editableLoader instead.
-     */
-    protected $tagLoader;
-
-    /**
-     * @var Editable\Loader\EditableLoader
      */
     protected $editableLoader;
 
@@ -49,20 +42,7 @@ class EditableRenderer implements LoggerAwareInterface
     public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver)
     {
         $this->editableLoader = $editableLoader;
-        $this->tagLoader = & $this->editableLoader;
         $this->editmodeResolver = $editmodeResolver;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return bool
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use editableExists() instead.
-     */
-    public function tagExists($type)
-    {
-        return $this->editableExists($type);
     }
 
     /**
@@ -76,37 +56,17 @@ class EditableRenderer implements LoggerAwareInterface
     }
 
     /**
-     * Loads a document tag
-     *
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     * @param bool|null $editmode
-     *
-     * @return Editable|null
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use editableExists() instead.
-     */
-    public function getTag(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
-    {
-        return $this->getEditable($document, $type, $inputName, $options, $editmode);
-    }
-
-    /**
-     * Loads a document tag
-     *
      * @param PageSnippet $document
      * @param string $type
      * @param string $inputName
      * @param array $config
      * @param bool|null $editmode
      *
-     * @throws \Exception
+     * @return Editable\EditableInterface
      *
-     * @return Editable|null
+     * @throws \Exception
      */
-    public function getEditable(PageSnippet $document, $type, $inputName, array $config = [], bool $editmode = null)
+    public function getEditable(PageSnippet $document, string $type, string $inputName, array $config = [], bool $editmode = null): Editable\EditableInterface
     {
         $type = strtolower($type);
 
@@ -117,45 +77,25 @@ class EditableRenderer implements LoggerAwareInterface
             $editmode = $this->editmodeResolver->isEditmode();
         }
 
-        try {
-            $editable = null;
-
-            if ($document instanceof PageSnippet) {
-                $editable = $document->getEditable($name);
-
-                // @TODO: BC layer, to be removed in v7.0
-                $aliases = [
-                    'href' => 'relation',
-                    'multihref' => 'relations',
-                ];
-                if (isset($aliases[$type])) {
-                    $type = $aliases[$type];
-                }
-
-                if ($editable instanceof Editable && $editable->getType() === $type) {
-                    // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
-                    if (method_exists($editable, 'load')) {
-                        $editable->load();
-                    }
-
-                    $editable->setEditmode($editmode);
-                    $editable->setConfig($config);
-                    $editable->setDocument($document);
-                } else {
-                    $editable = Editable::factory($type, $name, $document->getId(), $config, null, null, $editmode);
-                    $document->setEditable($name, $editable);
-                }
-
-                // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
-                $editable->setRealName($realName);
+        $editable = $document->getEditable($name);
+        if ($editable instanceof Editable\EditableInterface && $editable->getType() === $type) {
+            // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
+            if (method_exists($editable, 'load')) {
+                $editable->load();
             }
 
-            return $editable;
-        } catch (\Exception $e) {
-            $this->logger->warning($e);
-
-            return null;
+            $editable->setEditmode($editmode);
+            $editable->setConfig($config);
+            $editable->setDocument($document);
+        } else {
+            $editable = Editable::factory($type, $name, $document->getId(), $config, null, null, $editmode);
+            $document->setEditable($editable);
         }
+
+        // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
+        $editable->setRealName($realName);
+
+        return $editable;
     }
 
     /**
@@ -167,18 +107,12 @@ class EditableRenderer implements LoggerAwareInterface
      * @param array $options
      * @param bool|null $editmode
      *
-     * @return Editable|string
+     * @return mixed
+     *
+     * @throws \Exception
      */
     public function render(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
     {
-        $editable = $this->getEditable($document, $type, $inputName, $options, $editmode);
-
-        if ($editable) {
-            return $editable;
-        }
-
-        return '';
+        return $this->getEditable($document, $type, $inputName, $options, $editmode);
     }
 }
-
-class_alias(EditableRenderer::class, 'Pimcore\Templating\Renderer\TagRenderer');

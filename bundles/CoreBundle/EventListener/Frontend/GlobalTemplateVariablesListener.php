@@ -14,25 +14,15 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
-use Pimcore\Http\RequestHelper;
-use Pimcore\Model\DataObject\Service;
-use Pimcore\Model\Document;
-use Pimcore\Model\Staticroute;
-use Pimcore\Model\Version;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
 
@@ -77,12 +67,12 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER => ['onKernelController', 90], // has to be after DocumentFallbackListener
+            KernelEvents::CONTROLLER => ['onKernelController', 15], // has to be after DocumentFallbackListener
             KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $request = $event->getRequest();
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
@@ -100,11 +90,11 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param ResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
-        if(count($this->globalsStack)) {
+        if (count($this->globalsStack)) {
             $globals = array_pop($this->globalsStack);
             $this->twig->addGlobal('document', $globals['document'] ?? null);
             $this->twig->addGlobal('editmode', $globals['editmode'] ?? null);

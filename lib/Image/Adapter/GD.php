@@ -34,7 +34,7 @@ class GD extends Adapter
      * @param string $imagePath
      * @param array $options
      *
-     * @return $this|self
+     * @return $this|self|false
      */
     public function load($imagePath, $options = [])
     {

@@ -115,7 +115,7 @@ $product->save();
 ### Querying for Objectbrick data
 
 Data of Objectbricks can be queried in the same way as data of fieldcollections. 
-The Objectbricks have to be added to the `Object_List` object and then the Objectbrick data can be queried in the 
+The Objectbricks have to be added to the `DataObject\Listing` object and then the Objectbrick data can be queried in the 
 condition like in the sample below.
 
 ```php

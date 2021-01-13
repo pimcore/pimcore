@@ -26,5 +26,3 @@ interface ProductImpressionInterface
      */
     public function trackProductImpression(ProductInterface $product, string $list = 'default');
 }
-
-class_alias(ProductImpressionInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductImpression');

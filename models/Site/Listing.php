@@ -27,18 +27,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var Model\Site[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $sites = null;
-
-    public function __construct()
-    {
-        $this->sites = & $this->data;
-    }
-
-    /**
      * @return Model\Site[]
      */
     public function getSites()

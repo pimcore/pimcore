@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/bundles/pimcoreadmin/css/object_versions.css"/>
+</head>
+
+<body>
+
+{% set fields = object1.getClass().getFieldDefinitions()  %}
+
+<table class="preview" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <th>Name</th>
+        <th>Key</th>
+        {% if isImportPreview is defined %}
+            {% if isNew  is defined %}
+                <th>New Object or unable to resolve</th>
+            {% else %}
+                <th>Before</th>
+                <th>After</th>
+            {% endif %}
+        {% else %}
+            <th>Version 1</th>
+            <th>Version 2</th>
+        {% endif %}
+    </tr>
+    <tr class="system">
+        <td>Date</td>
+        <td>o_modificationDate</td>
+        {% if isImportPreview is not defined or isNew is not defined %}
+            <td>{{ object1.getModificationDate()|date('Y-m-d H:i:s') }}</td>
+        {% endif %}
+        <td>{{ object2.getModificationDate()|date('Y-m-d H:i:s') }}</td>
+    </tr>
+    <tr class="system">
+        <td>Path</td>
+        <td>o_path</td>
+        {% if isImportPreview is not defined or isNew is not defined %}
+            <td> {{ object1.getRealFullPath() }} </td>
+        {% endif %}
+        {% set modifiedPathClass = object1.getRealFullPath() is not same as(object2.getRealFullPath()) ? 'modified' : ''  %}
+        <td class="{{ modifiedPathClass }}">{{ object2.getRealFullPath() }}</td>
+    </tr>
+    <tr class="system">
+        <td>Published</td>
+        <td>o_published</td>
+        {% if isImportPreview is not defined or isNew is not defined %}
+            <td> {{ object1.getPublished() }} </td>
+        {% endif %}
+        {% set modifiedPublishedClass = object1.getPublished() is not same as(object2.getPublished()) ? 'modified' : ''  %}
+        <td class="{{ modifiedPublishedClass }}">{{ object2.getPublished() ? 'true' : 'false' }}</td>
+    </tr>
+    <tr class="system">
+        <td>Id</td>
+        <td>o_id</td>
+        {% if isImportPreview is not defined or isNew is not defined %}
+            <td> {{ object1.getId() }} </td>
+        {% endif %}
+        <td>{{ object2.getId() }}</td>
+    </tr>
+
+
+    <tr class="">
+        <td colspan="3">&nbsp;</td>
+    </tr>
+
+    {% set c = 0 %}
+    {% for fieldName, definition in fields %}
+        {% if definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
+            {% for language in validLanguages %}
+                {% for lfd in definition.getFieldDefinitions() %}
+                    {% set vlContainer = object1.getValueForFieldName(fieldName) %}
+                    {% set keyData1 = vlContainer is not empty ? vlContainer.getLocalizedValue(lfd.getName(), language) : null %}
+                    {% set v1 = lfd.getVersionPreview(keyData1) %}
+
+                    {% set v2Container = object2.getValueForFieldName(fieldName) %}
+                    {% set keyData2 = v2Container is not empty ? v2Container.getLocalizedValue(lfd.getName(), language) : null %}
+                    {% set v2 = v2Container ? lfd.getVersionPreview(keyData2) %}
+
+                    {% set trClass = (c % 2) ? 'odd' : '' %}
+
+                    <tr class="{{ trClass }}">
+                    <td>{{ lfd.getTitle()|trans([],'admin') }} ({{ language }})</td>
+                    <td>{{ lfd.getName() }}</td>
+                        {% if isImportPreview is not defined or isNew is not defined %}
+                        <td>{{ v1 | raw }}</td>
+                    {% endif %}
+                        {% set fieldIsEqual = lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not lfd.isEqual(keyData1, keyData2) ? 'modified' : '' %}
+                        <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Classificationstore') %}
+            {% set storedata1 = definition.getVersionPreview(object1.getValueForFieldName(fieldName)) %}
+            {% set storedata2 = definition.getVersionPreview(object2.getValueForFieldName(fieldName)) %}
+
+            {% set existingGroups = [] %}
+
+            {% set activeGroups1 = [] %}
+            {% if storedata1 %}
+                {% set activeGroups1 = storedata1.getActiveGroups() %}
+            {% endif %}
+
+            {% set activeGroups2 = [] %}
+            {% if storedata2 %}
+                {% set activeGroups2 = storedata2.getActiveGroups() %}
+            {% endif %}
+
+            {% set activeGroups = activeGroups1|merge(activeGroups2) %}
+
+            {% for activeGroupId, enabled in activeGroups %}
+                {% set existingGroups = existingGroups|merge({activeGroupId: enabled}) %}
+            {% endfor %}
+
+            {% if existingGroups is not empty %}
+                {% set languages = ['default'] %}
+                {% if definition.isLocalized() %}
+                    {% set languages = validLanguages|merge(languages) %}
+                {% endif %}
+
+                {% for activeGroupId, enabled in existingGroups %}
+                    {% if activeGroups1[activeGroupId] is defined and activeGroups2[activeGroupId] is defined %}
+                        {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
+                        {% if groupDefinition is not empty %}
+                            {% set keyGroupRelations = groupDefinition.getRelations() %}
+
+                            {% for keyGroupRelation in keyGroupRelations %}
+                                {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
+
+                                {% if keyDef is not empty %}
+                                    {% for language in languages %}
+                                        {% set keyData1 = storeData1 ? storeData1.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+                                        {% set preview1 = keyDef.getVersionPreview(keyData1) %}
+                                        {% set keyData2 = storeData2 ? storeData2.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+                                        {% set preview2 = keyDef.getVersionPreview(keyData2) %}
+
+                                        {% set trClass = (c % 2) ? 'odd' : '' %}
+                                        <tr class = "{{ trClass }}">
+                                            <td>{{ definition.getTitle()|trans([],'admin') }}</td>
+                                            <td>{{ groupDefinition.getName() }} - {{ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " ~ language : "" }}</td>
+                                            {% if isImportPreview is not defined or isNew is not defined %}
+                                                <td>{{ preview1 | raw }}</td>
+                                            {% endif %}
+                                            {% set fieldIsEqual = keyDef is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not keyDef.isEqual(keyData1, keyData2) ? 'modified' : '' %}
+                                            <td class="{{ fieldIsEqual }}">{{ preview2 }}</td>
+                                        </tr>
+                                        {% set c = c + 1 %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Objectbricks') %}
+            {% for asAllowedType in definition.getAllowedTypes() %}
+                {% set collectionDef = pimcore_object_brick_definition_key(asAllowedType) %}
+
+                {% for lfd in collectionDef.getFieldDefinitions() %}
+                    {% set value = null %}
+
+                    {% set bricks1 = object1.get(fieldName) %}
+                    {% set bricks2 = object2.get(fieldName) %}
+
+                    {% if bricks1 is not empty and bricks2 is not empty %}
+                        {% if lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
+                            {% for language in validLanguages %}
+                                {% for localizedFieldDefinition in lfd.getFieldDefinitions() %}
+                                    {% set trClass = (c % 2) ? 'odd' : '' %}
+                                    <tr class="{{ trClass }}">
+                                        <td>{{ localizedFieldDefinition.getTitle()|trans([],'admin') }} ({{ language }})</td>
+                                        <td>{{ localizedFieldDefinition.getName() }}</td>
+
+                                        {% set v1,localizedBrickValue1 = null,null %}
+                                        {% set v2,localizedBrickValue2 = null,null %}
+
+                                        {% if bricks1 %}
+                                            {% set brickGetter = "get" ~ asAllowedType %}
+                                            {% set brick1Value = attribute(bricks1,brickGetter) %}
+
+                                            {% if brick1Value %}
+                                                {% set localizedBrickValues = brick1Value.getLocalizedFields() %}
+                                                {% set localizedBrickValue1 = localizedBrickValues.getLocalizedValue(localizedFieldDefinition.getName(), language) %}
+                                                {% if localizedBrickValue1 != false %}
+                                                    {% set v1 = localizedFieldDefinition.getVersionPreview(localizedBrickValue1) %}
+                                                {% else %}
+                                                    {% set localizedBrickValue1 = null %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if bricks2 %}
+                                            {% set brickGetter = "get" ~ asAllowedType %}
+                                            {% set brick2Value = attribute(bricks2,brickGetter) %}
+
+                                            {% if brick2Value %}
+                                                {% set localizedBrickValues = brick2Value.getLocalizedFields() %}
+                                                {% set localizedBrickValue2 = localizedBrickValues.getLocalizedValue(localizedFieldDefinition.getName(), language) %}
+                                                {% if localizedBrickValue2 != false %}
+                                                    {% set v2 = localizedFieldDefinition.getVersionPreview(localizedBrickValue2) %}
+                                                {% else %}
+                                                    {% set localizedBrickValue2 = null %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if isImportPreview is not defined or isNew is not defined %}
+                                            <td>{{ v1 | raw }}</td>
+                                        {% endif %}
+                                        {% set fieldIsEqual = localizedFieldDefinition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not localizedFieldDefinition.isEqual(localizedBrickValue1, localizedBrickValue2) ? 'modified1' : '' %}
+                                        <td class="{{ fieldIsEqual }}">{{ v2 }}</td>
+                                    </tr>
+                                    {% set c = c + 1 %}
+                                {% endfor %}
+                                {% set break = true %}
+                            {% endfor %}
+                        {% else %}
+                            {% set v1 = null %}
+
+                            {% if bricks1 %}
+                                {% set brickGetter = "get" ~ asAllowedType %}
+                                {% set brick1Value = attribute(bricks1,brickGetter) %}
+
+                                {% if brick1Value %}
+                                    {% set brick1Value = brick1Value.getValueForFieldName(lfd.getName()) %}
+                                    {% if brick1Value != false %}
+                                        {% set v1 = lfd.getVersionPreview(brick1Value) %}
+                                    {% else %}
+                                        {% set brick1Value = null %}
+                                    {% endif %}
+
+                                {% endif %}
+                            {% endif %}
+
+                            {% set v2 = null %}
+
+                            {% if bricks2 %}
+                                {% set brickGetter = "get" ~ asAllowedType %}
+                                {% set brick2Value = attribute(bricks2,brickGetter) %}
+
+                                {% if brick2Value %}
+                                    {% set brick2Value = brick2Value.getValueForFieldName(lfd.getName()) ?? null %}
+                                    {% if brick2Value != false %}
+                                        {% set v2 = lfd.getVersionPreview(brick2Value) %}
+                                    {% else %}
+                                        {% set brick2Value = null %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+
+                            {% set trClass = (c % 2) ? 'odd' : '' %}
+                            <tr class="{{ trClass }}">
+                                <td>{{ asAllowedType|capitalize ~ " - " ~ lfd.getTitle() ? lfd.getTitle()|trans([],'admin') }}</td>
+                                <td>{{ lfd.getName() }}</td>
+                                {% if isImportPreview is not defined or isNew is not defined %}
+                                    <td>{{ v1 | raw }}</td>
+                                {% endif %}
+                                {% set fieldIsEqual = lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not lfd.isEqual(brick1Value,brick2Value) ? 'modified' : '' %}
+                                <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endif %}
+
+                {% endfor %}
+            {% endfor %}
+        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Fieldcollections') %}
+            {% set fields1,fields2 = object1.get(fieldName),object2.get(fieldName) %}
+            {% set fieldDefinitions11,fieldItems1 = null,null %}
+            {% set fieldDefinitions12,fieldItems2 = null,null %}
+            {% set skipFieldItems2 = [] %}
+
+            {% if fields1 %}
+                {% set fieldDefinitions1 = fields1.getItemDefinitions() %}
+                {% set fieldItems1 = fields1.getItems() %}
+            {% endif %}
+
+            {% if fields2 %}
+                {% set fieldDefinitions2 = fields2.getItemDefinitions() %}
+                {% set fieldItems2 = fields2.getItems() %}
+            {% endif %}
+
+            {% if fieldItems1 is iterable and fieldItems1|length > 0 %}
+                {% for fkey1,fieldItem1  in fieldItems1 %}
+                    {% set fieldKeys1 = fieldDefinitions1[fieldItem1.getType()].getFieldDefinitions() %}
+
+                    {% if fieldItems2[fkey1] is defined and fieldItem1.getType() == fieldItems2[fkey1].getType() %}
+                        {% set ffkey2 = fieldItems2[fkey1]  %}
+                        {% set fieldKeys2 = fieldDefinitions2[ffkey2.getType()].getFieldDefinitions() %}
+                        {% set skipFieldItems2 = skipFieldItems2|merge([fkey1, fkey1]) %}
+                    {% endif %}
+
+                    {% for fkey,fieldKey1 in fieldKeys1 %}
+                        {% set v2,keyData2 = null,null %}
+                        {% set keyData1 = fieldItem1.get(fieldKey1.name) %}
+                        {% set v1 = fieldKey1.getVersionPreview(keyData1) %}
+
+                        {% if ffkey2 is defined and fieldKeys2[fkey] is defined %}
+                            {% set keyData2 = ffkey2.get(fieldKeys2[fkey].name) %}
+                            {% set v2 = fieldKey1.getVersionPreview(keyData2) %}
+                        {% endif %}
+
+                        {% set trClass = (c % 2) ? 'odd' : '' %}
+                        <tr class="{{ trClass }}">
+                        <td>{{ fieldItem1.getType() ~ " - " ~ fieldKey1.getTitle()|trans([],'admin') }}</td>
+                        <td>{{ fieldKey1.name }}</td>
+                            {% if isImportPreview is not defined or isNew is not defined %}
+                                <td>{{ v1 | raw }}</td>
+                            {% endif %}
+                            {% set fieldIsEqual = fieldKey1 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey1.isEqual(keyData1, keyData2) ? 'modified' : '' %}
+                            <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
+                        </tr>
+                        {% set c = c + 1 %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+            {% if fieldItems2 is iterable and fieldItems2|length > 0 %}
+
+                {% for fkey2,fieldItem2  in fieldItems2 if fkey2 not in skipFieldItems2|keys %}
+                    {% set fieldKeys2 = fieldDefinitions2[fieldItem2.getType()].getFieldDefinitions() %}
+
+                    {% if fieldItems1[fkey2] is defined and fieldItem2.getType() == fieldItems1[fkey2].getType() %}
+                        {% set ffkey1 = fieldItems1[fkey2]  %}
+                        {% set fieldKeys1 = fieldDefinitions1[ffkey1.getType()].getFieldDefinitions() %}
+                    {% endif %}
+
+                    {% for fkey,fieldKey2 in fieldKeys2 %}
+                        {% set v1,keyData1 = null,null %}
+                        {% set keyData2 = fieldItem2.get(fieldKey2.name) %}
+                        {% set v2 = fieldKey2.getVersionPreview(keyData2) %}
+
+                        {% if ffkey1 is defined and fieldKeys1[fkey] is defined %}
+                            {% set keyData1 = ffkey1.get(fieldKeys1[fkey].name) %}
+                            {% set v1 = fieldKey2.getVersionPreview(keyData1) %}
+                        {% endif %}
+
+                        {% set trClass = (c % 2) ? 'odd' : '' %}
+                        <tr class="{{ trClass }}">
+                            <td>{{ fieldItem2.getType() ~ " - " ~ fieldKey2.getTitle()|trans([],'admin') }}</td>
+                            <td>{{ fieldKey2.name }}</td>
+                            {% if isImportPreview is not defined or isNew is not defined %}
+                                <td>{{ v1 | raw }}</td>
+                            {% endif %}
+                            {% set fieldIsEqual = fieldKey2 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey2.isEqual(v1, keyData2) ? 'modified' : '' %}
+                            <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
+                        </tr>
+                        {% set c = c + 1 %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            {% set keyData1 = object1.getValueForFieldName(fieldName) is not same as(false) ? object1.getValueForFieldName(fieldName) : null %}
+            {% set v1 = definition.getVersionPreview(keyData1) %}
+            {% set keyData2 = object2.getValueForFieldName(fieldName) is not same as(false) ? object2.getValueForFieldName(fieldName) : null %}
+            {% set v2 = definition.getVersionPreview(keyData2) %}
+
+            {% set trClass = (c % 2) ? 'odd' : '' %}
+            <tr class="{{ trClass }}">
+                <td>{{ definition.getTitle()|trans([],'admin') }}</td>
+                <td>{{ definition.getName() }}</td>
+                {% if isImportPreview is not defined or isNew is not defined %}
+                    <td>{{ v1 | raw }}</td>
+                {% endif %}
+                {% set fieldIsEqual = definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not definition.isEqual(keyData1, keyData2) ? 'modified' : '' %}
+                <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
+            </tr>
+        {% endif %}
+        {% set c = c + 1 %}
+    {% endfor %}
+</table>
+
+</body>
+</html>

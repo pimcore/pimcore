@@ -22,7 +22,6 @@ use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
-use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
@@ -31,7 +30,6 @@ use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
-use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -89,6 +87,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
+        $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
@@ -125,35 +125,23 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('image_optimizers.yml');
         $loader->load('maintenance.yml');
         $loader->load('commands.yml');
+        $loader->load('cache.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
-        $this->configureDocumentEditableNamingStrategy($container, $config);
         $this->configureRouting($container, $config['routing']);
-        $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
-        $this->configureMigrations($container, $config['migrations']);
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         // load engine specific configuration only if engine is active
-        $configuredEngines = ['twig', 'php'];
-
-        if ($container->hasParameter('templating.engines')) {
-            $engines = $container->getParameter('templating.engines');
-
-            foreach ($engines as $engine) {
-                if (in_array($engine, $configuredEngines)) {
-                    $loader->load(sprintf('templating_%s.yml', $engine));
-                }
-            }
-        }
+        $loader->load('templating_twig.yml');
 
         $this->addContextRoutes($container, $config['context']);
     }
@@ -176,22 +164,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configureDocumentEditableNamingStrategy(ContainerBuilder $container, array $config)
-    {
-        $strategyName = $config['documents']['editables']['naming_strategy'];
-
-        $container
-            ->setAlias(
-                'pimcore.document.tag.naming.strategy',
-                sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
-            )
-            ->setPublic(true);
-    }
-
-    /**
      * Configure implementation loaders from config
      *
      * @param ContainerBuilder $container
@@ -201,8 +173,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     {
         $services = [
             EditableLoader::class => [
-                //@TODO just use $config['documents']['editables'] in Pimcore 7
-                'config' => array_replace_recursive($config['documents']['tags'], $config['documents']['editables']),
+                'config' => $config['documents']['editables'],
                 'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.data' => [
@@ -224,16 +195,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         foreach ($services as $serviceId => $cfg) {
             $loaders = [];
 
-            if ($cfg['config']['map']) {
-                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
-                $classMapLoader->setPublic(false);
-
-                $classMapLoaderId = $serviceId . '.class_map_loader';
-                $container->setDefinition($classMapLoaderId, $classMapLoader);
-
-                $loaders[] = new Reference($classMapLoaderId);
-            }
-
             if ($cfg['config']['prefixes']) {
                 $prefixLoader = new Definition($cfg['prefixLoader'], [$cfg['config']['prefixes']]);
                 $prefixLoader->setPublic(false);
@@ -244,6 +205,16 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
                 $loaders[] = new Reference($prefixLoaderId);
             }
 
+            if ($cfg['config']['map']) {
+                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
+                $classMapLoader->setPublic(false);
+
+                $classMapLoaderId = $serviceId . '.class_map_loader';
+                $container->setDefinition($classMapLoaderId, $classMapLoader);
+
+                $loaders[] = new Reference($classMapLoaderId);
+            }
+
             $service = $container->getDefinition($serviceId);
             $service->setArguments([$loaders]);
         }
@@ -252,88 +223,13 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     private function configureRouting(ContainerBuilder $container, array $config)
     {
         $container->setParameter(
-            'pimcore.routing.defaults',
-            $config['defaults']
-        );
-        $container->setParameter(
             'pimcore.routing.static.locale_params',
             $config['static']['locale_params']
         );
     }
 
-    /**
-     * Configure pimcore core cache
-     *
-     * @param ContainerBuilder $container
-     * @param LoaderInterface $loader
-     * @param array $config
-     */
-    private function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
-    {
-        $coreCachePool = null;
-        if (null !== $config['cache']['pool_service_id']) {
-            $coreCachePool = $config['cache']['pool_service_id'];
-        }
-
-        // default lifetime
-        $container->setParameter('pimcore.cache.core.default_lifetime', $config['cache']['default_lifetime']);
-
-        $loader->load('cache.yml');
-
-        $configuredCachePool = null;
-
-        // register doctrine cache if it is enabled
-        if ($config['cache']['pools']['doctrine']['enabled']) {
-            $loader->load('cache_doctrine.yml');
-
-            // load named connection
-            $connectionId = sprintf('doctrine.dbal.%s_connection', $config['cache']['pools']['doctrine']['connection']);
-
-            $doctrinePool = $container->findDefinition('pimcore.cache.core.pool.doctrine');
-            $doctrinePool->replaceArgument(0, new Reference($connectionId));
-
-            $configuredCachePool = 'pimcore.cache.core.pool.doctrine';
-        }
-
-        // register redis cache if it is enabled
-        if ($config['cache']['pools']['redis']['enabled']) {
-            $container->setParameter(
-                'pimcore.cache.core.redis.connection',
-                $config['cache']['pools']['redis']['connection'] ?? []
-            );
-
-            $container->setParameter(
-                'pimcore.cache.core.redis.options',
-                $config['cache']['pools']['redis']['options'] ?? []
-            );
-
-            $loader->load('cache_redis.yml');
-
-            $configuredCachePool = 'pimcore.cache.core.pool.redis';
-        }
-
-        if (null === $coreCachePool) {
-            if (null !== $configuredCachePool) {
-                // use one of the pools configured above
-                $coreCachePool = $configuredCachePool;
-            } else {
-                // default to filesystem cache
-                $coreCachePool = 'pimcore.cache.core.pool.filesystem';
-            }
-        }
-
-        // set core cache pool alias
-        $container->setAlias('pimcore.cache.core.pool', $coreCachePool)->setPublic(true);
-    }
-
     private function configureTranslations(ContainerBuilder $container, array $config)
     {
-        // set translator to case insensitive
-        if ($config['case_insensitive']) {
-            $definition = $container->getDefinition(Translator::class);
-            $definition->setArgument('$caseInsensitive', $config['case_insensitive']);
-        }
-
         $parameter = $config['debugging']['parameter'];
 
         // remove the listener as it isn't needed at all if it is disabled or the parameter is empty
@@ -440,22 +336,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $definition->replaceArgument(1, $factoryMapping);
     }
 
-    private function configureMigrations(ContainerBuilder $container, array $config)
-    {
-        $configurations = [];
-        foreach ($config['sets'] as $identifier => $set) {
-            $configurations[] = array_merge([
-                'identifier' => $identifier,
-            ], $set);
-        }
-
-        $factory = $container->findDefinition(ConfigurationFactory::class);
-        $factory->setArgument(
-            '$migrationSetConfigurations',
-            $configurations
-        );
-    }
-
     /**
      * Creates service locator which is used from static Pimcore\Google\Analytics class
      *
@@ -542,7 +422,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function prepend(ContainerBuilder $container)
     {
-        // @TODO: to be removed in Pimcore 7 -> move security config to skeleton & demo package
+        // @TODO: to be removed in Pimcore 10 -> move security config to skeleton & demo package
         $securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {

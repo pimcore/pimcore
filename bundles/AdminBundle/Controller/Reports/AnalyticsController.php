@@ -15,21 +15,20 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/analytics")
  */
-class AnalyticsController extends ReportsControllerBase implements EventedControllerInterface
+class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {
     /**
      * @var \Google_Service_Analytics
@@ -501,9 +500,9 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -516,13 +515,5 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         }
 
         $this->service = new \Google_Service_Analytics($client);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

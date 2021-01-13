@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element\Filter;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\Element\FilterInterface;
 use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
@@ -29,7 +29,7 @@ class PropertiesFilter implements FilterInterface
     const PROPERTY_EXCLUDE = 'sitemaps_exclude';
     const PROPERTY_EXCLUDE_CHILDREN = 'sitemaps_exclude_children';
 
-    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         if ($this->getBoolProperty($element, self::PROPERTY_EXCLUDE)) {
             return false;
@@ -38,7 +38,7 @@ class PropertiesFilter implements FilterInterface
         return true;
     }
 
-    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         if ($this->getBoolProperty($element, self::PROPERTY_EXCLUDE_CHILDREN)) {
             return false;
@@ -47,7 +47,7 @@ class PropertiesFilter implements FilterInterface
         return true;
     }
 
-    private function getBoolProperty(AbstractElement $document, string $property): bool
+    private function getBoolProperty(ElementInterface $document, string $property): bool
     {
         if (!$document->hasProperty($property)) {
             return false;
