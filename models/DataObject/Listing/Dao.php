@@ -143,25 +143,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param DoctrineQueryBuilder $query
-     * @param string $part
-     *
-     * @return bool
-     */
-    private function isQueryBuilderPartinUse($query, $part)
-    {
-        try {
-            if ($query->getQueryPart($part)) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // do nothing
-        }
-
-        return false;
-    }
-
-    /**
      * @param ZendCompatibilityQueryBuilder $query
      * @param string $part
      *
@@ -201,8 +182,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $query = $this->getQuery([new Expression(sprintf('%s as o_id', $this->getTableName() . '.o_id')), 'o_type']);
-        $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilderCompatibility([sprintf('%s as o_id', $this->getTableName() . '.o_id'), 'o_type']);
+        $objectIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $objectIds);
     }

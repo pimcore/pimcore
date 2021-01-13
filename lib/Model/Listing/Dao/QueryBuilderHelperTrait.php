@@ -57,7 +57,7 @@ trait QueryBuilderHelperTrait
     {
         $condition = $this->model->getCondition();
 
-        if ($this->model instanceof \Pimcore\Model\DataObject\Listing) {
+        if ($this instanceof DataObject\Listing\Dao) {
             $objectTypes = $this->model->getObjectTypes();
 
             $tableName = $this->getTableName();
@@ -114,15 +114,13 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @param DoctrineQueryBuilder $queryBuilder
+     */
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $queryBuilder->setFirstResult($this->model->getOffset());
         $queryBuilder->setMaxResults($this->model->getLimit());
-    }
-
-    private function getConditionParametersArray(): array
-    {
-
     }
 
     /**
@@ -153,15 +151,17 @@ trait QueryBuilderHelperTrait
             $queryBuilder->setMaxResults(null);
             $queryBuilder->setFirstResult(0);
 
-            if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
-                $queryBuilder->distinct();
-            }
+            if ($this instanceof DataObject\Listing\Dao) {
+                if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
+                    $queryBuilder->distinct();
+                }
 
-            if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
-                $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
-            } else if ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
-                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-                $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
+                if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
+                    $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
+                } else if ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
+                    $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
+                    $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
+                }
             }
         } elseif ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
             $queryBuilder->columns([new Expression('COUNT(*)')]);
@@ -173,7 +173,7 @@ trait QueryBuilderHelperTrait
                 $queryBuilder->distinct(true);
             }
 
-            if (method_exists($this->model, 'isQueryPartinUse')) {
+            if ($this instanceof DataObject\Listing\Dao) {
                 if ($this->isQueryPartinUse($queryBuilder, ZendCompatibilityQueryBuilder::GROUP) || $this->isQueryPartinUse($queryBuilder, ZendCompatibilityQueryBuilder::HAVING)) {
                     $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
                 } else {
