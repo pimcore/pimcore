@@ -192,6 +192,8 @@ class ImageThumbnail
      * @param string|array|Image\Thumbnail\Config $selector
      *
      * @return Image\Thumbnail\Config|null
+     *
+     * @throws Model\Exception\NotFoundException
      */
     protected function createConfig($selector)
     {
