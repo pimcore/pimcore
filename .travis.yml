@@ -13,11 +13,6 @@ branches:
 sudo: false
 language: php
 
-matrix:
-    include:
-        - language: node_js
-          node_js: 10
-
 services:
   - redis
   - mysql
