@@ -157,19 +157,17 @@ trait QueryBuilderHelperTrait
                 $queryBuilder->distinct();
             }
 
-            if (method_exists($this->model, 'isQueryBuilderPartinUse')) {
-                if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
-                    $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
-                } else {
-                    $queryBuilder->reset(ZendCompatibilityQueryBuilder::COLUMNS);
+            if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
+                $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
+            } else {
+                $queryBuilder->resetQueryPart('select');
 
-                    $countIdentifier = '*';
-                    if ($this->isQueryPartinUse($queryBuilder, ZendCompatibilityQueryBuilder::DISTINCT)) {
-                        $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-                    }
-
-                    $queryBuilder->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
+                $countIdentifier = '*';
+                if ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
+                    $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
                 }
+
+                $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
             }
         } elseif ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
             $queryBuilder->columns([new Expression('COUNT(*)')]);
@@ -198,8 +196,22 @@ trait QueryBuilderHelperTrait
         }
     }
 
-    protected function getQueryBuilderPart($queryBuilder): void
+    /**
+     * @param DoctrineQueryBuilder $query
+     * @param string $part
+     *
+     * @return bool
+     */
+    protected function isQueryBuilderPartinUse($query, $part)
     {
+        try {
+            if ($query->getQueryPart($part)) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // do nothing
+        }
 
+        return false;
     }
 }
