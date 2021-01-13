@@ -159,14 +159,8 @@ trait QueryBuilderHelperTrait
 
             if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
                 $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
-            } else {
-                $queryBuilder->resetQueryPart('select');
-
-                $countIdentifier = '*';
-                if ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
-                    $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-                }
-
+            } else if ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
+                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
                 $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
             }
         } elseif ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
