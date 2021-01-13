@@ -111,9 +111,9 @@ class Folder extends Model\Asset
             'path' => $db->escapeLike($this->getRealFullPath()) . '/%',
         ];
 
-        if(file_exists($filesystemPath)) {
+        if (file_exists($filesystemPath)) {
             $lastUpdate = $db->fetchOne('SELECT MAX(modificationDate) FROM assets WHERE ' . $condition . ' ORDER BY filename ASC LIMIT ' . $limit, $conditionParams);
-            if($lastUpdate < filemtime($filesystemPath)) {
+            if ($lastUpdate < filemtime($filesystemPath)) {
                 return $filesystemPath;
             }
         }
@@ -131,8 +131,8 @@ class Folder extends Model\Asset
         $offsetTop = 0;
         $colums = 3;
 
-        if($totalImages) {
-            $collage = imagecreatetruecolor(($squareDimension * $colums) + ($gutter * ($colums-1)), ceil(($totalImages / $colums)) * ($squareDimension + $gutter));
+        if ($totalImages) {
+            $collage = imagecreatetruecolor(($squareDimension * $colums) + ($gutter * ($colums - 1)), ceil(($totalImages / $colums)) * ($squareDimension + $gutter));
             $background = imagecolorallocate($collage, 12, 15, 18);
             imagefill($collage, 0, 0, $background);
 
@@ -150,7 +150,7 @@ class Folder extends Model\Asset
                     imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 
                     $count++;
-                    if($count % $colums === 0) {
+                    if ($count % $colums === 0) {
                         $offsetTop += ($squareDimension + $gutter);
                     }
                 }

@@ -1227,7 +1227,7 @@ class TranslationController extends AdminController
         $dataList = json_decode($request->get('data'), true);
 
         $domain = Translation::DOMAIN_DEFAULT;
-        if ($translationType == "admin") {
+        if ($translationType == 'admin') {
             $domain = Translation::DOMAIN_ADMIN;
         }
         foreach ($dataList as $data) {
