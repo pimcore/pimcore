@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
@@ -169,7 +168,9 @@ class Listing extends AbstractOrderList implements OrderListInterface
         if ($this->query instanceof ZendCompatibilityQueryBuilder) {
             $this->getQuery()->limit($this->getLimit(), $this->getOffset());
         } else {
-            $this->applyLimitToQueryBuilder($this->getQueryBuilder());
+            $this->getQueryBuilder()
+                ->setFirstResult($this->getOffset())
+                ->setMaxResults($this->getLimit());
         }
 
         return $this;
@@ -181,14 +182,14 @@ class Listing extends AbstractOrderList implements OrderListInterface
      *
      * @return $this
      */
-    public function setOrder($order, $sort = null)
+    public function setOrder($order)
     {
         if ($this->query instanceof ZendCompatibilityQueryBuilder) {
             $this->getQuery()
                 ->reset(ZendCompatibilityQueryBuilder::ORDER)
                 ->order($order);
         } else {
-            $this->getQueryBuilder()->orderBy($order, $sort);
+            $this->getQueryBuilder()->add('orderBy', $order, false);
         }
 
         return $this;
@@ -629,7 +630,7 @@ SUBQUERY;
      * @deprecated
      *
      *
-     * @return ZendCompatibilityQueryBuilder|QueryBuilder
+     * @return ZendCompatibilityQueryBuilder|DoctrineQueryBuilder
      */
     public function getQueryBuilderCompatibility()
     {

@@ -175,7 +175,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         // set default order
-        $list->setOrder('order.orderDate', 'DESC');
+        $list->setOrder('order.orderDate desc');
 
         // create paging
         $paginator = new Paginator($list);
