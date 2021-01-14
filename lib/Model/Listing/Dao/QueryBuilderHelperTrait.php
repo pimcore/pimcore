@@ -138,12 +138,11 @@ trait QueryBuilderHelperTrait
      */
     protected function getQueryBuilderCompatibility($columns = '*')
     {
-        if (!is_array($columns)) {
-            $columns = [$columns];
-        }
-
         if(!is_callable($this->onCreateQueryCallback)) {
             // use Doctrine query builder (default)
+            if (!is_array($columns)) {
+                $columns = [$columns];
+            }
             return $this->getQueryBuilder(...$columns);
         } else {
             // use deprecated ZendCompatibility\QueryBuilder

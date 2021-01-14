@@ -110,13 +110,13 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
         // add select fields
         $list->addSelectField('order.OrderDate');
-        $list->addSelectField(['OrderNumber' => 'order.orderNumber']);
+        $list->addSelectField('order.orderNumber AS OrderNumber');
         if ($list->getListType() == $list::LIST_TYPE_ORDER) {
-            $list->addSelectField(['TotalPrice' => 'order.totalPrice']);
+            $list->addSelectField('order.totalPrice AS TotalPrice');
         } elseif ($list->getListType() == $list::LIST_TYPE_ORDER_ITEM) {
-            $list->addSelectField(['TotalPrice' => 'orderItem.totalPrice']);
+            $list->addSelectField('orderItem.totalPrice AS TotalPrice');
         }
-        $list->addSelectField(['Items' => 'count(orderItem.o_id)']);
+        $list->addSelectField('count(orderItem.o_id) AS Items');
 
         // Search
         if ($request->get('q')) {
@@ -167,15 +167,15 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
             //apply filter on PricingRule(OrderItem)
             $list->joinPricingRule();
-            $list->getQuery()->where('pricingRule.ruleId = ?', $pricingRuleId);
+            $list->getQueryBuilder()->orWhere('pricingRule.ruleId = :pricingRuleId')->setParameter(':pricingRuleId', $pricingRuleId);
 
             //apply filter on PriceModifications
             $list->joinPriceModifications();
-            $list->getQuery()->orWhere('OrderPriceModifications.pricingRuleId = ?', $pricingRuleId);
+            $list->getQueryBuilder()->orWhere('OrderPriceModifications.pricingRuleId = :OrderPriceModificationRuleId')->setParameter(':OrderPriceModificationRuleId', $pricingRuleId);
         }
 
         // set default order
-        $list->setOrder('order.orderDate desc');
+        $list->setOrder('order.orderDate', 'DESC');
 
         // create paging
         $paginator = new Paginator($list);
@@ -300,7 +300,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
 
-                        $orderList->getQuery()->where('customer.o_id = ?', $customer->getId());
+                        $orderList->getQueryBuilder()->andWhere('customer.o_id = :customer_oid')->setParameter(':customer_oid', $customer->getId());
 
                         $arrCustomerAccount['orderCount'] = $orderList->count();
                     }

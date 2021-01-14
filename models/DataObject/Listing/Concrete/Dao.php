@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Listing\Concrete;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model;
@@ -281,6 +282,85 @@ AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($th
 CONDITION
                         ,
                         ''
+                    );
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DoctrineQueryBuilder $queryBuilder
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
+    {
+        // add fielcollection's
+        $fieldCollections = $this->model->getFieldCollections();
+        if (!empty($fieldCollections)) {
+            foreach ($fieldCollections as $fc) {
+
+                // join info
+                $table = 'object_collection_' . $fc['type'] . '_' . $this->model->getClassId();
+                $name = $fc['type'];
+                if (!empty($fc['fieldname'])) {
+                    $name .= '~' . $fc['fieldname'];
+                }
+
+                // set join condition
+                $condition = <<<CONDITION
+1
+ AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+CONDITION;
+
+                if (!empty($fc['fieldname'])) {
+                    $condition .= <<<CONDITION
+ AND {$this->db->quoteIdentifier($name)}.fieldname = "{$fc['fieldname']}"
+CONDITION;
+                }
+
+                // add join
+                $queryBuilder->leftJoin($this->getTableName(), $table, $name, $condition);
+            }
+        }
+
+        // add brick's
+        $objectbricks = $this->model->getObjectbricks();
+        if (!empty($objectbricks)) {
+            foreach ($objectbricks as $ob) {
+                $brickDefinition = DataObject\Objectbrick\Definition::getByKey($ob);
+                if (!$brickDefinition instanceof DataObject\Objectbrick\Definition) {
+                    continue;
+                }
+
+                // join info
+                $table = 'object_brick_query_' . $ob . '_' . $this->model->getClassId();
+                $name = $ob;
+
+                // add join
+                $queryBuilder->leftJoin($this->getTableName(), $table, $name,
+                    <<<CONDITION
+1
+AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+CONDITION
+                );
+
+                if ($brickDefinition->getFieldDefinition('localizedfields')) {
+                    $langugage = $this->getLocalizedBrickLanguage();
+                    //TODO wrong pattern
+                    $localizedTable = 'object_brick_localized_query_' . $ob . '_' . $this->model->getClassId() . '_' . $langugage;
+                    $name = $ob . '_localized';
+
+                    // add join
+                    $queryBuilder->leftJoin($this->getTableName(), $localizedTable, $name,
+                        <<<CONDITION
+1
+AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+CONDITION
                     );
                 }
             }
