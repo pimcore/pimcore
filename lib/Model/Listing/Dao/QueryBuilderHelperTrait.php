@@ -106,10 +106,14 @@ trait QueryBuilderHelperTrait
                         $lastOrder = $order[$c];
                     }
 
-                    $queryBuilder->addOrderBy($key, $lastOrder);
+                    $parts[] = $key . ' ' . $lastOrder;
 
                     $c++;
                 }
+            }
+
+            if (!empty($parts)) {
+                $queryBuilder->orderBy((string) implode(', ', $parts), ' ');
             }
         }
     }
@@ -128,12 +132,16 @@ trait QueryBuilderHelperTrait
      *
      * @deprecated
      *
-     * @param array|string|Expression $columns $columns
+     * @param string|string[]|null $columns $columns
      *
      * @return ZendCompatibilityQueryBuilder|QueryBuilder
      */
     protected function getQueryBuilderCompatibility($columns = '*')
     {
+        if (!is_array($columns)) {
+            $columns = [$columns];
+        }
+
         if(!is_callable($this->onCreateQueryCallback)) {
             // use Doctrine query builder (default)
             return $this->getQueryBuilder(...$columns);

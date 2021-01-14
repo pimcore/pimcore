@@ -96,7 +96,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
         $queryBuilder = $this->db->createQueryBuilder();
-        $queryBuilder->select(...$columns)->from('assets');
+        $queryBuilder->select(...$columns)->from($this->getTableName());
 
         // apply joins
         $this->applyJoins($queryBuilder);
