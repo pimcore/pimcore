@@ -126,7 +126,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
             // init
             $queryBuilder = Db::getConnection()->createQueryBuilder();
             $queryBuilder->select(['SQL_CALC_FOUND_ROWS 1', 'order.oo_id AS OrderId']);
-            $queryBuilder->from('object_query_' . OnlineShopOrder::classId(), 'order');
+            $queryBuilder->from('object_query_' . OnlineShopOrder::classId(), '`order`');
 
             // join ordered products
             $this->joinItemsAndSubItems($queryBuilder);
@@ -249,7 +249,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
             if (!array_key_exists('OrderPriceModifications', $joins)) {
                 $queryBuilder->leftJoin(
-                    'order',
+                    '`order`',
                     'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId(),
                     'OrderPriceModifications',
                     'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"'
@@ -306,7 +306,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
                     ->join('_paymentInfo', 'object_' . OnlineShopOrder::classId(), '_order', '_order.oo_id = _paymentInfo.o_id');
 
                 // join
-                $queryBuilder->leftJoin('order',(string) $paymentQueryBuilder, 'paymentInfo', 'paymentInfo.o_id = `order`.oo_id');
+                $queryBuilder->leftJoin('`order`',(string) $paymentQueryBuilder, 'paymentInfo', 'paymentInfo.o_id = `order`.oo_id');
             }
         }
 
@@ -424,7 +424,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
             if (!$this->useSubItems()) {
                 // just order items
                 $select->join(
-                    'order',
+                    '`order`',
                     'object_relations_' . OnlineShopOrder::classId(),
                     '_orderItems',
                     '_orderItems.fieldname = "items" AND _orderItems.src_id = order.oo_id'

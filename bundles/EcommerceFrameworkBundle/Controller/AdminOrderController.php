@@ -167,11 +167,10 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
             //apply filter on PricingRule(OrderItem)
             $list->joinPricingRule();
-            $list->getQueryBuilder()->orWhere('pricingRule.ruleId = :pricingRuleId')->setParameter(':pricingRuleId', $pricingRuleId);
 
             //apply filter on PriceModifications
             $list->joinPriceModifications();
-            $list->getQueryBuilder()->orWhere('OrderPriceModifications.pricingRuleId = :OrderPriceModificationRuleId')->setParameter(':OrderPriceModificationRuleId', $pricingRuleId);
+            $list->getQueryBuilder()->andWhere('pricingRule.ruleId = :pricingRuleId OR OrderPriceModifications.pricingRuleId = :pricingRuleId')->setParameter(':pricingRuleId', $pricingRuleId);
         }
 
         // set default order
