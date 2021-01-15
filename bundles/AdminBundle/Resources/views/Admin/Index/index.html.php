@@ -4,8 +4,16 @@
 /** @var \Pimcore\Templating\GlobalVariables $app */
 $app = $view->app;
 
+$viewModel = $this->getViewModel();
+$settings = $viewModel->get('settings');
+$pluginJsPaths = $viewModel->get('pluginJsPaths');
+$pluginCssPaths = $viewModel->get('pluginCssPaths');
+
 $language = $app->getRequest()->getLocale();
-$this->get("translate")->setDomain("admin");
+
+/** @var \Pimcore\Templating\Helper\Translate $translator */
+$translator = $this->get("translate");
+$translator->setDomain("admin");
 
 /** @var \Pimcore\Bundle\AdminBundle\Security\User\User $userProxy */
 $userProxy = $app->getUser();
@@ -748,7 +756,7 @@ $scripts = array(
 <!-- some javascript -->
 <?php // pimcore constants ?>
 <script>
-    pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
+    pimcore.settings = <?= json_encode($settings, JSON_PRETTY_PRINT) ?>;
 </script>
 
 <script src="<?= $view->router()->path('pimcore_admin_misc_jsontranslationssystem', ['language' => $language, '_dc' => \Pimcore\Version::getRevision()])?>"></script>
@@ -794,11 +802,11 @@ if ($disableMinifyJs) {
 }
 ?>
 
-<?php foreach ($this->pluginJsPaths as $pluginJsPath): ?>
+<?php foreach ($pluginJsPaths as $pluginJsPath): ?>
     <script src="<?= $pluginJsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
 <?php endforeach; ?>
 
-<?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
+<?php foreach ($pluginCssPaths as $pluginCssPath): ?>
     <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
 <?php endforeach; ?>
 
