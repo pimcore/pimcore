@@ -320,8 +320,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         // sanity check, remove data requiring non-existing (deleted) brick definitions
 
         if (is_array($this->brickGetters)) {
-            foreach ($this->brickGetters as $brickGetter) {
-                if (isset($this->$brickGetter) && $this->$brickGetter instanceof  \__PHP_Incomplete_Class) {
+            foreach ($this->brickGetters as $key => $brickGetter) {
+                if (!property_exists($this, $brickGetter)) {
+                    unset($this->brickGetters[$key]);
                     $this->$brickGetter = null;
                     Logger::error('brick ' . $brickGetter . ' does not exist anymore');
                 }
