@@ -178,7 +178,6 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
     /**
      * @param array|string $order
-     * @param string $sort The ordering direction.
      *
      * @return $this
      */

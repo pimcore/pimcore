@@ -37,7 +37,7 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
     /**
      * @deprecated
      *
-     * @return QueryBuilder
+     * @return ZendCompatibilityQueryBuilder
      */
     public function getQuery();
 
