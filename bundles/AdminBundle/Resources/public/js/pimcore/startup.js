@@ -597,7 +597,7 @@ Ext.onReady(function () {
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
                                     Ext.create('Ext.ux.TabReorderer', {}),
-                                    //TODO EXTJS7, Ext.create('Ext.ux.TabMiddleButtonClose', {})
+                                    Ext.create('Ext.ux.TabMiddleButtonClose', {})
                                 ]
                         })
                         ,
