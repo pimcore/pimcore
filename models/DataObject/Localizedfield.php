@@ -596,7 +596,13 @@ class Localizedfield extends Model\AbstractModel implements
             );
         }
 
-        if ($markFieldAsDirty && ($forceLanguageDirty || !$fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value))) {
+        $isEqual = false;
+
+        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+            $isEqual = $fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value);
+        }
+
+        if ($markFieldAsDirty && ($forceLanguageDirty || !$isEqual)) {
             $this->markLanguageAsDirty($language);
         }
         $this->items[$language][$name] = $value;

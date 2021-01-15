@@ -1261,10 +1261,6 @@ class TestDataHelper extends Module
 
         $fieldLazyRelation = $value->getBrickLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
-
-        //isEqual() should return false as there is no implementation
-        $fd = $object->getClass()->getFieldDefinition($field);
-        $this->assertFalse($fd->isEqual($expectedInputValue, $inputValue));
     }
 
     /**
@@ -1338,10 +1334,6 @@ class TestDataHelper extends Module
 
         $fieldLazyRelation = $value->getFieldLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
-
-        //isEqual() should return false as there is no implementation
-        $fd = $object->getClass()->getFieldDefinition($field);
-        $this->assertFalse($fd->isEqual($value, $value));
     }
 
     public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)
