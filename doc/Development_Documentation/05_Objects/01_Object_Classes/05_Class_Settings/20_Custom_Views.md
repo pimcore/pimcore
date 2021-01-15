@@ -21,6 +21,7 @@ The main idea for this configuration is to
 * not showing the parent folder as its root
 * showing it at the right side in expanded state (there can be only one expanded tree on each side)
 * do NOT show all blog articles which have the text "magnis" in their English title.
+* only the classes `Category` (class id: 5) and `Subarticle` (class id: SUBARTICLE) should be enabled to be added. `Category` is only allowed to be added on the first level of the object tree. `Subarticle` is available in the context menu on the first three levels of the object tree.   
 
 ```php
 <?php
@@ -36,7 +37,10 @@ return [
             "id" => 1,
             "rootfolder" => "/blog",
             "showroot" => FALSE,
-            "classes" => "",
+            'classes' => [                                                      
+                "5" => 1,                                                                
+                "SUBARTICLE" => 3,                                      
+            ],
             "position" => "right",
             "sort" => "1",
             "expanded" => TRUE,
