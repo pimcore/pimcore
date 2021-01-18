@@ -495,7 +495,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             if ($params['purpose'] == 'editmode') {
                 $result = $data;
             } else {
-                $result = ['value' => isset($data) ? $data : null, 'options' => $this->getOptions()];
+                $result = ['value' => $data ?? null, 'options' => $this->getOptions()];
             }
 
             return $result;
