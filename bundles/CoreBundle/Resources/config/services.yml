@@ -224,3 +224,9 @@ services:
         alias: Symfony\Component\Lock\LockFactory
 
     Pimcore\Model\Paginator\EventSubscriber\PaginateListingSubscriber: ~
+
+    Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber: ~
+
+    Knp\Component\Pager\PaginatorInterface:
+        class: Knp\Component\Pager\Paginator
+        public: true

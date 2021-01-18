@@ -97,7 +97,7 @@
     "phpoffice/phpspreadsheet": "^1.9",
     "html2text/html2text": "^4.2.1",
     "webmozarts/console-parallelization": "^1.1.0",
-    "knplabs/knp-paginator-bundle": "^5.4.2"
+    "knplabs/knp-paginator-bundle": "^4.1.1"
   },
   "conflict": {
     "monolog/monolog": ">=2",

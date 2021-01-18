@@ -119,7 +119,7 @@
         </tfoot>
     </table>
 
-    {% if paginator.pageCount > 1 %}
+    {% if paginator.getPaginationData().pageCount > 1 %}
         {% include "PimcoreEcommerceFrameworkBundle:includes:paging.html.twig" with {'paginationVariables': paginator.getPaginationData() } %}
     {% endif %}
 
