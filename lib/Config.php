@@ -843,7 +843,7 @@ class Config implements \ArrayAccess
                 if ($rootNode) {
                     $tmpData['type'] = 'customview';
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? $tmpData['classes'] : null;
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ?? null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId] = $tmpData;

@@ -527,7 +527,7 @@ class Tool
                 if (isset($tmp['name'])) {
                     $tmp['showroot'] = !empty($tmp['showroot']);
 
-                    if (!is_array($tmp['classes'])) {
+                    if (!is_array($tmp['classes'] ?? [])) {
                         $flipArray = [];
                         $tempClasses = explode(',', $tmp['classes']);
 
