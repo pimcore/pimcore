@@ -197,10 +197,10 @@ $collectionConfig = new \Pimcore\Model\DataObject\Classificationstore\Collection
 $collectionConfig->setName($name);
 $collectionConfig->setDescription($description);
 $collectionConfig->save();
-```
 
 // Add a group to a collection
 $rel = new CollectionGroupRelation();
 $rel->setGroupId($groupConfig->getId();
 $rel->setColId($collectionConfig->getId();
 $rel->save();
+```
