@@ -164,7 +164,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             entities: false,
             entities_greek: false,
             entities_latin: false,
-            extraAllowedContent: "*[pimcore_type,pimcore_id]",
+            extraAllowedContent: "*[pimcore_type,pimcore_id,pimcore_disable_thumbnail]",
             baseFloatZIndex: 40000 // prevent that the editor gets displayed behind the grid cell editor window
         };
 
