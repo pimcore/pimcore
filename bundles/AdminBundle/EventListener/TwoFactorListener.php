@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
+use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\PreparationRecorderInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\TwoFactorProviderRegistry;
@@ -53,6 +54,10 @@ class TwoFactorListener
     public function onAuthenticationAttempt(TwoFactorAuthenticationEvent $event)
     {
         $twoFactorToken = $event->getToken();
+        if (!$twoFactorToken instanceof TwoFactorTokenInterface) {
+            return;
+        }
+
         $providerName = $twoFactorToken->getCurrentTwoFactorProvider();
         if (null === $providerName) {
             return;
