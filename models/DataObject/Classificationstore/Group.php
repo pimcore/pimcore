@@ -94,6 +94,7 @@ class Group
 
     /**
      * @param KeyGroupRelation ...$keyGroupRelations
+     *
      * @return Key[]
      */
     protected function getKeysByKeyGroupRelations(KeyGroupRelation ...$keyGroupRelations): array
@@ -103,16 +104,19 @@ class Group
 
     /**
      * @param KeyGroupRelation $keyGroupRelation
+     *
      * @return Key
      */
     protected function getKeyByKeyGroupRelation(KeyGroupRelation $keyGroupRelation): Key
     {
         $keyConfig = $this->getKeyConfigById((int)$keyGroupRelation->getKeyId());
+
         return new Key($this, $keyConfig);
     }
 
     /**
      * @param int $id
+     *
      * @return KeyConfig
      */
     public function getKeyConfigById(int $id): KeyConfig

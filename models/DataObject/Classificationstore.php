@@ -490,6 +490,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @param Classificationstore $classificationstore
      * @param Classificationstore\GroupConfig $groupConfig
+     *
      * @return Model\DataObject\Classificationstore\Group
      */
     public function createGroup(
@@ -501,6 +502,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     /**
      * @param int $groupId
+     *
      * @return Classificationstore\GroupConfig|null
      */
     protected function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
