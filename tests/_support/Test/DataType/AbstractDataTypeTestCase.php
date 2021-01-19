@@ -194,6 +194,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
         /** @var Note $consentNote */
         $consentNote = $consent->getNote();
         $this->assertEquals($consentNote->getDescription(), "some consent content");
+        $expectedValue = new Consent(true);
+        $this->testDataHelper->assertIsEqual($this->testObject, "consent", $expectedValue, $consent);
 
         // now revoke the consent
         $service->revokeConsent($this->testObject, "consent");
@@ -203,6 +205,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $consent = $this->testObject->getConsent();
         $this->assertNotNull($consent, "Consent must not be null");
         $this->assertFalse($consent->getConsent(), "Consent given but still false");
+
     }
 
     public function testCountry()
@@ -278,7 +281,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->testDataHelper->assertExternalImage($this->testObject, 'externalImage', $this->seed);
     }
-
 
     public function testFieldCollection()
     {
@@ -596,6 +598,15 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertPassword($this->testObject, 'password', $this->seed);
+    }
+
+    public function testRgbaColor()
+    {
+        $this->createTestObject('rgbaColor');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertRgbaColor($this->testObject, 'rgbaColor', $this->seed);
+        $this->testDataHelper->checkValidityRgbaColor($this->testObject, 'rgbaColor', $this->seed);
     }
 
     public function testSelect()

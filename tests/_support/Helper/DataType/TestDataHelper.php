@@ -12,6 +12,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Tests\Util\TestHelper;
@@ -100,7 +101,7 @@ class TestDataHelper extends Module
      * @param mixed $value
      *
      */
-    private function assertIsEqual($object, $field, $expected, $value)
+    public function assertIsEqual($object, $field, $expected, $value)
     {
         $fd = $object->getClass()->getFieldDefinition($field);
         if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
@@ -890,6 +891,32 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function assertRgbaColor(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        /** @var DataObject\Data\RgbaColor $value */
+        $value = $object->$getter();
+        $this->assertInstanceOf(DataObject\Data\RgbaColor::class, $value);
+
+        $seed = (int) $seed;
+        $expectedBase = $seed % 200;
+
+        $this->assertEquals($expectedBase, $value->getR());
+        $this->assertEquals($expectedBase + 1, $value->getG());
+        $this->assertEquals($expectedBase + 2, $value->getB());
+        $this->assertEquals($expectedBase + 3, $value->getA());
+
+
+        $expectedValue = new DataObject\Data\RgbaColor($expectedBase, $expectedBase + 1, $expectedBase + 2, $expectedBase + 3);
+
+        $this->assertIsEqual($object, $field, $expectedValue, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertSelect(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
@@ -1094,6 +1121,31 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function checkValidityRgbaColor(Concrete $object, $field, $seed = 1) {
+        $setter = 'set' . ucfirst($field);
+
+        try {
+            $invalidValue = new DataObject\Data\RgbaColor(1000, 2000, -1, 0);
+            $object->$setter($invalidValue);
+            $object->save();
+            $this->fail("expected a ValidationException");
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(ValidationException::class, $e);
+        }
+
+        try {
+            $object->$setter("#FF0000");
+            $this->fail("expected an instance of RgbaColor");
+        } catch (\TypeError $e) {
+
+        }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function fillBooleanSelect(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -1217,7 +1269,6 @@ class TestDataHelper extends Module
         $value = new DataObject\Data\ExternalImage("someUrl" . $seed);
         $object->$setter($value);
     }
-
 
     /**
      * @param Concrete $object
@@ -1519,6 +1570,21 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('sEcret$%!' . $seed);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillRgbaColor(Concrete $object, $field, $seed = 1)
+    {
+        $seed = (int) $seed;
+        $value = $seed % 200;
+        $value = new DataObject\Data\RgbaColor($value, $value + 1, $value + 2, $value + 3);
+
+        $setter = 'set' . ucfirst($field);
+        $object->$setter($value);
     }
 
     /**
