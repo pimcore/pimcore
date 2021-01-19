@@ -15,11 +15,33 @@
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Tool\Session;
+use Psr\Log\LoggerAwareTrait;
+use Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorTokenInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\PreparationRecorderInterface;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\TwoFactorProviderRegistry;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class TwoFactorListener
 {
+    use LoggerAwareTrait;
+
+    /**
+     * @var TwoFactorProviderRegistry
+     */
+    private $providerRegistry;
+
+    /**
+     * @var PreparationRecorderInterface
+     */
+    private $preparationRecorder;
+
+    public function __construct(TwoFactorProviderRegistry $providerRegistry, PreparationRecorderInterface $preparationRecorder)
+    {
+        $this->providerRegistry = $providerRegistry;
+        $this->preparationRecorder = $preparationRecorder;
+    }
+
     public function onAuthenticationComplete(TwoFactorAuthenticationEvent $event)
     {
         // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
@@ -27,5 +49,33 @@ class TwoFactorListener
         Session::useSession(function (AttributeBagInterface $adminSession) {
             $adminSession->set('2fa_required', false);
         });
+    }
+
+    public function onAuthenticationAttempt(TwoFactorAuthenticationEvent $event)
+    {
+        $twoFactorToken = $event->getToken();
+        if (!$twoFactorToken instanceof TwoFactorTokenInterface) {
+            return;
+        }
+
+        $providerName = $twoFactorToken->getCurrentTwoFactorProvider();
+        if (null === $providerName) {
+            return;
+        }
+
+        $twoFactorToken->setTwoFactorProviderPrepared($providerName);
+        $firewallName = $twoFactorToken->getProviderKey();
+
+        if ($this->preparationRecorder->isTwoFactorProviderPrepared($firewallName, $providerName)) {
+            $this->logger->info(sprintf('Two-factor provider "%s" was already prepared.', $providerName));
+
+            return;
+        }
+
+        $user = $twoFactorToken->getUser();
+        $this->providerRegistry->getProvider($providerName)->prepareAuthentication($user);
+
+        $this->preparationRecorder->setTwoFactorProviderPrepared($firewallName, $providerName);
+        $this->logger->info(sprintf('Two-factor provider "%s" prepared.', $providerName));
     }
 }
