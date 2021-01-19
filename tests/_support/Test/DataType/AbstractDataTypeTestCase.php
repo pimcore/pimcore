@@ -271,6 +271,14 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertFalse(strpos($result, "content"));
     }
 
+    public function testExternalImage()
+    {
+        $this->createTestObject('externalImage');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertExternalImage($this->testObject, 'externalImage', $this->seed);
+    }
+
 
     public function testFieldCollection()
     {

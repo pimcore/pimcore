@@ -206,6 +206,25 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function assertExternalImage(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        /** @var DataObject\Data\ExternalImage $container */
+        $container = $object->$getter();
+
+        $this->assertInstanceOf(DataObject\Data\ExternalImage::class, $container);
+
+        $value = $container->getUrl();
+        $expected = "someUrl" . $seed;
+
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertFieldCollection(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
@@ -1192,6 +1211,19 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function fillExternalImage(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $value = new DataObject\Data\ExternalImage("someUrl" . $seed);
+        $object->$setter($value);
+    }
+
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function fillFieldCollection(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -1243,9 +1275,7 @@ class TestDataHelper extends Module
     public function fillGender(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-
         $value = $seed % 2 == 0 ? "male" : "female";
-
         $object->$setter($value);
     }
 

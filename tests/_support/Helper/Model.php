@@ -404,8 +404,11 @@ class Model extends AbstractDefinitionHelper
 
             /** @var ClassDefinition\Data\EncryptedField $encryptedField */
             $encryptedField = $this->createDataChild('encryptedField');
+
             $encryptedField->setDelegateDatatype("input");
             $panel->addChild($encryptedField);
+
+            $panel->addChild($this->createDataChild('externalImage'));
 
             $panel->addChild($this->createDataChild('firstname'));
 
