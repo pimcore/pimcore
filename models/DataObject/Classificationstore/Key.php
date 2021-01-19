@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Classificationstore;
 
 class Key
 {
@@ -65,6 +64,7 @@ class Key
      * @param string|null $language
      * @param bool $ignoreFallbackLanguage
      * @param bool $ignoreDefaultLanguage
+     *
      * @return mixed
      */
     public function getValue(
@@ -73,6 +73,7 @@ class Key
         bool $ignoreDefaultLanguage = false
     ) {
         $classificationstore = $this->group->getClassificationStore();
+
         return $classificationstore->getLocalizedKeyValue(
             $this->group->getConfiguration()->getId(),
             $this->configuration->getId(),
