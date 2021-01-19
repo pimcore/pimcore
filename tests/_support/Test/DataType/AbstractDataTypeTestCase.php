@@ -5,6 +5,7 @@ namespace Pimcore\Tests\Test\DataType;
 use Pimcore\Cache;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Db;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\Consent;
@@ -458,7 +459,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         Cache::clearAll();
         Cache\Runtime::clear();
 
-        $this->testObject = AbstractObject::getById($this->testObject->getId());
+        $this->testObject = DataObject::getById($this->testObject->getId());
 
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'en');
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
