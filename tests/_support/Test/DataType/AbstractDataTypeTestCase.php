@@ -267,6 +267,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $result = $db->fetchOne("select encryptedField from object_store_" . $this->testObject->getClassId() . " where oo_id=" .  $this->testObject->getId());
         $this->assertNotNull($result);
 
+        $this->assertNotTrue($result ===  "content");
         $this->assertFalse(strpos($result, "content"));
     }
 
@@ -539,7 +540,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
     }
 
-    public function testNumber()
+    public function testNumeric()
     {
         $this->createTestObject('number');
 

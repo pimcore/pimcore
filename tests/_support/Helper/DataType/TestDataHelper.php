@@ -842,8 +842,13 @@ class TestDataHelper extends Module
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
 
-        // it is intended that no password is sent
-        $this->assertNull($value, 'Password getter is expected to return null');
+        $unencryptedValue = 'sEcret$%!' . $seed;
+        $this->assertNotNull($value, 'Password getter is expected to return non null value');
+
+        $this->assertNotEquals($unencryptedValue, $value, "Value not encrypted");
+
+        $info = password_get_info($value);
+        $this->assertNotNull($info['algo'], "Not properly encrypted");
     }
 
     /**

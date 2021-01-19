@@ -34,11 +34,6 @@ class DataTypeTest extends AbstractDataTypeTestCase
         return $this->testObject;
     }
 
-    public function testPassword()
-    {
-        $this->markTestIncomplete('To be checked - what is the intended behaviour here in local context?');
-    }
-
     public function refreshObject() {
         $this->testObject = AbstractObject::getById($this->testObject->getId(), true);
     }

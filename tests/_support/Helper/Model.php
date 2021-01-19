@@ -448,7 +448,9 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('slider'));
             $panel->addChild($this->createDataChild('numeric', 'number'));
 
-            $panel->addChild($this->createDataChild('password'));
+            $passwordField = $this->createDataChild('password');
+            $passwordField->setAlgorithm(ClassDefinition\Data\Password::HASH_FUNCTION_PASSWORD_HASH);
+            $panel->addChild($passwordField);
             $panel->addChild($this->createDataChild('textarea'));
             $panel->addChild($this->createDataChild('time'));
 
