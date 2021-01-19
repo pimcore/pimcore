@@ -21,9 +21,11 @@ namespace Pimcore\Workflow\Notes;
  */
 trait NotesAwareTrait
 {
+    protected $customHtmlService = null;
+
     public function getNotes(): ?array
     {
-        if ($this->getNotesCommentEnabled()) {
+        if ($this->getNotesCommentEnabled() || $this->getCustomHtmlService()) {
             return $this->options['notes'];
         }
 
@@ -58,5 +60,26 @@ trait NotesAwareTrait
     public function getNotesAdditionalFields(): array
     {
         return $this->options['notes']['additionalFields'] ?? [];
+    }
+
+    /**
+     * Inject service via compiler pass.
+     *
+     * @param CustomHtmlServiceInterface $customHtmlService
+     */
+    public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService)
+    {
+        if ($customHtmlService instanceof AbstractCustomHtmlService) {
+            if ($this->getName() == $customHtmlService->getTransitionName()) {
+                $this->customHtmlService = $customHtmlService;
+            } elseif ($this->getName() == $customHtmlService->getActionName()) {
+                $this->customHtmlService = $customHtmlService;
+            }
+        }
+    }
+
+    public function getCustomHtmlService(): ?CustomHtmlServiceInterface
+    {
+        return $this->customHtmlService;
     }
 }

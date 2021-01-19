@@ -18,7 +18,7 @@ foreach ($list as $element) {
 }
 
 //using force param to load latest data from database
-\Pimcore\Model\DataObject\AbstractObject::getById(123) === \Pimcore\Model\DataObject\AbstractObject::getById(123) => true
+\Pimcore\Model\DataObject::getById(123) === \Pimcore\Model\DataObject::getById(123) => true
 
-\Pimcore\Model\DataObject\AbstractObject::getById(123) === \Pimcore\Model\DataObject\AbstractObject::getById(123, true) => true/false
+\Pimcore\Model\DataObject::getById(123) === \Pimcore\Model\DataObject::getById(123, true) => true/false
 ```

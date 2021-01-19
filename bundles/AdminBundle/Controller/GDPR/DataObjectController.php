@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -79,7 +79,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
-        $object = AbstractObject::getById($request->get('id'));
+        $object = DataObject::getById($request->get('id'));
         if (!$object->isAllowed('view')) {
             throw new \Exception('export denied');
         }

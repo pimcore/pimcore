@@ -14,7 +14,7 @@
 
 namespace Pimcore\Workflow\Notification;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool;
@@ -196,8 +196,8 @@ class NotificationEmailService extends AbstractNotificationService
     protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
         // allow retrieval of inherited values
-        $inheritanceBackup = AbstractObject::getGetInheritedValues();
-        AbstractObject::setGetInheritedValues(true);
+        $inheritanceBackup = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(true);
 
         $translatorLocaleBackup = null;
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -210,7 +210,7 @@ class NotificationEmailService extends AbstractNotificationService
         );
 
         //reset inheritance
-        AbstractObject::setGetInheritedValues($inheritanceBackup);
+        DataObject::setGetInheritedValues($inheritanceBackup);
 
         if ($this->translator instanceof LocaleAwareInterface) {
             //reset translation locale

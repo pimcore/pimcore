@@ -69,7 +69,7 @@
     "myclabs/deep-copy": "^1.7",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
-    "ocramius/package-versions": "^1.2",
+    "ocramius/package-versions": "^2.0",
     "pear/net_url2": "^2.2",
     "phive/twig-extensions-deferred": "^2.0",
     "matomo/device-detector": "^3.9",
@@ -94,8 +94,9 @@
     "laminas/laminas-servicemanager": "^3.2",
     "scheb/two-factor-bundle": "^3.26",
     "phpoffice/phpspreadsheet": "^1.9",
-    "soundasleep/html2text": "^1.1.0",
-    "webmozarts/console-parallelization": "^1.1.0",
+    "soundasleep/html2text": "^1.1.0",   
+    "matthiasmullie/minify": "^1.3",
+    "webmozarts/console-parallelization": "^1.2.0",
     "onnov/detect-encoding": "^1.2"
   },
   "conflict": {

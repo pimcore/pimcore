@@ -173,8 +173,8 @@
         "/bundles/pimcoreadmin/css/icons.css",
         "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
         "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
-        "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-        "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/charts-all" ~ debugSuffix ~ ".css",
+        "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_1.css",
+        "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_2.css",
         "/bundles/pimcoreadmin/css/admin.css"
     ]
 %}
@@ -195,19 +195,15 @@
 
 {% set scriptLibs = [
     "lib/class.js",
-    "lib/ext/ext-all" ~ debugSuffix ~ ".js",
-    "lib/ext/classic/theme-triton/theme-triton" ~ debugSuffix ~ ".js",
-    "lib/ext/packages/charts/classic/charts" ~  debugSuffix ~ ".js",
+    "../extjs/js/ext-all" ~ debugSuffix ~ ".js",
     "lib/ext-plugins/portlet/PortalDropZone.js",
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
-    "lib/ext-plugins/TabMiddleButtonClose.js",
     "lib/ckeditor/ckeditor.js",
     "lib/leaflet/leaflet.js",
     "lib/leaflet.draw/leaflet.draw.js",
-    "lib/vrview/build/vrview.min.js",
-    "lib/ext/classic/locale/locale-" ~ language ~ ".js",
+    "lib/vrview/build/vrview.min.js"
 ] %}
 
 {# PIMCORE SCRIPTS #}

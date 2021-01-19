@@ -27,7 +27,6 @@ use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
@@ -360,6 +359,11 @@ class Installer
             unset($dbConfig['driverOptions']);
         }
 
+        $dbConfig['mapping_types'] = [
+            'enum' => 'string',
+            'bit' => 'boolean',
+        ];
+
         $this->createConfigFiles([
             'doctrine' => [
                 'dbal' => [
@@ -415,12 +419,9 @@ class Installer
                 PIMCORE_PROJECT_ROOT . '/bin/console',
             ]);
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
+            $this->logger->info('Running {command} command', ['command' => $arguments]);
 
-            $this->logger->info('Running {command} command', ['command' => $parts]);
-
-            $process = new Process($parts);
+            $process = new Process($arguments);
             $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();

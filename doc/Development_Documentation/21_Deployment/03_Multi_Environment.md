@@ -117,12 +117,18 @@ When running `./bin/console` application, set the environment by `--env=dev`.
 
 ### `.env`
 
-Pimcore loads a `.env` file if it exists. See [DotEnv Component Documentation](https://symfony.com/doc/3.4/components/dotenv.html)
-for details.
+Pimcore loads environment variables from `.env` files if they exist.
+It's good practice to add defaults to `.env`, which is committed to your repository, and local overrides to `.env.local`, which is not committed.
+See [Symfony Configuration Based on Environment Variables](https://symfony.com/doc/current/configuration.html#configuration-based-on-environment-variables) for details.
 
 ```
 # .env
 PIMCORE_ENVIRONMENT=dev
+```
+
+```
+# .env.local
+PIMCORE_ENVIRONMENT=prod
 ```
 
 ### Switching Environments Dynamically

@@ -395,7 +395,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     protected function addAsset(Request $request, Config $config)
     {
-        $success = false;
         $defaultUploadPath = $config['assets']['default_upload_path'] ?? '/';
 
         if (array_key_exists('Filedata', $_FILES)) {
@@ -477,28 +476,29 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
         $asset = null;
 
-        if ($parentAsset->isAllowed('create')) {
-            if (is_file($sourcePath) && filesize($sourcePath) < 1) {
-                throw new \Exception('File is empty!');
-            } elseif (!is_file($sourcePath)) {
-                throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
-            }
-
-            $asset = Asset::create($parentId, [
-                'filename' => $filename,
-                'sourcePath' => $sourcePath,
-                'userOwner' => $this->getAdminUser()->getId(),
-                'userModification' => $this->getAdminUser()->getId(),
-            ]);
-            $success = true;
-
-            @unlink($sourcePath);
-        } else {
-            Logger::debug('prevented creating asset because of missing permissions, parent asset is ' . $parentAsset->getRealFullPath());
+        if (!$parentAsset->isAllowed('create')) {
+            throw $this->createAccessDeniedHttpException(
+                'Missing the permission to create new assets in the folder: ' . $parentAsset->getRealFullPath()
+            );
         }
 
+        if (is_file($sourcePath) && filesize($sourcePath) < 1) {
+            throw new \Exception('File is empty!');
+        } elseif (!is_file($sourcePath)) {
+            throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
+        }
+
+        $asset = Asset::create($parentId, [
+            'filename' => $filename,
+            'sourcePath' => $sourcePath,
+            'userOwner' => $this->getAdminUser()->getId(),
+            'userModification' => $this->getAdminUser()->getId(),
+        ]);
+
+        @unlink($sourcePath);
+
         return [
-            'success' => $success,
+            'success' => true,
             'asset' => $asset,
         ];
     }
@@ -690,29 +690,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         ];
 
         // set type specific settings
-        if ($asset->getType() == 'folder') {
+        if ($asset instanceof Asset\Folder) {
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$asset->hasChildren();
             $tmpAsset['loaded'] = !$asset->hasChildren();
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
-
-            $folderThumbs = [];
-            $children = new Asset\Listing();
-            $children->setCondition('path LIKE ?', [$children->escapeLike($asset->getRealFullPath()) . '/%']);
-            $children->addConditionParam('type IN (\'image\', \'video\', \'document\')', 'AND');
-            $children->setLimit(35);
-
-            foreach ($children as $child) {
-                if ($child->isAllowed('view')) {
-                    if ($thumbnailUrl = $this->getThumbnailUrl($child)) {
-                        $folderThumbs[] = $thumbnailUrl;
-                    }
-                }
-            }
-
-            if (!empty($folderThumbs)) {
-                $tmpAsset['thumbnails'] = $folderThumbs;
-            }
+            $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
         } else {
             $tmpAsset['leaf'] = true;
             $tmpAsset['expandable'] = false;
@@ -795,6 +778,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($asset instanceof Asset\Image) {
             return $this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
+        }
+
+        if ($asset instanceof Asset\Folder) {
+            return $this->generateUrl('pimcore_admin_asset_getfolderthumbnail', $params);
         }
 
         if ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
@@ -1344,6 +1331,37 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $this->addThumbnailCacheHeaders($response);
 
         return $response;
+    }
+
+    /**
+     * @Route("/get-folder-thumbnail", name="pimcore_admin_asset_getfolderthumbnail", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function getFolderThumbnailAction(Request $request)
+    {
+        $folder = null;
+
+        if ($request->get('id')) {
+            $folder = Asset\Folder::getById((int)$request->get('id'));
+            if ($folder instanceof  Asset\Folder) {
+                if (!$folder->isAllowed('view')) {
+                    throw $this->createAccessDeniedException('not allowed to view thumbnail');
+                }
+
+                $thumbnailFile = $folder->getPreviewImage((bool)$request->get('hdpi'));
+                $response = new BinaryFileResponse($thumbnailFile);
+                $response->headers->set('Content-type', 'image/' . File::getFileExtension($thumbnailFile));
+
+                $this->addThumbnailCacheHeaders($response);
+
+                return $response;
+            }
+        }
+
+        throw $this->createNotFoundException('could not load asset folder');
     }
 
     /**

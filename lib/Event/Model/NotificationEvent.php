@@ -18,7 +18,7 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Notification;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class NotificationEvent extends Event implements ElementEventInterface
+class NotificationEvent extends Event
 {
     use ArgumentsAwareTrait;
 
@@ -53,15 +53,5 @@ class NotificationEvent extends Event implements ElementEventInterface
     public function setNotification($notification)
     {
         $this->notification = $notification;
-    }
-
-    /**
-     * @deprecated use getNotification() instead - will be removed in Pimcore 10
-     *
-     * @return Notification
-     */
-    public function getElement()
-    {
-        return $this->getNotification();
     }
 }
