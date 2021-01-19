@@ -14,19 +14,28 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 use Pimcore\Db;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 class Listing extends AbstractOrderList implements OrderListInterface
 {
     /**
-     * @var Db\ZendCompatibility\QueryBuilder
+     * @var ZendCompatibilityQueryBuilder
+     *
      */
     protected $query;
+
+    /**
+     * @var DoctrineQueryBuilder
+     */
+    protected $queryBuilder;
 
     /**
      * @var OrderListFilterInterface[]
@@ -62,7 +71,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
      * @deprecated
      * get select query
      *
-     * @return Db\ZendCompatibility\QueryBuilder
+     * @return ZendCompatibilityQueryBuilder
      */
     public function getQuery()
     {
@@ -107,6 +116,47 @@ class Listing extends AbstractOrderList implements OrderListInterface
     }
 
     /**
+     * get query builder
+     *
+     * @return DoctrineQueryBuilder
+     */
+    public function getQueryBuilder(): DoctrineQueryBuilder
+    {
+        if (!$this->queryBuilder) {
+            // init
+            $queryBuilder = Db::getConnection()->createQueryBuilder();
+            $queryBuilder->select(['SQL_CALC_FOUND_ROWS 1', 'order.oo_id AS OrderId']);
+            $queryBuilder->from('object_query_' . OnlineShopOrder::classId(), '`order`');
+
+            // join ordered products
+            $this->joinItemsAndSubItems($queryBuilder);
+
+            // group by list type
+            if ($this->getListType() == self::LIST_TYPE_ORDER_ITEM) {
+                $queryBuilder->addSelect(['orderItem.oo_id AS Id']);
+                $queryBuilder->groupBy('OrderItemId');
+            } else {
+                $queryBuilder->addSelect(['order.oo_id as Id']);
+                $queryBuilder->groupBy('OrderId');
+            }
+
+            // filter order state
+            if (!is_null($this->getOrderState())) {
+                $orderStates = [];
+                foreach ((array)$this->getOrderState() as $orderState) {
+                    $orderStates[] = $queryBuilder->expr()->literal($orderState);
+                }
+
+                $queryBuilder->andWhere('order.orderState IN('. implode(',', $orderStates) .')');
+            }
+
+            $this->queryBuilder = $queryBuilder;
+        }
+
+        return $this->queryBuilder;
+    }
+
+    /**
      * @param int $limit
      *
      * @return $this
@@ -115,7 +165,13 @@ class Listing extends AbstractOrderList implements OrderListInterface
     {
         parent::setLimit($limit, $offset);
 
-        $this->getQuery()->limit($this->getLimit(), $this->getOffset());
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $this->getQuery()->limit($this->getLimit(), $this->getOffset());
+        } else {
+            $this->getQueryBuilder()
+                ->setFirstResult($this->getOffset())
+                ->setMaxResults($this->getLimit());
+        }
 
         return $this;
     }
@@ -127,10 +183,13 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function setOrder($order)
     {
-        $this->getQuery()
-            ->reset(Db\ZendCompatibility\QueryBuilder::ORDER)
-            ->order($order)
-        ;
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $this->getQuery()
+                ->reset(ZendCompatibilityQueryBuilder::ORDER)
+                ->order($order);
+        } else {
+            $this->getQueryBuilder()->add('orderBy', $order, false);
+        }
 
         return $this;
     }
@@ -140,14 +199,28 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinPricingRule()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $joins = $this->getQuery()->getPart(ZendCompatibilityQueryBuilder::FROM);
 
-        if (!array_key_exists('pricingRule', $joins)) {
-            $this->getQuery()->joinLeft(
-                ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()],
-                'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"',
-                ''
-            );
+            if (!array_key_exists('pricingRule', $joins)) {
+                $this->getQuery()->joinLeft(
+                    ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()],
+                    'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"',
+                    ''
+                );
+            }
+        } else {
+            $queryBuilder = $this->getQueryBuilder();
+            $joins = $queryBuilder->getQueryPart('from');
+
+            if (!array_key_exists('pricingRule', $joins)) {
+                $queryBuilder->leftJoin(
+                    'orderItem',
+                    'object_collection_PricingRule_' . OnlineShopOrderItem::classId(),
+                    'pricingRule',
+                    'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"'
+                );
+            }
         }
 
         return $this;
@@ -159,14 +232,29 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinPriceModifications()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $joins = $this->getQuery()->getPart(ZendCompatibilityQueryBuilder::FROM);
 
-        if (!array_key_exists('OrderPriceModifications', $joins)) {
-            $this->getQuery()->joinLeft(
-                ['OrderPriceModifications' => 'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId()],
-                'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"',
-                ''
-            );
+            if (!array_key_exists('OrderPriceModifications', $joins)) {
+                $this->getQuery()->joinLeft(
+                    ['OrderPriceModifications' => 'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId()],
+                    'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"',
+                    ''
+                );
+            }
+        } else {
+            $queryBuilder = $this->getQueryBuilder();
+
+            $joins = $queryBuilder->getQueryPart('from');
+
+            if (!array_key_exists('OrderPriceModifications', $joins)) {
+                $queryBuilder->leftJoin(
+                    '`order`',
+                    'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId(),
+                    'OrderPriceModifications',
+                    'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"'
+                );
+            }
         }
 
         return $this;
@@ -177,32 +265,49 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinPaymentInfo()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $joins = $this->getQuery()->getPart(ZendCompatibilityQueryBuilder::FROM);
 
-        if (!array_key_exists('paymentInfo', $joins)) {
-            // create sub select
-            $paymentQuery = Db::getConnection()->select();
+            if (!array_key_exists('paymentInfo', $joins)) {
+                // create sub select
+                $paymentQuery = Db::getConnection()->select();
 
-            $paymentQuery
-                ->from(
-                    ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()],
-                    [
-                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id',
-                    ]
-                )
-                ->join(
-                    ['_order' => 'object_' . OnlineShopOrder::classId()],
-                    '_order.oo_id = _paymentInfo.o_id',
+                $paymentQuery
+                    ->from(
+                        ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()],
+                        [
+                            'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id',
+                        ]
+                    )
+                    ->join(
+                        ['_order' => 'object_' . OnlineShopOrder::classId()],
+                        '_order.oo_id = _paymentInfo.o_id',
+                        ''
+                    );
+
+                // join
+                $this->getQuery()->joinLeft(
+                    ['paymentInfo' => new Db\ZendCompatibility\Expression('(' . $paymentQuery . ')')],
+                    'paymentInfo.o_id = `order`.oo_id',
                     ''
-                )
-            ;
+                );
+            }
+        } else {
+            $queryBuilder = $this->getQueryBuilder();
 
-            // join
-            $this->getQuery()->joinLeft(
-                ['paymentInfo' => new Db\ZendCompatibility\Expression('(' . $paymentQuery . ')')],
-                'paymentInfo.o_id = `order`.oo_id',
-                ''
-            );
+            $joins = $queryBuilder->getQueryPart('from');
+
+            if (!array_key_exists('paymentInfo', $joins)) {
+                // create sub select
+                $paymentQueryBuilder = Db::getConnection()->createQueryBuilder();
+
+                $paymentQueryBuilder->select('GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",") AS paymentReference', '_order.o_id AS o_id')
+                    ->from('object_collection_PaymentInfo_' . OnlineShopOrder::classId(), '_paymentInfo')
+                    ->join('_paymentInfo', 'object_' . OnlineShopOrder::classId(), '_order', '_order.oo_id = _paymentInfo.o_id');
+
+                // join
+                $queryBuilder->leftJoin('`order`',(string) $paymentQueryBuilder, 'paymentInfo', 'paymentInfo.o_id = `order`.oo_id');
+            }
         }
 
         return $this;
@@ -213,14 +318,25 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinOrderItemObjects()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $joins = $this->getQuery()->getPart(ZendCompatibilityQueryBuilder::FROM);
 
-        if (!array_key_exists('orderItemObjects', $joins)) {
-            $this->getQuery()->join(
-                ['orderItemObjects' => 'objects'],
-                'orderItemObjects.o_id = orderItem.product__id',
-                ''
-            );
+            if (!array_key_exists('orderItemObjects', $joins)) {
+                $this->getQuery()->join(
+                    ['orderItemObjects' => 'objects'],
+                    'orderItemObjects.o_id = orderItem.product__id',
+                    ''
+                );
+            }
+        } else {
+            $queryBuilder = $this->getQueryBuilder();
+
+            $joins = $queryBuilder->getQueryPart('from');
+
+            if (!array_key_exists('orderItemObjects', $joins)) {
+                $queryBuilder->join('orderItem', 'objects', 'orderItemObjects',
+                    'orderItemObjects.o_id = orderItem.product__id');
+            }
         }
 
         return $this;
@@ -233,14 +349,29 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinProduct($classId)
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $joins = $this->getQuery()->getPart(ZendCompatibilityQueryBuilder::FROM);
 
-        if (!array_key_exists('product', $joins)) {
-            $this->getQuery()->join(
-                ['product' => 'object_query_' . $classId],
-                'product.oo_id = orderItem.product__id',
-                ''
-            );
+            if (!array_key_exists('product', $joins)) {
+                $this->getQuery()->join(
+                    ['product' => 'object_query_' . $classId],
+                    'product.oo_id = orderItem.product__id',
+                    ''
+                );
+            }
+        } else {
+            $queryBuilder = $this->getQueryBuilder();
+
+            $joins = $queryBuilder->getQueryPart('from');
+
+            if (!array_key_exists('product', $joins)) {
+                $queryBuilder->join(
+                    'orderItem',
+                    'object_query_' . $classId,
+                    'product',
+                    'product.oo_id = orderItem.product__id'
+                );
+            }
         }
 
         return $this;
@@ -255,14 +386,26 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinCustomer($classId)
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $joins = $this->getQuery()->getPart(ZendCompatibilityQueryBuilder::FROM);
 
-        if (!array_key_exists('customer', $joins)) {
-            $this->getQuery()->join(
-                ['customer' => 'object_' . $classId],
-                'customer.o_id = order.customer__id',
-                ''
-            );
+            if (!array_key_exists('customer', $joins)) {
+                $this->getQuery()->join(
+                    ['customer' => 'object_' . $classId],
+                    'customer.o_id = order.customer__id',
+                    ''
+                );
+            }
+        } else {
+            $queryBuilder = $this->getQueryBuilder();
+
+            $joins = $queryBuilder->getQueryPart('from');
+
+            if (!array_key_exists('customer', $joins)) {
+                $queryBuilder->join('order', 'object_' . $classId, 'customer',
+                    'customer.o_id = order.customer__id'
+                );
+            }
         }
 
         return $this;
@@ -271,71 +414,56 @@ class Listing extends AbstractOrderList implements OrderListInterface
     /**
      * join for item / sub items
      *
-     * @param Db\ZendCompatibility\QueryBuilder $select
+     * @param ZendCompatibilityQueryBuilder|DoctrineQueryBuilder $select
      *
      * @return $this
      */
     protected function joinItemsAndSubItems($select)
     {
-        if (!$this->useSubItems()) {
-            // just order items
+        if ($select instanceof DoctrineQueryBuilder) {
+            if (!$this->useSubItems()) {
+                // just order items
+                $select->join(
+                    '`order`',
+                    'object_relations_' . OnlineShopOrder::classId(),
+                    '_orderItems',
+                    '_orderItems.fieldname = "items" AND _orderItems.src_id = order.oo_id'
+                );
+            } else {
+                $select->join('order', (string) $this->getOrderItemsSubQuery(), '_orderItems',
+                    '_orderItems.orderId = order.oo_id'
+                );
+            }
+
+            // join related order item
+            $select->addSelect('orderItem.oo_id AS OrderItemId');
+            $select->join('_orderItems', 'object_' . OnlineShopOrderItem::classId(), 'orderItem',
+                'orderItem.o_id = _orderItems.dest_id');
+        } elseif ($select instanceof ZendCompatibilityQueryBuilder) {
+            if (!$this->useSubItems()) {
+                // just order items
+                $select->join(
+                    [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ],
+                    '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id',
+                    ''
+                );
+            } else {
+                $select->join(
+                    ['_orderItems' => new Db\ZendCompatibility\Expression(
+                        $this->getOrderItemsSubQuery()
+                    )],
+                    '_orderItems.orderId = `order`.oo_id',
+                    ''
+                );
+            }
+
+            // join related order item
             $select->join(
-                [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ],
-                '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id',
-                ''
-            );
-        } else {
-            // join items and sub items
-            $orderClassId = OnlineShopOrder::classId();
-            $orderItemClassId = OnlineShopOrderItem::classId();
-            $select->join(
-                ['_orderItems' => new Db\ZendCompatibility\Expression(
-                    <<<SUBQUERY
-(
-    -- add items
-    SELECT
-
-        _orderItems.src_id as "orderId"
-        , _orderItems.dest_id "dest_id"
-        , "item" as "kind"
-
-    FROM `object_relations_{$orderClassId}` AS `_orderItems`
-
-    WHERE 1
-
-        AND _orderItems.fieldname = "items"
-
-    UNION
-
-    -- add sub items (1. level)
-    SELECT
-
-        _orderItems.src_id as "orderId"
-        , _orderSubItems.dest_id as "dest_id"
-        , "subItem" as "kind"
-
-    FROM `object_relations_{$orderClassId}` AS `_orderItems`
-
-        JOIN `object_relations_{$orderItemClassId}` AS `_orderSubItems`
-            ON _orderSubItems.fieldname = "subItems" AND _orderSubItems.src_id = _orderItems.dest_id
-
-    WHERE 1
-
-        AND _orderItems.fieldname = "items"
-)
-SUBQUERY
-                )],
-                '_orderItems.orderId = `order`.oo_id',
-                ''
+                [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ],
+                'orderItem.o_id = _orderItems.dest_id',
+                ['OrderItemId' => 'orderItem.oo_id']
             );
         }
-
-        // join related order item
-        $select->join(
-            [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ],
-            'orderItem.o_id = _orderItems.dest_id',
-            ['OrderItemId' => 'orderItem.oo_id']
-        );
 
         return $this;
     }
@@ -347,7 +475,11 @@ SUBQUERY
      */
     public function addSelectField($field)
     {
-        $this->getQuery()->columns($field);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $this->getQuery()->columns($field);
+        } else {
+            $this->getQueryBuilder()->addSelect($field);
+        }
 
         return $this;
     }
@@ -373,7 +505,11 @@ SUBQUERY
      */
     public function addCondition($condition, $value = null)
     {
-        $this->getQuery()->where($condition, $value);
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            $this->getQuery()->where($condition, $value);
+        } else {
+            $this->getQueryBuilder()->where($condition, $value);
+        }
 
         return $this;
     }
@@ -392,16 +528,16 @@ SUBQUERY
         if (!$this->availableFilterValues) {
             $listing = new self();
 
-            $query = $listing->getQuery();
-            $query = str_replace('-- [GET_AVAILABLE_OPTIONS]', '
+            $queryBuilder = $listing->getQueryBuilder();
+            $queryBuilder = str_replace('-- [GET_AVAILABLE_OPTIONS]', '
                 , ifnull(GROUP_CONCAT(DISTINCT product.o_id, "|", product.o_parentId SEPARATOR "|"),0) as "available_productId"
                 , ifnull(GROUP_CONCAT(DISTINCT pricingRule.ruleId SEPARATOR "|"),0) as "available_pricingRules"
-            ', $query);
-            $query = str_replace('GROUP BY orderItem', '', $query);
+            ', $queryBuilder);
+            $queryBuilder = str_replace('GROUP BY orderItem', '', $queryBuilder);
 
             $conn = \Pimcore\Db::getConnection();
             $conn->query('SET SESSION group_concat_max_len = 1000000');
-            $this->availableFilterValues = $conn->fetchRow($query);
+            $this->availableFilterValues = $conn->fetchRow($queryBuilder);
         }
 
         return explode('|', $this->availableFilterValues['available_' . $field]);
@@ -441,5 +577,68 @@ SUBQUERY
         $this->useSubItems = (bool)$useSubItems;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    private function getOrderItemsSubQuery()
+    {
+        // join items and sub items
+        $orderClassId = OnlineShopOrder::classId();
+        $orderItemClassId = OnlineShopOrderItem::classId();
+        return <<<SUBQUERY
+(
+    -- add items
+    SELECT
+
+        _orderItems.src_id as "orderId"
+        , _orderItems.dest_id "dest_id"
+        , "item" as "kind"
+
+    FROM `object_relations_{$orderClassId}` AS `_orderItems`
+
+    WHERE 1
+
+        AND _orderItems.fieldname = "items"
+
+    UNION
+
+    -- add sub items (1. level)
+    SELECT
+
+        _orderItems.src_id as "orderId"
+        , _orderSubItems.dest_id as "dest_id"
+        , "subItem" as "kind"
+
+    FROM `object_relations_{$orderClassId}` AS `_orderItems`
+
+        JOIN `object_relations_{$orderItemClassId}` AS `_orderSubItems`
+            ON _orderSubItems.fieldname = "subItems" AND _orderSubItems.src_id = _orderItems.dest_id
+
+    WHERE 1
+
+        AND _orderItems.fieldname = "items"
+)
+SUBQUERY;
+    }
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     *
+     * @return ZendCompatibilityQueryBuilder|DoctrineQueryBuilder
+     */
+    public function getQueryBuilderCompatibility()
+    {
+        if ($this->query instanceof ZendCompatibilityQueryBuilder) {
+            // use deprecated ZendCompatibility\QueryBuilder
+            return $this->query;
+        } else {
+            // use Doctrine query builder (default)
+            return $this->getQueryBuilder();
+        }
     }
 }
