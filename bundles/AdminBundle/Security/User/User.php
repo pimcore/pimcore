@@ -148,7 +148,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
      *
      * @return string
      */
-    public function getGoogleAuthenticatorSecret(): string
+    public function getGoogleAuthenticatorSecret(): ?string
     {
         if ($this->isGoogleAuthenticatorEnabled()) {
             $secret = $this->user->getTwoFactorAuthentication('secret');
