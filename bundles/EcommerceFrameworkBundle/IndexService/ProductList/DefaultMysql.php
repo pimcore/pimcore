@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInter
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
@@ -794,7 +793,8 @@ class DefaultMysql implements ProductListInterface
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return AdapterInterface
+     * @deprecated will be removed in Pimcore 10
+     * @return self
      */
     public function getPaginatorAdapter()
     {

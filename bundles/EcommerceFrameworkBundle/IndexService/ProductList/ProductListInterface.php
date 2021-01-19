@@ -16,13 +16,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * Interface for product list which works based on the product index of the online shop framework
  */
-interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggregateInterface
+interface ProductListInterface extends PaginateListingInterface
 {
     const ORDERKEY_PRICE = 'orderkey_price';
 

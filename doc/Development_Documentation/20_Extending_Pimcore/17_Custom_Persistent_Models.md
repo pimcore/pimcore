@@ -245,10 +245,9 @@ If you need to query the data using a Pimcore entity list, you also need to impl
 namespace AppBundle\Model\Vote;
  
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
  
-class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * List of Votes.

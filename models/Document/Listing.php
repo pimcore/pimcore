@@ -19,8 +19,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Document[] load()
@@ -32,7 +31,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method onCreateQuery(callable $callback)
  * @method array loadIdPathList()
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
@@ -152,7 +151,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @return Listing
+     * @deprecated will be removed in Pimcore 10
+     * @return self
      */
     public function getPaginatorAdapter()
     {
