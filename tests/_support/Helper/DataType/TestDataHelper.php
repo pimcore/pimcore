@@ -183,6 +183,28 @@ class TestDataHelper extends Module
      * @param Concrete $object
      * @param string $field
      * @param int $seed
+     * @param string|null $language
+     */
+    public function assertEncrypted(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $getter = 'get' . ucfirst($field);
+        if ($language) {
+            $value = $object->$getter($language);
+        } else {
+            $value = $object->$getter();
+        }
+
+
+        $expected = $language . 'content' . $seed;
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
     public function assertFieldCollection(Concrete $object, $field, $seed = 1)
     {
@@ -241,7 +263,8 @@ class TestDataHelper extends Module
      * @param int $seed
      * @param string|null $language
      */
-    public function assertFirstname(Concrete $object, $field, $seed = 1, $language = null) {
+    public function assertFirstname(Concrete $object, $field, $seed = 1, $language = null)
+    {
         $this->assertInput($object, $field, $seed, $language);
     }
 
@@ -266,29 +289,20 @@ class TestDataHelper extends Module
         $this->assertEquals($expected, $value);
     }
 
-
     /**
      * @param Concrete $object
      * @param string $field
      * @param int $seed
-     * @param string|null $language
      */
-    public function assertEncrypted(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertGender(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
-        if ($language) {
-            $value = $object->$getter($language);
-        } else {
-            $value = $object->$getter();
-        }
-
-
-        $expected = $language . 'content' . $seed;
+        $value = $object->$getter();
+        $expected = $seed % 2 === 0 ? "male" : "female";
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
-
 
     /**
      * @param Concrete $object
@@ -563,8 +577,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertLanguage(Concrete $object, $field, $seed = 1)
     {
@@ -578,8 +592,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertLanguageMultiSelect(Concrete $object, $field, $seed = 1)
     {
@@ -596,14 +610,15 @@ class TestDataHelper extends Module
      * @param int $seed
      * @param string|null $language
      */
-    public function assertLastname(Concrete $object, $field, $seed = 1, $language = null) {
+    public function assertLastname(Concrete $object, $field, $seed = 1, $language = null)
+    {
         $this->assertInput($object, $field, $seed, $language);
     }
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertLink(Concrete $object, $field, $seed = 1)
     {
@@ -641,8 +656,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertMultiSelect(Concrete $object, $field, $seed = 1)
     {
@@ -656,8 +671,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertMultihref(Concrete $object, $field, $seed = 1)
     {
@@ -678,8 +693,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertNumber(Concrete $object, $field, $seed = 1)
     {
@@ -692,11 +707,11 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData      $object
-     * @param string        $field
+     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
+     * @param string $field
      * @param Concrete|null $comparisonObject
-     * @param int           $seed
-     * @param string|null   $language
+     * @param int $seed
+     * @param string|null $language
      */
     public function assertObjects($object, $field, $seed = 1, $language = null)
     {
@@ -759,9 +774,9 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
+     * @param string $field
      * @param Concrete $comparisonObject
-     * @param int      $seed
+     * @param int $seed
      */
     public function assertObjectsWithMetadata(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
@@ -834,8 +849,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertPassword(Concrete $object, $field, $seed = 1)
     {
@@ -853,8 +868,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertSelect(Concrete $object, $field, $seed = 1)
     {
@@ -868,8 +883,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertSlider(Concrete $object, $field, $seed = 1)
     {
@@ -883,9 +898,9 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
+     * @param string $field
      * @param Concrete $comparisonObject
-     * @param int      $seed
+     * @param int $seed
      */
     public function assertStructuredTable(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
@@ -937,9 +952,9 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
+     * @param string $field
      * @param Concrete $comparisonObject
-     * @param int      $seed
+     * @param int $seed
      */
     public function assertTable(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
@@ -974,8 +989,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertTime(Concrete $object, $field, $seed = 1)
     {
@@ -988,9 +1003,9 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      * @param string|null $language
      */
     public function assertUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
@@ -1016,8 +1031,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertUser(Concrete $object, $field, $seed = 1)
     {
@@ -1032,8 +1047,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertWysiwyg(Concrete $object, $field, $seed = 1)
     {
@@ -1042,8 +1057,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function assertTextarea(Concrete $object, $field, $seed = 1)
     {
@@ -1057,8 +1072,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillBooleanSelect(Concrete $object, $field, $seed = 1)
     {
@@ -1068,8 +1083,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillBricks(Concrete $object, $field, $seed = 1)
     {
@@ -1089,8 +1104,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillCalculatedValue(Concrete $object, $field, $seed = 1)
     {
@@ -1099,8 +1114,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillCheckbox(Concrete $object, $field, $seed = 1)
     {
@@ -1110,8 +1125,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillCountry(Concrete $object, $field, $seed = 1)
     {
@@ -1121,8 +1136,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillCountryMultiSelect(Concrete $object, $field, $seed = 1)
     {
@@ -1132,8 +1147,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillDate(Concrete $object, $field, $seed = 1)
     {
@@ -1147,8 +1162,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillEmail(Concrete $object, $field, $seed = 1)
     {
@@ -1158,8 +1173,24 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
+     * @param string|null $language
+     */
+    public function fillEncryptedField(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $setter = 'set' . ucfirst($field);
+        if ($language) {
+            $object->$setter($language . 'content' . $seed, $language);
+        } else {
+            $object->$setter('content' . $seed);
+        }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
     public function fillFieldCollection(Concrete $object, $field, $seed = 1)
     {
@@ -1178,19 +1209,20 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      * @param string|null $language
      */
-    public function fillFirstname(Concrete $object, $field, $seed = 1, $language = null) {
+    public function fillFirstname(Concrete $object, $field, $seed = 1, $language = null)
+    {
         $this->fillInput($object, $field, $seed, $language);
     }
 
     /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      * @param string|null $language
      */
     public function fillInput(Concrete $object, $field, $seed = 1, $language = null)
@@ -1204,26 +1236,23 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
-     * @param string|null $language
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
-    public function fillEncryptedField(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillGender(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-        if ($language) {
-            $object->$setter($language . 'content' . $seed, $language);
-        } else {
-            $object->$setter('content' . $seed);
-        }
-    }
 
+        $value = $seed % 2 == 0 ? "male" : "female";
+
+        $object->$setter($value);
+    }
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillGeobounds(Concrete $object, $field, $seed = 1)
     {
@@ -1233,8 +1262,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillGeopoint(Concrete $object, $field, $seed = 1)
     {
@@ -1244,8 +1273,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillGeopolygon(Concrete $object, $field, $seed = 1)
     {
@@ -1255,8 +1284,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillHotspotImage(Concrete $object, $field, $seed = 1)
     {
@@ -1276,8 +1305,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillHref(Concrete $object, $field, $seed = 1)
     {
@@ -1288,8 +1317,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillImage(Concrete $object, $field, $seed = 1)
     {
@@ -1307,8 +1336,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillLanguage(Concrete $object, $field, $seed = 1)
     {
@@ -1318,8 +1347,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillLanguageMultiSelect(Concrete $object, $field, $seed = 1)
     {
@@ -1328,19 +1357,20 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      * @param string|null $language
      */
-    public function fillLastname(Concrete $object, $field, $seed = 1, $language = null) {
+    public function fillLastname(Concrete $object, $field, $seed = 1, $language = null)
+    {
         $this->fillInput($object, $field, $seed, $language);
     }
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillLink(Concrete $object, $field, $seed = 1)
     {
@@ -1381,8 +1411,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillMultiSelect(Concrete $object, $field, $seed = 1)
     {
@@ -1392,8 +1422,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillMultihref(Concrete $object, $field, $seed = 1)
     {
@@ -1406,8 +1436,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillNumber(Concrete $object, $field, $seed = 1)
     {
@@ -1416,9 +1446,9 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData    $object
-     * @param string      $field
-     * @param int         $seed
+     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
+     * @param string $field
+     * @param int $seed
      * @param string|null $language
      */
     public function fillObjects($object, $field, $seed = 1, $language = null)
@@ -1441,8 +1471,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillObjectsWithMetadata(Concrete $object, $field, $seed = 1)
     {
@@ -1452,8 +1482,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillPassword(Concrete $object, $field, $seed = 1)
     {
@@ -1463,8 +1493,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillSelect(Concrete $object, $field, $seed = 1)
     {
@@ -1474,8 +1504,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillSlider(Concrete $object, $field, $seed = 1)
     {
@@ -1485,8 +1515,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillStructuredtable(Concrete $object, $field, $seed = 1)
     {
@@ -1496,8 +1526,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillTable(Concrete $object, $field, $seed = 1)
     {
@@ -1507,8 +1537,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillTime(Concrete $object, $field, $seed = 1)
     {
@@ -1517,9 +1547,9 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
-     * @param string      $field
-     * @param int         $seed
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      * @param string|null $language
      */
     public function fillUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
@@ -1536,8 +1566,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillUser(Concrete $object, $field, $seed = 1)
     {
@@ -1563,8 +1593,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillWysiwyg(Concrete $object, $field, $seed = 1)
     {
@@ -1573,8 +1603,8 @@ class TestDataHelper extends Module
 
     /**
      * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param string $field
+     * @param int $seed
      */
     public function fillTextarea(Concrete $object, $field, $seed = 1)
     {

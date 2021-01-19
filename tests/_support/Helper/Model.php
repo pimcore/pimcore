@@ -398,6 +398,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('consent'));
 
             $panel->addChild($this->createDataChild('date'));
+            $panel->addChild($this->createDataChild('datetime'));
 
             $panel->addChild($this->createDataChild('email'));
 
@@ -408,7 +409,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('firstname'));
 
-            $panel->addChild($this->createDataChild('datetime'));
+            $panel->addChild($this->createDataChild('gender'));
 
             $panel->addChild($this->createDataChild('geopoint', 'point'));
             $panel->addChild($this->createDataChild('geobounds', 'bounds'));

@@ -293,6 +293,14 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertFirstname($this->testObject, 'firstname', $this->seed);
     }
 
+    public function testGender()
+    {
+        $this->createTestObject('gender');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertGender($this->testObject, 'gender', $this->seed);
+    }
+
     public function testGeobounds()
     {
         $this->createTestObject([
