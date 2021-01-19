@@ -15,7 +15,8 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use ArrayAccess;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 use SeekableIterator;
 
@@ -23,6 +24,8 @@ use SeekableIterator;
  * Interface OrderListInterface
  *
  * @method OrderListItemInterface current()
+ * @method DoctrineQueryBuilder getQueryBuilder()
+ * @method ZendCompatibilityQueryBuilder|DoctrineQueryBuilder getQueryBuilderCompatibility()
  */
 interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateListingInterface
 {
@@ -32,7 +35,7 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
     /**
      * @deprecated
      *
-     * @return QueryBuilder
+     * @return ZendCompatibilityQueryBuilder
      */
     public function getQuery();
 

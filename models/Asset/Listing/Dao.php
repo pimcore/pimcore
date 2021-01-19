@@ -18,15 +18,21 @@
 namespace Pimcore\Model\Asset\Listing;
 
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
  * @property \Pimcore\Model\Asset\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+
     /**
+     * @deprecated
+     *
      * @var \Closure
      */
     protected $onCreateQueryCallback;
@@ -40,8 +46,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $assets = [];
 
-        $select = $this->getQuery(['id', 'type']);
-        $assetsData = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilderCompatibility(['id', 'type']);
+        $assetsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($assetsData as $assetData) {
             if ($assetData['type']) {
@@ -61,7 +67,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @param array|string|Expression $columns
      *
-     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
+     * @return ZendCompatibilityQueryBuilder
      */
     public function getQuery($columns = '*')
     {
@@ -84,14 +90,29 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
+     */
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
+    {
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from('assets');
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
+    }
+
+    /**
      * Loads a list of document IDs for the specified parameters, returns an array of ids
      *
      * @return int[]
      */
     public function loadIdList()
     {
-        $select = $this->getQuery(['id']);
-        $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilderCompatibility(['id']);
+        $assetIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $assetIds);
     }
@@ -115,17 +136,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $select = $this->getQuery([new Expression('COUNT(*)')]);
-        $select->reset(QueryBuilder::LIMIT_COUNT);
-        $select->reset(QueryBuilder::LIMIT_OFFSET);
-        $select->reset(QueryBuilder::ORDER);
+        $queryBuilder = $this->getQueryBuilderCompatibility();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
     }
 
     /**
+     * @deprecated
      * @param callable $callback
      */
     public function onCreateQuery(callable $callback)
