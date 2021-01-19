@@ -17,16 +17,20 @@
 
 namespace Pimcore\Model\Document\Listing;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
  * @property \Pimcore\Model\Document\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+
     /**
      * @var \Closure
      */
@@ -40,7 +44,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $documents = [];
-        $select = $this->getQuery(['id', 'type']);
+        $select = $this->getQueryBuilderCompatibility(['id', 'type']);
 
         $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
@@ -64,6 +68,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getQuery($columns = '*')
     {
+        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use getQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
+
         $select = $this->db->select();
         $select->from([ 'documents' ], $columns);
         $this->addConditions($select);
@@ -80,14 +86,29 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
+     */
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
+    {
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from('documents');
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
+    }
+
+    /**
      * Loads a list of document ids for the specicifies parameters, returns an array of ids
      *
      * @return int[]
      */
     public function loadIdList()
     {
-        $select = $this->getQuery(['id']);
-        $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilderCompatibility(['id']);
+        $documentIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $documentIds);
     }
@@ -97,8 +118,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList()
     {
-        $select = $this->getQuery(['id', 'CONCAT(path,`key`) as path']);
-        $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilderCompatibility(['id', 'CONCAT(path,`key`) as path']);
+        $documentIds = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
     }
@@ -122,12 +143,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $select = $this->getQuery([new Expression('COUNT(*)')]);
-        $select->reset(QueryBuilder::LIMIT_COUNT);
-        $select->reset(QueryBuilder::LIMIT_OFFSET);
-        $select->reset(QueryBuilder::ORDER);
+        $queryBuilder = $this->getQueryBuilderCompatibility();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
     }
@@ -137,6 +156,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function onCreateQuery(callable $callback)
     {
+        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use onCreateQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
         $this->onCreateQueryCallback = $callback;
     }
 }

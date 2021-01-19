@@ -24,7 +24,18 @@
 - `PageSnippet::$elements` property visibility changed from `protected` to `private`
 - `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private`
 - `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been deprecated and will be removed in Pimcore 10. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
+- Calling `getQuery()` on listing classes (to fetch Zend Compatibility Query Builder) has been deprecated and will be removed in Pimcore 10. Use `getQueryBuilder()` which returns Doctrine Query builder instead.
+- Using onCreateQuery callback to modify listing queries has been deprecated. Use onCreateQueryBuilder() instead. e.g.
+```php
+    /** @var \Pimcore\Model\DataObject\News\Listing $list */
+    $list = new Pimcore\Model\DataObject\News\Listing();
 
+    $list->onCreateQueryBuilder(
+        function (\Doctrine\DBAL\Query\QueryBuilder $select) use ($list) {
+            // modify listing $select->join(....);
+        }
+    );
+```
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
 Staticroutes and Document Types to the new controller references in the format: `AppBundle\Controller\FooController::barAction`.
