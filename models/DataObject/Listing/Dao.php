@@ -59,6 +59,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getQuery($columns = '*')
     {
+        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use getQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
+
         // init
         $select = $this->db->select();
 
@@ -250,6 +252,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function onCreateQuery(callable $callback)
     {
+        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use onCreateQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
         $this->onCreateQueryCallback = $callback;
     }
 }
