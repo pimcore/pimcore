@@ -65,6 +65,11 @@ class Bracket implements BracketInterface
 
             // test condition
             $check = $condition->check($environment);
+            
+            if ($num === 0) {
+                $state = $check;
+                continue;
+            }
 
             // check
             switch ($this->operator[$num]) {

@@ -452,7 +452,7 @@ class Dao extends Listing\Dao\AbstractDao
         $field = $this->getTableName().'.id';
         $select->from(
             [$this->getTableName()], [
-                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field, 'o_type')),
+                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)),
             ]
         );
  
