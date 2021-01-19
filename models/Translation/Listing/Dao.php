@@ -21,6 +21,7 @@ use Pimcore\Cache;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 
 /**
  * @property \Pimcore\Model\Translation\Listing $model
@@ -173,6 +174,21 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $this->db->deleteWhere($this->getDatabaseTableName(), '`key` IN (' . implode(',', $preparedKeys) . ')');
             }
         }
+    }
+
+    /**
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
+     */
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
+    {
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from($this->getDatabaseTableName());
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
     }
 
     /**
