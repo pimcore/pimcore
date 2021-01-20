@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
+use Pimcore\Model\Element\ValidationException;
 
 class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
@@ -290,6 +291,30 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     public function getDataForGrid($data, $object = null, $params = [])
     {
         return $this->getDataForEditmode($data, $object, $params);
+    }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     *
+     * @throws \Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        $isEmpty = true;
+
+        if ($data) {
+            if (!$data instanceof DataObject\Data\Geopoint) {
+                throw new ValidationException('Expected an instance of Geopoint');
+            }
+            $isEmpty = false;
+        }
+
+        if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
+            throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+        }
     }
 
     /**

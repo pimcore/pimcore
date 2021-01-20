@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
+use Pimcore\Model\Element\ValidationException;
 
 class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
@@ -81,6 +82,30 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $this->getName() . '__SWlongitude' => null,
             $this->getName() . '__SWlatitude' => null,
         ];
+    }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     *
+     * @throws \Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        $isEmpty = true;
+
+        if ($data) {
+            if (!$data instanceof DataObject\Data\Geobounds) {
+                throw new ValidationException('Expected an instance of Geobounds');
+            }
+            $isEmpty = false;
+        }
+
+        if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
+            throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+        }
     }
 
     /**
