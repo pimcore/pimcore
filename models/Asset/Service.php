@@ -213,8 +213,7 @@ class Service extends Model\Element\Service
                         $data[$field] = self::getPreviewThumbnail($asset, ['treepreview' => true, 'width' => 108, 'height' => 70, 'frame' => true]);
                     } elseif ($fieldDef[0] === 'size') {
                         /** @var Asset $asset */
-                        $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
-                        $size = @filesize($filename);
+                        $size = @filesize($asset->getFileSystemPath());
                         $data[$field] = formatBytes($size);
                     }
                 } else {
