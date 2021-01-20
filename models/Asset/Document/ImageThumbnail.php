@@ -22,6 +22,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 
@@ -146,6 +147,11 @@ class ImageThumbnail
     protected function createConfig($selector)
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $config === null) {
+            throw new NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
         if ($config) {
             $format = strtolower($config->getFormat());
             if ($format == 'source') {

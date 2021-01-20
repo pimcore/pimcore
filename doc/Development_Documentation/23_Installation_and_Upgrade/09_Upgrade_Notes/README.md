@@ -26,6 +26,7 @@
 - Added Validation for Geo datatypes
     - for Geopolyline and Geopolygon invalid data doesn't get serialized 1:1 anymore
     - for Geobounds and Geopoint invalid data doesn't get dropped silently anymore
+- Calling `$imageAsset->getThumbnail('non-existing-thumbnail-definition)` with a non-existing thumbnail definition will now throw an exception. Same goes for video assets and video image thumbnails.
     
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
