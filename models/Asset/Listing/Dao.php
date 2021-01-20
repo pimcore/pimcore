@@ -17,9 +17,9 @@
 
 namespace Pimcore\Model\Asset\Listing;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
-use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
@@ -150,6 +150,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @deprecated
+     *
      * @param callable $callback
      */
     public function onCreateQuery(callable $callback)

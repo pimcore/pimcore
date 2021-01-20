@@ -14,7 +14,6 @@
 
 namespace Pimcore\Model\Listing\Dao;
 
-
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
@@ -48,7 +47,7 @@ trait QueryBuilderHelperTrait
         $this->applyLimitToQueryBuilder($queryBuilder);
 
         $callback = $this->onCreateQueryBuilderCallback;
-        if(is_callable($callback)) {
+        if (is_callable($callback)) {
             $callback($queryBuilder);
         }
     }
@@ -138,11 +137,12 @@ trait QueryBuilderHelperTrait
      */
     protected function getQueryBuilderCompatibility($columns = '*')
     {
-        if(!is_callable($this->onCreateQueryCallback)) {
+        if (!is_callable($this->onCreateQueryCallback)) {
             // use Doctrine query builder (default)
             if (!is_array($columns)) {
                 $columns = [$columns];
             }
+
             return $this->getQueryBuilder(...$columns);
         } else {
             // use deprecated ZendCompatibility\QueryBuilder
@@ -165,7 +165,7 @@ trait QueryBuilderHelperTrait
 
                 if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
                     $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
-                } else if ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
+                } elseif ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
                     $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
                     $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
                 }
