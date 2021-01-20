@@ -99,7 +99,7 @@
     "matthiasmullie/minify": "^1.3",
     "webmozarts/console-parallelization": "^1.2.0",
     "onnov/detect-encoding": "^1.2",
-    "knplabs/knp-paginator-bundle": "^4.1.1"
+    "knplabs/knp-paginator-bundle": "^5.4.2"
   },
   "conflict": {
     "monolog/monolog": ">=2",
