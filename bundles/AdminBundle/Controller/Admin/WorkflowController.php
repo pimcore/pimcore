@@ -291,8 +291,8 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @throws \Exception
      */
-    public function getModalCustomHtml(Request $request, Registry $workflowRegistry, Manager $manager) {
-
+    public function getModalCustomHtml(Request $request, Registry $workflowRegistry, Manager $manager)
+    {
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
 
         if ($request->get('isGlobalAction') == 'true') {
@@ -300,9 +300,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
             if ($globalAction) {
                 return $this->customHtmlResponse($globalAction->getCustomHtmlService());
             }
-
         } elseif ($workflow->can($this->element, $request->get('transition'))) {
-
             $enabledTransitions = $workflow->getEnabledTransitions($this->element);
             $transition = null;
             foreach ($enabledTransitions as $_transition) {
@@ -318,16 +316,17 @@ class WorkflowController extends AdminController implements KernelControllerEven
 
         $data = [
             'success' => false,
-            'message' => 'error validating the action on this element, element cannot peform this action'
+            'message' => 'error validating the action on this element, element cannot peform this action',
         ];
 
         return new JsonResponse($data);
     }
 
-    private function customHtmlResponse(CustomHtmlServiceInterface $customHtmlService = null) : JsonResponse {
+    private function customHtmlResponse(CustomHtmlServiceInterface $customHtmlService = null): JsonResponse
+    {
         $data = [
             'success' => true,
-            'customHtml' => []
+            'customHtml' => [],
         ];
 
         if ($customHtmlService) {

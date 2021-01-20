@@ -30,5 +30,5 @@ interface NotesAwareInterface
 
     public function getNotesAdditionalFields(): array;
 
-    public function getCustomHtmlService() : ?CustomHtmlServiceInterface;
+    public function getCustomHtmlService(): ?CustomHtmlServiceInterface;
 }

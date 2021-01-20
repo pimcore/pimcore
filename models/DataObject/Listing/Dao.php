@@ -17,10 +17,12 @@
 
 namespace Pimcore\Model\DataObject\Listing;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
  * @internal
@@ -29,7 +31,11 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+
     /**
+     * @deprecated
+     *
      * @var \Closure
      */
     protected $onCreateQueryCallback;
@@ -45,12 +51,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param array|string|Expression $columns
      *
-     * @return QueryBuilder
+     * @return ZendCompatibilityQueryBuilder
      *
      * @throws \Exception
+     *
+     * @deprecated use getQueryBuilder() instead.
      */
     public function getQuery($columns = '*')
     {
+        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use getQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
+
         // init
         $select = $this->db->select();
 
@@ -81,6 +91,26 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
+     *
+     * @throws \Exception
+     */
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
+    {
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from($this->getTableName());
+
+        // apply joins
+        $this->applyJoins($queryBuilder);
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
+    }
+
+    /**
      * Loads a list of objects for the specicifies parameters, returns an array of DataObject\AbstractObject elements
      *
      * @return array
@@ -108,36 +138,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $query = $this->getQuery();
+        $queryBuilder = $this->getQueryBuilderCompatibility();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        if ($this->model->addDistinct()) {
-            $query->distinct(true);
-        }
-
-        $query->reset(QueryBuilder::LIMIT_COUNT);
-        $query->reset(QueryBuilder::LIMIT_OFFSET);
-        $query->reset(QueryBuilder::ORDER);
-
-        if ($this->isQueryPartinUse($query, QueryBuilder::GROUP) || $this->isQueryPartinUse($query, QueryBuilder::HAVING)) {
-            $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
-        } else {
-            $query->reset(QueryBuilder::COLUMNS);
-
-            $countIdentifier = '*';
-            if ($this->isQueryPartinUse($query, QueryBuilder::DISTINCT)) {
-                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-            }
-
-            $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
-        }
-
-        $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $totalCount = $this->db->fetchOne($queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return (int) $totalCount;
     }
 
     /**
-     * @param QueryBuilder $query
+     * @param ZendCompatibilityQueryBuilder $query
      * @param string $part
      *
      * @return bool
@@ -176,28 +186,39 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $query = $this->getQuery([new Expression(sprintf('%s as o_id', $this->getTableName() . '.o_id')), 'o_type']);
-        $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilderCompatibility([sprintf('%s as o_id', $this->getTableName() . '.o_id'), 'o_type']);
+        $objectIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $objectIds);
     }
 
     /**
-     * @param QueryBuilder $select
+     * @param ZendCompatibilityQueryBuilder $select
      *
      * @return $this
+     *
      */
-    protected function addJoins(QueryBuilder $select)
+    protected function addJoins(ZendCompatibilityQueryBuilder $select)
     {
         return $this;
     }
 
     /**
-     * @param QueryBuilder $select
+     * @param DoctrineQueryBuilder $queryBuilder
      *
      * @return $this
      */
-    protected function addConditions(QueryBuilder $select)
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
+    {
+        return $this;
+    }
+
+    /**
+     * @param ZendCompatibilityQueryBuilder $select
+     *
+     * @return $this
+     */
+    protected function addConditions(ZendCompatibilityQueryBuilder $select)
     {
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();
@@ -231,6 +252,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function onCreateQuery(callable $callback)
     {
+        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use onCreateQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
         $this->onCreateQueryCallback = $callback;
     }
 }
