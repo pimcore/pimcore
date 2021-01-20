@@ -323,6 +323,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertGeobounds($this->testObject, 'bounds', $this->seed);
+        $this->testDataHelper->checkValidityGeobounds($this->testObject, 'point', $this->seed);
     }
 
     public function testGeopoint()
@@ -336,6 +337,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertGeopoint($this->testObject, 'point', $this->seed);
+        $this->testDataHelper->checkValidityGeopoint($this->testObject, 'point', $this->seed);
     }
 
     public function testGeopolygon()
@@ -349,6 +351,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertGeopolygon($this->testObject, 'poly', $this->seed);
+        $this->testDataHelper->checkValidityGeopolygon($this->testObject, 'poly', $this->seed);
     }
 
     public function testHotspotImage()
