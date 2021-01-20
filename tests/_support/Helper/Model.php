@@ -416,7 +416,8 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('geopoint', 'point'));
             $panel->addChild($this->createDataChild('geobounds', 'bounds'));
-            $panel->addChild($this->createDataChild('geopolygon', 'poly'));
+            $panel->addChild($this->createDataChild('geopolygon', 'polygon'));
+            $panel->addChild($this->createDataChild('geopolyline', 'polyline'));
             $panel->addChild($this->createDataChild('input'));
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')

@@ -345,13 +345,27 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject([
             [
                 'method' => 'fillGeopolygon',
-                'field' => 'poly',
+                'field' => 'polygon',
             ],
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertGeopolygon($this->testObject, 'poly', $this->seed);
-        $this->testDataHelper->checkValidityGeopolygon($this->testObject, 'poly', $this->seed);
+        $this->testDataHelper->assertGeopolygon($this->testObject, 'polygon', $this->seed);
+        $this->testDataHelper->checkValidityGeopolygon($this->testObject, 'polygon', $this->seed);
+    }
+
+    public function testGeopolyline()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillGeopolyline',
+                'field' => 'polyline',
+            ],
+        ]);
+
+        $this->refreshObject();
+        $this->testDataHelper->assertGeopolygon($this->testObject, 'polyline', $this->seed);
+        $this->testDataHelper->checkValidityGeopolyline($this->testObject, 'polyline', $this->seed);
     }
 
     public function testHotspotImage()

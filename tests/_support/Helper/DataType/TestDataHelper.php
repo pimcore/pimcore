@@ -1071,6 +1071,31 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function checkValidityGeopoint(Concrete $object, $field, $seed = 1) {
+        $setter = 'set' . ucfirst($field);
+
+        try {
+            $object->$setter(1.234);
+            $this->fail("expected an instance of Geopoint");
+        } catch (\TypeError $e) {
+
+        }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function checkValidityGeopolyline(Concrete $object, $field, $seed = 1) {
+        $this->checkValidityGeopolygon($object, $field, $seed);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function checkValidityGeopolygon(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -1082,22 +1107,6 @@ class TestDataHelper extends Module
             $this->fail("expected a ValidationException");
         } catch (\Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
-        }
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function checkValidityGeopoint(Concrete $object, $field, $seed = 1) {
-        $setter = 'set' . ucfirst($field);
-
-        try {
-            $object->$setter(1.234);
-            $this->fail("expected an instance of Geopoint");
-        } catch (\TypeError $e) {
-
         }
     }
 
@@ -1343,6 +1352,18 @@ class TestDataHelper extends Module
      * @param int $seed
      */
     public function fillGeopolygon(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter($this->getGeopolygonFixture());
+    }
+
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillGeopolyline(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeopolygonFixture());
