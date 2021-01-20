@@ -22,6 +22,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -393,9 +394,17 @@ class Thumbnail
      * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
      * @return Thumbnail\Config
+     *
+     * @throws NotFoundException
      */
     protected function createConfig($selector)
     {
-        return Thumbnail\Config::getByAutoDetect($selector);
+        $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
+
+        if(!empty($selector) && $thumbnailConfig === null) {
+            throw new NotFoundException('Thumbnail definition "' . (is_string($selector)? $selector:'') . '" does not exist');
+        }
+
+        return $thumbnailConfig;
     }
 }

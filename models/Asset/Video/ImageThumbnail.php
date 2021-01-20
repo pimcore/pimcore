@@ -192,9 +192,17 @@ class ImageThumbnail
      * @param string|array|Image\Thumbnail\Config $selector
      *
      * @return Image\Thumbnail\Config|null
+     *
+     * @throws Model\Exception\NotFoundException
      */
     protected function createConfig($selector)
     {
-        return Image\Thumbnail\Config::getByAutoDetect($selector);
+        $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $thumbnailConfig === null) {
+            throw new Model\Exception\NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
+        return $thumbnailConfig;
     }
 }
