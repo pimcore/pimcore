@@ -20,8 +20,9 @@ use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
-class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Cse implements PaginateListingInterface
 {
     /**
      * @param string $query
@@ -397,7 +398,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * Methods for AdapterInterface
+     * Methods for PaginateListingInterface
      */
 
     /**
@@ -427,6 +428,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * @return self
      */
     public function getPaginatorAdapter()

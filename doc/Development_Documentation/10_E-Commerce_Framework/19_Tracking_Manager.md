@@ -123,18 +123,17 @@ See the following examples
 
 namespace AppBundle\Controller;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
-use Laminas\Paginator\Paginator;
 
 class ShopController extends FrontendController
 {
-    public function listAction(Request $request, TrackingManager $trackingManager)
+    public function listAction(Request $request, TrackingManager $trackingManager, PaginatorInterface $paginator)
     {       
         // ...
-        $paginator = new Paginator($products);
-        $paginator->setCurrentPageNumber( $request->get('page') );
+        $paginator->paginate($products, $request->get('page') ?? 1);
 
         foreach ($paginator as $product) {
             $trackingManager->trackProductImpression($product);

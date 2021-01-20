@@ -860,7 +860,8 @@ class DefaultFindologic implements ProductListInterface
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return AdapterInterface
+     * @deprecated will be removed in Pimcore 10
+     * @return self
      */
     public function getPaginatorAdapter()
     {

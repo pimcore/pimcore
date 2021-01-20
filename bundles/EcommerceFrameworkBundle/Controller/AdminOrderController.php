@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use GuzzleHttp\ClientInterface;
-use Laminas\Paginator\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
@@ -79,10 +79,11 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      *
      * @param Request $request
      * @param IntlFormatter $formatter
+     * @param PaginatorInterface $paginator
      *
      * @return Response
      */
-    public function listAction(Request $request, IntlFormatter $formatter)
+    public function listAction(Request $request, IntlFormatter $formatter, PaginatorInterface $paginator)
     {
         // create new order list
         $list = $this->orderManager->createOrderList();
@@ -161,10 +162,12 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         // set default order
         $list->setOrder('order.orderDate desc');
 
-        // create paging
-        $paginator = new Paginator($list);
-        $paginator->setItemCountPerPage(10);
-        $paginator->setCurrentPageNumber($request->get('page', 1));
+        // Paginate the results of the query
+        $paginator = $paginator->paginate(
+            $list,
+            $request->get('page', 1),
+            10
+        );
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/list.html.twig', [
             'paginator' => $paginator,
@@ -391,9 +394,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             return $this->redirect($url);
         }
 
-        return $this->render('@PimcoreEcommerceFramework/admin_order/item_cancel.html.twig', [
-            'orderItem' => $orderItem,
-        ]);
+        return ['orderItem' => $orderItem];
     }
 
     /**

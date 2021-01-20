@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
@@ -76,7 +77,14 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         }
 
         if ($codes = $this->getCodes()) {
-            $viewParamsBag['paginator'] = new Paginator(new ArrayAdapter($codes));
+            /** @var PaginatorInterface $paginator */
+            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+            $paginator = $paginator->paginate(
+                (array)$codes,
+                $params['page'] ?? 1,
+                $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
+            );
+            $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = count($codes);
         }
 

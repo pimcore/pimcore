@@ -62,6 +62,8 @@
         }
     );
 ```
+- Using Zend\Paginator for listing classes has been deprecated and will be removed in Pimcore 10. Use Knp\Component\Pager\Paginator instead.
+
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
 Staticroutes and Document Types to the new controller references in the format: `AppBundle\Controller\FooController::barAction`.
