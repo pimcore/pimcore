@@ -22,9 +22,10 @@ use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Doctrine\Common\Collections\Collection;
 use Pimcore\Db;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
@@ -968,29 +969,59 @@ class Service extends Model\AbstractModel
      */
     public static function addTreeFilterJoins($cv, $childsList)
     {
+        $queryBuilder = $childsList->getQueryBuilderCompatibility();
+
         if ($cv) {
-            $childsList->onCreateQuery(static function (QueryBuilder $select) use ($cv) {
-                $where = $cv['where'] ?? null;
-                if ($where) {
-                    $select->where($where);
-                }
-
-                $customViewJoins = $cv['joins'] ?? null;
-                if ($customViewJoins) {
-                    foreach ($customViewJoins as $joinConfig) {
-                        $type = $joinConfig['type'];
-                        $method = $type == 'left' || $type == 'right' ? $method = 'join' . ucfirst($type) : 'join';
-                        $name = $joinConfig['name'];
-                        $condition = $joinConfig['condition'];
-                        $columns = $joinConfig['columns'];
-                        $select->$method($name, $condition, $columns);
+            if ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
+                $childsList->onCreateQuery(static function (ZendCompatibilityQueryBuilder $select) use ($cv) {
+                    $where = $cv['where'] ?? null;
+                    if ($where) {
+                        $select->where($where);
                     }
-                }
 
-                if (!empty($cv['having'])) {
-                    $select->having($cv['having']);
-                }
-            });
+                    $customViewJoins = $cv['joins'] ?? null;
+                    if ($customViewJoins) {
+                        foreach ($customViewJoins as $joinConfig) {
+                            $type = $joinConfig['type'];
+                            $method = $type == 'left' || $type == 'right' ? $method = 'join' . ucfirst($type) : 'join';
+                            $name = $joinConfig['name'];
+                            $condition = $joinConfig['condition'];
+                            $columns = $joinConfig['columns'];
+                            $select->join($name, $condition, $columns);
+                        }
+                    }
+
+                    if (!empty($cv['having'])) {
+                        $select->having($cv['having']);
+                    }
+                });
+            } elseif ($queryBuilder instanceof DoctrineQueryBuilder) {
+                $childsList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
+                    $where = $cv['where'] ?? null;
+                    if ($where) {
+                        $select->where($where);
+                    }
+
+                    $fromAlias = $select->getQueryPart('form')[1];
+
+                    $customViewJoins = $cv['joins'] ?? null;
+                    if ($customViewJoins) {
+                        foreach ($customViewJoins as $joinConfig) {
+                            $type = $joinConfig['type'];
+                            $method = $type == 'left' || $type == 'right' ? $method =  $type . 'Join' : 'join';
+                            $name = $joinConfig['name'];
+                            $condition = $joinConfig['condition'];
+                            $columns = $joinConfig['columns'];
+                            $select->addSelect($columns);
+                            $select->$method($fromAlias, $name, $name, $condition);
+                        }
+                    }
+
+                    if (!empty($cv['having'])) {
+                        $select->having($cv['having']);
+                    }
+                });
+            }
         }
     }
 

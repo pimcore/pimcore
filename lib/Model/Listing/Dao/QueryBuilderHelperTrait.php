@@ -136,7 +136,7 @@ trait QueryBuilderHelperTrait
      *
      * @return ZendCompatibilityQueryBuilder|QueryBuilder
      */
-    protected function getQueryBuilderCompatibility($columns = '*')
+    public function getQueryBuilderCompatibility($columns = '*')
     {
         if(!is_callable($this->onCreateQueryCallback)) {
             // use Doctrine query builder (default)

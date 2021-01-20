@@ -20,7 +20,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -392,41 +394,84 @@ class GridHelperService
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureAndSlugFilters, $me) {
-                $db = \Pimcore\Db::get();
+            $queryBuilder = $list->getQueryBuilderCompatibility();
+            if ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
+                $list->onCreateQuery(function (ZendCompatibilityQueryBuilder $select) use (
+                    $featureJoins,
+                    $class,
+                    $featureAndSlugFilters,
+                    $me
+                ) {
+                    $db = \Pimcore\Db::get();
 
-                $alreadyJoined = [];
+                    $alreadyJoined = [];
 
-                foreach ($featureJoins as $featureJoin) {
-                    $fieldname = $featureJoin['fieldname'];
-                    $mappedKey = 'cskey_' . $fieldname . '_' . $featureJoin['groupId'] . '_' . $featureJoin['keyId'];
-                    if (isset($alreadyJoined[$mappedKey]) && $alreadyJoined[$mappedKey]) {
-                        continue;
+                    foreach ($featureJoins as $featureJoin) {
+                        $fieldname = $featureJoin['fieldname'];
+                        $mappedKey = 'cskey_' . $fieldname . '_' . $featureJoin['groupId'] . '_' . $featureJoin['keyId'];
+                        if (isset($alreadyJoined[$mappedKey]) && $alreadyJoined[$mappedKey]) {
+                            continue;
+                        }
+                        $alreadyJoined[$mappedKey] = 1;
+
+                        $table = $me->getDao()->getTableName();
+                        $select->joinLeft(
+                            [$mappedKey => 'object_classificationstore_data_' . $class->getId()],
+                            '('
+                            . $mappedKey . '.o_id = ' . $table . '.o_id'
+                            . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
+                            . ' and ' . $mappedKey . '.groupId=' . $featureJoin['groupId']
+                            . ' and ' . $mappedKey . '.keyId=' . $featureJoin['keyId']
+                            . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
+                            . ')',
+                            [
+                                $mappedKey => 'value',
+                            ]
+                        );
                     }
-                    $alreadyJoined[$mappedKey] = 1;
+                });
+            } elseif ($queryBuilder instanceof DoctrineQueryBuilder) {
+                $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                    $featureJoins,
+                    $class,
+                    $featureAndSlugFilters,
+                    $me
+                ) {
+                    $db = \Pimcore\Db::get();
 
-                    $table = $me->getDao()->getTableName();
-                    $select->joinLeft(
-                        [$mappedKey => 'object_classificationstore_data_' . $class->getId()],
-                        '('
-                        . $mappedKey . '.o_id = ' . $table . '.o_id'
-                        . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
-                        . ' and ' . $mappedKey . '.groupId=' . $featureJoin['groupId']
-                        . ' and ' . $mappedKey . '.keyId=' . $featureJoin['keyId']
-                        . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
-                        . ')',
-                        [
-                            $mappedKey => 'value',
-                        ]
-                    );
-                }
+                    $alreadyJoined = [];
 
-                $havings = $featureAndSlugFilters['featureConditions'];
-                if ($havings) {
-                    $havings = implode(' AND ', $havings);
-                    $select->having($havings);
-                }
-            });
+                    foreach ($featureJoins as $featureJoin) {
+                        $fieldname = $featureJoin['fieldname'];
+                        $mappedKey = 'cskey_' . $fieldname . '_' . $featureJoin['groupId'] . '_' . $featureJoin['keyId'];
+                        if (isset($alreadyJoined[$mappedKey]) && $alreadyJoined[$mappedKey]) {
+                            continue;
+                        }
+                        $alreadyJoined[$mappedKey] = 1;
+
+                        $table = $me->getDao()->getTableName();
+                        $select->addSelect('value AS ' . $mappedKey);
+                        $select->leftJoin(
+                            $table,
+                            'object_classificationstore_data_' . $class->getId(),
+                            $mappedKey,
+                            '('
+                            . $mappedKey . '.o_id = ' . $table . '.o_id'
+                            . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
+                            . ' and ' . $mappedKey . '.groupId=' . $featureJoin['groupId']
+                            . ' and ' . $mappedKey . '.keyId=' . $featureJoin['keyId']
+                            . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
+                            . ')'
+                        );
+                    }
+                });
+            }
+
+            $havings = $featureAndSlugFilters['featureConditions'];
+            if ($havings) {
+                $havings = implode(' AND ', $havings);
+                $queryBuilder->having($havings);
+            }
         }
     }
 
@@ -441,36 +486,78 @@ class GridHelperService
     {
         if ($slugJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($slugJoins, $featureAndSlugFilters, $me) {
-                $db = \Pimcore\Db::get();
+            $queryBuilder = $list->getQueryBuilderCompatibility();
+            if ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
+                $list->onCreateQuery(function (ZendCompatibilityQueryBuilder $select) use (
+                    $slugJoins,
+                    $featureAndSlugFilters,
+                    $me
+                ) {
+                    $db = \Pimcore\Db::get();
 
-                $alreadyJoined = [];
+                    $alreadyJoined = [];
 
-                foreach ($slugJoins as $slugJoin) {
-                    $fieldname = $slugJoin['fieldname'];
+                    foreach ($slugJoins as $slugJoin) {
+                        $fieldname = $slugJoin['fieldname'];
 
-                    $mappedKey = $fieldname;
-                    $alreadyJoined[$mappedKey] = 1;
-                    $table = $me->getDao()->getTableName();
+                        $mappedKey = $fieldname;
+                        $alreadyJoined[$mappedKey] = 1;
+                        $table = $me->getDao()->getTableName();
 
-                    $select->joinLeft(
-                        [$mappedKey => 'object_url_slugs'],
-                        '('
-                        . $mappedKey . '.objectId = ' . $table . '.o_id'
-                        . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
-                        . ')',
-                        [
-                            $mappedKey => 'slug',
-                        ]
-                    );
-                }
+                        $select->joinLeft(
+                            [$mappedKey => 'object_url_slugs'],
+                            '('
+                            . $mappedKey . '.objectId = ' . $table . '.o_id'
+                            . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
+                            . ')',
+                            [
+                                $mappedKey => 'slug',
+                            ]
+                        );
+                    }
 
-                $havings = $featureAndSlugFilters['slugConditions'];
-                if ($havings) {
-                    $havings = implode(' AND ', $havings);
-                    $select->having($havings);
-                }
-            });
+                    $havings = $featureAndSlugFilters['slugConditions'];
+                    if ($havings) {
+                        $havings = implode(' AND ', $havings);
+                        $select->having($havings);
+                    }
+                });
+            } elseif ($queryBuilder instanceof DoctrineQueryBuilder) {
+                $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                    $slugJoins,
+                    $featureAndSlugFilters,
+                    $me
+                ) {
+                    $db = \Pimcore\Db::get();
+
+                    $alreadyJoined = [];
+
+                    foreach ($slugJoins as $slugJoin) {
+                        $fieldname = $slugJoin['fieldname'];
+
+                        $mappedKey = $fieldname;
+                        $alreadyJoined[$mappedKey] = 1;
+                        $table = $me->getDao()->getTableName();
+
+                        $select->addSelect('slug AS ' . $mappedKey);
+                        $select->leftJoin(
+                            $table,
+                            'object_url_slugs',
+                            $mappedKey,
+                            '('
+                            . $mappedKey . '.objectId = ' . $table . '.o_id'
+                            . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
+                            . ')'
+                        );
+                    }
+
+                    $havings = $featureAndSlugFilters['slugConditions'];
+                    if ($havings) {
+                        $havings = implode(' AND ', $havings);
+                        $select->having($havings);
+                    }
+                });
+            }
         }
     }
 

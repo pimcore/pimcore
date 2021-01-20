@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Document;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Paginator\PaginateListingInterface;
@@ -29,6 +31,8 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method onCreateQueryBuilder(?callable $callback)
+ * @method ZendCompatibilityQueryBuilder|DoctrineQueryBuilder getQueryBuilderCompatibility()
  * @method array loadIdPathList()
  */
 class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
