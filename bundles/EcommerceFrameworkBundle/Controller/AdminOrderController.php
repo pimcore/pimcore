@@ -394,7 +394,9 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             return $this->redirect($url);
         }
 
-        return ['orderItem' => $orderItem];
+        return $this->render('@PimcoreEcommerceFramework/admin_order/item_cancel.html.twig', [
+            'orderItem' => $orderItem,
+        ]);
     }
 
     /**
