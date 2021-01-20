@@ -123,10 +123,10 @@ See the following examples
 
 namespace AppBundle\Controller;
 
-use Knp\Component\Pager\PaginatorInterface;use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
+use Knp\Component\Pager\PaginatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
-use Zend\Paginator\Paginator;
 
 class ShopController extends FrontendController
 {
