@@ -136,7 +136,9 @@ class Folder extends DAV\Collection
             return null;
         }
 
-        throw new DAV\Exception\Forbidden();
+        unlink($tmpFile);
+
+        throw new DAV\Exception\Forbidden('Missing "create" permission');
     }
 
     /**
@@ -156,7 +158,7 @@ class Folder extends DAV\Collection
                 'userOwner' => $user->getId(),
             ]);
         } else {
-            throw new DAV\Exception\Forbidden();
+            throw new DAV\Exception\Forbidden('Missing "create" permission');
         }
     }
 
@@ -169,7 +171,7 @@ class Folder extends DAV\Collection
         if ($this->asset->isAllowed('delete')) {
             $this->asset->delete();
         } else {
-            throw new DAV\Exception\Forbidden();
+            throw new DAV\Exception\Forbidden('Missing "delete" permission');
         }
     }
 
@@ -187,7 +189,7 @@ class Folder extends DAV\Collection
             $this->asset->setFilename(Element\Service::getValidKey($name, 'asset'));
             $this->asset->save();
         } else {
-            throw new DAV\Exception\Forbidden();
+            throw new DAV\Exception\Forbidden('Missing "rename" permission');
         }
 
         return $this;
