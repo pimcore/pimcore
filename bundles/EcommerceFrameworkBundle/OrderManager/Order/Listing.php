@@ -22,7 +22,6 @@ use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
-use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 class Listing extends AbstractOrderList implements OrderListInterface
 {
@@ -306,7 +305,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
                     ->join('_paymentInfo', 'object_' . OnlineShopOrder::classId(), '_order', '_order.oo_id = _paymentInfo.o_id');
 
                 // join
-                $queryBuilder->leftJoin('`order`',(string) $paymentQueryBuilder, 'paymentInfo', 'paymentInfo.o_id = `order`.oo_id');
+                $queryBuilder->leftJoin('`order`', (string) $paymentQueryBuilder, 'paymentInfo', 'paymentInfo.o_id = `order`.oo_id');
             }
         }
 
@@ -587,6 +586,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
         // join items and sub items
         $orderClassId = OnlineShopOrder::classId();
         $orderItemClassId = OnlineShopOrderItem::classId();
+
         return <<<SUBQUERY
 (
     -- add items
@@ -627,7 +627,6 @@ SUBQUERY;
      * @internal
      *
      * @deprecated
-     *
      *
      * @return ZendCompatibilityQueryBuilder|DoctrineQueryBuilder
      */
