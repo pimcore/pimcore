@@ -401,8 +401,8 @@ class Thumbnail
     {
         $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
 
-        if(!empty($selector) && $thumbnailConfig === null) {
-            throw new NotFoundException('Thumbnail definition "' . (is_string($selector)? $selector:'') . '" does not exist');
+        if (!empty($selector) && $thumbnailConfig === null) {
+            throw new NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
         }
 
         return $thumbnailConfig;

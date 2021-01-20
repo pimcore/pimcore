@@ -132,7 +132,7 @@ class Video extends Model\Asset
         if (is_string($config)) {
             $thumbnail = Video\Thumbnail\Config::getByName($config);
 
-            if($thumbnail === null) {
+            if ($thumbnail === null) {
                 throw new Model\Exception\NotFoundException('Video Thumbnail definition "' . $config . '" does not exist');
             }
         } elseif ($config instanceof Video\Thumbnail\Config) {
