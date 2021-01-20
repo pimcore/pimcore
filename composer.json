@@ -94,7 +94,6 @@
     "laminas/laminas-servicemanager": "^3.2",
     "scheb/2fa-bundle": "^5.3",
     "scheb/2fa-google-authenticator": "^5.3",
-    "scheb/2fa-qr-code": "^5.3",
     "phpoffice/phpspreadsheet": "^1.9",
     "soundasleep/html2text": "^1.1.0",   
     "matthiasmullie/minify": "^1.3",

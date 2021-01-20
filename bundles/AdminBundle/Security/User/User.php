@@ -146,7 +146,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
      * Return the Google Authenticator secret
      * When an empty string or null is returned, the Google authentication is disabled.
      *
-     * @return string
+     * @return string|null
      */
     public function getGoogleAuthenticatorSecret(): ?string
     {
@@ -162,6 +162,6 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
             return $secret;
         }
 
-        return '';
+        return null;
     }
 }
