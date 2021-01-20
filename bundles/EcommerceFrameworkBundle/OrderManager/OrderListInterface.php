@@ -16,8 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use ArrayAccess;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 use SeekableIterator;

@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
