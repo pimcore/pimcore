@@ -181,4 +181,4 @@ $environment->save();
 Once set, the cart manager uses all specific settings of the currently active checkout tenant which are configured
 in the configuration (identified by tenant name).
 
-See also [Demo](https://github.com/pimcore/demo/blob/master/app/config/ecommerce/base-ecommerce.yml#L197) for some examples.  
+See also [Demo](https://github.com/pimcore/demo/blob/1.6/app/config/ecommerce/base-ecommerce.yml#L197) for some examples.  
