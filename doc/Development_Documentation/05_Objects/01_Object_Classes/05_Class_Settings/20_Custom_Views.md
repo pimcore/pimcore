@@ -32,7 +32,6 @@ return [
         [
             "treetype" => "object",
             "name" => "Articles",
-            "condition" => NULL,
             "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/reading.svg",
             "id" => 1,
             "rootfolder" => "/blog",
@@ -73,7 +72,6 @@ return [
 [
     "treetype" => "asset",
     "name" => "Panama Impressions",
-    "condition" => NULL,
     "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/camera_identification.svg",
     "id" => 1,
     "rootfolder" => "/examples/panama",
@@ -110,7 +108,6 @@ The intention is to
 [
    "treetype" => "document",
    "name" => "Basic Page Examples",
-   "condition" => NULL,
    "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/reading.svg",
    "id" => 3,
    "rootfolder" => "/en/basic-examples",
