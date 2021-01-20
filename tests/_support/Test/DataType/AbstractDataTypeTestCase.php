@@ -322,7 +322,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertGeobounds($this->testObject, 'bounds', $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertGeobounds($this->testObject, 'bounds', $this->seed);
     }
 
     public function testGeopoint()
@@ -348,7 +348,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertGeopolygon($this->testObject, 'poly', $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertGeopolygon($this->testObject, 'poly', $this->seed);
     }
 
     public function testHotspotImage()
@@ -362,10 +362,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->assertNotNull($this->testObject->getHotspotImage());
-
-        if (null !== $this->comparisonObject) {
-            $this->assertNotNull($this->comparisonObject->getHotspotImage());
-        }
 
         $this->testDataHelper->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
     }
@@ -385,10 +381,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->assertNotNull($this->testObject->getImage());
-
-        if (null !== $this->comparisonObject) {
-            $this->assertNotNull($this->comparisonObject->getImage());
-        }
 
         $this->testDataHelper->assertImage($this->testObject, 'image', $this->seed);
     }
@@ -590,7 +582,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertObjectsWithmetadata($this->testObject, 'objectswithmetadata', $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertObjectsWithmetadata($this->testObject, 'objectswithmetadata', $this->seed);
     }
 
     public function testPassword()
@@ -636,7 +628,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertStructuredTable($this->testObject, 'structuredtable', $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertStructuredTable($this->testObject, 'structuredtable', $this->seed);
     }
 
     public function testTable()
@@ -644,7 +636,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject('table');
 
         $this->refreshObject();
-        $this->testDataHelper->assertTable($this->testObject, 'table', $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertTable($this->testObject, 'table', $this->seed);
     }
 
     public function testTextarea()

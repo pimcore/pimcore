@@ -319,10 +319,9 @@ class TestDataHelper extends Module
     /**
      * @param Concrete $object
      * @param string $field
-     * @param Concrete $comparisonObject
      * @param int $seed
      */
-    public function assertGeobounds(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
+    public function assertGeobounds(Concrete $object, $field,  $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
 
@@ -336,17 +335,6 @@ class TestDataHelper extends Module
 
         $this->assertEquals($expected->__toString(), $value->__toString(), 'String representations are equal');
         $this->assertEquals($expected, $value, 'Objects are equal');
-
-        // comparison object is only set on REST tests
-        if (null === $comparisonObject) {
-            return;
-        }
-
-        $fd = $object->getClass()->getFieldDefinition($field);
-        $valueData = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
-
-        $this->assertEquals($expectedData, $valueData);
     }
 
     /**
@@ -399,7 +387,7 @@ class TestDataHelper extends Module
      * @param          $comparisonObject
      * @param int $seed
      */
-    public function assertGeopolygon(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
+    public function assertGeopolygon(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
 
@@ -420,17 +408,6 @@ class TestDataHelper extends Module
             $this->assertEquals($expectedPoint->__toString(), $point->__toString(), 'String representations are equal');
             $this->assertEquals($expectedPoint, $point, 'Objects are equal');
         }
-
-        // comparison object is only set on REST tests
-        if (null === $comparisonObject) {
-            return;
-        }
-
-        $fd = $object->getClass()->getFieldDefinition($field);
-        $valueData = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
-
-        $this->assertEquals($expectedData, $valueData);
     }
 
     /**
@@ -787,10 +764,9 @@ class TestDataHelper extends Module
     /**
      * @param Concrete $object
      * @param string $field
-     * @param Concrete $comparisonObject
      * @param int $seed
      */
-    public function assertObjectsWithMetadata(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
+    public function assertObjectsWithMetadata(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -799,17 +775,6 @@ class TestDataHelper extends Module
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertObjectMetadataEqual($expected, $value);
-
-        // comparison object is only set on REST tests
-        if (null === $comparisonObject) {
-            return;
-        }
-
-        $fd = $object->getClass()->getFieldDefinition($field);
-        $valueHash = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expectedHash = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
-
-        $this->assertEquals($expectedHash, $valueHash);
     }
 
     /**
@@ -937,10 +902,9 @@ class TestDataHelper extends Module
     /**
      * @param Concrete $object
      * @param string $field
-     * @param Concrete $comparisonObject
      * @param int $seed
      */
-    public function assertStructuredTable(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
+    public function assertStructuredTable(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
 
@@ -954,17 +918,6 @@ class TestDataHelper extends Module
 
         $this->assertEquals($expected, $value);
         $this->assertEquals($expected->getData(), $value->getData());
-
-        // comparison object is only set on REST tests
-        if (null === $comparisonObject) {
-            return;
-        }
-
-        $fd = $object->getClass()->getFieldDefinition($field);
-        $valueData = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
-
-        $this->assertEquals($expectedData, $valueData);
     }
 
     /**
@@ -991,10 +944,9 @@ class TestDataHelper extends Module
     /**
      * @param Concrete $object
      * @param string $field
-     * @param Concrete $comparisonObject
      * @param int $seed
      */
-    public function assertTable(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
+    public function assertTable(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -1002,17 +954,6 @@ class TestDataHelper extends Module
         $expected = $this->getTableDataFixture($seed);
 
         $this->assertEquals($expected, $value);
-
-        // comparison object is only set on REST tests
-        if (null === $comparisonObject) {
-            return;
-        }
-
-        $fd = $object->getClass()->getFieldDefinition($field);
-        $valueData = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
-
-        $this->assertEquals($expectedData, $valueData);
     }
 
     /**
