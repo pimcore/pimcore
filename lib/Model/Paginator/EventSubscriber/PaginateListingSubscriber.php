@@ -28,7 +28,7 @@ class PaginateListingSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'knp_pager.items' => ['items', 2]
+            'knp_pager.items' => ['items', -5/* other data listeners should be analyzed first*/]
         ];
     }
 }

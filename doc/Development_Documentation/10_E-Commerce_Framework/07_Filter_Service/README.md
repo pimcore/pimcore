@@ -173,7 +173,12 @@ $viewModel->filterService = $filterService;
 $viewModel->filterDefinition = $filterDefinition;
 
 // init pagination
-$paginator = new Paginator($productListing);
+/** @var PaginatorInterface $paginator */
+$paginator->paginate(
+    $productListing,
+    $request->get('page', 1),
+    10
+);
 $paginator->setCurrentPageNumber($request->get('page'));
 $paginator->setItemCountPerPage(18);
 $paginator->setPageRange(5);
