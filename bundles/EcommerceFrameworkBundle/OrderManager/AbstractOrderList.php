@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 abstract class AbstractOrderList implements OrderListInterface
 {
@@ -151,7 +150,8 @@ abstract class AbstractOrderList implements OrderListInterface
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return AdapterInterface
+     * @deprecated will be removed in Pimcore 10
+     * @return self
      */
     public function getPaginatorAdapter()
     {

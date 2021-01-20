@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Tool;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * @deprecated since version 6.7.0 and will be removed in Pimcore 10.
@@ -976,7 +975,8 @@ class DefaultFactFinder implements ProductListInterface
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return AdapterInterface
+     * @deprecated will be removed in Pimcore 10
+     * @return self
      */
     public function getPaginatorAdapter()
     {

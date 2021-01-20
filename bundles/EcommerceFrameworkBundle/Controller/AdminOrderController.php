@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use GuzzleHttp\ClientInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
@@ -43,7 +44,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Zend\Paginator\Paginator;
 
 /**
  * Class AdminOrderController
@@ -94,10 +94,11 @@ class AdminOrderController extends AdminController implements EventedControllerI
      *
      * @param Request $request
      * @param IntlFormatter $formatter
+     * @param PaginatorInterface $paginator
      *
      * @return array
      */
-    public function listAction(Request $request, IntlFormatter $formatter)
+    public function listAction(Request $request, IntlFormatter $formatter, PaginatorInterface $paginator)
     {
         // create new order list
         $list = $this->orderManager->createOrderList();
@@ -176,10 +177,12 @@ class AdminOrderController extends AdminController implements EventedControllerI
         // set default order
         $list->setOrder('order.orderDate desc');
 
-        // create paging
-        $paginator = new Paginator($list);
-        $paginator->setItemCountPerPage(10);
-        $paginator->setCurrentPageNumber($request->get('page', 1));
+        // Paginate the results of the query
+        $paginator = $paginator->paginate(
+            $list,
+            $request->get('page', 1),
+            10
+        );
 
         return [
             'paginator' => $paginator,

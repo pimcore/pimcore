@@ -149,7 +149,7 @@ Once Filter Types and Filter Definitions are set up, it is quite easy to put it 
 in controller actions. 
  
 ### Controller
-For setting up the *Filter Service* (including Product List with `Zend\Paginator`) within the controller use following 
+For setting up the *Filter Service* (including Product List with `Knp\Paginator`) within the controller use following 
 sample: 
 
 ```php
@@ -173,7 +173,12 @@ $viewModel->filterService = $filterService;
 $viewModel->filterDefinition = $filterDefinition;
 
 // init pagination
-$paginator = new Paginator($productListing);
+/** @var PaginatorInterface $paginator */
+$paginator->paginate(
+    $productListing,
+    $request->get('page', 1),
+    10
+);
 $paginator->setCurrentPageNumber($request->get('page'));
 $paginator->setItemCountPerPage(18);
 $paginator->setPageRange(5);
