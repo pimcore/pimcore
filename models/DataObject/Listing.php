@@ -17,10 +17,9 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\DataObject[] load()
@@ -30,8 +29,9 @@ use Pimcore\Model;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\DataObject\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method onCreateQueryBuilder(?callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * @var bool
@@ -185,6 +185,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()

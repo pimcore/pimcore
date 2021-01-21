@@ -23,7 +23,11 @@
         ];
     }
     ```
-
+- Added Validation for Geo datatypes
+    - for Geopolyline and Geopolygon invalid data doesn't get serialized 1:1 anymore
+    - for Geobounds and Geopoint invalid data doesn't get dropped silently anymore
+- Calling `$imageAsset->getThumbnail('non-existing-thumbnail-definition)` with a non-existing thumbnail definition will now throw an exception. Same goes for video assets and video image thumbnails.
+    
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
@@ -46,6 +50,19 @@
 - `PageSnippet::$elements` property visibility changed from `protected` to `private`
 - `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private`
 - `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been deprecated and will be removed in Pimcore 10. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
+- Calling `getQuery()` on listing classes (to fetch Zend Compatibility Query Builder) has been deprecated and will be removed in Pimcore 10. Use `getQueryBuilder()` which returns Doctrine Query builder instead.
+- Using onCreateQuery callback to modify listing queries has been deprecated. Use onCreateQueryBuilder() instead. e.g.
+```php
+    /** @var \Pimcore\Model\DataObject\News\Listing $list */
+    $list = new Pimcore\Model\DataObject\News\Listing();
+
+    $list->onCreateQueryBuilder(
+        function (\Doctrine\DBAL\Query\QueryBuilder $select) use ($list) {
+            // modify listing $select->join(....);
+        }
+    );
+```
+- Using Zend\Paginator for listing classes has been deprecated and will be removed in Pimcore 10. Use Knp\Component\Pager\Paginator instead.
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
@@ -199,7 +216,7 @@ pimcore:
       full_page_cache:
           ...
     ```
-    in system.yml to avoid conflicts between output and data cache [#5369](https://github.com/pimcore/pimcore/issues/5369). If you are using custom config files then you have to migrate them manually. Also new config `pimcore:fullpage` is disabled by default, so you have to enable fullpage cache again in system settings.
+    in system.yml to avoid conflicts between output and data cache [#5369](https://github.com/pimcore/pimcore/issues/5369). If you are using custom config files then you have to migrate them manually. Also new config `pimcore:full_page_cache` is disabled by default, so you have to enable fullpage cache again in system settings.
 - Properties `$children`, `$hasChildren`, `$siblings`, `$hasSiblings` in `Pimcore\Model\Document` & `$o_children`, `$o_hasChildren`, `$o_siblings`, `$o_hasSiblings` in `Pimcore\Model\AbstractObject` uses array to cache result.
 
 ## 6.3.0

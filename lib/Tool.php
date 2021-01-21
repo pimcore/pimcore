@@ -527,6 +527,16 @@ class Tool
                 if (isset($tmp['name'])) {
                     $tmp['showroot'] = !empty($tmp['showroot']);
 
+                    if (!is_array($tmp['classes'] ?? [])) {
+                        $flipArray = [];
+                        $tempClasses = explode(',', $tmp['classes']);
+
+                        foreach ($tempClasses as $tempClass) {
+                            $flipArray[$tempClass] = null;
+                        }
+                        $tmp['classes'] = $flipArray;
+                    }
+
                     if (!empty($tmp['hidden'])) {
                         continue;
                     }

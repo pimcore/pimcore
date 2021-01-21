@@ -85,7 +85,7 @@
         <tbody>
         {% set totalSum = 0 %}
 
-        {% for item in paginator %}
+        {% for item in paginator.items %}
             {% set totalSum = totalSum + item.getTotalPrice() %}
 
         <tr>
@@ -103,7 +103,7 @@
 
                 {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
             </td>
-            <td>{{ item.getItems() }}</td>
+            <td>{{ item.getItems()|length }}</td>
             </td>
             <td class="text-right">{{ formatter.formatCurrency(item.getTotalPrice(), item.getCurrency()) }}</td>
         </tr>
@@ -119,8 +119,8 @@
         </tfoot>
     </table>
 
-    {% if paginator.getPages().pageCount > 1 %}
-        {% include "@PimcoreEcommerceFramework/includes/paging.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
+    {% if paginator.getPaginationData().pageCount > 1 %}
+        {% include "@PimcoreEcommerceFramework/includes/paging.html.twig" with {'paginationVariables': paginator.getPaginationData() } %}
     {% endif %}
 
     {% do pimcore_head_script().captureStart() %}

@@ -245,10 +245,9 @@ If you need to query the data using a Pimcore entity list, you also need to impl
 namespace AppBundle\Model\Vote;
  
 use Pimcore\Model;
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
  
-class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * List of Votes.
@@ -452,7 +451,7 @@ class Dao extends Listing\Dao\AbstractDao
         $field = $this->getTableName().'.id';
         $select->from(
             [$this->getTableName()], [
-                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field, 'o_type')),
+                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)),
             ]
         );
  

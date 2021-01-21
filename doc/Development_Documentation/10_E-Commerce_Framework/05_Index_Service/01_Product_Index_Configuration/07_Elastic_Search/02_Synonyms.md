@@ -74,6 +74,9 @@ pimcore_ecommerce_framework:
 
 ```
 
+> Don't forget to also add the synonyms filter to an analysers filter array where needed - as described in [elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/analysis-synonym-tokenfilter.html).
+
+
 #### Updating Synonyms 
 There are three ways of updating the synonyms in the elasticsearch index. For all applies that the synonyms are loaded 
 from synonyms provider and injected to the synonyms array of the corresponding synonyms filter by Pimcore.

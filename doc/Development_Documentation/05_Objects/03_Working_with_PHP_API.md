@@ -356,23 +356,25 @@ The object listing of this example only delivers objects of the type Collectiont
 
 <a name="zendPaginatorListing">&nbsp;</a>
 
-### Working with Zend\Paginator
+### Working with Knp\Component\Pager\Paginator
 
 ##### Action 
 ```php
-public function testAction( Request $request )
+public function testAction( Request $request, \Knp\Component\Pager\PaginatorInterface $paginator)
 {
     $list = new DataObject\Simple\Listing();
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
-    $paginator = new \Zend\Paginator\Paginator($list);
-    $paginator->setCurrentPageNumber( $request->get('page') );
-    $paginator->setItemCountPerPage(10);
+    $paginator->paginate(
+        $list,
+        $request->get('page') ?? 1,
+        10
+    );
 
     return $this->render('Test/Test.html.twig', [
         'paginator' => $paginator,
-        'paginationVariables' => $paginator->getPages('Sliding')
+        'paginationVariables' => $paginator->getPaginationData()
     ]);
 }
 ```

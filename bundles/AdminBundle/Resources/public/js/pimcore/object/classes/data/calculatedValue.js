@@ -52,7 +52,8 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
                 labelWidth: 140,
                 store: [
                     ['input', t('input')],
-                    ['textarea', t('textarea')]
+                    ['textarea', t('textarea')],
+                    ['html', t('html')]
                 ]
             },
             {

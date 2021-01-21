@@ -19,6 +19,7 @@
         {% if backgroundImageUrl is empty %}
             {% set defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'] %}
             {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' ~ random(defaultImages) %}
+            {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/pcx.svg' %}
         {% endif %}
 
         <style type="text/css">
