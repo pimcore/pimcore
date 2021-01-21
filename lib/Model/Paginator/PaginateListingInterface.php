@@ -2,13 +2,7 @@
 
 namespace Pimcore\Model\Paginator;
 
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
-
-/**
- * @TODO: Pimcore 10 : Remove AdapterInterface and AdapterAggregateInterface
- */
-interface PaginateListingInterface extends \Countable, \Iterator, AdapterInterface, AdapterAggregateInterface
+interface PaginateListingInterface extends \Countable, \Iterator
 {
     /**
      * Returns a collection of items for a page.

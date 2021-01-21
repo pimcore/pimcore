@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Asset;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 
