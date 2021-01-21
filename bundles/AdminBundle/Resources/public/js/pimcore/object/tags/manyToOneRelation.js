@@ -33,7 +33,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 return false;
             }
             return true;
-        });
+        }.bind(this));
     },
 
 
