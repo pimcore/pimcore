@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -504,8 +505,8 @@ class TranslationController extends AdminController
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
         if ($joins) {
-            $list->onCreateQuery(
-                function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use (
+            $list->onCreateQueryBuilder(
+                function (DoctrineQueryBuilder $select) use (
                     $joins,
                     $tableName,
                     $filters
@@ -522,15 +523,15 @@ class TranslationController extends AdminController
                         }
                         $alreadyJoined[$fieldname] = 1;
 
-                        $select->joinLeft(
-                            [$fieldname => $tableName],
+                        $select->addSelect('text AS ' . $fieldname);
+                        $select->leftJoin(
+                            $tableName,
+                            $fieldname,
+                            $fieldname,
                             '('
                             . $fieldname . '.key = ' . $tableName . '.key'
                             . ' and ' . $fieldname . '.language = ' . $db->quote($fieldname)
-                            . ')',
-                            [
-                                $fieldname => 'text',
-                            ]
+                            . ')'
                         );
                     }
 

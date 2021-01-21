@@ -22,9 +22,9 @@ use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Doctrine\Common\Collections\Collection;
 use Pimcore\Db;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
@@ -969,21 +969,24 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(static function (QueryBuilder $select) use ($cv) {
+            $childsList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->where($where);
                 }
 
+                $fromAlias = $select->getQueryPart('form')[1];
+
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
-                        $method = $type == 'left' || $type == 'right' ? $method = 'join' . ucfirst($type) : 'join';
+                        $method = $type == 'left' || $type == 'right' ? $method =  $type . 'Join' : 'join';
                         $name = $joinConfig['name'];
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->$method($name, $condition, $columns);
+                        $select->addSelect($columns);
+                        $select->$method($fromAlias, $name, $name, $condition);
                     }
                 }
 
