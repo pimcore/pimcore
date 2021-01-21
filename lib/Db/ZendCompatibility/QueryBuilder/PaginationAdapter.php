@@ -37,14 +37,13 @@
 
 namespace Pimcore\Db\ZendCompatibility\QueryBuilder;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 
 /**
  * @deprecated
  */
-class PaginationAdapter implements AdapterInterface
+class PaginationAdapter
 {
     /**
      * Name of the row count column
