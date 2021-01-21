@@ -429,6 +429,12 @@ class GridHelperService
                             ]
                         );
                     }
+
+                    $havings = $featureAndSlugFilters['featureConditions'];
+                    if ($havings) {
+                        $havings = implode(' AND ', $havings);
+                        $select->having($havings);
+                    }
                 });
             } elseif ($queryBuilder instanceof DoctrineQueryBuilder) {
                 $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
@@ -464,13 +470,13 @@ class GridHelperService
                             . ')'
                         );
                     }
-                });
-            }
 
-            $havings = $featureAndSlugFilters['featureConditions'];
-            if ($havings) {
-                $havings = implode(' AND ', $havings);
-                $queryBuilder->having($havings);
+                    $havings = $featureAndSlugFilters['featureConditions'];
+                    if ($havings) {
+                        $havings = implode(' AND ', $havings);
+                        $select->having($havings);
+                    }
+                });
             }
         }
     }
