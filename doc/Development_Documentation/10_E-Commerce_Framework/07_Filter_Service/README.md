@@ -172,18 +172,14 @@ $filterService = $ecommerceFactory->getFilterService();
 $templateParams['filterService'] = $filterService;
 $templateParams['filterDefinition'] = $filterDefinition;
 
-// init pagination
-/** @var PaginatorInterface $paginator */
-$paginator->paginate(
+// inject and use Knp Paginator service: PaginatorInterface $paginator
+$paginator = $paginator->paginate(
     $productListing,
     $request->get('page', 1),
-    10
+    18
 );
-$paginator->setCurrentPageNumber($request->get('page'));
-$paginator->setItemCountPerPage(18);
-$paginator->setPageRange(5);
 $templateParams['results'] = $paginator;
-$templateParams['paginationVariables'] = $paginator->getPages('Sliding');
+$templateParams['paginationVariables'] = $paginator->getPaginationData();
 
 return $this->render('Path/template.html.twig', $templateParams);
 ```
