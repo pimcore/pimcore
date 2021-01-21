@@ -366,9 +366,9 @@ public function testAction( Request $request, \Knp\Component\Pager\PaginatorInte
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
-    $paginator->paginate(
+    $paginator = $paginator->paginate(
         $list,
-        $request->get('page') ?? 1,
+        $request->get('page', 1),
         10
     );
 

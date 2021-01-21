@@ -133,7 +133,7 @@ class ShopController extends FrontendController
     public function listAction(Request $request, TrackingManager $trackingManager, PaginatorInterface $paginator)
     {       
         // ...
-        $paginator->paginate($products, $request->get('page') ?? 1);
+        $paginator = $paginator->paginate($products, $request->get('page', 1));
 
         foreach ($paginator as $product) {
             $trackingManager->trackProductImpression($product);
