@@ -368,20 +368,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->checkValidityGeopolyline($this->testObject, 'polyline', $this->seed);
     }
 
-    public function testImageGallery()
-    {
-        $this->createTestObject([
-            [
-                'method' => 'fillImageGallery',
-                'field' => 'imageGallery',
-            ],
-        ]);
-
-        $this->refreshObject();
-        $this->testDataHelper->assertImageGallery($this->testObject, 'imageGallery', $this->seed);
-    }
-
-
     public function testHotspotImage()
     {
         $this->createTestObject([
@@ -414,6 +400,19 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertNotNull($this->testObject->getImage());
 
         $this->testDataHelper->assertImage($this->testObject, 'image', $this->seed);
+    }
+
+    public function testImageGallery()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillImageGallery',
+                'field' => 'imageGallery',
+            ],
+        ]);
+
+        $this->refreshObject();
+        $this->testDataHelper->assertImageGallery($this->testObject, 'imageGallery', $this->seed);
     }
 
     public function testInput()
@@ -580,6 +579,22 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
+    }
+
+    public function testNewsletterActive()
+    {
+        $this->createTestObject('newsletterActive');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertNewsletterActive($this->testObject, 'newsletterActive', $this->seed);
+    }
+
+    public function testNewsletterConfirmed()
+    {
+        $this->createTestObject('newsletterConfirmed');
+
+        $this->refreshObject();
+        $this->testDataHelper->assertNewsletterConfirmed($this->testObject, 'newsletterConfirmed', $this->seed);
     }
 
     public function testNumeric()

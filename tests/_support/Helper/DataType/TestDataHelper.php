@@ -80,36 +80,6 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function assertCheckbox(Concrete $object, $field, $seed = 1)
-    {
-        $getter = 'get' . ucfirst($field);
-        $value = $object->$getter();
-        $expected = ($seed % 2) == true;
-
-        $this->assertIsEqual($object, $field, $expected, $value);
-        $this->assertEquals($expected, $value);
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param mixed $expected
-     * @param mixed $value
-     *
-     */
-    public function assertIsEqual($object, $field, $expected, $value)
-    {
-        $fd = $object->getClass()->getFieldDefinition($field);
-        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
-            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
-        }
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
     public function assertCountry(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
@@ -448,33 +418,6 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertImageGallery(Concrete $object, $field, $seed = 1)
-    {
-        $getter = 'get' . ucfirst($field);
-
-        /** @var DataObject\Data\ImageGallery $value */
-        $value = $object->$getter();
-        $this->assertInstanceOf(DataObject\Data\ImageGallery::class, $value);
-        /** @var DataObject\Data\Hotspotimage[] $items */
-        $items = $value->getItems();
-
-        $this->assertNull($items[1]);
-
-        $item0 = $items[0];
-        $this->assertEquals($item0->getImage()->getFilename(), "gal0.jpg");
-
-        $item2 = $items[2];
-        $this->assertEquals($item2->getImage()->getFilename(), "gal2.jpg");
-        $hotspots = $item2->getHotspots();
-        $this->assertEquals("hotspot_2_" . $seed, $hotspots[0]["name"]);
-    }
-
-
-    /**
      * @return array
      */
     private function createHotspots($idx = null, $seed = 0)
@@ -596,6 +539,32 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function assertImageGallery(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+
+        /** @var DataObject\Data\ImageGallery $value */
+        $value = $object->$getter();
+        $this->assertInstanceOf(DataObject\Data\ImageGallery::class, $value);
+        /** @var DataObject\Data\Hotspotimage[] $items */
+        $items = $value->getItems();
+
+        $this->assertNull($items[1]);
+
+        $item0 = $items[0];
+        $this->assertEquals($item0->getImage()->getFilename(), "gal0.jpg");
+
+        $item2 = $items[2];
+        $this->assertEquals($item2->getImage()->getFilename(), "gal2.jpg");
+        $hotspots = $item2->getHotspots();
+        $this->assertEquals("hotspot_2_" . $seed, $hotspots[0]["name"]);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertLanguage(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
@@ -705,6 +674,54 @@ class TestDataHelper extends Module
             $this->assertInstanceOf(AbstractObject::class, $value[$i]);
             $this->assertObjectsEqual($expectedArray[$i], $value[$i]);
         }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertNewsletterActive(Concrete $object, $field, $seed = 1) {
+        $this->assertCheckbox($object,$field, $seed);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertCheckbox(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        $value = $object->$getter();
+        $expected = ($seed % 2) == true;
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param mixed $expected
+     * @param mixed $value
+     *
+     */
+    public function assertIsEqual($object, $field, $expected, $value)
+    {
+        $fd = $object->getClass()->getFieldDefinition($field);
+        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
+        }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertNewsletterConfirmed(Concrete $object, $field, $seed = 1) {
+        $this->assertCheckbox($object,$field, $seed);
     }
 
     /**
@@ -1209,17 +1226,6 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function fillCheckbox(Concrete $object, $field, $seed = 1)
-    {
-        $setter = 'set' . ucfirst($field);
-        $object->$setter(($seed % 2) == true);
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
     public function fillCountry(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -1383,7 +1389,6 @@ class TestDataHelper extends Module
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeopolygonFixture());
     }
-
 
     /**
      * @param Concrete $object
@@ -1583,6 +1588,35 @@ class TestDataHelper extends Module
         $objects = array_slice($objects, 0, 4);
 
         $object->$setter($objects);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillNewsletterActive(Concrete $object, $field, $seed = 1) {
+        $this->fillCheckbox($object, $field, $seed);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillCheckbox(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(($seed % 2) == true);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillNewsletterConfirmed(Concrete $object, $field, $seed = 1) {
+        $this->fillCheckbox($object, $field, $seed);
     }
 
     /**
