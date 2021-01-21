@@ -110,7 +110,7 @@ class Folder extends DAV\Collection
 
     /**
      * @param string $name
-     * @param string|null $data
+     * @param string|resource|null $data
      *
      * @throws DAV\Exception\Forbidden
      *
@@ -119,6 +119,9 @@ class Folder extends DAV\Collection
     public function createFile($name, $data = null)
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
+        if(is_resource($data)) {
+            @rewind($data);
+        }
         file_put_contents($tmpFile, $data);
 
         $user = AdminTool::getCurrentUser();
@@ -136,7 +139,9 @@ class Folder extends DAV\Collection
             return null;
         }
 
-        throw new DAV\Exception\Forbidden();
+        unlink($tmpFile);
+
+        throw new DAV\Exception\Forbidden('Missing "create" permission');
     }
 
     /**
@@ -156,7 +161,7 @@ class Folder extends DAV\Collection
                 'userOwner' => $user->getId(),
             ]);
         } else {
-            throw new DAV\Exception\Forbidden();
+            throw new DAV\Exception\Forbidden('Missing "create" permission');
         }
     }
 
@@ -169,7 +174,7 @@ class Folder extends DAV\Collection
         if ($this->asset->isAllowed('delete')) {
             $this->asset->delete();
         } else {
-            throw new DAV\Exception\Forbidden();
+            throw new DAV\Exception\Forbidden('Missing "delete" permission');
         }
     }
 
@@ -187,7 +192,7 @@ class Folder extends DAV\Collection
             $this->asset->setFilename(Element\Service::getValidKey($name, 'asset'));
             $this->asset->save();
         } else {
-            throw new DAV\Exception\Forbidden();
+            throw new DAV\Exception\Forbidden('Missing "rename" permission');
         }
 
         return $this;

@@ -351,7 +351,7 @@ class Asset extends Element\AbstractElement
             } else {
                 $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
                 if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'r', false, File::getContext());
+                    $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                 }
 
                 unset($data['sourcePath']);
@@ -708,7 +708,7 @@ class Asset extends Element\AbstractElement
                         unlink($destinationPath);
                     }
 
-                    $dest = fopen($destinationPath, 'w', false, File::getContext());
+                    $dest = fopen($destinationPath, 'wb', false, File::getContext());
                     if ($dest) {
                         stream_copy_to_stream($src, $dest);
                         if (!fclose($dest)) {
@@ -724,7 +724,7 @@ class Asset extends Element\AbstractElement
                 @chmod($destinationPath, File::getDefaultMode());
 
                 // check file exists
-                if (!is_file($destinationPath)) {
+                if (!file_exists($destinationPath)) {
                     throw new \Exception("couldn't create new asset, file " . $destinationPath . " doesn't exist");
                 }
 

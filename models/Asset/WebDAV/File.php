@@ -178,6 +178,6 @@ class File extends DAV\File
      */
     public function getSize()
     {
-        return filesize($this->asset->getFileSystemPath());
+        return @filesize($this->asset->getFileSystemPath());
     }
 }
