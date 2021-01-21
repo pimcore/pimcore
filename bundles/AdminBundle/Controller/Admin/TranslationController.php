@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
@@ -506,85 +505,43 @@ class TranslationController extends AdminController
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
         if ($joins) {
-            $queryBuilder = $list->getQueryBuilderCompatibility();
+            $list->onCreateQueryBuilder(
+                function (DoctrineQueryBuilder $select) use (
+                    $joins,
+                    $tableName,
+                    $filters
+                ) {
+                    $db = \Pimcore\Db::get();
 
-            if ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
-                $list->onCreateQuery(
-                    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use (
-                        $joins,
-                        $tableName,
-                        $filters
-                    ) {
-                        $db = \Pimcore\Db::get();
+                    $alreadyJoined = [];
 
-                        $alreadyJoined = [];
+                    foreach ($joins as $join) {
+                        $fieldname = $join['language'];
 
-                        foreach ($joins as $join) {
-                            $fieldname = $join['language'];
-
-                            if (isset($alreadyJoined[$fieldname])) {
-                                continue;
-                            }
-                            $alreadyJoined[$fieldname] = 1;
-
-                            $select->joinLeft(
-                                [$fieldname => $tableName],
-                                '('
-                                . $fieldname . '.key = ' . $tableName . '.key'
-                                . ' and ' . $fieldname . '.language = ' . $db->quote($fieldname)
-                                . ')',
-                                [
-                                    $fieldname => 'text',
-                                ]
-                            );
+                        if (isset($alreadyJoined[$fieldname])) {
+                            continue;
                         }
+                        $alreadyJoined[$fieldname] = 1;
 
-                        $havings = $filters['conditions'];
-                        if ($havings) {
-                            $havings = implode(' AND ', $havings);
-                            $select->having($havings);
-                        }
+                        $select->addSelect($fieldname . 'as text');
+                        $select->leftJoin(
+                            $tableName,
+                            $fieldname,
+                            $fieldname,
+                            '('
+                            . $fieldname . '.key = ' . $tableName . '.key'
+                            . ' and ' . $fieldname . '.language = ' . $db->quote($fieldname)
+                            . ')'
+                        );
                     }
-                );
-            } elseif ($queryBuilder instanceof DoctrineQueryBuilder) {
-                $list->onCreateQueryBuilder(
-                    function (DoctrineQueryBuilder $select) use (
-                        $joins,
-                        $tableName,
-                        $filters
-                    ) {
-                        $db = \Pimcore\Db::get();
 
-                        $alreadyJoined = [];
-
-                        foreach ($joins as $join) {
-                            $fieldname = $join['language'];
-
-                            if (isset($alreadyJoined[$fieldname])) {
-                                continue;
-                            }
-                            $alreadyJoined[$fieldname] = 1;
-
-                            $select->addSelect($fieldname . 'as text');
-                            $select->leftJoin(
-                                $tableName,
-                                $fieldname,
-                                $fieldname,
-                                '('
-                                . $fieldname . '.key = ' . $tableName . '.key'
-                                . ' and ' . $fieldname . '.language = ' . $db->quote($fieldname)
-                                . ')'
-                            );
-                        }
-
-                        $havings = $filters['conditions'];
-                        if ($havings) {
-                            $havings = implode(' AND ', $havings);
-                            $select->having($havings);
-                        }
+                    $havings = $filters['conditions'];
+                    if ($havings) {
+                        $havings = implode(' AND ', $havings);
+                        $select->having($havings);
                     }
-                );
-            }
+                }
+            );
         }
     }
 

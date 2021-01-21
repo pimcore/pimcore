@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\Translation;
 
-use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model;
 
 /**
@@ -28,7 +26,6 @@ use Pimcore\Model;
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
  * @method void onCreateQueryBuilder(?callable $callback)
- * @method ZendCompatibilityQueryBuilder|DoctrineQueryBuilder getQueryBuilderCompatibility()
  *
  */
 class Listing extends Model\Listing\AbstractListing
