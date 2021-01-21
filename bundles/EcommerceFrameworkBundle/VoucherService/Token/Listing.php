@@ -355,6 +355,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()
