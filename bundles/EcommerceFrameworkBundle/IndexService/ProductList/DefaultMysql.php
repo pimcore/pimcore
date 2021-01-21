@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
@@ -795,6 +794,7 @@ class DefaultMysql implements ProductListInterface
      * Return a fully configured Paginator Adapter from this method.
      *
      * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()
