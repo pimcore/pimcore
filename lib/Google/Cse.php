@@ -14,8 +14,6 @@
 
 namespace Pimcore\Google;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -429,6 +427,7 @@ class Cse implements PaginateListingInterface
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()

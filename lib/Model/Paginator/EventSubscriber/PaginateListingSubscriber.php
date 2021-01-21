@@ -2,9 +2,9 @@
 
 namespace Pimcore\Model\Paginator\EventSubscriber;
 
+use Knp\Component\Pager\Event\ItemsEvent;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Knp\Component\Pager\Event\ItemsEvent;
 
 class PaginateListingSubscriber implements EventSubscriberInterface
 {
@@ -28,7 +28,7 @@ class PaginateListingSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'knp_pager.items' => ['items', -5/* other data listeners should be analyzed first*/]
+            'knp_pager.items' => ['items', -5/* other data listeners should be analyzed first*/],
         ];
     }
 }

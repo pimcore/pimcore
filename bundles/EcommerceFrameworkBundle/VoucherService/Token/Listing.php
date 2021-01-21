@@ -14,8 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 
@@ -357,6 +355,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()

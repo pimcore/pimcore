@@ -18,7 +18,6 @@
 namespace Pimcore\Model\DataObject;
 
 use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
@@ -187,6 +186,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()

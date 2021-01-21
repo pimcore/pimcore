@@ -14,8 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Model\Paginator\PaginateListingInterface;

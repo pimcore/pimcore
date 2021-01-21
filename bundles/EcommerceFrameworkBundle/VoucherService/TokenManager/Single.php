@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
 use Knp\Component\Pager\PaginatorInterface;
-use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
