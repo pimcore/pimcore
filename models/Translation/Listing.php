@@ -25,6 +25,7 @@ use Pimcore\Model;
  * @method Model\Translation current()
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
+ * @method void onCreateQueryBuilder(?callable $callback)
  *
  */
 class Listing extends Model\Listing\AbstractListing
