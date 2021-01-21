@@ -448,27 +448,54 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertImageGallery(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+
+        /** @var DataObject\Data\ImageGallery $value */
+        $value = $object->$getter();
+        $this->assertInstanceOf(DataObject\Data\ImageGallery::class, $value);
+        /** @var DataObject\Data\Hotspotimage[] $items */
+        $items = $value->getItems();
+
+        $this->assertNull($items[1]);
+
+        $item0 = $items[0];
+        $this->assertEquals($item0->getImage()->getFilename(), "gal0.jpg");
+
+        $item2 = $items[2];
+        $this->assertEquals($item2->getImage()->getFilename(), "gal2.jpg");
+        $hotspots = $item2->getHotspots();
+        $this->assertEquals("hotspot_2_" . $seed, $hotspots[0]["name"]);
+    }
+
+
+    /**
      * @return array
      */
-    private function createHotspots()
+    private function createHotspots($idx = null, $seed = 0)
     {
         $result = [];
 
         $hotspot1 = [
-            'name' => 'hotspot1',
-            'width' => 10,
-            'height' => 20,
-            'top' => 30,
-            'left' => 40,
+            'name' => 'hotspot_' . (is_null($idx) ? 1 : $idx) . '_' . $seed,
+            'width' => 10 + $idx,
+            'height' => 20 + $idx,
+            'top' => 30 +  $idx,
+            'left' => 40 + $idx,
         ];
         $result[] = $hotspot1;
 
         $hotspot2 = [
-            'name' => 'hotspot2',
-            'width' => 10,
-            'height' => 50,
-            'top' => 20,
-            'left' => 40,
+            'name' => 'hotspot_' . (is_null($idx) ? 2 : $idx) . '_' . $seed,
+            'width' => 10 + $idx,
+            'height' => 50 + $idx,
+            'top' => 20 + $idx,
+            'left' => 40 + $idx,
         ];
 
         $result[] = $hotspot2;
@@ -1419,6 +1446,43 @@ class TestDataHelper extends Module
         }
 
         $object->$setter($asset);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillImageGallery(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $filenames = ["gal0.jpg", null, "gal2.jpg"];
+        $hotspotImages = [];
+
+        $idx = 0;
+        foreach ($filenames as $filename) {
+            if (is_null($filename)) {
+                $hotspotImages[] = null;
+                $idx++;
+                continue;
+            }
+            $asset = Asset::getByPath('/' . $filename);
+            if (!$asset) {
+                $asset = TestHelper::createImageAsset('', null, false);
+                $asset->setFilename($filename);
+                $asset->save();
+                $hotspots = $this->createHotspots($idx, $seed);
+                $hotspotImage = new DataObject\Data\Hotspotimage($asset, $hotspots);
+
+                $hotspotImages[] = $hotspotImage;
+            }
+            $idx++;
+        }
+
+
+        $gallery = new DataObject\Data\ImageGallery($hotspotImages);
+        $object->$setter($gallery);
     }
 
     /**
