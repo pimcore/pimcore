@@ -27,13 +27,13 @@ use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 class Listing extends AbstractOrderList implements OrderListInterface
 {
     /**
-     * @var ZendCompatibilityQueryBuilder
+     * @var ZendCompatibilityQueryBuilder|null
      *
      */
     protected $query;
 
     /**
-     * @var DoctrineQueryBuilder
+     * @var DoctrineQueryBuilder|null
      */
     protected $queryBuilder;
 
