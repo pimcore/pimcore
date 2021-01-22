@@ -889,6 +889,12 @@ class Document extends Element\AbstractElement
                         $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
                             $hardlinkPath, $this->getRealFullPath());
                     }
+                    
+                    if ($site = $hardlink->getProperty('siteRoot')) {
+                        if (strpos($this->getRealFullPath(), $site->getRealFullPath()) === false) {
+                            $link = null;
+                        }
+                    }
                 }
             }
 
