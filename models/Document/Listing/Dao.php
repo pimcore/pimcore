@@ -39,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $documents = [];
-        $select = $this->getQueryBuilderCompatibility(['id', 'type']);
+        $select = $this->getQueryBuilder(['id', 'type']);
 
         $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
