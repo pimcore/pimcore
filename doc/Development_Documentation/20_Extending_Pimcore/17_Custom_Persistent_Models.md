@@ -417,9 +417,12 @@ namespace AppBundle\Model\Vote\Listing;
 use Pimcore\Model\Listing;
 use AppBundle\Model;
 use Pimcore\Tool;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
  
 class Dao extends Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+
     /**
      * @var string
      */
@@ -441,33 +444,16 @@ class Dao extends Listing\Dao\AbstractDao
      * get select query.
      * @throws \Exception
      */
-    public function getQuery()
+    public function getQueryBuilder()
     {
- 
-        // init
-        $select = $this->db->select();
- 
-        // create base
+        $queryBuilder = $this->db->createQueryBuilder(); 
         $field = $this->getTableName().'.id';
-        $select->from(
-            [$this->getTableName()], [
-                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)),
-            ]
-        );
+        $queryBuilder->select([sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)]);
+        $queryBuilder->from($this->getTableName());
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
  
-        // add condition
-        $this->addConditions($select);
- 
-        // group by
-        $this->addGroupBy($select);
- 
-        // order
-        $this->addOrder($select);
- 
-        // limit
-        $this->addLimit($select);
- 
-        return $select;
+        return $queryBuilder;
     }
  
     /**
@@ -501,7 +487,7 @@ class Dao extends Listing\Dao\AbstractDao
     public function loadIdList()
     {
         try {
-            $query = $this->getQuery();
+            $query = $this->getQueryBuilder();
             $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
             $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
  

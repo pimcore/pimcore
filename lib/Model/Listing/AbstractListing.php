@@ -15,6 +15,7 @@
 namespace Pimcore\Model\Listing;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
 
@@ -23,7 +24,7 @@ use Pimcore\Model\AbstractModel;
  *
  * @package Pimcore\Model\Listing
  *
- * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
+ * @method QueryBuilder getQueryBuilder()
  */
 abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
