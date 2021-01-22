@@ -14,10 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 
 class OrderSearch implements OrderListFilterInterface
 {
@@ -34,7 +32,7 @@ class OrderSearch implements OrderListFilterInterface
     public function apply(OrderListInterface $orderList)
     {
         // init
-        $queryBuilder = $orderList->getQueryBuilderCompatibility();
+        $queryBuilder = $orderList->getQueryBuilder();
         $condition = <<<'SQL'
 0
 OR `order`.ordernumber like ?
@@ -58,11 +56,7 @@ OR `order`.deliveryCountry like ?
 SQL;
 
         if ($this->getKeyword()) {
-            if ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
-                $queryBuilder->where($condition, '%' . $this->getKeyword() . '%');
-            } elseif ($queryBuilder instanceof DoctrineQueryBuilder) {
-                $queryBuilder->andWhere(str_replace('like ?', 'like :order_keyword', $condition))->setParameter(':order_keyword', $this->getKeyword());
-            }
+            $queryBuilder->andWhere(str_replace('like ?', 'like :order_keyword', $condition))->setParameter(':order_keyword', $this->getKeyword());
         }
 
         return $this;

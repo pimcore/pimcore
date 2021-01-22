@@ -19,7 +19,6 @@ namespace Pimcore\Model\Translation\Listing;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Cache;
-use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
@@ -39,18 +38,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @deprecated
-     *
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
-
-    /**
      * @return int
      */
     public function getTotalCount()
     {
-        $queryBuilder = $this->getQueryBuilderCompatibility([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
         $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
@@ -68,7 +60,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             return count($this->model->load());
         }
 
-        $queryBuilder = $this->getQueryBuilderCompatibility([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
         $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
@@ -85,7 +77,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if (!$translations = Cache::load($cacheKey)) {
             $translations = [];
 
-            $queryBuilder = $this->getQueryBuilderCompatibility(['*']);
+            $queryBuilder = $this->getQueryBuilder(['*']);
             $this->prepareQueryBuilderForTotalCount($queryBuilder);
             $translationsData = $this->db->fetchAll((string) $queryBuilder);
 
@@ -118,7 +110,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadRaw()
     {
-        $queryBuilder = $this->getQueryBuilderCompatibility(['*']);
+        $queryBuilder = $this->getQueryBuilder(['*']);
         $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
         return $translationsData;
@@ -133,7 +125,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $translations = [];
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
-        $queryBuilder = $this->getQueryBuilderCompatibility([$this->getDatabaseTableName() . '.key']);
+        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
         $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
@@ -190,38 +182,5 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->applyListingParametersToQueryBuilder($queryBuilder);
 
         return $queryBuilder;
-    }
-
-    /**
-     * @param array|string|Expression $columns
-     *
-     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
-     */
-    protected function getQuery($columns = '*')
-    {
-        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use getQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
-
-        $select = $this->db->select();
-        $select->from([ $this->getDatabaseTableName()], $columns);
-        $this->addConditions($select);
-        $this->addOrder($select);
-        $this->addLimit($select);
-        $this->addGroupBy($select);
-
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        return $select;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use onCreateQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
-        $this->onCreateQueryCallback = $callback;
     }
 }
