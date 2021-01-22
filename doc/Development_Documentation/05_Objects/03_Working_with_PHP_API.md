@@ -431,7 +431,7 @@ public function testAction( Request $request, \Knp\Component\Pager\PaginatorInte
 ### Access and modify internal object list query
 
 It is possible to access and modify the internal query from every object listing. The internal query is based 
-on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
+on `\Doctrine\DBAL\Query\QueryBuilder`.
 ```php
 
 <?php
@@ -441,9 +441,9 @@ on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(
-    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list) {
-        $select->join(
+$list->onCreateQueryBuilder(
+    function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) use ($list) {
+        $queryBuilder->join(
         ['rating' => 'plugin_rating_ratings'],
         'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
         ''
@@ -454,7 +454,7 @@ $list->onCreateQuery(
 
 ### Debugging the Object List Query
 
-You can access and print the internal query which is based on `\Pimcore\Db\ZendCompatibility\QueryBuilder` to debug your conditions like this:
+You can access and print the internal query which is based on `\Doctrine\DBAL\Query\QueryBuilder` to debug your conditions like this:
 
 ```php
 <?php
@@ -463,10 +463,10 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 /** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
 $list = new Pimcore\Model\DataObject\News\Listing();
  
-// set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
+// set onCreateQueryBuilder callback
+$list->onCreateQueryBuilder(function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
     // echo query
-    echo $query;
+    echo $queryBuilder;
 });
 ```
 

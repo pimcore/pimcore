@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Document\Listing;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
-use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
@@ -31,11 +30,6 @@ use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
-
-    /**
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
 
     /**
      * Loads a list of objects (all are an instance of Document) for the given parameters an return them
@@ -63,30 +57,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param array|string|Expression $columns
-     *
-     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
-     */
-    public function getQuery($columns = '*')
-    {
-        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use getQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
-
-        $select = $this->db->select();
-        $select->from([ 'documents' ], $columns);
-        $this->addConditions($select);
-        $this->addOrder($select);
-        $this->addLimit($select);
-        $this->addGroupBy($select);
-
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        return $select;
-    }
-
-    /**
      * @param string|string[]|null $columns
      *
      * @return DoctrineQueryBuilder
@@ -108,7 +78,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $queryBuilder = $this->getQueryBuilderCompatibility(['id']);
+        $queryBuilder = $this->getQueryBuilder(['id']);
         $documentIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $documentIds);
@@ -119,7 +89,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList()
     {
-        $queryBuilder = $this->getQueryBuilderCompatibility(['id', 'CONCAT(path,`key`) as path']);
+        $queryBuilder = $this->getQueryBuilder(['id', 'CONCAT(path,`key`) as path']);
         $documentIds = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
@@ -144,20 +114,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $queryBuilder = $this->getQueryBuilderCompatibility();
+        $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
         $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use onCreateQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
-        $this->onCreateQueryCallback = $callback;
     }
 }
