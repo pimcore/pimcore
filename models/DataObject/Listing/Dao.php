@@ -145,6 +145,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param ZendCompatibilityQueryBuilder $query
      * @param string $part
      *
@@ -191,6 +192,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param ZendCompatibilityQueryBuilder $select
      *
      * @return $this
@@ -212,6 +214,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param ZendCompatibilityQueryBuilder $select
      *
      * @return $this

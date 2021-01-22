@@ -32,6 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     use QueryBuilderHelperTrait;
 
     /**
+     * @deprecated
      * @var \Closure
      */
     protected $onCreateQueryCallback;
@@ -152,6 +153,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param callable $callback
      */
     public function onCreateQuery(callable $callback)

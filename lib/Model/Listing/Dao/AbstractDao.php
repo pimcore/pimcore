@@ -106,6 +106,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param QueryBuilder $select
      *
      * @return $this
@@ -141,6 +142,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param QueryBuilder $select
      *
      * @return $this
@@ -159,6 +161,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param QueryBuilder $select
      *
      * @return $this
@@ -171,6 +174,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
      * @param QueryBuilder $select
      *
      * @return $this

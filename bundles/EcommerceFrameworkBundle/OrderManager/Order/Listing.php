@@ -63,6 +63,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
         // reset query
         $this->query = null;
+        $this->queryBuilder = null;
 
         return $this;
     }
