@@ -248,8 +248,8 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->select()
-                           ->from('tags_assignment', [])
+        $select = $this->db->createQueryBuilder()->select(['*'])
+                           ->from('tags_assignment')
                            ->where('tags_assignment.ctype = ?', $type);
 
         if (true === $considerChildTags) {
@@ -284,7 +284,7 @@ class Dao extends Model\Dao\AbstractDao
             $select->where('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
-        $res = $this->db->query($select);
+        $res = $this->db->query((string) $select);
 
         while ($row = $res->fetch()) {
             $el = $map[$type][3]::getById($row['el_id']);

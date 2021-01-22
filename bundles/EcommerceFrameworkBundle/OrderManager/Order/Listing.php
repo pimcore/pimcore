@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\OnlineShopOrderItem;
 class Listing extends AbstractOrderList implements OrderListInterface
 {
     /**
-     * @var DoctrineQueryBuilder
+     * @var DoctrineQueryBuilder|null
      */
     protected $queryBuilder;
 
