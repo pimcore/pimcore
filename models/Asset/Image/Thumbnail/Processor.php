@@ -383,7 +383,7 @@ class Processor
 
                 clearstatcache();
 
-                Logger::debug('Thumbnail ' . $path . ' generated in ' . (microtime(true) - $startTime) . ' seconds, waiting for lock: ' . ($lockAcquiredTime - $lockStartTime) . ' seconds');
+                Logger::debug('Thumbnail ' . $path . ' generated in ' . (microtime(true) - $startTime) . ' seconds');
 
                 // set proper permissions
                 @chmod($fsPath, File::getDefaultMode());
