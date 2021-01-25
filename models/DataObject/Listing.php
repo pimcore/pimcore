@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 
@@ -134,27 +133,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     public function setCondition($condition, $conditionVariables = null)
     {
         return parent::setCondition($condition, $conditionVariables);
-    }
-
-    /**
-     * @param string $groupBy
-     * @param bool $qoute
-     *
-     * @return $this
-     */
-    public function setGroupBy($groupBy, $qoute = true)
-    {
-        $this->setData(null);
-
-        if ($groupBy) {
-            $this->groupBy = $groupBy;
-
-            if (!$qoute) {
-                $this->groupBy = new Expression($groupBy);
-            }
-        }
-
-        return $this;
     }
 
     /**

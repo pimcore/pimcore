@@ -18,8 +18,6 @@
 namespace Pimcore\Model\DataObject\Listing;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
@@ -34,60 +32,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     use QueryBuilderHelperTrait;
 
     /**
-     * @deprecated
-     *
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
-
-    /**
      * @return string
      */
     public function getTableName()
     {
         return 'objects';
-    }
-
-    /**
-     * @param array|string|Expression $columns
-     *
-     * @return ZendCompatibilityQueryBuilder
-     *
-     * @throws \Exception
-     *
-     * @deprecated use getQueryBuilder() instead.
-     */
-    public function getQuery($columns = '*')
-    {
-        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use getQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
-
-        // init
-        $select = $this->db->select();
-
-        // create base
-        $select->from([$this->getTableName()], $columns);
-
-        // add joins
-        $this->addJoins($select);
-
-        // add condition
-        $this->addConditions($select);
-
-        // group by
-        $this->addGroupBy($select);
-
-        // order
-        $this->addOrder($select);
-
-        // limit
-        $this->addLimit($select);
-
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        return $select;
     }
 
     /**
@@ -138,31 +87,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $queryBuilder = $this->getQueryBuilderCompatibility();
+        $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
         $totalCount = $this->db->fetchOne($queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return (int) $totalCount;
-    }
-
-    /**
-     * @param ZendCompatibilityQueryBuilder $query
-     * @param string $part
-     *
-     * @return bool
-     */
-    private function isQueryPartinUse($query, $part)
-    {
-        try {
-            if ($query->getPart($part)) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // do nothing
-        }
-
-        return false;
     }
 
     /**
@@ -186,21 +116,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $queryBuilder = $this->getQueryBuilderCompatibility([sprintf('%s as o_id', $this->getTableName() . '.o_id'), 'o_type']);
+        $queryBuilder = $this->getQueryBuilder([sprintf('%s as o_id', $this->getTableName() . '.o_id'), 'o_type']);
         $objectIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $objectIds);
-    }
-
-    /**
-     * @param ZendCompatibilityQueryBuilder $select
-     *
-     * @return $this
-     *
-     */
-    protected function addJoins(ZendCompatibilityQueryBuilder $select)
-    {
-        return $this;
     }
 
     /**
@@ -211,48 +130,5 @@ class Dao extends Model\Listing\Dao\AbstractDao
     protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
     {
         return $this;
-    }
-
-    /**
-     * @param ZendCompatibilityQueryBuilder $select
-     *
-     * @return $this
-     */
-    protected function addConditions(ZendCompatibilityQueryBuilder $select)
-    {
-        $condition = $this->model->getCondition();
-        $objectTypes = $this->model->getObjectTypes();
-
-        $tableName = $this->getTableName();
-
-        if (!empty($objectTypes)) {
-            if (!empty($condition)) {
-                $condition .= ' AND ';
-            }
-            $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
-        }
-
-        if ($condition) {
-            if (DataObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
-            }
-        } elseif (DataObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-            $condition = $tableName . '.o_published = 1';
-        }
-
-        if ($condition) {
-            $select->where($condition);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        @trigger_error(sprintf('Using %s is deprecated and will be removed in Pimcore 10, please use onCreateQueryBuilder() instead', __METHOD__), E_USER_DEPRECATED);
-        $this->onCreateQueryCallback = $callback;
     }
 }

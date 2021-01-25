@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
 
 abstract class AbstractOrderList implements OrderListInterface
 {
@@ -134,13 +133,8 @@ abstract class AbstractOrderList implements OrderListInterface
         if ($this->list === null) {
             // load
             $conn = \Pimcore\Db::getConnection();
-            $queryBuilder = $this->getQueryBuilderCompatibility();
-
-            if ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
-                $this->list = new \ArrayIterator($conn->fetchAll($this->getQuery()));
-            } else {
-                $this->list = new \ArrayIterator($conn->fetchAll($this->getQueryBuilder(), $this->getQueryBuilder()->getParameters(), $this->getQueryBuilder()->getParameterTypes()));
-            }
+            $queryBuilder = $this->getQueryBuilder();
+            $this->list = new \ArrayIterator($conn->fetchAll($queryBuilder, $queryBuilder->getParameters(), $queryBuilder->getParameterTypes()));
             $this->rowCount = (int)$conn->fetchCol('SELECT FOUND_ROWS() as "cnt"')[0];
         }
 
