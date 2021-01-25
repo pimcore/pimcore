@@ -231,7 +231,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
-        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
                 $this->getName() . '__value' => $data->getValue(),
                 $this->getName() . '__unit' => $data->getUnitId(),
