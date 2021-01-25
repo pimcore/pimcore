@@ -56,15 +56,16 @@ abstract class AbstractDataTypeTestCase extends TestCase
      *
      * @param Concrete     $object
      * @param array|string $fields
+     * @param array $returnData
      */
-    protected function fillObject(Concrete $object, $fields = [])
+    protected function fillObject(Concrete $object, $fields = [], &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
             $fields = [
                 [
                     'method' => 'fill' . ucfirst($fields),
-                    'field' => $fields,
+                    'field' => $fields
                 ],
             ];
         }
@@ -91,6 +92,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
                 $methodArguments[] = $aa;
             }
 
+            $methodArguments[]= &$returnData;
+
             call_user_func_array([$this->testDataHelper, $method], $methodArguments);
         }
     }
@@ -111,12 +114,13 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
+
     /**
-     * @param array|string $fields
-     *
+     * @param array $fields
+     * @param $params
      * @return Unittest
      */
-    abstract protected function createTestObject($fields = []);
+    abstract protected function createTestObject($fields = [], &$params = []);
 
     public abstract function refreshObject();
 
@@ -755,6 +759,17 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertUser($this->testObject, 'user', $this->seed);
     }
 
+    public function testVideo()
+    {
+        $returnData = [];
+        $this->createTestObject('video', $returnData);
+
+        $this->refreshObject();
+        $this->assertNotNull($this->testObject->getVideo());
+
+        $this->testDataHelper->assertVideo($this->testObject, 'video', $this->seed, $returnData);
+    }
+
     public function testWysiwyg()
     {
         $this->createTestObject('wysiwyg');
@@ -762,4 +777,5 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
+
 }

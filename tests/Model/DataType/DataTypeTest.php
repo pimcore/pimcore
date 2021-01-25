@@ -17,11 +17,11 @@ class DataTypeTest extends AbstractDataTypeTestCase
      *
      * @inheritDoc
      */
-    protected function createTestObject($fields = [])
+    protected function createTestObject($fields = [], &$returnData = [])
     {
         $object = TestHelper::createEmptyObject('local', true, true);
         if ($fields) {
-            $this->fillObject($object, $fields);
+            $this->fillObject($object, $fields, $returnData);
         }
 
         $object->save();

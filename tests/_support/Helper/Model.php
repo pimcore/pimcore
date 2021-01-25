@@ -397,6 +397,9 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('consent'));
 
+            $panel->addChild($this->createDataChild('country'));
+            $panel->addChild($this->createDataChild('countrymultiselect', 'countries'));
+
             $panel->addChild($this->createDataChild('date'));
             $panel->addChild($this->createDataChild('datetime'));
 
@@ -454,7 +457,6 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('lastname'));
 
-            $panel->addChild($this->createDataChild('slider'));
             $panel->addChild($this->createDataChild('numeric', 'number'));
 
             $passwordField = $this->createDataChild('password');
@@ -463,13 +465,18 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('rgbaColor'));
 
+            $panel->addChild($this->createDataChild('select')->setOptions([
+                ['key' => 'Selection 1', 'value' => '1'],
+                ['key' => 'Selection 2', 'value' => '2'], ]));
+
+            $panel->addChild($this->createDataChild('slider'));
+
             $panel->addChild($this->createDataChild('textarea'));
             $panel->addChild($this->createDataChild('time'));
 
             $panel->addChild($this->createDataChild('wysiwyg'));
-            $panel->addChild($this->createDataChild('select')->setOptions([
-                ['key' => 'Selection 1', 'value' => '1'],
-                ['key' => 'Selection 2', 'value' => '2'], ]));
+
+            $panel->addChild($this->createDataChild('video'));
 
             $panel->addChild($this->createDataChild('multiselect')->setOptions([
                 ['key' => 'Katze', 'value' => 'cat'],
@@ -481,8 +488,6 @@ class Model extends AbstractDefinitionHelper
                 ['key' => 'Huhn', 'value' => 'chicken'],
             ]));
 
-            $panel->addChild($this->createDataChild('country'));
-            $panel->addChild($this->createDataChild('countrymultiselect', 'countries'));
             $panel->addChild($this->createDataChild('language', 'languagex'));
             $panel->addChild($this->createDataChild('languagemultiselect', 'languages'));
             $panel->addChild($this->createDataChild('user'));

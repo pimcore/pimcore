@@ -396,6 +396,30 @@ class TestDataHelper extends Module
      * @param Concrete $object
      * @param string $field
      * @param int $seed
+     * @param array $returnParams
+     */
+    public function assertVideo(Concrete $object, $field, $seed = 1, $returnParams)
+    {
+        $getter = 'get' . ucfirst($field);
+
+        /** @var DataObject\Data\Video $value */
+        $value = $object->$getter();
+        $this->assertInstanceOf(DataObject\Data\Video::class, $value);
+
+        $this->assertEquals("title" . $seed, $value->getTitle());
+        $this->assertEquals("description" . $seed, $value->getDescription());
+        $this->assertEquals("asset", $value->getType());
+
+        $this->assertEquals($returnParams["poster"]->getId(), $value->getPoster()->getId());
+        $this->assertEquals($returnParams["video"]->getId(), $value->getData()->getId());
+    }
+
+
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
     public function assertHotspotImage(Concrete $object, $field, $seed = 1)
     {
@@ -1433,6 +1457,36 @@ class TestDataHelper extends Module
         $objects = $this->getObjectList();
         $object->$setter($objects[0]);
     }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     * @param array $returnData
+     */
+    public function fillVideo(Concrete $object, $field, $seed = 1, &$returnData = [])
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $video = TestHelper::createVideoAsset();
+        $this->assertNotNull($video);
+        $poster = TestHelper::createImageAsset();
+
+        $this->assertNotNull($poster);
+
+        $returnData["video"] = $video;
+        $returnData["poster"] = $poster;
+
+        $value = new DataObject\Data\Video();
+        $value->setType("asset");
+        $value->setData($video);
+        $value->setPoster($poster);
+        $value->setTitle("title" . $seed);
+        $value->setDescription("description" . $seed);
+
+        $object->$setter($value);
+    }
+
 
     /**
      * @param Concrete $object
