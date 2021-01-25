@@ -1169,7 +1169,7 @@ class TestDataHelper extends Module
         $setter = 'set' . ucfirst($field);
 
         try {
-            $invalidValue = "abc";
+            $invalidValue = new DataObject\Data\QuantityValue("abc");
             $object->$setter($invalidValue);
             $object->save();
             $this->fail("expected a ValidationException");
@@ -1330,6 +1330,23 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function fillInputQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $abbr = $this->mapUnit($seed);
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
+        $this->assertNotNull($unit);
+        $qv = new DataObject\Data\InputQuantityValue("abc" . $seed, $unit);
+
+        $object->$setter($qv);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertQuantityValue(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
@@ -1342,6 +1359,25 @@ class TestDataHelper extends Module
         $this->assertInstanceOf(DataObject\Data\QuantityValue::class, $qv);
         $this->assertEquals($expectedAbbr, $actualAbbreviation);
         $this->assertEquals(1000 + $seed, $qv->getValue());
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertInputQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        /** @var DataObject\Data\InputQuantityValue $qv */
+        $qv = $object->$getter();
+
+        $expectedAbbr = $this->mapUnit($seed);
+        $actualAbbreviation = $qv->getUnit()->getAbbreviation();
+
+        $this->assertInstanceOf(DataObject\Data\InputQuantityValue::class, $qv);
+        $this->assertEquals($expectedAbbr, $actualAbbreviation);
+        $this->assertEquals("abc" . $seed, $qv->getValue());
     }
 
 

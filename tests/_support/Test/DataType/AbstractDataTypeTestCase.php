@@ -427,6 +427,16 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertInput($this->testObject, 'input', $this->seed);
     }
 
+    public function testInputQuantityValue()
+    {
+        $this->createTestObject('inputQuantityValue');
+
+        $this->refreshObject();
+        $this->assertNotNull($this->testObject->getInputQuantityValue());
+
+        $this->testDataHelper->assertInputQuantityValue($this->testObject, 'inputQuantityValue', $this->seed);
+    }
+
     public function testLanguage()
     {
         $this->createTestObject([
@@ -651,7 +661,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertNotNull($this->testObject->getQuantityValue());
 
         $this->testDataHelper->assertQuantityValue($this->testObject, 'quantityValue', $this->seed);
-//        $this->testDataHelper->checkValidityQuantityValue($this->testObject, 'quantityValue', $this->seed);
+        $this->testDataHelper->checkValidityQuantityValue($this->testObject, 'quantityValue', $this->seed);
     }
 
     public function testRgbaColor()

@@ -449,6 +449,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('newsletterActive'));
             $panel->addChild($this->createDataChild('newsletterConfirmed'));
 
+            $panel->addChild($this->createDataChild('inputQuantityValue'));
             $panel->addChild($this->createDataChild('quantityValue'));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'objectswithmetadata')
