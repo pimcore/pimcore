@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Laminas\Paginator\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
@@ -540,15 +540,13 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         }
 
         if ($tokens) {
-            $paginator = new Paginator($tokens);
-
-            if ($params['tokensPerPage'] ?? false) {
-                $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
-            } else {
-                $paginator->setItemCountPerPage(25);
-            }
-
-            $paginator->setCurrentPageNumber($params['page'] ?? 1);
+            /** @var PaginatorInterface $paginator */
+            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+            $paginator = $paginator->paginate(
+                $tokens,
+                $params['page'] ?? 1,
+                $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
+            );
 
             $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = count($tokens);
@@ -594,13 +592,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $tokens = new Token\Listing();
         $tokens->setFilterConditions($params['id'], $params);
 
-        $paginator = new Paginator($tokens);
-        $paginator->setItemCountPerPage(-1);
-
         $data = [];
 
-        /** @var Token $token */
-        foreach ($paginator as $token) {
+        foreach ($tokens as $token) {
             $data[] = [
                 'token' => $token->getToken(),
                 'usages' => $token->getUsages(),

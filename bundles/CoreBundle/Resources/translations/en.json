@@ -959,5 +959,6 @@
   "batch_change_language": "Batch update language",
   "generate_type_declarations" : "Generate Type Declarations",
   "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
-  "preview_item": "Preview Item"
+  "preview_item": "Preview Item",
+  "version_currently_saved_in_database": "Currently saved in database (but not published)"
 }

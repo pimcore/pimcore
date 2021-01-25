@@ -15,31 +15,24 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use ArrayAccess;
-use Countable;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendCompatibilityQueryBuilder;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 use SeekableIterator;
 
 /**
  * Interface OrderListInterface
  *
  * @method OrderListItemInterface current()
- * @method DoctrineQueryBuilder getQueryBuilder()
- * @method ZendCompatibilityQueryBuilder|DoctrineQueryBuilder getQueryBuilderCompatibility()
  */
-interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, AdapterInterface, AdapterAggregateInterface
+interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateListingInterface
 {
     const LIST_TYPE_ORDER = 'order';
     const LIST_TYPE_ORDER_ITEM = 'item';
 
     /**
-     * @deprecated
-     *
-     * @return ZendCompatibilityQueryBuilder
+     * @return DoctrineQueryBuilder
      */
-    public function getQuery();
+    public function getQueryBuilder(): DoctrineQueryBuilder;
 
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface[]
