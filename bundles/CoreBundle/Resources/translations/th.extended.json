@@ -687,7 +687,7 @@
     "custom_login_background_image": "ภาพพื้นหลังการเข้าสู่ระบบที่กำหนดเอง",
     "show_charcount": "แสดงจำนวนอักขระ",
     "max_length": "ความยาวสูงสุด",
-    "reverse_many_to_many_object_relation": "ย้อนกลับความสัมพันธ์หลายต่อหลายวัตถุ",
+    "reverse_object_relation": "ย้อนกลับความสัมพันธ์หลายต่อหลายวัตถุ",
     "exclude_from_search_index": "แยกออกจากการค้นหาข้อความแบบเต็มแบ็กเอนด์",
     "media": "สื่อ",
     "encrypt_data": "เข้ารหัสข้อมูล",

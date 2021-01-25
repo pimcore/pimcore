@@ -687,7 +687,7 @@
     "custom_login_background_image": "Custom Login Background Image",
     "show_charcount": "Show Character Count",
     "max_length": "Max Length",
-    "reverse_many_to_many_object_relation": "Reverse Many-To-Many Object Relation",
+    "reverse_object_relation": "Reverse Object Relation",
     "exclude_from_search_index": "Exclude from Backend Full-Text Search",
     "media": "Media",
     "encrypt_data": "Encrypt Data",

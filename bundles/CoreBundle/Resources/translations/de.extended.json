@@ -687,7 +687,7 @@
     "custom_login_background_image": "Benutzerdefiniertes Login-Hintergrundbild",
     "show_charcount": "Zeichenzahl anzeigen",
     "max_length": "Maximale Länge",
-    "reverse_many_to_many_object_relation": "Umkehren der Viele-zu-Viele-Objektbeziehung",
+    "reverse_object_relation": "Umkehren der Objektbeziehung",
     "exclude_from_search_index": "Aus der Backend-Volltextsuche ausschließen",
     "media": "Medien",
     "encrypt_data": "Verschlüssele Daten",

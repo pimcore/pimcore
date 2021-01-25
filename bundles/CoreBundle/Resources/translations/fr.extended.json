@@ -687,7 +687,7 @@
     "custom_login_background_image": "Image de fond de connexion personnalisée",
     "show_charcount": "Afficher le nombre de caractères",
     "max_length": "Longueur maximum",
-    "reverse_many_to_many_object_relation": "Relation inverse objet avancée plusieurs à plusieurs",
+    "reverse_object_relation": "Relation inverse objet",
     "exclude_from_search_index": "Exclure de la recherche de texte intégral dans le backend",
     "media": "Médias",
     "encrypt_data": "Crypter les données",
