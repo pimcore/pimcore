@@ -19,6 +19,11 @@ class CompositeIndexTest extends ModelTestCase
         } catch (\Exception $e) {
         }
 
+        $db= Db::get();
+        $result = $db->fetchAll("SHOW KEYS FROM object_query_unittest;");
+        var_dump($result);
+        die();
+
         $definition = ClassDefinition::getById($classId);
         $definition->setCompositeIndices([
            [
