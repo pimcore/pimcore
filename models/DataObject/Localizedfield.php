@@ -482,6 +482,7 @@ class Localizedfield extends Model\AbstractModel implements
                                 $localizedFields = $parentContainer->getLocalizedFields();
                                 if ($localizedFields instanceof Localizedfield) {
                                     if ($localizedFields->getObject()->getId() != $this->getObject()->getId()) {
+                                        $localizedFields->setContext($this->getContext());
                                         $data = $localizedFields->getLocalizedValue($name, $language, true);
                                     }
                                 }
