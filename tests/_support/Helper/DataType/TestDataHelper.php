@@ -1164,6 +1164,25 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function checkValidityQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        try {
+            $invalidValue = "abc";
+            $object->$setter($invalidValue);
+            $object->save();
+            $this->fail("expected a ValidationException");
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(ValidationException::class, $e);
+        }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function checkValidityGeopolygon(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -1281,6 +1300,50 @@ class TestDataHelper extends Module
 
         $object->$setter($date);
     }
+
+    public function mapUnit($seed) {
+        $map = ["mm", "cm" , "dm", "m", "km"];
+        $seed = $seed % 5;
+        return $map[$seed];
+    }
+
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $abbr = $this->mapUnit($seed);
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
+        $this->assertNotNull($unit);
+        $qv = new DataObject\Data\QuantityValue(1000 + $seed, $unit);
+
+        $object->$setter($qv);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        /** @var DataObject\Data\QuantityValue $qv */
+        $qv = $object->$getter();
+
+        $expectedAbbr = $this->mapUnit($seed);
+        $actualAbbreviation = $qv->getUnit()->getAbbreviation();
+
+        $this->assertInstanceOf(DataObject\Data\QuantityValue::class, $qv);
+        $this->assertEquals($expectedAbbr, $actualAbbreviation);
+        $this->assertEquals(1000 + $seed, $qv->getValue());
+    }
+
 
     /**
      * @param Concrete $object

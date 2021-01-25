@@ -449,6 +449,8 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('newsletterActive'));
             $panel->addChild($this->createDataChild('newsletterConfirmed'));
 
+            $panel->addChild($this->createDataChild('quantityValue'));
+
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'objectswithmetadata')
                 ->setAllowedClassId($name)
                 ->setClasses([])
@@ -1008,6 +1010,8 @@ class Model extends AbstractDefinitionHelper
      */
     public function initializeDefinitions()
     {
+        $this->setupQuantityValueUnits();
+
         $cm = $this->getClassManager();
 
         $this->setupFieldcollection_Unittestfieldcollection();
@@ -1017,5 +1021,22 @@ class Model extends AbstractDefinitionHelper
         $this->setupPimcoreClass_RelationTest();
 
         $this->setupObjectbrick_UnittestBrick();
+    }
+
+    private function setupUnit($abbr) {
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
+        if (!$unit ) {
+            $unit = new DataObject\QuantityValue\Unit();
+            $unit->setAbbreviation($abbr);
+            $unit->save();
+        }
+    }
+
+    public function setupQuantityValueUnits() {
+        $this->setupUnit("mm");
+        $this->setupUnit("cm");
+        $this->setupUnit("dm");
+        $this->setupUnit("m");
+        $this->setupUnit("km");
     }
 }

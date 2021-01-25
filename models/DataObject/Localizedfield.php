@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
-use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
@@ -190,8 +189,8 @@ class Localizedfield extends Model\AbstractModel implements
         $loadLazyFieldNames = $this->getLazyLoadedFieldNames();
 
         if ($loadLazyFields && !empty($loadLazyFieldNames) && !$this->_loadedAllLazyData) {
-            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
-            DataObject::disableDirtyDetection();
+            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+            AbstractObject::disableDirtyDetection();
 
             foreach ($loadLazyFieldNames as $name) {
                 foreach (Tool::getValidLanguages() as $language) {
@@ -200,7 +199,7 @@ class Localizedfield extends Model\AbstractModel implements
                 }
             }
 
-            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
             $this->_loadedAllLazyData = true;
         }
 
@@ -395,8 +394,8 @@ class Localizedfield extends Model\AbstractModel implements
             $params['owner'] = $this;
             $params['fieldname'] = $name;
 
-            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
-            DataObject::disableDirtyDetection();
+            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+            AbstractObject::disableDirtyDetection();
 
             $data = $fieldDefinition->load($this, $params);
 
@@ -404,7 +403,7 @@ class Localizedfield extends Model\AbstractModel implements
                 $this->setLocalizedValue($name, $data, $language, false);
             }
 
-            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
             $this->markLazyKeyAsLoaded($lazyKey);
         }
@@ -444,7 +443,7 @@ class Localizedfield extends Model\AbstractModel implements
         }
 
         // check for inherited value
-        $doGetInheritedValues = DataObject::doGetInheritedValues();
+        $doGetInheritedValues = AbstractObject::doGetInheritedValues();
 
         $allowInheritance = $fieldDefinition->supportsInheritance();
         if (isset($context['containerType']) && ($context['containerType'] === 'block' || $context['containerType'] === 'fieldcollection')) {
@@ -596,13 +595,7 @@ class Localizedfield extends Model\AbstractModel implements
             );
         }
 
-        $isEqual = false;
-
-        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\EqualComparisonInterface) {
-            $isEqual = $fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value);
-        }
-
-        if ($markFieldAsDirty && ($forceLanguageDirty || !$isEqual)) {
+        if ($markFieldAsDirty && ($forceLanguageDirty || !$fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value))) {
             $this->markLanguageAsDirty($language);
         }
         $this->items[$language][$name] = $value;
@@ -669,7 +662,7 @@ class Localizedfield extends Model\AbstractModel implements
      */
     public function hasDirtyLanguages()
     {
-        if (DataObject::isDirtyDetectionDisabled()) {
+        if (AbstractObject::isDirtyDetectionDisabled()) {
             return true;
         }
 
@@ -683,7 +676,7 @@ class Localizedfield extends Model\AbstractModel implements
      */
     public function isLanguageDirty($language)
     {
-        if (DataObject::isDirtyDetectionDisabled()) {
+        if (AbstractObject::isDirtyDetectionDisabled()) {
             return true;
         }
 
@@ -719,7 +712,7 @@ class Localizedfield extends Model\AbstractModel implements
 
     public function allLanguagesAreDirty()
     {
-        if (DataObject::isDirtyDetectionDisabled()) {
+        if (AbstractObject::isDirtyDetectionDisabled()) {
             return true;
         }
 
@@ -732,7 +725,7 @@ class Localizedfield extends Model\AbstractModel implements
      */
     public function markLanguageAsDirty($language, $dirty = true)
     {
-        if (DataObject::isDirtyDetectionDisabled()) {
+        if (AbstractObject::isDirtyDetectionDisabled()) {
             return;
         }
 

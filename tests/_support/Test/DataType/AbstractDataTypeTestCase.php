@@ -643,6 +643,17 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertPassword($this->testObject, 'password', $this->seed);
     }
 
+    public function testQuantityValue()
+    {
+        $this->createTestObject('quantityValue', $returnData);
+
+        $this->refreshObject();
+        $this->assertNotNull($this->testObject->getQuantityValue());
+
+        $this->testDataHelper->assertQuantityValue($this->testObject, 'quantityValue', $this->seed);
+//        $this->testDataHelper->checkValidityQuantityValue($this->testObject, 'quantityValue', $this->seed);
+    }
+
     public function testRgbaColor()
     {
         $this->createTestObject('rgbaColor');
