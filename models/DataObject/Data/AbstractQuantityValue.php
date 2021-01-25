@@ -63,4 +63,6 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
         return $this->unit;
     }
+
+    public abstract function getValue();
 }
