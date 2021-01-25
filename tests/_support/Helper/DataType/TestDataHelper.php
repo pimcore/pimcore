@@ -93,6 +93,21 @@ class TestDataHelper extends Module
     /**
      * @param Concrete $object
      * @param string $field
+     * @param mixed $expected
+     * @param mixed $value
+     *
+     */
+    public function assertIsEqual($object, $field, $expected, $value)
+    {
+        $fd = $object->getClass()->getFieldDefinition($field);
+        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
+        }
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
      * @param int $seed
      */
     public function assertCountryMultiSelect(Concrete $object, $field, $seed = 1)
@@ -396,30 +411,6 @@ class TestDataHelper extends Module
      * @param Concrete $object
      * @param string $field
      * @param int $seed
-     * @param array $returnParams
-     */
-    public function assertVideo(Concrete $object, $field, $seed = 1, $returnParams)
-    {
-        $getter = 'get' . ucfirst($field);
-
-        /** @var DataObject\Data\Video $value */
-        $value = $object->$getter();
-        $this->assertInstanceOf(DataObject\Data\Video::class, $value);
-
-        $this->assertEquals("title" . $seed, $value->getTitle());
-        $this->assertEquals("description" . $seed, $value->getDescription());
-        $this->assertEquals("asset", $value->getType());
-
-        $this->assertEquals($returnParams["poster"]->getId(), $value->getPoster()->getId());
-        $this->assertEquals($returnParams["video"]->getId(), $value->getData()->getId());
-    }
-
-
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
      */
     public function assertHotspotImage(Concrete $object, $field, $seed = 1)
     {
@@ -589,6 +580,25 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function assertInputQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        /** @var DataObject\Data\InputQuantityValue $qv */
+        $qv = $object->$getter();
+
+        $expectedAbbr = $this->mapUnit($seed);
+        $actualAbbreviation = $qv->getUnit()->getAbbreviation();
+
+        $this->assertInstanceOf(DataObject\Data\InputQuantityValue::class, $qv);
+        $this->assertEquals($expectedAbbr, $actualAbbreviation);
+        $this->assertEquals("abc" . $seed, $qv->getValue());
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertLanguage(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
@@ -722,21 +732,6 @@ class TestDataHelper extends Module
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param mixed $expected
-     * @param mixed $value
-     *
-     */
-    public function assertIsEqual($object, $field, $expected, $value)
-    {
-        $fd = $object->getClass()->getFieldDefinition($field);
-        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
-            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
-        }
     }
 
     /**
@@ -909,6 +904,25 @@ class TestDataHelper extends Module
 
         $info = password_get_info($value);
         $this->assertNotNull($info['algo'], "Not properly encrypted");
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        /** @var DataObject\Data\QuantityValue $qv */
+        $qv = $object->$getter();
+
+        $expectedAbbr = $this->mapUnit($seed);
+        $actualAbbreviation = $qv->getUnit()->getAbbreviation();
+
+        $this->assertInstanceOf(DataObject\Data\QuantityValue::class, $qv);
+        $this->assertEquals($expectedAbbr, $actualAbbreviation);
+        $this->assertEquals(1000 + $seed, $qv->getValue());
     }
 
     /**
@@ -1096,6 +1110,28 @@ class TestDataHelper extends Module
      * @param Concrete $object
      * @param string $field
      * @param int $seed
+     * @param array $returnParams
+     */
+    public function assertVideo(Concrete $object, $field, $seed = 1, $returnParams)
+    {
+        $getter = 'get' . ucfirst($field);
+
+        /** @var DataObject\Data\Video $value */
+        $value = $object->$getter();
+        $this->assertInstanceOf(DataObject\Data\Video::class, $value);
+
+        $this->assertEquals("title" . $seed, $value->getTitle());
+        $this->assertEquals("description" . $seed, $value->getDescription());
+        $this->assertEquals("asset", $value->getType());
+
+        $this->assertEquals($returnParams["poster"]->getId(), $value->getPoster()->getId());
+        $this->assertEquals($returnParams["video"]->getId(), $value->getData()->getId());
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
      */
     public function assertWysiwyg(Concrete $object, $field, $seed = 1)
     {
@@ -1164,12 +1200,12 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function checkValidityQuantityValue(Concrete $object, $field, $seed = 1)
+    public function checkValidityGeopolygon(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
 
         try {
-            $invalidValue = new DataObject\Data\QuantityValue("abc");
+            $invalidValue = ["1234", null];
             $object->$setter($invalidValue);
             $object->save();
             $this->fail("expected a ValidationException");
@@ -1183,12 +1219,12 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function checkValidityGeopolygon(Concrete $object, $field, $seed = 1)
+    public function checkValidityQuantityValue(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
 
         try {
-            $invalidValue = ["1234", null];
+            $invalidValue = new DataObject\Data\QuantityValue("abc");
             $object->$setter($invalidValue);
             $object->save();
             $this->fail("expected a ValidationException");
@@ -1300,86 +1336,6 @@ class TestDataHelper extends Module
 
         $object->$setter($date);
     }
-
-    public function mapUnit($seed) {
-        $map = ["mm", "cm" , "dm", "m", "km"];
-        $seed = $seed % 5;
-        return $map[$seed];
-    }
-
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillQuantityValue(Concrete $object, $field, $seed = 1)
-    {
-        $setter = 'set' . ucfirst($field);
-
-        $abbr = $this->mapUnit($seed);
-        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
-        $this->assertNotNull($unit);
-        $qv = new DataObject\Data\QuantityValue(1000 + $seed, $unit);
-
-        $object->$setter($qv);
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillInputQuantityValue(Concrete $object, $field, $seed = 1)
-    {
-        $setter = 'set' . ucfirst($field);
-
-        $abbr = $this->mapUnit($seed);
-        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
-        $this->assertNotNull($unit);
-        $qv = new DataObject\Data\InputQuantityValue("abc" . $seed, $unit);
-
-        $object->$setter($qv);
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertQuantityValue(Concrete $object, $field, $seed = 1)
-    {
-        $getter = 'get' . ucfirst($field);
-        /** @var DataObject\Data\QuantityValue $qv */
-        $qv = $object->$getter();
-
-        $expectedAbbr = $this->mapUnit($seed);
-        $actualAbbreviation = $qv->getUnit()->getAbbreviation();
-
-        $this->assertInstanceOf(DataObject\Data\QuantityValue::class, $qv);
-        $this->assertEquals($expectedAbbr, $actualAbbreviation);
-        $this->assertEquals(1000 + $seed, $qv->getValue());
-    }
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertInputQuantityValue(Concrete $object, $field, $seed = 1)
-    {
-        $getter = 'get' . ucfirst($field);
-        /** @var DataObject\Data\InputQuantityValue $qv */
-        $qv = $object->$getter();
-
-        $expectedAbbr = $this->mapUnit($seed);
-        $actualAbbreviation = $qv->getUnit()->getAbbreviation();
-
-        $this->assertInstanceOf(DataObject\Data\InputQuantityValue::class, $qv);
-        $this->assertEquals($expectedAbbr, $actualAbbreviation);
-        $this->assertEquals("abc" . $seed, $qv->getValue());
-    }
-
 
     /**
      * @param Concrete $object
@@ -1561,36 +1517,6 @@ class TestDataHelper extends Module
      * @param Concrete $object
      * @param string $field
      * @param int $seed
-     * @param array $returnData
-     */
-    public function fillVideo(Concrete $object, $field, $seed = 1, &$returnData = [])
-    {
-        $setter = 'set' . ucfirst($field);
-
-        $video = TestHelper::createVideoAsset();
-        $this->assertNotNull($video);
-        $poster = TestHelper::createImageAsset();
-
-        $this->assertNotNull($poster);
-
-        $returnData["video"] = $video;
-        $returnData["poster"] = $poster;
-
-        $value = new DataObject\Data\Video();
-        $value->setType("asset");
-        $value->setData($video);
-        $value->setPoster($poster);
-        $value->setTitle("title" . $seed);
-        $value->setDescription("description" . $seed);
-
-        $object->$setter($value);
-    }
-
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
      */
     public function fillImage(Concrete $object, $field, $seed = 1)
     {
@@ -1641,6 +1567,23 @@ class TestDataHelper extends Module
 
         $gallery = new DataObject\Data\ImageGallery($hotspotImages);
         $object->$setter($gallery);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillInputQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $abbr = $this->mapUnit($seed);
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
+        $this->assertNotNull($unit);
+        $qv = new DataObject\Data\InputQuantityValue("abc" . $seed, $unit);
+
+        $object->$setter($qv);
     }
 
     /**
@@ -1834,6 +1777,29 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function fillQuantityValue(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $abbr = $this->mapUnit($seed);
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
+        $this->assertNotNull($unit);
+        $qv = new DataObject\Data\QuantityValue(1000 + $seed, $unit);
+
+        $object->$setter($qv);
+    }
+
+    public function mapUnit($seed) {
+        $map = ["mm", "cm" , "dm", "m", "km"];
+        $seed = $seed % 5;
+        return $map[$seed];
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function fillRgbaColor(Concrete $object, $field, $seed = 1)
     {
         $seed = (int) $seed;
@@ -1942,6 +1908,35 @@ class TestDataHelper extends Module
         }
 
         $object->$setter($user->getId());
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     * @param array $returnData
+     */
+    public function fillVideo(Concrete $object, $field, $seed = 1, &$returnData = [])
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $video = TestHelper::createVideoAsset();
+        $this->assertNotNull($video);
+        $poster = TestHelper::createImageAsset();
+
+        $this->assertNotNull($poster);
+
+        $returnData["video"] = $video;
+        $returnData["poster"] = $poster;
+
+        $value = new DataObject\Data\Video();
+        $value->setType("asset");
+        $value->setData($video);
+        $value->setPoster($poster);
+        $value->setTitle("title" . $seed);
+        $value->setDescription("description" . $seed);
+
+        $object->$setter($value);
     }
 
     /**
