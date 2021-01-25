@@ -402,7 +402,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
             $joins = $queryBuilder->getQueryPart('from');
 
             if (!array_key_exists('customer', $joins)) {
-                $queryBuilder->join('order', 'object_' . $classId, 'customer',
+                $queryBuilder->join('`order`', 'object_' . $classId, 'customer',
                     'customer.o_id = order.customer__id'
                 );
             }
@@ -430,7 +430,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
                     '_orderItems.fieldname = "items" AND _orderItems.src_id = order.oo_id'
                 );
             } else {
-                $select->join('order', (string) $this->getOrderItemsSubQuery(), '_orderItems',
+                $select->join('`order`', (string) $this->getOrderItemsSubQuery(), '_orderItems',
                     '_orderItems.orderId = order.oo_id'
                 );
             }
