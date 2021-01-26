@@ -77,6 +77,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 
     public function boot()
     {
+        die("boot");
         $container = $this->container;
 
         if ($container->hasParameter('pimcore_ecommerce.decimal_scale')) {
