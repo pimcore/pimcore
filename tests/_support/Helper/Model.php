@@ -417,10 +417,10 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('gender'));
 
-            $panel->addChild($this->createDataChild('geopoint', 'point'));
-            $panel->addChild($this->createDataChild('geobounds', 'bounds'));
-            $panel->addChild($this->createDataChild('geopolygon', 'polygon'));
-            $panel->addChild($this->createDataChild('geopolyline', 'polyline'));
+            $panel->addChild($this->createDataChild('geopoint', 'point', false, false));
+            $panel->addChild($this->createDataChild('geobounds', 'bounds', false, false));
+            $panel->addChild($this->createDataChild('geopolygon', 'polygon', false, false));
+            $panel->addChild($this->createDataChild('geopolyline', 'polyline', false, false));
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
 
@@ -446,8 +446,8 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses([]));
 
-            $panel->addChild($this->createDataChild('newsletterActive'));
-            $panel->addChild($this->createDataChild('newsletterConfirmed'));
+            $panel->addChild($this->createDataChild('newsletterActive', 'newsletterActive', false, false));
+            $panel->addChild($this->createDataChild('newsletterConfirmed', 'newsletterConfirmed', false, false));
 
             $panel->addChild($this->createDataChild('inputQuantityValue'));
             $panel->addChild($this->createDataChild('quantityValue'));
@@ -466,7 +466,7 @@ class Model extends AbstractDefinitionHelper
             $passwordField->setAlgorithm(ClassDefinition\Data\Password::HASH_FUNCTION_PASSWORD_HASH);
             $panel->addChild($passwordField);
 
-            $panel->addChild($this->createDataChild('rgbaColor'));
+            $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false, false));
 
             $panel->addChild($this->createDataChild('select')->setOptions([
                 ['key' => 'Selection 1', 'value' => '1'],
@@ -479,7 +479,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('wysiwyg'));
 
-            $panel->addChild($this->createDataChild('video'));
+            $panel->addChild($this->createDataChild('video', 'video', false, false));
 
             $panel->addChild($this->createDataChild('multiselect')->setOptions([
                 ['key' => 'Katze', 'value' => 'cat'],
@@ -500,7 +500,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('checkbox'));
             $panel->addChild($this->createDataChild('booleanSelect'));
             $panel->addChild($this->createDataChild('table'));
-            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable')
+            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable', false, false)
                 ->setCols([
                     ['position' => 1, 'key' => 'col1', 'type' => 'number', 'label' => 'collabel1'],
                     ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2'],
