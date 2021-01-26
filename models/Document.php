@@ -890,10 +890,8 @@ class Document extends Element\AbstractElement
                             $hardlinkPath, $this->getRealFullPath());
                     }
                     
-                    if ($site = $hardlink->getProperty('siteRoot')) {
-                        if (strpos($this->getRealFullPath(), $site->getRealFullPath()) === false) {
-                            $link = null;
-                        }
+                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false) {
+                        $link = null;
                     }
                 }
             }
