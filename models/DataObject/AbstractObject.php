@@ -1487,3 +1487,5 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_siblings = [];
     }
 }
+
+class_alias(AbstractObject::class, 'Pimcore\\Model\\DataObject');
