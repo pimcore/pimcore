@@ -28,9 +28,28 @@ class PaymentManager implements PaymentManagerInterface
      */
     private $providers;
 
-    public function __construct(PsrContainerInterface $providers)
+    /**
+     * @var array
+     */
+    protected $providerTypes;
+
+    /**
+     * @param PsrContainerInterface $providers
+     * @param array $providerTypes
+     *
+     */
+    public function __construct(PsrContainerInterface $providers, array $providerTypes)
     {
         $this->providers = $providers;
+        $this->providerTypes = $providerTypes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProviderTypes(): array
+    {
+        return $this->providerTypes;
     }
 
     /**

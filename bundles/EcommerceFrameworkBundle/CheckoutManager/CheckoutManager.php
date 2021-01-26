@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -383,7 +382,7 @@ class CheckoutManager implements CheckoutManagerInterface
         /* @var Agent $sourceOrderAgent */
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
 
-        /* @var QPay $paymentProvider */
+        /* @var PaymentInterface $paymentProvider */
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
         $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 

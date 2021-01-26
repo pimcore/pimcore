@@ -3261,16 +3261,7 @@
               {
                 "fieldtype": "objectbricks",
                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Objectbrick",
-                "allowedTypes": [
-                  "PaymentProviderQpay",
-                  "PaymentProviderDatatrans",
-                  "PaymentProviderPayPal",
-                  "PaymentProviderMpay24",
-                  "PaymentProviderOGone",
-                  "PaymentProviderWirecardSeamless",
-                  "PaymentProviderHeidelPay",
-                  "PaymentProviderHobex"
-                ],
+                "allowedTypes": [],
                 "maxItems": "",
                 "border": false,
                 "name": "paymentProvider",

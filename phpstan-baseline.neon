@@ -746,31 +746,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/Mpay24Seamless.php
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$paymentInfo contains unknown class OnlineShop\\\\Framework\\\\Model\\\\AbstractPaymentInformation\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/OGone.php
-
-		-
-			message: "#^Parameter \\#1 \\$response \\(array\\) of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\Payment\\\\OGone\\:\\:handleResponse\\(\\) should be compatible with parameter \\$response \\(Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\StatusInterface\\) of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\Payment\\\\PaymentInterface\\:\\:handleResponse\\(\\)$#"
-			count: 3
-			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/OGone.php
-
-		-
-			message: "#^Call to an undefined method SoapClient\\:\\:SetExpressCheckout\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPal.php
-
-		-
-			message: "#^Call to an undefined method SoapClient\\:\\:DoExpressCheckoutPayment\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPal.php
-
-		-
-			message: "#^Cannot cast Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface\\|null to string\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPal.php
-
-		-
 			message: "#^Cannot access property \\$payer on array\\|string\\.$#"
 			count: 3
 			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPalSmartPaymentButton.php
@@ -829,16 +804,6 @@ parameters:
 			message: "#^Cannot cast Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface\\|null to string\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayU.php
-
-		-
-			message: "#^Cannot cast Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface to string\\.$#"
-			count: 4
-			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/QPay.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getPaymentProvider\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/QPay.php
 
 		-
 			message: "#^Array \\(array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInfoInterface\\>\\) does not accept array\\.$#"
