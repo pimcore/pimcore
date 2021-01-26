@@ -21,6 +21,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
+use Symfony\Component\Lock\LockFactory;
 
 class Processor
 {
@@ -360,26 +361,37 @@ class Processor
         if ($optimizedFormat) {
             $format = $image->getContentOptimizedFormat();
         }
+        if (!is_file($fsPath)) {
+            $lockKey = 'image_thumbnail_' . $asset->getId() . '_' . md5($fsPath);
+            $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
 
-        $tmpFsPath = preg_replace('@\.([\w]+)$@', uniqid('.tmp-', true) . '.$1', $fsPath);
-        $image->save($tmpFsPath, $format, $config->getQuality());
-        @rename($tmpFsPath, $fsPath); // atomic rename to avoid race conditions
+            $lock->acquire(true);
+            
+            // after we got the lock, check again if the image exists in the meantime - if not - generate it
+            if (!is_file($fsPath)) {
+                $tmpFsPath = preg_replace('@\.([\w]+)$@', uniqid('.tmp-', true) . '.$1', $fsPath);
+                $image->save($tmpFsPath, $format, $config->getQuality());
+                @rename($tmpFsPath, $fsPath); // atomic rename to avoid race conditions
 
-        $generated = true;
+                $generated = true;
 
-        if ($optimizeContent) {
-            $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
-            $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
-            TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
+                if ($optimizeContent) {
+                    $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
+                    $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
+                    TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
+                }
+
+                clearstatcache();
+
+                Logger::debug('Thumbnail ' . $path . ' generated in ' . (microtime(true) - $startTime) . ' seconds');
+
+                // set proper permissions
+                @chmod($fsPath, File::getDefaultMode());
+            } else {
+                Logger::debug('Thumbnail ' . $path . ' already generated, waiting on lock for ' . (microtime(true) - $startTime) . ' seconds');
+            }
+            $lock->release();
         }
-
-        clearstatcache();
-
-        Logger::debug('Thumbnail ' . $path . ' generated in ' . (microtime(true) - $startTime) . ' seconds');
-
-        // set proper permissions
-        @chmod($fsPath, File::getDefaultMode());
-
         // quick bugfix / workaround, it seems that imagemagick / image optimizers creates sometimes empty PNG chunks (total size 33 bytes)
         // no clue why it does so as this is not continuous reproducible, and this is the only fix we can do for now
         // if the file is corrupted the file will be created on the fly when requested by the browser (because it's deleted here)
