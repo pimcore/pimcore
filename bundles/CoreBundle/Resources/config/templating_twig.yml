@@ -15,6 +15,10 @@ services:
 
     Pimcore\Twig\Extension\HelpersExtension: ~
 
+    Pimcore\Twig\Extension\CacheExtension: ~
+
+    Pimcore\Twig\Extension\PimcoreToolExtension: ~
+
     Pimcore\Twig\Extension\DocumentTagExtension: ~
 
     Pimcore\Twig\Extension\SubrequestExtension:
@@ -59,6 +63,8 @@ services:
     Pimcore\Twig\Extension\Templating\Inc: ~
 
     Pimcore\Twig\Extension\Templating\InlineScript: ~
+
+    Pimcore\Twig\Extension\HeaderExtension: ~
 
     Pimcore\Twig\Extension\Templating\Navigation:
         lazy: true

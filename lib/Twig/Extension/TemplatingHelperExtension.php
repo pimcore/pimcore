@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -20,13 +17,12 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Templating\PhpEngine;
 use Symfony\Component\Templating\Helper\HelperInterface;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
 
 /**
- * Delegates calls to PHP templating helpers. Use this only with templating helpers which do not rely
- * on PHP rendering!
- *
- * @deprecated
+ * @deprecated use \Pimcore\Twig\Extension\HeaderExtension instead.
+ * @deprecated use \Pimcore\Twig\Extension\PimcoreToolExtension instead.
+ * @deprecated use \Pimcore\Twig\Extension\HelpersExtension instead.
+ * @deprecated use \Pimcore\Twig\Extension\CacheExtension instead.
  */
 class TemplatingHelperExtension extends AbstractExtension
 {
@@ -43,68 +39,6 @@ class TemplatingHelperExtension extends AbstractExtension
         $this->phpEngine = $phpEngine;
     }
 
-    public function getFunctions(): array
-    {
-        $helperNames = [
-            'headLink' => 'pimcore_head_link',
-            'headMeta' => 'pimcore_head_meta',
-            'headScript' => 'pimcore_head_script',
-            'headStyle' => 'pimcore_head_style',
-            'headTitle' => 'pimcore_head_title',
-            'inlineScript' => 'pimcore_inline_script',
-            'breachAttackRandomContent' => 'pimcore_breach_attack_random_content',
-            'placeholder' => 'pimcore_placeholder',
-            'cache' => 'pimcore_cache',
-            'device' => 'pimcore_device',
-            'pimcoreUrl' => [
-                'name' => 'pimcore_url',
-                'is_safe' => null,
-            ],
-        ];
-
-        $functions = [];
-        foreach ($helperNames as $helperName => $helperOptions) {
-            $functionName = null;
-            $options = [
-                'is_safe' => ['html'],
-            ];
-
-            if (is_string($helperOptions)) {
-                $functionName = $helperOptions;
-            } else {
-                if (!isset($helperOptions['name'])) {
-                    throw new \LogicException('A helper declaration needs to define a Twig function name');
-                }
-
-                $functionName = $helperOptions['name'];
-                unset($helperOptions['name']);
-
-                $options = array_merge($options, $helperOptions);
-            }
-
-            $callable = function () use ($helperName) {
-                return $this->callHelper($helperName, func_get_args());
-            };
-
-            $functions[] = new TwigFunction($functionName, $callable, $options);
-        }
-
-        return $functions;
-
-        // those are just for auto-complete, not nice, but works ;-)
-        new TwigFunction('pimcore_head_link');
-        new TwigFunction('pimcore_head_meta');
-        new TwigFunction('pimcore_head_script');
-        new TwigFunction('pimcore_head_style');
-        new TwigFunction('pimcore_head_title');
-        new TwigFunction('pimcore_inline_script');
-        new TwigFunction('pimcore_placeholder');
-        new TwigFunction('pimcore_cache');
-        new TwigFunction('pimcore_device');
-        new TwigFunction('pimcore_url');
-        new TwigFunction('pimcore_breach_attack_random_content');
-    }
-
     /**
      * Calls a helper with arguments
      *
@@ -112,9 +46,24 @@ class TemplatingHelperExtension extends AbstractExtension
      * @param array $arguments
      *
      * @return mixed|HelperInterface
+     *
+     * @deprecated
      */
     public function callHelper(string $helperName, array $arguments = [])
     {
+
+        @trigger_error(
+            sprintf(
+                'Class "%s" is deprecated since v6.9 and will be removed in Pimcore 10. Use one of these "%s", "%s", "%s", "%s" instead.',
+                TemplatingHelperExtension::class,
+                HeaderExtension::class,
+                PimcoreToolExtension::class,
+                HelpersExtension::class,
+                CacheExtension::class
+            ),
+            E_USER_DEPRECATED
+        );
+
         $helper = $this->phpEngine->get($helperName);
 
         // helper implements __invoke -> run it directly
