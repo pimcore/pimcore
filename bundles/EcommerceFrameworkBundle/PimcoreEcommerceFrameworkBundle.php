@@ -49,7 +49,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcoreecommerceframework/css/backend.css',
-            '/bundles/pimcoreecommerceframework/css/pricing.css',
+            '/bundles/pimcoreecommerceframework/css/pricing.css'
         ];
     }
 
@@ -71,15 +71,12 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
             '/bundles/pimcoreecommerceframework/js/pricing/config/objects.js',
             '/bundles/pimcoreecommerceframework/js/voucherservice/VoucherSeriesTab.js',
             '/bundles/pimcoreecommerceframework/js/order/OrderTab.js',
-            '/admin/ecommerceframework/config/js-config',
+            '/admin/ecommerceframework/config/js-config'
         ];
     }
 
     public function boot()
     {
-        var_dump("isInstalled " . $this->getInstaller()->isInstalled());
-
-        die("boot done");
         $container = $this->container;
 
         if ($container->hasParameter('pimcore_ecommerce.decimal_scale')) {
