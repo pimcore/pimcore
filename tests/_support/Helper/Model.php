@@ -421,6 +421,11 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('geobounds', 'bounds', false, false));
             $panel->addChild($this->createDataChild('geopolygon', 'polygon', false, false));
             $panel->addChild($this->createDataChild('geopolyline', 'polyline', false, false));
+
+            $panel->addChild($this->createDataChild('indexFieldSelection', 'indexFieldSelection', false, false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionCombo', 'indexFieldSelectionCombo', false, false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionField', 'indexFieldSelectionField', false, false));
+
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
 
