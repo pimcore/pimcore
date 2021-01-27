@@ -366,7 +366,7 @@ class Processor
             $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
 
             $lock->acquire(true);
-            
+
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if (!is_file($fsPath)) {
                 $tmpFsPath = preg_replace('@\.([\w]+)$@', uniqid('.tmp-', true) . '.$1', $fsPath);
