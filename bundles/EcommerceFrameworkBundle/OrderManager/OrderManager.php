@@ -582,7 +582,7 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @param AbstractOrder $order
-     * @param PaymentInterface $payment
+     * @param RecurringPaymentInterface $payment
      * @param string $customerId
      *
      * @return bool
