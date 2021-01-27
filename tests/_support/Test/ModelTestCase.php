@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Test;
 
+use Pimcore\Tests\Helper\DataType\Calculator;
 use Pimcore\Tests\ModelTester;
 
 /**
@@ -15,6 +16,8 @@ abstract class ModelTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        \Pimcore::getContainer()->set("test.calculatorservice", new Calculator());
 
         if ($this->needsDb()) {
             $this->setUpTestClasses();

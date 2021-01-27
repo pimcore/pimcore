@@ -391,7 +391,44 @@ class Model extends AbstractDefinitionHelper
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
             $rootPanel->addChild($panel);
 
+            $calculatedValue = $this->createDataChild('calculatedValue');
+            $calculatedValue->setCalculatorClass("@test.calculatorservice");
+            $panel->addChild($calculatedValue);
+
+            $panel->addChild($this->createDataChild('consent'));
+
+            $panel->addChild($this->createDataChild('country'));
+            $panel->addChild($this->createDataChild('countrymultiselect', 'countries'));
+
             $panel->addChild($this->createDataChild('date'));
+            $panel->addChild($this->createDataChild('datetime'));
+
+            $panel->addChild($this->createDataChild('email'));
+
+            /** @var ClassDefinition\Data\EncryptedField $encryptedField */
+            $encryptedField = $this->createDataChild('encryptedField');
+
+            $encryptedField->setDelegateDatatype("input");
+            $panel->addChild($encryptedField);
+
+            $panel->addChild($this->createDataChild('externalImage'));
+
+            $panel->addChild($this->createDataChild('firstname'));
+
+            $panel->addChild($this->createDataChild('gender'));
+
+            $panel->addChild($this->createDataChild('geopoint', 'point', false, false));
+            $panel->addChild($this->createDataChild('geobounds', 'bounds', false, false));
+            $panel->addChild($this->createDataChild('geopolygon', 'polygon', false, false));
+            $panel->addChild($this->createDataChild('geopolyline', 'polyline', false, false));
+
+            $panel->addChild($this->createDataChild('indexFieldSelection', 'indexFieldSelection', false, false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionCombo', 'indexFieldSelectionCombo', false, false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionField', 'indexFieldSelectionField', false, false));
+
+            $panel->addChild($this->createDataChild('imageGallery'));
+            $panel->addChild($this->createDataChild('input'));
+
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
@@ -414,7 +451,11 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses([]));
 
-            //TODO add test
+            $panel->addChild($this->createDataChild('newsletterActive', 'newsletterActive', false, false));
+            $panel->addChild($this->createDataChild('newsletterConfirmed', 'newsletterConfirmed', false, false));
+
+            $panel->addChild($this->createDataChild('inputQuantityValue'));
+            $panel->addChild($this->createDataChild('quantityValue'));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'objectswithmetadata')
                 ->setAllowedClassId($name)
@@ -422,20 +463,28 @@ class Model extends AbstractDefinitionHelper
                 ->setColumns([ ['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'label1'],
                     ['position' => 2, 'key' => 'meta2', 'type' => 'text', 'label' => 'label2'], ]));
 
-            $panel->addChild($this->createDataChild('slider'));
+            $panel->addChild($this->createDataChild('lastname'));
+
             $panel->addChild($this->createDataChild('numeric', 'number'));
-            $panel->addChild($this->createDataChild('geopoint', 'point'));
-            $panel->addChild($this->createDataChild('geobounds', 'bounds'));
-            $panel->addChild($this->createDataChild('geopolygon', 'poly'));
-            $panel->addChild($this->createDataChild('datetime'));
-            $panel->addChild($this->createDataChild('time'));
-            $panel->addChild($this->createDataChild('input'));
-            $panel->addChild($this->createDataChild('password'));
-            $panel->addChild($this->createDataChild('textarea'));
-            $panel->addChild($this->createDataChild('wysiwyg'));
+
+            $passwordField = $this->createDataChild('password');
+            $passwordField->setAlgorithm(ClassDefinition\Data\Password::HASH_FUNCTION_PASSWORD_HASH);
+            $panel->addChild($passwordField);
+
+            $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false, false));
+
             $panel->addChild($this->createDataChild('select')->setOptions([
                 ['key' => 'Selection 1', 'value' => '1'],
                 ['key' => 'Selection 2', 'value' => '2'], ]));
+
+            $panel->addChild($this->createDataChild('slider'));
+
+            $panel->addChild($this->createDataChild('textarea'));
+            $panel->addChild($this->createDataChild('time'));
+
+            $panel->addChild($this->createDataChild('wysiwyg'));
+
+            $panel->addChild($this->createDataChild('video', 'video', false, false));
 
             $panel->addChild($this->createDataChild('multiselect')->setOptions([
                 ['key' => 'Katze', 'value' => 'cat'],
@@ -447,8 +496,6 @@ class Model extends AbstractDefinitionHelper
                 ['key' => 'Huhn', 'value' => 'chicken'],
             ]));
 
-            $panel->addChild($this->createDataChild('country'));
-            $panel->addChild($this->createDataChild('countrymultiselect', 'countries'));
             $panel->addChild($this->createDataChild('language', 'languagex'));
             $panel->addChild($this->createDataChild('languagemultiselect', 'languages'));
             $panel->addChild($this->createDataChild('user'));
@@ -458,7 +505,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('checkbox'));
             $panel->addChild($this->createDataChild('booleanSelect'));
             $panel->addChild($this->createDataChild('table'));
-            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable')
+            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable', false, false)
                 ->setCols([
                     ['position' => 1, 'key' => 'col1', 'type' => 'number', 'label' => 'collabel1'],
                     ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2'],
@@ -969,6 +1016,8 @@ class Model extends AbstractDefinitionHelper
      */
     public function initializeDefinitions()
     {
+        $this->setupQuantityValueUnits();
+
         $cm = $this->getClassManager();
 
         $this->setupFieldcollection_Unittestfieldcollection();
@@ -978,5 +1027,22 @@ class Model extends AbstractDefinitionHelper
         $this->setupPimcoreClass_RelationTest();
 
         $this->setupObjectbrick_UnittestBrick();
+    }
+
+    private function setupUnit($abbr) {
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
+        if (!$unit ) {
+            $unit = new DataObject\QuantityValue\Unit();
+            $unit->setAbbreviation($abbr);
+            $unit->save();
+        }
+    }
+
+    public function setupQuantityValueUnits() {
+        $this->setupUnit("mm");
+        $this->setupUnit("cm");
+        $this->setupUnit("dm");
+        $this->setupUnit("m");
+        $this->setupUnit("km");
     }
 }
