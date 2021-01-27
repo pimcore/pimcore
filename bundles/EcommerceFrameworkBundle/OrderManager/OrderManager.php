@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -562,12 +563,12 @@ class OrderManager implements OrderManagerInterface
      * Get source order for performing recurring payment
      *
      * @param string $customerId
-     * @param PaymentInterface $paymentProvider
+     * @param RecurringPaymentInterface $paymentProvider
      * @param string|null $paymentMethod
      *
      * @return mixed
      */
-    public function getRecurringPaymentSourceOrder(string $customerId, PaymentInterface $paymentProvider, $paymentMethod = null)
+    public function getRecurringPaymentSourceOrder(string $customerId, RecurringPaymentInterface $paymentProvider, $paymentMethod = null)
     {
         if (!$paymentProvider->isRecurringPaymentEnabled()) {
             return null;
