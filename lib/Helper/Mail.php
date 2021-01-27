@@ -424,6 +424,9 @@ CSS;
                 if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {
                     $entryAddress = trim($matches[2]);
                     $entryName = trim($matches[1]);
+                } elseif (preg_match('/(.*)\((.*)\)/', $entryAddress, $matches)) {
+                    $entryAddress = trim($matches[1]);
+                    $entryName = trim($matches[2]);
                 }
 
                 if ($entryAddress) {
