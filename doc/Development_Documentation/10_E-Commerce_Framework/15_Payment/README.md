@@ -100,16 +100,16 @@ The payment provider name will be referenced from the checkout manager configura
 provider from the payment manager.
 
 ## Payment Providers
-Currently following Payment Providers are integrated into the framework: 
+Following Payment Providers are available as a dedicated bundle to be integrated into the E-commerce framework: 
 
-- [Datatrans](./03_Datatrans.md)
-- [PayPal](./04_PayPal.md)
-- [Klarna](./05_Klarna.md)
-- [OGone](./06_OGone.md)
-- [MPay24](./07_MPay24.md)
-- [PayU](./08_PayU.md)
-- [Heidelpay](./09_Heidelpay.md)
-- [Hobex](./11_Hobex.md)
+- [Datatrans](https://github.com/pimcore/payment-provider-datatrans)
+- [PayPalSmartButton](https://github.com/pimcore/payment-provider-paypal-smart-payment-button)
+- [Klarna](https://github.com/pimcore/payment-provider-klarna)
+- [OGone](https://github.com/pimcore/payment-provider-ogone)
+- [MPay24](https://github.com/pimcore/payment-provider-mpay24-seamless)
+- [PayU](https://github.com/pimcore/payment-provider-payu)
+- [Unzer (former Heidelpay)](https://github.com/pimcore/payment-provider-unzer)
+- [Hobex](https://github.com/pimcore/payment-provider-hobex)
 
 
 ## Further Payment Aspects

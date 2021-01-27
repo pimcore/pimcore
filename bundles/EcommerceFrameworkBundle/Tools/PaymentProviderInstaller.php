@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 
@@ -28,7 +27,7 @@ class PaymentProviderInstaller extends AbstractInstaller
     /**
      * @var string // json source path
      */
-    protected $bricksPath =  __DIR__ . '/../../install/objectbrick_sources/';
+    protected $bricksPath;
 
     /**
      * @var array //$brickKey => $brickImportJsonPath

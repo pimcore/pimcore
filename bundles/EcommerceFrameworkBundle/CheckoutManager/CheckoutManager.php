@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\AbstractPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
@@ -382,7 +383,7 @@ class CheckoutManager implements CheckoutManagerInterface
         /* @var Agent $sourceOrderAgent */
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
 
-        /* @var PaymentInterface $paymentProvider */
+        /* @var AbstractPayment $paymentProvider */
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
         $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 
