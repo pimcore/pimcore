@@ -74,7 +74,7 @@ pimcore.element.abstract = Class.create({
 
     // CHANGE DETECTOR
     startChangeDetector: function () {
-        if (!this.changeDetectorInterval) {
+        if (!this.changeDetectorInterval && !this.isDirty()) {
             this.changeDetectorInterval = window.setInterval(this.checkForChanges.bind(this), 1000);
         }
     },
@@ -164,7 +164,9 @@ pimcore.element.abstract = Class.create({
         for (var i = 0; i < keys.length; i++) {
             if (this.changeDetectorInitData[keys[i]]) {
                 if (this.changeDetectorInitData[keys[i]] != liveData[keys[i]]) {
-                    this.detectedChange();
+                    if(!this.isDirty()) {
+                        this.detectedChange();
+                    }
                 }
             }
             this.changeDetectorInitData[keys[i]] = liveData[keys[i]];
