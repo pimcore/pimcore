@@ -332,12 +332,12 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\' . IndexFieldSelection::class;
+        return '?\\' . ObjectData\IndexFieldSelection::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\' . IndexFieldSelection::class;
+        return '?\\' . ObjectData\IndexFieldSelection::class;
     }
 
     public function getPhpdocInputType(): ?string
