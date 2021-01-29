@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Helper\DataType;
 
 use Codeception\Module;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\Consent\Service;
@@ -979,6 +980,21 @@ class TestDataHelper extends Module
         $this->assertIsEqual($object, $field, 'carClass', $value);
     }
 
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertIndexFieldSelection(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        /** @var IndexFieldSelection $value */
+        $value = $object->$getter();
+
+        $this->assertInstanceOf(IndexFieldSelection::class, $value);
+
+        $this->assertIsEqual($object, $field, 'carClass', $value->getField());
+    }
 
     /**
      * @param Concrete $object
@@ -1844,6 +1860,18 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('carClass');
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillIndexFieldSelection(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $value = new IndexFieldSelection(null, 'carClass', null);
+        $object->$setter($value);
     }
 
     /**
