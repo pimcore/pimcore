@@ -58,13 +58,19 @@ class Imagick extends Adapter
         }
 
         // support image URLs
-        if (preg_match('@^https?://@', $imagePath)) {
+        if (preg_match('@^https?://|^s3://@', $imagePath)) {
             $tmpFilename = 'imagick_auto_download_' . md5($imagePath) . '.' . File::getFileExtension($imagePath);
             $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFilename;
 
             $this->tmpFiles[] = $tmpFilePath;
 
-            File::put($tmpFilePath, \Pimcore\Tool::getHttpData($imagePath));
+            if (preg_match('@^s3://@', $imagePath)) {
+                $imageContent = file_get_contents($imagePath);
+            } else {
+                $imageContent = \Pimcore\Tool::getHttpData($imagePath);
+            }
+
+            File::put($tmpFilePath, $imageContent);
             $imagePath = $tmpFilePath;
         }
 
