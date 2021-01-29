@@ -500,7 +500,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
     /**
      * @param string $condition
-     * @param string $value
+     * @param mixed $value
      *
      * @return $this
      */
@@ -509,7 +509,10 @@ class Listing extends AbstractOrderList implements OrderListInterface
         if ($this->query instanceof ZendCompatibilityQueryBuilder) {
             $this->getQuery()->where($condition, $value);
         } else {
-            $this->getQueryBuilder()->where($condition, $value);
+            if (!is_array($value)) {
+                $value = [$value];
+            }
+            $this->getQueryBuilder()->where($condition)->setParameters($value);
         }
 
         return $this;
