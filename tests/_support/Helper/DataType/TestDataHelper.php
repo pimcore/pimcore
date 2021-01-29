@@ -1001,6 +1001,19 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
+    public function assertIndexFieldSelectionField(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        $value = $object->$getter();
+
+        $this->assertIsEqual($object, $field, 'carClass,color', $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertSlider(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
@@ -1860,6 +1873,17 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('carClass');
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillIndexFieldSelectionField(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter('carClass,color');
     }
 
     /**
