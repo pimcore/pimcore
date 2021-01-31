@@ -29,7 +29,7 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
 
     activate: function (filter) {
         if(filter){
-            this.store.getProxy().setExtraParam("filter", filter);
+            this.store.getProxy().setExtraParam("searchString", filter);
             this.store.load();
             this.filterField.setValue(filter);
         }
