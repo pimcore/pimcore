@@ -7,7 +7,7 @@
   "many_to_many_object_relation": "Many-To-Many Object Relation",
   "advanced_many_to_many_relation": "Advanced Many-To-Many Relation",
   "advanced_many_to_many_object_relation": "Advanced Many-To-Many Object Relation",
-  "reverse_many_to_many_object_relation": "Reverse Many-To-Many Object Relation",
+  "reverse_object_relation": "Reverse Object Relation",
   "url_slug": "URL Slug",
   "url_slug_datatype_info": "Enter the controller & action in the following format:<br>AppBundle\\Controller\\ProductController:slugAction",
   "controller_action": "Controller & Action",
