@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
 
+use Carbon\Carbon;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
@@ -85,7 +86,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
-            $order->setOrderdate(new \DateTime());
+            $order->setOrderdate(new Carbon());
 
             $cartId = $this->createCartId($cart);
             if (strlen($cartId) > 190) {
@@ -247,7 +248,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
-            $order->setOrderdate(new \DateTime());
+            $order->setOrderdate(new Carbon());
             $order->setCartId($sourceOrder->getCartId());
 
             $order->save(['versionNote' => 'OrderManager::recreateOrder.']);
@@ -276,7 +277,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         $order->setPublished(true);
 
         $order->setOrdernumber($tempOrdernumber);
-        $order->setOrderdate(new \DateTime());
+        $order->setOrderdate(new Carbon());
         $order->setCartId($sourceOrder->getCartId());
 
         $order->save(['versionNote' => 'OrderManager::recreateOrderBasedOnSourceOrder - initial save.']);

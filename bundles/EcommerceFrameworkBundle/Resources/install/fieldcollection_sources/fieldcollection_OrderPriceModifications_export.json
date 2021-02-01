@@ -1,20 +1,19 @@
 {
   "key": null,
   "parentClass": "",
-  "implementsInterfaces": null,
+  "implementsInterfaces": "",
   "title": "",
   "group": "Order Details",
   "layoutDefinitions": {
     "fieldtype": "panel",
-    "labelWidth": 100,
     "layout": null,
     "border": false,
     "name": null,
     "type": null,
     "region": null,
     "title": null,
-    "width": null,
-    "height": null,
+    "width": 0,
+    "height": 0,
     "collapsible": false,
     "collapsed": false,
     "bodyStyle": null,
@@ -23,7 +22,6 @@
     "childs": [
       {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": "",
         "border": false,
         "name": "Layout",
@@ -45,7 +43,6 @@
             "queryColumnType": "varchar",
             "columnType": "varchar",
             "columnLength": 255,
-            "phpdocType": "string",
             "regex": "",
             "unique": null,
             "showCharCount": null,
@@ -71,7 +68,6 @@
             "defaultValue": null,
             "queryColumnType": "double",
             "columnType": "double",
-            "phpdocType": "float",
             "integer": false,
             "unsigned": false,
             "minValue": null,
@@ -97,11 +93,10 @@
           },
           {
             "fieldtype": "numeric",
-            "width": 0,
+            "width": null,
             "defaultValue": null,
             "queryColumnType": "double",
             "columnType": "double",
-            "phpdocType": "float",
             "integer": true,
             "unsigned": false,
             "minValue": null,
@@ -131,7 +126,6 @@
             "defaultValue": null,
             "queryColumnType": "double",
             "columnType": "double",
-            "phpdocType": "float",
             "integer": false,
             "unsigned": false,
             "minValue": null,
@@ -157,11 +151,15 @@
           }
         ],
         "locked": false,
-        "icon": null
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
       }
     ],
     "locked": false,
-    "icon": null
+    "icon": null,
+    "labelWidth": 100,
+    "labelAlign": "left"
   },
-  "generateTypeDeclarations": false
+  "generateTypeDeclarations": true
 }

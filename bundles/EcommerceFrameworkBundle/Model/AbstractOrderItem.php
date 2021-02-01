@@ -25,82 +25,83 @@ abstract class AbstractOrderItem extends Concrete
     /**
      * @return CheckoutableInterface
      */
-    abstract public function getProduct();
+    abstract public function getProduct(): ?\Pimcore\Model\Element\AbstractElement;
 
     /**
      * @param CheckoutableInterface $product
      */
-    abstract public function setProduct($product);
+    abstract public function setProduct(?\Pimcore\Model\Element\AbstractElement $product);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getProductNumber();
+    abstract public function getProductNumber(): ?string;
 
     /**
-     * @param string $productNumber
+     * @param string|null $productNumber
      */
-    abstract public function setProductNumber($productNumber);
+    abstract public function setProductNumber(?string $productNumber);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getProductName();
+    abstract public function getProductName(): ?string;
 
     /**
-     * @param string $productName
+     * @param string|null $productName
      */
-    abstract public function setProductName($productName);
+    abstract public function setProductName(?string $productName);
 
     /**
-     * @return float
+     * @return float|null
      */
-    abstract public function getAmount();
+    abstract public function getAmount(): ?float;
 
     /**
-     * @param float $amount
+     * @param float|null $amount
+     * @return mixed
      */
-    abstract public function setAmount($amount);
+    abstract public function setAmount(?float $amount);
 
     /**
-     * @return float
+     * @return string|null
      */
-    abstract public function getTotalPrice();
+    abstract public function getTotalPrice(): ?string;
 
     /**
-     * @param float $totalPrice
+     * @param string|null $totalPrice
      */
-    abstract public function setTotalPrice($totalPrice);
+    abstract public function setTotalPrice(?string $totalPrice);
 
     /**
-     * @return float
+     * @return string|null
      */
-    abstract public function getTotalNetPrice();
+    abstract public function getTotalNetPrice(): ?string;
 
     /**
-     * @param float $totalNetPrice
+     * @param string|null $totalNetPrice
      */
-    abstract public function setTotalNetPrice($totalNetPrice);
+    abstract public function setTotalNetPrice(?string $totalNetPrice);
 
     /**
      * @return array
      */
-    abstract public function getTaxInfo();
+    abstract public function getTaxInfo(): array;
 
     /**
      * @param array $taxInfo
      */
-    abstract public function setTaxInfo($taxInfo);
+    abstract public function setTaxInfo(?array $taxInfo);
 
     /**
      * @return AbstractOrderItem[]
      */
-    abstract public function getSubItems();
+    abstract public function getSubItems(): array;
 
     /**
      * @param AbstractOrderItem[] $subItems
      */
-    abstract public function setSubItems($subItems);
+    abstract public function setSubItems(?array $subItems);
 
     /**
      * @return Fieldcollection
@@ -112,38 +113,38 @@ abstract class AbstractOrderItem extends Concrete
      *
      * @return $this
      */
-    abstract public function setPricingRules($pricingRules);
+    abstract public function setPricingRules(?Fieldcollection $pricingRules);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getOrderState();
+    abstract public function getOrderState(): ?string;
 
     /**
-     * @param string $orderState
+     * @param string|null $orderState
      *
      * @return $this
      */
-    abstract public function setOrderState($orderState);
+    abstract public function setOrderState(?string $orderState);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getComment();
+    abstract public function getComment(): ?string;
 
     /**
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return $this
      */
-    abstract public function setComment($comment);
+    abstract public function setComment(?string $comment);
 
     /**
      * is the order item cancel able
      *
      * @return bool
      */
-    public function isCancelAble()
+    public function isCancelAble(): bool
     {
         return !$this->isCanceled();
     }
@@ -153,7 +154,7 @@ abstract class AbstractOrderItem extends Concrete
      *
      * @return bool
      */
-    public function isEditAble()
+    public function isEditAble(): bool
     {
         return !$this->isCanceled();
     }
@@ -163,7 +164,7 @@ abstract class AbstractOrderItem extends Concrete
      *
      * @return bool
      */
-    public function isComplaintAble()
+    public function isComplaintAble(): bool
     {
         return true;
     }
@@ -171,7 +172,7 @@ abstract class AbstractOrderItem extends Concrete
     /**
      * @return bool
      */
-    public function isCanceled()
+    public function isCanceled(): bool
     {
         return $this->getOrderState() == AbstractOrder::ORDER_STATE_CANCELLED;
     }
@@ -179,7 +180,7 @@ abstract class AbstractOrderItem extends Concrete
     /**
      * @return AbstractOrder
      */
-    public function getOrder()
+    public function getOrder(): ?AbstractOrder
     {
         $parent = $this;
         while (!$parent instanceof AbstractOrder) {
