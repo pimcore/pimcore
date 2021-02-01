@@ -40,7 +40,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
- * @deprecated since Pimcore 6.8.0 and will be removed in Pimcore 7.
+ * @deprecated since Pimcore 6.8.0 and will be removed in Pimcore 10.
  */
 class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
