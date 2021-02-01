@@ -36,7 +36,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-datatrans" in Pimcore 7.
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-provider-datatrans" in Pimcore 10.
  */
 class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface, RecurringPaymentInterface
 {

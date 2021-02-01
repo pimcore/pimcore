@@ -34,7 +34,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderHeidelPay;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 
 /**
- * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-heidelpay" in Pimcore 7.
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-provider-unzer" in Pimcore 10.
  */
 class Heidelpay extends AbstractPayment implements PaymentInterface
 {
