@@ -39,6 +39,7 @@ class PublicServicesController extends Controller
      */
     public function thumbnailAction(Request $request, SessionListener $sessionListener)
     {
+        $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $assetId = $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
@@ -126,7 +127,7 @@ class PublicServicesController extends Controller
                 if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
                     $actualFileExtension = File::getFileExtension($thumbnailFile);
 
-                    if ($actualFileExtension !== $requestedFileExtension) {
+                    if ($actualFileExtension !== $requestedFileExtension && $thumbnailFile != $errorImage) {
                         // create a copy/symlink to the file with the original file extension
                         // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                         // is set to auto-optimized format so the resulting thumbnail can be jpeg
