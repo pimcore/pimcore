@@ -282,7 +282,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
 
         $mail = new \Pimcore\Mail(['document' => $this->confirmationMail, 'params' => $params]);
         if ($customer && method_exists($customer, 'getEmail')) {
-            $mail->addTo($order->getCustomer()->getEmail());
+            $mail->addTo($customer->getEmail());
             $mail->send();
         } else {
             Logger::err('No Customer found!');
