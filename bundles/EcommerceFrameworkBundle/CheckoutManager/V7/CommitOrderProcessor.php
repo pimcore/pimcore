@@ -176,7 +176,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
             $params['ordernumber'] = $order->getOrdernumber();
 
             $mail = new \Pimcore\Mail(['document' => $event->getConfirmationMailConfig(), 'params' => $params]);
-            if ($customer && method_exists($customer, 'getMail')) {
+            if ($customer && method_exists($customer, 'getEmail')) {
                 $mail->addTo($customer->getEmail());
                 $mail->send();
             } else {
