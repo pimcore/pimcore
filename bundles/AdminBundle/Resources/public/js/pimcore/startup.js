@@ -166,7 +166,7 @@ Ext.onReady(function () {
 
         var jsonData = null;
         try {
-            jsonData = Ext.decode(response.responseText);
+            jsonData = Ext.decode(response.responseJson);
         } catch (e) {
 
         }
