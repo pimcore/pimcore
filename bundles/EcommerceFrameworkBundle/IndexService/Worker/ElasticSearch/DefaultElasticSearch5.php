@@ -14,17 +14,33 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  *
  *  Use this for Adapter for ES Version >= 2 AND <= 5
+ *
+ * @deprecated since version 6.9.0 and will be removed in 10.0.0.
  */
 class DefaultElasticSearch5 extends AbstractElasticSearch
 {
+
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    {
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
+
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.9.0 and will be removed in 10.0.0.',
+            E_USER_DEPRECATED
+        );
+    }
+
     public function getSystemAttributes($includeTypes = false)
     {
         $systemAttributes = [
