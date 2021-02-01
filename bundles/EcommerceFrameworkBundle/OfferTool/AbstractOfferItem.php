@@ -81,7 +81,7 @@ abstract class AbstractOfferItem extends Concrete
     abstract public function setOriginalTotalPrice(?string $originalTotalPrice);
 
     /**
-     * @return mixed
+     * @return string|null
      */
     abstract public function getFinalTotalPrice(): ?string;
 

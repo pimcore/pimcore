@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\Element\AbstractElement;
 
 /**
  * Abstract base class for order item pimcore objects
@@ -23,14 +24,14 @@ use Pimcore\Model\DataObject\Fieldcollection;
 abstract class AbstractOrderItem extends Concrete
 {
     /**
-     * @return CheckoutableInterface
+     * @return AbstractElement
      */
-    abstract public function getProduct(): ?\Pimcore\Model\Element\AbstractElement;
+    abstract public function getProduct(): ?AbstractElement;
 
     /**
-     * @param CheckoutableInterface $product
+     * @param AbstractElement $product
      */
-    abstract public function setProduct(?\Pimcore\Model\Element\AbstractElement $product);
+    abstract public function setProduct(?AbstractElement $product);
 
     /**
      * @return string|null
@@ -182,11 +183,15 @@ abstract class AbstractOrderItem extends Concrete
      */
     public function getOrder(): ?AbstractOrder
     {
-        $parent = $this;
-        while (!$parent instanceof AbstractOrder) {
-            $parent = $parent->getParent();
+        $possibleOrderObject = $this;
+        while ($possibleOrderObject && !$possibleOrderObject instanceof AbstractOrder) {
+            $possibleOrderObject = $possibleOrderObject->getParent();
         }
 
-        return $parent;
+        if($possibleOrderObject instanceof AbstractOrder) {
+            return $possibleOrderObject;
+        }
+
+        return null;
     }
 }

@@ -84,7 +84,7 @@ abstract class AbstractOrder extends Concrete
     abstract public function setTotalNetPrice(?string $totalPrice);
 
     /**
-     * @return array|null
+     * @return array
      */
     abstract public function getTaxInfo(): array;
 

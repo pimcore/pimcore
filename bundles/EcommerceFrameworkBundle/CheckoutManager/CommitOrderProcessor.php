@@ -274,13 +274,14 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
 
     protected function sendConfirmationMail(AbstractOrder $order)
     {
+        $customer = $order->getCustomer();
         $params = [];
         $params['order'] = $order;
-        $params['customer'] = $order->getCustomer();
+        $params['customer'] = $customer;
         $params['ordernumber'] = $order->getOrdernumber();
 
         $mail = new \Pimcore\Mail(['document' => $this->confirmationMail, 'params' => $params]);
-        if ($order->getCustomer()) {
+        if ($customer && method_exists($customer, 'getEmail')) {
             $mail->addTo($order->getCustomer()->getEmail());
             $mail->send();
         } else {
