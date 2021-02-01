@@ -396,7 +396,6 @@ class Agent implements OrderAgentInterface
 
         $currentPaymentInformation = new PaymentInfo();
         $currentPaymentInformation->setPaymentStart(new Carbon());
-        $currentPaymentInformation->setPaymentStart(new Carbon());
         $currentPaymentInformation->setPaymentState($paymentState);
         $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
 
