@@ -111,6 +111,24 @@ class Dao extends Model\Dao\AbstractDao
         return $languages;
     }
 
+    /**
+     * Returns boolean, if the domain table exists
+     *
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public function isAValidDomain(string $domain): bool
+    {
+        try {
+            $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function createOrUpdateTable()
     {
         $table = $this->getDatabaseTableName();

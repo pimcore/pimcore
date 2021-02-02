@@ -165,7 +165,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
         $this->initializedCatalogues[$cacheKey] = true;
 
-        if (!empty($domain)) {
+        if (Translation::isAValidDomain($domain)) {
             $catalogue = null;
 
             if (!$catalogue = Cache::load($cacheKey)) {
@@ -272,7 +272,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 if ($translated != $normalizedId) {
                     return $translated;
                 }
-            } elseif (!empty($domain)) {
+            } elseif (Translation::isAValidDomain($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
