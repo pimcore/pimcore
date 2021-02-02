@@ -591,21 +591,21 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return $this->delegate ? $this->delegate->getParameterTypeDeclaration() : null;
+        return null;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return $this->delegate ? $this->delegate->getReturnTypeDeclaration() : null;
+        return null;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocInputType() : null;
+        return $this->delegate ? $this->delegate->getPhpdocInputType() . "|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField" : null;
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
+        return $this->delegate ? $this->delegate->getPhpdocReturnType() . "|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField" : null;
     }
 }
