@@ -126,6 +126,8 @@ class PdfReactor8 extends Processor
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
+        include_once(__DIR__ . '/api/v' . Config::getWeb2PrintConfig()->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
+
         $params = [];
         $params['printermarks'] = isset($config->printermarks) && $config->printermarks === true;
         $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === true;
