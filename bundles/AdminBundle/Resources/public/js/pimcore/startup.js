@@ -164,11 +164,13 @@ Ext.onReady(function () {
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 
-        var jsonData = null;
-        try {
-            jsonData = Ext.decode(response.responseText);
-        } catch (e) {
+        var jsonData = response.responseJson;
+        if (!jsonData) {
+            try {
+                jsonData = Ext.decode(response.responseText);
+            } catch (e) {
 
+            }
         }
 
         var date = new Date();
