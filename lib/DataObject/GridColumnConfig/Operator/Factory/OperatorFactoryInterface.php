@@ -21,5 +21,10 @@ use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 
 interface OperatorFactoryInterface
 {
-    public function build(\stdClass $configElement, $context = null): OperatorInterface;
+    /**
+     * @param \stdClass $configElement
+     * @param null $context
+     * @return OperatorInterface|null
+     */
+    public function build(\stdClass $configElement, $context = null);
 }

@@ -80,14 +80,23 @@ class Service
                     $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
                 }
 
-                $config[] = $this->buildOperator($configElement->class, $configElement, $context);
+                $operator = $this->buildOperator($configElement->class, $configElement, $context);;
+                if ($operator) {
+                    $config[] = $operator;
+                }
             }
         }
 
         return $config;
     }
 
-    private function buildOperator(string $name, \stdClass $configElement, $context = null): OperatorInterface
+    /**
+     * @param string $name
+     * @param \stdClass $configElement
+     * @param null $context
+     * @return OperatorInterface|null
+     */
+    private function buildOperator(string $name, \stdClass $configElement, $context = null)
     {
         if (!$this->operatorFactories->has($name)) {
             throw new \InvalidArgumentException(sprintf('Operator "%s" is not supported', $name));
