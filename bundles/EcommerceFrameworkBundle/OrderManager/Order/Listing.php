@@ -314,12 +314,16 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
     /**
      * @param string $condition
-     * @param string $value
+     * @param mixed $value
      *
      * @return $this
      */
     public function addCondition($condition, $value = null)
     {
+        if (!is_array($value)) {
+            $value = [$value];
+        }
+
         $this->getQueryBuilder()->where($condition, $value);
 
         return $this;
