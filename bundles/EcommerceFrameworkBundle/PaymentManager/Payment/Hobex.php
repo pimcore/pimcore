@@ -35,7 +35,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
- * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-hobex" in Pimcore 10.
+ * @deprecated since v6.8.0 and will be moved to package "payment-provider-hobex" in Pimcore 10.
  */
 class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInterface
 {
