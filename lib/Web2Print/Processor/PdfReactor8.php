@@ -66,8 +66,7 @@ class PdfReactor8 extends Processor
     protected function getClient()
     {
         $web2PrintConfig = Config::getWeb2PrintConfig();
-
-        include_once(__DIR__ . '/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
+        $this->includeApi();
 
         $port = ((string)$web2PrintConfig->get('pdfreactorServerPort')) ? (string)$web2PrintConfig->get('pdfreactorServerPort') : '9423';
         $protocol = ((string)$web2PrintConfig->get('pdfreactorProtocol')) ? (string)$web2PrintConfig->get('pdfreactorProtocol') : 'http';
@@ -126,6 +125,8 @@ class PdfReactor8 extends Processor
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
+        $this->includeApi();
+
         $params = [];
         $params['printermarks'] = isset($config->printermarks) && $config->printermarks === true;
         $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === true;
@@ -170,7 +171,7 @@ class PdfReactor8 extends Processor
 
     public function getProcessingOptions()
     {
-        include_once(__DIR__ . '/api/v' . Config::getWeb2PrintConfig()->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
+        $this->includeApi();
 
         $options = [];
 
@@ -225,5 +226,10 @@ class PdfReactor8 extends Processor
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
 
         return (array)$event->getArguments()['options'];
+    }
+
+    protected function includeApi()
+    {
+        include_once(__DIR__ . '/api/v' . Config::getWeb2PrintConfig()->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
     }
 }
