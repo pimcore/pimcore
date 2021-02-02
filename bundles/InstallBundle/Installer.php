@@ -34,6 +34,7 @@ use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -586,7 +587,11 @@ class Installer
 
         $filesystem->rename($cacheDir, $oldCacheDir);
         $filesystem->mkdir($cacheDir);
-        $filesystem->remove($oldCacheDir);
+        try {
+            $filesystem->remove($oldCacheDir);
+        } catch (IOException $e) {
+                $this->logger->error($e->getMessage());
+        }
     }
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
