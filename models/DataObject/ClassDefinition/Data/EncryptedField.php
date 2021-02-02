@@ -601,11 +601,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     public function getPhpdocInputType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocInputType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
+        return $this->delegate ? $this->delegate->getPhpdocInputType() . "|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField" : null;
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
+        return $this->delegate ? $this->delegate->getPhpdocReturnType() . "|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField" : null;
     }
 }
