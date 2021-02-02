@@ -392,7 +392,7 @@ class Model extends AbstractDefinitionHelper
             $rootPanel->addChild($panel);
 
             $calculatedValue = $this->createDataChild('calculatedValue');
-            $calculatedValue->setCalculatorClass("@test.calculatorservice");
+            $calculatedValue->setCalculatorClass('@test.calculatorservice');
             $panel->addChild($calculatedValue);
 
             $panel->addChild($this->createDataChild('consent'));
@@ -408,7 +408,7 @@ class Model extends AbstractDefinitionHelper
             /** @var ClassDefinition\Data\EncryptedField $encryptedField */
             $encryptedField = $this->createDataChild('encryptedField');
 
-            $encryptedField->setDelegateDatatype("input");
+            $encryptedField->setDelegateDatatype('input');
             $panel->addChild($encryptedField);
 
             $panel->addChild($this->createDataChild('externalImage'));
@@ -1029,20 +1029,22 @@ class Model extends AbstractDefinitionHelper
         $this->setupObjectbrick_UnittestBrick();
     }
 
-    private function setupUnit($abbr) {
+    private function setupUnit($abbr)
+    {
         $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
-        if (!$unit ) {
+        if (!$unit) {
             $unit = new DataObject\QuantityValue\Unit();
             $unit->setAbbreviation($abbr);
             $unit->save();
         }
     }
 
-    public function setupQuantityValueUnits() {
-        $this->setupUnit("mm");
-        $this->setupUnit("cm");
-        $this->setupUnit("dm");
-        $this->setupUnit("m");
-        $this->setupUnit("km");
+    public function setupQuantityValueUnits()
+    {
+        $this->setupUnit('mm');
+        $this->setupUnit('cm');
+        $this->setupUnit('dm');
+        $this->setupUnit('m');
+        $this->setupUnit('km');
     }
 }

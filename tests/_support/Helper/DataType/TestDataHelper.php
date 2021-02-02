@@ -6,7 +6,6 @@ use Codeception\Module;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
-use Pimcore\DataObject\Consent\Service;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -177,7 +176,6 @@ class TestDataHelper extends Module
             $value = $object->$getter();
         }
 
-
         $expected = $language . 'content' . $seed;
 
         $this->assertIsEqual($object, $field, $expected, $value);
@@ -198,7 +196,7 @@ class TestDataHelper extends Module
         $this->assertInstanceOf(DataObject\Data\ExternalImage::class, $container);
 
         $value = $container->getUrl();
-        $expected = "someUrl" . $seed;
+        $expected = 'someUrl' . $seed;
 
         $this->assertEquals($expected, $value);
     }
@@ -296,7 +294,7 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
-        $expected = $seed % 2 === 0 ? "male" : "female";
+        $expected = $seed % 2 === 0 ? 'male' : 'female';
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
@@ -307,7 +305,7 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function assertGeobounds(Concrete $object, $field,  $seed = 1)
+    public function assertGeobounds(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
 
@@ -444,7 +442,7 @@ class TestDataHelper extends Module
             'name' => 'hotspot_' . (is_null($idx) ? 1 : $idx) . '_' . $seed,
             'width' => 10 + $idx,
             'height' => 20 + $idx,
-            'top' => 30 +  $idx,
+            'top' => 30 + $idx,
             'left' => 40 + $idx,
         ];
         $result[] = $hotspot1;
@@ -568,12 +566,12 @@ class TestDataHelper extends Module
         $this->assertNull($items[1]);
 
         $item0 = $items[0];
-        $this->assertEquals($item0->getImage()->getFilename(), "gal0.jpg");
+        $this->assertEquals($item0->getImage()->getFilename(), 'gal0.jpg');
 
         $item2 = $items[2];
-        $this->assertEquals($item2->getImage()->getFilename(), "gal2.jpg");
+        $this->assertEquals($item2->getImage()->getFilename(), 'gal2.jpg');
         $hotspots = $item2->getHotspots();
-        $this->assertEquals("hotspot_2_" . $seed, $hotspots[0]["name"]);
+        $this->assertEquals('hotspot_2_' . $seed, $hotspots[0]['name']);
     }
 
     /**
@@ -592,7 +590,7 @@ class TestDataHelper extends Module
 
         $this->assertInstanceOf(DataObject\Data\InputQuantityValue::class, $qv);
         $this->assertEquals($expectedAbbr, $actualAbbreviation);
-        $this->assertEquals("abc" . $seed, $qv->getValue());
+        $this->assertEquals('abc' . $seed, $qv->getValue());
     }
 
     /**
@@ -716,8 +714,9 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function assertNewsletterActive(Concrete $object, $field, $seed = 1) {
-        $this->assertCheckbox($object,$field, $seed);
+    public function assertNewsletterActive(Concrete $object, $field, $seed = 1)
+    {
+        $this->assertCheckbox($object, $field, $seed);
     }
 
     /**
@@ -740,8 +739,9 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function assertNewsletterConfirmed(Concrete $object, $field, $seed = 1) {
-        $this->assertCheckbox($object,$field, $seed);
+    public function assertNewsletterConfirmed(Concrete $object, $field, $seed = 1)
+    {
+        $this->assertCheckbox($object, $field, $seed);
     }
 
     /**
@@ -901,10 +901,10 @@ class TestDataHelper extends Module
         $unencryptedValue = 'sEcret$%!' . $seed;
         $this->assertNotNull($value, 'Password getter is expected to return non null value');
 
-        $this->assertNotEquals($unencryptedValue, $value, "Value not encrypted");
+        $this->assertNotEquals($unencryptedValue, $value, 'Value not encrypted');
 
         $info = password_get_info($value);
-        $this->assertNotNull($info['algo'], "Not properly encrypted");
+        $this->assertNotNull($info['algo'], 'Not properly encrypted');
     }
 
     /**
@@ -945,7 +945,6 @@ class TestDataHelper extends Module
         $this->assertEquals($expectedBase + 1, $value->getG());
         $this->assertEquals($expectedBase + 2, $value->getB());
         $this->assertEquals($expectedBase + 3, $value->getA());
-
 
         $expectedValue = new DataObject\Data\RgbaColor($expectedBase, $expectedBase + 1, $expectedBase + 2, $expectedBase + 3);
 
@@ -1163,12 +1162,12 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $this->assertInstanceOf(DataObject\Data\Video::class, $value);
 
-        $this->assertEquals("title" . $seed, $value->getTitle());
-        $this->assertEquals("description" . $seed, $value->getDescription());
-        $this->assertEquals("asset", $value->getType());
+        $this->assertEquals('title' . $seed, $value->getTitle());
+        $this->assertEquals('description' . $seed, $value->getDescription());
+        $this->assertEquals('asset', $value->getType());
 
-        $this->assertEquals($returnParams["poster"]->getId(), $value->getPoster()->getId());
-        $this->assertEquals($returnParams["video"]->getId(), $value->getData()->getId());
+        $this->assertEquals($returnParams['poster']->getId(), $value->getPoster()->getId());
+        $this->assertEquals($returnParams['video']->getId(), $value->getData()->getId());
     }
 
     /**
@@ -1207,9 +1206,8 @@ class TestDataHelper extends Module
 
         try {
             $object->$setter(1.234);
-            $this->fail("expected an instance of Geobounds");
+            $this->fail('expected an instance of Geobounds');
         } catch (\TypeError $e) {
-
         }
     }
 
@@ -1218,14 +1216,14 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function checkValidityGeopoint(Concrete $object, $field, $seed = 1) {
+    public function checkValidityGeopoint(Concrete $object, $field, $seed = 1)
+    {
         $setter = 'set' . ucfirst($field);
 
         try {
             $object->$setter(1.234);
-            $this->fail("expected an instance of Geopoint");
+            $this->fail('expected an instance of Geopoint');
         } catch (\TypeError $e) {
-
         }
     }
 
@@ -1234,7 +1232,8 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function checkValidityGeopolyline(Concrete $object, $field, $seed = 1) {
+    public function checkValidityGeopolyline(Concrete $object, $field, $seed = 1)
+    {
         $this->checkValidityGeopolygon($object, $field, $seed);
     }
 
@@ -1248,10 +1247,10 @@ class TestDataHelper extends Module
         $setter = 'set' . ucfirst($field);
 
         try {
-            $invalidValue = ["1234", null];
+            $invalidValue = ['1234', null];
             $object->$setter($invalidValue);
             $object->save();
-            $this->fail("expected a ValidationException");
+            $this->fail('expected a ValidationException');
         } catch (\Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
@@ -1267,10 +1266,10 @@ class TestDataHelper extends Module
         $setter = 'set' . ucfirst($field);
 
         try {
-            $invalidValue = new DataObject\Data\QuantityValue("abc");
+            $invalidValue = new DataObject\Data\QuantityValue('abc');
             $object->$setter($invalidValue);
             $object->save();
-            $this->fail("expected a ValidationException");
+            $this->fail('expected a ValidationException');
         } catch (\Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
@@ -1281,23 +1280,23 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function checkValidityRgbaColor(Concrete $object, $field, $seed = 1) {
+    public function checkValidityRgbaColor(Concrete $object, $field, $seed = 1)
+    {
         $setter = 'set' . ucfirst($field);
 
         try {
             $invalidValue = new DataObject\Data\RgbaColor(1000, 2000, -1, 0);
             $object->$setter($invalidValue);
             $object->save();
-            $this->fail("expected a ValidationException");
+            $this->fail('expected a ValidationException');
         } catch (\Exception $e) {
             $this->assertInstanceOf(ValidationException::class, $e);
         }
 
         try {
-            $object->$setter("#FF0000");
-            $this->fail("expected an instance of RgbaColor");
+            $object->$setter('#FF0000');
+            $this->fail('expected an instance of RgbaColor');
         } catch (\TypeError $e) {
-
         }
     }
 
@@ -1415,7 +1414,7 @@ class TestDataHelper extends Module
     public function fillExternalImage(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-        $value = new DataObject\Data\ExternalImage("someUrl" . $seed);
+        $value = new DataObject\Data\ExternalImage('someUrl' . $seed);
         $object->$setter($value);
     }
 
@@ -1475,7 +1474,7 @@ class TestDataHelper extends Module
     public function fillGender(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-        $value = $seed % 2 == 0 ? "male" : "female";
+        $value = $seed % 2 == 0 ? 'male' : 'female';
         $object->$setter($value);
     }
 
@@ -1584,7 +1583,7 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
 
-        $filenames = ["gal0.jpg", null, "gal2.jpg"];
+        $filenames = ['gal0.jpg', null, 'gal2.jpg'];
         $hotspotImages = [];
 
         $idx = 0;
@@ -1607,7 +1606,6 @@ class TestDataHelper extends Module
             $idx++;
         }
 
-
         $gallery = new DataObject\Data\ImageGallery($hotspotImages);
         $object->$setter($gallery);
     }
@@ -1624,7 +1622,7 @@ class TestDataHelper extends Module
         $abbr = $this->mapUnit($seed);
         $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
         $this->assertNotNull($unit);
-        $qv = new DataObject\Data\InputQuantityValue("abc" . $seed, $unit);
+        $qv = new DataObject\Data\InputQuantityValue('abc' . $seed, $unit);
 
         $object->$setter($qv);
     }
@@ -1734,7 +1732,8 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function fillNewsletterActive(Concrete $object, $field, $seed = 1) {
+    public function fillNewsletterActive(Concrete $object, $field, $seed = 1)
+    {
         $this->fillCheckbox($object, $field, $seed);
     }
 
@@ -1754,7 +1753,8 @@ class TestDataHelper extends Module
      * @param string $field
      * @param int $seed
      */
-    public function fillNewsletterConfirmed(Concrete $object, $field, $seed = 1) {
+    public function fillNewsletterConfirmed(Concrete $object, $field, $seed = 1)
+    {
         $this->fillCheckbox($object, $field, $seed);
     }
 
@@ -1832,9 +1832,11 @@ class TestDataHelper extends Module
         $object->$setter($qv);
     }
 
-    public function mapUnit($seed) {
-        $map = ["mm", "cm" , "dm", "m", "km"];
+    public function mapUnit($seed)
+    {
+        $map = ['mm', 'cm', 'dm', 'm', 'km'];
         $seed = $seed % 5;
+
         return $map[$seed];
     }
 
@@ -2003,15 +2005,15 @@ class TestDataHelper extends Module
 
         $this->assertNotNull($poster);
 
-        $returnData["video"] = $video;
-        $returnData["poster"] = $poster;
+        $returnData['video'] = $video;
+        $returnData['poster'] = $poster;
 
         $value = new DataObject\Data\Video();
-        $value->setType("asset");
+        $value->setType('asset');
         $value->setData($video);
         $value->setPoster($poster);
-        $value->setTitle("title" . $seed);
-        $value->setDescription("description" . $seed);
+        $value->setTitle('title' . $seed);
+        $value->setDescription('description' . $seed);
 
         $object->$setter($value);
     }

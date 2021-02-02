@@ -17,7 +17,7 @@ abstract class ModelTestCase extends TestCase
     {
         parent::setUp();
 
-        \Pimcore::getContainer()->set("test.calculatorservice", new Calculator());
+        \Pimcore::getContainer()->set('test.calculatorservice', new Calculator());
 
         if ($this->needsDb()) {
             $this->setUpTestClasses();

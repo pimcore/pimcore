@@ -6,7 +6,6 @@ use Pimcore\Cache;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\Consent;
 use Pimcore\Model\DataObject\Data\UrlSlug;
@@ -65,7 +64,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             $fields = [
                 [
                     'method' => 'fill' . ucfirst($fields),
-                    'field' => $fields
+                    'field' => $fields,
                 ],
             ];
         }
@@ -92,7 +91,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
                 $methodArguments[] = $aa;
             }
 
-            $methodArguments[]= &$returnData;
+            $methodArguments[] = &$returnData;
 
             call_user_func_array([$this->testDataHelper, $method], $methodArguments);
         }
@@ -114,15 +113,15 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
-
     /**
      * @param array $fields
      * @param $params
+     *
      * @return Unittest
      */
     abstract protected function createTestObject($fields = [], &$params = []);
 
-    public abstract function refreshObject();
+    abstract public function refreshObject();
 
     public function testBricks()
     {
@@ -148,29 +147,28 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         // create a random number and hand it over to the calculator via the runtime and then make sure it will be returned
         $value = uniqid();
-        Cache\Runtime::set("modeltest.testCalculatedValue.value", $value);
+        Cache\Runtime::set('modeltest.testCalculatedValue.value', $value);
 
         $valueFromCalculator = $this->testObject->getCalculatedValue();
-        $this->assertEquals($value, $valueFromCalculator, "calculated value does not match");
+        $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
 
         // now call the setter and retry, shouldn't have any effect
         $newValue = uniqid();
         $this->testObject->setCalculatedValue($newValue);
 
         $valueFromCalculator = $this->testObject->getCalculatedValue();
-        $this->assertEquals($value, $valueFromCalculator, "calculated value does not match");
+        $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
 
         //check if it got written to the query table
 
         $this->testObject->save();
 
         $db = Db::get();
-        $select = "SELECT calculatedValue from object_query_" . $this->testObject->getClassId()
-                        . " WHERE oo_id = " . $this->testObject->getId();
+        $select = 'SELECT calculatedValue from object_query_' . $this->testObject->getClassId()
+                        . ' WHERE oo_id = ' . $this->testObject->getId();
         $row = $db->fetchRow($select);
 
-        $this->assertEquals($value, $row['calculatedValue'], "value should have been written to query table");
-
+        $this->assertEquals($value, $row['calculatedValue'], 'value should have been written to query table');
     }
 
     public function testCheckbox()
@@ -186,31 +184,30 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject();
 
         $service = \Pimcore::getContainer()->get(Service::class);
-        $service->giveConsent($this->testObject, "consent", "some consent content");
+        $service->giveConsent($this->testObject, 'consent', 'some consent content');
 
         $this->refreshObject();
 
         /** @var Consent $consent */
         $consent = $this->testObject->getConsent();
 
-        $this->assertNotNull($consent, "Consent must not be null");
-        $this->assertTrue($consent->getConsent(), "Consent given but still false");
+        $this->assertNotNull($consent, 'Consent must not be null');
+        $this->assertTrue($consent->getConsent(), 'Consent given but still false');
 
         /** @var Note $consentNote */
         $consentNote = $consent->getNote();
-        $this->assertEquals($consentNote->getDescription(), "some consent content");
+        $this->assertEquals($consentNote->getDescription(), 'some consent content');
         $expectedValue = new Consent(true);
-        $this->testDataHelper->assertIsEqual($this->testObject, "consent", $expectedValue, $consent);
+        $this->testDataHelper->assertIsEqual($this->testObject, 'consent', $expectedValue, $consent);
 
         // now revoke the consent
-        $service->revokeConsent($this->testObject, "consent");
+        $service->revokeConsent($this->testObject, 'consent');
 
         $this->refreshObject();
 
         $consent = $this->testObject->getConsent();
-        $this->assertNotNull($consent, "Consent must not be null");
-        $this->assertFalse($consent->getConsent(), "Consent given but still false");
-
+        $this->assertNotNull($consent, 'Consent must not be null');
+        $this->assertFalse($consent->getConsent(), 'Consent given but still false');
     }
 
     public function testCountry()
@@ -272,11 +269,11 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertEncrypted($this->testObject, 'encryptedField', $this->seed);
 
         $db = Db::get();
-        $result = $db->fetchOne("select encryptedField from object_store_" . $this->testObject->getClassId() . " where oo_id=" .  $this->testObject->getId());
+        $result = $db->fetchOne('select encryptedField from object_store_' . $this->testObject->getClassId() . ' where oo_id=' .  $this->testObject->getId());
         $this->assertNotNull($result);
 
-        $this->assertNotTrue($result ===  "content");
-        $this->assertFalse(strpos($result, "content"));
+        $this->assertNotTrue($result === 'content');
+        $this->assertFalse(strpos($result, 'content'));
     }
 
     public function testExternalImage()
@@ -822,5 +819,4 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
-
 }
