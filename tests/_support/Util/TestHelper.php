@@ -671,7 +671,7 @@ class TestHelper
     public static function createVideoAsset($keyPrefix = '', $data = null, $save = true)
     {
         if (!$data) {
-            $path = static::resolveFilePath('assets/video/example.mp4');
+            $path = static::resolveFilePath('assets/video/small.mp4');
             if (!file_exists($path)) {
                 throw new \RuntimeException(sprintf('Path %s was not found', $path));
             }
