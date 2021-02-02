@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Translation;
 
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\Translation\Listing\Dao getDao()
@@ -52,6 +53,10 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setDomain(string $domain): void
     {
+        if (!Model\Translation::isAValidDomain($domain)) {
+            throw new NotFoundException(sprintf('Translation domain table "translations_%s" does not exist',$domain));
+        }
+
         $this->domain = $domain;
     }
 

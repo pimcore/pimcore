@@ -330,6 +330,17 @@ class Translation extends AbstractModel
         return null;
     }
 
+    /**
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public static function isAValidDomain(string $domain): bool
+    {
+        $translation = new static();
+        return $translation->getDao()->isAValidDomain($domain);
+    }
+
     public function save()
     {
         \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
