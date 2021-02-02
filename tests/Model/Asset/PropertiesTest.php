@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Model\DataType;
+namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
