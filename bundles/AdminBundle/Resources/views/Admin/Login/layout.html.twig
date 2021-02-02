@@ -15,7 +15,10 @@
         {% endfor %}
     </head>
     <body class="pimcore_version_6 {{ config['branding']['login_screen_invert_colors'] ? 'inverted' : '' }}">
-        {% set backgroundImageUrl = config['branding']['login_screen_custom_image'] %}
+        {% set backgroundImageUrl = "" %}
+        {% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ config['branding']['login_screen_custom_image']) %}
+            {% set backgroundImageUrl = config['branding']['login_screen_custom_image'] %}
+        {% endif %}
         {% if backgroundImageUrl is empty %}
             {% set defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'] %}
             {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' ~ random(defaultImages) %}
