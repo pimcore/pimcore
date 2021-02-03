@@ -432,12 +432,11 @@ class Staticroute extends AbstractModel
 
     /**
      * @param array $urlOptions
-     * @param bool $reset
      * @param bool $encode
      *
      * @return mixed|string
      */
-    public function assemble(array $urlOptions = [], $reset = false, $encode = true)
+    public function assemble(array $urlOptions = [], $encode = true)
     {
         // get request parameters
         $blockedRequestParams = ['controller', 'document'];
@@ -451,32 +450,26 @@ class Staticroute extends AbstractModel
             }
         }
 
-        if ($reset) {
-            $requestParameters = [];
-        } else {
-            $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
+        $requestParameters = [];
 
-            // merge route params from static routes here
-            $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-            if (null !== $request && $request->attributes->get('_route_params')) {
-                $requestParameters = array_merge($requestParameters, $request->attributes->get('_route_params'));
-            }
+        // merge route params from static routes here
+        $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+        if (null !== $request && $request->attributes->get('_route_params')) {
+            $requestParameters = array_merge($requestParameters, $request->attributes->get('_route_params'));
+        }
 
-            // remove blocked parameters from request
-            foreach ($blockedRequestParams as $key) {
-                if (array_key_exists($key, $requestParameters)) {
-                    unset($requestParameters[$key]);
-                }
+        // remove blocked parameters from request
+        foreach ($blockedRequestParams as $key) {
+            if (array_key_exists($key, $requestParameters)) {
+                unset($requestParameters[$key]);
             }
         }
 
         $defaultValues = $this->getDefaultsArray();
 
         // apply values (controller, ... ) from previous match if applicable (only when )
-        if ($reset) {
-            if (self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName())) {
-                $defaultValues = array_merge($defaultValues, self::$_currentRoute->_values);
-            }
+        if (self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName())) {
+            $defaultValues = array_merge($defaultValues, self::$_currentRoute->_values);
         }
 
         // merge with defaults
@@ -504,8 +497,7 @@ class Staticroute extends AbstractModel
                 $tmpReversePattern = str_replace('%' . $key, '---', $tmpReversePattern);
             } else {
                 // only append the get parameters if there are defined in $urlOptions
-                // or if they are defined in $_GET an $reset is false
-                if (array_key_exists($key, $urlOptions) || (!$reset && array_key_exists($key, $_GET))) {
+                if (array_key_exists($key, $urlOptions)) {
                     $parametersGet[$key] = $param;
                 }
             }
@@ -551,7 +543,6 @@ class Staticroute extends AbstractModel
         $event = new GenericEvent($this, [
             'frontendPath' => $url,
             'params' => $urlParams,
-            'reset' => $reset,
             'encode' => $encode,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);
