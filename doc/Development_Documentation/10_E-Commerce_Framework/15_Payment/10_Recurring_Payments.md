@@ -1,20 +1,12 @@
 # Recurring Payment
   
-Pimcore currently supports recurring payment for the payment providers Wirecard Checkout Page (_recurPayment_) and Datatrans (_Alias_).
+Pimcore currently supports recurring payment for the payment provider Datatrans (_Alias_).
 It is performed via backend operations (server-to-server) which are used to create a new order and a new payment attempt by reusing the payment information available in a previous order, the so-called source order.
 
 Recurring payment can for example be used to implement sequential payments like hiring or leasing agreements, or also to perform a one time payment for an authorized user which already committed at least one previous order successfully. 
 
 ### Additional Information
-- [Wirecard Documentation](https://guides.wirecard.at/back-end_operations:transaction-based:recurpayment)
 - [Datatrans Documentation](https://www.datatrans.ch/alias-tokenization/using-the-alias)
-
-
-### Wirecard: Requirements, Common Pitfalls & Additional Information
-- For backend operations like *recurPayment* a toolkit-password is required on top of the standard Wirecard credentials. 
-- Source orders are valid for 400 days.
-- There are payment method specific specifications, like for example passing a parameter `transactionIdentifier` with the value `INITIAL` for source orders performed via *SEPA Direct Debit*.
-- Every credit card based order payment response contains a parameter `anonymousPan`, which consists of the last 4 digits of the credit card number. This is useful, if you you want to let the user choose which card he wants to use for the recurring payment. For some credit cards also `maskedPan` and  `expiry` are available. The `maskedPan` includes a masked string of the whole creditcard-number. The expiry is useful to validate if the source order can still be used for a _recurPayment_ operation.
 
 ## Best Practice
 ### Bad Way

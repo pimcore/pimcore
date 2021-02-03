@@ -22,8 +22,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Event\Ecommerce\CheckoutManagerEvents;
@@ -346,12 +346,12 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * Verifies if the payment provider is supported for recurring payment
      *
-     * @param PaymentInterface $provider
+     * @param RecurringPaymentInterface $provider
      * @param AbstractOrder $sourceOrder
      *
      * @throws \Exception
      */
-    protected function verifyRecurringPayment(PaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
+    protected function verifyRecurringPayment(RecurringPaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
     {
 
         /* @var OrderManager $orderManager */
@@ -383,7 +383,7 @@ class CheckoutManager implements CheckoutManagerInterface
         /* @var Agent $sourceOrderAgent */
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
 
-        /* @var QPay $paymentProvider */
+        /* @var RecurringPaymentInterface $paymentProvider */
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
         $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 

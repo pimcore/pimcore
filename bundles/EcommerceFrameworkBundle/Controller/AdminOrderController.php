@@ -55,6 +55,8 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      */
     protected $orderManager;
 
+    protected $paymentManager;
+
     /**
      * @inheritdoc
      */
@@ -73,6 +75,8 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
+        $this->paymentManager = Factory::getInstance()->getPaymentManager();
+
     }
 
     /**
@@ -349,6 +353,8 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             ];
         }
 
+        $paymentProviders = $this->paymentManager->getProviderTypes();
+
         return $this->render('@PimcoreEcommerceFramework/admin_order/detail.html.twig', [
             'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
             'orderAgent' => $orderAgent,
@@ -359,6 +365,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig,
             'formatter' => $formatter,
             'locale' => $localeService,
+            'paymentProviders' => $paymentProviders
         ]);
     }
 

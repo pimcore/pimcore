@@ -27,6 +27,8 @@
     - for Geopolyline and Geopolygon invalid data doesn't get serialized 1:1 anymore
     - for Geobounds and Geopoint invalid data doesn't get dropped silently anymore
 - Calling `$imageAsset->getThumbnail('non-existing-thumbnail-definition)` with a non-existing thumbnail definition will now throw an exception. Same goes for video assets and video image thumbnails.
+- Removed grid column operator `ObjectBrickGetter` since it is obsolete
+- Grid operator `AnyGetter` available only for admin users from now on
 
 - [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
 - [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 

@@ -774,16 +774,21 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $esClient = $this->getElasticSearchClient();
 
         Logger::info('Index-Actions - creating new Index. Name: ' . $indexName);
+
+        $configuredSettings = $this->tenantConfig->getIndexSettings();
+        $synonymSettings = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
+        if (isset($synonymSettings['analysis'])) {
+            $configuredSettings['analysis']['filter'] = array_replace_recursive($configuredSettings['analysis']['filter'], $synonymSettings['analysis']['filter']);
+        }
+
         $result = $esClient->indices()->create([
             'index' => $indexName,
-            'body' => ['settings' => $this->tenantConfig->getIndexSettings()],
+            'body' => ['settings' => $configuredSettings],
         ]);
 
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
-
-        $this->updateSynonyms($indexName, true, true);
     }
 
     /**

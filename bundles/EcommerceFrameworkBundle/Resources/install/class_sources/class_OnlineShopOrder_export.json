@@ -1189,15 +1189,7 @@
                             },
                             {
                                 "fieldtype": "objectbricks",
-                                "allowedTypes": [
-                                    "PaymentProviderQpay",
-                                    "PaymentProviderDatatrans",
-                                    "PaymentProviderPayPal",
-                                    "PaymentProviderMpay24",
-                                    "PaymentProviderOGone",
-                                    "PaymentProviderWirecardSeamless",
-                                    "PaymentProviderHeidelPay"
-                                ],
+                                "allowedTypes": [],
                                 "maxItems": "",
                                 "border": false,
                                 "name": "paymentProvider",
