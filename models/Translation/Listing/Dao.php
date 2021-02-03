@@ -78,7 +78,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $translations = [];
 
             $queryBuilder = $this->getQueryBuilder(['*']);
-            $queryBuilder->setMaxResults(NULL); //retrieve all results
+            $queryBuilder->setMaxResults(null); //retrieve all results
             $translationsData = $this->db->fetchAll((string) $queryBuilder);
 
             foreach ($translationsData as $t) {

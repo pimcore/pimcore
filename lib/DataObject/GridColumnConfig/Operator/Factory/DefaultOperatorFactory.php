@@ -35,6 +35,7 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
     /**
      * @param \stdClass $configElement
      * @param null $context
+     *
      * @return OperatorInterface|null
      */
     public function build(\stdClass $configElement, $context = null)
@@ -42,7 +43,8 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
         if (class_exists($this->className)) {
             return new $this->className($configElement, $context);
         } else {
-            Logger::warn("operator " . $this->className . " does not exist");
+            Logger::warn('operator ' . $this->className . ' does not exist');
+
             return null;
         }
     }
