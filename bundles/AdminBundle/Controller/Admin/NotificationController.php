@@ -102,7 +102,16 @@ class NotificationController extends AdminController
         $this->checkPermission('notifications');
 
         $id = (int) $request->get('id', 0);
-        $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
+        try {
+            $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
+        } catch(\UnexpectedValueException $e) {
+            return $this->adminJson(
+                [
+                    'success' => false
+                ]
+            );
+        }
+
         $data = $service->format($notification);
 
         return $this->adminJson([
