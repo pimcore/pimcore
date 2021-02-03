@@ -36,7 +36,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         foreach ($taxes as $name => $tax) {
             $entry = new TaxEntryFieldcollection();
             $entry->setPercent($tax);
-            $entry->setName($name);
+            $entry->setName((string)$name);
             $taxEntries->add($entry);
         }
 
