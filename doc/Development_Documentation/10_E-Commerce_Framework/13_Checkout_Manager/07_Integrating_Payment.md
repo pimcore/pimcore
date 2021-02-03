@@ -111,7 +111,7 @@ A server side handling could look as follows:
         }
 
         $commitOrderProcessor = $factory->getCommitOrderProcessor();
-        $paymentProvider = $factory->getPaymentManager()->getProvider("qpay");
+        $paymentProvider = $factory->getPaymentManager()->getProvider("unzer");
 
         if($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($params, $paymentProvider)) {
             Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());

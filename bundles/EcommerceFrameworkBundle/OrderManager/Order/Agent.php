@@ -27,6 +27,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderAgent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Event\Ecommerce\OrderAgentEvents;
 use Pimcore\Event\Model\Ecommerce\OrderAgentEvent;
@@ -350,7 +351,7 @@ class Agent implements OrderAgentInterface
         }
 
         /* recurring payment data */
-        if ($sourceOrder) {
+        if ($sourceOrder && $paymentProvider instanceof RecurringPaymentInterface) {
             $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
         }
 

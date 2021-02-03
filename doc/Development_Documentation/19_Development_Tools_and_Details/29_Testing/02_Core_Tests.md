@@ -133,7 +133,7 @@ Add dependencies:
 composer require "phpstan/phpstan:^0.12" "phpstan/phpstan-symfony:^0.12"
 
 # required if you want to do a full analysis
-composer require "heidelpay/heidelpay-php:^1.2.5.1" "klarna/checkout:^3.0.0" "elasticsearch/elasticsearch:2.0.0" "paypal/paypal-checkout-sdk:^1" "mpay24/mpay24-php:^4.2" "composer/composer:*"
+composer require "elasticsearch/elasticsearch:2.0.0" "composer/composer:*"
 ```
 
 Run

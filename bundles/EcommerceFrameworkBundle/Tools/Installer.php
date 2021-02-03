@@ -170,7 +170,6 @@ class Installer extends AbstractInstaller
     {
         $this->installFieldCollections();
         $this->installClasses();
-        $this->installObjectBricks();
         $this->installTables();
         $this->installTranslations();
         $this->installPermissions();
@@ -303,38 +302,6 @@ class Installer extends AbstractInstaller
             if (!$success) {
                 throw new InstallationException(sprintf(
                     'Failed to create field collection "%s"',
-                    $key
-                ));
-            }
-        }
-    }
-
-    private function installObjectBricks()
-    {
-        $bricks = $this->findInstallFiles(
-            $this->installSourcesPath . '/objectbrick_sources',
-            '/^objectbrick_(.*)_export\.json$/'
-        );
-
-        foreach ($bricks as $key => $path) {
-            if ($brick = Objectbrick\Definition::getByKey($key)) {
-                $this->output->write(sprintf(
-                    '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
-                    $key
-                ));
-
-                continue;
-            } else {
-                $brick = new Objectbrick\Definition();
-                $brick->setKey($key);
-            }
-
-            $data = file_get_contents($path);
-            $success = Service::importObjectBrickFromJson($brick, $data);
-
-            if (!$success) {
-                throw new InstallationException(sprintf(
-                    'Failed to create object brick "%s"',
                     $key
                 ));
             }
