@@ -332,21 +332,21 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\' . IndexFieldSelection::class;
+        return '?\\' . ObjectData\IndexFieldSelection::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\' . IndexFieldSelection::class;
+        return '?\\' . ObjectData\IndexFieldSelection::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . IndexFieldSelection::class . '|null';
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . IndexFieldSelection::class . '|null';
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 }

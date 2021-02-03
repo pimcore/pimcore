@@ -1,18 +1,17 @@
 {
     "id": null,
     "description": null,
+    "modificationDate": null,
     "parentClass": null,
-    "listingParentClass": null,
-    "useTraits": null,
-    "listingUseTraits": null,
+    "implementsInterfaces": null,
+    "listingParentClass": "",
+    "useTraits": "",
+    "listingUseTraits": "",
     "allowInherit": false,
     "allowVariants": false,
     "showVariants": false,
-    "generateTypeDeclarations": true,
-    "implementsInterfaces": null,
     "layoutDefinitions": {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": null,
         "border": false,
         "name": null,
@@ -45,7 +44,6 @@
                 "childs": [
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 100,
                         "layout": null,
                         "border": false,
                         "name": "MyLayout",
@@ -62,7 +60,6 @@
                         "childs": [
                             {
                                 "fieldtype": "classificationstore",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Classificationstore",
                                 "childs": [],
                                 "name": "csstore",
                                 "region": null,
@@ -95,20 +92,27 @@
                             }
                         ],
                         "locked": false,
-                        "icon": null
+                        "icon": null,
+                        "labelWidth": 100,
+                        "labelAlign": "left"
                     }
                 ],
                 "locked": false
             }
         ],
         "locked": false,
-        "icon": null
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
     },
     "icon": null,
     "previewUrl": null,
     "group": null,
+    "showAppLoggerTab": false,
     "linkGeneratorReference": null,
-    "compositeIndices": null,
+    "compositeIndices": [],
+    "generateTypeDeclarations": true,
+    "showFieldLookup": false,
     "propertyVisibility": {
         "grid": {
             "id": true,
@@ -124,5 +128,6 @@
             "modificationDate": true,
             "creationDate": true
         }
-    }
+    },
+    "enableGridLocking": false
 }

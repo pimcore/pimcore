@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Fil
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
 
 class OrderDateTime implements OrderListFilterInterface
 {
@@ -43,24 +42,14 @@ class OrderDateTime implements OrderListFilterInterface
     public function apply(OrderListInterface $orderList)
     {
         // init
-        $queryBuilder = $orderList->getQueryBuilderCompatibility();
+        $queryBuilder = $orderList->getQueryBuilder();
 
-        if ($queryBuilder instanceof QueryBuilder) {
-            if ($this->getFrom()) {
-                $queryBuilder->where($this->getColumn() . ' >= ?', $this->getFrom()->getTimestamp());
-            }
+        if ($this->getFrom()) {
+            $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter(':from_date', $this->getFrom()->getTimestamp());
+        }
 
-            if ($this->getTill()) {
-                $queryBuilder->where($this->getColumn() . ' <= ?', $this->getTill()->getTimestamp());
-            }
-        } else {
-            if ($this->getFrom()) {
-                $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter(':from_date', $this->getFrom()->getTimestamp());
-            }
-
-            if ($this->getTill()) {
-                $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter(':till_date', $this->getTill()->getTimestamp());
-            }
+        if ($this->getTill()) {
+            $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter(':till_date', $this->getTill()->getTimestamp());
         }
 
         return $this;
