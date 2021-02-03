@@ -6,6 +6,7 @@ use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Tests\Test\TestCase;
 
 class SessionCartTest extends TestCase
@@ -66,7 +67,10 @@ class SessionCartTest extends TestCase
 
         $cart = $this->buildCart();
 
-        $cart->addItem($product1, 2, null, false, [], [$product2, $product3]);
+        $subEntry1 = new AbstractSetProductEntry($product2, 1);
+        $subEntry2 = new AbstractSetProductEntry($product3, 2);
+
+        $cart->addItem($product1, 2, null, false, [], [$subEntry1, $subEntry2]);
         $cart->addItem($product4, 6);
         $items = $cart->getItems();
 
@@ -83,7 +87,7 @@ class SessionCartTest extends TestCase
 
         //test legacy value true = consider sub items somehow
         //TODO remove in Pimcore 10.0.0
-        $this->assertEquals($cart->getItemAmount(true), 10, 'item amount - legacy mode `true`');
+        $this->assertEquals($cart->getItemAmount(true), 12, 'item amount - legacy mode `true`');
         $this->assertEquals($cart->getItemCount(true), 4, 'item count with cart method - legacy mode `true`');
 
 
@@ -92,11 +96,11 @@ class SessionCartTest extends TestCase
         $this->assertEquals($cart->getItemCount(CartInterface::COUNT_MAIN_ITEMS_ONLY), 2, 'item count with cart method - mode `COUNT_MAIN_ITEMS_ONLY`');
 
         //test COUNT_MAIN_AND_SUB_ITEMS
-        $this->assertEquals($cart->getItemAmount(CartInterface::COUNT_MAIN_AND_SUB_ITEMS), 12, 'item amount - mode `COUNT_MAIN_AND_SUB_ITEMS`');
+        $this->assertEquals($cart->getItemAmount(CartInterface::COUNT_MAIN_AND_SUB_ITEMS), 14, 'item amount - mode `COUNT_MAIN_AND_SUB_ITEMS`');
         $this->assertEquals($cart->getItemCount(CartInterface::COUNT_MAIN_AND_SUB_ITEMS), 4, 'item count with cart method - mode `COUNT_MAIN_AND_SUB_ITEMS`');
 
         //test COUNT_MAIN_OR_SUB_ITEMS
-        $this->assertEquals($cart->getItemAmount(CartInterface::COUNT_MAIN_OR_SUB_ITEMS), 10, 'item amount - mode `COUNT_MAIN_OR_SUB_ITEMS`');
+        $this->assertEquals($cart->getItemAmount(CartInterface::COUNT_MAIN_OR_SUB_ITEMS), 12, 'item amount - mode `COUNT_MAIN_OR_SUB_ITEMS`');
         $this->assertEquals($cart->getItemCount(CartInterface::COUNT_MAIN_OR_SUB_ITEMS), 3, 'item count with cart method - mode `COUNT_MAIN_OR_SUB_ITEMS`');
     }
 
