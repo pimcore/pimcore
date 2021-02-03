@@ -21,7 +21,6 @@ use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 use Pimcore\Model\Element\ValidationException;
 
 interface ConnectionInterface extends Connection
@@ -191,13 +190,6 @@ interface ConnectionInterface extends Connection
      * @return string
      */
     public function quoteTableAs($ident, $alias = null);
-
-    /**
-     * @deprecated
-     *
-     * @return ZendDbCompatibleQueryBuilder
-     */
-    public function select();
 
     /**
      * @param string $sql

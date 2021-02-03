@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Model\DataObject\Listing\Concrete;
 
-interface RecurringPaymentInterface
+interface RecurringPaymentInterface extends PaymentInterface
 {
     /**
      * Payment supports recurring payment

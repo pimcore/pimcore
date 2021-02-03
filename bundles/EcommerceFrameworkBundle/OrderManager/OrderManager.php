@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -524,7 +525,7 @@ class OrderManager implements OrderManagerInterface
      * Get list of valid source orders to perform recurring payment on.
      *
      * @param string $customerId
-     * @param PaymentInterface $paymentProvider
+     * @param RecurringPaymentInterface $paymentProvider
      * @param string|null $paymentMethod
      * @param string $orderId
      *
@@ -533,7 +534,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return \Pimcore\Model\DataObject\Listing\Concrete
      */
-    public function getRecurringPaymentSourceOrderList(string $customerId, PaymentInterface $paymentProvider, $paymentMethod = null, $orderId = '')
+    public function getRecurringPaymentSourceOrderList(string $customerId, RecurringPaymentInterface $paymentProvider, $paymentMethod = null, $orderId = '')
     {
         $orders = $this->buildOrderList();
         $orders->addConditionParam('customer__id = ?', $customerId);
@@ -562,12 +563,12 @@ class OrderManager implements OrderManagerInterface
      * Get source order for performing recurring payment
      *
      * @param string $customerId
-     * @param PaymentInterface $paymentProvider
+     * @param RecurringPaymentInterface $paymentProvider
      * @param string|null $paymentMethod
      *
      * @return mixed
      */
-    public function getRecurringPaymentSourceOrder(string $customerId, PaymentInterface $paymentProvider, $paymentMethod = null)
+    public function getRecurringPaymentSourceOrder(string $customerId, RecurringPaymentInterface $paymentProvider, $paymentMethod = null)
     {
         if (!$paymentProvider->isRecurringPaymentEnabled()) {
             return null;
@@ -581,12 +582,12 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @param AbstractOrder $order
-     * @param PaymentInterface $payment
+     * @param RecurringPaymentInterface $payment
      * @param string $customerId
      *
      * @return bool
      */
-    public function isValidOrderForRecurringPayment(AbstractOrder $order, PaymentInterface $payment, $customerId = '')
+    public function isValidOrderForRecurringPayment(AbstractOrder $order, RecurringPaymentInterface $payment, $customerId = '')
     {
         $orders = $this->getRecurringPaymentSourceOrderList($customerId, $payment, null, $order->getId());
 

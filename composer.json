@@ -110,22 +110,14 @@
     "phpstan/phpstan": "^0.12.56",
     "phpstan/phpstan-symfony": "^0.12.11",
     "phpunit/phpunit": "^9",
-    "heidelpay/heidelpay-php": "^1.2.5.1",
-    "klarna/checkout": "^3.0.0",
     "elasticsearch/elasticsearch": "^6 || ^7",
-    "paypal/paypal-checkout-sdk": "^1",
-    "mpay24/mpay24-php": "^4.2",
     "composer/composer": "*"
   },
   "suggest": {
     "ext-curl": "*",
     "ext-imagick": "*",
     "ext-redis": "*",
-    "heidelpay/heidelpay-php": "Required for Heidelpay payment",
-    "klarna/checkout": "Required for Klarna payment",
-    "elasticsearch/elasticsearch": "Required for Elastic Search service",
-    "paypal/paypal-checkout-sdk": "Required for Paypal payment",
-    "mpay24/mpay24-php": "Required for MPay24 payment"
+    "elasticsearch/elasticsearch": "Required for Elastic Search service"
   },
   "autoload": {
     "files": [

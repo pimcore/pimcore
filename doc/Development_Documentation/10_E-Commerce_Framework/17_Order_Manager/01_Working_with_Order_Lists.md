@@ -23,9 +23,8 @@ foreach($orderList as $order)
 }
 
 
-// ALTERNATE: use knp paginator service
-/** @var PaginatorInterface $paginator */
-$paginator->paginate(
+// ALTERNATE: use knp paginator service: PaginatorInterface $paginator
+$paginator = $paginator->paginate(
     $orderList,
     $request->get('page', 1),
     10

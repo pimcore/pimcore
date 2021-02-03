@@ -14,13 +14,26 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
+ *
+ * @deprecated since version 6.9.0 and will be removed in 10.0.0.
  */
 class DefaultElasticSearch5 extends AbstractElasticSearch
 {
+    public function __construct(ElasticSearchConfigInterface $tenantConfig)
+    {
+        parent::__construct($tenantConfig);
+
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.9.0 and will be removed in 10.0.0.',
+            E_USER_DEPRECATED
+        );
+    }
+
     protected function getQueryType()
     {
         switch ($this->getVariantMode()) {

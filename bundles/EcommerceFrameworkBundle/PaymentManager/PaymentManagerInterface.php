@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 
+
 interface PaymentManagerInterface
 {
     /**
@@ -32,4 +33,11 @@ interface PaymentManagerInterface
      * @throws ProviderNotFoundException
      */
     public function getProvider(string $name): PaymentInterface;
+
+    /**
+     * Get configured payment providers
+     *
+     * @return array
+     */
+    public function getProviderTypes(): array;
 }

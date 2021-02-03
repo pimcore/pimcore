@@ -354,7 +354,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         try {
             /** @var PimcoreBundleInterface $bundle */
             $bundle = new $bundleName();
-            $bundle->setContainer($this->container);
+            $bundle->setContainer(\Pimcore::getContainer());
 
             return $bundle;
         } catch (\Exception $e) {
@@ -483,11 +483,12 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
         $installer = $this->bundleManager->getInstaller($bundle);
         if (null !== $installer) {
+            /** @var \Symfony\Component\Console\Output\BufferedOutput $output */
             $output = $installer->getOutput();
             if (!empty($output)) {
                 $converter = new AnsiToHtmlConverter(null);
 
-                $converted = Encoding::fixUTF8($output);
+                $converted = Encoding::fixUTF8($output->fetch());
                 $converted = $converter->convert($converted);
 
                 if (!$decorated) {

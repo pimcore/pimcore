@@ -85,34 +85,6 @@ interface PaymentInterface
     public function executeCredit(PriceInterface $price, $reference, $transactionId);
 
     /**
-     * Payment supports recurring payment
-     *
-     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
-     *
-     * @return bool
-     */
-    public function isRecurringPaymentEnabled();
-
-    /**
-     * @param AbstractOrder $sourceOrder
-     * @param object $paymentBrick
-     *
-     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
-     *
-     * @return mixed
-     */
-    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick);
-
-    /**
-     * @param Concrete $orderListing
-     *
-     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
-     *
-     * @return Concrete
-     */
-    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);
-
-    /**
      * returns configuration key in yml configuration file
      *
      * @return string

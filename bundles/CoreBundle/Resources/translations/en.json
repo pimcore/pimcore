@@ -949,7 +949,6 @@
   "methods": "Methods",
   "default_value_generator": "Default value generator service / class",
   "export_configuration": "Export Configuration As JSON",
-  "import_configuration": "Import Configuration From JSON",
   "property_name": "Property name",
   "force_value": "Force value",
   "composite_indices": "Composite indices",
@@ -959,5 +958,6 @@
   "batch_change_language": "Batch update language",
   "generate_type_declarations" : "Generate Type Declarations",
   "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
-  "preview_item": "Preview Item"
+  "preview_item": "Preview Item",
+  "version_currently_saved_in_database": "Currently saved in database (but not published)"
 }
