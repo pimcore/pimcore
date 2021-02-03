@@ -43,7 +43,7 @@ class AnyGetter extends AbstractOperator
     public function __construct(\stdClass $config, $context = null)
     {
         if (!Admin::getCurrentUser()->isAdmin()) {
-            throw new \Exception("AnyGetter only allowed for admin users");
+            throw new \Exception('AnyGetter only allowed for admin users');
         }
 
         parent::__construct($config, $context);
