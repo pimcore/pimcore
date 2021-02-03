@@ -175,7 +175,7 @@ class Cart extends AbstractCart implements CartInterface
         //TODO remove this in Pimcore 10.0.0
         if($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else {
+        } else if(!in_array($countSubItems, [self::COUNT_MAIN_ITEMS_ONLY, self::COUNT_MAIN_OR_SUB_ITEMS, self::COUNT_MAIN_AND_SUB_ITEMS])) {
             $countSubItems = self::COUNT_MAIN_AND_SUB_ITEMS;
         }
 
@@ -204,7 +204,7 @@ class Cart extends AbstractCart implements CartInterface
 
         if($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else {
+        } else if(!in_array($countSubItems, [self::COUNT_MAIN_ITEMS_ONLY, self::COUNT_MAIN_OR_SUB_ITEMS, self::COUNT_MAIN_AND_SUB_ITEMS])) {
             $countSubItems = self::COUNT_MAIN_OR_SUB_ITEMS;
         }
 
