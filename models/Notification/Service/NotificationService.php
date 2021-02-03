@@ -141,6 +141,8 @@ class NotificationService
      * @param int|null $recipientId
      *
      * @return Notification
+     *
+     * @throws \UnexpectedValueException
      */
     public function findAndMarkAsRead(int $id, ?int $recipientId = null): Notification
     {
