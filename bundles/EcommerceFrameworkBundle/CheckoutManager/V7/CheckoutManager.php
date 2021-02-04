@@ -381,7 +381,7 @@ class CheckoutManager implements CheckoutManagerInterface
             throw new \Exception("Recurring Payment is not supported by payment provider [{$payment->getName()}].");
         }
 
-        if (!$orderManager->isValidOrderForRecurringPayment($sourceOrder, $payment, $customerId)) {
+        if ($orderManager instanceof OrderManager && !$orderManager->isValidOrderForRecurringPayment($sourceOrder, $payment, $customerId)) {
             throw new \Exception('The given source order is not valid for recurring payment.');
         }
     }
