@@ -172,20 +172,20 @@ interface CartInterface
     /**
      * calculates amount of items in cart
      *
-     * @param mixed $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
+     * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemAmount(/*?string*/ $countSubItems = false);
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY);
 
     /**
      * counts items in cart (does not consider item amount)
      *
-     * @param mixed $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
+     * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemCount(/*?string*/ $countSubItems = false);
+    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY);
 
     /**
      * @param int $count
