@@ -1,6 +1,6 @@
 # Reverse Object Relation Datatype
 
-Reverse Object Relation are the counter part to the [Many-To-Many Object Relation & Many-To-One Object Relation field](70_Relation_Types.md).
+Reverse Object Relation are the counter part to the [Many-To-Many Object Relation & Many-To-One Object Relation fields](70_Relation_Types.md).
 They allow to display and edit relations which are owned by a remote object. 
 
 This is best explained with an example: 
@@ -10,7 +10,7 @@ This is best explained with an example:
 Let's say there is a product, which has an Many-To-Many Object Relation field called `accessories`. The straight forward way of establishing 
 a relation is to open a product and assign it it's accessories by dragging and dropping other products into the 
 accessories field. If you now also want to be able to go to the accessory product and define which other products 
-this is an accessory of, you'd have to set up a Reverse Many-To-Many Object Relation field to do that. The reverse field needs to be configured 
+this is an accessory of, you'd have to set up a Reverse Object Relation field to do that. The reverse field needs to be configured 
 with the remote class name and the field name of the objects field in the remote class. Having done that, you can 
 not only assign accessories to a product, but you can also define of which other products the current one is an accessory of.
 
