@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Localizedfield;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -479,7 +480,14 @@ class Dao extends Model\Dao\AbstractDao
             }
         } catch (\Exception $e) {
             Logger::error($e);
-            $this->createUpdateTable();
+
+            if($isUpdate && $e instanceof TableNotFoundException) {
+                $this->db->rollBack();
+                $this->createUpdateTable();
+
+                // throw exception which gets caught in AbstractObject::save() -> retry saving
+                throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+            }
         }
 
         // remove relations
