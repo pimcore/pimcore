@@ -101,7 +101,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $subItemAmount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $mainAndSubItemAmount;
 
@@ -116,7 +116,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $subItemCount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $mainAndSubItemCount;
 
@@ -799,6 +799,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         }
     }
 
+
     /**
      * @param int $modificationDateTimestamp
      */
@@ -902,8 +903,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
         $this->itemAmount = null;
         $this->subItemAmount = null;
+        $this->mainAndSubItemAmount = null;
         $this->itemCount = null;
         $this->subItemCount = null;
+        $this->mainAndSubItemCount = null;
 
         //don't use getter here because reset is only necessary if price calculator is already there
         if ($this->priceCalculator) {
