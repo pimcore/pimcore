@@ -30,6 +30,7 @@
 - Removed grid column operator `ObjectBrickGetter` since it is obsolete
 - Grid operator `AnyGetter` available only for admin users from now on
 
+- [Ecommerce] Removed elasticsearch 5 support 
 - [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
 `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
 
