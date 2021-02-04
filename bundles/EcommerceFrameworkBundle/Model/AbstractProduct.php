@@ -22,11 +22,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements ProductInterface, IndexableInterface, CheckoutableInterface
+class AbstractProduct extends Concrete implements ProductInterface, IndexableInterface, CheckoutableInterface
 {
     // =============================================
     //     IndexableInterface Methods
@@ -37,7 +38,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return bool
      */
-    public function getOSDoIndexProduct()
+    public function getOSDoIndexProduct(): bool
     {
         return true;
     }
@@ -53,7 +54,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return bool
      */
-    public function isActive($inProductList = false)
+    public function isActive(bool $inProductList = false): bool
     {
         throw new UnsupportedException('isActive is not supported for ' . get_class($this));
     }
@@ -65,20 +66,21 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @throws UnsupportedException
      *
-     * @return string
+     * @return string|string
      */
-    public function getPriceSystemName()
+    public function getPriceSystemName(): ?string
     {
         throw new UnsupportedException('getPriceSystemName is not supported for ' . get_class($this));
     }
+
 
     /**
      * returns product type for product index (either object or variant).
      * by default it returns type of object, but it may be overwritten if necessary.
      *
-     * @return string
+     * @return string|string
      */
-    public function getOSIndexType()
+    public function getOSIndexType(): ?string
     {
         return $this->getType();
     }
@@ -102,7 +104,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return array
      */
-    public function getCategories()
+    public function getCategories(): ?array
     {
         throw new UnsupportedException('getCategories is not supported for ' . get_class($this));
     }
@@ -119,7 +121,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return string
      */
-    public function getOSName()
+    public function getOSName(): ?string
     {
         throw new UnsupportedException('getOSName is not supported for ' . get_class($this));
     }
@@ -132,7 +134,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return string
      */
-    public function getOSProductNumber()
+    public function getOSProductNumber(): ?string
     {
         throw new UnsupportedException('getOSProductNumber is not supported for ' . get_class($this));
     }
@@ -144,7 +146,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return string
      */
-    public function getAvailabilitySystemName()
+    public function getAvailabilitySystemName(): ?string
     {
         return 'default';
     }
@@ -156,7 +158,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return bool
      */
-    public function getOSIsBookable($quantityScale = 1)
+    public function getOSIsBookable($quantityScale = 1): bool
     {
         $price = $this->getOSPrice($quantityScale);
 
@@ -168,7 +170,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return PriceSystemInterface
      */
-    public function getPriceSystemImplementation()
+    public function getPriceSystemImplementation(): ?PriceSystemInterface
     {
         return Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
@@ -178,7 +180,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return AvailabilitySystemInterface
      */
-    public function getAvailabilitySystemImplementation()
+    public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface
     {
         return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
@@ -190,7 +192,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return PriceInterface
      */
-    public function getOSPrice($quantityScale = 1)
+    public function getOSPrice($quantityScale = 1): ?PriceInterface
     {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
     }
@@ -203,7 +205,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return PriceInfoInterface|AbstractPriceInfo
      */
-    public function getOSPriceInfo($quantityScale = 1)
+    public function getOSPriceInfo($quantityScale = 1): ?PriceInfoInterface
     {
         return $this->getPriceSystemImplementation()->getPriceInfo($this, $quantityScale);
     }
@@ -215,7 +217,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      *
      * @return AvailabilityInterface
      */
-    public function getOSAvailabilityInfo($quantity = null)
+    public function getOSAvailabilityInfo($quantity = null): ?AvailabilityInterface
     {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
     }

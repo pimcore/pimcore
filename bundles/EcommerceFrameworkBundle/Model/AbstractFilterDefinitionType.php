@@ -42,9 +42,9 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fi
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getLabel();
+    abstract public function getLabel(): ?string;
 
     /**
      * @return string
@@ -52,9 +52,9 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fi
     abstract public function getField();
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getScriptPath();
+    abstract public function getScriptPath(): ?string;
 
     /**
      * @return string
