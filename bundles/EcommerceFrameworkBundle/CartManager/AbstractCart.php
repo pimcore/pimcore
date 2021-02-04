@@ -120,7 +120,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     protected $mainAndSubItemCount;
 
-
     /**
      * @var string
      */
@@ -498,7 +497,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
             default:
                 throw new InvalidConfigException('Invalid value for $countSubItems: ' . $countSubItems);
         }
-
     }
 
     /**
@@ -518,7 +516,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
                     if (!empty($items)) {
                         foreach ($items as $item) {
                             $subItems = $item->getSubItems();
-                            if(!empty($subItems)) {
+                            if (!empty($subItems)) {
                                 $count += count($subItems);
                             } else {
                                 $count++;

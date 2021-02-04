@@ -193,7 +193,6 @@ class Cart extends AbstractCart implements CartInterface
             }
 
             return $this->itemAmount;
-
         } else {
             return parent::getItemAmount($countSubItems);
         }
