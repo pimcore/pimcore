@@ -106,7 +106,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $mainAndSubItemAmount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $itemCount;
 
@@ -116,7 +116,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $subItemCount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $mainAndSubItemCount;
 
