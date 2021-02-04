@@ -438,33 +438,6 @@ class Staticroute extends AbstractModel
      */
     public function assemble(array $urlOptions = [], $encode = true)
     {
-        // get request parameters
-        $blockedRequestParams = ['controller', 'document'];
-
-        // allow blocked params if we use it as variables
-        $variables = explode(',', $this->getVariables());
-        foreach ($variables as $name) {
-            $pos = array_search($name, $blockedRequestParams);
-            if ($pos !== false) {
-                unset($blockedRequestParams[$pos]);
-            }
-        }
-
-        $requestParameters = [];
-
-        // merge route params from static routes here
-        $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-        if (null !== $request && $request->attributes->get('_route_params')) {
-            $requestParameters = array_merge($requestParameters, $request->attributes->get('_route_params'));
-        }
-
-        // remove blocked parameters from request
-        foreach ($blockedRequestParams as $key) {
-            if (array_key_exists($key, $requestParameters)) {
-                unset($requestParameters[$key]);
-            }
-        }
-
         $defaultValues = $this->getDefaultsArray();
 
         // apply values (controller, ... ) from previous match if applicable (only when )
@@ -473,7 +446,7 @@ class Staticroute extends AbstractModel
         }
 
         // merge with defaults
-        $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
+        $urlParams = array_merge($defaultValues, $urlOptions);
 
         $parametersInReversePattern = [];
         $parametersGet = [];
