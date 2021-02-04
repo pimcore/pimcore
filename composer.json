@@ -42,6 +42,7 @@
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
+    "ext-curl": "*",
     "psr/simple-cache": "^1.0.0",
     "amnuts/opcache-gui": "^3.0.1",
     "cbschuld/browser.php": "^1.9.6",
@@ -110,11 +111,10 @@
     "phpstan/phpstan": "^0.12.56",
     "phpstan/phpstan-symfony": "^0.12.11",
     "phpunit/phpunit": "^9",
-    "elasticsearch/elasticsearch": "^6 || ^7",
+    "elasticsearch/elasticsearch": "^7.11",
     "composer/composer": "*"
   },
   "suggest": {
-    "ext-curl": "*",
     "ext-imagick": "*",
     "ext-redis": "*",
     "elasticsearch/elasticsearch": "Required for Elastic Search service"
