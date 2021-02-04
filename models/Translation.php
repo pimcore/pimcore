@@ -273,6 +273,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public static function isAValidDomain(string $domain): bool
     {
         $translation = new static();
+
         return $translation->getDao()->isAValidDomain($domain);
     }
 

@@ -21,7 +21,8 @@ class SessionCartTest extends TestCase
     /**
      * @return SessionCart
      */
-    protected function buildCart() {
+    protected function buildCart()
+    {
         $cart = Stub::construct('\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart', [], [
             'getSession' => function () {
                 return [];
@@ -38,11 +39,14 @@ class SessionCartTest extends TestCase
 
     /**
      * @param int $id
+     *
      * @return AbstractProduct
      */
-    protected function buildProduct(int $id) {
+    protected function buildProduct(int $id)
+    {
         $product = $this->getMockBuilder(AbstractProduct::class)->getMock();
         $product->method('getId')->willReturn($id);
+
         return $product;
     }
 
@@ -56,10 +60,11 @@ class SessionCartTest extends TestCase
 
         $this->assertEquals(1, count($items), 'item count');
         $this->assertEquals(2, $cart->getItemAmount(), 'item amount');
-        $this->assertEquals(1, $cart->getItemCount(),'item count with cart method');
+        $this->assertEquals(1, $cart->getItemCount(), 'item count with cart method');
     }
 
-    public function testCartAmountAndCount() {
+    public function testCartAmountAndCount()
+    {
         $product1 = $this->buildProduct(5);
         $product2 = $this->buildProduct(6);
         $product3 = $this->buildProduct(7);
@@ -90,7 +95,6 @@ class SessionCartTest extends TestCase
         $this->assertEquals(12, $cart->getItemAmount(true), 'item amount - legacy mode `true`');
         $this->assertEquals(4, $cart->getItemCount(true), 'item count with cart method - legacy mode `true`');
 
-
         //test COUNT_MAIN_ITEMS_ONLY
         $this->assertEquals(8, $cart->getItemAmount(CartInterface::COUNT_MAIN_ITEMS_ONLY), 'item amount - mode `COUNT_MAIN_ITEMS_ONLY`');
         $this->assertEquals(2, $cart->getItemCount(CartInterface::COUNT_MAIN_ITEMS_ONLY), 'item count with cart method - mode `COUNT_MAIN_ITEMS_ONLY`');
@@ -103,6 +107,4 @@ class SessionCartTest extends TestCase
         $this->assertEquals(12, $cart->getItemAmount(CartInterface::COUNT_MAIN_OR_SUB_ITEMS), 'item amount - mode `COUNT_MAIN_OR_SUB_ITEMS`');
         $this->assertEquals(3, $cart->getItemCount(CartInterface::COUNT_MAIN_OR_SUB_ITEMS), 'item count with cart method - mode `COUNT_MAIN_OR_SUB_ITEMS`');
     }
-
-
 }

@@ -120,7 +120,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     protected $mainAndSubItemCount;
 
-
     /**
      * @var string
      */
@@ -436,7 +435,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function getItemAmount(/*?string*/ $countSubItems = false)
     {
-        if(is_bool($countSubItems) || $countSubItems === null) {
+        if (is_bool($countSubItems) || $countSubItems === null) {
             @trigger_error(
                 'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
                 E_USER_DEPRECATED
@@ -444,9 +443,9 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         }
 
         //TODO remove this in Pimcore 10.0.0
-        if($countSubItems === false) {
+        if ($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+        } elseif ($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
             $countSubItems = self::COUNT_MAIN_OR_SUB_ITEMS;
         }
 
@@ -512,7 +511,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
             default:
                 throw new InvalidConfigException('Invalid value for $countSubItems: ' . $countSubItems);
         }
-
     }
 
     /**
@@ -522,7 +520,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function getItemCount(/*?string*/ $countSubItems = false)
     {
-        if(is_bool($countSubItems) || $countSubItems === null) {
+        if (is_bool($countSubItems) || $countSubItems === null) {
             @trigger_error(
                 'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
                 E_USER_DEPRECATED
@@ -530,9 +528,9 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         }
 
         //TODO remove this in Pimcore 10.0.0
-        if($countSubItems === false) {
+        if ($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+        } elseif ($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
             $countSubItems = self::COUNT_MAIN_AND_SUB_ITEMS;
         }
 
@@ -546,7 +544,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
                     if (!empty($items)) {
                         foreach ($items as $item) {
                             $subItems = $item->getSubItems();
-                            if(!empty($subItems)) {
+                            if (!empty($subItems)) {
                                 $count += count($subItems);
                             } else {
                                 $count++;

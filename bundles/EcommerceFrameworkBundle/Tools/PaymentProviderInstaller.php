@@ -14,16 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
-
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Objectbrick;
 
 class PaymentProviderInstaller extends AbstractInstaller
 {
-
     /**
      * @var string // json source path
      */
@@ -102,13 +100,12 @@ class PaymentProviderInstaller extends AbstractInstaller
         foreach ($this->bricksToInstall as $brickKey => $brickFile) {
             try {
                 $brick = Objectbrick\Definition::getByKey($brickKey);
-                if($brick instanceof Objectbrick\Definition) {
+                if ($brick instanceof Objectbrick\Definition) {
                     $brick->delete();
                 }
             } catch (\Exception $e) {
                 Logger::err("Could not delete $brickKey brick. Error:" . $e->getMessage());
             }
-
         }
     }
 
