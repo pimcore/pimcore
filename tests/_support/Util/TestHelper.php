@@ -19,6 +19,8 @@ use Symfony\Component\Finder\Finder;
 
 class TestHelper
 {
+
+    static $thumbnail_configs = [];
     /**
      * Constant will be defined upon suite initialization and will result to true
      * if we have a valid DB configuration.
@@ -579,13 +581,14 @@ class TestHelper
      * @param string $keyPrefix
      * @param string|null $data
      * @param bool $save
+     * @param string $filePath
      *
      * @return Asset\Image
      */
-    public static function createImageAsset($keyPrefix = '', $data = null, $save = true)
+    public static function createImageAsset($keyPrefix = '', $data = null, $save = true, $filePath = 'assets/images/image5.jpg')
     {
         if (!$data) {
-            $path = static::resolveFilePath('assets/images/image5.jpg');
+            $path = static::resolveFilePath($filePath);
             if (!file_exists($path)) {
                 throw new \RuntimeException(sprintf('Path %s was not found', $path));
             }
@@ -877,4 +880,55 @@ class TestHelper
 
         return $randomString;
     }
+
+    public static function clearThumbnailConfiguration($name) {
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if ($pipe) {
+            $pipe->delete();
+        }
+    }
+
+    public static function clearThumbnailConfigurations() {
+        foreach (self::$thumbnail_configs as $name) {
+            static::clearThumbnailConfiguration($name);
+        }
+    }
+
+    /**
+     * @param int $angle
+     * @return Asset\Image\Thumbnail\Config
+     * @throws \Exception
+     */
+    public static function createThumbnailConfigurationRotate($angle = 90) {
+        $name = 'assettest_rotate_' . $angle;
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config();
+            $pipe->setName($name);
+            $pipe->addItem("rotate", ["angle" => $angle], "default");
+            $pipe->save();
+            self::$thumbnail_configs[] = $name;
+        }
+        return $pipe;
+    }
+
+    /**
+     * @param int $width
+     * @param false $forceResize
+     * @return Asset\Image\Thumbnail\Config
+     * @throws \Exception
+     */
+    public static function createThumbnailConfigurationScaleByWidth($width = 256, $forceResize = false) {
+        $name = 'assettest_scaleByWidth_' . $width . "_" . $forceResize;
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config($name);
+            $pipe->setName($name);
+            $pipe->addItem("scaleByWidth", ["width" => $width, "forceResize" => $forceResize], "default");
+            $pipe->save();
+            self::$thumbnail_configs[] = $name;
+        }
+        return $pipe;
+    }
+
 }
