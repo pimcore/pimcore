@@ -292,6 +292,17 @@ Ext.onReady(function () {
                 },
                 depends : ['name']
             },
+            'group',
+            {
+                name: "translatedGroup",
+                convert: function (v, rec) {
+                    if (rec.data.group) {
+                        return t(rec.data.group);
+                    }
+                    return '';
+                },
+                depends : ['group']
+            },
             'module',
             'controller',
             'action',
@@ -346,12 +357,24 @@ Ext.onReady(function () {
         {name: 'id'},
         {name: 'text', allowBlank: false},
         {
-            name: "translatedText", convert: function (v, rec) {
+            name: "translatedText",
+            convert: function (v, rec) {
                 return t(rec.data.text);
-            }
+            },
+            depends : ['text']
         },
         {name: 'icon'},
         {name: 'group'},
+        {
+            name: "translatedGroup",
+            convert: function (v, rec) {
+                if (rec.data.group) {
+                    return t(rec.data.group);
+                }
+                return '';
+            },
+            depends : ['group']
+        },
         {name: "propertyVisibility"}
     ];
 
