@@ -23,7 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
@@ -39,6 +38,9 @@ use Pimcore\Model\FactoryInterface;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 class OrderManager implements OrderManagerInterface
 {
     /**

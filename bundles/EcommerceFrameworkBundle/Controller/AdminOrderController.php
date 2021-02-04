@@ -76,7 +76,6 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
         $this->paymentManager = Factory::getInstance()->getPaymentManager();
-
     }
 
     /**
@@ -365,7 +364,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig,
             'formatter' => $formatter,
             'locale' => $localeService,
-            'paymentProviders' => $paymentProviders
+            'paymentProviders' => $paymentProviders,
         ]);
     }
 

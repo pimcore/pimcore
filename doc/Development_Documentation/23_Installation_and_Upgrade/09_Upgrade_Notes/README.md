@@ -35,6 +35,9 @@
   activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
 - [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
 - [Ecommerce] Added type declarations to Ecommerce Framework product interfaces (`ProductInterface`, `IndexableInterface`, `CheckoutableInterface`).
+- [Ecommerce] Removed elasticsearch 5 support 
+- [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
+`CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
 
 
     
@@ -73,6 +76,10 @@
     );
 ```
 - Using Zend\Paginator for listing classes has been deprecated and will be removed in Pimcore 10. Use Knp\Component\Pager\Paginator instead.
+- [Ecommerce] Elasticsearch 5 support is deprecated, use newer versions of elasticsearch.
+- [Ecommerce] Calling `getItemAmount` and `getItemCount` of `Carts` with boolean parameter is deprecated. Use one of 
+  `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS` 
+  instead. 
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
