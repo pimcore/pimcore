@@ -22,187 +22,103 @@ use Pimcore\Model\DataObject\Concrete;
 /**
  * Abstract base class for offer pimcore objects
  */
-class AbstractOffer extends Concrete
+abstract class AbstractOffer extends Concrete
 {
     /**
-     * @return string
-     *
-     * @throws UnsupportedException
+     * @return string|null
      */
-    public function getOffernumber()
-    {
-        throw new UnsupportedException('getOffernumber is not implemented for ' . get_class($this));
-    }
+    abstract public function getOffernumber(): ?string;
 
     /**
-     * @param string $offernumber
-     *
-     * @throws UnsupportedException
+     * @param string|null $offernumber
      */
-    public function setOffernumber($offernumber)
-    {
-        throw new UnsupportedException('setOffernumber is not implemented for ' . get_class($this));
-    }
+    abstract public function setOffernumber(?string $offernumber);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string|float|int
+     * @return string|null
      */
-    public function getTotalPrice()
-    {
-        throw new UnsupportedException('getTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function getTotalPrice(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string|float|int $totalPrice
+     * @param string|null $totalPriceBeforeDiscount
+     * @return mixed
      */
-    public function setTotalPriceBeforeDiscount($totalPrice)
-    {
-        throw new UnsupportedException('setTotalPriceBeforeDiscount is not implemented for ' . get_class($this));
-    }
+    abstract public function setTotalPriceBeforeDiscount(?string $totalPriceBeforeDiscount);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string|float|int
+     * @return string|null
      */
-    public function getTotalPriceBeforeDiscount()
-    {
-        throw new UnsupportedException('getTotalPriceBeforeDiscount is not implemented for ' . get_class($this));
-    }
+    abstract public function getTotalPriceBeforeDiscount(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string|float|int $totalPrice
+     * @param string|null $totalPrice
+     * @return mixed
      */
-    public function setTotalPrice($totalPrice)
-    {
-        throw new UnsupportedException('setTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function setTotalPrice(?string $totalPrice);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return float
+     * @return string|null
      */
-    public function getDiscount()
-    {
-        throw new UnsupportedException('getDiscount is not implemented for ' . get_class($this));
-    }
+    abstract public function getDiscount(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param float $discount
+     * @param string|null $discount
+     * @return mixed
      */
-    public function setDiscount($discount)
-    {
-        throw new UnsupportedException('setDiscount is not implemented for ' . get_class($this));
-    }
+    abstract public function setDiscount(?string $discount);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getDiscountType()
-    {
-        throw new UnsupportedException('getDiscountType is not implemented for ' . get_class($this));
-    }
+    abstract public function getDiscountType(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $discountType
+     * @param string|null $discountType
+     * @return mixed
      */
-    public function setDiscountType($discountType)
-    {
-        throw new UnsupportedException('setDiscountType is not implemented for ' . get_class($this));
-    }
+    abstract public function setDiscountType(?string $discountType);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return \DateTime
+     * @return \Carbon\Carbon|null
      */
-    public function getDateCreated()
-    {
-        throw new UnsupportedException('getDateCreated is not implemented for ' . get_class($this));
-    }
+    abstract public function getDateCreated(): ?\Carbon\Carbon;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param \DateTime $dateCreated
+     * @param \Carbon\Carbon|null $dateCreated
+     * @return mixed
      */
-    public function setDateCreated($dateCreated)
-    {
-        throw new UnsupportedException('setDateCreated is not implemented for ' . get_class($this));
-    }
+    abstract public function setDateCreated(?\Carbon\Carbon $dateCreated);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return \DateTime
+     * @return \Carbon\Carbon|null
      */
-    public function getDateValidUntil()
-    {
-        throw new UnsupportedException('getDateValidUntil is not implemented for ' . get_class($this));
-    }
+    abstract public function getDateValidUntil(): ?\Carbon\Carbon;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param \DateTime $dateValidUntil
+     * @param \Carbon\Carbon|null $dateValidUntil
+     * @return mixed
      */
-    public function setDateValidUntil($dateValidUntil)
-    {
-        throw new UnsupportedException('setDateValidUntil is not implemented for ' . get_class($this));
-    }
+    abstract public function setDateValidUntil(?\Carbon\Carbon $dateValidUntil);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return AbstractOfferItem[]
      */
-    public function getItems()
-    {
-        throw new UnsupportedException('getItems is not implemented for ' . get_class($this));
-    }
+    abstract public function getItems(): array;
 
     /**
      * @param AbstractOfferItem[] $items
-     *
-     * @throws UnsupportedException
      */
-    public function setItems($items)
-    {
-        throw new UnsupportedException('setItems is not implemented for ' . get_class($this));
-    }
+    abstract public function setItems(?array $items);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return AbstractOfferItem[]
      */
-    public function getCustomItems()
-    {
-        throw new UnsupportedException('getCustomItems is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomItems(): array;
 
     /**
      * @param AbstractOfferItem[] $customItems
-     *
-     * @throws UnsupportedException
      */
-    public function setCustomItems($customItems)
-    {
-        throw new UnsupportedException('setCustomItems is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomItems(?array $customItems);
 
     /**
      * @throws UnsupportedException
@@ -225,24 +141,15 @@ class AbstractOffer extends Concrete
     }
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getCartId()
-    {
-        throw new UnsupportedException('getCartId is not implemented for ' . get_class($this));
-    }
+    abstract public function getCartId(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param int $cartId
+     * @param string|null $cartId
+     * @return mixed
      */
-    public function setCartId($cartId)
-    {
-        throw new UnsupportedException('setCartId is not implemented for ' . get_class($this));
-    }
+    abstract public function setCartId(?string $cartId);
 
     /**
      * @param AbstractOfferToolProduct $product
@@ -250,7 +157,7 @@ class AbstractOffer extends Concrete
      *
      * @return AbstractOfferItem
      */
-    public function addCustomItemFromProduct(AbstractOfferToolProduct $product, $amount = 1)
+    public function addCustomItemFromProduct(AbstractOfferToolProduct $product, $amount = 1): ?AbstractOfferItem
     {
         $item = $this->getCustomItemByProduct($product);
         if (empty($item)) {
@@ -301,7 +208,7 @@ class AbstractOffer extends Concrete
      *
      * @return AbstractOfferItem
      */
-    public function getCustomItemsByGroup($groupName)
+    public function getCustomItemsByGroup($groupName): ?AbstractOfferItem
     {
         $groupedItems = [];
         foreach ($this->getCustomItems() as $item) {
@@ -319,7 +226,7 @@ class AbstractOffer extends Concrete
      *
      * @return null|AbstractOfferItem
      */
-    public function getCustomItemByProduct(AbstractOfferToolProduct $product)
+    public function getCustomItemByProduct(AbstractOfferToolProduct $product): ?AbstractOfferItem
     {
         $items = $this->getCustomItems();
         foreach ($items as $item) {

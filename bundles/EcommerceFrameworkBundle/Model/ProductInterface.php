@@ -28,15 +28,15 @@ interface ProductInterface
      * called by default CommitOrderProcessor to get the product name to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @return string
+     * @return string|null
      */
-    public function getOSName();
+    public function getOSName(): ?string;
 
     /**
      * called by default CommitOrderProcessor to get the product number to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @return string
+     * @return string|null
      */
-    public function getOSProductNumber();
+    public function getOSProductNumber(): ?string;
 }

@@ -30,9 +30,15 @@
 - Removed grid column operator `ObjectBrickGetter` since it is obsolete
 - Grid operator `AnyGetter` available only for admin users from now on
 
+- [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
+- [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
+  activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
+- [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
+- [Ecommerce] Added type declarations to Ecommerce Framework product interfaces (`ProductInterface`, `IndexableInterface`, `CheckoutableInterface`).
 - [Ecommerce] Removed elasticsearch 5 support 
 - [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
 `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
+
 
     
 ## 6.9.0

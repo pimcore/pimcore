@@ -27,34 +27,34 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return float
+     * @return float|null
      */
-    abstract public function getPageLimit();
+    abstract public function getPageLimit(): ?float;
 
     /**
      * returns list of available fields for sorting ascending
      *
      * @abstract
      *
-     * @return string
+     * @return string|null
      */
-    abstract public function getOrderByAsc();
+    abstract public function getOrderByAsc(): ?string;
 
     /**
      * returns list of available fields for sorting descending
      *
      * @abstract
      *
-     * @return string
+     * @return string|null
      */
-    abstract public function getOrderByDesc();
+    abstract public function getOrderByDesc(): ?string;
 
     /**
      * return array of field collections for preconditions
      *
      * @abstract
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection|null
      */
     abstract public function getConditions();
 
@@ -63,7 +63,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection|null
      */
     abstract public function getFilters();
 
