@@ -101,7 +101,8 @@
   },
   "conflict": {
     "monolog/monolog": ">=2",
-    "symfony/monolog-bundle": "3.6.0"
+    "symfony/monolog-bundle": "3.6.0",
+    "thecodingmachine/safe": "<1.0.0"
   },
   "require-dev": {
     "cache/integration-tests": "dev-master",
