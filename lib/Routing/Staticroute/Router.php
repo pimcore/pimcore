@@ -174,11 +174,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         }
 
         if ($name && $route = Staticroute::getByName($name, $siteId)) {
-            $reset = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
             $encode = isset($parameters['encode']) ? (bool)$parameters['encode'] : true;
             unset($parameters['encode']);
             // assemble the route / url in Staticroute::assemble()
-            $url = $route->assemble($parameters, $reset, $encode);
+            $url = $route->assemble($parameters, $encode);
             $port = '';
             $scheme = $this->context->getScheme();
 
