@@ -20,8 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
@@ -48,7 +47,7 @@ class OrderAgent implements OrderAgentInterface
     const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
     /**
-     * @var Order
+     * @var AbstractOrder
      */
     protected $order;
 
@@ -78,7 +77,7 @@ class OrderAgent implements OrderAgentInterface
     protected $fullChangeLog;
 
     public function __construct(
-        Order $order,
+        AbstractOrder $order,
         EnvironmentInterface $environment,
         PaymentManagerInterface $paymentManager,
         EventDispatcherInterface $eventDispatcher
@@ -90,7 +89,7 @@ class OrderAgent implements OrderAgentInterface
     }
 
     /**
-     * @return Order
+     * @return AbstractOrder
      */
     public function getOrder()
     {
@@ -100,20 +99,20 @@ class OrderAgent implements OrderAgentInterface
     /**
      * cancel order item and refund payment
      *
-     * @param OrderItem $item
+     * @param AbstractOrderItem $item
      *
      * @return Note
      *
      * @throws \Exception
      */
-    public function itemCancel(OrderItem $item)
+    public function itemCancel(AbstractOrderItem $item)
     {
         // add log note
         $note = $this->createNote($item);
         $note->setTitle(__FUNCTION__);
 
         // change item
-        $item->setOrderState(Order::ORDER_STATE_CANCELLED);
+        $item->setOrderState(AbstractOrder::ORDER_STATE_CANCELLED);
 
         // cancel complete order if all items are canceled
         //        $cancel = true;
@@ -144,13 +143,13 @@ class OrderAgent implements OrderAgentInterface
     /**
      * change order item
      *
-     * @param OrderItem $item
+     * @param AbstractOrderItem $item
      * @param float $amount
      *
      * @return Note
      * @throws Exception
      */
-    public function itemChangeAmount(OrderItem $item, $amount)
+    public function itemChangeAmount(AbstractOrderItem $item, $amount)
     {
         // init
         $amount = (float)$amount;
@@ -175,12 +174,12 @@ class OrderAgent implements OrderAgentInterface
     /**
      * start item complaint
      *
-     * @param OrderItem $item
+     * @param AbstractOrderItem $item
      * @param float     $quantity
      *
      * @return Note
      */
-    public function itemComplaint(OrderItem $item, $quantity)
+    public function itemComplaint(AbstractOrderItem $item, $quantity)
     {
         // add log note
         $note = $this->createNote($item);
@@ -196,13 +195,13 @@ class OrderAgent implements OrderAgentInterface
     /**
      * set a item state
      *
-     * @param OrderItem $item
+     * @param AbstractOrderItem $item
      * @param string $state
      *
      * @return Note
      * @throws Exception
      */
-    public function itemSetState(OrderItem $item, $state)
+    public function itemSetState(AbstractOrderItem $item, $state)
     {
         // add log note
         $note = $this->createNote($item);
@@ -305,12 +304,12 @@ class OrderAgent implements OrderAgentInterface
 
     /**
      * @param PaymentInterface $paymentProvider
-     * @param Order|null $sourceOrder
+     * @param AbstractOrder|null $sourceOrder
      *
      * @return $this
      * @throws Exception
      */
-    public function setPaymentProvider(PaymentInterface $paymentProvider, Order $sourceOrder = null)
+    public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         $this->paymentProvider = $paymentProvider;
 
@@ -379,12 +378,12 @@ class OrderAgent implements OrderAgentInterface
     }
 
     /**
-     * @param Order $order
+     * @param AbstractOrder $order
      * @param string $paymentState
      *
      * @return PaymentInfo
      */
-    protected function createNewOrderInformation(Order $order, string $paymentState)
+    protected function createNewOrderInformation(AbstractOrder $order, string $paymentState)
     {
         $paymentInformationCollection = $order->getPaymentInfo();
         if (empty($paymentInformationCollection)) {
@@ -418,14 +417,14 @@ class OrderAgent implements OrderAgentInterface
         $currentPaymentInformation = $event->getArgument('currentPaymentInformation');
 
         if ($currentPaymentInformation) {
-            if ($currentPaymentInformation->getPaymentState() == order::ORDER_STATE_PAYMENT_PENDING) {
+            if ($currentPaymentInformation->getPaymentState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING) {
                 throw new PaymentNotAllowedException(
                     'Init payment not allowed because there is currently a payment pending. Cancel payment or recreate order.',
                     $order
                 );
             }
 
-            if ($currentPaymentInformation->getPaymentState() == order::ORDER_STATE_PAYMENT_INIT) {
+            if ($currentPaymentInformation->getPaymentState() == AbstractOrder::ORDER_STATE_PAYMENT_INIT) {
                 $internalPaymentIdForCurrentOrderVersion = $this->generateInternalPaymentId();
 
                 //if order fingerprint changed, abort initialized payment and create new payment information (so set it to null)
@@ -441,7 +440,7 @@ class OrderAgent implements OrderAgentInterface
 
         //if no payment information available, create new one
         if (empty($currentPaymentInformation)) {
-            $currentPaymentInformation = $this->createNewOrderInformation($order, order::ORDER_STATE_PAYMENT_INIT);
+            $currentPaymentInformation = $this->createNewOrderInformation($order, AbstractOrder::ORDER_STATE_PAYMENT_INIT);
             $order->save(['versionNote' => 'Agent::initPayment - save order to add new PaymentInformation.']);
         }
 
@@ -522,7 +521,7 @@ class OrderAgent implements OrderAgentInterface
     }
 
     /**
-     * @return Order
+     * @return AbstractOrder
      *
      * @throws Exception
      * @throws UnsupportedException
