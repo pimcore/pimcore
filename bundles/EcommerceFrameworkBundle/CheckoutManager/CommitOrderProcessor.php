@@ -26,6 +26,9 @@ use Pimcore\Logger;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 class CommitOrderProcessor implements CommitOrderProcessorInterface
 {
     const LOCK_KEY = 'ecommerce-framework-commitorder-lock';

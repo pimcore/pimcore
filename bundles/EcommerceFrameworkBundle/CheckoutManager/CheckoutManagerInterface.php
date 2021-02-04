@@ -21,6 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 interface CheckoutManagerInterface
 {
     /**

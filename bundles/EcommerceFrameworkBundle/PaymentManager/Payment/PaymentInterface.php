@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 /**
- * Interface for checkout payment provider
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
  */
 interface PaymentInterface
 {
