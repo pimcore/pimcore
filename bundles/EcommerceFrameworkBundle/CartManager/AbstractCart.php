@@ -103,12 +103,23 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @var int
      */
+    protected $mainAndSubItemAmount;
+
+    /**
+     * @var int
+     */
     protected $itemCount;
 
     /**
      * @var int
      */
     protected $subItemCount;
+
+    /**
+     * @var int
+     */
+    protected $mainAndSubItemCount;
+
 
     /**
      * @var string
@@ -277,7 +288,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         if (!empty($subProducts)) {
             $subItems = [];
             foreach ($subProducts as $subProduct) {
-                if ($subItems[$subProduct->getProduct()->getId()]) {
+                if (array_key_exists($subProduct->getProduct()->getId(), $subItems)) {
                     $subItem = $subItems[$subProduct->getProduct()->getId()];
                     $subItem->setCount($subItem->getCount() + $subProduct->getQuantity());
                 } else {
@@ -420,77 +431,162 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param bool $countSubItems
+     * @param mixed $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemAmount($countSubItems = false)
+    public function getItemAmount(/*?string*/ $countSubItems = false)
     {
-        if ($countSubItems) {
-            if ($this->subItemAmount == null) {
-                $count = 0;
-                $items = $this->getItems();
-                if (!empty($items)) {
-                    foreach ($items as $item) {
-                        $subItems = $item->getSubItems();
-                        if ($subItems) {
-                            foreach ($subItems as $subItem) {
-                                $count += ($subItem->getCount() * $item->getCount());
+        if(is_bool($countSubItems) || $countSubItems === null) {
+            @trigger_error(
+                'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
+                E_USER_DEPRECATED
+            );
+        }
+
+        //TODO remove this in Pimcore 10.0.0
+        if($countSubItems === false) {
+            $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
+        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+            $countSubItems = self::COUNT_MAIN_OR_SUB_ITEMS;
+        }
+
+        switch ($countSubItems) {
+            case self::COUNT_MAIN_OR_SUB_ITEMS:
+
+                if ($this->subItemAmount == null) {
+                    $count = 0;
+                    $items = $this->getItems();
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            if ($subItems) {
+                                foreach ($subItems as $subItem) {
+                                    $count += ($subItem->getCount() * $item->getCount());
+                                }
+                            } else {
+                                $count += $item->getCount();
                             }
-                        } else {
+                        }
+                    }
+                    $this->subItemAmount = $count;
+                }
+
+                return $this->subItemAmount;
+
+            case self::COUNT_MAIN_AND_SUB_ITEMS:
+
+                if ($this->mainAndSubItemAmount == null) {
+                    $count = 0;
+                    $items = $this->getItems();
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            if ($subItems) {
+                                foreach ($subItems as $subItem) {
+                                    $count += ($subItem->getCount() * $item->getCount());
+                                }
+                            }
                             $count += $item->getCount();
                         }
                     }
+                    $this->mainAndSubItemAmount = $count;
                 }
-                $this->subItemAmount = $count;
-            }
 
-            return $this->subItemAmount;
-        } else {
-            if ($this->itemAmount == null) {
-                $count = 0;
-                $items = $this->getItems();
-                if (!empty($items)) {
-                    foreach ($items as $item) {
-                        $count += $item->getCount();
+                return $this->mainAndSubItemAmount;
+
+            case self::COUNT_MAIN_ITEMS_ONLY:
+
+                if ($this->itemAmount == null) {
+                    $count = 0;
+                    $items = $this->getItems();
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $count += $item->getCount();
+                        }
                     }
+                    $this->itemAmount = $count;
                 }
-                $this->itemAmount = $count;
-            }
 
-            return $this->itemAmount;
+                return $this->itemAmount;
+
+            default:
+                throw new InvalidConfigException('Invalid value for $countSubItems: ' . $countSubItems);
         }
+
     }
 
     /**
-     * @param bool|false $countSubItems
+     * @param mixed $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemCount($countSubItems = false)
+    public function getItemCount(/*?string*/ $countSubItems = false)
     {
-        if ($countSubItems) {
-            if ($this->subItemCount == null) {
-                $items = $this->getItems();
-                $count = count($items);
+        if(is_bool($countSubItems) || $countSubItems === null) {
+            @trigger_error(
+                'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
+                E_USER_DEPRECATED
+            );
+        }
 
-                if (!empty($items)) {
-                    foreach ($items as $item) {
-                        $subItems = $item->getSubItems();
-                        $count += count($subItems);
+        //TODO remove this in Pimcore 10.0.0
+        if($countSubItems === false) {
+            $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
+        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+            $countSubItems = self::COUNT_MAIN_AND_SUB_ITEMS;
+        }
+
+        switch ($countSubItems) {
+            case self::COUNT_MAIN_OR_SUB_ITEMS:
+
+                if ($this->subItemCount == null) {
+                    $items = $this->getItems();
+                    $count = 0;
+
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            if(!empty($subItems)) {
+                                $count += count($subItems);
+                            } else {
+                                $count++;
+                            }
+                        }
                     }
+                    $this->subItemCount = $count;
                 }
-                $this->subItemCount = $count;
-            }
 
-            return $this->subItemCount;
-        } else {
-            if ($this->itemCount == null) {
-                $items = $this->getItems();
-                $this->itemCount = count($items);
-            }
+                return $this->subItemCount;
 
-            return $this->itemCount;
+            case self::COUNT_MAIN_AND_SUB_ITEMS:
+
+                if ($this->mainAndSubItemCount == null) {
+                    $items = $this->getItems();
+                    $count = count($items);
+
+                    if (!empty($items)) {
+                        foreach ($items as $item) {
+                            $subItems = $item->getSubItems();
+                            $count += count($subItems);
+                        }
+                    }
+                    $this->mainAndSubItemCount = $count;
+                }
+
+                return $this->mainAndSubItemCount;
+
+            case self::COUNT_MAIN_ITEMS_ONLY:
+
+                if ($this->itemCount == null) {
+                    $items = $this->getItems();
+                    $this->itemCount = count($items);
+                }
+
+                return $this->itemCount;
+
+            default:
+                throw new InvalidConfigException('Invalid value for $countSubItems: ' . $countSubItems);
         }
     }
 
