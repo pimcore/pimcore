@@ -90,7 +90,7 @@
 
         <tr>
             <td>
-                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}|merge(urlParams), null, true) %}
+                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}|merge(urlParams), false, true) %}
                 <a href="{{ urlDetail }}">{{ item.getOrderNumber() }}</a>
             </td>
             <td>
