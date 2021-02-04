@@ -162,15 +162,27 @@ class Cart extends AbstractCart implements CartInterface
     }
 
     /**
-     * @param bool|false $countSubItems
+     * @param mixed $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemCount($countSubItems = false)
+    public function getItemCount(/*?string*/ $countSubItems = false)
     {
-        if ($countSubItems) {
-            return parent::getItemCount($countSubItems);
-        } else {
+        if(is_bool($countSubItems) || $countSubItems === null) {
+            @trigger_error(
+                'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
+                E_USER_DEPRECATED
+            );
+        }
+
+        //TODO remove this in Pimcore 10.0.0
+        if($countSubItems === false) {
+            $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
+        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+            $countSubItems = self::COUNT_MAIN_AND_SUB_ITEMS;
+        }
+
+        if ($countSubItems === self::COUNT_MAIN_ITEMS_ONLY) {
             if ($this->itemCount == null) {
                 $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName($this->getCartItemClassName());
@@ -179,14 +191,27 @@ class Cart extends AbstractCart implements CartInterface
             }
 
             return $this->itemCount;
+        } else {
+            return parent::getItemCount($countSubItems);
         }
     }
 
-    public function getItemAmount($countSubItems = false)
+    public function getItemAmount(/*?string*/ $countSubItems = false)
     {
-        if ($countSubItems) {
-            return parent::getItemAmount($countSubItems);
-        } else {
+        if(is_bool($countSubItems)) {
+            @trigger_error(
+                'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
+                E_USER_DEPRECATED
+            );
+        }
+
+        if($countSubItems === false) {
+            $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
+        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+            $countSubItems = self::COUNT_MAIN_OR_SUB_ITEMS;
+        }
+
+        if ($countSubItems === self::COUNT_MAIN_ITEMS_ONLY) {
             if ($this->itemAmount == null) {
                 $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName($this->getCartItemClassName());
@@ -195,6 +220,9 @@ class Cart extends AbstractCart implements CartInterface
             }
 
             return $this->itemAmount;
+
+        } else {
+            return parent::getItemAmount($countSubItems);
         }
     }
 
