@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
+use Carbon\Carbon;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
@@ -317,7 +318,7 @@ class OrderManager implements OrderManagerInterface
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
-            $order->setOrderdate(new \DateTime());
+            $order->setOrderdate(new Carbon());
 
             $cartId = $this->createCartId($cart);
             if (strlen($cartId) > 190) {

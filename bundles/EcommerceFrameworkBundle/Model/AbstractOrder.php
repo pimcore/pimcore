@@ -14,172 +14,175 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Carbon\Carbon;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\OnlineShopOrder;
+use Pimcore\Model\Element\AbstractElement;
 
 /**
  * Abstract base class for order pimcore objects
  */
 abstract class AbstractOrder extends Concrete
 {
-    public const ORDER_STATE_COMMITTED = 'committed';
-    public const ORDER_STATE_CANCELLED = 'cancelled';
-    public const ORDER_STATE_PAYMENT_PENDING = 'paymentPending';
-    public const ORDER_STATE_PAYMENT_INIT = 'paymentInit';
-    public const ORDER_STATE_PAYMENT_AUTHORIZED = 'paymentAuthorized';
-    public const ORDER_STATE_ABORTED = 'aborted';
-    public const ORDER_PAYMENT_STATE_ABORTED_BUT_RESPONSE = 'abortedButResponseReceived';
+    CONST ORDER_STATE_COMMITTED = 'committed';
+    CONST ORDER_STATE_CANCELLED = 'cancelled';
+    CONST ORDER_STATE_PAYMENT_PENDING = 'paymentPending';
+    CONST ORDER_STATE_PAYMENT_INIT = 'paymentInit';
+    CONST ORDER_STATE_PAYMENT_AUTHORIZED = 'paymentAuthorized';
+    CONST ORDER_STATE_ABORTED = 'aborted';
+    CONST ORDER_PAYMENT_STATE_ABORTED_BUT_RESPONSE = 'abortedButResponseReceived';
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getOrdernumber();
+    abstract public function getOrdernumber(): ?string;
 
     /**
-     * @param string $ordernumber
+     * @param string|null $ordernumber
      */
-    abstract public function setOrdernumber($ordernumber);
+    abstract public function setOrdernumber(?string $ordernumber);
 
     /**
-     * @return float
+     * @return string|null
      */
-    abstract public function getSubTotalPrice();
+    abstract public function getSubTotalPrice(): ?string;
 
     /**
-     * @param float $subTotalPrice
+     * @param string|null $subTotalPrice
      */
-    abstract public function setSubTotalPrice($subTotalPrice);
+    abstract public function setSubTotalPrice(?string $subTotalPrice);
 
     /**
-     * @return float
+     * @return string|null
      */
-    abstract public function getSubTotalNetPrice();
+    abstract public function getSubTotalNetPrice(): ?string;
 
     /**
-     * @param float $subTotalPrice
+     * @param string|null $subTotalPrice
      */
-    abstract public function setSubTotalNetPrice($subTotalPrice);
+    abstract public function setSubTotalNetPrice(?string $subTotalPrice);
 
     /**
-     * @return float
+     * @return string|null
      */
-    abstract public function getTotalPrice();
+    abstract public function getTotalPrice(): ?string;
 
     /**
-     * @param float $totalPrice
+     * @param string|null $totalPrice
      */
-    abstract public function setTotalPrice($totalPrice);
+    abstract public function setTotalPrice(?string $totalPrice);
 
     /**
-     * @return float
+     * @return string|null
      */
-    abstract public function getTotalNetPrice();
+    abstract public function getTotalNetPrice(): ?string;
 
     /**
-     * @param float $totalPrice
+     * @param string|null $totalPrice
      */
-    abstract public function setTotalNetPrice($totalPrice);
+    abstract public function setTotalNetPrice(?string $totalPrice);
 
     /**
      * @return array
      */
-    abstract public function getTaxInfo();
+    abstract public function getTaxInfo(): array;
 
     /**
-     * @param array $taxInfo
+     * @param array|null $taxInfo
      */
-    abstract public function setTaxInfo($taxInfo);
+    abstract public function setTaxInfo(?array $taxInfo);
 
     /**
-     * @return \DateTime
+     * @return Carbon|null
      */
-    abstract public function getOrderdate();
+    abstract public function getOrderdate(): ?Carbon;
 
     /**
-     * @param \DateTime $orderdate
+     * @param Carbon|null $orderdate
      */
-    abstract public function setOrderdate($orderdate);
+    abstract public function setOrderdate(?Carbon $orderdate);
 
     /**
      * @return AbstractOrderItem[]
      */
-    abstract public function getItems();
+    abstract public function getItems(): array;
 
     /**
      * @param AbstractOrderItem[] $items
      */
-    abstract public function setItems($items);
+    abstract public function setItems(?array $items);
 
     /**
      * @return AbstractOrderItem[]
      */
-    abstract public function getGiftItems();
+    abstract public function getGiftItems(): array;
 
     /**
      * @param AbstractOrderItem[] $giftItems
      */
-    abstract public function setGiftItems($giftItems);
+    abstract public function setGiftItems(?array $giftItems);
 
     /**
-     * @return \Pimcore\Model\DataObject\Customer
+     * @return AbstractElement|null
      */
-    abstract public function getCustomer();
+    abstract public function getCustomer(): ?AbstractElement;
 
     /**
-     * @param \Pimcore\Model\DataObject\Customer $customer
+     * @param AbstractElement|null $customer
      */
-    abstract public function setCustomer($customer);
+    abstract public function setCustomer(?AbstractElement $customer);
 
     /**
-     * @return Fieldcollection
+     * @return Fieldcollection|null
      */
     abstract public function getPriceModifications();
 
     /**
-     * @param Fieldcollection $priceModifications
+     * @param Fieldcollection|null $priceModifications
      */
-    abstract public function setPriceModifications($priceModifications);
+    abstract public function setPriceModifications(?Fieldcollection $priceModifications);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getOrderState();
+    abstract public function getOrderState(): ?string;
 
     /**
-     * @param string $orderState
+     * @param string|null $orderState
      *
      * @return $this
      */
-    abstract public function setOrderState($orderState);
+    abstract public function setOrderState(?string $orderState);
 
     /**
-     * @return int
+     * @return string|null
      */
-    abstract public function getCartId();
+    abstract public function getCartId(): ?string;
 
     /**
-     * @param int $cartId
+     * @param string|null $cartId
      *
      * @return void
      */
-    abstract public function setCartId($cartId);
+    abstract public function setCartId(?string $cartId);
 
     /**
-     * @return Fieldcollection
+     * @return Fieldcollection|null
      */
     abstract public function getPaymentInfo();
 
     /**
-     * @param Fieldcollection $paymentInfo
+     * @param Fieldcollection|null $paymentInfo
      */
-    abstract public function setPaymentInfo($paymentInfo);
+    abstract public function setPaymentInfo(?\Pimcore\Model\DataObject\Fieldcollection $paymentInfo);
 
     /**
      * returns latest payment info entry
      *
      * @return AbstractPaymentInformation
      */
-    public function getLastPaymentInfo()
+    public function getLastPaymentInfo(): ?AbstractPaymentInformation
     {
         if ($this->getPaymentInfo()) {
             $items = $this->getPaymentInfo()->getItems();
@@ -195,201 +198,201 @@ abstract class AbstractOrder extends Concrete
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getComment();
+    abstract public function getComment(): ?string;
 
     /**
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return $this
      */
-    abstract public function setComment($comment);
+    abstract public function setComment(?string $comment);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCustomerEMail();
+    abstract public function getCustomerEMail(): ?string;
 
     /**
-     * @param string $customerEMail
+     * @param string|null $customerEMail
      *
      * @return $this
      */
-    abstract public function setCustomerEMail($customerEMail);
+    abstract public function setCustomerEMail(?string $customerEMail);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCustomerCountry();
+    abstract public function getCustomerCountry(): ?string;
 
     /**
-     * @param string $customerCountry
+     * @param string|null $customerCountry
      *
      * @return $this
      */
-    abstract public function setCustomerCountry($customerCountry);
+    abstract public function setCustomerCountry(?string $customerCountry);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCustomerCity();
+    abstract public function getCustomerCity(): ?string;
 
     /**
-     * @param string $customerCity
+     * @param string|null $customerCity
      *
      * @return $this
      */
-    abstract public function setCustomerCity($customerCity);
+    abstract public function setCustomerCity(?string $customerCity);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCustomerZip();
+    abstract public function getCustomerZip(): ?string;
 
     /**
-     * @param string $customerZip
+     * @param string|null $customerZip
      *
      * @return $this
      */
-    abstract public function setCustomerZip($customerZip);
+    abstract public function setCustomerZip(?string $customerZip);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCustomerStreet();
+    abstract public function getCustomerStreet(): ?string;
 
     /**
-     * @param string $customerStreet
+     * @param string|null $customerStreet
      *
      * @return $this
      */
-    abstract public function setCustomerStreet($customerStreet);
+    abstract public function setCustomerStreet(?string $customerStreet);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCustomerCompany();
+    abstract public function getCustomerCompany(): ?string;
 
     /**
-     * @param string $customerCompany
+     * @param string|null $customerCompany
      *
      * @return $this
      */
-    abstract public function setCustomerCompany($customerCompany);
+    abstract public function setCustomerCompany(?string $customerCompany);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCustomerFirstname();
+    abstract public function getCustomerFirstname(): ?string;
 
     /**
-     * @param string $customerFirstname
+     * @param string|null $customerFirstname
      *
      * @return $this
      */
-    abstract public function setCustomerFirstname($customerFirstname);
-
-    /**
-     * @return string
-     */
-    abstract public function getCustomerLastname();
-
-    /**
-     * @param string $customerLastname
-     *
-     * @return $this
-     */
-    abstract public function setCustomerLastname($customerLastname);
+    abstract public function setCustomerFirstname(?string $customerFirstname);
 
     /**
      * @return string
      */
-    abstract public function getDeliveryCountry();
+    abstract public function getCustomerLastname(): ?string;
 
     /**
-     * @param string $deliveryCountry
+     * @param string|null $customerLastname
      *
      * @return $this
      */
-    abstract public function setDeliveryCountry($deliveryCountry);
+    abstract public function setCustomerLastname(?string $customerLastname);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getDeliveryCity();
+    abstract public function getDeliveryCountry(): ?string;
 
     /**
-     * @param string $deliveryCity
+     * @param string|null $deliveryCountry
      *
      * @return $this
      */
-    abstract public function setDeliveryCity($deliveryCity);
+    abstract public function setDeliveryCountry(?string $deliveryCountry);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getDeliveryZip();
+    abstract public function getDeliveryCity(): ?string;
 
     /**
-     * @param string $deliveryZip
+     * @param string|null $deliveryCity
      *
      * @return $this
      */
-    abstract public function setDeliveryZip($deliveryZip);
+    abstract public function setDeliveryCity(?string $deliveryCity);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getDeliveryStreet();
+    abstract public function getDeliveryZip(): ?string;
 
     /**
-     * @param string $deliveryStreet
+     * @param string|null $deliveryZip
      *
      * @return $this
      */
-    abstract public function setDeliveryStreet($deliveryStreet);
+    abstract public function setDeliveryZip(?string $deliveryZip);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getDeliveryCompany();
+    abstract public function getDeliveryStreet(): ?string;
 
     /**
-     * @param string $deliveryCompany
+     * @param string|null $deliveryStreet
      *
      * @return $this
      */
-    abstract public function setDeliveryCompany($deliveryCompany);
+    abstract public function setDeliveryStreet(?string $deliveryStreet);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getDeliveryFirstname();
+    abstract public function getDeliveryCompany(): ?string;
 
     /**
-     * @param string $deliveryFirstname
+     * @param string|null $deliveryCompany
      *
      * @return $this
      */
-    abstract public function setDeliveryFirstname($deliveryFirstname);
+    abstract public function setDeliveryCompany(?string $deliveryCompany);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getDeliveryLastname();
+    abstract public function getDeliveryFirstname(): ?string;
 
     /**
-     * @param string $deliveryLastname
+     * @param string|null $deliveryFirstname
      *
      * @return $this
      */
-    abstract public function setDeliveryLastname($deliveryLastname);
+    abstract public function setDeliveryFirstname(?string $deliveryFirstname);
+
+    /**
+     * @return string|null
+     */
+    abstract public function getDeliveryLastname(): ?string;
+
+    /**
+     * @param string|null $deliveryLastname
+     *
+     * @return $this
+     */
+    abstract public function setDeliveryLastname(?string $deliveryLastname);
 
     /**
      * @return bool
      */
-    public function hasDeliveryAddress()
+    public function hasDeliveryAddress(): bool
     {
         return
             ($this->getDeliveryFirstname() != '' || $this->getDeliveryLastname())
@@ -400,37 +403,37 @@ abstract class AbstractOrder extends Concrete
     }
 
     /**
-     * @param string $currency
+     * @param string|null $currency
      *
      * @return $this
      */
-    abstract public function setCurrency($currency);
+    abstract public function setCurrency(?string $currency);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getCurrency();
+    abstract public function getCurrency(): ?string;
 
     /**
      * Get voucherTokens - Voucher Tokens
      *
      * @return array
      */
-    abstract public function getVoucherTokens();
+    abstract public function getVoucherTokens(): array;
 
     /**
      * Set voucherTokens - Voucher Tokens
      *
-     * @param array $voucherTokens
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken[]|null $voucherTokens
      *
-     * @return \Pimcore\Model\DataObject\OnlineShopOrder
+     * @return OnlineShopOrder
      */
-    abstract public function setVoucherTokens($voucherTokens);
+    abstract public function setVoucherTokens(?array $voucherTokens);
 
     /**
      * Get cartHash - Cart Hash
      *
-     * @return float|null
+     * @return int|null
      */
-    abstract public function getCartHash();
+    abstract public function getCartHash(): ?int;
 }

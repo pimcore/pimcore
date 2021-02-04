@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
+use Carbon\Carbon;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
@@ -137,7 +138,7 @@ class DefaultService implements ServiceInterface
         $offer->setCreationDate(time());
         $offer->setKey($tempOfferNumber);
         $offer->setPublished(true);
-        $offer->setDateCreated(new \DateTime());
+        $offer->setDateCreated(new Carbon());
 
         return $offer;
     }
