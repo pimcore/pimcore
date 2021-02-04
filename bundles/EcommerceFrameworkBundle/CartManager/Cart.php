@@ -168,7 +168,7 @@ class Cart extends AbstractCart implements CartInterface
      */
     public function getItemCount(/*?string*/ $countSubItems = false)
     {
-        if(is_bool($countSubItems) || $countSubItems === null) {
+        if (is_bool($countSubItems) || $countSubItems === null) {
             @trigger_error(
                 'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
                 E_USER_DEPRECATED
@@ -176,9 +176,9 @@ class Cart extends AbstractCart implements CartInterface
         }
 
         //TODO remove this in Pimcore 10.0.0
-        if($countSubItems === false) {
+        if ($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+        } elseif ($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
             $countSubItems = self::COUNT_MAIN_AND_SUB_ITEMS;
         }
 
@@ -198,16 +198,16 @@ class Cart extends AbstractCart implements CartInterface
 
     public function getItemAmount(/*?string*/ $countSubItems = false)
     {
-        if(is_bool($countSubItems)) {
+        if (is_bool($countSubItems)) {
             @trigger_error(
                 'Use of true/false for $countSubItems is deprecated and will be removed in version 10.0.0. Use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS instead.',
                 E_USER_DEPRECATED
             );
         }
 
-        if($countSubItems === false) {
+        if ($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
+        } elseif ($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
             $countSubItems = self::COUNT_MAIN_OR_SUB_ITEMS;
         }
 
@@ -220,7 +220,6 @@ class Cart extends AbstractCart implements CartInterface
             }
 
             return $this->itemAmount;
-
         } else {
             return parent::getItemAmount($countSubItems);
         }
