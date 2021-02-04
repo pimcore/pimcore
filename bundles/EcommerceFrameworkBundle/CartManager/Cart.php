@@ -162,15 +162,13 @@ class Cart extends AbstractCart implements CartInterface
     }
 
     /**
-     * @param bool|false $countSubItems
+     * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemCount($countSubItems = false)
+    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY)
     {
-        if ($countSubItems) {
-            return parent::getItemCount($countSubItems);
-        } else {
+        if ($countSubItems === self::COUNT_MAIN_ITEMS_ONLY) {
             if ($this->itemCount == null) {
                 $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName($this->getCartItemClassName());
@@ -179,14 +177,14 @@ class Cart extends AbstractCart implements CartInterface
             }
 
             return $this->itemCount;
+        } else {
+            return parent::getItemCount($countSubItems);
         }
     }
 
-    public function getItemAmount($countSubItems = false)
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY)
     {
-        if ($countSubItems) {
-            return parent::getItemAmount($countSubItems);
-        } else {
+        if ($countSubItems === self::COUNT_MAIN_ITEMS_ONLY) {
             if ($this->itemAmount == null) {
                 $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName($this->getCartItemClassName());
@@ -195,6 +193,8 @@ class Cart extends AbstractCart implements CartInterface
             }
 
             return $this->itemAmount;
+        } else {
+            return parent::getItemAmount($countSubItems);
         }
     }
 

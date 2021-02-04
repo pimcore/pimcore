@@ -20,7 +20,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\OrderUpdateNotPossibleException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\Event\Ecommerce\OrderManagerEvents;
 use Pimcore\Event\Model\Ecommerce\OrderManagerEvent;
@@ -131,7 +130,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $modificationItem->setAmount($modification->getGrossAmount()->asString());
             $modificationItem->setNetAmount($modification->getNetAmount()->asString());
 
-            if ($modification instanceof ModificatedPriceInterface && $rule = $modification->getRule()) {
+            if ($rule = $modification->getRule()) {
                 $modificationItem->setPricingRuleId($rule->getId());
             } else {
                 $modificationItem->setPricingRuleId(null);

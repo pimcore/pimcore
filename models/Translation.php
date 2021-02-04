@@ -338,6 +338,7 @@ class Translation extends AbstractModel
     public static function isAValidDomain(string $domain): bool
     {
         $translation = new static();
+
         return $translation->getDao()->isAValidDomain($domain);
     }
 

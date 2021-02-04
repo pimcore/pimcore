@@ -108,13 +108,7 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function modified()
     {
-        // Reset cached values
-        $this->itemCount = null;
-        $this->subItemCount = null;
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-
-        return parent::modified();
+         return parent::modified();
     }
 
     /**
