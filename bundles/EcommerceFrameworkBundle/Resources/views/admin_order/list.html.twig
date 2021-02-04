@@ -98,7 +98,7 @@
 
                 {% if date.timestamp is defined %}
                     {% set date = date() %}
-                    {% do date.setTimestamp(item.getOrderDate()) %}
+                    {% do date.setTimestamp(item.getOrderDate().getTimestamp()) %}
                 {% endif %}
 
                 {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
