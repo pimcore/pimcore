@@ -31,6 +31,9 @@ use Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 class CheckoutManager implements CheckoutManagerInterface
 {
     /**
