@@ -1506,7 +1506,7 @@ class Service extends Model\Element\Service
      *
      * @return string|null
      */
-    public static function getCalculatedFieldValueForEditMode($object, $params = [], $data)
+    public static function getCalculatedFieldValueForEditMode($object, $params, $data)
     {
         if (!$data) {
             return null;

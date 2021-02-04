@@ -59,7 +59,7 @@ class TrackingManager implements TrackingManagerInterface
      * @param TrackerInterface[] $trackers
      * @param EnvironmentInterface $environment
      */
-    public function __construct(array $trackers = [], EnvironmentInterface $environment)
+    public function __construct(EnvironmentInterface $environment, array $trackers = [])
     {
         foreach ($trackers as $tracker) {
             $this->registerTracker($tracker);

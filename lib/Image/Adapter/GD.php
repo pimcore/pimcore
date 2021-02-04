@@ -158,7 +158,7 @@ class GD extends Adapter
      * @param int $width
      * @param int $height
      *
-     * @return resource
+     * @return resource|\GdImage|false
      */
     protected function createImage($width, $height)
     {

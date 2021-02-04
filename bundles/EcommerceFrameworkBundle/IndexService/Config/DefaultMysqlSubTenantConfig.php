@@ -43,7 +43,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         array $attributes,
         array $searchAttributes,
         array $filterTypes,
-        array $options = [],
+        array $options,
         EnvironmentInterface $environment,
         ConnectionInterface $db
     ) {

@@ -323,7 +323,7 @@ class PricingManager implements PricingManagerInterface
         $environment = $this->getEnvironment();
         $environment->setProduct($priceInfo->getProduct());
 
-        if (method_exists($priceInfo->getProduct(), 'getCategories')) {
+        if ($priceInfo->getProduct() && method_exists($priceInfo->getProduct(), 'getCategories')) {
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
         }
 
