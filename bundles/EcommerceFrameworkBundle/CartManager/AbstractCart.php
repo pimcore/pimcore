@@ -447,7 +447,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         //TODO remove this in Pimcore 10.0.0
         if($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else if(!in_array($countSubItems, [self::COUNT_MAIN_ITEMS_ONLY, self::COUNT_MAIN_OR_SUB_ITEMS, self::COUNT_MAIN_AND_SUB_ITEMS])) {
+        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
             $countSubItems = self::COUNT_MAIN_OR_SUB_ITEMS;
         }
 
@@ -490,10 +490,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
                             $count += $item->getCount();
                         }
                     }
-                    $this->subItemAmount = $count;
+                    $this->mainAndSubItemAmount = $count;
                 }
 
-                return $this->subItemAmount;
+                return $this->mainAndSubItemAmount;
 
             case self::COUNT_MAIN_ITEMS_ONLY:
 
@@ -533,7 +533,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         //TODO remove this in Pimcore 10.0.0
         if($countSubItems === false) {
             $countSubItems = self::COUNT_MAIN_ITEMS_ONLY;
-        } else if(!in_array($countSubItems, [self::COUNT_MAIN_ITEMS_ONLY, self::COUNT_MAIN_OR_SUB_ITEMS, self::COUNT_MAIN_AND_SUB_ITEMS])) {
+        } else if($countSubItems !== self::COUNT_MAIN_ITEMS_ONLY && $countSubItems !== self::COUNT_MAIN_OR_SUB_ITEMS && $countSubItems !== self::COUNT_MAIN_AND_SUB_ITEMS) {
             $countSubItems = self::COUNT_MAIN_AND_SUB_ITEMS;
         }
 
