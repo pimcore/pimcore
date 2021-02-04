@@ -24,6 +24,21 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenIn
 interface CartInterface
 {
     /**
+     * count main items only, don't consider sub items
+     */
+    const COUNT_MAIN_ITEMS_ONLY = 'main';
+
+    /**
+     * count sub items if available, otherwise main items
+     */
+    const COUNT_MAIN_OR_SUB_ITEMS = 'main_or_sub';
+
+    /**
+     * count main and sub items
+     */
+    const COUNT_MAIN_AND_SUB_ITEMS = 'main_and_sub';
+
+    /**
      * @return int
      */
     public function getId();
@@ -157,20 +172,20 @@ interface CartInterface
     /**
      * calculates amount of items in cart
      *
-     * @param bool $countSubItems
+     * @param mixed $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemAmount($countSubItems = false);
+    public function getItemAmount(/*?string*/ $countSubItems = false);
 
     /**
      * counts items in cart (does not consider item amount)
      *
-     * @param bool|false $countSubItems
+     * @param mixed $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
      */
-    public function getItemCount($countSubItems = false);
+    public function getItemCount(/*?string*/ $countSubItems = false);
 
     /**
      * @param int $count
