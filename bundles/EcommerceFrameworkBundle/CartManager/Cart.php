@@ -60,8 +60,6 @@ class Cart extends AbstractCart implements CartInterface
      */
     public function delete()
     {
-        $this->setIgnoreReadonly();
-
         $cacheKey = Cart\Dao::TABLE_NAME . '_' . $this->getId();
         Runtime::set($cacheKey, null);
 
@@ -108,7 +106,6 @@ class Cart extends AbstractCart implements CartInterface
                 $cartClass = get_called_class();
                 /* @var CartInterface $cart */
                 $cart = new $cartClass;
-                $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);
 
                 //call getter to make sure modification date is set too (not only timestamp)
@@ -120,8 +117,6 @@ class Cart extends AbstractCart implements CartInterface
                 foreach ($dataList->getCartCheckoutDataItems() as $data) {
                     $cart->setCheckoutData($data->getKey(), $data->getData());
                 }
-
-                $cart->unsetIgnoreReadonly();
 
                 Runtime::set($cacheKey, $cart);
             } catch (\Exception $ex) {
@@ -149,13 +144,10 @@ class Cart extends AbstractCart implements CartInterface
                 }
             }
             $this->items = $items;
-            $this->setIgnoreReadonly();
 
             $dateBackup = $this->getModificationDate();
             $this->modified();
             $this->setModificationDate($dateBackup);
-
-            $this->unsetIgnoreReadonly();
         }
 
         return $this->items;

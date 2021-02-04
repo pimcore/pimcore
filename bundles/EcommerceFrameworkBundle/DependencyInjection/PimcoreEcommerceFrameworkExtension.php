@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFacto
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
@@ -301,19 +302,22 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 '$checkoutStepDefinitions' => $tenantConfig['steps'],
             ]);
 
+            $paymentStrategyLocatorMapping = [];
             if (!empty($tenantConfig['factory_options'])) {
                 $factoryConfig = $tenantConfig['factory_options'];
 
                 $locatorMapping = [];
-                if ($factoryConfig['handle_pending_payments_strategy']) {
-                    $locatorMapping[$factoryConfig['handle_pending_payments_strategy']] = $factoryConfig['handle_pending_payments_strategy'];
-                } else {
-                    $locatorMapping[ThrowExceptionStrategy::class] = ThrowExceptionStrategy::class;
+                if ($factoryConfig['handle_pending_payments_strategy'] ?? false) {
+                    $paymentStrategyLocatorMapping[$factoryConfig['handle_pending_payments_strategy']] = $factoryConfig['handle_pending_payments_strategy'];
                 }
 
                 $checkoutManagerFactory->setArgument('$options', $factoryConfig);
-                $checkoutManagerFactory->setArgument('$handlePendingPaymentStrategyLocator', $this->setupServiceLocator($container, 'pimcore_ecommerce.checkout_manager.handle_pending_payments_strategy_locator', $locatorMapping));
             }
+
+            if(empty($paymentStrategyLocatorMapping)) {
+                $paymentStrategyLocatorMapping[CancelPaymentOrRecreateOrderStrategy::class] = CancelPaymentOrRecreateOrderStrategy::class;
+            }
+            $checkoutManagerFactory->setArgument('$handlePendingPaymentStrategyLocator', $this->setupServiceLocator($container, 'pimcore_ecommerce.checkout_manager.handle_pending_payments_strategy_locator', $paymentStrategyLocatorMapping));
 
             if (null !== $tenantConfig['payment']['provider']) {
                 $checkoutManagerFactory->setArgument('$paymentProvider', new Reference(sprintf(
