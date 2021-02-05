@@ -446,7 +446,9 @@ class Staticroute extends AbstractModel
         }
 
         // merge with defaults
-        $urlParams = array_merge($defaultValues, $urlOptions);
+        // merge router.request_context params e.g. "_locale"
+        $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
+        $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
 
         $parametersInReversePattern = [];
         $parametersGet = [];
