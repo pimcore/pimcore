@@ -357,8 +357,11 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expectedVideo->getId(), $video->getId());
 
         $poster = $editable->getPosterAsset();
+        $expectedPoster = $params["poster"];
         $this->assertInstanceOf(\Pimcore\Model\Asset\Image::class, $poster);
-        $this->assertEquals($params["poster"]->getId(), $video);
+        $this->assertInstanceOf(\Pimcore\Model\Asset\Image::class, $expectedPoster);
+
+        $this->assertEquals($expectedPoster->getId(), $poster->getId());
 
         $this->assertEquals("some title " . $seed, $editable->getTitle());
         $this->assertEquals("some description " . $seed, $editable->getDescription());
