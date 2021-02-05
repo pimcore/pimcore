@@ -63,7 +63,7 @@ class EditableTest extends ModelTestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Concrete     $object
+     * @param Concrete $object
      * @param array|string $fields
      * @param array $returnData
      */
@@ -107,7 +107,8 @@ class EditableTest extends ModelTestCase
         }
     }
 
-    public function reloadPage() {
+    public function reloadPage()
+    {
         $this->testPage = Page::getById($this->testPage->getId(), true);
     }
 
@@ -125,6 +126,14 @@ class EditableTest extends ModelTestCase
 
         $this->reloadPage();
         $this->testDataHelper->assertDate($this->testPage, 'date', $this->seed);
+    }
+
+    public function testEmbed()
+    {
+        $this->createTestPage('embed');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertEmbed($this->testPage, 'embed', $this->seed);
     }
 
     public function testImage()
@@ -159,6 +168,31 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertNumeric($this->testPage, 'numeric', $this->seed);
     }
 
+    public function testPdf()
+    {
+        $this->createTestPage('pdf', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertPdf($this->testPage, 'pdf', $this->seed, $returnData);
+    }
+
+    public function testRelation()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestPage('relation', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertRelation($this->testPage, 'relation', $this->seed, $returnData);
+    }
+
+    public function testRelations()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestPage('relations', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertRelations($this->testPage, 'relations', $this->seed, $returnData);
+    }
 
     public function testSelect()
     {
@@ -184,6 +218,15 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertTextarea($this->testPage, 'textarea', $this->seed);
     }
 
+    public function testVideo()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestPage('video', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertVideo($this->testPage, 'video', $this->seed, $returnData);
+    }
+
     public function testWysiwyg()
     {
         $this->createTestPage('wysiwyg');
@@ -191,7 +234,6 @@ class EditableTest extends ModelTestCase
         $this->reloadPage();
         $this->testDataHelper->assertWysiwyg($this->testPage, 'wysiwyg', $this->seed);
     }
-
 
 
 }

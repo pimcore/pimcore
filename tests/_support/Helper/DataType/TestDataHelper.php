@@ -500,35 +500,6 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param string|null $condition
-     *
-     * @return Concrete[]
-     */
-    private function getObjectList($condition = null)
-    {
-        $list = new DataObject\Listing();
-        $list->setOrderKey('o_id');
-        $list->setCondition($condition);
-
-        $objects = $list->load();
-
-        return $objects;
-    }
-
-    public function assertObjectsEqual(AbstractObject $obj1, AbstractObject $obj2)
-    {
-        $this->assertElementsEqual($obj1, $obj2);
-
-        $str1 = TestHelper::createObjectComparisonString($obj1);
-        $str2 = TestHelper::createObjectComparisonString($obj2);
-
-        $this->assertNotNull($str1);
-        $this->assertNotNull($str2);
-
-        $this->assertEquals($str1, $str2);
-    }
-
-    /**
      * @param Concrete $object
      * @param string $field
      * @param int $seed
