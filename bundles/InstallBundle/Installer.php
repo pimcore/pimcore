@@ -590,7 +590,7 @@ class Installer
         try {
             $filesystem->remove($oldCacheDir);
         } catch (IOException $e) {
-                $this->logger->error($e->getMessage());
+            $this->logger->error($e->getMessage());
         }
     }
 
