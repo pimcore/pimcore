@@ -168,6 +168,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     {
         $vars = get_object_vars($this);
         unset($vars['options']);
+
         return array_keys($vars);
     }
 

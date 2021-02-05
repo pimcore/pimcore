@@ -780,7 +780,7 @@ class Service extends Model\AbstractModel
             } else {
 
                 // if this is the initial element set the correct path and key
-                if ($data instanceof ElementInterface && $initial) {
+                if ($data instanceof ElementInterface && $initial && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
                     $originalElement = self::getElementById(self::getElementType($data), $data->getId());
 
                     if ($originalElement) {
@@ -795,9 +795,7 @@ class Service extends Model\AbstractModel
                             $data->setKey($originalElement->getKey());
                         }
 
-                        if (!DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
-                            $data->setPath($originalElement->getRealPath());
-                        }
+                        $data->setPath($originalElement->getRealPath());
                     }
                 }
 
