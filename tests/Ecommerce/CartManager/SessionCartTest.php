@@ -97,5 +97,4 @@ class SessionCartTest extends TestCase
         $this->assertEquals(12, $cart->getItemAmount(CartInterface::COUNT_MAIN_OR_SUB_ITEMS), 'item amount - mode `COUNT_MAIN_OR_SUB_ITEMS`');
         $this->assertEquals(3, $cart->getItemCount(CartInterface::COUNT_MAIN_OR_SUB_ITEMS), 'item count with cart method - mode `COUNT_MAIN_OR_SUB_ITEMS`');
     }
-
 }

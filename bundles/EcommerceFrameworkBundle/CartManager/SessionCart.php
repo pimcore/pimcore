@@ -108,7 +108,7 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function modified()
     {
-         return parent::modified();
+        return parent::modified();
     }
 
     /**

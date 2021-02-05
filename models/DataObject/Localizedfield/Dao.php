@@ -481,7 +481,7 @@ class Dao extends Model\Dao\AbstractDao
         } catch (\Exception $e) {
             Logger::error($e);
 
-            if($isUpdate && $e instanceof TableNotFoundException) {
+            if ($isUpdate && $e instanceof TableNotFoundException) {
                 $this->db->rollBack();
                 $this->createUpdateTable();
 

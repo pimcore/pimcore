@@ -41,6 +41,7 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param string|null $totalPriceBeforeDiscount
+     *
      * @return mixed
      */
     abstract public function setTotalPriceBeforeDiscount(?string $totalPriceBeforeDiscount);
@@ -52,6 +53,7 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param string|null $totalPrice
+     *
      * @return mixed
      */
     abstract public function setTotalPrice(?string $totalPrice);
@@ -63,6 +65,7 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param string|null $discount
+     *
      * @return mixed
      */
     abstract public function setDiscount(?string $discount);
@@ -74,6 +77,7 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param string|null $discountType
+     *
      * @return mixed
      */
     abstract public function setDiscountType(?string $discountType);
@@ -85,6 +89,7 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param \Carbon\Carbon|null $dateCreated
+     *
      * @return mixed
      */
     abstract public function setDateCreated(?\Carbon\Carbon $dateCreated);
@@ -96,6 +101,7 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param \Carbon\Carbon|null $dateValidUntil
+     *
      * @return mixed
      */
     abstract public function setDateValidUntil(?\Carbon\Carbon $dateValidUntil);
@@ -147,6 +153,7 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param string|null $cartId
+     *
      * @return mixed
      */
     abstract public function setCartId(?string $cartId);

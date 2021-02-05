@@ -60,6 +60,7 @@ abstract class AbstractOrderItem extends Concrete
 
     /**
      * @param float|null $amount
+     *
      * @return mixed
      */
     abstract public function setAmount(?float $amount);
@@ -188,7 +189,7 @@ abstract class AbstractOrderItem extends Concrete
             $possibleOrderObject = $possibleOrderObject->getParent();
         }
 
-        if($possibleOrderObject instanceof AbstractOrder) {
+        if ($possibleOrderObject instanceof AbstractOrder) {
             return $possibleOrderObject;
         }
 
