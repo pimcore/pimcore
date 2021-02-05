@@ -48,6 +48,105 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertAreablock($this->testPage, 'areablock', $this->seed);
     }
 
+    public function testCheckbox()
+    {
+        $this->createTestPage('checkbox');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
+    }
+
+    public function testDate()
+    {
+        $this->createTestPage('date');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertDate($this->testPage, 'date', $this->seed);
+    }
+
+    public function testEmbed()
+    {
+        $this->createTestPage('embed');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertEmbed($this->testPage, 'embed', $this->seed);
+    }
+
+    public function testImage()
+    {
+        $this->createTestPage('image', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
+    }
+
+    public function testInput()
+    {
+        $this->createTestPage('input');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertInput($this->testPage, 'input', $this->seed);
+    }
+
+    public function testLink()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestPage('link', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertLink($this->testPage, 'link', $this->seed, $returnData);
+    }
+
+    public function testMultiselect()
+    {
+        $this->createTestPage('multiselect');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertMultiselect($this->testPage, 'multiselect', $this->seed);
+    }
+
+    public function testNumeric()
+    {
+        $this->createTestPage('numeric');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertNumeric($this->testPage, 'numeric', $this->seed);
+    }
+
+    public function testPdf()
+    {
+        $this->createTestPage('pdf', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertPdf($this->testPage, 'pdf', $this->seed, $returnData);
+    }
+
+    public function testRelation()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestPage('relation', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertRelation($this->testPage, 'relation', $this->seed, $returnData);
+    }
+
+    public function testRelations()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestPage('relations', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertRelations($this->testPage, 'relations', $this->seed, $returnData);
+    }
+
+    public function testScheduledblock()
+    {
+        $this->createTestPage('scheduledblock');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertScheduledblock($this->testPage, 'scheduledblock', $this->seed);
+    }
+
     protected function createTestPage($fields = [], &$returnData = [])
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
@@ -110,88 +209,6 @@ class EditableTest extends ModelTestCase
     public function reloadPage()
     {
         $this->testPage = Page::getById($this->testPage->getId(), true);
-    }
-
-    public function testCheckbox()
-    {
-        $this->createTestPage('checkbox');
-
-        $this->reloadPage();
-        $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
-    }
-
-    public function testDate()
-    {
-        $this->createTestPage('date');
-
-        $this->reloadPage();
-        $this->testDataHelper->assertDate($this->testPage, 'date', $this->seed);
-    }
-
-    public function testEmbed()
-    {
-        $this->createTestPage('embed');
-
-        $this->reloadPage();
-        $this->testDataHelper->assertEmbed($this->testPage, 'embed', $this->seed);
-    }
-
-    public function testImage()
-    {
-        $this->createTestPage('image', $returnData);
-
-        $this->reloadPage();
-        $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
-    }
-
-    public function testInput()
-    {
-        $this->createTestPage('input');
-
-        $this->reloadPage();
-        $this->testDataHelper->assertInput($this->testPage, 'input', $this->seed);
-    }
-
-    public function testMultiselect()
-    {
-        $this->createTestPage('multiselect');
-
-        $this->reloadPage();
-        $this->testDataHelper->assertMultiselect($this->testPage, 'multiselect', $this->seed);
-    }
-
-    public function testNumeric()
-    {
-        $this->createTestPage('numeric');
-
-        $this->reloadPage();
-        $this->testDataHelper->assertNumeric($this->testPage, 'numeric', $this->seed);
-    }
-
-    public function testPdf()
-    {
-        $this->createTestPage('pdf', $returnData);
-
-        $this->reloadPage();
-        $this->testDataHelper->assertPdf($this->testPage, 'pdf', $this->seed, $returnData);
-    }
-
-    public function testRelation()
-    {
-        TestHelper::createEmptyObjects();
-        $this->createTestPage('relation', $returnData);
-
-        $this->reloadPage();
-        $this->testDataHelper->assertRelation($this->testPage, 'relation', $this->seed, $returnData);
-    }
-
-    public function testRelations()
-    {
-        TestHelper::createEmptyObjects();
-        $this->createTestPage('relations', $returnData);
-
-        $this->reloadPage();
-        $this->testDataHelper->assertRelations($this->testPage, 'relations', $this->seed, $returnData);
     }
 
     public function testSelect()

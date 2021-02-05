@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Helper\Document;
 
 use Carbon\Carbon;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Document;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document\Editable\Areablock;
@@ -11,11 +12,13 @@ use Pimcore\Model\Document\Editable\Date;
 use Pimcore\Model\Document\Editable\Embed;
 use Pimcore\Model\Document\Editable\Image;
 use Pimcore\Model\Document\Editable\Input;
+use Pimcore\Model\Document\Editable\Link;
 use Pimcore\Model\Document\Editable\Multiselect;
 use Pimcore\Model\Document\Editable\Numeric;
 use Pimcore\Model\Document\Editable\Pdf;
 use Pimcore\Model\Document\Editable\Relation;
 use Pimcore\Model\Document\Editable\Relations;
+use Pimcore\Model\Document\Editable\Scheduledblock;
 use Pimcore\Model\Document\Editable\Select;
 use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Editable\Textarea;
@@ -151,6 +154,29 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param string $field
      * @param int $seed
      */
+    public function assertLink(Page $page, $field, $seed = 1, $params = [])
+    {
+        /** @var Link $editable */
+        $editable = $page->getEditable($field);
+
+        $this->assertInstanceOf(Link::class, $editable);
+        $target = $editable->getTarget();
+
+        /** @var Asset $expectedTarget */
+        $expectedTarget = $params["target"];
+
+        $this->assertEquals($expectedTarget->getFullPath(), $editable->getHref());
+
+        $this->assertEquals("some title" . $seed, $editable->getTitle());
+        $this->assertEquals("some text" . $seed, $editable->getText());
+        $this->assertEquals("_blank", $editable->getTarget());
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertMultiselect(Page $page, $field, $seed = 1)
     {
         /** @var Select $editable */
@@ -234,6 +260,41 @@ class TestDataHelper extends AbstractTestDataHelper
             $this->assertInstanceOf(AbstractObject::class, $value[$i]);
             $this->assertObjectsEqual($expectedTargets[$i], $value[$i]);
         }
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertScheduledblock(Page $page, $field, $seed = 1)
+    {
+        /** @var Scheduledblock $editable */
+        $editable = $page->getEditable($field);
+        $this->assertInstanceOf(Scheduledblock::class, $editable);
+        $value = $editable->getIndices();
+
+        $expected = $this->createScheduledblockData($seed);
+
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param int $seed
+     * @return array[]
+     */
+    public function createScheduledblockData($seed = 1)
+    {
+        return [
+            [
+                "key" => 4,
+                "date" => time() + $seed,
+            ],
+            [
+                "key" => 1,
+                "date" => time() + 6 + $seed,
+            ]
+        ];
     }
 
     /**
@@ -414,6 +475,33 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param string $field
      * @param int $seed
      */
+    public function fillLink(Page $page, $field, $seed = 1, &$returnData)
+    {
+        $target = TestHelper::createImageAsset();
+        $editable = new Link();
+        $editable->setName($field);
+
+        $editable->setDataFromEditmode([
+                "internalType" => "asset",
+                "linktype" => "internal",
+                "path" => $target->getFullPath(),
+                "text" => "some text" . $seed,
+                "title" => "some title" . $seed,
+                "target" => "_blank"]
+        );
+
+        $page->setEditable($editable);
+
+        $returnData = [
+            "target" => $target
+        ];
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
     public function fillMultiselect(Page $page, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -506,6 +594,20 @@ class TestDataHelper extends AbstractTestDataHelper
         $returnData = [
             "targets" => $objects
         ];
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillScheduledblock(Page $page, $field, $seed = 1)
+    {
+        $editable = new Scheduledblock();
+        $editable->setName($field);
+        $data = $this->createScheduledblockData($seed);
+        $editable->setDataFromEditmode($data);
+        $page->setEditable($editable);
     }
 
     /**
