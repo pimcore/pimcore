@@ -61,8 +61,6 @@ class DocumentTest extends ModelTestCase
     }
 
 
-    //TODO elements
-
     public function reloadPage() {
         $this->testPage = Page::getById($this->testPage->getId(), true);
     }

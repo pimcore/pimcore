@@ -40,16 +40,12 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper = $testData;
     }
 
-    public function testCheckbox()
+    public function testAreablock()
     {
-        $this->createTestPage('checkbox');
+        $this->createTestPage('areablock');
 
         $this->reloadPage();
-        $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
-    }
-
-    public function reloadPage() {
-        $this->testPage = Page::getById($this->testPage->getId(), true);
+        $this->testDataHelper->assertAreablock($this->testPage, 'areablock', $this->seed);
     }
 
     protected function createTestPage($fields = [], &$returnData = [])
@@ -109,6 +105,42 @@ class EditableTest extends ModelTestCase
 
             call_user_func_array([$this->testDataHelper, $method], $methodArguments);
         }
+    }
+
+    public function reloadPage() {
+        $this->testPage = Page::getById($this->testPage->getId(), true);
+    }
+
+    public function testCheckbox()
+    {
+        $this->createTestPage('checkbox');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
+    }
+
+    public function testDate()
+    {
+        $this->createTestPage('date');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertDate($this->testPage, 'date', $this->seed);
+    }
+
+    public function testImage()
+    {
+        $this->createTestPage('image', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
+    }
+
+    public function testImagex()
+    {
+        $this->createTestPage('checkbox');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
     }
 
 
