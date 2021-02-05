@@ -124,7 +124,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             }
 
             if (value) {
-                return value.value + " " + value.unit;
+                return (value.value ? value.value : "") + " " + value.unitAbbr;
             } else {
                 return "";
             }
