@@ -337,7 +337,7 @@ class Link extends Model\Document
             }
         } catch (\Exception $e) {
             Logger::warn($e);
-            $this->internalType = null;
+            $this->internalType = '';
             $this->internal = null;
             $this->object = null;
         }
