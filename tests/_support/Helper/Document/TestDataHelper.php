@@ -660,7 +660,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable->setDataFromEditmode(
             ["id" => $video->getId(),
                 "path" => $video->getFullPath(),
-                "title" => "some title" . $seed,
+                "title" => "some title " . $seed,
                 "description" => "some description " . $seed,
                 "poster" => $poster->getFullPath(),
                 "type" => "asset"
