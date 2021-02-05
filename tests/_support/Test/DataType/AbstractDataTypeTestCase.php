@@ -119,7 +119,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
      *
      * @return Unittest
      */
-    abstract protected function createTestObject($fields = [], &$params = []);
+    abstract protected function createfTestObject($fields = [], &$params = []);
 
     abstract public function refreshObject();
 

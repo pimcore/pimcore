@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Helper\DataType;
 
-use Codeception\Module;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -15,10 +14,11 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
+use Pimcore\Tests\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 
-class TestDataHelper extends Module
+class TestDataHelper extends AbstractTestDataHelper
 {
     const IMAGE = 'sampleimage.jpg';
     const DOCUMENT = 'sampledocument.txt';
