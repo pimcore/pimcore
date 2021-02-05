@@ -173,7 +173,7 @@ class NotificationService
 
         if (!empty($filter)) {
             $conditions = [];
-            foreach($filter as $key => $value) {
+            foreach ($filter as $key => $value) {
                 $conditions[] = $key . ' = :' . $key;
             }
 

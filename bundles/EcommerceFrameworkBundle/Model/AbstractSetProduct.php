@@ -157,7 +157,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      */
     public function getOSAvailabilityInfo($quantity = null, $products = null): ?AvailabilityInterface
     {
-        if($quantity === null) {
+        if ($quantity === null) {
             $quantity = 1;
         }
 

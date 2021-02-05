@@ -73,7 +73,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
         throw new UnsupportedException('getPriceSystemName is not supported for ' . get_class($this));
     }
 
-
     /**
      * returns product type for product index (either object or variant).
      * by default it returns type of object, but it may be overwritten if necessary.

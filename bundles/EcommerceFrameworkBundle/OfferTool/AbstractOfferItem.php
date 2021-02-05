@@ -15,8 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Model\DataObject\Concrete;
 
 /**
@@ -41,6 +39,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param string|null $productNumber
+     *
      * @return mixed
      */
     abstract public function setProductNumber(?string $productNumber);
@@ -59,12 +58,14 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @return float|null
+     *
      * @throws UnsupportedException
      */
     abstract public function getAmount(): ?float;
 
     /**
      * @param float|null $amount
+     *
      * @return mixed
      */
     abstract public function setAmount(?float $amount);
@@ -76,6 +77,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param string|null $originalTotalPrice
+     *
      * @return mixed
      */
     abstract public function setOriginalTotalPrice(?string $originalTotalPrice);
@@ -87,6 +89,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param string|null $finalTotalPrice
+     *
      * @return mixed
      */
     abstract public function setFinalTotalPrice(?string $finalTotalPrice);
@@ -98,6 +101,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param string|null $discount
+     *
      * @return mixed
      */
     abstract public function setDiscount(?string $discount);
@@ -109,6 +113,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param string|null $discountType
+     *
      * @return mixed
      */
     abstract public function setDiscountType(?string $discountType);
@@ -120,6 +125,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param array|null $subItems
+     *
      * @return mixed
      */
     abstract public function setSubItems(?array $subItems);
@@ -131,6 +137,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param string|null $comment
+     *
      * @return mixed
      */
     abstract public function setComment(?string $comment);
@@ -142,6 +149,7 @@ abstract class AbstractOfferItem extends Concrete
 
     /**
      * @param string|null $cartItemKey
+     *
      * @return mixed
      */
     abstract public function setCartItemKey(?string $cartItemKey);

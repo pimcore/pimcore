@@ -768,7 +768,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         }
     }
 
-
     /**
      * @param int $modificationDateTimestamp
      */

@@ -14,8 +14,8 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class AssetTest extends ModelTestCase
 {
-
-    public function tearDown() : void {
+    public function tearDown(): void
+    {
         parent::tearDown();
         TestHelper::clearThumbnailConfigurations();
     }
@@ -23,14 +23,15 @@ class AssetTest extends ModelTestCase
     /** @var Asset */
     protected $testAsset;
 
-    public function testCRUD() {
+    public function testCRUD()
+    {
         // create
         $path = TestHelper::resolveFilePath('assets/images/image5.jpg');
         $expectedData = file_get_contents($path);
         $fileSize = strlen($expectedData);
         $this->assertTrue(strlen($fileSize) > 0);
 
-        $this->testAsset = TestHelper::createImageAsset('', null, true,'assets/images/image5.jpg');
+        $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image5.jpg');
         $this->assertInstanceOf(Asset\Image::class, $this->testAsset);
 
         $this->reloadAsset();
@@ -39,10 +40,10 @@ class AssetTest extends ModelTestCase
 
         // move and rename
         $newParent = Asset\Service::createFolderByPath(uniqid());
-        $newPath = $newParent->getFullPath() . "/" . $this->testAsset->getKey() . "_new";
+        $newPath = $newParent->getFullPath() . '/' . $this->testAsset->getKey() . '_new';
 
         $this->testAsset->setParentId($newParent->getId());
-        $this->testAsset->setKey($this->testAsset->getKey() . "_new");
+        $this->testAsset->setKey($this->testAsset->getKey() . '_new');
         $this->testAsset->save();
         $this->reloadAsset();
 
@@ -73,8 +74,9 @@ class AssetTest extends ModelTestCase
         $this->assertFalse($newParent->hasChildren());
     }
 
-    public function testThumbnails() {
-        $this->testAsset = TestHelper::createImageAsset('', null, true,'assets/images/image1.jpg');
+    public function testThumbnails()
+    {
+        $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
         $this->assertInstanceOf(Asset\Image::class, $this->testAsset);
 
         $this->reloadAsset();
@@ -94,7 +96,7 @@ class AssetTest extends ModelTestCase
         $this->assertTrue($thumbnail->getHeight() > 768);
 
         // scale by width (shrink)
-        $config =  TestHelper::createThumbnailConfigurationScaleByWidth();
+        $config = TestHelper::createThumbnailConfigurationScaleByWidth();
         $thumbnail = $this->testAsset->getThumbnail($config->getName(), false);
         $this->assertEquals(256, $thumbnail->getWidth());
         $this->assertEquals(192, $thumbnail->getHeight());
@@ -135,7 +137,8 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(file_exists($fsPathThumbnail));
     }
 
-    public function reloadAsset() {
+    public function reloadAsset()
+    {
         $this->testAsset = Asset::getById($this->testAsset->getId(), true);
     }
 
