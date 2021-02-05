@@ -151,6 +151,14 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertMultiselect($this->testPage, 'multiselect', $this->seed);
     }
 
+    public function testNumeric()
+    {
+        $this->createTestPage('numeric');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertNumeric($this->testPage, 'numeric', $this->seed);
+    }
+
 
     public function testSelect()
     {
@@ -160,6 +168,13 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertSelect($this->testPage, 'select', $this->seed);
     }
 
+    public function testTable()
+    {
+        $this->createTestPage('table');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertTable($this->testPage, 'table', $this->seed);
+    }
 
     public function testTextarea()
     {

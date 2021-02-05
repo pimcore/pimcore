@@ -9,7 +9,9 @@ use Pimcore\Model\Document\Editable\Date;
 use Pimcore\Model\Document\Editable\Image;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Editable\Multiselect;
+use Pimcore\Model\Document\Editable\Numeric;
 use Pimcore\Model\Document\Editable\Select;
+use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Helper\AbstractTestDataHelper;
@@ -142,6 +144,21 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param string $field
      * @param int $seed
      */
+    public function assertNumeric(Page $page, $field, $seed = 1)
+    {
+        /** @var Numeric $editable */
+        $editable = $page->getEditable($field);
+        $this->assertInstanceOf(Numeric::class, $editable);
+        $value = $editable->getValue();
+
+        $this->assertEquals(123 + $seed, $value);
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
     public function assertSelect(Page $page, $field, $seed = 1)
     {
         /** @var Select $editable */
@@ -151,6 +168,28 @@ class TestDataHelper extends AbstractTestDataHelper
         $expected = 1 + ($seed % 2);
 
         $this->assertEquals($expected, $editable->getValue());
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertTable(Page $page, $field, $seed = 1)
+    {
+        /** @var Table $editable */
+        $editable = $page->getEditable($field);
+        $this->assertInstanceOf(Table::class, $editable);
+        $value = $editable->getValue();
+
+        $this->assertEquals($this->createTableData($seed), $value);
+    }
+
+    public function createTableData($seed = 1) {
+        return [
+            ['a' . $seed, 'b' . $seed, 'c'. $seed],
+            [1 + $seed, 2 + $seed, 3 + $seed]
+        ];
     }
 
     /**
@@ -270,6 +309,21 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param string $field
      * @param int $seed
      */
+    public function fillNumeric(Page $page, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $editable = new Numeric();
+        $editable->setName($field);
+        $editable->setDataFromEditmode(123 + $seed);
+        $page->setEditable($editable);
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
     public function fillSelect(Page $page, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
@@ -277,6 +331,19 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable = new Select();
         $editable->setName($field);
         $editable->setDataFromEditmode(1 + ($seed % 2));
+        $page->setEditable($editable);
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillTable(Page $page, $field, $seed = 1)
+    {
+        $editable = new Table();
+        $editable->setName($field);
+        $editable->setDataFromEditmode($this->createTableData($seed));
         $page->setEditable($editable);
     }
 
