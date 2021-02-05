@@ -135,13 +135,48 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
     }
 
-    public function testImagex()
+    public function testInput()
     {
-        $this->createTestPage('checkbox');
+        $this->createTestPage('input');
 
         $this->reloadPage();
-        $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
+        $this->testDataHelper->assertInput($this->testPage, 'input', $this->seed);
     }
+
+    public function testMultiselect()
+    {
+        $this->createTestPage('multiselect');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertMultiselect($this->testPage, 'multiselect', $this->seed);
+    }
+
+
+    public function testSelect()
+    {
+        $this->createTestPage('select');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertSelect($this->testPage, 'select', $this->seed);
+    }
+
+
+    public function testTextarea()
+    {
+        $this->createTestPage('textarea');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertTextarea($this->testPage, 'textarea', $this->seed);
+    }
+
+    public function testWysiwyg()
+    {
+        $this->createTestPage('wysiwyg');
+
+        $this->reloadPage();
+        $this->testDataHelper->assertWysiwyg($this->testPage, 'wysiwyg', $this->seed);
+    }
+
 
 
 }

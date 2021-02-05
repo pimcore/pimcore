@@ -7,6 +7,10 @@ use Pimcore\Model\Document\Editable\Areablock;
 use Pimcore\Model\Document\Editable\Checkbox;
 use Pimcore\Model\Document\Editable\Date;
 use Pimcore\Model\Document\Editable\Image;
+use Pimcore\Model\Document\Editable\Input;
+use Pimcore\Model\Document\Editable\Multiselect;
+use Pimcore\Model\Document\Editable\Select;
+use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Util\TestHelper;
@@ -103,6 +107,78 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertInput(Page $page, $field, $seed = 1)
+    {
+        /** @var Input $editable */
+        $editable = $page->getEditable($field);
+        $this->assertInstanceOf(Input::class, $editable);
+        $value = $editable->getValue();
+
+        $this->assertEquals("content" . $seed, $value);
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertMultiselect(Page $page, $field, $seed = 1)
+    {
+        /** @var Select $editable */
+        $editable = $page->getEditable($field);
+        $this->assertInstanceOf(Multiselect::class, $editable);
+
+        $expected = ["1", "2"];
+
+        $this->assertEquals($expected, $editable->getValue());
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertSelect(Page $page, $field, $seed = 1)
+    {
+        /** @var Select $editable */
+        $editable = $page->getEditable($field);
+        $this->assertInstanceOf(Select::class, $editable);
+
+        $expected = 1 + ($seed % 2);
+
+        $this->assertEquals($expected, $editable->getValue());
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertWysiwyg(Page $page, $field, $seed = 1)
+    {
+        $this->assertTextarea($page, $field, $seed);
+    }
+
+    /**
+     * @param Page $object
+     * @param string $field
+     * @param int $seed
+     */
+    public function assertTextarea(Page $page, $field, $seed = 1)
+    {
+        /** @var Textarea $editable */
+        $editable = $page->getEditable($field);
+        $this->assertInstanceOf(Textarea::class, $editable);
+        $value = $editable->getValue();
+
+        $this->assertEquals("content<br>" . $seed, $value);
+    }
+
+    /**
      * @param Page $page
      * @param string $field
      * @param int $seed
@@ -161,6 +237,70 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillInput(Page $page, $field, $seed = 1)
+    {
+        $editable = new Input();
+        $editable->setName($field);
+        $editable->setDataFromEditmode("content" . $seed);
+        $page->setEditable($editable);
+    }
 
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillMultiselect(Page $page, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $editable = new Multiselect();
+        $editable->setName($field);
+        $editable->setDataFromEditmode(['1', '2']);
+        $page->setEditable($editable);
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillSelect(Page $page, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $editable = new Select();
+        $editable->setName($field);
+        $editable->setDataFromEditmode(1 + ($seed % 2));
+        $page->setEditable($editable);
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillWysiwyg(Page $page, $field, $seed = 1)
+    {
+        $this->fillTextarea($page, $field, $seed);
+    }
+
+    /**
+     * @param Page $page
+     * @param string $field
+     * @param int $seed
+     */
+    public function fillTextarea(Page $page, $field, $seed = 1)
+    {
+        $editable = new Textarea();
+        $editable->setName($field);
+        $editable->setDataFromEditmode("content<br>" . $seed);
+        $page->setEditable($editable);
+    }
 
 }
