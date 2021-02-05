@@ -350,8 +350,8 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $video = $editable->getVideoAsset();
         $this->assertInstanceOf(\Pimcore\Model\Asset\Video::class, $video);
-        codecept_debug(var_export($params, true));
-        codecept_debug(var_export($video, true));
+        codecept_debug(get_class($params));
+        codecept_debug(get_class($video));
 
         $this->assertEquals($params["video"]->getId(), $video->getId());
 
