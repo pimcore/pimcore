@@ -2074,14 +2074,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         if ($currentData[$i]->getId() == $object->getId()) {
                             unset($currentData[$i]);
                             $owner->$setter($currentData);
-                            $owner->setUserModification($this->getAdminUser()->getId());
-                            $owner->save();
-                            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
                             break;
                         }
                     }
+                } else {
+                    if ($currentData->getId() == $object->getId()) {
+                        $owner->$setter(null);
+                    }
                 }
             }
+            $owner->setUserModification($this->getAdminUser()->getId());
+            $owner->save();
+            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
         }
 
         foreach ($toAdd as $id) {
@@ -2089,8 +2093,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             //TODO: lock ?!
             if (method_exists($owner, $getter)) {
                 $currentData = $owner->$getter();
-                $currentData[] = $object;
-
+                if (is_array($currentData)) {
+                    $currentData[] = $object;
+                } else {
+                    $currentData = $object;
+                }
                 $owner->$setter($currentData);
                 $owner->setUserModification($this->getAdminUser()->getId());
                 $owner->save();

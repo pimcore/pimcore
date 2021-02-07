@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.reverseObjectRelation");
-pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
+pimcore.object.tags.reverseObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
     pathProperty: "path",
 
