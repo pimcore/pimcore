@@ -179,10 +179,10 @@ abstract class AbstractElementController extends AbstractRestController
         }
 
         if ($wsData instanceof \Pimcore\Model\Webservice\Data\DataObject) {
-            /** @var \Pimcore\Model\Webservice\Data\DataObject key */
+            /** @var \Pimcore\Model\Webservice\Data\DataObject $wsData */
             $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, 'object');
         } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Document) {
-            /** @var \Pimcore\Model\Webservice\Data\Document key */
+            /** @var \Pimcore\Model\Webservice\Data\Document $wsData */
             $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, 'document');
         } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Asset) {
             /** @var \Pimcore\Model\Webservice\Data\Asset $wsData */
