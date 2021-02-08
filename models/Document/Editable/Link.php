@@ -250,7 +250,7 @@ class Link extends Model\Document\Editable
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') === false ? '&' : '?') . str_replace('?', '', $this->getParameters());
+            $url .= (strpos($url, '?') !== false ? '&' : '?') . str_replace('?', '', $this->getParameters());
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
