@@ -330,7 +330,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (strlen($data['value']) > 0 || $data['unit']) {
-            if (is_numeric($data['unit'])) {
+            if ($data['unit']) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return new Model\DataObject\Data\QuantityValue($data['value'], null);
                 }
@@ -391,12 +391,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             $value = $data->getValue();
             if ((!empty($value) && !is_numeric($data->getValue()))) {
                 throw new Model\Element\ValidationException('Invalid dimension unit data ' . $this->getName());
-            }
-
-            if (!empty($data->getUnitId())) {
-                if (!is_numeric($data->getUnitId())) {
-                    throw new Model\Element\ValidationException('Unit id has to be empty or numeric ' . $data->getUnitId());
-                }
             }
         }
     }
