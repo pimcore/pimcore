@@ -176,7 +176,7 @@ $key->getValue('en_GB', true, true);
 // first of all, define the datatype which is quantity value in this example
 $definition = new \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue();
 $definition->setName("height");
-$definition->setTitle(Height);
+$definition->setTitle("Height");
 
 $keyConfig = new \Pimcore\Model\DataObject\Classificationstore\KeyConfig();
 $keyConfig->setName($name);
@@ -185,13 +185,13 @@ $keyConfig->setEnabled(true);
 $keyConfig->setType($definition->getFieldtype());
 $keyConfig->setDefinition(json_encode($definition)); // The definition is used in object editor to render fields
 $keyConfig->save();  
-  
+
 // Group
 $groupConfig = new \Pimcore\Model\DataObject\Classificationstore\GroupConfig();
 $groupConfig->setName($name);
 $groupConfig->setDescription($description);
 $groupConfig->save();
-  
+
 // Collection
 $collectionConfig = new \Pimcore\Model\DataObject\Classificationstore\CollectionConfig();
 $collectionConfig->setName($name);
