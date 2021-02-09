@@ -119,9 +119,8 @@ class Newsletter
         }
 
         $mail->setHtmlBody($contentHTML);
-        $mail->setTextBody($contentText);
         // Adds the plain text part to the message, that it becomes a multipart email
-        $mail->addPart($contentText, 'text/plain');
+        $mail->setTextBody($contentText);
         $mail->setSubject($mail->getSubjectRendered());
 
         return $mail;
