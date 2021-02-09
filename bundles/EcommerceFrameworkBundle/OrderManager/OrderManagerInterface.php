@@ -19,6 +19,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Model\DataObject\Folder;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 interface OrderManagerInterface
 {
     /**

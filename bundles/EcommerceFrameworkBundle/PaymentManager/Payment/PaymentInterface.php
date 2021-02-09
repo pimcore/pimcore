@@ -14,13 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
-use Pimcore\Model\DataObject\Listing\Concrete;
 
 /**
- * Interface for checkout payment provider
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
  */
 interface PaymentInterface
 {
@@ -83,34 +81,6 @@ interface PaymentInterface
      * @return StatusInterface
      */
     public function executeCredit(PriceInterface $price, $reference, $transactionId);
-
-    /**
-     * Payment supports recurring payment
-     *
-     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
-     *
-     * @return bool
-     */
-    public function isRecurringPaymentEnabled();
-
-    /**
-     * @param AbstractOrder $sourceOrder
-     * @param object $paymentBrick
-     *
-     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
-     *
-     * @return mixed
-     */
-    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick);
-
-    /**
-     * @param Concrete $orderListing
-     *
-     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
-     *
-     * @return Concrete
-     */
-    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);
 
     /**
      * returns configuration key in yml configuration file

@@ -1,24 +1,23 @@
 {
     "description": null,
     "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OfferTool\\AbstractOfferItem",
-    "listingParentClass": null,
-    "useTraits": null,
-    "listingUseTraits": null,
+    "implementsInterfaces": "",
+    "listingParentClass": "",
+    "useTraits": "",
+    "listingUseTraits": "",
     "allowInherit": false,
-    "allowVariants": false,
+    "allowVariants": null,
     "showVariants": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": null,
         "border": false,
-        "icon": null,
         "name": "pimcore_root",
         "type": null,
         "region": null,
         "title": null,
-        "width": null,
-        "height": null,
+        "width": 0,
+        "height": 0,
         "collapsible": false,
         "collapsed": false,
         "bodyStyle": null,
@@ -27,10 +26,8 @@
         "childs": [
             {
                 "fieldtype": "panel",
-                "labelWidth": 100,
                 "layout": "",
                 "border": false,
-                "icon": null,
                 "name": "Layout",
                 "type": "",
                 "region": "",
@@ -65,7 +62,6 @@
                     },
                     {
                         "fieldtype": "fieldset",
-                        "labelWidth": 150,
                         "name": "Product Information",
                         "type": null,
                         "region": null,
@@ -87,13 +83,11 @@
                                     "id": "int(11)",
                                     "type": "enum('document','asset','object')"
                                 },
-                                "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
                                 "objectsAllowed": true,
                                 "assetsAllowed": false,
                                 "assetTypes": [],
                                 "documentsAllowed": false,
                                 "documentTypes": [],
-                                "lazyLoading": false,
                                 "classes": [],
                                 "pathFormatterClass": null,
                                 "name": "product",
@@ -113,10 +107,10 @@
                             {
                                 "fieldtype": "input",
                                 "width": 400,
+                                "defaultValue": null,
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 255,
-                                "phpdocType": "string",
                                 "regex": "",
                                 "unique": null,
                                 "showCharCount": null,
@@ -133,15 +127,16 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "input",
                                 "width": 400,
+                                "defaultValue": null,
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 255,
-                                "phpdocType": "string",
                                 "regex": "",
                                 "unique": null,
                                 "showCharCount": null,
@@ -158,14 +153,16 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "labelWidth": 150,
+                        "labelAlign": "left"
                     },
                     {
                         "fieldtype": "fieldset",
-                        "labelWidth": 150,
                         "name": "Price Information",
                         "type": null,
                         "region": null,
@@ -184,7 +181,6 @@
                                 "defaultValue": null,
                                 "queryColumnType": "double",
                                 "columnType": "double",
-                                "phpdocType": "float",
                                 "integer": false,
                                 "unsigned": false,
                                 "minValue": null,
@@ -205,7 +201,8 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "numeric",
@@ -213,7 +210,6 @@
                                 "defaultValue": null,
                                 "queryColumnType": "double",
                                 "columnType": "double",
-                                "phpdocType": "float",
                                 "integer": false,
                                 "unsigned": false,
                                 "minValue": null,
@@ -234,7 +230,8 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "select",
@@ -255,7 +252,6 @@
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 190,
-                                "phpdocType": "string",
                                 "dynamicOptions": false,
                                 "name": "DiscountType",
                                 "title": "Discount Type",
@@ -270,7 +266,8 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "numeric",
@@ -278,7 +275,6 @@
                                 "defaultValue": null,
                                 "queryColumnType": "double",
                                 "columnType": "double",
-                                "phpdocType": "float",
                                 "integer": false,
                                 "unsigned": false,
                                 "minValue": null,
@@ -299,7 +295,8 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "numeric",
@@ -307,7 +304,6 @@
                                 "defaultValue": null,
                                 "queryColumnType": "double",
                                 "columnType": "double",
-                                "phpdocType": "float",
                                 "integer": false,
                                 "unsigned": false,
                                 "minValue": null,
@@ -328,10 +324,13 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "labelWidth": 150,
+                        "labelAlign": "left"
                     },
                     {
                         "fieldtype": "manyToManyObjectRelation",
@@ -339,12 +338,11 @@
                         "height": "",
                         "maxItems": "",
                         "queryColumnType": "text",
-                        "phpdocType": "array",
                         "relationType": true,
                         "visibleFields": null,
+                        "allowToCreateNewObject": true,
                         "optimizedAdminLoading": false,
                         "visibleFieldDefinitions": [],
-                        "lazyLoading": true,
                         "classes": [
                             {
                                 "classes": "OnlineShopOrderItem"
@@ -374,7 +372,6 @@
                         "excludeFromSearchIndex": false,
                         "queryColumnType": "longtext",
                         "columnType": "longtext",
-                        "phpdocType": "string",
                         "name": "comment",
                         "title": "Comment",
                         "tooltip": "",
@@ -392,7 +389,6 @@
                     },
                     {
                         "fieldtype": "fieldset",
-                        "labelWidth": 150,
                         "name": "System Informations",
                         "type": null,
                         "region": null,
@@ -408,10 +404,10 @@
                             {
                                 "fieldtype": "input",
                                 "width": 400,
+                                "defaultValue": null,
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 255,
-                                "phpdocType": "string",
                                 "regex": "",
                                 "unique": null,
                                 "showCharCount": null,
@@ -428,21 +424,34 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "labelWidth": 150,
+                        "labelAlign": "left"
                     }
                 ],
-                "locked": false
+                "locked": false,
+                "icon": null,
+                "labelWidth": 100,
+                "labelAlign": "left"
             }
         ],
-        "locked": false
+        "locked": false,
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
     },
-    "icon": null,
-    "previewUrl": null,
+    "icon": "",
+    "previewUrl": "",
     "group": "E-Commerce",
-    "linkGeneratorReference": null,
+    "showAppLoggerTab": false,
+    "linkGeneratorReference": "",
+    "compositeIndices": [],
+    "generateTypeDeclarations": true,
+    "showFieldLookup": false,
     "propertyVisibility": {
         "grid": {
             "id": true,
@@ -460,5 +469,6 @@
             "modificationDate": true,
             "creationDate": true
         }
-    }
+    },
+    "enableGridLocking": false
 }

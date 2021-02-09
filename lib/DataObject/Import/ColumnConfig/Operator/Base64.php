@@ -51,8 +51,8 @@ class Base64 extends AbstractOperator
         if (!$childs) {
             return;
         } else {
-            /** @var AbstractConfigElement $child */
             for ($i = 0; $i < count($childs); $i++) {
+                /** @var AbstractConfigElement $child */
                 $child = $childs[$i];
                 $child->process($element, $target, $rowData, $colIndex, $context);
             }

@@ -169,14 +169,15 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::SEND_CONFIRMATION_MAILS);
 
         if (!$event->doSkipDefaultBehaviour()) {
+            $customer = $order->getCustomer();
             $params = [];
             $params['order'] = $order;
-            $params['customer'] = $order->getCustomer();
+            $params['customer'] = $customer;
             $params['ordernumber'] = $order->getOrdernumber();
 
             $mail = new \Pimcore\Mail(['document' => $event->getConfirmationMailConfig(), 'params' => $params]);
-            if ($order->getCustomer()) {
-                $mail->addTo($order->getCustomer()->getEmail());
+            if ($customer && method_exists($customer, 'getEmail')) {
+                $mail->addTo($customer->getEmail());
                 $mail->send();
             } else {
                 $this->logger->error('No Customer found!');

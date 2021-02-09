@@ -26,6 +26,9 @@ use Pimcore\Logger;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 class CommitOrderProcessor implements CommitOrderProcessorInterface
 {
     const LOCK_KEY = 'ecommerce-framework-commitorder-lock';
@@ -274,14 +277,15 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
 
     protected function sendConfirmationMail(AbstractOrder $order)
     {
+        $customer = $order->getCustomer();
         $params = [];
         $params['order'] = $order;
-        $params['customer'] = $order->getCustomer();
+        $params['customer'] = $customer;
         $params['ordernumber'] = $order->getOrdernumber();
 
         $mail = new \Pimcore\Mail(['document' => $this->confirmationMail, 'params' => $params]);
-        if ($order->getCustomer()) {
-            $mail->addTo($order->getCustomer()->getEmail());
+        if ($customer && method_exists($customer, 'getEmail')) {
+            $mail->addTo($customer->getEmail());
             $mail->send();
         } else {
             Logger::err('No Customer found!');
