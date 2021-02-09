@@ -82,7 +82,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $queryColumnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
@@ -92,7 +92,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
