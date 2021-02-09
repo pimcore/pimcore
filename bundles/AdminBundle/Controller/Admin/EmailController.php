@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -292,11 +293,11 @@ class EmailController extends AdminController
             }
 
             if ($html = $emailLog->getHtmlLog()) {
-                $mail->setBodyHtml($html);
+                $mail->setHtmlBody($html);
             }
 
             if ($text = $emailLog->getTextLog()) {
-                $mail->setBodyText($text);
+                $mail->setTextBody($text);
             }
 
             foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
@@ -379,22 +380,22 @@ class EmailController extends AdminController
             if ($addressArray) {
                 //use the first address only
                 list($cleanedFromAddress) = $addressArray;
-                $mail->setFrom($cleanedFromAddress['email'], $cleanedFromAddress['name']);
+                $mail->from(new Address($cleanedFromAddress['email'], $cleanedFromAddress['name'] ?? ''));
             }
         }
 
         $toAddresses = \Pimcore\Helper\Mail::parseEmailAddressField($request->get('to'));
         foreach ($toAddresses as $cleanedToAddress) {
-            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name']);
+            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name'] ?? '');
         }
 
         $mail->setSubject($request->get('subject'));
         $mail->setIgnoreDebugMode(true);
 
         if ($request->get('emailType') == 'text') {
-            $mail->setBodyText($request->get('content'));
+            $mail->setTextBody($request->get('content'));
         } elseif ($request->get('emailType') == 'html') {
-            $mail->setBodyHtml($request->get('content'));
+            $mail->setHtmlBody($request->get('content'));
         } elseif ($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
 

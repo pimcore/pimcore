@@ -169,7 +169,7 @@ CSS;
         $subject = $mail->getSubjectRendered();
         if (0 === strpos($subject, '=?')) {
             $mbIntEnc = mb_internal_encoding();
-            mb_internal_encoding($mail->getCharset());
+            mb_internal_encoding($mail->getTextCharset());
             $subject = mb_decode_mimeheader($subject);
             mb_internal_encoding($mbIntEnc);
         }

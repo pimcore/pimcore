@@ -78,7 +78,7 @@ final class CheckErrorLogsDbTask implements TaskInterface
                     $html = "<pre>$html</pre>";
                     $mail = new \Pimcore\Mail();
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setBodyHtml($html);
+                    $mail->setHtmlBody($html);
                     $mail->addTo($receivers);
                     $mail->setSubject('Error Log ' . \Pimcore\Tool::getHostUrl());
                     $mail->send();

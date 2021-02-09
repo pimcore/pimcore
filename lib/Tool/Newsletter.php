@@ -72,7 +72,7 @@ class Newsletter
         }
 
         if (strlen(trim($newsletterDocument->getPlaintext())) > 0) {
-            $mail->setBodyText(trim($newsletterDocument->getPlaintext()));
+            $mail->setTextBody(trim($newsletterDocument->getPlaintext()));
         }
 
         $contentHTML = $mail->getBodyHtmlRendered();
@@ -115,11 +115,11 @@ class Newsletter
                 unset($html);
             }
 
-            $mail->setBodyHtml($contentHTML);
+            $mail->setHtmlBody($contentHTML);
         }
 
-        $mail->setBodyHtml($contentHTML);
-        $mail->setBodyText($contentText);
+        $mail->setHtmlBody($contentHTML);
+        $mail->setTextBody($contentText);
         // Adds the plain text part to the message, that it becomes a multipart email
         $mail->addPart($contentText, 'text/plain');
         $mail->setSubject($mail->getSubjectRendered());
@@ -144,7 +144,7 @@ class Newsletter
         }
 
         if (!empty($mailAddress)) {
-            $mail->setTo($mailAddress);
+            $mail->to($mailAddress);
 
             $mailer = null;
             // check if newsletter specific mailer is needed
