@@ -22,9 +22,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslateValue extends AbstractOperator
 {
-    /**
-     * @var Translator
-     */
     private $translator;
 
     /** @var string */
