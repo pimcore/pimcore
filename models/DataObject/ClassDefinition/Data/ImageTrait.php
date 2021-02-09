@@ -21,9 +21,11 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 
+/**
+ * @internal
+ */
 trait ImageTrait
 {
-
 
     /**
      * @var string|int
