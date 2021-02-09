@@ -891,7 +891,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param int $count
      *
-     * @return CheckoutableInterface[]
+     * @return array<int, CartItemInterface>
      */
     public function getRecentlyAddedItems($count)
     {

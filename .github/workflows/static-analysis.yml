@@ -28,7 +28,7 @@ jobs:
                     - "lowest"
                     - "highest"
                 php-version:
-                    - "8.0"
+                    - "7.4"
 
         steps:
             - name: "Checkout code"
