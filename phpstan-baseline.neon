@@ -1,2 +1,7 @@
 parameters:
 	ignoreErrors:
+		-
+		    #see Remove deprecated Tool\Console methods https://github.com/pimcore/pimcore/issues/8137
+			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Console.php
