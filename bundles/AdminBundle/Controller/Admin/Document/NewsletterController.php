@@ -378,8 +378,6 @@ class NewsletterController extends DocumentControllerBase
      * @Route("/calculate", name="pimcore_admin_document_newsletter_calculate", methods={"POST"})
      *
      * @param Request $request
-     * @param ServiceLocator $addressSourceAdapterFactory
-     *
      * @return JsonResponse
      */
     public function calculateAction(Request $request): JsonResponse
