@@ -184,6 +184,9 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
+        if (!$bag instanceof NamespacedAttributeBag)
+            throw new \Exception("wrong type");
+
         return $bag;
     }
 
