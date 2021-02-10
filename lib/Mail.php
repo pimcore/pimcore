@@ -22,6 +22,7 @@ use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail\Mailer;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -596,7 +597,7 @@ class Mail extends Email
             $failedRecipients = [];
             try {
                 $mailer->send($this);
-            } catch (\Exception $e) {
+            } catch (TransportExceptionInterface $e) {
                 if (isset($failedRecipients[0])) {
                     throw new \Exception($failedRecipients[0].' - '.$e->getMessage());
                 } else {
