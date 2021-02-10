@@ -467,28 +467,28 @@ class Mail extends Email
                 $to = \Pimcore\Helper\Mail::parseEmailAddressField($document->getTo());
                 if (!empty($to)) {
                     foreach ($to as $toEntry) {
-                        $this->addTo(sprintf('%s <%s>',$toEntry['name'], $toEntry['email']));
+                        $this->addTo(new Address($toEntry['name'], $toEntry['email']));
                     }
                 }
 
                 $cc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getCc());
                 if (!empty($cc)) {
                     foreach ($cc as $ccEntry) {
-                        $this->addCc(sprintf('%s <%s>',$ccEntry['email'], $ccEntry['name']));
+                        $this->addCc(new Address($ccEntry['email'], $ccEntry['name']));
                     }
                 }
 
                 $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getBcc());
                 if (!empty($bcc)) {
                     foreach ($bcc as $bccEntry) {
-                        $this->addBcc(sprintf('%s <%s>',$bccEntry['email'], $bccEntry['name']));
+                        $this->addBcc(new Address($bccEntry['email'], $bccEntry['name']));
                     }
                 }
 
                 $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($document->getReplyTo());
                 if (!empty($replyTo)) {
                     foreach ($replyTo as $replyToEntry) {
-                        $this->addReplyTo(sprintf('%s <%s>',$replyToEntry['email'], $replyToEntry['name']));
+                        $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name']));
                     }
                 }
             }
@@ -517,7 +517,7 @@ class Mail extends Email
      * set DefaultTransport or the internal mail function if no
      * default transport had been set.
      *
-     * @param  MailerInterface $mailer
+     * @param  MailerInterface|null $mailer
      *
      * @return \Pimcore\Mail Provides fluent interface
      */
@@ -543,7 +543,7 @@ class Mail extends Email
      * sends mail without (re)rendering the content.
      * see also comments of send() method
      *
-     * @param MailerInterface $mailer
+     * @param MailerInterface|null $mailer
      *
      * @return \Pimcore\Mail
      *
