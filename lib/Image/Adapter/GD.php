@@ -158,7 +158,7 @@ class GD extends Adapter
      * @param int $width
      * @param int $height
      *
-     * @return mixed // change it to resource|\GdImage|false as soon as 8.0 is a minimum requirement
+     * @return resource|\GdImage|false
      */
     protected function createImage($width, $height)
     {
