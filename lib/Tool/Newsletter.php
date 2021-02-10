@@ -148,7 +148,7 @@ class Newsletter
             $mailer = null;
             // check if newsletter specific mailer is needed
             if ($config['use_specific']) {
-                $mailer = Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
+                $mail->getHeaders()->addTextHeader('X-Transport', 'pimcore_newsletter');
             }
 
             $event = new GenericEvent($mail, [

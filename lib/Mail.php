@@ -546,6 +546,8 @@ class Mail extends Email
      * @param MailerInterface $mailer
      *
      * @return \Pimcore\Mail
+     *
+     * @throws \Exception
      */
     public function sendWithoutRendering(MailerInterface $mailer = null)
     {
@@ -792,7 +794,7 @@ class Mail extends Email
      */
     public function setDocument($document)
     {
-        if ($document instanceof Model\Document\Email) { //document passed
+        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) { //document passed
             $this->document = $document;
             $this->setDocumentSettings();
         } elseif ((int)$document > 0) { //id of document passed
