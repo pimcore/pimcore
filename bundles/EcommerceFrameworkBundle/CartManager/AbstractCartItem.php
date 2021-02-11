@@ -213,7 +213,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         }
 
         foreach ($subItems as $item) {
-            $item->setParentItemKey($this->getItemKey());
+            if ($item instanceof AbstractCartItem) {
+                $item->setParentItemKey($this->getItemKey());
+            }
         }
         $this->subItems = $subItems;
     }
