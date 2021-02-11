@@ -24,20 +24,13 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 {
     const FIELDNAME = 'cat';
 
+    /** @inheritDoc */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
         //$productList->prepareGroupBySystemValues($filterDefinition->getField(), true);
     }
 
-    /**
-     * @param FilterCategory $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
+    /** @inheritDoc */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues(self::FIELDNAME, true);

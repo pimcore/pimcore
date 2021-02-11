@@ -25,15 +25,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    /**
-     * @param FilterNumberRange $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
+    /** @inheritDoc */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $currentField = $this->getField($filterDefinition);
@@ -73,15 +65,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         ];
     }
 
-    /**
-     * @param FilterNumberRange $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     * @param array $params
-     * @param bool $isPrecondition
-     *
-     * @return array
-     */
+    /** @inheritDoc */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);

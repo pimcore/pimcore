@@ -21,15 +21,8 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
-    /**
-     * @param FilterMultiSelect $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
+
+    /** @inheritDoc */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
@@ -69,15 +62,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         ];
     }
 
-    /**
-     * @param FilterMultiSelect $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     * @param array $params
-     * @param bool $isPrecondition
-     *
-     * @return mixed
-     */
+    /** @inheritDoc */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         // init

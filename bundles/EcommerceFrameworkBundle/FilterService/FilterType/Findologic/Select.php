@@ -20,11 +20,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Select
 {
+    /** @inheritDoc */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
+    /** @inheritDoc */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
