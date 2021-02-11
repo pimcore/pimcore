@@ -67,7 +67,12 @@ class MultiSelectCategory extends AbstractFilterType
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } elseif (empty($value) && !$isReload) {
-            $value = $filterDefinition->getPreSelect();
+            $preSelect = false;
+            if (method_exists($filterDefinition, 'getPreSelect')) {
+                $preSelect = $filterDefinition->getPreSelect();
+            }
+
+            $value = $preSelect;
         }
 
         $currentFilter[$filterDefinition->getField()] = $value;
@@ -87,7 +92,12 @@ class MultiSelectCategory extends AbstractFilterType
         }
 
         if (count($conditions)) {
-            if ($filterDefinition->getUseAndCondition()) {
+            $useAndCondition = false;
+            if (method_exists($filterDefinition, 'getUseAndCondition')) {
+                $useAndCondition = $filterDefinition->getUseAndCondition();
+            }
+
+            if ($useAndCondition) {
                 $conditions = implode(' AND ', $conditions);
             } else {
                 $conditions = '(' . implode(' OR ', $conditions) . ')';

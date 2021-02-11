@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
 
 class SelectCategory extends AbstractFilterType
@@ -37,6 +38,7 @@ class SelectCategory extends AbstractFilterType
 
         $availableRelations = [];
         if ($filterDefinition->getAvailableCategories()) {
+            /** @var Concrete $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[$rel->getId()] = true;
             }
@@ -44,6 +46,7 @@ class SelectCategory extends AbstractFilterType
 
         foreach ($rawValues as $v) {
             $explode = explode(',', $v['value']);
+            /** @var int $e */
             foreach ($explode as $e) {
                 if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
                     if (!empty($values[$e])) {

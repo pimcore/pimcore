@@ -23,10 +23,14 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
-        if ($filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
-            $field = $this->getField($filterDefinition);
-            $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
+        $useAndCondition = false;
+        if (method_exists($filterDefinition, 'getUseAndCondition')) {
+            $useAndCondition = $filterDefinition->getUseAndCondition();
         }
+
+        $field = $this->getField($filterDefinition);
+        $productList->prepareGroupByValues($field, true, !$useAndCondition);
+
     }
 
     /**

@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Elast
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 
@@ -71,22 +72,23 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 }
             }
 
-            /** @var AbstractConfig $config */
-            $config = $productList->getTenantConfig();
-            $attributeConfig = $config->getAttributeConfig()[$field];
-            if ($attributeConfig['type'] == 'boolean') {
-                foreach ($quotedValues as $k => $v) {
-                    $quotedValues[$k] = (bool)$v;
-                }
-            }
-
-            if (!empty($quotedValues)) {
-                if ($filterDefinition->getUseAndCondition()) {
-                    foreach ($quotedValues as $value) {
-                        $productList->addCondition($value, $field);
+            if (method_exists($productList, 'getTenantConfig')) {
+                $config = $productList->getTenantConfig();
+                $attributeConfig = $config->getAttributeConfig()[$field];
+                if ($attributeConfig['type'] == 'boolean') {
+                    foreach ($quotedValues as $k => $v) {
+                        $quotedValues[$k] = (bool)$v;
                     }
-                } else {
-                    $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], $field);
+                }
+
+                if (!empty($quotedValues)) {
+                    if ($filterDefinition->getUseAndCondition()) {
+                        foreach ($quotedValues as $value) {
+                            $productList->addCondition($value, $field);
+                        }
+                    } else {
+                        $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], $field);
+                    }
                 }
             }
         }
