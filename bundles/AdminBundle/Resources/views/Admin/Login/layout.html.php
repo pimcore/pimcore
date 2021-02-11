@@ -26,7 +26,7 @@ $config = $this->config;
     $customImage = $config['branding']['login_screen_custom_image'];
     //https://github.com/pimcore/pimcore/issues/8016
     //https://github.com/pimcore/pimcore/issues/8129
-    if (preg_match('@^https?://@', $customImage) && file_get_contents($customImage)) {
+    if (preg_match('@^https?://@', $customImage)) {
         $backgroundImageUrl = $customImage;
     } elseif (file_exists(PIMCORE_WEB_ROOT . $customImage)) {
         $backgroundImageUrl = $customImage;
