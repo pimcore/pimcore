@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 
 class Select extends AbstractFilterType
 {
@@ -52,10 +53,11 @@ class Select extends AbstractFilterType
         $currentFilter[$field] = $value;
 
         if (!empty($value)) {
+            $db = Db::get();
             if ($isPrecondition) {
-                $productList->addCondition('TRIM(`' . $field . '`) = ' . $productList->quote($value), 'PRECONDITION_' . $field);
+                $productList->addCondition('TRIM(`' . $field . '`) = ' . $db->quote($value), 'PRECONDITION_' . $field);
             } else {
-                $productList->addCondition('TRIM(`' . $field . '`) = ' . $productList->quote($value), $field);
+                $productList->addCondition('TRIM(`' . $field . '`) = ' . $db->quote($value), $field);
             }
         }
 

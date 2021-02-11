@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 
 class MultiSelectCategory extends AbstractFilterType
 {
@@ -73,6 +74,7 @@ class MultiSelectCategory extends AbstractFilterType
 
         $conditions = [];
         if (!empty($value)) {
+            $db = Db::get();
             foreach ($value as $category) {
                 if (is_object($category)) {
                     $category = $category->getId();
@@ -80,7 +82,7 @@ class MultiSelectCategory extends AbstractFilterType
 
                 $category = '%,' . trim($category) . ',%';
 
-                $conditions[] = $filterDefinition->getField() . ' LIKE ' . $productList->quote($category);
+                $conditions[] = $filterDefinition->getField() . ' LIKE ' . $db->quote($category);
             }
         }
 

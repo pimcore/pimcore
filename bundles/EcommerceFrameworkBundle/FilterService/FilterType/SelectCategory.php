@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
 
 class SelectCategory extends AbstractFilterType
@@ -99,10 +100,12 @@ class SelectCategory extends AbstractFilterType
         if (!empty($value)) {
             $value = '%,' . trim($value) . ',%';
 
+            $db = Db::get();
+
             if ($isPrecondition) {
-                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $productList->quote($value), 'PRECONDITION_' . $filterDefinition->getField());
+                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $db->quote($value), 'PRECONDITION_' . $filterDefinition->getField());
             } else {
-                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $productList->quote($value), $filterDefinition->getField());
+                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $db->quote($value), $filterDefinition->getField());
             }
         }
 

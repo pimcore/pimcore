@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation;
@@ -110,8 +111,9 @@ class SelectRelation extends AbstractFilterType
 
         $currentFilter[$field] = $value;
 
+        $db = Db::get();
         if (!empty($value)) {
-            $productList->addRelationCondition($field, 'dest = ' . $productList->quote($value));
+            $productList->addRelationCondition($field, 'dest = ' . $db->quote($value));
         }
 
         return $currentFilter;

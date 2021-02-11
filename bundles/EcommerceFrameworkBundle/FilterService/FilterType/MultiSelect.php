@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 
 class MultiSelect extends AbstractFilterType
 {
@@ -23,11 +24,16 @@ class MultiSelect extends AbstractFilterType
     {
         $field = $this->getField($filterDefinition);
 
+        $useAndCondition = false;
+        if (method_exists($filterDefinition, 'getUseAndCondition')) {
+            $useAndCondition = $filterDefinition->getUseAndCondition();
+        }
+
         return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
-            'values' => $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition()),
+            'values' => $productList->getGroupByValues($field, true, !$useAndCondition),
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
             'resultCount' => $productList->count(),
@@ -60,13 +66,14 @@ class MultiSelect extends AbstractFilterType
 
         if (!empty($value)) {
             $quotedValues = [];
+            $db = Db::get();
             foreach ($value as $v) {
                 if (!empty($v)) {
-                    $quotedValues[] = $productList->quote($v);
+                    $quotedValues[] = $db->quote($v);
                 }
             }
             if (!empty($quotedValues)) {
-                if ($filterDefinition->getUseAndCondition()) {
+                if (method_exists($filterDefinition, 'getUseAndCondition') && $filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
                         if ($isPrecondition) {
                             $productList->addCondition($field . ' = ' . $value, 'PRECONDITION_' . $field);
