@@ -615,7 +615,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param float $tolerance
+     * @param int $tolerance
      *
      * @return self
      */
