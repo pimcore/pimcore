@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token as VoucherServiceToken;
@@ -155,7 +156,10 @@ class DefaultService implements VoucherServiceInterface
      */
     public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
     {
-        if ($tokenManager = $tokenObject->getVoucherSeries()->getTokenManager()) {
+        /** @var AbstractVoucherSeries $series */
+        $series = $tokenObject->getVoucherSeries();
+
+        if ($tokenManager = $series->getTokenManager()) {
             $tokenManager->removeAppliedTokenFromOrder($tokenObject, $order);
 
             $voucherTokens = $order->getVoucherTokens();
