@@ -51,4 +51,11 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      * @return SynonymProviderInterface[]
      */
     public function getSynonymProviders(): array;
+
+    /**
+     * @param string $property
+     *
+     * @return array|string
+     */
+    public function getClientConfig($property = null);
 }

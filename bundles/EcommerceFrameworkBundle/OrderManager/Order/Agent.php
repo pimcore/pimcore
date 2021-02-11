@@ -328,44 +328,48 @@ class Agent implements OrderAgentInterface
         // save provider data
         $order = $this->getOrder();
 
-        $provider = $order->getPaymentProvider();
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider $provider */
+        if (method_exists($order, 'getPaymentProvider')) {
+            $provider = $order->getPaymentProvider();
+            /* @var \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider $provider */
 
-        // load existing
-        $providerDataGetter = 'getPaymentProvider' . $paymentProvider->getName();
-        $providerData = $provider->{$providerDataGetter}();
-        /* @var ObjectbrickData\PaymentProvider* $providerData */
+            // load existing
+            $providerDataGetter = 'getPaymentProvider' . $paymentProvider->getName();
+            $providerData = $provider->{$providerDataGetter}();
+            /* @var ObjectbrickData\PaymentProvider* $providerData */
 
-        if (!$providerData) {
-            // create new
-            $class = '\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProvider' . $paymentProvider->getName();
-            $providerData = new $class($order);
-            $provider->{'setPaymentProvider' . $paymentProvider->getName()}($providerData);
-        }
-
-        // update authorizedData
-        $authorizedData = $paymentProvider->getAuthorizedData();
-        foreach ((array)$authorizedData as $field => $value) {
-            $setter = 'setAuth_' . $field;
-            if (method_exists($providerData, $setter)) {
-                $providerData->{$setter}($value);
+            if (!$providerData) {
+                // create new
+                $class = '\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProvider' . $paymentProvider->getName();
+                $providerData = new $class($order);
+                $provider->{'setPaymentProvider' . $paymentProvider->getName()}($providerData);
             }
-        }
 
-        if (method_exists($providerData, 'setPaymentFinished')) {
-            $providerData->setPaymentFinished(new Carbon());
-        }
+            // update authorizedData
+            $authorizedData = $paymentProvider->getAuthorizedData();
+            foreach ((array)$authorizedData as $field => $value) {
+                $setter = 'setAuth_' . $field;
+                if (method_exists($providerData, $setter)) {
+                    $providerData->{$setter}($value);
+                }
+            }
 
-        if (method_exists($providerData, 'setConfigurationKey')) {
-            $providerData->setConfigurationKey($paymentProvider->getConfigurationKey());
-        }
+            if (method_exists($providerData, 'setPaymentFinished')) {
+                $providerData->setPaymentFinished(new Carbon());
+            }
 
-        /* recurring payment data */
-        if ($sourceOrder && $paymentProvider instanceof RecurringPaymentInterface) {
-            $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
-        }
+            if (method_exists($providerData, 'setConfigurationKey')) {
+                $providerData->setConfigurationKey($paymentProvider->getConfigurationKey());
+            }
 
-        $order->save(['versionNote' => 'OrderAgent::setPaymentProvider.']);
+            /* recurring payment data */
+            if ($sourceOrder && $paymentProvider instanceof RecurringPaymentInterface) {
+                $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
+            }
+
+            $order->save(['versionNote' => 'OrderAgent::setPaymentProvider.']);
+        } else {
+            Logger::error("payment provider not provided");
+        }
 
         return $this;
     }
