@@ -38,9 +38,8 @@
 - [Ecommerce] Removed elasticsearch 5 support 
 - [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
 `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`.
-- [Data Objects] `Pimcore\Model\DataObject\ClassDefinition\Data\HotspotImage`does not extend `Image` anymore  
-
-
+- [Data Objects] `Pimcore\Model\DataObject\ClassDefinition\Data\HotspotImage`does not extend `Image` anymore
+- [Elastic Search] added `getClientConfig` to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config` interface
     
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
