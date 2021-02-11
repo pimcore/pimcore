@@ -100,7 +100,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @var array
      */
     protected $_optionalAttributes = [
-        'charset', 'defer', 'language', 'src', 'type', 'async'
+        'charset', 'defer', 'language', 'src', 'type', 'async',
     ];
 
     /**
