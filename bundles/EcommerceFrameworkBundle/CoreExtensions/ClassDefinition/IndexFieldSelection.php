@@ -294,8 +294,8 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
         $value = null;
         if ($values[0] && $values[1] && $values[2]) {
-            $preSelect = explode('%%', $value[2]);
-            $value = new ObjectData\IndexFieldSelection($value[0], $values[1], $preSelect);
+            $preSelect = explode('%%', $values[2]);
+            $value = new ObjectData\IndexFieldSelection($values[0], $values[1], $preSelect);
         }
 
         return $value;
