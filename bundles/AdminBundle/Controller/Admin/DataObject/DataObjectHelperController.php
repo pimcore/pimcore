@@ -2300,7 +2300,7 @@ class DataObjectHelperController extends AdminController
         foreach ($fds as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Fieldcollections || $fd instanceof DataObject\ClassDefinition\Data\Objectbricks
                 || $fd instanceof DataObject\ClassDefinition\Data\Block) {
-                return;
+                continue;
             }
 
             if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
