@@ -877,17 +877,11 @@ class Config implements \ArrayAccess
             }
         }
 
-        usort($result, function ($treeA, $treeB) {
-            $a = $treeA['sort'] ? $treeA['sort'] : 0;
-            $b = $treeB['sort'] ? $treeB['sort'] : 0;
+        usort($result, static function ($treeA, $treeB) {
+            $a = $treeA['sort'] ?: 0;
+            $b = $treeB['sort'] ?: 0;
 
-            if ($a > $b) {
-                return 1;
-            } elseif ($a < $b) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return $a <=> $b;
         });
 
         return $result;
