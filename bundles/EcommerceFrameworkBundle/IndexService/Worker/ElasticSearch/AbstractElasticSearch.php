@@ -435,7 +435,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $metadata]];
             }
 
-            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
+            /** @var ElasticSearchConfigInterface $configInterface */
+            $configInterface = $this->getTenantConfig();
+            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $configInterface->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
                 return $value !== null;
             }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
@@ -629,9 +631,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
 
             try {
+                /** @var ElasticSearchConfigInterface $configInterface */
+                $configInterface = $this->getTenantConfig();
+
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
-                    'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
+                    'type' => $configInterface->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
                     $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
