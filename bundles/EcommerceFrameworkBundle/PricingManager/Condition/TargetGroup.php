@@ -20,12 +20,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class TargetGroup implements ConditionInterface
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $targetGroupId;
 
     /**
-     * @var \Pimcore\Model\Tool\Targeting\TargetGroup
+     * @var \Pimcore\Model\Tool\Targeting\TargetGroup|null
      */
     protected $targetGroup;
 
