@@ -187,7 +187,7 @@ abstract class AbstractOrderList implements OrderListInterface
     {
         $this->limit = (int)$limit;
         $this->offset = (int)$offset;
-        $this->list = null;
+        $this->list = new \ArrayIterator();
 
         return $this;
     }
