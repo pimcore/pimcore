@@ -276,33 +276,39 @@ class Agent implements OrderAgentInterface
             $order = $this->getOrder();
 
             // get first available provider
-            foreach ($order->getPaymentProvider()->getBrickGetters() as $method) {
-                $providerData = $order->getPaymentProvider()->{$method}();
-                if ($providerData) {
-                    /* @var \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData $providerData */
+            if (method_exists($order, 'getPaymentProvider')) {
+                $paymentProvider = $order->getPaymentProvider();
 
-                    // get provider data
-                    if (method_exists($providerData, 'getConfigurationKey') && $providerData->getConfigurationKey()) {
-                        $name = $providerData->getConfigurationKey();
-                    } else {
-                        $name = strtolower(str_replace(Agent::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
-                    }
-                    $authorizedData = [];
-                    foreach ($providerData->getObjectVars() as $field => $value) {
-                        if (preg_match('#^auth_(?<name>\w+)$#i', $field, $match)) {
-                            $func = 'get' . $field;
-                            $authorizedData[$match['name']] = $providerData->$func();
+                foreach ($paymentProvider->getBrickGetters() as $method) {
+                    $providerData = $order->getPaymentProvider()->{$method}();
+                    if ($providerData) {
+                        /* @var \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData $providerData */
+
+                        // get provider data
+                        if (method_exists($providerData, 'getConfigurationKey') && $providerData->getConfigurationKey()) {
+                            $name = $providerData->getConfigurationKey();
+                        } else {
+                            $name = strtolower(str_replace(Agent::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
                         }
+                        $authorizedData = [];
+                        foreach ($providerData->getObjectVars() as $field => $value) {
+                            if (preg_match('#^auth_(?<name>\w+)$#i', $field, $match)) {
+                                $func = 'get' . $field;
+                                $authorizedData[$match['name']] = $providerData->$func();
+                            }
+                        }
+
+                        // init payment
+                        $paymentProvider = $this->paymentManager->getProvider($name);
+                        $paymentProvider->setAuthorizedData($authorizedData);
+
+                        $this->paymentProvider = $paymentProvider;
+
+                        break;
                     }
-
-                    // init payment
-                    $paymentProvider = $this->paymentManager->getProvider($name);
-                    $paymentProvider->setAuthorizedData($authorizedData);
-
-                    $this->paymentProvider = $paymentProvider;
-
-                    break;
                 }
+            } else {
+                Logger::error("No payment provider provided");
             }
         }
 

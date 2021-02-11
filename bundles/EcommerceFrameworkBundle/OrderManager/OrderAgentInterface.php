@@ -89,7 +89,7 @@ interface OrderAgentInterface
      * @param PaymentInterface $paymentProvider
      * @param AbstractOrder|null $sourceOrder
      *
-     * @return Order
+     * @return self
      */
     public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null);
 
