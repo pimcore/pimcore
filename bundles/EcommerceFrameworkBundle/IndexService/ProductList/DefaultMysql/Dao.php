@@ -43,7 +43,7 @@ class Dao
      */
     protected $logger;
 
-    public function __construct(ProductListInterface $model, Logger $logger)
+    public function __construct(DefaultMysql $model, Logger $logger)
     {
         $this->model = $model;
         $this->db = \Pimcore\Db::get();
