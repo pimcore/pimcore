@@ -25,9 +25,11 @@ class MultiSelectCategory extends AbstractFilterType
         $values = [];
 
         $availableRelations = [];
-        if ($filterDefinition->getAvailableCategories()) {
-            foreach ($filterDefinition->getAvailableCategories() as $rel) {
-                $availableRelations[$rel->getId()] = true;
+        if (method_exists($filterDefinition, 'getAvailableCategories')) {
+            if ($filterDefinition->getAvailableCategories()) {
+                foreach ($filterDefinition->getAvailableCategories() as $rel) {
+                    $availableRelations[$rel->getId()] = true;
+                }
             }
         }
 

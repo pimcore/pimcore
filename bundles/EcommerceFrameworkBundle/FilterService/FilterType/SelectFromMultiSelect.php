@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 
 class SelectFromMultiSelect extends AbstractFilterType
 {
@@ -67,13 +68,14 @@ class SelectFromMultiSelect extends AbstractFilterType
         $value = trim($value);
 
         $currentFilter[$field] = $value;
+        $db = Db::get();
 
         if (!empty($value)) {
             $value = '%' . WorkerInterface::MULTISELECT_DELIMITER  . $value .  WorkerInterface::MULTISELECT_DELIMITER . '%';
             if ($isPrecondition) {
-                $productList->addCondition($field . ' LIKE ' . $productList->quote($value), 'PRECONDITION_' . $field);
+                $productList->addCondition($field . ' LIKE ' . $db->quote($value), 'PRECONDITION_' . $field);
             } else {
-                $productList->addCondition($field . ' LIKE ' . $productList->quote($value), $field);
+                $productList->addCondition($field . ' LIKE ' . $db->quote($value), $field);
             }
         }
 
