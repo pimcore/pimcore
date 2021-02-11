@@ -30,7 +30,6 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 
         $field = $this->getField($filterDefinition);
         $productList->prepareGroupByValues($field, true, !$useAndCondition);
-
     }
 
     /**
