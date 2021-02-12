@@ -38,6 +38,10 @@
 - [Ecommerce] Removed elasticsearch 5 support 
 - [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
 `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
+- [Ecommerce] Removed legacy CheckoutManager architecture, migrate your project to V7 if not already
+  - `CancelPaymentOrRecreateOrderStrategy` is now default strategy for handling active payments 
+  - Removed method `isCartReadOnly` from cart and `cart_readonly_mode` configuration option as readonly mode 
+    does not exist anymore.
 
 
     

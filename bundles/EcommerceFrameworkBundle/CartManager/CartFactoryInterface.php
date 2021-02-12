@@ -38,8 +38,4 @@ interface CartFactoryInterface
      */
     public function create(EnvironmentInterface $environment, string $name, string $id = null, array $options = []): CartInterface;
 
-    /**
-     * @return string
-     */
-    public function getCartReadOnlyMode(): string;
 }
