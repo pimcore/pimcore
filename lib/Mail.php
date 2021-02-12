@@ -313,7 +313,7 @@ class Mail extends Email
         $this->getHeaders()->remove('to');
         $this->getHeaders()->remove('cc');
         $this->getHeaders()->remove('bcc');
-        $this->getHeaders()->remove('replyTo');
+        $this->getHeaders()->remove('reply-to');
 
         return $this;
     }
