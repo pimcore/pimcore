@@ -64,17 +64,6 @@ interface CartInterface
     public function isEmpty();
 
     /**
-     * returns if cart is read only
-     * default implementation checks if order object exists and if order state is PAYMENT_PENDING
-     *
-     * @return bool
-     *
-     * @deprecated use checkout implementation Pimcore 10 instead
-     *
-     */
-    public function isCartReadOnly();
-
-    /**
      * @param string $itemKey
      *
      * @return CartItemInterface

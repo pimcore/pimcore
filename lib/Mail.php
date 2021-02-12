@@ -523,8 +523,6 @@ class Mail extends Email
      */
     public function send(MailerInterface $mailer = null)
     {
-        $this->subject($this->getSubjectRendered());
-
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
             $this->setHtmlBody($bodyHtmlRendered);
@@ -535,6 +533,8 @@ class Mail extends Email
             //add mime part for plain text body
             $this->setTextBody($bodyTextRendered);
         }
+
+        $this->subject($this->getSubjectRendered());
 
         return $this->sendWithoutRendering($mailer);
     }
@@ -794,13 +794,17 @@ class Mail extends Email
      */
     public function setDocument($document)
     {
-        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) { //document passed
+        if(!empty($document)) {
+            if (is_numeric($document)) { //id of document passed
+                $document = Model\Document\Email::getById($document);
+            } elseif (is_string($document)) { //path of document passed
+                $document = Model\Document\Email::getByPath($document);
+            }
+        }
+
+        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
             $this->document = $document;
             $this->setDocumentSettings();
-        } elseif ((int)$document > 0) { //id of document passed
-            $this->setDocument(Model\Document\Email::getById($document));
-        } elseif (is_string($document) && $document != '') { //path of document passed
-            $this->setDocument(Model\Document\Email::getByPath($document));
         } else {
             throw new \Exception("$document is not an instance of " . Model\Document\Email::class);
         }

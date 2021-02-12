@@ -61,7 +61,7 @@ class PricingManager implements PricingManagerInterface
     protected $visitorInfoStorage = null;
 
     /**
-     * @var Rule[]
+     * @var RuleInterface[]
      */
     protected $rules;
 

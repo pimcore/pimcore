@@ -178,6 +178,11 @@ abstract class AbstractOrder extends Concrete
     abstract public function setPaymentInfo(?\Pimcore\Model\DataObject\Fieldcollection $paymentInfo);
 
     /**
+     * @return \Pimcore\Model\DataObject\Objectbrick|null
+     */
+    abstract public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick;
+
+    /**
      * returns latest payment info entry
      *
      * @return AbstractPaymentInformation

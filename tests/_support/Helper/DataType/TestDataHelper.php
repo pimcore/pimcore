@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Helper\DataType;
 
-use Codeception\Module;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -15,10 +14,11 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
+use Pimcore\Tests\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 
-class TestDataHelper extends Module
+class TestDataHelper extends AbstractTestDataHelper
 {
     const IMAGE = 'sampleimage.jpg';
     const DOCUMENT = 'sampledocument.txt';
@@ -497,35 +497,6 @@ class TestDataHelper extends Module
         $this->assertInstanceOf(AbstractObject::class, $value);
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertObjectsEqual($expected, $value);
-    }
-
-    /**
-     * @param string|null $condition
-     *
-     * @return Concrete[]
-     */
-    private function getObjectList($condition = null)
-    {
-        $list = new DataObject\Listing();
-        $list->setOrderKey('o_id');
-        $list->setCondition($condition);
-
-        $objects = $list->load();
-
-        return $objects;
-    }
-
-    public function assertObjectsEqual(AbstractObject $obj1, AbstractObject $obj2)
-    {
-        $this->assertElementsEqual($obj1, $obj2);
-
-        $str1 = TestHelper::createObjectComparisonString($obj1);
-        $str2 = TestHelper::createObjectComparisonString($obj2);
-
-        $this->assertNotNull($str1);
-        $this->assertNotNull($str2);
-
-        $this->assertEquals($str1, $str2);
     }
 
     /**

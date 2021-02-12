@@ -20,7 +20,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class LoginFailedEvent extends Event
 {
     /**
-     * @var string
+     * @var array
      */
     protected $credentials;
 
@@ -38,7 +38,7 @@ class LoginFailedEvent extends Event
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getCredentials()
     {
