@@ -118,6 +118,7 @@ class MailTest extends TestCase
     public function testAddRecipientsToMail()
     {
         $mail = new \Pimcore\Mail();
+        $mail->clearRecipients();
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
             $setterName = 'add' . $key;
             $mail->$setterName($this->defaultSettings[strtolower($key)], 'John Doe');
