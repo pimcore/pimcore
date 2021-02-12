@@ -360,9 +360,8 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-
-    public function testTwoAndConditions() {
-
+    public function testTwoAndConditions()
+    {
         $ruleDefinitions = [
             'testrule' => [
                 'actions' => [
@@ -391,7 +390,7 @@ class CombinedRuleTest extends AbstractRuleTest
                     ],
                 ],
 
-            ]
+            ],
         ];
 
         $productDefinitions = [
@@ -422,7 +421,6 @@ class CombinedRuleTest extends AbstractRuleTest
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
-
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 5,
@@ -450,12 +448,10 @@ class CombinedRuleTest extends AbstractRuleTest
         ];
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
-
     }
 
-
-    public function testTwoOrConditions() {
-
+    public function testTwoOrConditions()
+    {
         $ruleDefinitions = [
             'testrule' => [
                 'actions' => [
@@ -484,7 +480,7 @@ class CombinedRuleTest extends AbstractRuleTest
                     ],
                 ],
 
-            ]
+            ],
         ];
 
         $productDefinitions = [
@@ -515,7 +511,6 @@ class CombinedRuleTest extends AbstractRuleTest
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
-
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 5,
@@ -543,8 +538,5 @@ class CombinedRuleTest extends AbstractRuleTest
         ];
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
-
     }
-
-
 }
