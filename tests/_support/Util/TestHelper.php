@@ -123,8 +123,8 @@ class TestHelper
     }
 
     /**
-     * @param  Asset $asset1
-     * @param  Asset $asset2
+     * @param Asset $asset1
+     * @param Asset $asset2
      * @param bool $ignoreCopyDifferences
      * @param bool $id
      *
@@ -404,7 +404,7 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
+     * @param bool $save
      *
      * @return ObjectModel\Folder
      */
@@ -447,10 +447,10 @@ class TestHelper
 
     /**
      * @param TestDataHelper $testDataHelper
-     * @param string         $keyPrefix
-     * @param bool           $save
-     * @param bool           $publish
-     * @param int            $seed
+     * @param string $keyPrefix
+     * @param bool $save
+     * @param bool $publish
+     * @param int $seed
      *
      * @return Unittest
      */
@@ -521,19 +521,17 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
-     * @param bool   $publish
+     * @param bool $save
+     * @param bool $publish
      *
-     * @return Document\Page
+     * @return Document
      */
-    public static function createEmptyDocumentPage($keyPrefix = '', $save = true, $publish = true)
-    {
+    public static function createEmptyDocument($keyPrefix = '', $save = true, $publish = true, $type = '\\Pimcore\\Model\\Document\\Page') {
         if (null === $keyPrefix) {
             $keyPrefix = '';
         }
 
-        $document = new Document\Page();
-        $document->setType('page');
+        $document = new $type();
         $document->setParentId(1);
         $document->setUserOwner(1);
         $document->setUserModification(1);
@@ -549,6 +547,18 @@ class TestHelper
         }
 
         return $document;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param bool   $save
+     * @param bool   $publish
+     *
+     * @return Document\Page
+     */
+    public static function createEmptyDocumentPage($keyPrefix = '', $save = true, $publish = true)
+    {
+        return self::createEmptyDocument($keyPrefix, $save, $publish);
     }
 
     /**
@@ -674,7 +684,7 @@ class TestHelper
     public static function createVideoAsset($keyPrefix = '', $data = null, $save = true)
     {
         if (!$data) {
-            $path = static::resolveFilePath('assets/video/small.mp4');
+            $path = static::resolveFilePath('assets/video/example.mp4');
             if (!file_exists($path)) {
                 throw new \RuntimeException(sprintf('Path %s was not found', $path));
             }

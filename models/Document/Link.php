@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
@@ -324,14 +325,21 @@ class Link extends Model\Document
      */
     public function setObjectFromId()
     {
-        if ($this->internal) {
-            if ($this->internalType == 'document') {
-                $this->object = Document::getById($this->internal);
-            } elseif ($this->internalType == 'asset') {
-                $this->object = Asset::getById($this->internal);
-            } elseif ($this->internalType == 'object') {
-                $this->object = Model\DataObject\Concrete::getById($this->internal);
+        try {
+            if ($this->internal) {
+                if ($this->internalType == 'document') {
+                    $this->object = Document::getById($this->internal);
+                } elseif ($this->internalType == 'asset') {
+                    $this->object = Asset::getById($this->internal);
+                } elseif ($this->internalType == 'object') {
+                    $this->object = Model\DataObject\Concrete::getById($this->internal);
+                }
             }
+        } catch (\Exception $e) {
+            Logger::warn($e);
+            $this->internalType = '';
+            $this->internal = null;
+            $this->object = null;
         }
 
         return $this->object;
