@@ -22,7 +22,7 @@ parameters:
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
 
     ignoreErrors:
-        - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\FilterMultiSelectFromMultiSelect'
+        - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\FilterMultiSelectFromMultiSelect/'
         - '/(snappy|lz4)_(un)?compress/'
         - '/Instantiated class COM not found/'
         - '/(Order|Checkout)Manager.*__construct\(\) does not call parent constructor/'
