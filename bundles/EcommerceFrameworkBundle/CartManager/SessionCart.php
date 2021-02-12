@@ -73,8 +73,6 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function delete()
     {
-        $this->setIgnoreReadonly();
-
         $session = static::getSessionBag();
 
         if (!$this->getId()) {
@@ -168,8 +166,6 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function __wakeup()
     {
-        $this->setIgnoreReadonly();
-
         $timestampBackup = $this->getModificationDate();
 
         // set current cart
@@ -185,6 +181,5 @@ class SessionCart extends AbstractCart implements CartInterface
         $this->modified();
 
         $this->setModificationDate($timestampBackup);
-        $this->unsetIgnoreReadonly();
     }
 }

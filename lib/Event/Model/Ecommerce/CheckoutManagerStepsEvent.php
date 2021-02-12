@@ -14,8 +14,8 @@
 
 namespace Pimcore\Event\Model\Ecommerce;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Symfony\Contracts\EventDispatcher\Event;
 

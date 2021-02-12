@@ -319,6 +319,11 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @return \Pimcore\Model\DataObject\Objectbrick|null
+     */
+    abstract public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick;
+
+    /**
      * returns latest payment info entry
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation

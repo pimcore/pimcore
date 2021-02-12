@@ -26,7 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 use Pimcore\Cache;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Localization\IntlFormatter;
