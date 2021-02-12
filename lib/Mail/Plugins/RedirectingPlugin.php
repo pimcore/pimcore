@@ -91,7 +91,7 @@ class RedirectingPlugin
         }
 
         $headers = $message->getHeaders();
-        if (\Pimcore::inDebugMode()) {
+        if (\Pimcore::inDebugMode() && !$message->getIgnoreDebugMode()) {
             $headers->add(new MailboxListHeader('X-Pimcore-Debug-To', $message->getTo()));
             $headers->add(new MailboxListHeader('X-Pimcore-Debug-Cc', $message->getCc()));
             $headers->add(new MailboxListHeader('X-Pimcore-Debug-Bcc', $message->getBcc()));
