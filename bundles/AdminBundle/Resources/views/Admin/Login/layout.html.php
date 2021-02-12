@@ -28,7 +28,7 @@ $config = $this->config;
     //https://github.com/pimcore/pimcore/issues/8129
     if (preg_match('@^https?://@', $customImage)) {
         $backgroundImageUrl = $customImage;
-    } elseif (file_exists(PIMCORE_WEB_ROOT . $customImage)) {
+    } elseif (is_file(PIMCORE_WEB_ROOT . $customImage)) {
         $backgroundImageUrl = $customImage;
     } else {
         $defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'];
