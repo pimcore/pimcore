@@ -43,7 +43,7 @@ class InputQuantityValue extends QuantityValue
      */
     public $queryColumnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
@@ -53,7 +53,7 @@ class InputQuantityValue extends QuantityValue
      */
     public $columnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
@@ -90,7 +90,7 @@ class InputQuantityValue extends QuantityValue
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data['value'] || $data['unit']) {
-            if (is_numeric($data['unit'])) {
+            if ($data['unit']) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return $this->getNewDataObject($data['value'], null);
                 }
@@ -117,14 +117,6 @@ class InputQuantityValue extends QuantityValue
         if ($this->getMandatory() &&
             ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
-        }
-
-        if (!empty($data)) {
-            if (!empty($data->getUnitId())) {
-                if (!is_numeric($data->getUnitId())) {
-                    throw new Model\Element\ValidationException('Unit id has to be empty or numeric ' . $data->getUnitId());
-                }
-            }
         }
     }
 
