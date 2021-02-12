@@ -14,13 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
 
+use Carbon\Carbon;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\OrderUpdateNotPossibleException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\Event\Ecommerce\OrderManagerEvents;
 use Pimcore\Event\Model\Ecommerce\OrderManagerEvent;
@@ -85,7 +85,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
-            $order->setOrderdate(new \DateTime());
+            $order->setOrderdate(new Carbon());
 
             $cartId = $this->createCartId($cart);
             if (strlen($cartId) > 190) {
@@ -247,7 +247,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
-            $order->setOrderdate(new \DateTime());
+            $order->setOrderdate(new Carbon());
             $order->setCartId($sourceOrder->getCartId());
 
             $order->save(['versionNote' => 'OrderManager::recreateOrder.']);
@@ -276,7 +276,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         $order->setPublished(true);
 
         $order->setOrdernumber($tempOrdernumber);
-        $order->setOrderdate(new \DateTime());
+        $order->setOrderdate(new Carbon());
         $order->setCartId($sourceOrder->getCartId());
 
         $order->save(['versionNote' => 'OrderManager::recreateOrderBasedOnSourceOrder - initial save.']);

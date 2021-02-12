@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
+use Carbon\Carbon;
 use Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
@@ -41,6 +42,9 @@ use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Lock\Exception\NotSupportedException;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 class Agent implements OrderAgentInterface
 {
     const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
@@ -343,7 +347,7 @@ class Agent implements OrderAgentInterface
         }
 
         if (method_exists($providerData, 'setPaymentFinished')) {
-            $providerData->setPaymentFinished(new \DateTime());
+            $providerData->setPaymentFinished(new Carbon());
         }
 
         if (method_exists($providerData, 'setConfigurationKey')) {
@@ -395,7 +399,7 @@ class Agent implements OrderAgentInterface
         }
 
         $currentPaymentInformation = new PaymentInfo();
-        $currentPaymentInformation->setPaymentStart(new \DateTime());
+        $currentPaymentInformation->setPaymentStart(new Carbon());
         $currentPaymentInformation->setPaymentState($paymentState);
         $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
 
@@ -613,7 +617,7 @@ class Agent implements OrderAgentInterface
         }
 
         // save basic payment data
-        $currentPaymentInformation->setPaymentFinish(new \DateTime());
+        $currentPaymentInformation->setPaymentFinish(new Carbon());
         $currentPaymentInformation->setPaymentReference($status->getPaymentReference());
         $currentPaymentInformation->setPaymentState($status->getStatus());
         $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' ' . $status->getMessage());

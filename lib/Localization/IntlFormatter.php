@@ -43,7 +43,7 @@ class IntlFormatter
     protected $dateFormatters = [];
 
     /**
-     * @var \NumberFormatter
+     * @var \NumberFormatter|null
      */
     protected $numberFormatter;
 

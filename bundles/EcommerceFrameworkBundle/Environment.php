@@ -34,7 +34,7 @@ class Environment implements EnvironmentInterface
     protected $defaultCurrency;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $customItems = [];
 
@@ -49,17 +49,17 @@ class Environment implements EnvironmentInterface
     protected $useGuestCart = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentAssortmentTenant;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentAssortmentSubTenant;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentCheckoutTenant;
 
@@ -69,7 +69,7 @@ class Environment implements EnvironmentInterface
      * This value will not be stored into the session and is only valid for current process
      * set with setCurrentCheckoutTenant('tenant', false');
      *
-     * @var string
+     * @var string|null
      */
     protected $currentTransientCheckoutTenant;
 

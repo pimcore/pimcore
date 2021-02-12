@@ -122,7 +122,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      * @param string $position
      * @param int $index
      */
-    public function save($object, $ownertype = 'object', $ownername, $position, $index)
+    public function save($object, $ownertype, $ownername, $position, $index)
     {
         $element = $this->getElement();
         $type = Model\Element\Service::getElementType($element);

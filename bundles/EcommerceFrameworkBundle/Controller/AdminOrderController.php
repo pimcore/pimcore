@@ -22,6 +22,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
@@ -75,7 +76,6 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
         $this->paymentManager = Factory::getInstance()->getPaymentManager();
-
     }
 
     /**
@@ -327,7 +327,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
             // load reference
             $reference = Concrete::getById($note->getCid());
-            $title = $reference instanceof AbstractOrderItem
+            $title = $reference instanceof AbstractOrderItem && $reference->getProduct() instanceof CheckoutableInterface
                 ? $reference->getProduct()->getOSName()
                 : null
             ;
@@ -364,7 +364,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig,
             'formatter' => $formatter,
             'locale' => $localeService,
-            'paymentProviders' => $paymentProviders
+            'paymentProviders' => $paymentProviders,
         ]);
     }
 

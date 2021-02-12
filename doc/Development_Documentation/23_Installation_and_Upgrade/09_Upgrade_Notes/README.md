@@ -32,8 +32,23 @@
    
 - [Ecommerce] Indexing doesn't catch any exceptions that occur during preprocessing of attributes in BatchProcessing workers (e.g. elasticsearch). 
   You can change that behavior with event listeners.     
+
+- [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
+- [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
+  activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
+- [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
+- [Ecommerce] Added type declarations to Ecommerce Framework product interfaces (`ProductInterface`, `IndexableInterface`, `CheckoutableInterface`).
+- [Ecommerce] Removed elasticsearch 5 support 
+- [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
+`CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
+
+
     
 ## 6.9.0
+- Abstract method `load` will be added to `Pimcore\Model\Listing\Dao\AbstractDao` in Pimcore 10
+- [Elastic Search] `getClientConfig` will be added to the `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config` interface in Pimcore 10
+- `PageSnippet::$elements` property visibility changed from `protected` to `private` 
+- `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private` 
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
 - Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore 10. 
@@ -68,7 +83,10 @@
     );
 ```
 - Using Zend\Paginator for listing classes has been deprecated and will be removed in Pimcore 10. Use Knp\Component\Pager\Paginator instead.
-- Elasticsearch 5 support is deprecated, use newer versions of elasticsearch. 
+- [Ecommerce] Elasticsearch 5 support is deprecated, use newer versions of elasticsearch.
+- [Ecommerce] Calling `getItemAmount` and `getItemCount` of `Carts` with boolean parameter is deprecated. Use one of 
+  `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS` 
+  instead. 
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 

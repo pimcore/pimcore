@@ -1,20 +1,19 @@
 {
     "key": null,
     "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractFilterDefinitionType",
+    "implementsInterfaces": "",
     "title": "",
     "group": "FilterTypes",
     "layoutDefinitions": {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": null,
         "border": false,
-        "icon": null,
         "name": null,
         "type": null,
         "region": null,
         "title": null,
-        "width": null,
-        "height": null,
+        "width": 0,
+        "height": 0,
         "collapsible": false,
         "collapsed": false,
         "bodyStyle": null,
@@ -23,10 +22,8 @@
         "childs": [
             {
                 "fieldtype": "panel",
-                "labelWidth": 100,
                 "layout": "",
                 "border": false,
-                "icon": "",
                 "name": "Layout",
                 "type": "",
                 "region": "",
@@ -62,10 +59,10 @@
                     {
                         "fieldtype": "input",
                         "width": 400,
+                        "defaultValue": null,
                         "queryColumnType": "varchar",
                         "columnType": "varchar",
                         "columnLength": 255,
-                        "phpdocType": "string",
                         "regex": "",
                         "unique": null,
                         "showCharCount": null,
@@ -82,7 +79,8 @@
                         "relationType": false,
                         "invisible": false,
                         "visibleGridView": false,
-                        "visibleSearch": false
+                        "visibleSearch": false,
+                        "defaultValueGenerator": ""
                     },
                     {
                         "fieldtype": "indexFieldSelection",
@@ -96,7 +94,6 @@
                             "field": "varchar(200)",
                             "preSelect": "text"
                         },
-                        "phpdocType": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection",
                         "width": 400,
                         "considerTenants": true,
                         "multiPreSelect": "remote_multi",
@@ -122,10 +119,10 @@
                     {
                         "fieldtype": "input",
                         "width": 400,
+                        "defaultValue": null,
                         "queryColumnType": "varchar",
                         "columnType": "varchar",
                         "columnLength": 255,
-                        "phpdocType": "string",
                         "regex": "",
                         "unique": null,
                         "showCharCount": null,
@@ -142,14 +139,14 @@
                         "relationType": false,
                         "invisible": false,
                         "visibleGridView": false,
-                        "visibleSearch": false
+                        "visibleSearch": false,
+                        "defaultValueGenerator": ""
                     },
                     {
                         "fieldtype": "checkbox",
                         "defaultValue": 0,
                         "queryColumnType": "tinyint(1)",
                         "columnType": "tinyint(1)",
-                        "phpdocType": "boolean",
                         "name": "UseAndCondition",
                         "title": "Use And Condition",
                         "tooltip": "",
@@ -163,12 +160,20 @@
                         "relationType": false,
                         "invisible": false,
                         "visibleGridView": false,
-                        "visibleSearch": false
+                        "visibleSearch": false,
+                        "defaultValueGenerator": ""
                     }
                 ],
-                "locked": false
+                "locked": false,
+                "icon": "",
+                "labelWidth": 100,
+                "labelAlign": "left"
             }
         ],
-        "locked": false
-    }
+        "locked": false,
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
+    },
+    "generateTypeDeclarations": true
 }

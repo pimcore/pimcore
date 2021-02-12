@@ -7,6 +7,7 @@ Pimcore uses [Codeception](https://codeception.com/) for testing its core featur
 1. A Pimcore installation. Read this [guide](../../01_Getting_Started/00_Installation.md) for instructions.
 2. A **dedicated database** used only for testing. In other words, if the Pimcore installation is not only used for testing, create a separate database!
 3. Redis cache (optional, but needed for executing cache tests)
+4. Make sure that `require-dev` requirements of Pimcore's `composer.json` are installed, especially `codeception/codeception`, `codeception/module-symfony`, `codeception/phpunit-wrapper` for executing codeception tests. 
 
 ## Executing tests
 
@@ -24,6 +25,9 @@ PIMCORE_TEST=1
 
 This will switch special directories used for testing (like /var/classes) and prevent that you existing installation gets messed up. 
 
+##### Check Logfiles
+Don't forget to check logfiles (especially `test.log` and `php.log`) when problems occur. 
+
 #### Run all tests
 
 This will run all tests.
@@ -33,10 +37,10 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 
 #### Only run a specific suite
 
-Only runs the `model` tests. For a list of suites see the list below.
+Only runs the `Model` tests. For a list of suites see the list below.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore model
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Model
 ```
 
 #### Only run a specific test group
@@ -45,7 +49,7 @@ This can be a subset of a suite. You also have the option to provide a comma-sep
 For an overview of available groups see the table below. 
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore rest -g dataTypeIn    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Rest -g dataTypeIn    
 ```
 
 ##### Redis Cache tests
@@ -54,7 +58,7 @@ For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. Set to a value that
 other Redis DBs on your system.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore cache    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore Cache    
 ```
 
 
@@ -73,11 +77,11 @@ The tests are organized into suites, each one covering specific areas of the cor
 
 | Suite name | Description                                                    |
 |------------|----------------------------------------------------------------|
-| cache      | Cache tests                                                    |
-| ecommerce  | Ecommerce bundle tests                                         |
-| model      | Dataobject tests                                               |
-| service    | Test covering common or shared element tasks (versioning, ...) |
-| unit       | Other tests (may need restructuring)                           |
+| Cache      | Cache tests                                                    |
+| Ecommerce  | Ecommerce bundle tests                                         |
+| Model      | Dataobject tests                                               |
+| Service    | Test covering common or shared element tasks (versioning, ...) |
+| Unit       | Other tests (may need restructuring)                           |
 | ...        |                                                                |
 
 #### Groups

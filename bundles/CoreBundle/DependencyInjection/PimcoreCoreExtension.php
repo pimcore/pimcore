@@ -251,7 +251,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
         $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
         if (!$container->hasParameter('pimcore.geoip.db_file')) {
-            $container->setParameter('pimcore.geoip.db_file', null);
+            $container->setParameter('pimcore.geoip.db_file', '');
         }
 
         $loader->load('targeting.yml');

@@ -338,7 +338,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function getCurrentIndex()
     {
-        return $this->indices[$this->getCurrent()];
+        return $this->indices[$this->getCurrent()] ?? null;
     }
 
     /**

@@ -42,6 +42,7 @@
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
+    "ext-curl": "*",
     "psr/simple-cache": "^1.0.0",
     "amnuts/opcache-gui": "^3.0.1",
     "cbschuld/browser.php": "^1.9.6",
@@ -60,7 +61,7 @@
     "friendsofsymfony/jsrouting-bundle": "^2.6",
     "geoip2/geoip2": "^2.9",
     "google/apiclient": "^2.8",
-    "guzzlehttp/guzzle": "^6.3",
+    "guzzlehttp/guzzle": "^7.2",
     "http-interop/http-factory-guzzle": "^1.0.0",
     "lcobucci/jwt": "^3.2",
     "league/csv": "^9.1",
@@ -69,7 +70,7 @@
     "myclabs/deep-copy": "^1.7",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
-    "ocramius/package-versions": "^2.0",
+    "ocramius/package-versions": "^2.1",
     "pear/net_url2": "^2.2",
     "phive/twig-extensions-deferred": "^2.0",
     "matomo/device-detector": "^3.9",
@@ -87,7 +88,7 @@
     "twig/extensions": "^1.5",
     "twig/twig": "^2.10",
     "umpirsky/country-list": "^2.0.4",
-    "vrana/adminer": "^4.6.3",
+    "vrana/adminer": "^4.8.0",
     "vrana/jush": "~2.0.2",
     "scheb/2fa-bundle": "^5.3",
     "scheb/2fa-google-authenticator": "^5.3",
@@ -100,7 +101,8 @@
   },
   "conflict": {
     "monolog/monolog": ">=2",
-    "symfony/monolog-bundle": "3.6.0"
+    "symfony/monolog-bundle": "3.6.0",
+    "thecodingmachine/safe": "<1.2.0"
   },
   "require-dev": {
     "cache/integration-tests": "dev-master",
@@ -110,11 +112,10 @@
     "phpstan/phpstan": "^0.12.56",
     "phpstan/phpstan-symfony": "^0.12.11",
     "phpunit/phpunit": "^9",
-    "elasticsearch/elasticsearch": "^6 || ^7",
+    "elasticsearch/elasticsearch": "^7.11",
     "composer/composer": "*"
   },
   "suggest": {
-    "ext-curl": "*",
     "ext-imagick": "*",
     "ext-redis": "*",
     "elasticsearch/elasticsearch": "Required for Elastic Search service"

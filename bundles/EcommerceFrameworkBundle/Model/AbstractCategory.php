@@ -30,7 +30,7 @@ class AbstractCategory extends \Pimcore\Model\DataObject\Concrete
      *
      * @return bool
      */
-    public function getOSProductsInParentCategoryVisible()
+    public function getOSProductsInParentCategoryVisible(): bool
     {
         return true;
     }

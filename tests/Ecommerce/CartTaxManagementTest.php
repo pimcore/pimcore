@@ -36,7 +36,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         foreach ($taxes as $name => $tax) {
             $entry = new TaxEntryFieldcollection();
             $entry->setPercent($tax);
-            $entry->setName($name);
+            $entry->setName((string)$name);
             $taxEntries->add($entry);
         }
 
@@ -161,12 +161,12 @@ class CartTaxManagementTest extends EcommerceTestCase
     public function testCartWithTaxEntriesCombine()
     {
         $product = $this->setUpProduct(100, [
-            1 => 10,
-            2 => 15,
+            '1' => 10,
+            '2' => 15,
         ], TaxEntry::CALCULATION_MODE_COMBINE);
 
         $product2 = $this->setUpProduct(50, [
-            1 => 10,
+            '1' => 10,
         ], TaxEntry::CALCULATION_MODE_COMBINE);
 
         $cart = $this->setUpCart();
@@ -206,12 +206,12 @@ class CartTaxManagementTest extends EcommerceTestCase
     public function testPriceSystemWithTaxEntriesOneAfterAnother()
     {
         $product = $this->setUpProduct(100, [
-            1 => 10,
-            2 => 15,
+            '1' => 10,
+            '2' => 15,
         ], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
         $product2 = $this->setUpProduct(50, [
-            1 => 10,
+            '1' => 10,
         ], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
         $cart = $this->setUpCart();
@@ -273,8 +273,8 @@ class CartTaxManagementTest extends EcommerceTestCase
 
     public function testCartWithTaxEntriesCombineWithModificators()
     {
-        $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
-        $product2 = $this->setUpProduct(50, [1 => 10], TaxEntry::CALCULATION_MODE_COMBINE);
+        $product = $this->setUpProduct(100, ['1' => 10, '2' => 15], TaxEntry::CALCULATION_MODE_COMBINE);
+        $product2 = $this->setUpProduct(50, ['1' => 10], TaxEntry::CALCULATION_MODE_COMBINE);
 
         $cart = $this->setUpCart();
         $cart->addItem($product, 2);
@@ -311,8 +311,8 @@ class CartTaxManagementTest extends EcommerceTestCase
 
     public function testPriceSystemWithTaxEntriesOneAfterAnotherWithModificators()
     {
-        $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
-        $product2 = $this->setUpProduct(50, [1 => 10], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
+        $product = $this->setUpProduct(100, ['1' => 10, '2' => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
+        $product2 = $this->setUpProduct(50, ['1' => 10], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
         $cart = $this->setUpCart();
         $cart->addItem($product, 2);
