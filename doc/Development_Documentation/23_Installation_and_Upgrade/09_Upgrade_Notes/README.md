@@ -66,6 +66,20 @@
         $mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
         ...
     ```
+
+    Before:
+    ```php
+      $mail->setFrom($emailAddress, $name);
+      $mail->setTo($emailAddress, $name);
+      ...
+    ```
+      
+    After:
+    ```php
+      $mail->from(new \Symfony\Component\Mime\Address($emailAddress, $name));
+      $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
+      ...
+    ```
     
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
