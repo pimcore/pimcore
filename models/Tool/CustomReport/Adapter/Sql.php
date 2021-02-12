@@ -36,6 +36,16 @@ class Sql extends AbstractAdapter
     {
         $db = Db::get();
 
+        if($fields === null) {
+            $columns = $this->fullConfig->getColumnConfiguration();
+            $fields = [];
+            foreach ($columns as $column) {
+                if ($column['export']) {
+                    $fields[] = $column['name'];
+                }
+            }
+        }
+
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
         $data = [];
         $total = 0;
@@ -164,10 +174,14 @@ class Sql extends AbstractAdapter
         $db = Db::get();
         $condition = ['1 = 1'];
 
+        $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
+
+        $data = '';
+
         if ($filters) {
             if (is_array($filters)) {
                 foreach ($filters as $filter) {
-                    $value = $filter['value'];
+                    $value = $filter['value'] ;
                     $type = $filter['type'];
                     $operator = $filter['operator'];
                     $maxValue = null;
@@ -180,7 +194,8 @@ class Sql extends AbstractAdapter
 
                     switch ($operator) {
                         case 'like':
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value . '%');
+                            $fields[] = $filter['property'];
+                            $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
                             break;
                         case 'lt':
                         case 'gt':
@@ -197,9 +212,11 @@ class Sql extends AbstractAdapter
                                     break;
                                 }
                             }
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
                             break;
                         case '=':
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
                             break;
                     }
@@ -207,20 +224,15 @@ class Sql extends AbstractAdapter
             }
         }
 
-        $condition = implode(' AND ', $condition);
-
-        $config = $this->config;
-        $config->where = !empty($config->where) ? $config->where . ' AND ' . $condition : $condition;
-
-        $sql = $this->buildQueryString($config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
-
         if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
-            $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz';
+            $condition = implode(' AND ', $condition);
+
+            $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
             if ($fields) {
-                $data = 'SELECT `' . implode('`, `', $fields) . '` FROM (' . $sql . ') AS somerandxyz';
+                $data = 'SELECT `' . implode('`, `', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
-                $data = $sql;
+                $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }
         } else {
             return null;
@@ -242,7 +254,7 @@ class Sql extends AbstractAdapter
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
         $db = Db::get();
-        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, $field);
+        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, (empty($filters) ? $field : null));
         $data = [];
         if ($baseQuery) {
             $sql = $baseQuery['data'] . ' GROUP BY ' . $db->quoteIdentifier($field);
