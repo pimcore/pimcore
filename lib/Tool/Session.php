@@ -21,7 +21,6 @@ use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler;
 use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use function Sabre\Event\Loop\instance;
 
 class Session
 {
@@ -118,10 +117,11 @@ class Session
      */
     public static function get(string $namespace = 'pimcore_admin')
     {
-        $bag = static::getHandler()->loadAttributeBag($namespace);;
+        $bag = static::getHandler()->loadAttributeBag($namespace);
         if ($bag instanceof AttributeBagInterface) {
             return $bag;
         }
+
         return null;
     }
 
@@ -136,6 +136,7 @@ class Session
         if ($bag instanceof AttributeBagInterface) {
             return $bag;
         }
+
         return null;
     }
 
