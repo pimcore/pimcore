@@ -38,8 +38,34 @@
 - [Ecommerce] Removed elasticsearch 5 support 
 - [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
 `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
+- [Emails & Newsletters] Swiftmailer has been replaced with Symfony Mailer. \Pimcore\Mail class now extends from `Symfony\Component\Mime\Email` and new mailer service has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
 
-
+    Email method and transport setting has been removed from System settings. Setup transport method in config.yaml:
+    ```yaml
+    framework:
+        mailer:
+            transports:
+                main: smtp://user:pass@smtp.example.com:port
+                pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+    ```
+    please see [Symfony Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for more information.
+    
+    API changes:
+    
+    Before:
+    ```php
+        $mail = new \Pimcore\Mail($subject = null, $body = null, $contentType = null, $charset = null);
+        $mail->setBodyText("This is just plain text");
+        $mail->setBodyHtml("<b>some</b> rich text: {{ myParam }}");
+        ...
+    ```
+    After:
+    ```php
+        $mail= new \Pimcore\Mail($headers = null, $body = null, $contentType = null);
+        $mail->setTextBody("This is just plain text");
+        $mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
+        ...
+    ```
     
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 

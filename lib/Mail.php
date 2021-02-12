@@ -176,10 +176,6 @@ class Mail extends Email
             $body = $options['body'] instanceof AbstractPart ? $options['body'] : null;
             parent::__construct($headers, $body);
 
-            if ($contentType) {
-                $this->setContentType($contentType);
-            }
-
             if ($options['subject'] ?? false) {
                 $this->subject($options['subject']);
             }
@@ -194,6 +190,10 @@ class Mail extends Email
             }
         } else {
             parent::__construct($headers, $body);
+        }
+
+        if ($contentType) {
+            $this->setContentType($contentType);
         }
 
         $this->init();
