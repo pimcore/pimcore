@@ -199,11 +199,12 @@ class AbstractRuleTest extends EcommerceTestCase
         );
 
         $priceInfo = $pricingManager->applyProductRules($priceInfo);
+        $product = $this->setUpProduct($productDefinitions['singleProduct']['id'], $productDefinitions['singleProduct']['price'], $pricingManager);
+        $priceInfo->getEnvironment()->setProduct($product);
 
         $this->assertTrue($priceInfo->getPrice()->getAmount()->equals(Decimal::create($tests['productPriceSingle'])), 'check single product price: ' . $priceInfo->getPrice()->getAmount() . ' vs. ' . $tests['productPriceSingle']);
         $this->assertTrue($priceInfo->getTotalPrice()->getAmount()->equals(Decimal::create($tests['productPriceTotal'])), 'check total product price: ' . $priceInfo->getTotalPrice()->getAmount() . ' vs. ' . $tests['productPriceTotal']);
 
-        $product = $this->setUpProduct($productDefinitions['singleProduct']['id'], $productDefinitions['singleProduct']['price'], $pricingManager);
         $this->assertTrue($product->getOSPrice()->getAmount()->equals(Decimal::create($tests['productPriceSingle'])), 'check single product price via product object');
 
         $cart = $this->setUpCart($pricingManager, false);
@@ -370,5 +371,26 @@ class AbstractRuleTest extends EcommerceTestCase
         }
 
         return $rules;
+    }
+
+    /**
+     * @param int $id
+     * @param int|null $parentId
+     *
+     * @return AbstractProduct
+     */
+    protected function mockProductForCondition($id, $parentId = null)
+    {
+        $product = $this->getMockBuilder(AbstractProduct::class)->getMock();
+        $product->method('getId')->willReturn($id);
+
+        if ($parentId) {
+            $subProduct = $this->mockProduct($parentId);
+            $product->method('getParent')->willReturn($subProduct);
+        } else {
+            $product->method('getParent')->willReturn(null);
+        }
+
+        return $product;
     }
 }

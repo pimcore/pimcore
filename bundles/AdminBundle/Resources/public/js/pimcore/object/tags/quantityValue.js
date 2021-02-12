@@ -186,7 +186,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
         };
 
-        if(this.data && this.data.unit != null && !isNaN(this.data.unit)) {
+        if(this.data && this.data.unit != null) {
             options.value = this.data.unit;
         } else {
             options.value = -1;
