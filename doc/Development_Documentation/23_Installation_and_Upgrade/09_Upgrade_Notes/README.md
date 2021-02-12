@@ -38,9 +38,9 @@
 - [Ecommerce] Removed elasticsearch 5 support 
 - [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
 `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
-- [Emails & Newsletters] Swiftmailer has been replaced with Symfony Mailer. \Pimcore\Mail class now extends from `Symfony\Component\Mime\Email` and new mailer service has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
+- [Email & Newsletter] Swiftmailer has been replaced with Symfony Mailer. `\Pimcore\Mail` class now extends from `Symfony\Component\Mime\Email` and new mailer service `Pimcore\Mail\Mailer` has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
 
-    Email method and transport setting has been removed from System settings. Setup transport method in config.yaml:
+    Email method and transport setting has been removed from System settings. Cleanup Swiftmailer config and setup mailer transports "main" & "newsletter" in config.yaml:
     ```yaml
     framework:
         mailer:
