@@ -548,11 +548,12 @@ class SettingsController extends AdminController
             $settings['pimcore'][$type] = [
                 'sender' => [
                     'name' => $values[$type . '.sender.name'],
-                    'email' => $values[$type . '.sender.email'], ],
+                    'email' => $values[$type . '.sender.email'],
+                ],
                 'return' => [
                     'name' => $values[$type . '.return.name'],
-                    'email' => $values[$type . '.return.email'], ],
-                'method' => $values[$type . '.method'],
+                    'email' => $values[$type . '.return.email'],
+                ],
             ];
 
             if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
