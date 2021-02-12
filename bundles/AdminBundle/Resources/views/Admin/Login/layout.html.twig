@@ -16,12 +16,16 @@
     </head>
     <body class="pimcore_version_6 {{ config['branding']['login_screen_invert_colors'] ? 'inverted' : '' }}">
         {% set backgroundImageUrl = "" %}
-        {% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ config['branding']['login_screen_custom_image']) %}
-            {% set backgroundImageUrl = config['branding']['login_screen_custom_image'] %}
-        {% endif %}
-        {% if backgroundImageUrl is empty %}
-            {% set defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'] %}
-            {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' ~ random(defaultImages) %}
+        {% set customImage = config['branding']['login_screen_custom_image'] %}
+        {# https://github.com/pimcore/pimcore/issues/8016 #}
+        {# https://github.com/pimcore/pimcore/issues/8129 #}
+        {% if customImage matches '@^https?://@' %}
+            {% set backgroundImageUrl = customImage %}
+        {% elseif pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ customImage) %}
+            {% set backgroundImageUrl = customImage %}
+        {% else %}
+{#            {% set defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'] %}#}
+{#            {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' ~ random(defaultImages) %}#}
             {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/pcx.svg' %}
         {% endif %}
 
