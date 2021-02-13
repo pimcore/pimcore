@@ -224,7 +224,7 @@ class CheckoutManager implements CheckoutManagerInterface
                 // recreate order if trying to start a payment with an aborted, cancelled or committed order
                 $orderManager->recreateOrder($cart);
             } elseif ($orderManager->cartHasPendingPayments($cart)) {
-               $this->getHandlePendingPaymentsStrategy()->handlePaymentNotAllowed(
+                $this->getHandlePendingPaymentsStrategy()->handlePaymentNotAllowed(
                     $order,
                     $cart,
                     $orderManager
@@ -246,12 +246,13 @@ class CheckoutManager implements CheckoutManagerInterface
 
         $orderManager = $this->orderManagers->getOrderManager();
         $orderAgent = $orderManager->createOrderAgent($order);
-        return $orderAgent->initPayment();
 
+        return $orderAgent->initPayment();
     }
 
     /**
      * @inheritDoc
+     *
      * @throws \Exception
      */
     public function startOrderPaymentWithPaymentProvider(AbstractRequest $paymentConfig): StartPaymentResponseInterface
@@ -289,6 +290,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
             return $orderAgent->cancelStartedOrderPayment();
         }
+
         return null;
     }
 
@@ -325,6 +327,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
     /**
      * @inheritdoc
+     *
      * @throws UnsupportedException
      * @throws \Exception
      */
@@ -362,8 +365,8 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @param RecurringPaymentInterface $provider
      * @param AbstractOrder $sourceOrder
-     *
      * @param string $customerId
+     *
      * @throws \Exception
      */
     protected function verifyRecurringPayment(RecurringPaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
@@ -391,6 +394,7 @@ class CheckoutManager implements CheckoutManagerInterface
      * @param string $customerId
      *
      * @return null|AbstractOrder
+     *
      * @throws UnsupportedException
      * @throws \Exception
      */
@@ -415,7 +419,6 @@ class CheckoutManager implements CheckoutManagerInterface
             $targetOrder->save(['versionNote' => 'CheckoutManager::startAndCommitRecurringOrderPayment - set order state to ' . $targetOrder::ORDER_STATE_PAYMENT_PENDING . '.']);
         }
 
-
         $targetOrderAgent->setPaymentProvider($paymentProvider, $sourceOrder);
         $price = new Price(
             Decimal::create($targetOrder->getTotalPrice(), 2),
@@ -439,6 +442,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
     /**
      * @inheritdoc
+     *
      * @throws UnsupportedException
      */
     public function commitOrder()
@@ -464,6 +468,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
     /**
      * @inheritdoc
+     *
      * @throws UnsupportedException
      */
     public function commitStep(CheckoutStepInterface $step, $data)
@@ -610,5 +615,4 @@ class CheckoutManager implements CheckoutManagerInterface
     {
         $this->handlePendingPaymentsStrategy = $handlePendingPaymentsStrategy;
     }
-
 }

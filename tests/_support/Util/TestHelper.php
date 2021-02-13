@@ -526,7 +526,8 @@ class TestHelper
      *
      * @return Document
      */
-    public static function createEmptyDocument($keyPrefix = '', $save = true, $publish = true, $type = '\\Pimcore\\Model\\Document\\Page') {
+    public static function createEmptyDocument($keyPrefix = '', $save = true, $publish = true, $type = '\\Pimcore\\Model\\Document\\Page')
+    {
         if (null === $keyPrefix) {
             $keyPrefix = '';
         }

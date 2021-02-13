@@ -24,13 +24,11 @@ use Pimcore\Model\Document\Editable\Table;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Editable\Video;
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Util\TestHelper;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
-
     /**
      * @param Page $object
      * @param string $field
@@ -50,21 +48,22 @@ class TestDataHelper extends AbstractTestDataHelper
 
     /**
      * @param int $seed
+     *
      * @return array[]
      */
     public function createAreablockData($seed = 1)
     {
         return [
             [
-                "key" => 4,
-                "type" => "standard-teaser",
-                "hidden" => false
+                'key' => 4,
+                'type' => 'standard-teaser',
+                'hidden' => false,
             ],
             [
-                "key" => 1,
-                "type" => "wysiwyg",
-                "hidden" => true
-            ]
+                'key' => 1,
+                'type' => 'wysiwyg',
+                'hidden' => true,
+            ],
         ];
     }
 
@@ -96,7 +95,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Date::class, $editable);
         $value = $editable->getValue();
         $this->assertInstanceOf(Carbon::class, $value);
-        $expected = strtotime("2021-02-1" . ($seed % 10));
+        $expected = strtotime('2021-02-1' . ($seed % 10));
 
         $this->assertEquals($expected, $value->getTimestamp());
     }
@@ -113,7 +112,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Embed::class, $editable);
         $value = $editable->getUrl();
 
-        $this->assertEquals("http://someurl" . $seed, $value);
+        $this->assertEquals('http://someurl' . $seed, $value);
     }
 
     /**
@@ -130,7 +129,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $value = $editable->getImage();
         $this->assertInstanceOf(\Pimcore\Model\Asset\Image::class, $value);
 
-        $expectedImage = $params["asset"];
+        $expectedImage = $params['asset'];
         $this->assertEquals($expectedImage->getId(), $value->getId());
     }
 
@@ -146,7 +145,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Input::class, $editable);
         $value = $editable->getValue();
 
-        $this->assertEquals("content" . $seed, $value);
+        $this->assertEquals('content' . $seed, $value);
     }
 
     /**
@@ -163,13 +162,13 @@ class TestDataHelper extends AbstractTestDataHelper
         $target = $editable->getTarget();
 
         /** @var Asset $expectedTarget */
-        $expectedTarget = $params["target"];
+        $expectedTarget = $params['target'];
 
         $this->assertEquals($expectedTarget->getFullPath(), $editable->getHref());
 
-        $this->assertEquals("some title" . $seed, $editable->getTitle());
-        $this->assertEquals("some text" . $seed, $editable->getText());
-        $this->assertEquals("_blank", $editable->getTarget());
+        $this->assertEquals('some title' . $seed, $editable->getTitle());
+        $this->assertEquals('some text' . $seed, $editable->getText());
+        $this->assertEquals('_blank', $editable->getTarget());
     }
 
     /**
@@ -183,7 +182,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable = $page->getEditable($field);
         $this->assertInstanceOf(Multiselect::class, $editable);
 
-        $expected = ["1", "2"];
+        $expected = ['1', '2'];
 
         $this->assertEquals($expected, $editable->getValue());
     }
@@ -217,7 +216,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $value = $editable->getElement();
         $this->assertInstanceOf(Document::class, $value);
 
-        $expectedPdf = $params["pdf"];
+        $expectedPdf = $params['pdf'];
         $this->assertEquals($expectedPdf->getId(), $value->getId());
     }
 
@@ -233,7 +232,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Relation::class, $editable);
         $value = $editable->getElement();
 
-        $expectedTarget = $params["target"];
+        $expectedTarget = $params['target'];
 
         $this->assertEquals($expectedTarget->getId(), $value->getId());
         $this->assertEquals($expectedTarget->getType(), $value->getType());
@@ -251,9 +250,8 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Relations::class, $editable);
         $value = $editable->getElements();
 
-        $expectedTargets = $params["targets"];
+        $expectedTargets = $params['targets'];
         $this->assertCount(count($expectedTargets), $value);
-
 
         for ($i = 0; $i < count($expectedTargets); $i++) {
             $this->assertNotNull($value[$i]);
@@ -281,19 +279,20 @@ class TestDataHelper extends AbstractTestDataHelper
 
     /**
      * @param int $seed
+     *
      * @return array[]
      */
     public function createScheduledblockData($seed = 1)
     {
         return [
             [
-                "key" => 4,
-                "date" => time() + $seed,
+                'key' => 4,
+                'date' => time() + $seed,
             ],
             [
-                "key" => 1,
-                "date" => time() + 6 + $seed,
-            ]
+                'key' => 1,
+                'date' => time() + 6 + $seed,
+            ],
         ];
     }
 
@@ -332,7 +331,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         return [
             ['a' . $seed, 'b' . $seed, 'c' . $seed],
-            [1 + $seed, 2 + $seed, 3 + $seed]
+            [1 + $seed, 2 + $seed, 3 + $seed],
         ];
     }
 
@@ -351,20 +350,20 @@ class TestDataHelper extends AbstractTestDataHelper
         $video = $editable->getVideoAsset();
         $this->assertInstanceOf(\Pimcore\Model\Asset\Video::class, $video);
 
-        $expectedVideo = $params["video"];
+        $expectedVideo = $params['video'];
         $this->assertInstanceOf(\Pimcore\Model\Asset\Video::class, $expectedVideo);
 
         $this->assertEquals($expectedVideo->getId(), $video->getId());
 
         $poster = $editable->getPosterAsset();
-        $expectedPoster = $params["poster"];
+        $expectedPoster = $params['poster'];
         $this->assertInstanceOf(\Pimcore\Model\Asset\Image::class, $poster);
         $this->assertInstanceOf(\Pimcore\Model\Asset\Image::class, $expectedPoster);
 
         $this->assertEquals($expectedPoster->getId(), $poster->getId());
 
-        $this->assertEquals("some title " . $seed, $editable->getTitle());
-        $this->assertEquals("some description " . $seed, $editable->getDescription());
+        $this->assertEquals('some title ' . $seed, $editable->getTitle());
+        $this->assertEquals('some description ' . $seed, $editable->getDescription());
     }
 
     /**
@@ -389,7 +388,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Textarea::class, $editable);
         $value = $editable->getValue();
 
-        $this->assertEquals("content<br>" . $seed, $value);
+        $this->assertEquals('content<br>' . $seed, $value);
     }
 
     /**
@@ -428,7 +427,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Date();
         $editable->setName($field);
-        $dateStr = "2021-02-1" . ($seed % 10);
+        $dateStr = '2021-02-1' . ($seed % 10);
         $editable->setDataFromEditmode($dateStr);
         $page->setEditable($editable);
     }
@@ -442,7 +441,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Embed();
         $editable->setName($field);
-        $editable->setDataFromEditmode(["url" => "http://someurl" . $seed]);
+        $editable->setDataFromEditmode(['url' => 'http://someurl' . $seed]);
         $page->setEditable($editable);
     }
 
@@ -457,9 +456,9 @@ class TestDataHelper extends AbstractTestDataHelper
         $asset = TestHelper::createImageAsset();
         $editable = new Image();
         $editable->setName($field);
-        $editable->setDataFromEditmode(["id" => $asset->getId()]);
+        $editable->setDataFromEditmode(['id' => $asset->getId()]);
         $returnData = [
-            "asset" => $asset
+            'asset' => $asset,
         ];
         $page->setEditable($editable);
     }
@@ -473,7 +472,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Input();
         $editable->setName($field);
-        $editable->setDataFromEditmode("content" . $seed);
+        $editable->setDataFromEditmode('content' . $seed);
         $page->setEditable($editable);
     }
 
@@ -489,18 +488,18 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable->setName($field);
 
         $editable->setDataFromEditmode([
-                "internalType" => "asset",
-                "linktype" => "internal",
-                "path" => $target->getFullPath(),
-                "text" => "some text" . $seed,
-                "title" => "some title" . $seed,
-                "target" => "_blank"]
+                'internalType' => 'asset',
+                'linktype' => 'internal',
+                'path' => $target->getFullPath(),
+                'text' => 'some text' . $seed,
+                'title' => 'some title' . $seed,
+                'target' => '_blank', ]
         );
 
         $page->setEditable($editable);
 
         $returnData = [
-            "target" => $target
+            'target' => $target,
         ];
     }
 
@@ -545,9 +544,9 @@ class TestDataHelper extends AbstractTestDataHelper
         $pdf = TestHelper::createDocumentAsset();
         $editable = new Pdf();
         $editable->setName($field);
-        $editable->setDataFromEditmode(["id" => $pdf->getId()]);
+        $editable->setDataFromEditmode(['id' => $pdf->getId()]);
         $returnData = [
-            "pdf" => $pdf
+            'pdf' => $pdf,
         ];
         $page->setEditable($editable);
     }
@@ -564,14 +563,14 @@ class TestDataHelper extends AbstractTestDataHelper
         $objects = $this->getObjectList();
 
         $editable->setDataFromEditmode([
-                "id" => $objects[0]->getId(),
-                "type" => "object"]
+                'id' => $objects[0]->getId(),
+                'type' => 'object', ]
 
         );
         $page->setEditable($editable);
 
         $returnData = [
-            "target" => $objects[0]
+            'target' => $objects[0],
         ];
     }
 
@@ -590,16 +589,14 @@ class TestDataHelper extends AbstractTestDataHelper
         $list = [];
         foreach ($objects as $object) {
             $list[] = [
-                "id" => $object->getId(),
-                "type" => "object"];
-
-
+                'id' => $object->getId(),
+                'type' => 'object', ];
         }
         $editable->setDataFromEditmode($list);
         $page->setEditable($editable);
 
         $returnData = [
-            "targets" => $objects
+            'targets' => $objects,
         ];
     }
 
@@ -658,17 +655,17 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable = new Video();
         $editable->setName($field);
         $editable->setDataFromEditmode(
-            ["id" => $video->getId(),
-                "path" => $video->getFullPath(),
-                "title" => "some title " . $seed,
-                "description" => "some description " . $seed,
-                "poster" => $poster->getFullPath(),
-                "type" => "asset"
+            ['id' => $video->getId(),
+                'path' => $video->getFullPath(),
+                'title' => 'some title ' . $seed,
+                'description' => 'some description ' . $seed,
+                'poster' => $poster->getFullPath(),
+                'type' => 'asset',
             ]);
 
         $returnData = [
-            "video" => $video,
-            "poster" => $poster
+            'video' => $video,
+            'poster' => $poster,
         ];
         $page->setEditable($editable);
     }
@@ -692,8 +689,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Textarea();
         $editable->setName($field);
-        $editable->setDataFromEditmode("content<br>" . $seed);
+        $editable->setDataFromEditmode('content<br>' . $seed);
         $page->setEditable($editable);
     }
-
 }
