@@ -45,12 +45,11 @@ class CartFactory implements CartFactoryInterface
 
         $resolver->setDefaults([
             'cart_class_name' => Cart::class,
-            'guest_cart_class_name' => SessionCart::class
+            'guest_cart_class_name' => SessionCart::class,
         ]);
 
         $resolver->setAllowedTypes('cart_class_name', 'string');
         $resolver->setAllowedTypes('guest_cart_class_name', 'string');
-
     }
 
     public function getCartClassName(EnvironmentInterface $environment): string

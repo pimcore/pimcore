@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 interface PaymentInterface
 {
-
     /**
      * @return string
      */
@@ -102,5 +101,4 @@ interface PaymentInterface
      * @return string
      */
     public function getConfigurationKey();
-
 }

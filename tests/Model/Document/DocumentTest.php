@@ -18,11 +18,11 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class DocumentTest extends ModelTestCase
 {
-
     /** @var Page */
     protected $testPage;
 
-    public function testCRUD() {
+    public function testCRUD()
+    {
         // create
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);
@@ -38,10 +38,10 @@ class DocumentTest extends ModelTestCase
 
         // move and rename
         $newParent = Service::createFolderByPath(uniqid());
-        $newPath = $newParent->getFullPath() . "/" . $this->testPage->getKey() . "_new";
+        $newPath = $newParent->getFullPath() . '/' . $this->testPage->getKey() . '_new';
 
         $this->testPage->setParentId($newParent->getId());
-        $this->testPage->setKey($this->testPage->getKey() . "_new");
+        $this->testPage->setKey($this->testPage->getKey() . '_new');
         $this->testPage->save();
         $this->reloadPage();
 
@@ -60,8 +60,8 @@ class DocumentTest extends ModelTestCase
         $this->assertFalse($newParent->hasChildren());
     }
 
-
-    public function reloadPage() {
+    public function reloadPage()
+    {
         $this->testPage = Page::getById($this->testPage->getId(), true);
     }
 
@@ -152,12 +152,12 @@ class DocumentTest extends ModelTestCase
     {
         /** @var Email $emailDocument */
         $emailDocument = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Email');
-        $subject = "mysubject" . uniqid();
-        $to = "john" . uniqid(). "@doe.com";
-        $cc = "john" . uniqid(). "@doe.com";;
-        $bcc = "john" . uniqid(). "@doe.com";
-        $from = "jane" . uniqid() . "@doe.com";
-        $replyTo = "jane" . uniqid() . "@doe.com";
+        $subject = 'mysubject' . uniqid();
+        $to = 'john' . uniqid(). '@doe.com';
+        $cc = 'john' . uniqid(). '@doe.com';
+        $bcc = 'john' . uniqid(). '@doe.com';
+        $from = 'jane' . uniqid() . '@doe.com';
+        $replyTo = 'jane' . uniqid() . '@doe.com';
 
         $emailDocument->setSubject($subject);
         $emailDocument->setTo($to);
@@ -177,24 +177,25 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals($replyTo, $emailDocument->getReplyTo());
     }
 
-    public function testInheritance() {
+    public function testInheritance()
+    {
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);
 
         $inputEditable = new Input();
-        $inputEditable->setName("headline");
-        $inputEditable->setDataFromResource("test");
+        $inputEditable->setName('headline');
+        $inputEditable->setDataFromResource('test');
         $this->testPage->setEditable($inputEditable);
         $this->testPage->save();
         $this->reloadPage();
 
-        $inputEditableAfterSave = $this->testPage->getEditable("headline");
-        $this->assertEquals("test", $inputEditableAfterSave->getValue());
+        $inputEditableAfterSave = $this->testPage->getEditable('headline');
+        $this->assertEquals('test', $inputEditableAfterSave->getValue());
 
         // create sibling
         $sibling = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $sibling);
-        $siblingEditable = $sibling->getEditable("headline");
+        $siblingEditable = $sibling->getEditable('headline');
         $this->assertNull($siblingEditable);
 
         // transform to child
@@ -203,7 +204,7 @@ class DocumentTest extends ModelTestCase
         $child = Page::getById($sibling->getId(), true);
         // editable should still be null as no master document is set
 
-        $childEditable = $child->getEditable("headline");
+        $childEditable = $child->getEditable('headline');
         $this->assertNull($childEditable);
 
         // set master document
@@ -212,8 +213,8 @@ class DocumentTest extends ModelTestCase
         $child = Page::getById($child->getId(), true);
 
         // now the value should get inherited
-        $childEditable = $child->getEditable("headline");
-        $this->assertEquals("test", $childEditable->getValue());
+        $childEditable = $child->getEditable('headline');
+        $this->assertEquals('test', $childEditable->getValue());
     }
 
     public function testLink()
@@ -222,9 +223,9 @@ class DocumentTest extends ModelTestCase
 
         /** @var Link $linkDocument */
         $linkDocument = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Link');
-        $linkDocument->setInternalType("asset");
+        $linkDocument->setInternalType('asset');
         $linkDocument->setInternal($target->getId());
-        $linkDocument->setLinktype("internal");
+        $linkDocument->setLinktype('internal');
         $linkDocument->save();
 
         $linkDocument = Link::getById($linkDocument->getId());

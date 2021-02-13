@@ -4,10 +4,7 @@ namespace Pimcore\Tests\Model\Document;
 
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\Editable\Input;
-use Pimcore\Model\Document\Email;
-use Pimcore\Model\Document\Link;
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Document\Service;
 use Pimcore\Tests\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -20,7 +17,6 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class EditableTest extends ModelTestCase
 {
-
     /**
      * @var int
      */
@@ -156,6 +152,7 @@ class EditableTest extends ModelTestCase
         }
 
         $this->testPage->save();
+
         return $this->testPage;
     }
 
@@ -251,6 +248,4 @@ class EditableTest extends ModelTestCase
         $this->reloadPage();
         $this->testDataHelper->assertWysiwyg($this->testPage, 'wysiwyg', $this->seed);
     }
-
-
 }

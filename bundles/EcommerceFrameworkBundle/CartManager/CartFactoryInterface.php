@@ -37,5 +37,4 @@ interface CartFactoryInterface
      * @return CartInterface
      */
     public function create(EnvironmentInterface $environment, string $name, string $id = null, array $options = []): CartInterface;
-
 }

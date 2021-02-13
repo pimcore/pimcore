@@ -195,5 +195,4 @@ interface CheckoutManagerInterface
      * @return void
      */
     public function cleanUpPendingOrders();
-
 }

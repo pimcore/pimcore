@@ -117,7 +117,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     protected $mainAndSubItemCount;
 
-
     public function __construct()
     {
         $this->setCreationDate(new \DateTime());
@@ -849,6 +848,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     /**
      * Removes all tokens form cart and releases the token reservations.
+     *
      * @throws InvalidConfigException
      */
     public function removeAllVoucherTokens()

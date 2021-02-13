@@ -64,7 +64,6 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
      */
     protected $lastPaymentStatus = null;
 
-
     public function __construct(LockFactory $lockFactory, OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, ApplicationLogger $applicationLogger, array $options = [])
     {
         $this->orderManagers = $orderManagers;
@@ -139,6 +138,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
 
     /**
      * @inheritDoc
+     *
      * @throws UnsupportedException
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider)
@@ -155,7 +155,6 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
 
         return $this->commitOrderPayment($paymentStatus, $paymentProvider);
     }
-
 
     /**
      * @inheritdoc
@@ -190,6 +189,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
 
     /**
      * @inheritdoc
+     *
      * @throws UnsupportedException|PaymentNotSuccessfulException
      * @throws \Exception
      */
@@ -305,7 +305,6 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     {
         // nothing to do
     }
-
 
     /**
      * @inheritdoc
