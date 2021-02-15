@@ -1,6 +1,6 @@
 # Pimcore Mail
 
-The `Pimcore\Mail` Class extends the [`\Swift_Message`](http://swiftmailer.org/docs/introduction.html) 
+The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/current/mailer.html#email-addresses) 
 Class and adds some features for the usage with Pimcore.
 
 When you create a new `Pimcore\Mail` instance the E-Mail settings from *Settings* > *System* > *Email Settings*
@@ -10,7 +10,19 @@ If the Debug Mode in *Settings* > *System* > *Debug* is enabled, all emails will
 Debug Email recipients defined in *Settings* > *System* > *Email Settings* > *Debug Email Addresses*. 
 Additionally the debug information (to whom the email would have been sent) is appended to the email 
 and the Subject contains the prefix "Debug email:".
-This is done via an extension of the swift mailer `RedirectingPlugin`.   
+
+This is done by extending Symfony Mailer, with injected service `RedirectingPlugin`, which calls beforeSendPerformed before mail is sent and sendPerformed immediately after email is sent.
+
+Emails are sent via transport and `\Pimcore\Mailer` requires transports: `main` for sending emails and  `pimcore_newsletter` for sending newsletters(if newsletter specific settings are used), which needs to be configured in your config.yml e.g.,
+```yaml
+framework:
+    mailer:
+        transports:
+            main: smtp://user:pass@smtp.example.com:port
+            pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+```
+Please refer to the [Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for further details on how this can be set up.
+
 
 The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, 
 normalizing URLs and Twig expressions ...). Note that all CSS files are embedded 
@@ -49,7 +61,7 @@ $mail->send();
  
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
-$mail->setBodyText("This is just plain text");
+$mail->setTextBody("This is just plain text");
 $mail->send();
  
 // Sending a rich text (HTML) email with Twig expressions 
@@ -59,11 +71,22 @@ $mail->addBcc("bcc@pimcore.org");
 $mail->setParams([
     'myParam' => 'Just a simple text'
 ]);
-$mail->setBodyHtml("<b>some</b> rich text: {{ myParam }}");
+$mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
 $mail->send();
  
 //adding an asset as attachment
 if($asset instanceof Asset) {
    $mail->createAttachment($asset->getData(), $asset->getMimetype(), $asset->getFilename());
 }
+
+//Embedding Images
+$mail = new \Pimcore\Mail();
+$mail->addTo('example@pimcore.org');
+
+$mail->embed($asset->getData(), 'logo', $asset->getMimetype());
+//or
+$mail->embedFromPath($asset->getFileSystemPath(), 'logo', $asset->getMimetype());
+
+$mail->setHtmlBody("Embedded Image: <img src='cid:logo'>"); //image name(passed second argument in embed) as ref
+$mail->send();
 ```

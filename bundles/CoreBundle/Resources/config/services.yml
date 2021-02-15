@@ -171,10 +171,15 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
         public: true
 
-    # Override Swiftmailer redirecting plugin
-    swiftmailer.plugin.redirecting.abstract:
-        abstract: true
-        class: Pimcore\Mail\Plugins\RedirectingPlugin
+    Pimcore\Mail\Plugins\RedirectingPlugin: ~
+
+    # Decorates Symfony Mailer
+    Pimcore\Mail\Mailer:
+        decorates: mailer
+        arguments:
+            - '@Pimcore\Mail\Mailer.inner'
+            - '@Pimcore\Mail\Plugins\RedirectingPlugin'
+        public: true
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
         public: true

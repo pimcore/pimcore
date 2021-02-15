@@ -16,70 +16,96 @@ namespace Pimcore\Mail\Plugins;
 
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail;
+use Symfony\Component\Mime\Header\MailboxListHeader;
 
-class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
+class RedirectingPlugin
 {
+    /**
+     * The recipient who will receive all messages.
+     *
+     * @var array
+     */
+    private $recipient;
+
     /**
      * Create a new RedirectingPlugin.
      *
-     * @param mixed $recipient
-     * @param array $whitelist
+     * @param array $recipient
      */
-    public function __construct($recipient, array $whitelist = [])
+    public function __construct(array $recipient = [])
     {
-        $explodedRecipientArray = [];
-        foreach ($recipient as $r) {
-            $explodedRecipientArray = array_merge($explodedRecipientArray, array_filter(explode(',', $r)));
+        $config = \Pimcore\Config::getSystemConfiguration('email');
+        if (!empty($config['debug']['email_addresses'])) {
+            $recipient = array_merge($recipient, array_filter(explode(',', $config['debug']['email_addresses'])));
         }
 
-        parent::__construct($explodedRecipientArray, $whitelist);
+        $this->recipient = $recipient;
+    }
+
+    /**
+     * Set the recipient of all messages.
+     *
+     * @param mixed $recipient
+     */
+    public function setRecipient($recipient)
+    {
+        $this->recipient = $recipient;
+    }
+
+    /**
+     * Get the recipient of all messages.
+     *
+     * @return mixed
+     */
+    public function getRecipient()
+    {
+        return $this->recipient;
     }
 
     /**
      * Invoked immediately before the Message is sent.
      *
-     * @param \Swift_Events_SendEvent $evt
+     * @param Mail $message
+     *
      */
-    public function beforeSendPerformed(\Swift_Events_SendEvent $evt)
+    public function beforeSendPerformed(Mail $message)
     {
-        $message = $evt->getMessage();
-
-        if ($message instanceof Mail) {
-            // additional checks if message is Pimcore\Mail
-            if ($message->doRedirectMailsToDebugMailAddresses()) {
-                if (empty($this->getRecipient())) {
-                    throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
-                }
-
-                $this->appendDebugInformation($message);
-                parent::beforeSendPerformed($evt);
+        // additional checks if message is Pimcore\Mail
+        if ($message->doRedirectMailsToDebugMailAddresses()) {
+            if (empty($this->getRecipient())) {
+                throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
             }
-        } else {
-            // default symfony behavior - only redirect when recipients are set and pimcore debug mode is active
-            if (\Pimcore::inDebugMode() && $this->getRecipient()) {
-                parent::beforeSendPerformed($evt);
+
+            $this->appendDebugInformation($message);
+            // Add each hard coded recipient
+            $to = $message->getTo();
+            if (null === $to) {
+                $to = [];
+            }
+
+            foreach ((array) $this->recipient as $recipient) {
+                if (!array_key_exists($recipient, $to)) {
+                    $message->to($recipient);
+                }
             }
         }
 
         $headers = $message->getHeaders();
-        if (\Pimcore::inDebugMode()) {
-            $headers->addMailboxHeader('X-Pimcore-Debug-To', $message->getTo());
-            $headers->addMailboxHeader('X-Pimcore-Debug-Cc', $message->getCc());
-            $headers->addMailboxHeader('X-Pimcore-Debug-Bcc', $message->getBcc());
-            $headers->addMailboxHeader('X-Pimcore-Debug-ReplyTo', $message->getReplyTo());
+        if (\Pimcore::inDebugMode() && !$message->getIgnoreDebugMode()) {
+            $headers->add(new MailboxListHeader('X-Pimcore-Debug-To', $message->getTo()));
+            $headers->add(new MailboxListHeader('X-Pimcore-Debug-Cc', $message->getCc()));
+            $headers->add(new MailboxListHeader('X-Pimcore-Debug-Bcc', $message->getBcc()));
+            $headers->add(new MailboxListHeader('X-Pimcore-Debug-ReplyTo', $message->getReplyTo()));
         }
     }
 
     /**
      * Invoked immediately after the Message is sent.
      *
-     * @param \Swift_Events_SendEvent $evt
+     * @param Mail $message
      */
-    public function sendPerformed(\Swift_Events_SendEvent $evt)
+    public function sendPerformed(Mail $message)
     {
-        parent::sendPerformed($evt);
-
-        $message = $evt->getMessage();
         if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
             $this->setSenderAndReceiversParams($message);
             $this->removeDebugInformation($message);
@@ -97,7 +123,8 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
             $originalData = [];
 
             //adding the debug information to the html email
-            $html = $message->getBody();
+            $html = $message->getHtmlBody();
+            $text = $message->getTextBody();
             if (!empty($html)) {
                 $originalData['html'] = $html;
 
@@ -107,18 +134,14 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
                 $html = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $html);
                 $html = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $html);
 
-                $message->setBody($html, 'text/html');
-            }
+                $message->setHtmlBody($html);
+            } elseif (!empty($text)) {
+                    $originalData['text'] = $text;
 
-            $text = $message->getBodyTextMimePart();
-
-            if (!empty($text)) {
-                $originalData['text'] = $text->getBody();
-
-                $rawText = $text->getBody();
-                $debugInformation = MailHelper::getDebugInformation('text', $message);
-                $rawText .= $debugInformation;
-                $text->setBody($rawText);
+                    $rawText = $text;
+                    $debugInformation = MailHelper::getDebugInformation('text', $message);
+                    $rawText .= $debugInformation;
+                    $message->setTextBody($rawText);
             }
 
             //setting debug subject
@@ -164,10 +187,10 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
         $originalData = $message->getOriginalData();
 
         if (isset($originalData['html']) && $originalData['html']) {
-            $message->setBody($originalData['html'], 'text/html');
+            $message->setHtmlBody($originalData['html']);
         }
         if (isset($originalData['text']) && $originalData['text']) {
-            $message->getBodyTextMimePart()->setBody($originalData['html']);
+            $message->setTextBody($originalData['text']);
         }
         if (isset($originalData['subject']) && $originalData['subject']) {
             $message->setSubject($originalData['subject']);

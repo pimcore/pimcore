@@ -552,16 +552,14 @@ class Tool
     /**
      * @param array|string|null $recipients
      * @param string|null $subject
-     * @param string|null $charset
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public static function getMail($recipients = null, $subject = null, $charset = null)
+    public static function getMail($recipients = null, $subject = null)
     {
         $mail = new Mail();
-        $mail->setCharset($charset);
 
         if ($recipients) {
             if (is_string($recipients)) {

@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -192,7 +193,7 @@ class EmailController extends AdminController
                 $this->enhanceLoggingData($value, $data);
             }
         }
-        if ($data['children']) {
+        if ($data['children'] ?? false) {
             foreach ($data['children'] as $key => $entry) {
                 if (is_string($key)) { //key must be integers
                     unset($data['children'][$key]);
@@ -202,10 +203,10 @@ class EmailController extends AdminController
             $data['data'] = ['type' => 'simple', 'value' => 'Children (' . count($data['children']) . ')'];
         } else {
             //setting the icon class
-            if (!$data['iconCls']) {
-                if ($data['objectClassBase'] == 'DataObject') {
+            if (empty($data['iconCls'])) {
+                if (($data['objectClassBase'] ?? '') == 'DataObject') {
                     $fullEntry['iconCls'] = 'pimcore_icon_object';
-                } elseif ($data['objectClassBase'] == 'Asset') {
+                } elseif (($data['objectClassBase'] ?? '') == 'Asset') {
                     switch ($data['objectClassSubType']) {
                         case 'Image':
                             $fullEntry['iconCls'] = 'pimcore_icon_image';
@@ -222,7 +223,7 @@ class EmailController extends AdminController
                         default:
                             $fullEntry['iconCls'] = 'pimcore_icon_asset';
                     }
-                } elseif (strpos($data['objectClass'], 'Document') === 0) {
+                } elseif (strpos($data['objectClass'] ?? '', 'Document') === 0) {
                     $fullEntry['iconCls'] = 'pimcore_icon_' . strtolower($data['objectClassSubType']);
                 } else {
                     $data['iconCls'] = 'pimcore_icon_text';
@@ -292,11 +293,11 @@ class EmailController extends AdminController
             }
 
             if ($html = $emailLog->getHtmlLog()) {
-                $mail->setBodyHtml($html);
+                $mail->setHtmlBody($html);
             }
 
             if ($text = $emailLog->getTextLog()) {
-                $mail->setBodyText($text);
+                $mail->setTextBody($text);
             }
 
             foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
@@ -310,8 +311,8 @@ class EmailController extends AdminController
                 if (!empty($values)) {
                     list($value) = $values;
                     if ($value) {
-                        $prefix = ($field === 'From') ? 'set' : 'add';
-                        $mail->{$prefix . $field}($value['email'], $value['name']);
+                        $prefix = 'add';
+                        $mail->{$prefix . $field}(new Address($value['email'], $value['name'] ?? ''));
                     }
                 }
             }
@@ -379,22 +380,22 @@ class EmailController extends AdminController
             if ($addressArray) {
                 //use the first address only
                 list($cleanedFromAddress) = $addressArray;
-                $mail->setFrom($cleanedFromAddress['email'], $cleanedFromAddress['name']);
+                $mail->from(new Address($cleanedFromAddress['email'], $cleanedFromAddress['name'] ?? ''));
             }
         }
 
         $toAddresses = \Pimcore\Helper\Mail::parseEmailAddressField($request->get('to'));
         foreach ($toAddresses as $cleanedToAddress) {
-            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name']);
+            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name'] ?? '');
         }
 
         $mail->setSubject($request->get('subject'));
         $mail->setIgnoreDebugMode(true);
 
         if ($request->get('emailType') == 'text') {
-            $mail->setBodyText($request->get('content'));
+            $mail->setTextBody($request->get('content'));
         } elseif ($request->get('emailType') == 'html') {
-            $mail->setBodyHtml($request->get('content'));
+            $mail->setHtmlBody($request->get('content'));
         } elseif ($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
 

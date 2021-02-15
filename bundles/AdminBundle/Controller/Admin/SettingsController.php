@@ -543,40 +543,22 @@ class SettingsController extends AdminController
                 ],
         ];
 
-        // email & newsletter (swiftmailer settings)
+        // email & newsletter sender/return and debug email defaults
         foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
             $settings['pimcore'][$type] = [
                 'sender' => [
                     'name' => $values[$type . '.sender.name'],
-                    'email' => $values[$type . '.sender.email'], ],
+                    'email' => $values[$type . '.sender.email'],
+                ],
                 'return' => [
                     'name' => $values[$type . '.return.name'],
-                    'email' => $values[$type . '.return.email'], ],
-                'method' => $values[$type . '.method'],
+                    'email' => $values[$type . '.return.email'],
+                ],
             ];
 
-            $settings['swiftmailer']['mailers'][$group] = [
-                'transport' => $values[$type . '.method'],
-                'host' => $values[$type . '.smtp.host'],
-                'username' => $values[$type . '.smtp.auth.username'],
-                'port' => $values[$type . '.smtp.port'],
-                'encryption' => $values[$type . '.smtp.ssl'] ? $values[$type . '.smtp.ssl'] : null,
-                'auth_mode' => $values[$type . '.smtp.auth.method'] ? $values[$type . '.smtp.auth.method'] : null,
-            ];
-
-            $smtpPassword = $values[$type . '.smtp.auth.password'];
-            if ($smtpPassword !== '#####SUPER-SECRET-VALUE-PLACEHOLDER######') {
-                if (!empty($smtpPassword)) {
-                    $settings['swiftmailer']['mailers'][$group]['password'] = $smtpPassword;
-                } else {
-                    $settings['swiftmailer']['mailers'][$group]['password'] = null;
-                }
-            }
             if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
-                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [$values['email.debug.emailAddresses']];
                 $settings['pimcore'][$type]['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
             } else {
-                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [];
                 $settings['pimcore'][$type]['debug']['email_addresses'] = null;
             }
         }

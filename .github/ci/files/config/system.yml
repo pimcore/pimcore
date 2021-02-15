@@ -60,7 +60,6 @@ pimcore:
         return:
             name: pimcore
             email: pimcore@example.com
-        method: sendmail
         debug:
             email_addresses: ''
     newsletter:
@@ -70,7 +69,6 @@ pimcore:
         return:
             name: ''
             email: ''
-        method: sendmail
         debug: null
         use_specific: true
     applicationlog:
@@ -85,23 +83,4 @@ pimcore_admin:
         color_login_screen: ''
         color_admin_interface: ''
         login_screen_custom_image: ''
-swiftmailer:
-    mailers:
-        pimcore_mailer:
-            transport: smtp
-            delivery_addresses: []
-            host: ''
-            username: ''
-            password: ''
-            port: ''
-            encryption: null
-            auth_mode:
-        newsletter_mailer:
-            transport: sendmail
-            delivery_addresses: []
-            host: ''
-            username: ''
-            password: null
-            port: ''
-            encryption: null
-            auth_mode: null
+

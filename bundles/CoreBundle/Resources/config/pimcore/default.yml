@@ -23,6 +23,8 @@ framework:
     php_errors:
         log: true
     assets: ~
+    mailer:
+        enabled: true
 
 # Twig Configuration
 twig:
@@ -471,8 +473,6 @@ pimcore:
             movie: 'video/x-sgi-movie'
             ice: 'x-conference/x-cooltalk'
 
-swiftmailer:
-    default_mailer: pimcore_mailer
 
 presta_sitemap:
     # override default dump_directory from public to web
