@@ -287,11 +287,11 @@ class TestDataHelper extends AbstractTestDataHelper
         return [
             [
                 'key' => 4,
-                'date' => time() + $seed,
+                'date' => 1613383345 + $seed,
             ],
             [
                 'key' => 1,
-                'date' => time() + 6 + $seed,
+                'date' => 1613383345 + 6 + $seed,
             ],
         ];
     }
