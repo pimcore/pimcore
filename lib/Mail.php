@@ -794,7 +794,7 @@ class Mail extends Email
      */
     public function setDocument($document)
     {
-        if(!empty($document)) {
+        if (!empty($document)) {
             if (is_numeric($document)) { //id of document passed
                 $document = Model\Document\Email::getById($document);
             } elseif (is_string($document)) { //path of document passed

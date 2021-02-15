@@ -17,14 +17,12 @@ namespace Pimcore\Tests\Helper;
 use Codeception\Module;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tests\Util\TestHelper;
 
 abstract class AbstractTestDataHelper extends Module
 {
-
     public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)
     {
         $this->assertEquals(get_class($e1), get_class($e2));

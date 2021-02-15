@@ -317,6 +317,7 @@ class OrderManager implements OrderManagerInterface
      * @param CartInterface $cart
      *
      * @return AbstractOrder
+     *
      * @throws \Exception
      */
     public function recreateOrder(CartInterface $cart): AbstractOrder
@@ -350,6 +351,7 @@ class OrderManager implements OrderManagerInterface
      * @param AbstractOrder $sourceOrder
      *
      * @return AbstractOrder
+     *
      * @throws \Exception
      */
     public function recreateOrderBasedOnSourceOrder(AbstractOrder $sourceOrder): AbstractOrder
@@ -406,6 +408,7 @@ class OrderManager implements OrderManagerInterface
      * @param CartInterface $cart
      *
      * @return bool
+     *
      * @throws \Exception
      */
     public function cartHasPendingPayments(CartInterface $cart): bool
@@ -504,7 +507,6 @@ class OrderManager implements OrderManagerInterface
             }
         }
 
-
         $event = new OrderManagerItemEvent($item, $isGiftItem, $orderItem);
         $this->eventDispatcher->dispatch($event, OrderManagerEvents::POST_CREATE_ORDER_ITEM);
 
@@ -525,7 +527,6 @@ class OrderManager implements OrderManagerInterface
 
         return $event->getArgument('itemKey');
     }
-
 
     protected function buildModelClass($className, array $params = [])
     {
@@ -592,6 +593,7 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @param int|Folder $orderParentFolder
+     *
      * @throws \Exception
      */
     public function setParentOrderFolder($orderParentFolder)
@@ -616,6 +618,7 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @return Folder
+     *
      * @throws \Exception
      */
     protected function getOrderParentFolder()
@@ -652,6 +655,7 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @param AbstractOrder $order
+     *
      * @throws \Exception
      */
     protected function cleanupZombieOrderItems(AbstractOrder $order)
@@ -681,9 +685,10 @@ class OrderManager implements OrderManagerInterface
     /**
      * @param array $items
      * @param AbstractOrder $order
-     *
      * @param bool $giftItems
+     *
      * @return array
+     *
      * @throws \Exception
      */
     protected function applyOrderItems(array $items, AbstractOrder $order, $giftItems = false)
@@ -844,6 +849,7 @@ class OrderManager implements OrderManagerInterface
      * @param string|null $paymentMethod
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function getRecurringPaymentSourceOrder(string $customerId, RecurringPaymentInterface $paymentProvider, $paymentMethod = null)
@@ -864,6 +870,7 @@ class OrderManager implements OrderManagerInterface
      * @param string $customerId
      *
      * @return bool
+     *
      * @throws \Exception
      */
     public function isValidOrderForRecurringPayment(AbstractOrder $order, RecurringPaymentInterface $payment, $customerId = '')
@@ -888,7 +895,6 @@ class OrderManager implements OrderManagerInterface
         return $this->buildModelClass($orderItemClassName);
     }
 
-
     /**
      * @param TaxEntry[] $taxItems
      *
@@ -907,7 +913,6 @@ class OrderManager implements OrderManagerInterface
 
         return $taxArray;
     }
-
 
     /**
      * Build list class name, try namespaced first and fall back to legacy naming
@@ -965,6 +970,7 @@ class OrderManager implements OrderManagerInterface
     public function buildOrderList()
     {
         $orderListClass = $this->buildOrderListClassName();
+
         return $this->buildModelClass($orderListClass);
     }
 
@@ -978,6 +984,7 @@ class OrderManager implements OrderManagerInterface
     public function buildOrderItemList()
     {
         $orderItemListClass = $this->buildOrderItemListClassName();
+
         return $this->buildModelClass($orderItemListClass);
     }
 

@@ -147,6 +147,7 @@ class OrderAgent implements OrderAgentInterface
      * @param float $amount
      *
      * @return Note
+     *
      * @throws Exception
      */
     public function itemChangeAmount(AbstractOrderItem $item, $amount)
@@ -199,6 +200,7 @@ class OrderAgent implements OrderAgentInterface
      * @param string $state
      *
      * @return Note
+     *
      * @throws Exception
      */
     public function itemSetState(AbstractOrderItem $item, $state)
@@ -307,6 +309,7 @@ class OrderAgent implements OrderAgentInterface
      * @param AbstractOrder|null $sourceOrder
      *
      * @return $this
+     *
      * @throws Exception
      */
     public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
@@ -401,9 +404,9 @@ class OrderAgent implements OrderAgentInterface
         return $currentPaymentInformation;
     }
 
-
     /**
      * @inheritdoc
+     *
      * @throws PaymentNotAllowedException
      * @throws Exception
      */
@@ -479,6 +482,7 @@ class OrderAgent implements OrderAgentInterface
      * generates internal payment id for current order
      *
      * @param null $paymentInfoCount
+     *
      * @return string
      */
     protected function generateInternalPaymentId($paymentInfoCount = null)
