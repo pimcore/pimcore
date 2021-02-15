@@ -417,15 +417,34 @@ abstract class PageSnippet extends Model\Document
     /**
      * Set an element with the given key/name
      *
-     * @param string $name
-     * @param Editable $data
+     * @param string|Editable $name
+     * @param Editable|null $data
      *
      * @return $this
      */
-    public function setEditable(string $name, Editable $data)
+    public function setEditable(/*string $name, Editable $data*/)
     {
         $this->getEditables();
-        $this->editables[$name] = $data;
+
+        $arguments = func_get_args();
+
+        if(count($arguments) === 2) {
+            if(is_string($arguments[0]) && $arguments[1] instanceof Editable) {
+                $this->editables[$arguments[0]] = $arguments[1];
+
+                @trigger_error(sprintf('Calling %s with 2 arguments is deprecated and will throw an exception in Pimcore 10, just use 1 argument of type %s', __METHOD__, Editable::class), E_USER_DEPRECATED);
+            } else {
+                throw new \InvalidArgumentException('One or more passed arguments do not match the expected type, expected: string $name, Editable $data');
+            }
+        } elseif (count($arguments) === 1) {
+            if($arguments[0] instanceof Editable) {
+                $this->editables[$arguments[0]->getName()] = $arguments[0];
+            } else {
+                throw new \InvalidArgumentException(sprintf('Type of passed argument is of wrong type, expected %s', Editable::class));
+            }
+        } else {
+            throw new \InvalidArgumentException(sprintf('Invalid amount of arguments passed, expected 2, got %d', count($arguments)));
+        }
 
         return $this;
     }
@@ -718,7 +737,7 @@ abstract class PageSnippet extends Model\Document
     {
         if (!$scheme) {
             $scheme = 'http://';
-            $requestHelper = \Pimcore::getContainer()->get('pimcore.http.request_helper');
+            $requestHelper = \Pimcore::getContainer()->get(\Pimcore\Http\RequestHelper::class);
             if ($requestHelper->hasMasterRequest()) {
                 $scheme = $requestHelper->getMasterRequest()->getScheme() . '://';
             }
