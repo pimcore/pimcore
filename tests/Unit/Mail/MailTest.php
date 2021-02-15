@@ -17,17 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Cache;
 
-use Pimcore\Mail\Mailer;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
 
 class MailTest extends TestCase
 {
-    /**
-     * @var Mailer
-     */
-    protected $mailer;
 
     /**
      * @var array
@@ -49,9 +44,6 @@ class MailTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mailer = $this->getMockBuilder(Mailer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 
     /**
