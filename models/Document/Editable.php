@@ -876,7 +876,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
     {
         /**
-         * @var $namingStrategy NamingStrategyInterface
+         * @var NamingStrategyInterface $namingStrategy
          */
         $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
         return $namingStrategy->buildChildElementTagName($name, $type, $parentBlockNames, $index);
