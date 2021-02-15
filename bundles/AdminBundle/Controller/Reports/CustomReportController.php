@@ -200,7 +200,7 @@ class CustomReportController extends ReportsControllerBase
         }
 
         $configuration = json_decode($request->get('configuration'));
-        $configuration = $configuration[0];
+        $configuration = $configuration[0] ?? null;
 
         $success = false;
         $columns = null;
