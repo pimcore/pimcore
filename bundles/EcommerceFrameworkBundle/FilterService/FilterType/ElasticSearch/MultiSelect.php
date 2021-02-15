@@ -31,15 +31,8 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         }
     }
 
-    /**
-     * @param FilterMultiSelect $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     * @param array $params
-     * @param bool $isPrecondition
-     *
-     * @return array
-     */
+
+    /** @inheritDoc */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
