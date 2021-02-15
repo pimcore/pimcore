@@ -87,7 +87,7 @@ class PageSnippet extends Model\Webservice\Data\Document
                 $tag = Model\Document\Tag::factory($element->type, $element->name, $this->id);
                 $tag->getFromWebserviceImport($element, $object, [], $idMapper);
 
-                $object->setEditable($element->name, $tag);
+                $object->setEditable($tag);
             }
         }
     }
