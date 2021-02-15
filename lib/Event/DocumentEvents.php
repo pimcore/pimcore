@@ -203,7 +203,7 @@ final class DocumentEvents
      *  - mail | \Pimcore\Mail | the pimcore mail instance
      *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
      *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | Swift_Mailer|null | newsletter specific swift mailer if enabled in system settings
+     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific mailer if enabled in system settings
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent\GenericEvent")
      *
@@ -216,7 +216,7 @@ final class DocumentEvents
      *  - mail | \Pimcore\Mail | the pimcore mail instance
      *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
      *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | Swift_Mailer|null | newsletter specific swift mailer if enabled in system settings
+     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific swift mailer if enabled in system settings
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent\GenericEvent")
      *

@@ -46,7 +46,7 @@ class Mail extends MailHandler
     {
         $mail = Tool::getMail([$this->address], 'pimcore log notification');
         $mail->setIgnoreDebugMode(true);
-        $mail->setBodyText($content);
+        $mail->setTextBody($content);
         $mail->send();
     }
 }

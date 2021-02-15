@@ -1153,7 +1153,7 @@ class UserController extends AdminController implements KernelControllerEventInt
                 try {
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
+                    $mail->setTextBody("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
                     $mail->send();
 
                     $success = true;

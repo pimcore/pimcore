@@ -18,7 +18,7 @@ final class MailEvents
 {
     /**
      * Arguments:
-     *  - mailer | Swift_Mailer | contains the mailer object. Modify (or unset) this parameter if you want to implement a custom mail sending method
+     *  - mailer | \Pimcore\Mail\Mailer | contains the mailer object. Modify (or unset) this parameter if you want to implement a custom mail sending method
      *
      * @Event("Pimcore\Event\Model\MailEvent")
      *
