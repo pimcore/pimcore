@@ -27,7 +27,7 @@ class MailTest extends TestCase
     /**
      * @var array
      */
-    protected $defaultSettings = [
+    private $defaultSettings = [
         'from' => 'jane@doe.com',
         'to' => 'john@doe.com',
         'cc' => 'john-cc@doe.com',
@@ -37,14 +37,6 @@ class MailTest extends TestCase
         'text' => 'This is a test mail.',
         'html' => 'This is a <b>test</b> mail.',
     ];
-
-    /**
-     * Set up
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
 
     /**
      * Test: Mail generate with header and body param
