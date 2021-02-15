@@ -98,14 +98,18 @@ class Imagick extends Adapter
             $i = new \Imagick();
             $this->imagePath = $imagePath;
 
-            if (!$this->isPreserveColor() && method_exists($i, 'setcolorspace')) {
-                $i->setcolorspace(\Imagick::COLORSPACE_SRGB);
-            }
+            if (!$this->isPreserveColor()) {
+                $this->setColorspaceToRGB();
 
-            if (!$this->isPreserveColor() && $this->isVectorGraphic($imagePath)) {
-                // only for vector graphics
-                // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
-                $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                if (method_exists($i, 'setColorspace')) {
+                    $i->setColorspace(\Imagick::COLORSPACE_SRGB);
+                }
+
+                if ($this->isVectorGraphic($imagePath)) {
+                    // only for vector graphics
+                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
+                    $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                }
             }
 
             if (isset($options['resolution'])) {
@@ -140,10 +144,6 @@ class Imagick extends Adapter
                 if ($alphaChannel) {
                     $this->setIsAlphaPossible(true);
                 }
-            }
-
-            if (!$this->isPreserveColor()) {
-                $this->setColorspaceToRGB();
             }
 
             if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
