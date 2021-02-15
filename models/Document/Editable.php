@@ -873,7 +873,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @return string
      * @throws \Exception
      */
-    public static function buildChildElementTagName(string $name, string $type, array $parentBlockNames, int $index): string
+    public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
     {
         /**
          * @var $namingStrategy NamingStrategyInterface
