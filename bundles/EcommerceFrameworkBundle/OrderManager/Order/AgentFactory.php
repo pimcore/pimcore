@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderAgent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -45,7 +46,7 @@ class AgentFactory implements OrderAgentFactoryInterface
     /**
      * @var string
      */
-    protected $agentClass = Agent::class;
+    protected $agentClass = OrderAgent::class;
 
     public function __construct(
         EnvironmentInterface $environment,

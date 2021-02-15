@@ -110,7 +110,7 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
-                    if (isset($data['baseunit']) && $data['baseunit'] === -1) {
+                    if (($data['baseunit'] ?? null) === -1) {
                         $data['baseunit'] = null;
                     }
                     $unit->setValues($data);

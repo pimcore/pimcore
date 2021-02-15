@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
@@ -26,7 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFacto
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor\TenantProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\IndexService\DefaultWorkerConfigMapper;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
@@ -37,7 +36,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBa
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo;
@@ -287,7 +286,6 @@ class Configuration implements ConfigurationInterface
                                     ->append($this->buildOptionsNode('factory_options', [
                                         'cart_class_name' => Cart::class,
                                         'guest_cart_class_name' => SessionCart::class,
-                                        'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT,
                                     ]))
                                 ->end()
                             ->end()
