@@ -12,14 +12,14 @@ parameters:
         #container_xml_path: ../../../var/cache/dev/App_KernelDevDebugContainer.xml # optional when running in project scope
 
     excludes_analyse:
-        - '**/DependencyInjection/Configuration.php'
-        - '**/Migrations/Version*.php'
-        - '**/External/AdminerController.php'
-        - '**/Generator/DoctrineCrudGenerator.php'
-        - '**/Processor/PdfReactor8.php'
-        - '**/simple_html_dom.php'
-        - '**/PDFreactor.class.php'
-        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
+        # - '**/DependencyInjection/Configuration.php'
+        # - '**/Migrations/Version*.php'
+        # - '**/External/AdminerController.php'
+        # - '**/Generator/DoctrineCrudGenerator.php'
+        # - '**/Processor/PdfReactor8.php'
+        # - '**/simple_html_dom.php'
+        # - '**/PDFreactor.class.php'
+        # - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
 
     ignoreErrors:
         - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\FilterMultiSelectFromMultiSelect/'
