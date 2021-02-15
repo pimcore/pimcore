@@ -31,7 +31,7 @@ class Version20201113143914 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->writeMessage(sprintf('Unable to rollback %s as the data was already deleted.', self::class));
-        $this->writeMessage(sprintf('Please restore the data from tables %s manually from backup.', implode(',', $this->tables)));
+        $this->write(sprintf('Unable to rollback %s as the data was already deleted.', self::class));
+        $this->write(sprintf('Please restore the data from tables %s manually from backup.', implode(',', $this->tables)));
     }
 }
