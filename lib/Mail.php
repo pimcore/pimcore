@@ -553,7 +553,6 @@ class Mail extends Email
     {
         // filter email addresses
 
-        // preserve email addresses, see Swift_Transport_MailTransport::send lines 140ff :-(
         // ... Remove headers that would otherwise be duplicated
         // $message->getHeaders()->remove('To');
         // $message->getHeaders()->remove('Subject'); ....

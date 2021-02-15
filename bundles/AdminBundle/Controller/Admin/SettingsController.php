@@ -543,7 +543,7 @@ class SettingsController extends AdminController
                 ],
         ];
 
-        // email & newsletter (swiftmailer settings)
+        // email & newsletter sender/return and debug email defaults
         foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
             $settings['pimcore'][$type] = [
                 'sender' => [
