@@ -92,7 +92,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @return AbstractProduct[]
+     * @return IndexableInterface[]
      */
     public function getProducts()
     {
@@ -109,7 +109,7 @@ class DefaultMysql implements ProductListInterface
     protected $conditions = [];
 
     /**
-     * @var string[]
+     * @var array<string[]>
      */
     protected $relationConditions = [];
 
