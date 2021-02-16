@@ -246,9 +246,11 @@ abstract class Kernel extends SymfonyKernel
     {
         $collection = $this->createBundleCollection();
 
-        $flexBundles = [];
-        array_push($flexBundles, ...$this->microKernelRegisterBundles());
-        $collection->addBundles($flexBundles);
+        if(is_file($this->getProjectDir().'/config/bundles.php')) {
+            $flexBundles = [];
+            array_push($flexBundles, ...$this->microKernelRegisterBundles());
+            $collection->addBundles($flexBundles);
+        }
 
         // core bundles (Symfony, Pimcore)
         $this->registerCoreBundlesToCollection($collection);
