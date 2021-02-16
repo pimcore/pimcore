@@ -1134,8 +1134,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             if ($data->getObject()->getClass()->getAllowInherit()) {
                                 //try again with parent data when inheritance is activated
                                 try {
-                                    $getInheritedValues = AbstractObject::doGetInheritedValues();
-                                    AbstractObject::setGetInheritedValues(true);
+                                    $getInheritedValues = DataObject::doGetInheritedValues();
+                                    DataObject::setGetInheritedValues(true);
 
                                     $value = null;
                                     $context = $data->getContext();
@@ -1152,7 +1152,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     }
 
                                     $fd->checkValidity($value, $omitMandatoryCheck);
-                                    AbstractObject::setGetInheritedValues($getInheritedValues);
+                                    DataObject::setGetInheritedValues($getInheritedValues);
                                 } catch (\Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;

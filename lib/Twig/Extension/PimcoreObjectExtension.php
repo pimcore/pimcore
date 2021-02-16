@@ -37,7 +37,7 @@ class PimcoreObjectExtension extends AbstractExtension
             new TwigFunction('pimcore_site_is_request', [Site::class, 'isSiteRequest']),
             new TwigFunction('pimcore_site_current', [Site::class, 'getCurrentSite']),
             new TwigFunction('pimcore_asset', [Asset::class, 'getById']),
-            new TwigFunction('pimcore_object', [DataObject\AbstractObject::class, 'getById']),
+            new TwigFunction('pimcore_object', [DataObject::class, 'getById']),
             new TwigFunction('pimcore_document_wrap_hardlink', [Document\Hardlink\Service::class, 'wrap']),
         ];
     }

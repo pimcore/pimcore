@@ -106,7 +106,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filter = $request->get('filter');
-        $object = DataObject\AbstractObject::getById($request->get('node'));
+        $object = DataObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
         $cv = false;
@@ -115,12 +115,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($object instanceof DataObject\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
-                $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT];
+                $objectTypes = [DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT];
             }
         }
 
         if (!$objectTypes) {
-            $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
+            $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
         }
 
         $filteredTotalCount = 0;
@@ -272,9 +272,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'lockOwner' => $child->getLocked() ? true : false,
         ];
 
-        $allowedTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
+        $allowedTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
         if ($child instanceof DataObject\Concrete && $child->getClass()->getShowVariants()) {
-            $allowedTypes[] = DataObject\AbstractObject::OBJECT_TYPE_VARIANT;
+            $allowedTypes[] = DataObject::OBJECT_TYPE_VARIANT;
         }
 
         $hasChildren = $child->hasChildren($allowedTypes);
@@ -813,8 +813,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $object->setUserModification($this->getAdminUser()->getId());
                 $object->setPublished(false);
 
-                if ($request->get('objecttype') == DataObject\AbstractObject::OBJECT_TYPE_OBJECT
-                    || $request->get('objecttype') == DataObject\AbstractObject::OBJECT_TYPE_VARIANT) {
+                if ($request->get('objecttype') == DataObject::OBJECT_TYPE_OBJECT
+                    || $request->get('objecttype') == DataObject::OBJECT_TYPE_VARIANT) {
                     $object->setType($request->get('objecttype'));
                 }
 
@@ -1107,9 +1107,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         (SELECT @n := -1) variable
                         WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
                         "','", [
-                            DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
-                            DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
-                            DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
+                            DataObject::OBJECT_TYPE_OBJECT,
+                            DataObject::OBJECT_TYPE_VARIANT,
+                            DataObject::OBJECT_TYPE_FOLDER,
                         ]
                     ).'\')
                             ORDER BY o_index, o_id=?
@@ -1141,7 +1141,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $sibling['o_versionCount'], $index);
                     $index++;
 
-                    DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);
+                    DataObject::clearDependentCacheByObjectId($sibling['o_id']);
                 }
 
                 Db::get()->commit();
@@ -1261,7 +1261,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $object->save();
             $treeData = $this->getTreeNodeConfig($object);
 
-            $newObject = DataObject\AbstractObject::getById($object->getId(), true);
+            $newObject = DataObject::getById($object->getId(), true);
 
             return $this->adminJson([
                 'success' => true,
@@ -1290,7 +1290,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $treeData = $this->getTreeNodeConfig($object);
 
-            $newObject = DataObject\AbstractObject::getById($object->getId(), true);
+            $newObject = DataObject::getById($object->getId(), true);
 
             return $this->adminJson([
                 'success' => true,
@@ -1463,13 +1463,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function previewVersionAction(Request $request)
     {
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
+        DataObject::setDoNotRestoreKeyAndPath(true);
 
         $id = intval($request->get('id'));
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(false);
+        DataObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object) {
             if ($object->isAllowed('versions')) {
@@ -1496,7 +1496,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function diffVersionsAction(Request $request, $from, $to)
     {
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
+        DataObject::setDoNotRestoreKeyAndPath(true);
 
         $id1 = intval($from);
         $id2 = intval($to);
@@ -1507,7 +1507,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $version2 = Model\Version::getById($id2);
         $object2 = $version2->loadData();
 
-        DataObject\AbstractObject::setDoNotRestoreKeyAndPath(false);
+        DataObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object1 && $object2) {
             if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
@@ -1838,13 +1838,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 ],
             ]];
 
-            if ($object->hasChildren([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT])) {
+            if ($object->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
                 // get amount of children
                 $list = new DataObject\Listing();
                 $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
-                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT]);
                 $childIds = $list->loadIdList();
 
                 if (count($childIds) > 0) {

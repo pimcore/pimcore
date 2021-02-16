@@ -36,10 +36,10 @@ $myObject->getDescription();
 $city = DataObject\City::getByZip(5020,1);
 
 // you can also get an object by id where you don't know the type
-$object = DataObject\AbstractObject::getById(235);
+$object = DataObject::getById(235);
 
 // or obtain an object by path
-$object = DataObject\AbstractObject::getByPath("/path/to/the/object");
+$object = DataObject::getByPath("/path/to/the/object");
 
 
 //updating and saving objects
@@ -314,10 +314,10 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 <?php
 
 // revert to the default API behaviour, and setUnpublished can be used as usually
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(true);
+\Pimcore\Model\DataObject::setHideUnpublished(true);
 
 // force to return all objects including unpublished ones, even if setUnpublished is set to false
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(false);
+\Pimcore\Model\DataObject::setHideUnpublished(false);
 ```
 
 ### Filter Objects by attributes from Field Collections

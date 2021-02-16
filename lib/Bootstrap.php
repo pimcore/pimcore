@@ -78,8 +78,8 @@ class Bootstrap
         // activate inheritance for cli-scripts
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
-        DataObject\AbstractObject::setHideUnpublished(true);
-        DataObject\AbstractObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+        DataObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
 
         // CLI has no memory/time limits

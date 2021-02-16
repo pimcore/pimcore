@@ -193,7 +193,7 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
-                    if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                    if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                         if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
                                 '_self'
                             )) {
@@ -230,7 +230,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         }
-        if (!$this->model->isFieldDirty('_self') && !DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+        if (!$this->model->isFieldDirty('_self') && !DataObject::isDirtyDetectionDisabled()) {
             return [];
         }
 
@@ -240,7 +240,7 @@ class Dao extends Model\Dao\AbstractDao
             . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
+            if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 

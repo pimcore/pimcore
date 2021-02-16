@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 6.9.0
+- Calling static methods on `Pimcore\Model\DataObject\AbstractObject` is deprecated, use `Pimcore\Model\DataObject` instead.
 - Abstract method `load` will be added to `Pimcore\Model\Listing\Dao\AbstractDao` in Pimcore 10
 - [Elastic Search] `getClientConfig` will be added to the `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config` interface in Pimcore 10
 - `PageSnippet::$elements` property visibility changed from `protected` to `private` 

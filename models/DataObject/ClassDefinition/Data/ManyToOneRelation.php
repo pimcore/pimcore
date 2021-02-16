@@ -576,7 +576,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
+        if (DataObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }

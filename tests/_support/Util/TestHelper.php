@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Util;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
@@ -765,7 +766,7 @@ class TestHelper
         }
 
         if ($cleanObjects) {
-            static::cleanUpTree(AbstractObject::getById(1), 'object');
+            static::cleanUpTree(DataObject::getById(1), 'object');
             codecept_debug(sprintf('Number of objects is: %d', static::getObjectCount()));
         }
 
