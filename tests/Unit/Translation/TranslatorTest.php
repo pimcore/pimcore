@@ -122,7 +122,6 @@ class TranslatorTest extends TestCase
         $this->translator->setLocale('de');
         $this->assertEquals($this->translations['en']['simple_key'], $this->translator->trans('Text As Key'));
 
-        p_r(\Pimcore\Tool::getFallbackLanguagesFor("fr")); die;
         //Returns Key value (no translation + no fallback)
 //        $this->translator->setLocale('fr');
 //        $this->assertEquals('Text As Key', $this->translator->trans('Text As Key'));
