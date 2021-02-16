@@ -15,7 +15,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 @trigger_error(
-    'Data-type `Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation` is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
+    'Data-type `Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation` is deprecated since version 6.9.0 and will be removed in Pimcore 10. ' .
     'Use `' . ReverseObjectRelation::class . '` instead.',
     E_USER_DEPRECATED
 );
