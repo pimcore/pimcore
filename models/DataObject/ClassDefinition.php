@@ -456,7 +456,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -480,7 +480,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                if ($def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                     continue;
                 }
 
