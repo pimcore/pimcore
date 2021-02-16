@@ -136,7 +136,7 @@ pimcore:
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
-                    reverseManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation
+                    reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks

@@ -1109,7 +1109,7 @@
                                 "visibleSearch": true
                             },
                             {
-                                "fieldtype": "reverseManyToManyObjectRelation",
+                                "fieldtype": "reverseObjectRelation",
                                 "ownerClassName": null,
                                 "ownerClassId": null,
                                 "ownerFieldName": null,
