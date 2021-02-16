@@ -171,7 +171,7 @@ class Composer
             }
         });
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\n%s\n\n%s", escapeshellarg($cmd), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
+            throw new \RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\nExit code: %d\n\n%s\n\n%s", implode(' ', $command), $process->getExitCode(), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
         }
 
         return $process;
