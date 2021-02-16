@@ -98,20 +98,6 @@ class Imagick extends Adapter
             $i = new \Imagick();
             $this->imagePath = $imagePath;
 
-            if (!$this->isPreserveColor()) {
-                $this->setColorspaceToRGB();
-
-                if (method_exists($i, 'setColorspace')) {
-                    $i->setColorspace(\Imagick::COLORSPACE_SRGB);
-                }
-
-                if ($this->isVectorGraphic($imagePath)) {
-                    // only for vector graphics
-                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
-                    $i->setBackgroundColor(new \ImagickPixel('transparent'));
-                }
-            }
-
             if (isset($options['resolution'])) {
                 // set the resolution to 2000x2000 for known vector formats
                 // otherwise this will cause problems with eg. cropPercent in the image editable (select specific area)
@@ -128,6 +114,20 @@ class Imagick extends Adapter
             }
 
             $this->resource = $i;
+
+            if (!$this->isPreserveColor()) {
+                if (method_exists($i, 'setColorspace')) {
+                    $i->setColorspace(\Imagick::COLORSPACE_SRGB);
+                }
+
+                if ($this->isVectorGraphic($imagePath)) {
+                    // only for vector graphics
+                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
+                    $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                }
+
+                $this->setColorspaceToRGB();
+            }
 
             // set dimensions
             $dimensions = $this->getDimensions();
