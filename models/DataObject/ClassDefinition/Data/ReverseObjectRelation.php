@@ -46,7 +46,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public $ownerFieldName;
 
     /**
-     * NonOwnerObjects must be lazy loading!
+     * ReverseObjectRelation must be lazy loading!
      *
      * @var bool
      */
@@ -237,6 +237,3 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return true;
     }
 }
-
-class_alias(ReverseObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects');
-class_alias(ReverseObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation');
