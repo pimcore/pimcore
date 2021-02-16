@@ -43,10 +43,13 @@ class TranslatorTest extends TestCase
         'en' => [
             'simple_key' => 'EN Text',
             'Text As Key' => 'EN Text',
+            'count_key' => '%count% Count',
+            'count_key_190' => 'This is a translated text generated from translator service, using count parameter to be replaced from passed parameters and having %count% characters to test text greater than 190 characters.'
         ],
         'de' => [
             'simple_key' => 'DE Text',
             'Text As Key' => '',
+            'count_key' => '',
         ],
         'fr' => [
             'simple_key' => 'FR Text',
@@ -116,7 +119,7 @@ class TranslatorTest extends TestCase
         $this->translator->setLocale('en');
         $this->assertEquals($this->translations['en']['Text As Key'], $this->translator->trans('Text As Key'));
 
-        //Returns Fallback value
+        //Returns Fallback("en") value
         $this->translator->setLocale('de');
         $this->assertEquals($this->translations['en']['simple_key'], $this->translator->trans('Text As Key'));
 
@@ -124,4 +127,21 @@ class TranslatorTest extends TestCase
         $this->translator->setLocale('fr');
         $this->assertEquals('Text As Key', $this->translator->trans('Text As Key'));
     }
+
+    public function testTranslateWithCountParam()
+    {
+        $this->translator->setLocale('en');
+        $this->assertEquals('2 Count', $this->translator->trans('count_key',['%count%' => 2]));
+
+        //fallback
+        $this->translator->setLocale('de');
+        $this->assertEquals('2 Count', $this->translator->trans('count_key',['%count%' => 2]));
+    }
+
+    public function testTranslateLongerTextWithCountParam()
+    {
+        $this->translator->setLocale('en');
+        $this->assertEquals(strtr($this->translations['en']['count_key_190'], ['%count%' => 192]), $this->translator->trans('count_key_190',['%count%' => 192]));
+    }
+
 }

@@ -284,7 +284,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $normalizedId = mb_strtolower($id);
         }
 
-        if (isset($parameters['%count%'])) {
+        if (isset($parameters['%count%']) && $translated) {
             $normalizedId = $id = $translated;
         }
 
@@ -294,7 +294,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
-                if ($translated != $normalizedId) {
+                if ($normalizedId != $translated && $translated) {
                     return $translated;
                 }
             } elseif ($backend = $this->getBackendForDomain($domain)) {
@@ -352,7 +352,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                 if ($fallbackValue && $normalizedId != $fallbackValue) {
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
                     $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain);
-
                     return strtr($fallbackValue, $parameters);
                 }
             }
