@@ -102,7 +102,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                             $targetTag = $targetDocument->getEditable($editable->getName());
                             if ($targetTag instanceof Document\Editable\Image || $targetTag instanceof Document\Editable\Link) {
                                 $targetContent[$targetLanguage] = $targetTag->getText();
-                            } else {
+                            } elseif ($targetTag !== null) {
                                 $targetContent[$targetLanguage] = $targetTag->getData();
                             }
                         }
