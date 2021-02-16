@@ -235,10 +235,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                             $translationKey = mb_strtolower($translationKey);
                         }
 
-                        if (empty($translationTerm)) {
-                            $translationTerm = $translationKey;
-                        }
-
                         $data[$translationKey] = $translationTerm;
                     }
                 }
@@ -292,7 +288,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $normalizedId = $id = $translated;
         }
 
-        $lookForFallback = $normalizedId == $translated;
+        $lookForFallback = empty($translated);
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
@@ -366,7 +362,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             }
         }
 
-        return $translated;
+        return !empty($translated) ? $translated : $id;
     }
 
     /**
