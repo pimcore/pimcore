@@ -28,7 +28,6 @@ use Pimcore\Model\Tool\CustomReport\Config;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -378,6 +377,7 @@ class NewsletterController extends DocumentControllerBase
      * @Route("/calculate", name="pimcore_admin_document_newsletter_calculate", methods={"POST"})
      *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function calculateAction(Request $request): JsonResponse
