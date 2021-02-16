@@ -182,6 +182,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_versionCount = 0;
 
+    private static function checkIfDeprecatedStaticCall($calledClass, $method)
+    {
+        if(self::class === $calledClass) {
+            @trigger_error(sprintf('Calling static methods on %s is deprecated, please use %s instead.', self::class, str_replace(self::class, DataObject::class, $method)), E_USER_DEPRECATED);
+        }
+    }
+
     /**
      * @static
      *
@@ -189,6 +196,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getHideUnpublished()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$hideUnpublished;
     }
 
@@ -199,6 +208,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setHideUnpublished($hideUnpublished)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$hideUnpublished = $hideUnpublished;
     }
 
@@ -209,6 +220,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doHideUnpublished()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$hideUnpublished;
     }
 
@@ -219,6 +232,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setGetInheritedValues($getInheritedValues)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$getInheritedValues = $getInheritedValues;
     }
 
@@ -229,6 +244,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getGetInheritedValues()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$getInheritedValues;
     }
 
@@ -241,6 +258,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doGetInheritedValues(Concrete $object = null)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         if (self::$getInheritedValues && $object !== null) {
             $class = $object->getClass();
 
@@ -257,6 +276,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTypes()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$types;
     }
 
@@ -270,6 +291,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
@@ -335,6 +358,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         $path = Model\Element\Service::correctPath($path);
 
         try {
@@ -356,6 +381,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getList($config = [])
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         $className = DataObject::class;
         // get classname
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
@@ -391,6 +418,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         $list = static::getList($config);
         $count = $list->getTotalCount();
 
@@ -841,6 +870,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function clearDependentCacheByObjectId($objectId, $additionalTags = [])
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         if (!$objectId) {
             throw new \Exception('object ID missing');
         }
@@ -1343,6 +1374,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doNotRestoreKeyAndPath()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$doNotRestoreKeyAndPath;
     }
 
@@ -1351,6 +1384,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setDoNotRestoreKeyAndPath($doNotRestoreKeyAndPath)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$doNotRestoreKeyAndPath = $doNotRestoreKeyAndPath;
     }
 
@@ -1394,6 +1429,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function isDirtyDetectionDisabled()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$disableDirtyDetection;
     }
 
@@ -1402,6 +1439,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$disableDirtyDetection = $disableDirtyDetection;
     }
 
@@ -1410,6 +1449,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function disableDirtyDetection()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::setDisableDirtyDetection(true);
     }
 
@@ -1418,6 +1459,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function enableDirtyDetection()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::setDisableDirtyDetection(false);
     }
 
