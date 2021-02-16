@@ -78,8 +78,7 @@ class TranslatorTest extends TestCase
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {
-                $t = new Website();
-                $t->setKey($transKey);
+                $t = Website::getByKey($transKey, true);
                 $t->addTranslation($locale, $trans ?? '');
                 $t->save();
             }
