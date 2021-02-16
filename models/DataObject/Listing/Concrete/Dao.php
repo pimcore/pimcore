@@ -325,7 +325,7 @@ CONDITION;
                 }
 
                 // add join
-                $queryBuilder->leftJoin($this->getTableName(), $table, $name, $condition);
+                $queryBuilder->leftJoin($this->getTableName(), $table, $this->db->quoteIdentifier($name), $condition);
             }
         }
 
@@ -343,7 +343,7 @@ CONDITION;
                 $name = $ob;
 
                 // add join
-                $queryBuilder->leftJoin($this->getTableName(), $table, $name,
+                $queryBuilder->leftJoin($this->getTableName(), $table, $this->db->quoteIdentifier($name),
                     <<<CONDITION
 1
 AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
@@ -357,7 +357,7 @@ CONDITION
                     $name = $ob . '_localized';
 
                     // add join
-                    $queryBuilder->leftJoin($this->getTableName(), $localizedTable, $name,
+                    $queryBuilder->leftJoin($this->getTableName(), $localizedTable, $this->db->quoteIdentifier($name),
                         <<<CONDITION
 1
 AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id

@@ -1054,9 +1054,17 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 manageHeight: false,
                 items: this.buildEditableDialogLayout(config['items'], editablesInBox, nextLevel)
             };
-
-            if(config['title']) {
-                container['title'] = config['title'];
+            let allowedConfigElements = [
+                'layout',
+                'flex',
+                'defaults',
+                'title'
+            ];
+            for (let i in allowedConfigElements) {
+                let cfgElement = allowedConfigElements[i];
+                if(config[cfgElement]) {
+                    container[cfgElement] = config[cfgElement];
+                }
             }
 
             return container;

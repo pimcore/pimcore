@@ -863,6 +863,26 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * This is a wrapper around \Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface::buildChildElementTagName()
+     * which will be exclusively used by Pimcore 10 to build the name of an editable. Use that if you want to support both v6.9 and v10
+     *
+     * @param string $name
+     * @param string $type
+     * @param array $parentBlockNames
+     * @param int $index
+     * @return string
+     * @throws \Exception
+     */
+    public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
+    {
+        /**
+         * @var NamingStrategyInterface $namingStrategy
+         */
+        $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
+        return $namingStrategy->buildChildElementTagName($name, $type, $parentBlockNames, $index);
+    }
+
+    /**
      * @param string $name
      * @param Document $document
      *

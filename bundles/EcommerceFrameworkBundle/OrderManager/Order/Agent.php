@@ -40,6 +40,9 @@ use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Lock\Exception\NotSupportedException;
 
+/**
+ * @deprecated since version 6.1.0 and will be removed in Pimcore 10
+ */
 class Agent implements OrderAgentInterface
 {
     const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';

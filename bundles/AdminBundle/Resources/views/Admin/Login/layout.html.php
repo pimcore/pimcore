@@ -23,7 +23,14 @@ $config = $this->config;
 <body class="pimcore_version_6 <?= $config['branding']['login_screen_invert_colors'] ? 'inverted' : '' ?>">
 
 <?php
-    if (empty($backgroundImageUrl = $config['branding']['login_screen_custom_image'])) {
+    $customImage = $config['branding']['login_screen_custom_image'];
+    //https://github.com/pimcore/pimcore/issues/8016
+    //https://github.com/pimcore/pimcore/issues/8129
+    if (preg_match('@^https?://@', $customImage)) {
+        $backgroundImageUrl = $customImage;
+    } elseif (is_file(PIMCORE_WEB_ROOT . $customImage)) {
+        $backgroundImageUrl = $customImage;
+    } else {
         $defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'];
         $backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' . $defaultImages[array_rand($defaultImages)];
     }

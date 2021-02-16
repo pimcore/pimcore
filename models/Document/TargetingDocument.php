@@ -133,19 +133,43 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * Set an element with the given key/name
      *
-     * @param string $name
-     * @param Editable $data
+     * @param string|Editable $name
+     * @param Editable|null $data
      *
-     * @return PageSnippet
+     * @return $this
      */
-    public function setEditable($name, $data)
+    public function setEditable(/*string $name, Editable $data*/)
     {
+        $data = null;
+        $name = null;
+
+        $arguments = func_get_args();
+        if(count($arguments) === 2) {
+            if(is_string($arguments[0]) && $arguments[1] instanceof Editable) {
+                $data = $arguments[1];
+                $name = $arguments[0];
+
+                @trigger_error(sprintf('Calling %s with 2 arguments is deprecated and will throw an exception in Pimcore 10, just use 1 argument of type %s', __METHOD__, Editable::class), E_USER_DEPRECATED);
+            } else {
+                throw new \InvalidArgumentException('One or more passed arguments do not match the expected type, expected: string $name, Editable $data');
+            }
+        } elseif (count($arguments) === 1) {
+            if($arguments[0] instanceof Editable) {
+                $data = $arguments[0];
+                $name = $data->getName();
+            } else {
+                throw new \InvalidArgumentException(sprintf('Type of passed argument is of wrong type, expected %s', Editable::class));
+            }
+        } else {
+            throw new \InvalidArgumentException(sprintf('Invalid amount of arguments passed, expected 2, got %d', count($arguments)));
+        }
+
         if ($this->getUseTargetGroup()) {
             $name = $this->getTargetGroupEditableName($name);
             $data->setName($name);
         }
 
-        return parent::setEditable($name, $data);
+        return parent::setEditable($data);
     }
 
     /**
@@ -176,7 +200,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
                     $inheritedEditable->setName($targetGroupEditableName);
                     $inheritedEditable->setInherited(true);
 
-                    $this->setEditable($targetGroupEditableName, $inheritedEditable);
+                    $this->setEditable($inheritedEditable);
 
                     return $inheritedEditable;
                 }
