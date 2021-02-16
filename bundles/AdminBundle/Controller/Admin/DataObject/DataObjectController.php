@@ -31,7 +31,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
-use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -591,15 +591,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
         // LazyLoadingSupportInterface types. It tries to optimize fetching the data needed for the editmode without
         // loading the entire target element.
-        // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),
+        // ReverseObjectRelation should go in there anyway (regardless if it a version or not),
         // so that the values can be loaded.
         if (
             (!$objectFromVersion && $fielddefinition instanceof AbstractRelations)
-            || $fielddefinition instanceof ReverseManyToManyObjectRelation
+            || $fielddefinition instanceof ReverseObjectRelation
         ) {
             $refId = null;
 
-            if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
+            if ($fielddefinition instanceof ReverseObjectRelation) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refClass = DataObject\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
                 if ($refClass) {
@@ -609,7 +609,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $refKey = $key;
             }
 
-            $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseManyToManyObjectRelation, $refId);
+            $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseObjectRelation, $refId);
 
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
@@ -1206,7 +1206,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         }
                     }
 
-                    if ($fd instanceof ReverseManyToManyObjectRelation) {
+                    if ($fd instanceof ReverseObjectRelation) {
                         $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
@@ -2074,14 +2074,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         if ($currentData[$i]->getId() == $object->getId()) {
                             unset($currentData[$i]);
                             $owner->$setter($currentData);
-                            $owner->setUserModification($this->getAdminUser()->getId());
-                            $owner->save();
-                            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
                             break;
                         }
                     }
+                } else {
+                    if ($currentData->getId() == $object->getId()) {
+                        $owner->$setter(null);
+                    }
                 }
             }
+            $owner->setUserModification($this->getAdminUser()->getId());
+            $owner->save();
+            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
         }
 
         foreach ($toAdd as $id) {
@@ -2089,8 +2093,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             //TODO: lock ?!
             if (method_exists($owner, $getter)) {
                 $currentData = $owner->$getter();
-                $currentData[] = $object;
-
+                if (is_array($currentData)) {
+                    $currentData[] = $object;
+                } else {
+                    $currentData = $object;
+                }
                 $owner->$setter($currentData);
                 $owner->setUserModification($this->getAdminUser()->getId());
                 $owner->save();

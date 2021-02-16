@@ -1991,7 +1991,7 @@ class DataObjectHelperController extends AdminController
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
             //exclude remote owner fields
-            if (!$value instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+            if (!$value instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                 $o[$key] = $value->getForCsvExport($object);
             }
         }

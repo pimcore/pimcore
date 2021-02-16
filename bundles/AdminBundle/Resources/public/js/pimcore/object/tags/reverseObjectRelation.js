@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.reverseManyToManyObjectRelation");
-pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
+pimcore.registerNS("pimcore.object.tags.reverseObjectRelation");
+pimcore.object.tags.reverseObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
     pathProperty: "path",
 
@@ -424,4 +424,5 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
 });
 
 // @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.tags.nonownerobjects = pimcore.object.tags.reverseManyToManyObjectRelation;
+pimcore.object.tags.nonownerobjects = pimcore.object.tags.reverseObjectRelation;
+pimcore.object.tags.reverseManyToManyObjectRelation = pimcore.object.tags.reverseObjectRelation;

@@ -254,7 +254,7 @@ class TestHelper
 
                             if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
                                 $fieldValue = serialize($v);
-                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
                                 $fieldValue = null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -295,7 +295,7 @@ class TestHelper
             return serialize($lData);
         } elseif (method_exists($object, $getter) && $fd instanceof ObjectModel\Data\Link) {
             return serialize($fd);
-        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
             return $fd->getForCsvExport($object);
         }
     }

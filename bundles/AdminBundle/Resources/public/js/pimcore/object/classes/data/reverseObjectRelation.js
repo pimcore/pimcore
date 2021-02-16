@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.classes.data.reverseManyToManyObjectRelation");
-pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.reverseObjectRelation");
+pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.classes.data.data, {
 
-    type: "reverseManyToManyObjectRelation",
+    type: "reverseObjectRelation",
     /**
      * define where this datatype is allowed
      */
@@ -27,7 +27,7 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "reverseManyToManyObjectRelation";
+        this.type = "reverseObjectRelation";
 
         this.initData(initData);
 
@@ -42,11 +42,11 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
     },
 
     getTypeName: function () {
-        return t("reverse_many_to_many_object_relation");
+        return t("reverse_object_relation");
     },
 
     getIconClass: function () {
-        return "pimcore_icon_reverseManyToManyObjectRelation";
+        return "pimcore_icon_reverseObjectRelation";
     },
 
     getLayout: function ($super) {
@@ -112,7 +112,7 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
                     rootProperty: "availableFields"
                 },
                 extraParams: {
-                    types: 'manyToManyObjectRelation',
+                    types: 'manyToManyObjectRelation,manyToOneRelation',
                     name: this.datax.ownerClassName
                 }
             },
@@ -179,4 +179,5 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
 });
 
 // @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.classes.data.nonownerobjects = pimcore.object.classes.data.reverseManyToManyObjectRelation;
+pimcore.object.classes.data.nonownerobjects = pimcore.object.classes.data.reverseObjectRelation;
+pimcore.object.classes.data.reverseManyToManyObjectRelation = pimcore.object.classes.data.reverseObjectRelation;

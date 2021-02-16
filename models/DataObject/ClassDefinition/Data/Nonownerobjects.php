@@ -16,17 +16,17 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 @trigger_error(
     'Data-type `Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects` is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
-    'Use `' . ReverseManyToManyObjectRelation::class . '` instead.',
+    'Use `' . ReverseObjectRelation::class . '` instead.',
     E_USER_DEPRECATED
 );
 
-class_exists(ReverseManyToManyObjectRelation::class);
+class_exists(ReverseObjectRelation::class);
 
 if (false) {
     /**
-     * @deprecated use \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation instead
+     * @deprecated use \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation instead
      */
-    class Nonownerobjects extends ReverseManyToManyObjectRelation
+    class Nonownerobjects extends ReverseObjectRelation
     {
     }
 }
