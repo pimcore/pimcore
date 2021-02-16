@@ -887,7 +887,6 @@ class Mail extends Email
         return $this->html($body, $charset);
     }
 
-
     /**
      * @return array
      */

@@ -136,12 +136,12 @@ class RedirectingPlugin
 
                 $message->setHtmlBody($html);
             } elseif (!empty($text)) {
-                    $originalData['text'] = $text;
+                $originalData['text'] = $text;
 
-                    $rawText = $text;
-                    $debugInformation = MailHelper::getDebugInformation('text', $message);
-                    $rawText .= $debugInformation;
-                    $message->setTextBody($rawText);
+                $rawText = $text;
+                $debugInformation = MailHelper::getDebugInformation('text', $message);
+                $rawText .= $debugInformation;
+                $message->setTextBody($rawText);
             }
 
             //setting debug subject

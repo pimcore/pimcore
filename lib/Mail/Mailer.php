@@ -17,8 +17,8 @@ namespace Pimcore\Mail;
 use Pimcore\Mail;
 use Pimcore\Mail\Plugins\RedirectingPlugin;
 use Symfony\Component\Mailer\Envelope;
-use Symfony\Component\Mime\RawMessage;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\RawMessage;
 
 class Mailer implements MailerInterface
 {
@@ -41,7 +41,7 @@ class Mailer implements MailerInterface
         $this->redirectPlugin = $redirectPlugin;
     }
 
-    public function send(RawMessage $message, Envelope $envelope = NULL): void
+    public function send(RawMessage $message, Envelope $envelope = null): void
     {
         if ($message instanceof Mail) {
             $this->redirectPlugin->beforeSendPerformed($message);

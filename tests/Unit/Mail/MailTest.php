@@ -23,7 +23,6 @@ use Symfony\Component\Mime\Part\TextPart;
 
 class MailTest extends TestCase
 {
-
     /**
      * @var array
      */
@@ -70,7 +69,7 @@ class MailTest extends TestCase
         $mailArray = [
             'headers' => $headers,
             'body' => $body,
-            'subject' => $this->defaultSettings['subject']
+            'subject' => $this->defaultSettings['subject'],
         ];
 
         $mail = new \Pimcore\Mail($mailArray);
@@ -93,7 +92,6 @@ class MailTest extends TestCase
         if (!empty($emailConfig['return']['email'])) {
             $this->assertEquals($emailConfig['return']['email'], $mail->getReplyTo()[0]->getAddress(), 'replyTo recipient not initialized from system settings');
         }
-
     }
 
     /**
@@ -139,13 +137,13 @@ class MailTest extends TestCase
     public function testTextBodyRenderedWithParams()
     {
         $mail = new \Pimcore\Mail();
-        $mail->setTextBody("Hi, {{ firstname }} {{ lastname }}.");
+        $mail->setTextBody('Hi, {{ firstname }} {{ lastname }}.');
         $mail->setParams([
             'firstname' => 'John',
-            'lastname' => 'Doe'
+            'lastname' => 'Doe',
         ]);
 
-        $this->assertEquals("Hi, John Doe.", $mail->getBodyTextRendered());
+        $this->assertEquals('Hi, John Doe.', $mail->getBodyTextRendered());
     }
 
     /**
@@ -154,12 +152,12 @@ class MailTest extends TestCase
     public function testHtmlBodyRenderedWithParams()
     {
         $mail = new \Pimcore\Mail();
-        $mail->setHtmlBody("Hi, {{ firstname }} {{ lastname }}.");
+        $mail->setHtmlBody('Hi, {{ firstname }} {{ lastname }}.');
         $mail->setParams([
             'firstname' => 'John',
-            'lastname' => 'Doe'
+            'lastname' => 'Doe',
         ]);
 
-        $this->assertStringContainsString("Hi, John Doe.", $mail->getBodyHtmlRendered());
+        $this->assertStringContainsString('Hi, John Doe.', $mail->getBodyHtmlRendered());
     }
 }
