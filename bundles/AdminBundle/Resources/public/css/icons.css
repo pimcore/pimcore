@@ -1432,10 +1432,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/neutral_trading.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_reverseManyToManyObjectRelation {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/reverse_object_relation.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_reverseObjectRelation {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/reverse_object_relation.svg) center center no-repeat !important;
 }
