@@ -8,7 +8,6 @@ framework:
     serializer:
         enabled: true
     router:
-        resource: "%kernel.project_dir%/config/routes.yaml"
         strict_requirements: ~
     form: ~
     csrf_protection: ~

@@ -8,16 +8,14 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        # webdav http basic
-        # TODO check if this config is enough
-        # TODO use http_digest?
-        admin_webdav:
+        # Pimcore WebDAV HTTP basic // DO NOT CHANGE!
+        pimcore_admin_webdav:
             pattern: ^/admin/asset/webdav
             provider: pimcore_admin
             http_basic: ~
 
-        # admin form login
-        admin:
+        # Pimcore admin form login // DO NOT CHANGE!
+        pimcore_admin:
             anonymous: ~
             pattern: ^/admin(/.*)?$
             # admin firewall is stateless as we open the admin
@@ -43,6 +41,7 @@ security:
 
 
     access_control:
+        # Pimcore admin ACl  // DO NOT CHANGE!
         - { path: ^/admin/settings/display-custom-logo, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/login/2fa-verify, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
         - { path: ^/admin/login/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
@@ -51,4 +50,5 @@ security:
         - { path: ^/admin, roles: ROLE_PIMCORE_USER }
 
     role_hierarchy:
+        # Pimcore admin  // DO NOT CHANGE!
         ROLE_PIMCORE_ADMIN: [ROLE_PIMCORE_USER]

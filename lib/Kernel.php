@@ -31,22 +31,29 @@ use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 abstract class Kernel extends SymfonyKernel
 {
+    use MicroKernelTrait {
+        registerContainerConfiguration as microKernelRegisterContainerConfiguration;
+        registerBundles as microKernelRegisterBundles;
+    }
+
     /**
      * @var Extension\Config
      */
@@ -89,11 +96,44 @@ abstract class Kernel extends SymfonyKernel
         return PIMCORE_LOG_DIRECTORY;
     }
 
+
+    protected function configureContainer(ContainerConfigurator $container): void
+    {
+        $projectDir = realpath($this->getProjectDir());
+
+        $container->import($projectDir . '/config/{packages}/*.yaml');
+        $container->import($projectDir . '/config/{packages}/'.$this->environment.'/*.yaml');
+
+        if (is_file($projectDir . '/config/services.yaml')) {
+            $container->import($projectDir . '/config/services.yaml');
+            $container->import($projectDir . '/config/{services}_'.$this->environment.'.yaml');
+        } elseif (is_file($path = $projectDir . '/config/services.php')) {
+            (require $path)($container->withPath($path), $this);
+        }
+    }
+
+    protected function configureRoutes(RoutingConfigurator $routes): void
+    {
+        $projectDir = realpath($this->getProjectDir());
+
+        $routes->import($projectDir . '/config/{routes}/'.$this->environment.'/*.yaml');
+        $routes->import($projectDir . '/config/{routes}/*.yaml');
+
+        if (is_file($projectDir . '/config/routes.yaml')) {
+            $routes->import($projectDir . '/config/routes.yaml');
+        } elseif (is_file($path = $projectDir . '/config/routes.php')) {
+            (require $path)($routes->withPath($path), $this);
+        }
+    }
+
+
     /**
      * {@inheritdoc}
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        $this->microKernelRegisterContainerConfiguration($loader);
+
         $loader->load(function (ContainerBuilder $container) {
             $this->registerExtensionConfigFileResources($container);
         });
@@ -108,12 +148,6 @@ abstract class Kernel extends SymfonyKernel
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
         }
-
-        $configRealPath = realpath($this->getProjectDir() . '/config/packages/' . $this->getEnvironment() . '/config.yaml');
-        if ($configRealPath === false) {
-            throw new InvalidConfigurationException('File ' . $this->getProjectDir() . '/config/packages/' . $this->getEnvironment() . '/config.yaml cannot be found.');
-        }
-        $loader->load($configRealPath);
     }
 
     private function registerExtensionConfigFileResources(ContainerBuilder $container)
@@ -211,6 +245,12 @@ abstract class Kernel extends SymfonyKernel
     public function registerBundles(): array
     {
         $collection = $this->createBundleCollection();
+
+        if(is_file($this->getProjectDir().'/config/bundles.php')) {
+            $flexBundles = [];
+            array_push($flexBundles, ...$this->microKernelRegisterBundles());
+            $collection->addBundles($flexBundles);
+        }
 
         // core bundles (Symfony, Pimcore)
         $this->registerCoreBundlesToCollection($collection);
