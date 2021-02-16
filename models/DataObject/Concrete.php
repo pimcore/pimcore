@@ -26,12 +26,13 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
  * @method \Pimcore\Model\Version getLatestVersion()
  */
-class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
+class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
@@ -129,13 +130,13 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         if ($this->getClass()->getAllowInherit()) {
                             //try again with parent data when inheritance is activated
                             try {
-                                $getInheritedValues = AbstractObject::doGetInheritedValues();
-                                AbstractObject::setGetInheritedValues(true);
+                                $getInheritedValues = DataObject::doGetInheritedValues();
+                                DataObject::setGetInheritedValues(true);
 
                                 $value = $this->$getter();
                                 $fd->checkValidity($value, $omitMandatoryCheck);
 
-                                AbstractObject::setGetInheritedValues($getInheritedValues);
+                                DataObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
@@ -732,12 +733,12 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function save()
     {
-        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+        $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
         // if the class is newer then better disable the dirty detection. This should fix issues with the query table if
         // the inheritance enabled flag has been changed in the meantime
         if ($this->getClass()->getModificationDate() >= $this->getModificationDate() && $this->getId()) {
-            AbstractObject::disableDirtyDetection();
+            DataObject::disableDirtyDetection();
         }
         try {
             $params = [];
@@ -750,7 +751,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $this->resetDirtyMap();
             }
         } finally {
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
 
         return $this;

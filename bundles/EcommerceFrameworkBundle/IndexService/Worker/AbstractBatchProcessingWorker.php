@@ -22,7 +22,7 @@ use Pimcore\Event\Ecommerce\IndexServiceEvents;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
 use Pimcore\Logger;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 
@@ -155,7 +155,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
         }
 
-        $virtualProduct = AbstractObject::getById($virtualProductId);
+        $virtualProduct = DataObject::getById($virtualProductId);
         if ($virtualProduct && method_exists($virtualProduct, 'isActive')) {
             $virtualProductActive = $virtualProduct->isActive();
         }
@@ -198,11 +198,11 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $insertData = [];
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
-                $b = AbstractObject::doGetInheritedValues();
+                $b = DataObject::doGetInheritedValues();
                 \Pimcore::unsetAdminMode();
-                AbstractObject::setGetInheritedValues(true);
-                $hidePublishedMemory = AbstractObject::doHideUnpublished();
-                AbstractObject::setHideUnpublished(false);
+                DataObject::setGetInheritedValues(true);
+                $hidePublishedMemory = DataObject::doHideUnpublished();
+                DataObject::setHideUnpublished(false);
                 $getFallbackLanguagesMemory = Localizedfield::getGetFallbackValues();
                 Localizedfield::setGetFallbackValues(true);
 
@@ -261,8 +261,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }
-                AbstractObject::setGetInheritedValues($b);
-                AbstractObject::setHideUnpublished($hidePublishedMemory);
+                DataObject::setGetInheritedValues($b);
+                DataObject::setHideUnpublished($hidePublishedMemory);
                 Localizedfield::setGetFallbackValues($getFallbackLanguagesMemory);
 
                 $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);

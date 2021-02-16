@@ -234,10 +234,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         if ($condition) {
-            if (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+            if (DataObject::doHideUnpublished() && !$this->model->getUnpublished()) {
                 $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
             }
-        } elseif (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+        } elseif (DataObject::doHideUnpublished() && !$this->model->getUnpublished()) {
             $condition = $tableName . '.o_published = 1';
         }
 

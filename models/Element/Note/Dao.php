@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             } elseif ($type == 'object') {
                 if ($data) {
-                    $data = DataObject\AbstractObject::getById($data);
+                    $data = DataObject::getById($data);
                 }
             } elseif ($type == 'date') {
                 if ($data > 0) {

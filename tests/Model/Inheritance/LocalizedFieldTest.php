@@ -3,7 +3,7 @@
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Db;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -61,9 +61,9 @@ class LocalizedFieldTest extends ModelTestCase
         $id2 = $two->getId();
         $id3 = $three->getId();
 
-        $one = AbstractObject::getById($id1);
-        $two = AbstractObject::getById($id2);
-        $three = AbstractObject::getById($id3);
+        $one = DataObject::getById($id1);
+        $two = DataObject::getById($id2);
+        $three = DataObject::getById($id3);
 
         $three->delete();
 
@@ -80,7 +80,7 @@ class LocalizedFieldTest extends ModelTestCase
         $two->setInput(null, 'de');
         $two->save();
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals('parenttextDE', $two->getInput('de'));
 
         $list = new Inheritance\Listing();
@@ -93,7 +93,7 @@ class LocalizedFieldTest extends ModelTestCase
         // set it back
         $two->setInput('childtextDE', 'de');
         $two->save();
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
 
         $list = new Inheritance\Listing();
         $list->setCondition("input LIKE '%parenttext%'");
@@ -109,14 +109,14 @@ class LocalizedFieldTest extends ModelTestCase
         $listItems = $list->load();
         $this->assertEquals(1, count($listItems), 'Expected one list item for de');
 
-        $getInheritedValues = AbstractObject::getGetInheritedValues();
-        AbstractObject::setGetInheritedValues(false);
+        $getInheritedValues = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(false);
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals(null, $two->getInput('en'));
         $this->assertEquals('childtextDE', $two->getInput('de'));
 
-        AbstractObject::setGetInheritedValues($getInheritedValues);
+        DataObject::setGetInheritedValues($getInheritedValues);
 
         // now move it out
 
@@ -138,7 +138,7 @@ class LocalizedFieldTest extends ModelTestCase
         $one->setInput('parenttextEN2', 'en');
         $one->save();
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals('parenttextEN2', $two->getInput('en'));
 
         // now turn inheritance off
@@ -146,14 +146,14 @@ class LocalizedFieldTest extends ModelTestCase
         $class->setAllowInherit(false);
         $class->save();
 
-        $one = AbstractObject::getById($id2);
-        $two = AbstractObject::getById($id2);
+        $one = DataObject::getById($id2);
+        $two = DataObject::getById($id2);
 
         // save both objects again
         $one->save();
         $two->save();
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals(null, $two->getInput('en'));
 
         $list = new Inheritance\Listing();

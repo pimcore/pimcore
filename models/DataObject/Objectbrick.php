@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
@@ -187,9 +188,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
                     //check if parent object has brick, and if so, create an empty brick to enable inheritance
                     $parentBrick = null;
-                    $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
-                    AbstractObject::setGetInheritedValues(true);
-                    if (AbstractObject::doGetInheritedValues($object)) {
+                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
+                    DataObject::setGetInheritedValues(true);
+                    if (DataObject::doGetInheritedValues($object)) {
                         try {
                             $container = $object->getValueFromParent($this->fieldname);
                             if (!empty($container)) {
@@ -199,7 +200,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             // no data from parent available, continue ...
                         }
                     }
-                    AbstractObject::setGetInheritedValues($inheritanceModeBackup);
+                    DataObject::setGetInheritedValues($inheritanceModeBackup);
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
@@ -215,9 +216,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             } else {
                 if ($brick == null) {
                     $parentBrick = null;
-                    $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
-                    AbstractObject::setGetInheritedValues(true);
-                    if (AbstractObject::doGetInheritedValues($object)) {
+                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
+                    DataObject::setGetInheritedValues(true);
+                    if (DataObject::doGetInheritedValues($object)) {
                         try {
                             $container = $object->getValueFromParent($this->fieldname);
                             if (!empty($container)) {
@@ -227,7 +228,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             // no data from parent available, continue ...
                         }
                     }
-                    AbstractObject::setGetInheritedValues($inheritanceModeBackup);
+                    DataObject::setGetInheritedValues($inheritanceModeBackup);
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
@@ -384,10 +385,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             $context['fieldname'] = $field;
             $params['context'] = $context;
 
-            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-            AbstractObject::disableDirtyDetection();
+            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::disableDirtyDetection();
             $data = $fieldDef->load($this->$brick, $params);
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
             $item->setObjectVar($field, $data);
             $item->markLazyKeyAsLoaded($field);

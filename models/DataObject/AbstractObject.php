@@ -182,6 +182,13 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_versionCount = 0;
 
+    private static function checkIfDeprecatedStaticCall($calledClass, $method)
+    {
+        if(self::class === $calledClass) {
+            @trigger_error(sprintf('Calling static methods on %s is deprecated, please use %s instead.', self::class, str_replace(self::class, DataObject::class, $method)), E_USER_DEPRECATED);
+        }
+    }
+
     /**
      * @static
      *
@@ -189,6 +196,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getHideUnpublished()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$hideUnpublished;
     }
 
@@ -199,6 +208,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setHideUnpublished($hideUnpublished)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$hideUnpublished = $hideUnpublished;
     }
 
@@ -209,6 +220,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doHideUnpublished()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$hideUnpublished;
     }
 
@@ -219,6 +232,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setGetInheritedValues($getInheritedValues)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$getInheritedValues = $getInheritedValues;
     }
 
@@ -229,6 +244,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getGetInheritedValues()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$getInheritedValues;
     }
 
@@ -241,6 +258,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doGetInheritedValues(Concrete $object = null)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         if (self::$getInheritedValues && $object !== null) {
             $class = $object->getClass();
 
@@ -257,6 +276,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTypes()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$types;
     }
 
@@ -270,6 +291,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
@@ -335,10 +358,12 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         $path = Model\Element\Service::correctPath($path);
 
         try {
-            $object = new self();
+            $object = new static();
             $object->getDao()->getByPath($path);
 
             return static::getById($object->getId(), $force);
@@ -356,6 +381,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getList($config = [])
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         $className = DataObject::class;
         // get classname
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
@@ -391,6 +418,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         $list = static::getList($config);
         $count = $list->getTotalCount();
 
@@ -746,7 +775,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
-            $parent = AbstractObject::getById($this->getParentId());
+            $parent = DataObject::getById($this->getParentId());
 
             if ($parent) {
                 // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
@@ -770,7 +799,7 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         if (Service::pathExists($this->getRealFullPath())) {
-            $duplicate = AbstractObject::getByPath($this->getRealFullPath());
+            $duplicate = DataObject::getByPath($this->getRealFullPath());
             if ($duplicate instanceof self && $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
             }
@@ -841,6 +870,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function clearDependentCacheByObjectId($objectId, $additionalTags = [])
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         if (!$objectId) {
             throw new \Exception('object ID missing');
         }
@@ -1147,7 +1178,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function getParent()
     {
         if ($this->o_parent === null) {
-            $this->setParent(AbstractObject::getById($this->getParentId()));
+            $this->setParent(DataObject::getById($this->getParentId()));
         }
 
         return $this->o_parent;
@@ -1272,7 +1303,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         if ($this->isInDumpState() && !self::$doNotRestoreKeyAndPath) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
-            $originalElement = AbstractObject::getById($this->getId());
+            $originalElement = DataObject::getById($this->getId());
             if ($originalElement) {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getRealPath());
@@ -1345,6 +1376,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doNotRestoreKeyAndPath()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$doNotRestoreKeyAndPath;
     }
 
@@ -1353,6 +1386,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setDoNotRestoreKeyAndPath($doNotRestoreKeyAndPath)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$doNotRestoreKeyAndPath = $doNotRestoreKeyAndPath;
     }
 
@@ -1396,6 +1431,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function isDirtyDetectionDisabled()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         return self::$disableDirtyDetection;
     }
 
@@ -1404,6 +1441,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection)
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::$disableDirtyDetection = $disableDirtyDetection;
     }
 
@@ -1412,6 +1451,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function disableDirtyDetection()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::setDisableDirtyDetection(true);
     }
 
@@ -1420,6 +1461,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function enableDirtyDetection()
     {
+        self::checkIfDeprecatedStaticCall(get_called_class(), __METHOD__);
+
         self::setDisableDirtyDetection(false);
     }
 
@@ -1489,5 +1532,3 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_siblings = [];
     }
 }
-
-class_alias(AbstractObject::class, 'Pimcore\\Model\\DataObject');

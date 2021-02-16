@@ -98,7 +98,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         if ($context == PimcoreContextResolver::CONTEXT_ADMIN || $context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
-            DataObject\AbstractObject::setHideUnpublished(false);
+            DataObject::setHideUnpublished(false);
 
             if ($context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
                 DataObject\AbstractObject::setGetInheritedValues(filter_var($request->get('inheritance'), FILTER_VALIDATE_BOOLEAN));
@@ -107,8 +107,8 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         } else {
             \Pimcore::unsetAdminMode();
             Document::setHideUnpublished(true);
-            DataObject\AbstractObject::setHideUnpublished(true);
-            DataObject\AbstractObject::setGetInheritedValues(true);
+            DataObject::setHideUnpublished(true);
+            DataObject::setGetInheritedValues(true);
             DataObject\Localizedfield::setGetFallbackValues(true);
         }
     }

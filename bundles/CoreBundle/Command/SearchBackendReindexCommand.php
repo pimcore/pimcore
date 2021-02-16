@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search;
 use Symfony\Component\Console\Input\InputInterface;
@@ -55,9 +55,9 @@ class SearchBackendReindexCommand extends AbstractCommand
 
             if (method_exists($list, 'setObjectTypes')) {
                 $list->setObjectTypes([
-                    AbstractObject::OBJECT_TYPE_OBJECT,
-                    AbstractObject::OBJECT_TYPE_FOLDER,
-                    AbstractObject::OBJECT_TYPE_VARIANT,
+                    DataObject::OBJECT_TYPE_OBJECT,
+                    DataObject::OBJECT_TYPE_FOLDER,
+                    DataObject::OBJECT_TYPE_VARIANT,
                 ]);
             }
 
