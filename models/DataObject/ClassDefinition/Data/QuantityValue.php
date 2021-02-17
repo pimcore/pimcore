@@ -677,15 +677,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $obj = parent::__set_state($data);
 
-        //@TODO Implement a decent solution to take column type changes for class updates.
-        $columnType = $obj->getColumnType();
-        $columnType['unit'] = 'varchar(50)';
-        $obj->setColumnType($columnType);
-
-        $queryColumnType = $obj->getQueryColumnType();
-        $queryColumnType['unit'] = 'varchar(50)';
-        $obj->setQueryColumnType($queryColumnType);
-
         $obj->configureOptions();
 
         return $obj;

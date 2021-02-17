@@ -300,6 +300,14 @@ class ClassDefinition extends Model\AbstractModel
             unset($data->fieldDefinitionsCache);
         }
 
+        if (isset($data->columnType)) {
+            unset($data->columnType);
+        }
+
+        if (isset($data->queryColumnType)) {
+            unset($data->queryColumnType);
+        }
+
         if (method_exists($data, 'getChildren')) {
             $children = $data->getChildren();
             if (is_array($children)) {
