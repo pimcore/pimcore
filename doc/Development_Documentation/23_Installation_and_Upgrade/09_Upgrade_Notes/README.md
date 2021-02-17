@@ -45,8 +45,48 @@
   - `CancelPaymentOrRecreateOrderStrategy` is now default strategy for handling active payments 
   - Removed method `isCartReadOnly` from cart and `cart_readonly_mode` configuration option as readonly mode 
     does not exist anymore.
+- [Email & Newsletter] Swiftmailer has been replaced with Symfony Mailer. `\Pimcore\Mail` class now extends from `Symfony\Component\Mime\Email` and new mailer service `Pimcore\Mail\Mailer` has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
 
+    Email method and transport setting has been removed from System settings. Cleanup Swiftmailer config and setup mailer transports "main" & "newsletter" in config.yaml:
+    ```yaml
+    framework:
+        mailer:
+            transports:
+                main: smtp://user:pass@smtp.example.com:port
+                pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+    ```
+    please see [Symfony Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for more information.
+    
+    API changes:
+    
+    Before:
+    ```php
+        $mail = new \Pimcore\Mail($subject = null, $body = null, $contentType = null, $charset = null);
+        $mail->setBodyText("This is just plain text");
+        $mail->setBodyHtml("<b>some</b> rich text: {{ myParam }}");
+        ...
+    ```
+    After:
+    ```php
+        $mail= new \Pimcore\Mail($headers = null, $body = null, $contentType = null);
+        $mail->setTextBody("This is just plain text");
+        $mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
+        ...
+    ```
 
+    Before:
+    ```php
+      $mail->setFrom($emailAddress, $name);
+      $mail->setTo($emailAddress, $name);
+      ...
+    ```
+      
+    After:
+    ```php
+      $mail->from(new \Symfony\Component\Mime\Address($emailAddress, $name));
+      $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
+      ...
+    ```
     
 ## 6.9.0
 - Abstract method `load` will be added to `Pimcore\Model\Listing\Dao\AbstractDao` in Pimcore 10

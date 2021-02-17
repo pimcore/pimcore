@@ -758,7 +758,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @throws \Exception
      */
-    public static function buildChildElementTagName(string $name, string $type, array $parentBlockNames, int $index): string
+    public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
     {
         if (count($parentBlockNames) === 0) {
             throw new \Exception(sprintf(

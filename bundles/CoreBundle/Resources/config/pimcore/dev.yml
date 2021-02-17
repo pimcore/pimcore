@@ -1,6 +1,5 @@
 framework:
     router:
-        resource: "%kernel.project_dir%/config/packages/dev/routes.yaml"
         strict_requirements: true
     profiler: { only_exceptions: false }
 

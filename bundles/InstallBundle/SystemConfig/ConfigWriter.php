@@ -93,30 +93,6 @@ class ConfigWriter
                 'login_screen_custom_image' => '',
             ],
         ],
-        'swiftmailer' => [
-            'mailers' => [
-                'pimcore_mailer' => [
-                    'transport' => 'sendmail',
-                    'delivery_addresses' => [],
-                    'host' => '',
-                    'username' => '',
-                    'password' => '',
-                    'port' => '',
-                    'encryption' => null,
-                    'auth_mode' => null,
-                ],
-                'newsletter_mailer' => [
-                    'transport' => 'sendmail',
-                    'delivery_addresses' => [],
-                    'host' => '',
-                    'username' => '',
-                    'password' => '',
-                    'port' => '',
-                    'encryption' => null,
-                    'auth_mode' => null,
-                ],
-            ],
-        ],
     ];
 
     public function __construct(array $defaultConfig = null)

@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.object.fieldcollections.field");
 pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'fieldcollection',
-    disallowedDataTypes: ["reverseManyToManyObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
+    disallowedDataTypes: ["reverseObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
         "advancedManyToManyObjectRelation"],
 
     uploadRoute: 'pimcore_admin_dataobject_class_importfieldcollection',

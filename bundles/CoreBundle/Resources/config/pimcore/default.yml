@@ -8,7 +8,6 @@ framework:
     serializer:
         enabled: true
     router:
-        resource: "%kernel.project_dir%/config/routes.yaml"
         strict_requirements: ~
     form: ~
     csrf_protection: ~
@@ -23,6 +22,8 @@ framework:
     php_errors:
         log: true
     assets: ~
+    mailer:
+        enabled: true
 
 # Twig Configuration
 twig:
@@ -134,7 +135,7 @@ pimcore:
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
-                    reverseManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation
+                    reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
@@ -471,8 +472,6 @@ pimcore:
             movie: 'video/x-sgi-movie'
             ice: 'x-conference/x-cooltalk'
 
-swiftmailer:
-    default_mailer: pimcore_mailer
 
 presta_sitemap:
     # override default dump_directory from public to web
