@@ -259,17 +259,17 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         $normalizedId = $id;
-        if (isset($parameters['%count%'])) {
+        if (isset($parameters['%count%']) && $translated) {
             $normalizedId = $id = $translated;
         }
 
-        $lookForFallback = $normalizedId == $translated;
+        $lookForFallback = empty($translated);
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
-                if ($translated != $normalizedId) {
+                if ($normalizedId != $translated && $translated) {
                     return $translated;
                 }
             } elseif (Translation::isAValidDomain($domain)) {
@@ -329,7 +329,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             }
         }
 
-        return $translated;
+        return !empty($translated) ? $translated : $id;
     }
 
     /**
