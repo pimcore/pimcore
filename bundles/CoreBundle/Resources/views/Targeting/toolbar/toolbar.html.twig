@@ -170,7 +170,7 @@
 
                                     <tr class="_ptgtb__table__row-with-details">
                                         <td>
-                                            {{ toolbar.trigger_label(assignment.document.path|truncate(32), '#' ~ rowIdentifier, [], { title: assignment.document.path }) }}
+                                            {{ toolbar.trigger_label(assignment.document.path|u.truncate(32), '#' ~ rowIdentifier, [], { title: assignment.document.path }) }}
                                         </td>
                                         <td class="_ptgtb__table__col-right">
                                             {{ toolbar.label(assignment.targetGroup.name, ['_ptgtb__label--target-group']) }}
