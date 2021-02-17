@@ -43,14 +43,16 @@ class TranslatorTest extends TestCase
         'en' => [
             'simple_key' => 'EN Text',
             'Text As Key' => 'EN Text',
+            'text_params' => 'Text with %Param1% and %Param2%',
             'count_key' => '%count% Count',
             'count_key_190' => 'This is a translated text generated from translator service, using count parameter to be replaced from passed parameters and having %count% characters to test text greater than 190 characters.',
             'case_key' => 'Lower Case Key',
-            'CASE_KEY' => 'Upper Case Key'
+            'CASE_KEY' => 'Upper Case Key',
         ],
         'de' => [
             'simple_key' => 'DE Text',
             'Text As Key' => '',
+            'text_params' => '',
             'count_key' => '',
         ],
         'fr' => [
@@ -127,6 +129,39 @@ class TranslatorTest extends TestCase
         //Returns Key value (no translation + no fallback)
 //        $this->translator->setLocale('fr');
 //        $this->assertEquals('Text As Key', $this->translator->trans('Text As Key'));
+    }
+
+    public function testTranslateTextWithParams()
+    {
+        //Returns Translated value with params value
+        $this->translator->setLocale('en');
+        $this->assertEquals(
+            strtr($this->translations['en']['text_params'],
+                [   '%Param1%' => 'First Parameter',
+                    '%Param2%' => 'Second Parameter'
+                ]
+            ),
+            $this->translator->trans('text_params',
+                [   '%Param1%' => 'First Parameter',
+                    '%Param2%' => 'Second Parameter'
+                ]
+            )
+        );
+
+        //Returns Fallback("en") value with params value
+        $this->translator->setLocale('de');
+        $this->assertEquals(
+            strtr($this->translations['en']['text_params'],
+                [   '%Param1%' => 'First Parameter',
+                    '%Param2%' => 'Second Parameter'
+                ]
+            ),
+            $this->translator->trans('text_params',
+                [   '%Param1%' => 'First Parameter',
+                    '%Param2%' => 'Second Parameter'
+                ]
+            )
+        );
     }
 
     public function testTranslateWithCountParam()
