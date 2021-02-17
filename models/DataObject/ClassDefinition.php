@@ -296,16 +296,17 @@ class ClassDefinition extends Model\AbstractModel
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
-        }
+        if (method_exists($data, 'resolveBlockedVars')) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
 
-        if (isset($data->columnType)) {
-            unset($data->columnType);
-        }
-
-        if (isset($data->queryColumnType)) {
-            unset($data->queryColumnType);
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {

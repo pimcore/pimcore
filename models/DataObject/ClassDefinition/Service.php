@@ -54,12 +54,17 @@ class Service
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
-        if (property_exists($layout, 'columnType')) {
-            unset($layout->columnType);
-        }
+        if (method_exists($layout, 'resolveBlockedVars')) {
+            $blockedVars = $layout->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($layout->{$blockedVar})) {
+                    unset($layout->{$blockedVar});
+                }
+            }
 
-        if (property_exists($layout, 'queryColumnType')) {
-            unset($layout->queryColumnType);
+            if (isset($layout->blockedVarsForExport)) {
+                unset($layout->blockedVarsForExport);
+            }
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -260,8 +265,6 @@ class Service
             /** @var LoaderInterface $loader */
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
-            self::cleanupForImport($array);
-
             if ($loader->supports($array['fieldtype'])) {
                 /** @var Data|Layout $item */
                 $item = $loader->build($array['fieldtype']);
@@ -292,6 +295,12 @@ class Service
                         }
                     }
                 } else {
+                    //for BC reasons
+                    $blockedVars = [];
+                    if (method_exists($item, 'resolveBlockedVars')) {
+                        $blockedVars = $item->resolveBlockedVars();
+                    }
+                    self::removeDynamicOptionsFromArray($array, $blockedVars);
                     $item->setValues($array);
 
                     if ($item instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -310,16 +319,15 @@ class Service
     }
 
     /**
-     * @param array $data
+     * @param mixed $data
+     * @param array $blockedVars
      */
-    public static function cleanupForImport(&$data)
+    public static function removeDynamicOptionsFromArray(&$data, $blockedVars)
     {
-        if (isset($data['columnType'])) {
-            unset($data['columnType']);
-        }
-
-        if (isset($data['queryColumnType'])) {
-            unset($data['queryColumnType']);
+        foreach ($blockedVars as $blockedVar) {
+            if (isset($data[$blockedVar])) {
+                unset($data[$blockedVar]);
+            }
         }
     }
 

@@ -793,8 +793,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport'
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }

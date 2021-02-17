@@ -19,6 +19,25 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 trait VarExport
 {
     /**
+     * @var array
+     */
+    protected $blockedVarsForExport = [];
+
+    /**
+     * @return array
+     */
+    public function resolveBlockedVars()
+    {
+        $defaultBlockedVars = [
+            'fieldDefinitionsCache',
+            'columnType',
+            'queryColumnType',
+        ];
+
+        return array_merge($defaultBlockedVars, $this->blockedVarsForExport);
+    }
+
+    /**
      * @param array $data
      *
      * @return static
