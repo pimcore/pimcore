@@ -159,7 +159,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $treeNodes = [];
         if (!empty($groups)) {
-            $types  = array_column($groups, 'type');
+            $types = array_column($groups, 'type');
             array_multisort($types, SORT_ASC, array_keys($groups), SORT_ASC, $groups);
         }
 
