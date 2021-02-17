@@ -38,6 +38,8 @@ class Service
     public static function generateClassDefinitionJson($class)
     {
         $class = clone $class;
+        self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+
         $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
@@ -45,13 +47,21 @@ class Service
         unset($data->userModification);
         unset($data->fieldDefinitions);
 
-        self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
+
 
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
+        if (property_exists($layout, 'columnType')) {
+            unset($layout->columnType);
+        }
+
+        if (property_exists($layout, 'queryColumnType')) {
+            unset($layout->queryColumnType);
+        }
+
         if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
@@ -250,6 +260,8 @@ class Service
             /** @var LoaderInterface $loader */
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
+            self::cleanupForImport($array);
+
             if ($loader->supports($array['fieldtype'])) {
                 /** @var Data|Layout $item */
                 $item = $loader->build($array['fieldtype']);
@@ -295,6 +307,20 @@ class Service
         }
 
         return false;
+    }
+
+    /**
+     * @param array $data
+     */
+    public static function cleanupForImport(&$data)
+    {
+        if (isset($data['columnType'])) {
+            unset($data['columnType']);
+        }
+
+        if (isset($data['queryColumnType'])) {
+            unset($data['queryColumnType']);
+        }
     }
 
     /**
