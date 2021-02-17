@@ -19,8 +19,8 @@ namespace Pimcore\Tests\Unit\Translation;
 
 use Codeception\Util\Stub;
 use Pimcore\Model\Translation\Website;
-use Pimcore\Translation\Translator;
 use Pimcore\Tests\Test\TestCase;
+use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslatorTest extends TestCase
@@ -58,7 +58,7 @@ class TranslatorTest extends TestCase
         'fr' => [
             'simple_key' => 'FR Text',
             'Text As Key' => '',
-        ]
+        ],
     ];
 
     /**
@@ -95,7 +95,7 @@ class TranslatorTest extends TestCase
             foreach ($this->translations[$locale] as $transKey => $trans) {
                 $t = Website::getByKey($transKey);
                 if ($t instanceof Website) {
-                   $t->delete();
+                    $t->delete();
                 }
             }
         }
@@ -138,12 +138,12 @@ class TranslatorTest extends TestCase
         $this->assertEquals(
             strtr($this->translations['en']['text_params'],
                 [   '%Param1%' => 'First Parameter',
-                    '%Param2%' => 'Second Parameter'
+                    '%Param2%' => 'Second Parameter',
                 ]
             ),
             $this->translator->trans('text_params',
                 [   '%Param1%' => 'First Parameter',
-                    '%Param2%' => 'Second Parameter'
+                    '%Param2%' => 'Second Parameter',
                 ]
             )
         );
@@ -153,12 +153,12 @@ class TranslatorTest extends TestCase
         $this->assertEquals(
             strtr($this->translations['en']['text_params'],
                 [   '%Param1%' => 'First Parameter',
-                    '%Param2%' => 'Second Parameter'
+                    '%Param2%' => 'Second Parameter',
                 ]
             ),
             $this->translator->trans('text_params',
                 [   '%Param1%' => 'First Parameter',
-                    '%Param2%' => 'Second Parameter'
+                    '%Param2%' => 'Second Parameter',
                 ]
             )
         );
@@ -167,17 +167,17 @@ class TranslatorTest extends TestCase
     public function testTranslateWithCountParam()
     {
         $this->translator->setLocale('en');
-        $this->assertEquals('2 Count', $this->translator->trans('count_key',['%count%' => 2]));
+        $this->assertEquals('2 Count', $this->translator->trans('count_key', ['%count%' => 2]));
 
         //fallback
         $this->translator->setLocale('de');
-        $this->assertEquals('2 Count', $this->translator->trans('count_key',['%count%' => 2]));
+        $this->assertEquals('2 Count', $this->translator->trans('count_key', ['%count%' => 2]));
     }
 
     public function testTranslateLongerTextWithCountParam()
     {
         $this->translator->setLocale('en');
-        $this->assertEquals(strtr($this->translations['en']['count_key_190'], ['%count%' => 192]), $this->translator->trans('count_key_190',['%count%' => 192]));
+        $this->assertEquals(strtr($this->translations['en']['count_key_190'], ['%count%' => 192]), $this->translator->trans('count_key_190', ['%count%' => 192]));
     }
 
     public function testTranslateCaseSensitive()
@@ -196,5 +196,4 @@ class TranslatorTest extends TestCase
 
         $this->assertEquals($this->translations['en']['case_key'], $translator->trans('CASE_KEY'));
     }
-
 }

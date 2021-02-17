@@ -352,6 +352,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                 if ($fallbackValue && $normalizedId != $fallbackValue) {
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
                     $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain);
+
                     return strtr($fallbackValue, $parameters);
                 }
             }

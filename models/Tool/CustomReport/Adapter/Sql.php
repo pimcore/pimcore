@@ -36,7 +36,7 @@ class Sql extends AbstractAdapter
     {
         $db = Db::get();
 
-        if($fields === null) {
+        if ($fields === null) {
             $columns = $this->fullConfig->getColumnConfiguration();
             $fields = [];
             foreach ($columns as $column) {
