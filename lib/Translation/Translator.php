@@ -241,10 +241,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                             $translationKey = mb_strtolower($translationKey);
                         }
 
-                        if (empty($translationTerm)) {
-                            $translationTerm = $translationKey;
-                        }
-
                         $data[$translationKey] = $translationTerm;
                     }
                 }
@@ -294,17 +290,17 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $normalizedId = mb_strtolower($id);
         }
 
-        if (isset($parameters['%count%'])) {
+        if (isset($parameters['%count%']) && $translated) {
             $normalizedId = $id = $translated;
         }
 
-        $lookForFallback = $normalizedId == $translated;
+        $lookForFallback = empty($translated);
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
-                if ($translated != $normalizedId) {
+                if ($normalizedId != $translated && $translated) {
                     return $translated;
                 }
             } elseif ($backend = $this->getBackendForDomain($domain)) {
@@ -372,7 +368,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             }
         }
 
-        return $translated;
+        return !empty($translated) ? $translated : $id;
     }
 
     /**
