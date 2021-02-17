@@ -167,7 +167,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
-    public $generateTypeDeclarations = false;
+    public $generateTypeDeclarations = true;
 
     /**
      * @var bool

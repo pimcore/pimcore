@@ -57,7 +57,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @var bool
      */
-    public $generateTypeDeclarations = false;
+    public $generateTypeDeclarations = true;
 
     /**
      * @var Data[]
