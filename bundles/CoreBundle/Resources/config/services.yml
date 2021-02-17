@@ -40,6 +40,11 @@ services:
         tags:
             - { name: kernel.cache_warmer }
 
+    Pimcore\HttpKernel\CacheWarmer\PimcoreCoreCacheWarmer:
+        public: false
+        tags:
+            - { name: kernel.cache_warmer }
+
     Pimcore\Cache\Symfony\CacheClearer:
         public: true
 
