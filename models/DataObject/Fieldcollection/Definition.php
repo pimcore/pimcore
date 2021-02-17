@@ -156,7 +156,8 @@ class Definition extends Model\AbstractModel
         $definitionFile = $this->getDefinitionFile();
 
         if ($generateDefinitionFile) {
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
             DataObject\ClassDefinition::cleanupForExport($clone->layoutDefinitions);

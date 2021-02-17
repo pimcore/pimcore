@@ -586,8 +586,8 @@ class ClassDefinition extends Model\AbstractModel
                     'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
                 );
             }
-
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
 

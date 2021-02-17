@@ -1238,7 +1238,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $definition
+     * @param mixed $definition
      *
      * @return array
      */
