@@ -17,8 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Translation;
 
-use Codeception\Util\Stub;
-use Pimcore\Model\Translation\Website;
+use Pimcore\Model\Translation;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -64,7 +63,7 @@ class TranslatorTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -72,7 +71,7 @@ class TranslatorTest extends TestCase
         $this->addTranslations();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->removeTranslations();
         parent::tearDown();
@@ -82,7 +81,7 @@ class TranslatorTest extends TestCase
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {
-                $t = Website::getByKey($transKey, true);
+                $t = Translation::getByKey($transKey, Translation::DOMAIN_DEFAULT, true);
                 $t->addTranslation($locale, $trans ?? '');
                 $t->save();
             }
@@ -93,8 +92,8 @@ class TranslatorTest extends TestCase
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {
-                $t = Website::getByKey($transKey);
-                if ($t instanceof Website) {
+                $t = Translation::getByKey($transKey);
+                if ($t instanceof Translation) {
                     $t->delete();
                 }
             }
@@ -189,11 +188,5 @@ class TranslatorTest extends TestCase
 
         //Upper case key
         $this->assertEquals($this->translations['en']['CASE_KEY'], $this->translator->trans('CASE_KEY'));
-
-        // Case Insensitive
-        /** @var Translator $translator */
-        $translator = Stub::construct(Translator::class, [$this->translator, true]);
-
-        $this->assertEquals($this->translations['en']['case_key'], $translator->trans('CASE_KEY'));
     }
 }
