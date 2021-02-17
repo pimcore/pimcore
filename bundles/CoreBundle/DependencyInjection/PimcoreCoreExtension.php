@@ -411,6 +411,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     /**
      * Allows us to prepend/modify configurations of different extensions
+     *
      * @inheritDoc
      */
     public function prepend(ContainerBuilder $container)
@@ -421,7 +422,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             $this->setExtensionConfig($container, 'security', $securityConfigs);
         }*/
     }
-
 
     /**
      * Configure Adapter Factories

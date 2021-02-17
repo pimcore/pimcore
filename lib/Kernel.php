@@ -96,7 +96,6 @@ abstract class Kernel extends SymfonyKernel
         return PIMCORE_LOG_DIRECTORY;
     }
 
-
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -125,7 +124,6 @@ abstract class Kernel extends SymfonyKernel
             (require $path)($routes->withPath($path), $this);
         }
     }
-
 
     /**
      * {@inheritdoc}
@@ -246,7 +244,7 @@ abstract class Kernel extends SymfonyKernel
     {
         $collection = $this->createBundleCollection();
 
-        if(is_file($this->getProjectDir().'/config/bundles.php')) {
+        if (is_file($this->getProjectDir().'/config/bundles.php')) {
             $flexBundles = [];
             array_push($flexBundles, ...$this->microKernelRegisterBundles());
             $collection->addBundles($flexBundles);
