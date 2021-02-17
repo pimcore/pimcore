@@ -14,6 +14,8 @@
 
 namespace Pimcore\HttpKernel\CacheWarmer;
 
+use Pimcore\Bootstrap;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
@@ -34,6 +36,54 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     public function warmUp($cacheDir)
     {
         $classes = [];
+
+        $this->libraryClasses($classes);
+        $this->modelClasses($classes);
+        $this->dataObjectClasses($classes);
+
+        return $classes;
+    }
+
+    private function libraryClasses(array &$classes): void
+    {
+        $excludePattern = '@/lib/(Migrations|Maintenance|Sitemap|Workflow|Console|Composer|Translation/(Import|Export)|Image/Optimizer|DataObject/(GridColumnConfig|Import)|Test|Tool/Transliteration|(Pimcore|simple_html_dom)\.php)@';
+
+        $reflection = new \ReflectionClass(Bootstrap::class);
+        $dir = dirname($reflection->getFileName());
+
+        $this->getClassesFromDirectory($dir, $excludePattern, 'Pimcore', $classes);
+    }
+
+    private function modelClasses(array &$classes): void
+    {
+        $excludePattern = '@/models/(GridConfig|ImportConfig|Notification|Schedule|Tool/CustomReport|User|Workflow)@';
+
+        $reflection = new \ReflectionClass(Asset::class);
+        $dir = dirname($reflection->getFileName());
+
+        $this->getClassesFromDirectory($dir, $excludePattern, 'Pimcore\Model', $classes);
+    }
+
+    private function getClassesFromDirectory(string $dir, string $excludePattern, string $NSPrefix, array &$classes): void
+    {
+        $files = rscandir($dir);
+
+        foreach($files as $file) {
+            $file = str_replace(DIRECTORY_SEPARATOR, '/', $file);
+            if(is_file($file) && !preg_match($excludePattern, $file)) {
+                $className = preg_replace('@^' . preg_quote($dir, '@') . '@', $NSPrefix, $file);
+                $className = preg_replace('@\.php$@', '', $className);
+                $className = str_replace(DIRECTORY_SEPARATOR, '\\', $className);
+
+                if(class_exists($className)) {
+                    $classes[] = $className;
+                }
+            }
+        }
+    }
+
+    private function dataObjectClasses(array &$classes): void
+    {
 
         // load all data object classes
         $list = new DataObject\ClassDefinition\Listing();
@@ -66,7 +116,5 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
             $classes[] = $className;
         }
 
-
-        return $classes;
     }
 }
