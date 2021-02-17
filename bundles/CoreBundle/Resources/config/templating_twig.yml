@@ -74,8 +74,4 @@ services:
     # content was added (e.g. headTitle)
     Phive\Twig\Extensions\Deferred\DeferredExtension: ~
 
-    # provides truncate and wordwrap filters
-    Twig_Extensions_Extension_Text:
-        class: Twig_Extensions_Extension_Text
-
     Pimcore\Twig\Extension\AdminExtension: ~
