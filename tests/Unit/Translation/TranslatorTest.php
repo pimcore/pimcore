@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Translation;
 
-use Pimcore\Model\Translation\AbstractTranslation;
+use Codeception\Util\Stub;
 use Pimcore\Model\Translation\Website;
 use Pimcore\Translation\Translator;
 use Pimcore\Tests\Test\TestCase;
@@ -44,7 +44,9 @@ class TranslatorTest extends TestCase
             'simple_key' => 'EN Text',
             'Text As Key' => 'EN Text',
             'count_key' => '%count% Count',
-            'count_key_190' => 'This is a translated text generated from translator service, using count parameter to be replaced from passed parameters and having %count% characters to test text greater than 190 characters.'
+            'count_key_190' => 'This is a translated text generated from translator service, using count parameter to be replaced from passed parameters and having %count% characters to test text greater than 190 characters.',
+            'case_key' => 'Lower Case Key',
+            'CASE_KEY' => 'Upper Case Key'
         ],
         'de' => [
             'simple_key' => 'DE Text',
@@ -141,6 +143,23 @@ class TranslatorTest extends TestCase
     {
         $this->translator->setLocale('en');
         $this->assertEquals(strtr($this->translations['en']['count_key_190'], ['%count%' => 192]), $this->translator->trans('count_key_190',['%count%' => 192]));
+    }
+
+    public function testTranslateCaseSensitive()
+    {
+        // Case sensitive
+        $this->translator->setLocale('en');
+        //Lower case key
+        $this->assertEquals($this->translations['en']['case_key'], $this->translator->trans('case_key'));
+
+        //Upper case key
+        $this->assertEquals($this->translations['en']['CASE_KEY'], $this->translator->trans('CASE_KEY'));
+
+        // Case Insensitive
+        /** @var Translator $translator */
+        $translator = Stub::construct(Translator::class, [$this->translator, true]);
+
+        $this->assertEquals($this->translations['en']['case_key'], $translator->trans('CASE_KEY'));
     }
 
 }
