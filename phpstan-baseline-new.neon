@@ -1,6 +1,6 @@
 parameters:
 	ignoreErrors:
-		-
+        -
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
@@ -10,7 +10,7 @@ parameters:
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/DependencyInjection/Configuration.php
 
-		-
+        -
 			message: "#^Class Pimcore\\\\Model\\\\DataObject\\\\OfferToolOfferItem not found\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/DependencyInjection/Configuration.php
