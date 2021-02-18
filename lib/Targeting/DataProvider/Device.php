@@ -181,7 +181,7 @@ class Device implements DataProviderInterface
             'client' => $dd->getClient(),
             'device' => [
                 'type' => $dd->getDeviceName(),
-                'brand' => $dd->getBrand(),
+                'brand' => $dd->getBrandName(),
                 'model' => $dd->getModel(),
             ],
             'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
