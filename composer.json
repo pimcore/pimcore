@@ -74,7 +74,6 @@
     "pear/net_url2": "^2.2",
     "matomo/device-detector": "^4.0",
     "presta/sitemap-bundle": "^1.7 || ^2.1",
-    "ramsey/uuid": "^4.0",
     "sabre/dav": "^4.1.1",
     "sensio/framework-extra-bundle": "^6.1",
     "sensiolabs/ansi-to-html": "^1.1",
