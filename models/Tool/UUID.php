@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
+use Symfony\Component\Uid\Uuid as Uid;
 
 /**
  * @method \Pimcore\Model\Tool\UUID\Dao getDao()
@@ -139,8 +140,8 @@ class UUID extends Model\AbstractModel
         }
 
         // namespace originally used from \Ramsey\Uuid\Uuid::NAMESPACE_DNS
-        $namespace = \Symfony\Component\Uid\Uuid::fromString('6ba7b810-9dad-11d1-80b4-00c04fd430c8');
-        $uuid = \Symfony\Component\Uid\Uuid::v5($namespace, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
+        $namespace = Uid::fromString('6ba7b810-9dad-11d1-80b4-00c04fd430c8');
+        $uuid = Uid::v5($namespace, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
         $this->uuid = $uuid->toRfc4122();
 
         $this->getDao()->save();
