@@ -23,6 +23,9 @@ use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @deprecated
+ */
 class PiwikReportsProvider
 {
     /**
