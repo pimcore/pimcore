@@ -28,6 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
+ * @deprecated
  * @Route("/piwik")
  */
 class PiwikController extends ReportsControllerBase

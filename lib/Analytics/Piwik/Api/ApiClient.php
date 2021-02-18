@@ -25,6 +25,9 @@ use Pimcore\Http\ClientFactory;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * @deprecated
+ */
 class ApiClient
 {
     /**

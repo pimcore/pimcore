@@ -38,6 +38,7 @@ services:
             - '@Pimcore\Analytics\Piwik\Tracker'
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
             - '@templating.engine.delegating'
+        deprecated: 'The "%service_id%" service is deprecated.'
 
 
     #

@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @deprecated
+ */
 pimcore.registerNS("pimcore.report.piwik.settings");
 pimcore.report.piwik.settings = Class.create({
 
@@ -24,10 +27,14 @@ pimcore.report.piwik.settings = Class.create({
 
     getLayout: function () {
         this.panel = new Ext.FormPanel({
-            title: "Matomo/Piwik",
+            title: "Matomo/Piwik (Deprecated)",
             bodyStyle: "padding: 10px;",
             autoScroll: true,
             items: [
+                {
+                    xtype: 'container',
+                    html: "<b>DEPRECATED! Will be removed in Pimcore 10</b><br />"
+                },
                 {
                     xtype: "displayfield",
                     width: 670,
