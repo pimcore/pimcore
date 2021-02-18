@@ -83,6 +83,3 @@ pimcore_ecommerce_framework:
             tag_manager:
                 id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager
                 enabled: false
-            piwik:
-                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik
-                enabled: false

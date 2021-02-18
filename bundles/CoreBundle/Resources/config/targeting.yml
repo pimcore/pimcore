@@ -82,7 +82,6 @@ services:
             - [setCache, ['@Pimcore\Cache\Core\CoreCacheHandler']]
             - [setCachePool, ['@pimcore.cache.pool']]
 
-    Pimcore\Targeting\DataProvider\Piwik: ~
     Pimcore\Targeting\DataProvider\TargetingStorage: ~
 
     Pimcore\Targeting\Service\VisitedPagesCounter: ~
