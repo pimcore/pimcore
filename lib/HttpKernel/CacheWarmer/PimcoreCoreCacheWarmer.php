@@ -21,7 +21,6 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 {
-
     /**
      * @inheritDoc
      */
@@ -68,14 +67,14 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     {
         $files = rscandir($dir);
 
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $file = str_replace(DIRECTORY_SEPARATOR, '/', $file);
-            if(is_file($file) && !preg_match($excludePattern, $file)) {
+            if (is_file($file) && !preg_match($excludePattern, $file)) {
                 $className = preg_replace('@^' . preg_quote($dir, '@') . '@', $NSPrefix, $file);
                 $className = preg_replace('@\.php$@', '', $className);
                 $className = str_replace(DIRECTORY_SEPARATOR, '\\', $className);
 
-                if(class_exists($className)) {
+                if (class_exists($className)) {
                     $classes[] = $className;
                 }
             }
@@ -97,7 +96,6 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
             $classes[] = $listingClass;
         }
 
-
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
 
@@ -115,6 +113,5 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
             $classes[] = $className;
         }
-
     }
 }
