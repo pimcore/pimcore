@@ -35,6 +35,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterfac
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated
+ */
 class Piwik extends Tracker implements
     ProductViewInterface,
     CategoryPageViewInterface,

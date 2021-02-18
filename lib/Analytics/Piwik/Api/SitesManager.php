@@ -26,6 +26,8 @@ use Pimcore\Config\ReportConfigWriter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
+ * @deprecated
+ *
  * Exposes parts of the Piwik SitesManager API
  */
 class SitesManager

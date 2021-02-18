@@ -19,6 +19,9 @@ namespace Pimcore\Analytics\Piwik\Api\Exception;
 
 use Throwable;
 
+/**
+ * @deprecated
+ */
 class ApiException extends \RuntimeException
 {
     /**

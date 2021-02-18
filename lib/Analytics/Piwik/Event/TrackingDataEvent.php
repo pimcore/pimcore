@@ -22,6 +22,9 @@ use Pimcore\Analytics\Piwik\Config\Config;
 use Pimcore\Analytics\SiteId\SiteId;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * @deprecated
+ */
 class TrackingDataEvent extends Event
 {
     /**

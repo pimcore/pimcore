@@ -22,6 +22,9 @@ use Pimcore\Targeting\DataProvider\Piwik;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
+/**
+ * @deprecated
+ */
 class VisitedPageBefore implements ConditionInterface, DataProviderDependentInterface
 {
     /**

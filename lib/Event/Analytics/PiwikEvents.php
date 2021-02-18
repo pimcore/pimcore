@@ -14,6 +14,9 @@
 
 namespace Pimcore\Event\Analytics;
 
+/**
+ * @deprecated
+ */
 final class PiwikEvents
 {
     /**

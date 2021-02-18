@@ -19,6 +19,9 @@ namespace Pimcore\Analytics\Piwik\Api;
 
 use Pimcore\Analytics\Piwik\Config\Config;
 
+/**
+ * @deprecated
+ */
 class VisitorClient
 {
     /**
