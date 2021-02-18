@@ -72,7 +72,7 @@
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
     "ocramius/package-versions": "^2.1",
     "pear/net_url2": "^2.2",
-    "matomo/device-detector": "^3.9",
+    "matomo/device-detector": "^4.0",
     "presta/sitemap-bundle": "^1.7 || ^2.1",
     "ramsey/uuid": "^3.8",
     "sabre/dav": "^4.1.1",
