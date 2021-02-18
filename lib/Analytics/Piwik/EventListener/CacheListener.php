@@ -22,6 +22,9 @@ use Pimcore\Event\Admin\Report\SettingsEvent;
 use Pimcore\Event\Admin\ReportEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * @deprecated
+ */
 class CacheListener implements EventSubscriberInterface
 {
     /**

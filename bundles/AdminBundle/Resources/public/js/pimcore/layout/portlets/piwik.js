@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @deprecated
+ */
 pimcore.registerNS("pimcore.layout.portlets.piwik");
 pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
 

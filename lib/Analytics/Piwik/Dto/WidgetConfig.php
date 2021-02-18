@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Piwik\Dto;
 
+/**
+ * @deprecated
+ */
 final class WidgetConfig
 {
     /**

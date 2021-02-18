@@ -30,6 +30,9 @@ use Pimcore\Event\Analytics\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 
+/**
+ * @deprecated
+ */
 class Tracker extends AbstractTracker
 {
     const BLOCK_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
@@ -78,6 +81,10 @@ class Tracker extends AbstractTracker
         EventDispatcherInterface $eventDispatcher,
         Environment $twig
     ) {
+        @trigger_error(
+            'Piwik\Tracker has been deprecated and will be removed in Pimcore 10.',
+            E_USER_DEPRECATED
+        );
         parent::__construct($siteIdProvider);
 
         $this->configProvider = $configProvider;

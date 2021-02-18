@@ -24,6 +24,9 @@ use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * @deprecated
+ */
 class IndexSettingsListener implements EventSubscriberInterface
 {
     /**

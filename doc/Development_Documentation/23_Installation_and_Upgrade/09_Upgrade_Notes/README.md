@@ -108,6 +108,9 @@
 - `\Pimcore\Tool\Frontend::hasWebpSupport()` and all related `webp` methods have been deprecated and will be removed in Pimcore 10. 
 - Config option `pimcore.translations.case_insensitive` has been deprecated and will be removed in Pimcore 10. 
 
+- [Analytics] Matomo(Piwik) integration has been deprecated in Core and Ecommerce bundle, and will be removed in Pimcore 10.
+- [Targeting and Personalization] VisitedPageBefore condition has been deprecated, as it is based on deprecated Piwik integration and will be removed in Pimcore 10.
+
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
 Staticroutes and Document Types to the new controller references in the format: `AppBundle\Controller\FooController::barAction`.
