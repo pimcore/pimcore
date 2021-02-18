@@ -55,11 +55,8 @@ jobs:
             - name: "Generate baseline with phpstan/phpstan"
               run: "cat /home/runner/work/pimcore/pimcore/phpstan-baseline.neon"
 
-            - name: "Dump checked-in baseline"
-              run: "cat /home/runner/work/pimcore/pimcore/phpstan-baseline-new.neon"
-
-            - name: "Restore baseline"
-              run: "cp /home/runner/work/pimcore/pimcore/phpstan-baseline-new.neon /home/runner/work/pimcore/pimcore/phpstan-baseline.neon"
+            - name: "Remove baseline"
+              run: "echo -n > /home/runner/work/pimcore/pimcore/phpstan-baseline.neon"
 
             - name: "Run a static analysis with phpstan/phpstan"
               run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1"
