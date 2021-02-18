@@ -55,7 +55,7 @@ class ConsoleColorFormatter extends LineFormatter
      *
      * @param  array $record A record to format
      *
-     * @return mixed The formatted record
+     * @return string The formatted record
      */
     public function format(array $record): string
     {
