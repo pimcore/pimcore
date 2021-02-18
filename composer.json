@@ -56,7 +56,7 @@
     "doctrine/doctrine-bundle": "^2.2.1",
     "doctrine/doctrine-migrations-bundle": "^3.0.1",
     "doctrine/inflector": "^1.4.0 || ^2.0.0",
-    "egulias/email-validator": "^2.1.16",
+    "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^3.4.4",
     "friendsofsymfony/jsrouting-bundle": "^2.6",
     "geoip2/geoip2": "^2.9",
