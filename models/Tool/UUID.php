@@ -139,8 +139,7 @@ class UUID extends Model\AbstractModel
             throw new \Exception('No instance identifier specified.');
         }
 
-        // namespace originally used from \Ramsey\Uuid\Uuid::NAMESPACE_DNS
-        $namespace = Uid::fromString('6ba7b810-9dad-11d1-80b4-00c04fd430c8');
+        $namespace = Uid::fromString(Uid::NAMESPACE_DNS);
         $uuid = Uid::v5($namespace, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
         $this->uuid = $uuid->toRfc4122();
 
