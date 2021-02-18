@@ -37,7 +37,7 @@ services:
         arguments:
             - '@Pimcore\Analytics\Piwik\Tracker'
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-
+        deprecated: 'The "%service_id%" service is deprecated.'
 
 
     #

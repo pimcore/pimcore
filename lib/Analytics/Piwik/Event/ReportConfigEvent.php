@@ -20,6 +20,9 @@ namespace Pimcore\Analytics\Piwik\Event;
 use Pimcore\Analytics\Piwik\Dto\ReportConfig;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * @deprecated
+ */
 class ReportConfigEvent extends Event
 {
     /**

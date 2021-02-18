@@ -19,6 +19,9 @@ namespace Pimcore\Analytics\Piwik\Config;
 
 use Pimcore\Config\Config as ConfigObject;
 
+/**
+ * @deprecated
+ */
 class ConfigProvider
 {
     /**

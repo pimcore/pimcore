@@ -26,6 +26,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
+ * @deprecated
+ *
  * Builds a list of all available Piwik reports which should be shown in reports panel. A ReportConfig references an
  * iframe URL with a title. Additional reports can be added by adding them in the GENERATE_REPORTS event.
  */

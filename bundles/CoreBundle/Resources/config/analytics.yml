@@ -44,7 +44,8 @@ services:
     Pimcore\Analytics\Piwik\ReportBroker: ~
     Pimcore\Analytics\Piwik\WidgetBroker: ~
 
-    Pimcore\Analytics\Piwik\Tracker: ~
+    Pimcore\Analytics\Piwik\Tracker:
+        deprecated: ~
 
     Pimcore\Analytics\Piwik\EventListener\CacheListener: ~
     Pimcore\Analytics\Piwik\EventListener\IndexSettingsListener: ~

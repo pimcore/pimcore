@@ -1,4 +1,4 @@
-# Matomo (formerly known as Piwik)
+# [Deprecated] Matomo (formerly known as Piwik) 
 
 Similar to Google Analytics, a Matomo tracking code can be automatically injected into each response. For a basic tracking
 integration you need to know the following:

@@ -22,6 +22,9 @@ use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Event\Analytics\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * @deprecated
+ */
 class PiwikVisitorIdListener implements EventSubscriberInterface
 {
     /**

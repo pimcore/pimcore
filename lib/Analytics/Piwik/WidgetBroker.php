@@ -28,6 +28,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
+ * @deprecated
+ *
  * Fetches and caches available widget data (stored by site ID and language) from the
  * Piwik API. This is used to show a list of widgets inside the Pimcore admin and to
  * generate iframe URLs to single widgets.

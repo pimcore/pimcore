@@ -508,6 +508,12 @@ pimcore.settings.targeting.conditions = (function () {
                     {
                         xtype: "displayfield",
                         hideLabel: true,
+                        value: warningIconHtml + ' DEPRECATED! Will be removed in Pimcore 10',
+                        cls: "pimcore_extra_label"
+                    },
+                    {
+                        xtype: "displayfield",
+                        hideLabel: true,
                         value: warningIconHtml + t('targeting_condition_visited_page_before_piwik_data_warning'),
                         cls: "pimcore_extra_label"
                     }
