@@ -94,7 +94,7 @@
     "league/html-to-markdown": "^4.10.0",
     "matthiasmullie/minify": "^1.3",
     "webmozarts/console-parallelization": "^1.2.0",
-    "onnov/detect-encoding": "^1.2",
+    "onnov/detect-encoding": "^2.0",
     "knplabs/knp-paginator-bundle": "^5.4.2"
   },
   "conflict": {
