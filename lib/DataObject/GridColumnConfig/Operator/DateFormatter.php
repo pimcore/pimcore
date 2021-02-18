@@ -89,7 +89,7 @@ class DateFormatter extends AbstractOperator
     {
         $timestamp = null;
         if (is_int($theValue)) {
-            $timestamp = Carbon::createFromTimestamp($theValue);
+            $theValue = Carbon::createFromTimestamp($theValue);
         }
         if ($theValue instanceof Carbon) {
             $timestamp = $theValue->getTimestamp();
