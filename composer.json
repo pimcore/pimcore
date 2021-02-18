@@ -98,7 +98,6 @@
     "knplabs/knp-paginator-bundle": "^5.4.2"
   },
   "conflict": {
-    "monolog/monolog": ">=2",
     "symfony/monolog-bundle": "3.6.0",
     "thecodingmachine/safe": "<1.2.0"
   },

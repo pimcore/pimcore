@@ -42,7 +42,7 @@ class Mail extends MailHandler
      * @param string $content
      * @param array $records
      */
-    public function send($content, array $records)
+    public function send($content, array $records): void
     {
         $mail = Tool::getMail([$this->address], 'pimcore log notification');
         $mail->setIgnoreDebugMode(true);
