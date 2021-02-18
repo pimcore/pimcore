@@ -57,7 +57,7 @@ class ConsoleColorFormatter extends LineFormatter
      *
      * @return mixed The formatted record
      */
-    public function format(array $record)
+    public function format(array $record): string
     {
         $formatted = parent::format($record);
         $levelName = strtolower($record['level_name']);
