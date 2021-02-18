@@ -1,2 +1,6 @@
 parameters:
 	ignoreErrors:
+		-
+			message: "#^Class Pimcore\\\\Model\\\\DataObject\\\\OfferToolOffer not found\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/DependencyInjection/Configuration.php
