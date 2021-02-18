@@ -441,4 +441,11 @@ abstract class AbstractOrder extends Concrete
      * @return int|null
      */
     abstract public function getCartHash(): ?int;
+
+    /**
+     * Set cartHash - Cart Hash
+     * @param int|null $cartHash
+     * @return $this
+     */
+    abstract public function setCartHash ($cartHash);
 }
