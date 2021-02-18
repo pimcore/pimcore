@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Reports\Piwik\PiwikReportsProvider;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @deprecated
  * @Route("/reports/piwik")
  */
 class PiwikController extends AdminController
