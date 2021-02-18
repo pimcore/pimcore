@@ -138,7 +138,11 @@ class UUID extends Model\AbstractModel
             throw new \Exception('No instance identifier specified.');
         }
 
-        $this->uuid = (string) \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId())->toString();
+        // namespace originally used from \Ramsey\Uuid\Uuid::NAMESPACE_DNS
+        $namespace = \Symfony\Component\Uid\Uuid::fromString('6ba7b810-9dad-11d1-80b4-00c04fd430c8');
+        $uuid = \Symfony\Component\Uid\Uuid::v5($namespace, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
+        $this->uuid = $uuid->toRfc4122();
+
         $this->getDao()->save();
 
         return $this->uuid;
