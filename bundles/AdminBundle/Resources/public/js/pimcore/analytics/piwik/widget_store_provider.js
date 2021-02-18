@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @deprecated
+ */
 pimcore.registerNS("pimcore.analytics.piwik.WidgetStoreProvider");
 
 (function() {
