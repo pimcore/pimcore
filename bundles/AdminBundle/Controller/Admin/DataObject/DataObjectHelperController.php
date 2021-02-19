@@ -1803,6 +1803,7 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
