@@ -210,14 +210,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $fieldName;
     }
 
-    /**
-     * returns short field name based on full field name
-     * also considers subfield names like name.analyzed etc.
-     *
-     * @param string $fullFieldName
-     *
-     * @return false|int|string
-     */
+    /** @inheritDoc */
     public function getReverseMappedFieldName($fullFieldName)
     {
         //check for direct match of field name

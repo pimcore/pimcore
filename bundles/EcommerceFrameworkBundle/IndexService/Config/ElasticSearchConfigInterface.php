@@ -68,4 +68,14 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      * @return string
      */
     public function getFieldNameMapped($fieldName, $considerSubFieldNames = false);
+
+    /**
+     * returns short field name based on full field name
+     * also considers subfield names like name.analyzed etc.
+     *
+     * @param string $fullFieldName
+     *
+     * @return false|int|string
+     */
+    public function getReverseMappedFieldName($fullFieldName);
 }

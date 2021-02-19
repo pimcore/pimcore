@@ -34,6 +34,7 @@
   You can change that behavior with event listeners.
 - [Ecommerce] Added abstract method `setCartHash` to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder`  
 - [Ecommerce] Added `getFieldNameMapped` to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`
+- [Ecommerce] Added `getReverseMappedFieldName` to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`  
 - [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
 - [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
   activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
