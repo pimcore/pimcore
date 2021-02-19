@@ -40,7 +40,7 @@ class DefaultFindologic implements ProductListInterface
     protected $revision = '0.1';
 
     /**
-     * @var IndexableInterface[]
+     * @var IndexableInterface[]|null
      */
     protected $products = null;
 
@@ -87,7 +87,7 @@ class DefaultFindologic implements ProductListInterface
     /**
      * json result from findologic
      *
-     * @var string[]
+     * @var \SimpleXMLElement
      */
     protected $response;
 
@@ -97,7 +97,7 @@ class DefaultFindologic implements ProductListInterface
     protected $groupedValues;
 
     /**
-     * @var string[]
+     * @var string[][]
      */
     protected $conditions = [];
 
@@ -107,12 +107,12 @@ class DefaultFindologic implements ProductListInterface
     protected $queryConditions = [];
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceFrom = null;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceTo = null;
 
@@ -142,9 +142,9 @@ class DefaultFindologic implements ProductListInterface
     protected $timeout = 3;
 
     /**
-     * @param ConfigInterface $tenantConfig
+     * @param FindologicConfigInterface $tenantConfig
      */
-    public function __construct(ConfigInterface $tenantConfig)
+    public function __construct(FindologicConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
