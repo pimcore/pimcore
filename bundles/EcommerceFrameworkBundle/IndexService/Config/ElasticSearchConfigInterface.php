@@ -58,4 +58,14 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      * @return array|string
      */
     public function getClientConfig($property = null);
+
+    /**
+     * returns the full field name
+     *
+     * @param string $fieldName
+     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
+     *
+     * @return string
+     */
+    public function getFieldNameMapped($fieldName, $considerSubFieldNames = false);
 }

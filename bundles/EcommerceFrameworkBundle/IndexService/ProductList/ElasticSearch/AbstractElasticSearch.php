@@ -52,7 +52,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $tenantName;
 
     /**
-     * @var ElasticSearch
+     * @var ElasticSearchConfigInterface
      */
     protected $tenantConfig;
 
