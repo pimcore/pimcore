@@ -2,6 +2,7 @@
 
 ## 6.9.0
 - [Ecommerce] `getFieldNameMapped` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [Ecommerce] `getReverseMappedFieldName` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
 - Calling static methods on `Pimcore\Model\DataObject\AbstractObject` is deprecated, use `Pimcore\Model\DataObject` instead.
 - [Ecommerce] Abstract method `setCartHash` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
 - Abstract method `load` will be added to `Pimcore\Model\Listing\Dao\AbstractDao` in Pimcore 10
