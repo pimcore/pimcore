@@ -92,7 +92,7 @@ class DefaultFindologic implements ProductListInterface
     protected $response;
 
     /**
-     * @var string[]
+     * @var array<string,\stdClass>
      */
     protected $groupedValues;
 
