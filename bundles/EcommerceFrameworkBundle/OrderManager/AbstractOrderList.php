@@ -44,7 +44,7 @@ abstract class AbstractOrderList implements OrderListInterface
     protected $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator|null
      */
     protected $list;
 
@@ -187,7 +187,7 @@ abstract class AbstractOrderList implements OrderListInterface
     {
         $this->limit = (int)$limit;
         $this->offset = (int)$offset;
-        $this->list = new \ArrayIterator();
+        $this->list = null;
 
         return $this;
     }
