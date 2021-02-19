@@ -55,6 +55,9 @@ jobs:
             - name: "Generate baseline with phpstan/phpstan"
               run: "cat /home/runner/work/pimcore/pimcore/phpstan-baseline.neon"
 
+            - name: "Dump var/classes"
+              run: "ls /home/runner/work/pimcore/pimcore/var/classes"
+
             - name: "Dump checked-in baseline"
               run: "cat /home/runner/work/pimcore/pimcore/phpstan-baseline-new.neon"
 
