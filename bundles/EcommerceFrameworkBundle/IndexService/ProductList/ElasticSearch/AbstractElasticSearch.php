@@ -209,11 +209,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $this;
     }
 
-    /**
-     * Returns all products valid for this search
-     *
-     * @return IndexableInterface[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {

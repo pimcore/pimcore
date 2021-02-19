@@ -91,9 +91,7 @@ class DefaultMysql implements ProductListInterface
         $this->resource = new DefaultMysql\Dao($this, $this->logger);
     }
 
-    /**
-     * @return IndexableInterface[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {

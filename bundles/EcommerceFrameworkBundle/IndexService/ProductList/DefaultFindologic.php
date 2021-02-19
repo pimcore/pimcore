@@ -40,7 +40,7 @@ class DefaultFindologic implements ProductListInterface
     protected $revision = '0.1';
 
     /**
-     * @var IndexableInterface[]|null
+     * @var IndexableInterface[]
      */
     protected $products = null;
 
@@ -87,17 +87,17 @@ class DefaultFindologic implements ProductListInterface
     /**
      * json result from findologic
      *
-     * @var \SimpleXMLElement
+     * @var string[]
      */
     protected $response;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $groupedValues;
 
     /**
-     * @var string[][]
+     * @var string[]
      */
     protected $conditions = [];
 
@@ -107,12 +107,12 @@ class DefaultFindologic implements ProductListInterface
     protected $queryConditions = [];
 
     /**
-     * @var float|null
+     * @var float
      */
     protected $conditionPriceFrom = null;
 
     /**
-     * @var float|null
+     * @var float
      */
     protected $conditionPriceTo = null;
 
@@ -142,9 +142,9 @@ class DefaultFindologic implements ProductListInterface
     protected $timeout = 3;
 
     /**
-     * @param FindologicConfigInterface $tenantConfig
+     * @param ConfigInterface $tenantConfig
      */
-    public function __construct(FindologicConfigInterface $tenantConfig)
+    public function __construct(ConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -157,9 +157,7 @@ class DefaultFindologic implements ProductListInterface
         $this->referer = $_SERVER['HTTP_REFERER'];
     }
 
-    /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {
