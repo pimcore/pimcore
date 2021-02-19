@@ -1433,14 +1433,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $var = next($this->products);
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
-     */
+
+    /** @inheritDoc */
     public function rewind()
     {
         $this->getProducts();
