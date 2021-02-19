@@ -1426,20 +1426,11 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function next()
     {
         $this->getProducts();
         $var = next($this->products);
-
-        return $var;
     }
 
     /**
