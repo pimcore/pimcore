@@ -14,9 +14,14 @@
 
 namespace Pimcore\Image\Optimizer;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Product;
 use Pimcore\Exception\ImageOptimizationFailedException;
 use Pimcore\Tool\Console;
+use Symfony\Component\Process\Process;
 
+/**
+ * @ abstract protected function getCommand(string $executable, string $input, string $output): string;
+ */
 abstract class AbstractCommandOptimizer implements OptimizerInterface
 {
     /**
@@ -27,9 +32,16 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
         $executable = $this->getExecutable();
 
         if ($executable) {
-            $command = $this->getCommand($executable, $input, $output);
+            $command = $this->getCommandArray($executable, $input, $output);
 
-            Console::exec($command, null, 60);
+            if (empty($command)) {
+                $command = $this->getCommand($executable, $input, $output);
+                $process = Process::fromShellCommandline($command);
+            } else {
+                $process = new Process($command);
+            }
+
+            $process->run();
 
             if (file_exists($output) && filesize($output) > 0) {
                 return $output;
@@ -48,11 +60,26 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
     abstract protected function getExecutable(): string;
 
     /**
+     * @deprecated use getCommandArray() instead.
+     *
      * @param string $executable
      * @param string $input
      * @param string $output
      *
-     * @return string
+     * @return string|array
      */
     abstract protected function getCommand(string $executable, string $input, string $output): string;
+
+    /**
+     * @TODO make abstract in Pimcore 10
+     *
+     * @param string $executable
+     * @param string $input
+     * @param string $output
+     * @return array
+     */
+    protected function getCommandArray(string $executable, string $input, string $output): array
+    {
+        return [];
+    }
 }

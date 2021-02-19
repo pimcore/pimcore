@@ -16,6 +16,7 @@ namespace Pimcore\Tool;
 
 use Pimcore\Config;
 use Pimcore\Logger;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 class Console
@@ -109,13 +110,8 @@ class Console
                     $executablePath = $name;
                 }
 
-                $checkCmd = 'which ' . escapeshellarg($executablePath);
-                if (self::getSystemEnvironment() == 'windows') {
-                    $checkCmd = 'where ' . escapeshellarg($path) . ':' . $name;
-                }
-
-                $fullQualifiedPath = shell_exec($checkCmd . ' ' . $executablePath);
-                $fullQualifiedPath = trim(strtok($fullQualifiedPath, "\n")); // get the first line/result
+                $executableFinder = new ExecutableFinder();
+                $fullQualifiedPath = $executableFinder->find($executablePath);
                 if ($fullQualifiedPath) {
                     if (!$customCheckMethod || self::$customCheckMethod($executablePath)) {
                         self::$executableCache[$name] = $fullQualifiedPath;

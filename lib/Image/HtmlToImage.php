@@ -17,6 +17,7 @@ namespace Pimcore\Image;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\Process\Process;
 
 class HtmlToImage
 {
@@ -80,7 +81,9 @@ class HtmlToImage
             $command = self::getWkhtmltoimageBinary() . $arguments;
         }
 
-        Console::exec($command, PIMCORE_LOG_DIRECTORY . '/wkhtmltoimage.log', 60);
+        $command .= ' > '. PIMCORE_LOG_DIRECTORY . '/wkhtmltoimage.log' .' 2>&1';
+        $process = Process::fromShellCommandline($command);
+        $process->run();
 
         if (file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;
