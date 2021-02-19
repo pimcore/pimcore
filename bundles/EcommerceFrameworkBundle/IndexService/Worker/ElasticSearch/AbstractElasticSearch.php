@@ -430,14 +430,15 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
+            /** @var ElasticSearchConfigInterface $tenantConfig */
+            $tenantConfig = $this->getTenantConfig();
+
             if ($metadata !== null && $routingId != $metadata) {
                 //routing has changed, need to delete old ES entry
-                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $metadata]];
+                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $tenantConfig->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $metadata]];
             }
 
-            /** @var ElasticSearchConfigInterface $configInterface */
-            $configInterface = $this->getTenantConfig();
-            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $configInterface->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
+            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $tenantConfig->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
                 return $value !== null;
             }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
@@ -630,13 +631,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 throw new \Exception('Delete not possible due to product index lock. Please re-try later.');
             }
 
-            try {
-                /** @var ElasticSearchConfigInterface $configInterface */
-                $configInterface = $this->getTenantConfig();
+            /** @var ElasticSearchConfigInterface $tenantConfig */
+            $tenantConfig = $this->getTenantConfig();
 
+            try {
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
-                    'type' => $configInterface->getElasticSearchClientParams()['indexType'],
+                    'type' => $tenantConfig->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
                     $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
