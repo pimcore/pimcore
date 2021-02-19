@@ -421,7 +421,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return array|\Pimcore\Model\DataObject\AbstractObject
+     * @return array|IndexableInterface
      */
     protected function loadElementById($elementId)
     {
