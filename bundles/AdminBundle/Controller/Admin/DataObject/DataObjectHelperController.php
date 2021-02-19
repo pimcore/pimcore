@@ -23,6 +23,7 @@ use Pimcore\DataObject\Import\Resolver\ImportErrorException;
 use Pimcore\DataObject\Import\Resolver\ImportWarningException;
 use Pimcore\DataObject\Import\Service as ImportService;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\DataObjectImportEvents;
 use Pimcore\Event\Model\DataObjectImportEvent;
 use Pimcore\File;
@@ -39,6 +40,7 @@ use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -1804,12 +1806,20 @@ class DataObjectHelperController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getExportJobsAction(Request $request, GridHelperService $gridHelperService)
+    public function getExportJobsAction(Request $request, GridHelperService $gridHelperService, EventDispatcherInterface $eventDispatcher)
     {
         $requestedLanguage = $this->extractLanguage($request);
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $list = $gridHelperService->prepareListingForGrid($allParams, $requestedLanguage, $this->getAdminUser());
+
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $list,
+            'context' => $allParams,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+
+        $list = $beforeListLoadEvent->getArgument('list');
 
         $ids = $list->loadIdList();
 
