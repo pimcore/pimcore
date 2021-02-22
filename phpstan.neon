@@ -33,20 +33,20 @@ parameters:
         -
             message: '/ALPHACHANNEL_REMOVE/'
             path: '**/Imagick.php'
-        -
-            message: '/an undefined static method.*getParameter\(\)./'
-            path: '**/Controller/Controller.php'
-        -
-            message: '/NO_AUTO_CACHE_CONTROL_HEADER/'
-            path: '**/Controller/PublicServicesController.php'
-        -
-            message: '/__construct\(\) does not call parent constructor/'
-            path: '**/Migrations/Version.php'
-        - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
+        #-
+        #    message: '/an undefined static method.*getParameter\(\)./'
+        #    path: '**/Controller/Controller.php'
+        #-
+        #    message: '/NO_AUTO_CACHE_CONTROL_HEADER/'
+        #    path: '**/Controller/PublicServicesController.php'
+        #-
+        #    message: '/__construct\(\) does not call parent constructor/'
+        #    path: '**/Migrations/Version.php'
+        #- '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         # - '~^Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required\.\z~'
-        - '~^Unsafe usage of new static\(\)~'
-        - '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
-        - '~^Method Symfony\\Component\\Cache\\Adapter\\AdapterInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
+        #- '~^Unsafe usage of new static\(\)~'
+        #- '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
+        #- '~^Method Symfony\\Component\\Cache\\Adapter\\AdapterInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
