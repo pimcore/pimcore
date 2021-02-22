@@ -304,7 +304,9 @@ class WorkflowController extends AdminController implements EventedControllerInt
         ];
 
         $process = Process::fromShellCommandline($cmd);
-        return $process->run(null, $params);
+        $process->mustRun(null, $params);
+
+        return $process->getOutput();
     }
 
     /**

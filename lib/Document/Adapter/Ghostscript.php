@@ -148,9 +148,7 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        $process = new Process($this->buildPageCountCommand());
-        $process->setTimeout(120);
-        $pages = $process->run();
+        $pages = Console::exec($this->buildPageCountCommand(), null, 120);
         $pages = trim($pages);
 
         if (! is_numeric($pages)) {
@@ -161,20 +159,20 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return array
+     * @return string
      *
      * @throws \Exception
      */
     protected function buildPageCountCommand()
     {
-        $command = [self::getGhostscriptCli(), '-dNODISPLAY', '-q'];
+        $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            $command[] = '--permit-file-read=' . $this->path;
+            $command .= " --permit-file-read='" . $this->path . "'";
         }
 
-        $command []= "-c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
+        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
 
         return $command;
     }
@@ -213,7 +211,7 @@ class Ghostscript extends Adapter
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             }
 
-            $process = new Process([self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r' . $resolution, '-o ' . $path, $this->path]);
+            $process = Process::fromShellCommandline(self::getGhostscriptCli() . ' -sDEVICE=pngalpha -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
             $process->setTimeout(240);
             $process->run();
 
@@ -239,28 +237,25 @@ class Ghostscript extends Adapter
     {
         try {
             $path = $path ? $this->preparePath($path) : $this->path;
-            $cmd = [self::getPdftotextCli()];
+            $pageRange = '';
             $text = null;
 
             try {
                 // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript
                 if ($page) {
-                    array_push($cmd, ['-f ' . $page, '-l ' . $page]);
+                    $pageRange = '-f ' . $page . ' -l ' . $page . ' ';
                 }
-                $params[] = $path . '-';
-                $process = new Process($cmd);
+                $process = Process::fromShellCommandline(self::getPdftotextCli() . ' ' . $pageRange . escapeshellarg($path) . ' -');
                 $process->setTimeout(120);
                 $process->mustRun();
                 $text = $process->getOutput();
             } catch (ProcessFailedException $e) {
                 // pure ghostscript way
-                $cmd = [self::getPdftotextCli(), '-dBATCH', '-dNOPAUSE'];
                 if ($page) {
-                    array_push($cmd, ['-dFirstPage=' . $page, '-dLastPage=' . $page]);
+                    $pageRange = '-dFirstPage=' . $page . ' -dLastPage=' . $page . ' ';
                 }
                 $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
-                array_push($cmd, ['-dTextFormat=2', '-sOutputFile=' . $textFile, $path]);
-                $process = new Process($cmd);
+                Process::fromShellCommandline(self::getGhostscriptCli() . ' -dBATCH -dNOPAUSE -sDEVICE=txtwrite ' . $pageRange . '-dTextFormat=2 -sOutputFile=' . $textFile . ' ' . escapeshellarg($path), null, 120);
                 $process->setTimeout(120);
                 $process->mustRun();
 
