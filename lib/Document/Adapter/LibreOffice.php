@@ -149,7 +149,8 @@ class LibreOffice extends Ghostscript
             $cmd .= ' > '. PIMCORE_LOG_DIRECTORY . '/libreoffice-pdf-convert.log' .' 2>&1';
 
             $lock->acquire(true);
-            $process = Process::fromShellCommandline($cmd);
+            $process = new Process([]);
+            $process->setCommandLine($cmd);
             $process->setTimeout(240);
             $process->run();
             $out = $process->getOutput();
@@ -190,8 +191,8 @@ class LibreOffice extends Ghostscript
             return parent::getText($page, $this->getPdf($path));
         } elseif (File::getFileExtension($path)) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
-            $cmd = self::getLibreOfficeCli() . ' --headless --nologo --nofirststartwizard --norestore --convert-to txt:Text --outdir ' . escapeshellarg(PIMCORE_TEMPORARY_DIRECTORY) . ' ' . escapeshellarg($path);
-            $process = Process::fromShellCommandline($cmd);
+            $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_TEMPORARY_DIRECTORY, $path];
+            $process = new Process($cmd);
             $process->setTimeout(240);
             $process->run();
             $out = $process->getOutput();

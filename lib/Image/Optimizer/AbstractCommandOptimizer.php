@@ -34,13 +34,12 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
         if ($executable) {
             $command = $this->getCommandArray($executable, $input, $output);
 
+            //@TODO Remove in Pimcore 10
             if (empty($command)) {
                 $command = $this->getCommand($executable, $input, $output);
-                $process = Process::fromShellCommandline($command);
-            } else {
-                $process = new Process($command);
             }
 
+            $process = new Process($command);
             $process->run();
 
             if (file_exists($output) && filesize($output) > 0) {

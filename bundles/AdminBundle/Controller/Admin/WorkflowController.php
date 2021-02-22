@@ -303,7 +303,8 @@ class WorkflowController extends AdminController implements EventedControllerInt
             'DOT' => $dot
         ];
 
-        $process = Process::fromShellCommandline($cmd);
+        $process = new Process([]);
+        $process->setCommandLine($cmd);
         $process->mustRun(null, $params);
 
         return $process->getOutput();

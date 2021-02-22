@@ -42,7 +42,7 @@ final class AdvancedPngOptimizer extends AbstractCommandOptimizer
      */
     protected function getCommandArray(string $executable, string $input, string $output): array
     {
-        return [$executable.' -z4 ', $output];
+        return [$executable, '-z4', $output];
     }
 
     /**

@@ -82,7 +82,8 @@ class HtmlToImage
         }
 
         $command .= ' > '. PIMCORE_LOG_DIRECTORY . '/wkhtmltoimage.log' .' 2>&1';
-        $process = Process::fromShellCommandline($command);
+        $process = new Process();
+        $process->setCommandLine($command);
         $process->run();
 
         if (file_exists($outputFile) && filesize($outputFile) > 1000) {

@@ -148,8 +148,9 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        $pages = Console::exec($this->buildPageCountCommand(), null, 120);
-        $pages = trim($pages);
+        $process = new Process($this->buildPageCountCommand());
+        $process->setTimeout(120);
+        $pages = $process->run();
 
         if (! is_numeric($pages)) {
             throw new \Exception('Unable to get page-count of ' . $this->path);
@@ -159,20 +160,20 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
     protected function buildPageCountCommand()
     {
-        $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
+        $command = [self::getGhostscriptCli(), '-dNODISPLAY', '-q'];
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            $command .= " --permit-file-read='" . $this->path . "'";
+            array_push($command,"--permit-file-read='" . $this->path . "'");
         }
 
-        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
+        array_push($command,"-c", "'(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'");
 
         return $command;
     }
@@ -211,7 +212,7 @@ class Ghostscript extends Adapter
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             }
 
-            $process = Process::fromShellCommandline(self::getGhostscriptCli() . ' -sDEVICE=pngalpha -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
+            $process = new Process([self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r', $resolution, '-o', $path, $this->path]);
             $process->setTimeout(240);
             $process->run();
 
@@ -237,25 +238,29 @@ class Ghostscript extends Adapter
     {
         try {
             $path = $path ? $this->preparePath($path) : $this->path;
-            $pageRange = '';
+            $cmd = [self::getPdftotextCli()];
             $text = null;
 
             try {
                 // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript
                 if ($page) {
-                    $pageRange = '-f ' . $page . ' -l ' . $page . ' ';
+                    array_push($cmd, '-f', $page, '-l', $page);
                 }
-                $process = Process::fromShellCommandline(self::getPdftotextCli() . ' ' . $pageRange . escapeshellarg($path) . ' -');
+                array_push($cmd, $path, '-');
+                $process = new Process($cmd);
                 $process->setTimeout(120);
                 $process->mustRun();
                 $text = $process->getOutput();
             } catch (ProcessFailedException $e) {
                 // pure ghostscript way
+                $cmd = [self::getPdftotextCli(), '-dBATCH', '-dNOPAUSE', '-sDEVICE=txtwrite'];
                 if ($page) {
-                    $pageRange = '-dFirstPage=' . $page . ' -dLastPage=' . $page . ' ';
+                    array_push($cmd, '-dFirstPage=' . $page, '-dLastPage=' . $page);
                 }
                 $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
-                $process = Process::fromShellCommandline(self::getGhostscriptCli() . ' -dBATCH -dNOPAUSE -sDEVICE=txtwrite ' . $pageRange . '-dTextFormat=2 -sOutputFile=' . $textFile . ' ' . escapeshellarg($path), null, 120);
+                array_push($cmd, '-dTextFormat=2', '-sOutputFile=', $textFile, $path);
+
+                $process = new Process($cmd);
                 $process->setTimeout(120);
                 $process->mustRun();
 
