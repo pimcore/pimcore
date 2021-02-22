@@ -943,7 +943,7 @@ class Configuration implements ConfigurationInterface
     {
         $node = $parent->children()->arrayNode($name);
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
+        /** @var ArrayNodeDefinition $prototype */
         $prototype = $node->prototype('array');
         $prototype
             ->beforeNormalization()
