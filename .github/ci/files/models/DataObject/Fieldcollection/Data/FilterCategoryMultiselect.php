@@ -30,7 +30,7 @@ protected $availableCategories;
 * Get label - Label
 * @return string|null
 */
-public function getLabel () {
+public function getLabel (): ?string {
 	$data = $this->label;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -43,7 +43,7 @@ public function getLabel () {
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setLabel ($label) {
+public function setLabel (?string $label) {
 	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
 	return $this;
@@ -53,7 +53,7 @@ public function setLabel ($label) {
 * Get preSelect - Pre Select
 * @return \Pimcore\Model\DataObject\ProductCategory[]
 */
-public function getPreSelect () {
+public function getPreSelect (): array {
 	$container = $this;
 	$fd = $this->getDefinition()->getFieldDefinition("preSelect");
 	$data = $fd->preGetData($container);
@@ -68,7 +68,7 @@ public function getPreSelect () {
 * @param \Pimcore\Model\DataObject\ProductCategory[] $preSelect
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setPreSelect ($preSelect) {
+public function setPreSelect (?array $preSelect) {
 	$fd = $this->getDefinition()->getFieldDefinition("preSelect");
 	$hideUnpublished = \Pimcore\Model\DataObject\Concrete::getHideUnpublished();
 	\Pimcore\Model\DataObject\Concrete::setHideUnpublished(false);
@@ -86,7 +86,7 @@ public function setPreSelect ($preSelect) {
 * Get useAndCondition - Use And Condition
 * @return bool|null
 */
-public function getUseAndCondition () {
+public function getUseAndCondition (): ?bool {
 	$data = $this->useAndCondition;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -99,7 +99,7 @@ public function getUseAndCondition () {
 * @param bool|null $useAndCondition
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setUseAndCondition ($useAndCondition) {
+public function setUseAndCondition (?bool $useAndCondition) {
 	$fd = $this->getDefinition()->getFieldDefinition("useAndCondition");
 	$this->useAndCondition = $useAndCondition;
 	return $this;
@@ -109,7 +109,7 @@ public function setUseAndCondition ($useAndCondition) {
 * Get includeParentCategories - Include SubCategories
 * @return bool|null
 */
-public function getIncludeParentCategories () {
+public function getIncludeParentCategories (): ?bool {
 	$data = $this->includeParentCategories;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -122,7 +122,7 @@ public function getIncludeParentCategories () {
 * @param bool|null $includeParentCategories
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setIncludeParentCategories ($includeParentCategories) {
+public function setIncludeParentCategories (?bool $includeParentCategories) {
 	$fd = $this->getDefinition()->getFieldDefinition("includeParentCategories");
 	$this->includeParentCategories = $includeParentCategories;
 	return $this;
@@ -132,7 +132,7 @@ public function setIncludeParentCategories ($includeParentCategories) {
 * Get scriptPath - Script Path
 * @return string|null
 */
-public function getScriptPath () {
+public function getScriptPath (): ?string {
 	$data = $this->scriptPath;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -145,7 +145,7 @@ public function getScriptPath () {
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setScriptPath ($scriptPath) {
+public function setScriptPath (?string $scriptPath) {
 	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
 	return $this;
@@ -155,7 +155,7 @@ public function setScriptPath ($scriptPath) {
 * Get availableCategories - Available Categories
 * @return \Pimcore\Model\DataObject\ProductCategory[]
 */
-public function getAvailableCategories () {
+public function getAvailableCategories (): array {
 	$container = $this;
 	$fd = $this->getDefinition()->getFieldDefinition("availableCategories");
 	$data = $fd->preGetData($container);
@@ -170,7 +170,7 @@ public function getAvailableCategories () {
 * @param \Pimcore\Model\DataObject\ProductCategory[] $availableCategories
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setAvailableCategories ($availableCategories) {
+public function setAvailableCategories (?array $availableCategories) {
 	$fd = $this->getDefinition()->getFieldDefinition("availableCategories");
 	$hideUnpublished = \Pimcore\Model\DataObject\Concrete::getHideUnpublished();
 	\Pimcore\Model\DataObject\Concrete::setHideUnpublished(false);

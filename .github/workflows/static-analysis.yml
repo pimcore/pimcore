@@ -56,7 +56,7 @@ jobs:
                   dependency-versions: "${{ matrix.dependencies }}"
 
             - name: "Run a static analysis with phpstan/phpstan"
-              run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1"
+              run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline"
 
             - name: "Generate baseline with phpstan/phpstan"
               run: "cat /home/runner/work/pimcore/pimcore/phpstan-baseline.neon"

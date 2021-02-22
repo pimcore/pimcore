@@ -30,7 +30,7 @@ protected $availableCategories;
 * Get label - Label
 * @return string|null
 */
-public function getLabel () {
+public function getLabel (): ?string {
 	$data = $this->label;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -43,7 +43,7 @@ public function getLabel () {
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
-public function setLabel ($label) {
+public function setLabel (?string $label) {
 	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
 	return $this;
@@ -53,7 +53,7 @@ public function setLabel ($label) {
 * Get preSelect - Pre Select
 * @return \\Pimcore\Model\DataObject\Category|null
 */
-public function getPreSelect () {
+public function getPreSelect (): ?\Pimcore\Model\Element\AbstractElement {
 	$container = $this;
 	$fd = $this->getDefinition()->getFieldDefinition("preSelect");
 	$data = $fd->preGetData($container);
@@ -68,7 +68,7 @@ public function getPreSelect () {
 * @param \Pimcore\Model\DataObject\Category $preSelect
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
-public function setPreSelect ($preSelect) {
+public function setPreSelect (?\Pimcore\Model\Element\AbstractElement $preSelect) {
 	$fd = $this->getDefinition()->getFieldDefinition("preSelect");
 	$hideUnpublished = \Pimcore\Model\DataObject\Concrete::getHideUnpublished();
 	\Pimcore\Model\DataObject\Concrete::setHideUnpublished(false);
@@ -86,7 +86,7 @@ public function setPreSelect ($preSelect) {
 * Get rootCategory - Root Category
 * @return \\Pimcore\Model\DataObject\Category|null
 */
-public function getRootCategory () {
+public function getRootCategory (): ?\Pimcore\Model\Element\AbstractElement {
 	$container = $this;
 	$fd = $this->getDefinition()->getFieldDefinition("rootCategory");
 	$data = $fd->preGetData($container);
@@ -101,7 +101,7 @@ public function getRootCategory () {
 * @param \Pimcore\Model\DataObject\Category $rootCategory
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
-public function setRootCategory ($rootCategory) {
+public function setRootCategory (?\Pimcore\Model\Element\AbstractElement $rootCategory) {
 	$fd = $this->getDefinition()->getFieldDefinition("rootCategory");
 	$hideUnpublished = \Pimcore\Model\DataObject\Concrete::getHideUnpublished();
 	\Pimcore\Model\DataObject\Concrete::setHideUnpublished(false);
@@ -119,7 +119,7 @@ public function setRootCategory ($rootCategory) {
 * Get includeParentCategories - Include SubCategories
 * @return bool|null
 */
-public function getIncludeParentCategories () {
+public function getIncludeParentCategories (): ?bool {
 	$data = $this->includeParentCategories;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -132,7 +132,7 @@ public function getIncludeParentCategories () {
 * @param bool|null $includeParentCategories
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
-public function setIncludeParentCategories ($includeParentCategories) {
+public function setIncludeParentCategories (?bool $includeParentCategories) {
 	$fd = $this->getDefinition()->getFieldDefinition("includeParentCategories");
 	$this->includeParentCategories = $includeParentCategories;
 	return $this;
@@ -142,7 +142,7 @@ public function setIncludeParentCategories ($includeParentCategories) {
 * Get scriptPath - Script Path
 * @return string|null
 */
-public function getScriptPath () {
+public function getScriptPath (): ?string {
 	$data = $this->scriptPath;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -155,7 +155,7 @@ public function getScriptPath () {
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
-public function setScriptPath ($scriptPath) {
+public function setScriptPath (?string $scriptPath) {
 	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
 	return $this;
@@ -165,7 +165,7 @@ public function setScriptPath ($scriptPath) {
 * Get availableCategories - Available Categories
 * @return \Pimcore\Model\DataObject\ProductCategory[]
 */
-public function getAvailableCategories () {
+public function getAvailableCategories (): array {
 	$container = $this;
 	$fd = $this->getDefinition()->getFieldDefinition("availableCategories");
 	$data = $fd->preGetData($container);
@@ -180,7 +180,7 @@ public function getAvailableCategories () {
 * @param \Pimcore\Model\DataObject\ProductCategory[] $availableCategories
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
 */
-public function setAvailableCategories ($availableCategories) {
+public function setAvailableCategories (?array $availableCategories) {
 	$fd = $this->getDefinition()->getFieldDefinition("availableCategories");
 	$hideUnpublished = \Pimcore\Model\DataObject\Concrete::getHideUnpublished();
 	\Pimcore\Model\DataObject\Concrete::setHideUnpublished(false);

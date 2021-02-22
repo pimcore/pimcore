@@ -32,7 +32,7 @@ protected $unit;
 * Get label - Label
 * @return string|null
 */
-public function getLabel () {
+public function getLabel (): ?string {
 	$data = $this->label;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -45,7 +45,7 @@ public function getLabel () {
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
 */
-public function setLabel ($label) {
+public function setLabel (?string $label) {
 	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
 	return $this;
@@ -53,9 +53,9 @@ public function setLabel ($label) {
 
 /**
 * Get field - Field
-* @return \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection|null
+* @return \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null
 */
-public function getField () {
+public function getField (): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection {
 	$data = $this->field;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -65,10 +65,10 @@ public function getField () {
 
 /**
 * Set field - Field
-* @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection|null $field
+* @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
 */
-public function setField ($field) {
+public function setField (?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field) {
 	$fd = $this->getDefinition()->getFieldDefinition("field");
 	$this->field = $field;
 	return $this;
@@ -78,7 +78,7 @@ public function setField ($field) {
 * Get ranges - Ranges
 * @return \Pimcore\Model\DataObject\Data\StructuredTable|null
 */
-public function getRanges () {
+public function getRanges (): ?\Pimcore\Model\DataObject\Data\StructuredTable {
 	$data = $this->ranges;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -91,7 +91,7 @@ public function getRanges () {
 * @param \Pimcore\Model\DataObject\Data\StructuredTable|null $ranges
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
 */
-public function setRanges ($ranges) {
+public function setRanges (?\Pimcore\Model\DataObject\Data\StructuredTable $ranges) {
 	$fd = $this->getDefinition()->getFieldDefinition("ranges");
 	$this->ranges = $ranges;
 	return $this;
@@ -101,7 +101,7 @@ public function setRanges ($ranges) {
 * Get preSelectFrom - Pre Select From
 * @return float|null
 */
-public function getPreSelectFrom () {
+public function getPreSelectFrom (): ?float {
 	$data = $this->preSelectFrom;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -114,7 +114,7 @@ public function getPreSelectFrom () {
 * @param float|null $preSelectFrom
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
 */
-public function setPreSelectFrom ($preSelectFrom) {
+public function setPreSelectFrom (?float $preSelectFrom) {
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectFrom");
 	$this->preSelectFrom = $fd->preSetData($this, $preSelectFrom);
 	return $this;
@@ -124,7 +124,7 @@ public function setPreSelectFrom ($preSelectFrom) {
 * Get preSelectTo - Pre Select To
 * @return float|null
 */
-public function getPreSelectTo () {
+public function getPreSelectTo (): ?float {
 	$data = $this->preSelectTo;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -137,7 +137,7 @@ public function getPreSelectTo () {
 * @param float|null $preSelectTo
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
 */
-public function setPreSelectTo ($preSelectTo) {
+public function setPreSelectTo (?float $preSelectTo) {
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectTo");
 	$this->preSelectTo = $fd->preSetData($this, $preSelectTo);
 	return $this;
@@ -147,7 +147,7 @@ public function setPreSelectTo ($preSelectTo) {
 * Get scriptPath - Script Path
 * @return string|null
 */
-public function getScriptPath () {
+public function getScriptPath (): ?string {
 	$data = $this->scriptPath;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -160,7 +160,7 @@ public function getScriptPath () {
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
 */
-public function setScriptPath ($scriptPath) {
+public function setScriptPath (?string $scriptPath) {
 	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
 	return $this;
@@ -170,7 +170,7 @@ public function setScriptPath ($scriptPath) {
 * Get unit - Unit
 * @return string|null
 */
-public function getUnit () {
+public function getUnit (): ?string {
 	$data = $this->unit;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -183,7 +183,7 @@ public function getUnit () {
 * @param string|null $unit
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
 */
-public function setUnit ($unit) {
+public function setUnit (?string $unit) {
 	$fd = $this->getDefinition()->getFieldDefinition("unit");
 	$this->unit = $unit;
 	return $this;

@@ -24,7 +24,7 @@ protected $scriptPath;
 * Get label - Label
 * @return string|null
 */
-public function getLabel () {
+public function getLabel (): ?string {
 	$data = $this->label;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -37,7 +37,7 @@ public function getLabel () {
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterSelect
 */
-public function setLabel ($label) {
+public function setLabel (?string $label) {
 	$fd = $this->getDefinition()->getFieldDefinition("label");
 	$this->label = $label;
 	return $this;
@@ -45,9 +45,9 @@ public function setLabel ($label) {
 
 /**
 * Get field - Field
-* @return \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection|null
+* @return \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null
 */
-public function getField () {
+public function getField (): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection {
 	$data = $this->field;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -57,10 +57,10 @@ public function getField () {
 
 /**
 * Set field - Field
-* @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection|null $field
+* @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterSelect
 */
-public function setField ($field) {
+public function setField (?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field) {
 	$fd = $this->getDefinition()->getFieldDefinition("field");
 	$this->field = $field;
 	return $this;
@@ -70,7 +70,7 @@ public function setField ($field) {
 * Get scriptPath - Script Path
 * @return string|null
 */
-public function getScriptPath () {
+public function getScriptPath (): ?string {
 	$data = $this->scriptPath;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		    return $data->getPlain();
@@ -83,7 +83,7 @@ public function getScriptPath () {
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterSelect
 */
-public function setScriptPath ($scriptPath) {
+public function setScriptPath (?string $scriptPath) {
 	$fd = $this->getDefinition()->getFieldDefinition("scriptPath");
 	$this->scriptPath = $scriptPath;
 	return $this;
