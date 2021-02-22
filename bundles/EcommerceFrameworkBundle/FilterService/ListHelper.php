@@ -172,7 +172,10 @@ class ListHelper
         if (!empty($conditions)) {
             foreach ($conditions as $c) {
                 if ($c instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory) {
-                    return $c->getPreSelect();
+                    $result =  $c->getPreSelect();
+                    if ($result instanceof AbstractCategory) {
+                        return $result;
+                    }
                 }
             }
         }
