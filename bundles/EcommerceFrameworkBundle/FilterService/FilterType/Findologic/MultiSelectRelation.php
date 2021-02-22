@@ -23,7 +23,15 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation;
 
 class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
 {
-    /** @inheritDoc */
+    /**
+     * @param FilterMultiRelation $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);

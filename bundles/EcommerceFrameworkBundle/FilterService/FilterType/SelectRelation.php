@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\Folder;
 
 class SelectRelation extends AbstractFilterType
 {
+
     /**
      * @param FilterRelation $filterDefinition
      * @param ProductListInterface $productList

@@ -30,7 +30,15 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    /** @inheritDoc */
+    /**
+     * @param FilterRelation $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);

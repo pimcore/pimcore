@@ -26,7 +26,6 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    /** @inheritDoc */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);

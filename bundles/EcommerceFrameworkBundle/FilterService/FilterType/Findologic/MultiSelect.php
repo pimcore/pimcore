@@ -22,7 +22,15 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
 
-    /** @inheritDoc */
+    /**
+     * @param FilterMultiSelect $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);

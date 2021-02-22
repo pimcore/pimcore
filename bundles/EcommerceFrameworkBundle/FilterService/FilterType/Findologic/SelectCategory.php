@@ -30,7 +30,15 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         //$productList->prepareGroupBySystemValues($filterDefinition->getField(), true);
     }
 
-    /** @inheritDoc */
+    /**
+     * @param FilterCategory $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues(self::FIELDNAME, true);
