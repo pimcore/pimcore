@@ -262,7 +262,7 @@ class Console
                 @trigger_error(sprintf('Passing string arguments to %s is deprecated since v6.9 and will throw exception in Pimcore 10. Pass array arguments instead.', __METHOD__), E_USER_DEPRECATED);
                 $arguments = explode(' ', $arguments);
             }
-            array_push($cmd, $arguments);
+            $cmd = array_merge($cmd, $arguments);
         }
 
         return $cmd;
@@ -270,7 +270,7 @@ class Console
 
     /**
      * @param string $script
-     * @param string $arguments
+     * @param string|array $arguments
      * @param string|null $outputFile
      * @param int|null $timeout
      * @param bool $background
