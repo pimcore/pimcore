@@ -47,8 +47,8 @@ jobs:
             - name: "Copy models"
               run: "cp -rv .github/ci/files/models ."
 
-            - name: "Dump models"
-              run: "ls -R /home/runner/work/pimcore/pimcore"
+#            - name: "Dump models"
+#              run: "ls -R /home/runner/work/pimcore/pimcore"
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
@@ -56,13 +56,13 @@ jobs:
                   dependency-versions: "${{ matrix.dependencies }}"
 
             - name: "Run a static analysis with phpstan/phpstan"
-              run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline"
+              run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1"
 
             - name: "Generate baseline with phpstan/phpstan"
               run: "cat /home/runner/work/pimcore/pimcore/phpstan-baseline.neon"
 
-            - name: "Dump var/classes"
-              run: "ls /home/runner/work/pimcore/pimcore/models/DataObject/Fieldcollection/Data"
+            - name: "Dump models"
+              run: "ls /home/runner/work/pimcore/pimcore/models/DataObject"
 
             - name: "Dump checked-in baseline"
               run: "cat /home/runner/work/pimcore/pimcore/phpstan-baseline-new.neon"
