@@ -45,7 +45,7 @@ jobs:
                   .github/ci/scripts/setup-pimcore-environment.sh
 
             - name: "Copy models"
-              run: "cp -rv .github/ci/files/models models"
+              run: "cp -rv .github/ci/files/models ."
 
             - name: "Dump models"
               run: "ls -R /home/runner/work/pimcore/pimcore"
