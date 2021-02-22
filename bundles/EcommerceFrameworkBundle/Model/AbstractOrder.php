@@ -448,4 +448,11 @@ abstract class AbstractOrder extends Concrete
      * @return $this
      */
     abstract public function setCartHash (?int $cartHash);
+
+    /**
+     * Set successorOrder - Successor Order
+     * @param \Pimcore\Model\DataObject\OnlineShopOrder $successorOrder
+     * @return \Pimcore\Model\DataObject\OnlineShopOrder
+     */
+    abstract function setSuccessorOrder (?\Pimcore\Model\Element\AbstractElement $successorOrder);
 }
