@@ -255,7 +255,7 @@ class Ghostscript extends Adapter
                     $pageRange = '-dFirstPage=' . $page . ' -dLastPage=' . $page . ' ';
                 }
                 $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
-                Process::fromShellCommandline(self::getGhostscriptCli() . ' -dBATCH -dNOPAUSE -sDEVICE=txtwrite ' . $pageRange . '-dTextFormat=2 -sOutputFile=' . $textFile . ' ' . escapeshellarg($path), null, 120);
+                $process = Process::fromShellCommandline(self::getGhostscriptCli() . ' -dBATCH -dNOPAUSE -sDEVICE=txtwrite ' . $pageRange . '-dTextFormat=2 -sOutputFile=' . $textFile . ' ' . escapeshellarg($path), null, 120);
                 $process->setTimeout(120);
                 $process->mustRun();
 
