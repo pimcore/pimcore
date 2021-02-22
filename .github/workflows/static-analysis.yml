@@ -56,6 +56,13 @@ jobs:
                   ini-values: display_errors=On, display_startup_errors=On, error_reporting=32767
                   php-version: "${{ matrix.php-version }}"
 
+            - name: Verify MariaDB connection
+              run: |
+                  cp .github/ci/files/.my.cnf ~/.my.cnf
+                  while ! mysqladmin ping --silent; do
+                    sleep 1
+                  done
+
             - name: "Setup Pimcore environment"
               run: |
                   .github/ci/scripts/setup-pimcore-environment.sh
