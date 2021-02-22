@@ -37,6 +37,7 @@ class Console
     protected static $executableCache = [];
 
     /**
+     * @deprecated since v.6.9.
      * @static
      *
      * @return string "windows" or "unix"
@@ -242,22 +243,26 @@ class Console
 
     /**
      * @param string $script
-     * @param string $arguments
+     * @param string|array $arguments
      *
-     * @return string
+     * @return array
      */
     protected static function buildPhpScriptCmd($script, $arguments)
     {
         $phpCli = self::getPhpCli();
 
-        $cmd = $phpCli . ' ' . $script;
+        $cmd = [$phpCli, $script];
 
         if (Config::getEnvironment()) {
-            $cmd .= ' --env=' . Config::getEnvironment();
+            array_push($cmd, '--env=' . Config::getEnvironment());
         }
 
         if (!empty($arguments)) {
-            $cmd .= ' ' . $arguments;
+            if (is_string($arguments)) {
+                @trigger_error(sprintf('Passing string arguments to %s is deprecated since v6.9 and will throw exception in Pimcore 10. Pass array arguments instead.', __METHOD__), E_USER_DEPRECATED);
+                $arguments = explode(' ', $arguments);
+            }
+            array_push($cmd, $arguments);
         }
 
         return $cmd;
@@ -268,18 +273,34 @@ class Console
      * @param string $arguments
      * @param string|null $outputFile
      * @param int|null $timeout
+     * @param bool $background
      *
-     * @return string
+     * @return string|int
      */
-    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
+    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null, $background = false)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $return = self::exec($cmd, $outputFile, $timeout);
+        $process = new Process($cmd);
+        if ($timeout) {
+            $process->setTimeout($timeout);
+        }
+        $process->start();
 
-        return $return;
+        if (!empty($outputFile)) {
+            $logHandle = fopen($outputFile, 'a');
+            $exitCode = $process->wait(function ($type, $buffer) use ($logHandle) {
+                fwrite($logHandle, $buffer);
+            });
+            fclose($logHandle);
+        } else {
+            $exitCode = $process->wait();
+        }
+
+        return $background ? $process->getOutput() : $exitCode;
     }
 
     /**
+     * @deprecated since v6.9. Use runPhpScript instead.
      * @param string $script
      * @param string $arguments
      * @param string|null $outputFile
@@ -288,10 +309,7 @@ class Console
      */
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
-        $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $return = self::execInBackground($cmd, $outputFile);
-
-        return $return;
+        return self::runPhpScript($script, $arguments, $outputFile);
     }
 
     /**
@@ -342,6 +360,8 @@ class Console
     }
 
     /**
+     *
+     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead.
      * @static
      *
      * @param string $cmd
@@ -363,6 +383,7 @@ class Console
     }
 
     /**
+     * @deprecated since v.6.9.
      * @static
      *
      * @param string $cmd
@@ -412,6 +433,7 @@ class Console
     }
 
     /**
+     * @deprecated since v.6.9.
      * @static
      *
      * @param string $cmd
