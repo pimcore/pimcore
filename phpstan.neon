@@ -29,7 +29,7 @@ parameters:
         # - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
         - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
-        - '/Matcher::__construct\(\).*TypeMatcher/'
+        # - '/Matcher::__construct\(\).*TypeMatcher/'
         -
             message: '/ALPHACHANNEL_REMOVE/'
             path: '**/Imagick.php'
@@ -39,9 +39,9 @@ parameters:
         -
             message: '/NO_AUTO_CACHE_CONTROL_HEADER/'
             path: '**/Controller/PublicServicesController.php'
-        -
-            message: '/__construct\(\) does not call parent constructor/'
-            path: '**/Migrations/Version.php'
+        # -
+        #    message: '/__construct\(\) does not call parent constructor/'
+        #    path: '**/Migrations/Version.php'
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         # - '~^Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required\.\z~'
         - '~^Unsafe usage of new static\(\)~'
