@@ -250,6 +250,7 @@ class LogController extends AdminController implements KernelControllerEventInte
                 static function () use ($filePath) {
                     $handle = fopen($filePath, 'rb');
                     fpassthru($handle);
+                    fclose($handle);
                 }
             );
             $response->headers->set('Content-Type', 'text/plain');
