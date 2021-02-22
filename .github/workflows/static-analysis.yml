@@ -14,11 +14,8 @@ on:
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
-    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
     PIMCORE_ENVIRONMENT: test
     PIMCORE_TEST: 1
-    PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
-    PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
 
 jobs:
     static-analysis-phpstan:
@@ -32,20 +29,6 @@ jobs:
                     - "highest"
                 php-version:
                     - "8.0"
-                database:
-                    - "mariadb:10.5"
-
-        services:
-            redis:
-                image: redis
-                ports:
-                    - 63379:6379
-            mariadb:
-                image: "${{ matrix.database }}"
-                ports:
-                    - 33006:3306
-                env:
-                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
 
         steps:
             - name: "Checkout code"
@@ -57,28 +40,14 @@ jobs:
                   coverage: "none"
                   php-version: "${{ matrix.php-version }}"
 
-            - name: "Verify MariaDB connection"
-              run: |
-                  cp .github/ci/files/.my.cnf ~/.my.cnf
-                  while ! mysqladmin ping --silent; do
-                    sleep 1
-                  done
-
             - name: "Setup Pimcore environment"
               run: |
-                  mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
                   .github/ci/scripts/setup-pimcore-environment.sh
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
-
-            - name: "Test environment infos"
-              run: |
-                  mysql -e "SELECT VERSION();"
-                  php -i
-                  ./bin/console pimcore:system:requirements:check
 
             - name: "Run a static analysis with phpstan/phpstan"
               run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline"
