@@ -48,7 +48,7 @@ jobs:
               run: "cp -rv .github/ci/files/models models"
 
             - name: "Dump models"
-              run: "ls /home/runner/work/pimcore/pimcore/models/DataObject/Fieldcollection/Data"
+              run: "ls -R /home/runner/work/pimcore/pimcore"
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
