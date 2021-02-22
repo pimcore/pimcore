@@ -42,9 +42,9 @@ parameters:
         #-
         #    message: '/__construct\(\) does not call parent constructor/'
         #    path: '**/Migrations/Version.php'
-        #- '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
+        - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         # - '~^Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required\.\z~'
-        #- '~^Unsafe usage of new static\(\)~'
+        - '~^Unsafe usage of new static\(\)~'
         #- '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
         #- '~^Method Symfony\\Component\\Cache\\Adapter\\AdapterInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
 
