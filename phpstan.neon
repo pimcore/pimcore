@@ -17,12 +17,12 @@ parameters:
         - '**/External/AdminerController.php'
         # - '**/Generator/DoctrineCrudGenerator.php'
         - '**/Processor/PdfReactor8.php'
+        - '**/Fieldcollection/Data/Filter*'
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
 
     ignoreErrors:
-        - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\(FilterCategory|FilterCategoryMultiselect|FilterInputfield)/'
         # - '/(snappy|lz4)_(un)?compress/'
         # - '/Instantiated class COM not found/'
         # - '/(Order|Checkout)Manager.*__construct\(\) does not call parent constructor/'
