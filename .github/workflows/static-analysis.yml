@@ -52,6 +52,8 @@ jobs:
               uses: "shivammathur/setup-php@v2"
               with:
                   coverage: "none"
+                  extensions: imagick
+                  ini-values: display_errors=On, display_startup_errors=On, error_reporting=32767
                   php-version: "${{ matrix.php-version }}"
 
             - name: "Setup Pimcore environment"
