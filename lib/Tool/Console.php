@@ -295,6 +295,7 @@ class Console
     }
 
     /**
+     * @deprecated Use Symfony\Component\Process\Process instead.
      * @param string $cmd
      * @param string|null $outputFile
      * @param int|null $timeout

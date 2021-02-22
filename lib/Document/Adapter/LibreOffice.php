@@ -145,14 +145,26 @@ class LibreOffice extends Ghostscript
 
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
-            $cmd = self::getLibreOfficeCli() . ' --headless --nologo --nofirststartwizard --norestore --convert-to pdf:writer_web_pdf_Export --outdir ' . escapeshellarg(PIMCORE_SYSTEM_TEMP_DIRECTORY) . ' ' . escapeshellarg($path);
-            $cmd .= ' > '. PIMCORE_LOG_DIRECTORY . '/libreoffice-pdf-convert.log' .' 2>&1';
+            $cmd = [
+                self::getLibreOfficeCli(),
+                '--headless', '--nologo', '--nofirststartwizard',
+                '--norestore', '--convert-to', 'pdf:writer_web_pdf_Export',
+                '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $path
+            ];
 
             $lock->acquire(true);
-            $process = new Process([]);
-            $process->setCommandLine($cmd);
+            $process = new Process($cmd);
             $process->setTimeout(240);
-            $process->run();
+            $process->start();
+
+            $tmpFile = PIMCORE_LOG_DIRECTORY . '/libreoffice-pdf-convert.log';
+            $tmpHandle = fopen($tmpFile, 'a');
+            $process->wait(function ($type, $buffer) use ($tmpHandle) {
+                fwrite($tmpHandle, $buffer);
+            });
+            fclose($tmpHandle);
+
+
             $out = $process->getOutput();
             $lock->release();
 
@@ -163,7 +175,7 @@ class LibreOffice extends Ghostscript
                 File::rename($tmpName, $pdfFile);
                 $pdfPath = $pdfFile;
             } else {
-                $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $cmd . "'";
+                $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $process->getCommandLine() . "'";
                 Logger::error($message);
                 throw new \Exception($message);
             }
@@ -186,7 +198,7 @@ class LibreOffice extends Ghostscript
     {
         $path = $path ? $this->preparePath($path) : $this->path;
 
-        if ($page || parent::isFileTypeSupported($path)) {
+        if (0) {
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
             return parent::getText($page, $this->getPdf($path));
         } elseif (File::getFileExtension($path)) {
@@ -207,7 +219,7 @@ class LibreOffice extends Ghostscript
 
                 return $text;
             } else {
-                $message = "Couldn't convert document to Text: " . $path . " with the command: '" . $cmd . "' - now trying to get the text out of the PDF with ghostscript...";
+                $message = "Couldn't convert document to Text: " . $path . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
                 Logger::error($message);
 
                 return parent::getText(null, $this->getPdf($path));

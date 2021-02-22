@@ -107,39 +107,49 @@ class Ffmpeg extends Adapter
                 @unlink($this->getDestinationFile());
             }
 
-            // get the argument string from the configurations
-            $arguments = implode(' ', $this->arguments);
-
             // add format specific arguments
             if ($this->getFormat() == 'mp4') {
-                $arguments = '-strict experimental -f mp4 -vcodec libx264 -acodec aac -g 100 -pix_fmt yuv420p -movflags faststart ' . $arguments;
+                $arguments = array_merge([
+                    '-strict', 'experimental', '-f', 'mp4', '-vcodec',
+                    'libx264', '-acodec', 'aac', '-g', '100', '-pix_fmt',
+                    'yuv420p', '-movflags', 'faststart'],
+                    $this->arguments);
             } elseif ($this->getFormat() == 'webm') {
                 // check for vp9 support
                 $webmCodec = 'libvpx';
-                $codecs = Console::exec(self::getFfmpegCli() . ' -codecs');
+                $process = new Process([self::getFfmpegCli(), '-codecs']);
+                $process->run();
+                $codecs = $process->getOutput();
                 if (stripos($codecs, 'vp9')) {
                     //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
                 }
 
-                $arguments = '-strict experimental -f webm -vcodec ' . $webmCodec . ' -acodec libvorbis -ar 44000 -g 100 ' . $arguments;
+                $arguments = array_merge([
+                    '-strict', 'experimental', '-f', 'webm', '-vcodec', $webmCodec,
+                    '-acodec', 'libvorbis', '-ar', '44000', '-g', '100'],
+                    $this->arguments);
             } else {
                 throw new \Exception('Unsupported video output format: ' . $this->getFormat());
             }
 
             // add some global arguments
-            $arguments = '-threads 0 ' . $arguments;
+            array_push($arguments, '-threads 0');
 
-            $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file)) . ' ' . $arguments . ' ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile()));
-
-            Logger::debug('Executing FFMPEG Command: ' . $cmd);
-
+            $cmd = array_merge(
+                [self::getFfmpegCli(), '-i', realpath($this->file)],
+                $arguments,
+                [str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile())]
+            );
             $process = new Process($cmd);
+
+            Logger::debug('Executing FFMPEG Command: ' . $process->getCommandLine());
+
             //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
             $process->setTimeout(null);
             $process->start();
 
             $logHandle = fopen($this->getConversionLogFile(), 'a');
-            fwrite($logHandle, 'Command: ' . $cmd . "\n\n\n");
+            fwrite($logHandle, 'Command: ' . $process->getCommandLine() . "\n\n\n");
 
             $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
@@ -180,8 +190,13 @@ class Ffmpeg extends Adapter
             $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ffmpeg-tmp-' . uniqid() . '.' . File::getFileExtension($file);
         }
 
-        $cmd = self::getFfmpegCli() . ' -ss ' . $timeOffset . ' -i ' . escapeshellarg(realpath($this->file)) . ' -vcodec png -vframes 1 -vf scale=iw*sar:ih ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $file));
-        Console::exec($cmd, null, 60);
+        $cmd = [
+            self::getFfmpegCli(),
+            '-ss', $timeOffset, '-i', realpath($this->file),
+            '-vcodec', 'png', '-vframes', 1, '-vf', 'scale=iw*sar:ih',
+            str_replace('/', DIRECTORY_SEPARATOR, $file)];
+        $process = new Process($cmd);
+        $process->run();
 
         if ($realTargetPath) {
             File::rename($file, $realTargetPath);
@@ -197,8 +212,15 @@ class Ffmpeg extends Adapter
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
-        $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file));
-        Console::exec($cmd, $tmpFile, 60);
+        $cmd = [self::getFfmpegCli(), '-i', realpath($this->file)];
+        $process = new Process($cmd);
+        $process->start();
+
+        $tmpHandle = fopen($tmpFile, 'a');
+        $process->wait(function ($type, $buffer) use ($tmpHandle) {
+            fwrite($tmpHandle, $buffer);
+        });
+        fclose($tmpHandle);
 
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);

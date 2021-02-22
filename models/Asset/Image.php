@@ -211,7 +211,8 @@ class Image extends Model\Asset
             $sqipConfig->setFormat('png');
             $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
             $svgPath = $this->getLowQualityPreviewFileSystemPath();
-            \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . escapeshellarg($svgPath) . ' '. escapeshellarg($pngPath));
+            $process = new Process([$sqipBin, '-o', $svgPath, $pngPath]);
+            $process->run();
             unlink($pngPath);
 
             if (file_exists($svgPath)) {
