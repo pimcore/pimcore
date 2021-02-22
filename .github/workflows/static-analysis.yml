@@ -44,6 +44,9 @@ jobs:
               run: |
                   .github/ci/scripts/setup-pimcore-environment.sh
 
+            - name: "Dump models"
+              run: "ls /home/runner/work/pimcore/pimcore/models"
+
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
               with:
