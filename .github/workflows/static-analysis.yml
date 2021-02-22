@@ -31,7 +31,6 @@ jobs:
                     - "highest"
                 php-version:
                     - "8.0"
-                database: "mariadb:10.5"
 
         services:
             redis:
@@ -39,7 +38,7 @@ jobs:
                 ports:
                     - 63379:6379
             mariadb:
-                image: "${{ matrix.database }}"
+                image: "mariadb:10.5"
                 ports:
                     - 33006:3306
                 env:
