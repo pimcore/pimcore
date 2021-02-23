@@ -156,7 +156,7 @@ class Item extends Model\AbstractModel
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $element->getParent();
-            if (!$parent->isAllowed('publish')) {
+            if ($parent && !$parent->isAllowed('publish')) {
                 throw new \Exception('Not sufficient permissions');
             }
         }
