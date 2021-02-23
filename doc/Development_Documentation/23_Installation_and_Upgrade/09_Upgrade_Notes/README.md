@@ -45,6 +45,24 @@
   - `CancelPaymentOrRecreateOrderStrategy` is now default strategy for handling active payments 
   - Removed method `isCartReadOnly` from cart and `cart_readonly_mode` configuration option as readonly mode 
     does not exist anymore.
+- [Ecommerce] Removed deprecated `ecommerce:indexservice:process-queue` command, 
+  use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead 
+- [Ecommerce] Removed deprecated `IndexUpdater` tool
+- [Ecommerce] Removed legacy BatchProcessing worker mode, product centric batch processing is now standard
+  - Removed abstract class `AbstractBatchProcessingWorker`, use `ProductCentricBatchProcessing` instead
+  - Removed methods from interface `BatchProcessingWorkerInterface` and its implementations:
+     - `BatchProcessingWorkerInterface::processPreparationQueue`
+     - `BatchProcessingWorkerInterface::processUpdateIndexQueue`
+  - Added methods to interface `BatchProcessingWorkerInterface`
+    - `BatchProcessingWorkerInterface::prepareDataForIndex`
+    - `BatchProcessingWorkerInterface::resetPreparationQueue`
+    - `BatchProcessingWorkerInterface::resetIndexingQueue`
+  - Removed constants 
+     - `ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY` 
+     - `ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC`
+  - Removed configuration node `worker_mode` in `index_service` configuration  
+- [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is 
+  implemented in `AbstractConfig` this should not have any consequences.   
 - [Email & Newsletter] Swiftmailer has been replaced with Symfony Mailer. `\Pimcore\Mail` class now extends from `Symfony\Component\Mime\Email` and new mailer service `Pimcore\Mail\Mailer` has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
 
     Email method and transport setting has been removed from System settings. Cleanup Swiftmailer config and setup mailer transports "main" & "newsletter" in config.yaml:
