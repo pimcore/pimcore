@@ -198,7 +198,7 @@ class LibreOffice extends Ghostscript
     {
         $path = $path ? $this->preparePath($path) : $this->path;
 
-        if (0) {
+        if ($page || parent::isFileTypeSupported($path)) {
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
             return parent::getText($page, $this->getPdf($path));
         } elseif (File::getFileExtension($path)) {

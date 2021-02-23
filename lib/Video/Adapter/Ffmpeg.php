@@ -107,13 +107,12 @@ class Ffmpeg extends Adapter
                 @unlink($this->getDestinationFile());
             }
 
+            // get the argument string from the configurations
+            $arguments = implode(' ', $this->arguments);
+
             // add format specific arguments
             if ($this->getFormat() == 'mp4') {
-                $arguments = array_merge([
-                    '-strict', 'experimental', '-f', 'mp4', '-vcodec',
-                    'libx264', '-acodec', 'aac', '-g', '100', '-pix_fmt',
-                    'yuv420p', '-movflags', 'faststart'],
-                    $this->arguments);
+                $arguments = '-strict experimental -f mp4 -vcodec libx264 -acodec aac -g 100 -pix_fmt yuv420p -movflags faststart ' . $arguments;
             } elseif ($this->getFormat() == 'webm') {
                 // check for vp9 support
                 $webmCodec = 'libvpx';
@@ -124,26 +123,19 @@ class Ffmpeg extends Adapter
                     //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
                 }
 
-                $arguments = array_merge([
-                    '-strict', 'experimental', '-f', 'webm', '-vcodec', $webmCodec,
-                    '-acodec', 'libvorbis', '-ar', '44000', '-g', '100'],
-                    $this->arguments);
+                $arguments = '-strict experimental -f webm -vcodec ' . $webmCodec . ' -acodec libvorbis -ar 44000 -g 100 ' . $arguments;
             } else {
                 throw new \Exception('Unsupported video output format: ' . $this->getFormat());
             }
 
             // add some global arguments
-            array_push($arguments, '-threads 0');
+            $arguments = '-threads 0 ' . $arguments;
 
-            $cmd = array_merge(
-                [self::getFfmpegCli(), '-i', realpath($this->file)],
-                $arguments,
-                [str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile())]
-            );
+            $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file)) . ' ' . $arguments . ' ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile()));
+
+            Logger::debug('Executing FFMPEG Command: ' . $cmd);
+
             $process = new Process($cmd);
-
-            Logger::debug('Executing FFMPEG Command: ' . $process->getCommandLine());
-
             //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
             $process->setTimeout(null);
             $process->start();

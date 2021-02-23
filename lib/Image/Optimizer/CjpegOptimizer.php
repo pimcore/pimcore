@@ -52,7 +52,7 @@ final class CjpegOptimizer extends AbstractCommandOptimizer
      */
     protected function getCommand(string $executable, string $input, string $output): string
     {
-        return implode(' ',$this->getCommandArray($executable, $input, $output));
+        return implode(' ', $this->getCommandArray($executable, $input, $output));
     }
 
     /**

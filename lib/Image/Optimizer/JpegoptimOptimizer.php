@@ -48,7 +48,7 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
             $additionalParams = '--all-progressive';
         }
 
-        return [$executable, $additionalParams, '-o',  '--strip-all', '--max=85', '-d' , $output, $input];
+        return [$executable, $additionalParams, '-o',  '--strip-all', '--max=85', '-d', $output, $input];
     }
 
     /**
@@ -57,7 +57,7 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
      */
     protected function getCommand(string $executable, string $input, string $output): string
     {
-        return implode(' ',$this->getCommandArray($executable, $input, $output));
+        return implode(' ', $this->getCommandArray($executable, $input, $output));
     }
 
     /**
