@@ -12,7 +12,7 @@ parameters:
         #container_xml_path: ../../../var/cache/dev/App_KernelDevDebugContainer.xml # optional when running in project scope
 
     excludes_analyse:
-        # - '**/DependencyInjection/Configuration.php'
+        - '**/DependencyInjection/Configuration.php'
         # - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         # - '**/Generator/DoctrineCrudGenerator.php'
