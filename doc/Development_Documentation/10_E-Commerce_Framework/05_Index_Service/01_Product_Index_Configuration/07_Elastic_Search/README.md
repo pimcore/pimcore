@@ -1,6 +1,7 @@
 # Special Aspects for Elasticsearch
 Basically elasticsearch worker works as described in the [optimized architecture](../README.md). 
-Currently elasticsearch 5 (deprecated, will be removed with Pimcore 10), 6 and 7 are supported. 
+Currently elasticsearch 5 (deprecated, will be removed with Pimcore 10), 6 (deprecated, will be removed with Pimcore 10) 
+and 7 are supported. 
 
 ## Installation
 To work properly Pimcore requires the Elasticsearch bindings, install them with: `composer require elasticsearch/elasticsearch`.
