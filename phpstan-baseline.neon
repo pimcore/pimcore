@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\AbstractOrderList\\:\\:getItems\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListItemInterface\\> but returns Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/AbstractOrderList.php
+
+		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
