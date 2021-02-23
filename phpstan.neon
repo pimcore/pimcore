@@ -14,7 +14,7 @@ parameters:
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
         - '**/External/AdminerController.php'
-        - '**/Generator/DoctrineCrudGenerator.php'
+        # - '**/Generator/DoctrineCrudGenerator.php'
         - '**/Processor/PdfReactor8.php'
         - '**/Processor/PdfReactor.php'
         - '**/simple_html_dom.php'
@@ -35,7 +35,7 @@ parameters:
             path: '**/Imagick.php'
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         - '~^Unsafe usage of new static\(\)~'
-        - '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
+        # - '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
