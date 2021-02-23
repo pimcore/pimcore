@@ -1793,7 +1793,7 @@ class SettingsController extends AdminController
 
         if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
             $params['adapterConfig'] = '-O landscape';
-        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             $params['adapterConfig'] = [
                 'javaScriptMode' => 0,
                 'addLinks' => true,
