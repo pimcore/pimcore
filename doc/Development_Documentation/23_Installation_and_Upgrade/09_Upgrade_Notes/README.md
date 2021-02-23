@@ -55,6 +55,7 @@
   - `CancelPaymentOrRecreateOrderStrategy` is now default strategy for handling active payments 
   - Removed method `isCartReadOnly` from cart and `cart_readonly_mode` configuration option as readonly mode 
     does not exist anymore.
+  - Removed deprecated method `initPayment` from `PaymentInterface`
 - [Ecommerce] Removed deprecated `ecommerce:indexservice:process-queue` command, 
   use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead 
 - [Ecommerce] Removed deprecated `IndexUpdater` tool
