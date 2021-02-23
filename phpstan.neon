@@ -15,7 +15,7 @@ parameters:
         - '**/DependencyInjection/Configuration.php'
         - '**/External/AdminerController.php'
         # - '**/Generator/DoctrineCrudGenerator.php'
-        - '**/Processor/PdfReactor8.php'
+        # - '**/Processor/PdfReactor8.php'
         - '**/Processor/PdfReactor.php'
         - '**/simple_html_dom.php'
         - '**/Fieldcollection/Data/Filter*'
