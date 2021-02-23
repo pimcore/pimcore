@@ -16,7 +16,6 @@ parameters:
         - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
-        - '**/Processor/PdfReactor8.php'
         - '**/Processor/PdfReactor.php'
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
