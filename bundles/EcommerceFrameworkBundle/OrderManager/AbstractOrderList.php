@@ -154,7 +154,7 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * Returns an collection of items for a page.
+     * Returns a collection of items for a page.
      *
      * @param  int $offset           Page offset
      * @param  int $itemCountPerPage Number of items per page
