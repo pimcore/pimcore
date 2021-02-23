@@ -38,7 +38,10 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
         $this->libraryClasses($classes);
         $this->modelClasses($classes);
-        $this->dataObjectClasses($classes);
+
+        if(\Pimcore::isInstalled()) {
+            $this->dataObjectClasses($classes);
+        }
 
         return $classes;
     }
