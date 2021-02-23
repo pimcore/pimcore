@@ -295,20 +295,14 @@ class WorkflowController extends AdminController implements EventedControllerInt
             throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['dot']));
         }
 
-        $cmd = [
-            $php,
-            '${PPROOT}/bin/console',
-            'pimcore:workflow:dump',
-            '${WNAME}', '${WPLACES}',
-            '|', '${DOT}', '-Tsvg'
-        ];
+        $cmd = $php . ' ' . PIMCORE_PROJECT_ROOT . '/bin/console pimcore:workflow:dump ${WNAME} ${WPLACES} | ${DOT} -Tsvg';
         $params = [
-            'PPROOT' => PIMCORE_PROJECT_ROOT,
             'WNAME' => $workflow->getName(),
             'WPLACES' => implode(' ', array_keys($marking->getPlaces())),
             'DOT' => $dot
         ];
 
+        //@TODO change to Process::fromShellCommandline in Pimcore 10
         $process = new Process($cmd);
         $process->mustRun(null, $params);
 

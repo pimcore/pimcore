@@ -296,7 +296,7 @@ class Console
             $exitCode = $process->wait();
         }
 
-        return $background ? $process->getOutput() : $exitCode;
+        return $background ? $exitCode : $process->getOutput();
     }
 
     /**
