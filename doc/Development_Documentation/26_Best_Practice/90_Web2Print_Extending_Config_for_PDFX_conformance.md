@@ -44,7 +44,7 @@ class PDFConfigListener
         $options = $arguments['options'];
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             
             //add option to append log into generated PDF (pdf reactor functionality) 
             $options[] = ['name' => 'appendLog', 'type' => 'bool', 'default' => false];
@@ -59,7 +59,7 @@ class PDFConfigListener
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             
             //check if option for appending log to PDF is set in configuration and apply it to reactor config accordingly  
             if($arguments['config']->appendLog == 'true'){
@@ -94,7 +94,7 @@ class PDFConfigListener
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             
             //Set pdf reactor config for generating PDF/X conform PDF  
             $arguments['reactorConfig']['conformance'] = \Conformance::PDFX4;
