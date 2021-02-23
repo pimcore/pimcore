@@ -1,6 +1,10 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:end\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/Factory/PreAuthenticatedAdminSessionFactory.php
+		-
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\AbstractOrderList\\:\\:getItems\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListItemInterface\\> but returns Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OrderManager/AbstractOrderList.php
