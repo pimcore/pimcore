@@ -13,7 +13,6 @@ parameters:
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
-        # - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
         - '**/Processor/PdfReactor8.php'
