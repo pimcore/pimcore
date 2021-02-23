@@ -54,12 +54,4 @@ interface MysqlConfigInterface extends ConfigInterface
      */
     public function getCondition();
 
-    /**
-     * returns column type for id
-     *
-     * @param bool $isPrimary
-     *
-     * @return string
-     */
-    public function getIdColumnType($isPrimary);
 }
