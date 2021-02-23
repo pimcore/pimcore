@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.area");
-pimcore.document.editables.area = Class.create(pimcore.document.editable, {
+pimcore.document.editables.area = Class.create(pimcore.document.area_abstract, {
 
     initialize: function(id, name, config, data, inherited) {
 
@@ -31,6 +31,23 @@ pimcore.document.editables.area = Class.create(pimcore.document.editable, {
             });
             if (editDiv) {
                 editButton.render(editDiv);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
+        //editable dialog box button
+        try {
+            var dialogBoxDiv = Ext.get(id).query('.pimcore_area_dialog[data-name="' + this.name + '"]')[0];
+            if (dialogBoxDiv) {
+                var dialogBoxButton = new Ext.Button({
+                    cls: "pimcore_block_button_dialog",
+                    iconCls: "pimcore_icon_white_edit",
+                    listeners: {
+                        "click": this.openEditableDialogBox.bind(this, Ext.get(id), dialogBoxDiv)
+                    }
+                });
+                dialogBoxButton.render(dialogBoxDiv);
             }
         } catch (e) {
             console.log(e);
