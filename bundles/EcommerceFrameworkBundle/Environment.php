@@ -183,22 +183,6 @@ class Environment implements EnvironmentInterface
     }
 
     /**
-     * @deprecated
-     *
-     * use setCurrentAssortmentTenant instead
-     *
-     * @param string $currentTenant
-     *
-     * @return mixed|void
-     */
-    public function setCurrentTenant($currentTenant)
-    {
-        $this->load();
-
-        $this->setCurrentAssortmentTenant($currentTenant);
-    }
-
-    /**
      * @param Currency $currency
      */
     public function setDefaultCurrency(Currency $currency)
