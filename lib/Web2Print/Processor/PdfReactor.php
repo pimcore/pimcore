@@ -14,6 +14,12 @@
 
 namespace Pimcore\Web2Print\Processor;
 
+use com\realobjects\pdfreactor\webservice\client\ColorSpace;
+use com\realobjects\pdfreactor\webservice\client\Encryption;
+use com\realobjects\pdfreactor\webservice\client\HttpsMode;
+use com\realobjects\pdfreactor\webservice\client\JavaScriptMode;
+use com\realobjects\pdfreactor\webservice\client\LogLevel;
+use com\realobjects\pdfreactor\webservice\client\ViewerPreferences;
 use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\PrintConfigEvent;
@@ -41,14 +47,14 @@ class PdfReactor extends Processor
             'title' => $config->title ?? '',
             'addLinks' => isset($config->links) && $config->links === true,
             'addBookmarks' => isset($config->bookmarks) && $config->bookmarks === true,
-            'javaScriptMode' => $config->javaScriptMode ?? \JavaScriptMode::ENABLED,
-            'defaultColorSpace' => $config->colorspace ?? \ColorSpace::CMYK,
-            'encryption' => $config->encryption ?? \Encryption::NONE,
+            'javaScriptMode' => $config->javaScriptMode ?? JavaScriptMode::ENABLED,
+            'defaultColorSpace' => $config->colorspace ?? ColorSpace::CMYK,
+            'encryption' => $config->encryption ?? Encryption::NONE,
             'addTags' => isset($config->tags) && $config->tags === true,
-            'logLevel' => $config->loglevel ?? \LogLevel::FATAL,
+            'logLevel' => $config->loglevel ?? LogLevel::FATAL,
             'enableDebugMode' => $web2PrintConfig->get('pdfreactorEnableDebugMode') || (isset($config->enableDebugMode) && $config->enableDebugMode === true),
             'addOverprint' => isset($config->addOverprint) && $config->addOverprint === true,
-            'httpsMode' => $web2PrintConfig->get('pdfreactorEnableLenientHttpsMode') ? \HttpsMode::LENIENT : \HttpsMode::STRICT,
+            'httpsMode' => $web2PrintConfig->get('pdfreactorEnableLenientHttpsMode') ? HttpsMode::LENIENT : HttpsMode::STRICT,
         ];
         if (!empty($config->viewerPreference)) {
             $reactorConfig['viewerPreferences'] = [$config->viewerPreference];
@@ -61,7 +67,7 @@ class PdfReactor extends Processor
     }
 
     /**
-     * @return \PDFreactor
+     * @return \com\realobjects\pdfreactor\webservice\client\PDFreactor
      */
     protected function getClient()
     {
@@ -71,7 +77,7 @@ class PdfReactor extends Processor
         $port = ((string)$web2PrintConfig->get('pdfreactorServerPort')) ? (string)$web2PrintConfig->get('pdfreactorServerPort') : '9423';
         $protocol = ((string)$web2PrintConfig->get('pdfreactorProtocol')) ? (string)$web2PrintConfig->get('pdfreactorProtocol') : 'http';
 
-        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->get('pdfreactorServer') . ':' . $port . '/service/rest');
+        $pdfreactor = new \com\realobjects\pdfreactor\webservice\client\PDFreactor($protocol . '://' . $web2PrintConfig->get('pdfreactorServer') . ':' . $port . '/service/rest');
 
         if (trim($web2PrintConfig->get('pdfreactorApiKey'))) {
             $pdfreactor->apiKey = trim($web2PrintConfig->get('pdfreactorApiKey'));
@@ -94,7 +100,7 @@ class PdfReactor extends Processor
         $pdfreactor = $this->getClient();
 
         $customConfig = (array)$params['adapterConfig'];
-        $reactorConfig = $this->getConfig($customConfig);
+        $reactorConfig = $this->getConfig((object)$customConfig);
 
         if (!array_keys($customConfig, 'addLinks')) {
             $customConfig['addLinks'] = true;
@@ -130,7 +136,7 @@ class PdfReactor extends Processor
         $params = [];
         $params['printermarks'] = isset($config->printermarks) && $config->printermarks === true;
         $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === true;
-        $params['colorspace'] = $config->colorspace ?? \ColorSpace::CMYK;
+        $params['colorspace'] = $config->colorspace ?? ColorSpace::CMYK;
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
@@ -145,7 +151,7 @@ class PdfReactor extends Processor
         $reactorConfig['document'] = $html;
 
         $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
 
         $reactorConfig = $event->getArguments()['reactorConfig'];
 
@@ -164,9 +170,7 @@ class PdfReactor extends Processor
 
         $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         $result = $pdfreactor->getDocument($processId);
-        $pdf = base64_decode($result->document);
-
-        return $pdf;
+        return base64_decode($result->document);
     }
 
     public function getProcessingOptions()
@@ -185,36 +189,36 @@ class PdfReactor extends Processor
         $options[] = [
             'name' => 'javaScriptMode',
             'type' => 'select',
-            'values' => [\JavaScriptMode::ENABLED, \JavaScriptMode::DISABLED, \JavaScriptMode::ENABLED_NO_LAYOUT],
-            'default' => \JavaScriptMode::ENABLED,
+            'values' => [JavaScriptMode::ENABLED, JavaScriptMode::DISABLED, JavaScriptMode::ENABLED_NO_LAYOUT],
+            'default' => JavaScriptMode::ENABLED,
         ];
 
         $options[] = [
             'name' => 'viewerPreference',
             'type' => 'select',
-            'values' => [\ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_LEFT, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_RIGHT],
-            'default' => \ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE,
+            'values' => [ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE, ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_LEFT, ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_RIGHT],
+            'default' => ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE,
         ];
 
         $options[] = [
             'name' => 'colorspace',
             'type' => 'select',
-            'values' => [\ColorSpace::CMYK, \ColorSpace::RGB],
-            'default' => \ColorSpace::CMYK,
+            'values' => [ColorSpace::CMYK, ColorSpace::RGB],
+            'default' => ColorSpace::CMYK,
         ];
 
         $options[] = [
             'name' => 'encryption',
             'type' => 'select',
-            'values' => [\Encryption::NONE, \Encryption::TYPE_40, \Encryption::TYPE_128],
-            'default' => \Encryption::NONE,
+            'values' => [Encryption::NONE, Encryption::TYPE_40, Encryption::TYPE_128],
+            'default' => Encryption::NONE,
         ];
 
         $options[] = [
             'name' => 'loglevel',
             'type' => 'select',
-            'values' => [\LogLevel::FATAL, \LogLevel::WARN, \LogLevel::INFO, \LogLevel::DEBUG, \LogLevel::PERFORMANCE],
-            'default' => \LogLevel::FATAL,
+            'values' => [LogLevel::FATAL, LogLevel::WARN, LogLevel::INFO, LogLevel::DEBUG, LogLevel::PERFORMANCE],
+            'default' => LogLevel::FATAL,
         ];
 
         $options[] = ['name' => 'enableDebugMode', 'type' => 'bool', 'default' => false];
@@ -223,13 +227,13 @@ class PdfReactor extends Processor
             'options' => $options,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
 
         return (array)$event->getArguments()['options'];
     }
 
     protected function includeApi()
     {
-        include_once(__DIR__ . '/api/v' . Config::getWeb2PrintConfig()->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
+        include_once(__DIR__ . '/api/PDFreactor.class.php');
     }
 }
