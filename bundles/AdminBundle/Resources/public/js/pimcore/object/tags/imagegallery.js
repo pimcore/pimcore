@@ -107,7 +107,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         var fieldConfig = Object.assign({}, this.fieldConfig, {
             width: itemWidth,
             height: itemHeight,
-            uploadPath: this.fieldConfig.uploadPath
         });
     
         return fieldConfig;
