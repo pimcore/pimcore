@@ -239,11 +239,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
 
     /**
-     * prepare data for index creation and store is in store table
-     *
-     * @param IndexableInterface $object
-     *
-     * @return array returns the processed subobjects that can be used for the index update.
+     * @inheritDoc
      */
     public function prepareDataForIndex(IndexableInterface $object)
     {
@@ -397,7 +393,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     }
 
     /**
-     * resets the store table by marking all items as "in preparation", so items in store will be regenerated
+     * @inheritDoc
      */
     public function resetPreparationQueue()
     {
@@ -415,7 +411,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     }
 
     /**
-     * resets the store table to initiate a re-indexing
+     * @inheritDoc
      */
     public function resetIndexingQueue()
     {

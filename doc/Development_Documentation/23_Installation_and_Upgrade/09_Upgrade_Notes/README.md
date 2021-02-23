@@ -50,9 +50,13 @@
 - [Ecommerce] Removed deprecated `IndexUpdater` tool
 - [Ecommerce] Removed legacy BatchProcessing worker mode, product centric batch processing is now standard
   - Removed abstract class `AbstractBatchProcessingWorker`, use `ProductCentricBatchProcessing` instead
-  - Removed methods 
+  - Removed methods from interface `BatchProcessingWorkerInterface` and its implementations:
      - `BatchProcessingWorkerInterface::processPreparationQueue`
      - `BatchProcessingWorkerInterface::processUpdateIndexQueue`
+  - Added methods to interface `BatchProcessingWorkerInterface`
+    - `BatchProcessingWorkerInterface::prepareDataForIndex`
+    - `BatchProcessingWorkerInterface::resetPreparationQueue`
+    - `BatchProcessingWorkerInterface::resetIndexingQueue`
   - Removed constants 
      - `ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY` 
      - `ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC`
