@@ -148,9 +148,11 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
+        //@TODO change to Process::fromShellCommandline in Pimcore 10
         $process = new Process($this->buildPageCountCommand());
         $process->setTimeout(120);
-        $pages = $process->run();
+        $process->mustRun();
+        $pages = trim($process->getOutput());
 
         if (! is_numeric($pages)) {
             throw new \Exception('Unable to get page-count of ' . $this->path);
@@ -160,20 +162,20 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return array
+     * @return string
      *
      * @throws \Exception
      */
     protected function buildPageCountCommand()
     {
-        $command = [self::getGhostscriptCli(), '-dNODISPLAY', '-q'];
+        $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            array_push($command,"--permit-file-read='" . $this->path . "'");
+            $command .= " --permit-file-read='" . $this->path . "'";
         }
 
-        array_push($command,"-c", "'(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'");
+        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
 
         return $command;
     }
