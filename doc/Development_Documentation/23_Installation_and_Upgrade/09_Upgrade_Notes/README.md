@@ -38,6 +38,7 @@
   Use tenant specific options.  
 - [Ecommerce] Removed deprecated functions `get/setCurrentTenant` and `get/setCurrentSubTenant` 
   of `EnvironmentInterface`
+- [Ecommerce] Removed deprecated service alias for `Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment`
 - [Ecommerce] Removed deprecated functions `getGeneralSearchColumns`, `createOrUpdateTable`, `getIndexColumns` and `getIndexColumnsByFilterGroup` 
   of `IndexService`  
 - [Ecommerce] Removed deprecated function `getPaginatorAdapter` from 
