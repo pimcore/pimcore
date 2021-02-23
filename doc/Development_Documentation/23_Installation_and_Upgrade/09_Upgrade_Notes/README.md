@@ -42,7 +42,7 @@
 - [Ecommerce] Removed deprecated functions `getGeneralSearchColumns`, `createOrUpdateTable`, `getIndexColumns` and `getIndexColumnsByFilterGroup` 
   of `IndexService`  
 - [Ecommerce] Removed deprecated function `getPaginatorAdapter` from 
-  `ProductList\MySql`, `ProductList\DefaultFindologic`, `ProductList\ElasticSearch\AbstractElasticSearch` and `AbstractOrderList`
+  `ProductList\MySql`, `ProductList\DefaultFindologic`, `ProductList\ElasticSearch\AbstractElasticSearch`, `Token\Listing` and `AbstractOrderList`
 - [Ecommerce] Removed deprecated functions `getCalculatedPrice` and `getCalculatedPriceInfo` from `AbstractSetProduct`
 - [Ecommerce] Removed deprecated protected function `getAvailableFilterValues` from `Order\Listing`  
 - [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
