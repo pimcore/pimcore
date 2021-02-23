@@ -34,7 +34,7 @@ trait ClearTempFilesTrait
 
         /** @var \SplFileInfo $fileInfo */
         foreach (new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST, \RecursiveIteratorIterator::CATCH_GET_CHILD) as $fileInfo) {
-            if (preg_match('@^(image|video)-thumb__[\d]+__'.$thumbnail.'(?:_auto_.+)?$@', $fileInfo->getFilename(), $matches) && is_dir($fileInfo->getPathname())) {
+            if (preg_match('@^(image|video)-thumb__[\d]+__'.$thumbnail.'(?:_auto_.+)?$@', $fileInfo->getFilename(), $matches) && $fileInfo->isDir()) {
                 recursiveDelete($fileInfo->getPathname());
             }
         }
