@@ -19,6 +19,7 @@ parameters:
         - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
         - '**/EcommerceFrameworkBundle/Resources/views/Includes/paging.html.php'
         - '**/Processor/PdfReactor8.php'
+        - '**/Processor/PdfReactor.php'
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
         - '**/Document/MigrateTagNamingStrategyCommand.php'
