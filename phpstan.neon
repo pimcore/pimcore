@@ -33,9 +33,6 @@ parameters:
         -
             message: '/ALPHACHANNEL_REMOVE/'
             path: '**/Imagick.php'
-        -
-            message: '/an undefined static method.*getParameter\(\)./'
-            path: '**/Controller/Controller.php'
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         - '~^Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required\.\z~'
         - '~^Unsafe usage of new static\(\)~'
