@@ -610,9 +610,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
 
             try {
+                $tenantConfig = $this->getTenantConfig();
+                if (!$tenantConfig instanceof ElasticSearchConfigInterface) {
+                    throw new \Exception("Expected a ElasticSearchConfigInterface");
+                }
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
-                    'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
+                    'type' => $tenantConfig->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
                     $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
