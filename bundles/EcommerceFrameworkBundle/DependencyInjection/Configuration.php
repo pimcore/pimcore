@@ -130,6 +130,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $pimcore */
         $pimcore = $builder->getRootNode();
         $pimcore
             ->addDefaultsIfNotSet()
