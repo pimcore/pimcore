@@ -92,11 +92,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      * @param EventDispatcherInterface $eventDispatcher
-     * @param string|null $workerMode
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
     }
@@ -519,24 +518,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         // reset
         $this->bulkIndexData = [];
         $this->indexStoreMetaData = [];
-    }
-
-    /**
-     * @deprecated
-     *
-     * first run processUpdateIndexQueue of trait and then commit updated entries
-     *
-     * @param int $limit
-     *
-     * @return int number of entries processed
-     */
-    public function processUpdateIndexQueue($limit = 100)
-    {
-        $entriesUpdated = parent::processUpdateIndexQueue($limit);
-        Logger::info('Entries updated:' . $entriesUpdated);
-        $this->commitBatchToIndex();
-
-        return $entriesUpdated;
     }
 
     protected function getStoreTableName()
