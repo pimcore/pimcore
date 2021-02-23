@@ -34,6 +34,8 @@
   You can change that behavior with event listeners.     
 
 - [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
+- [Ecommerce] Removed deprecated configuration options `enabled`, `pricing_manager_id` and `pricing_manager_options` for pricing_manager. 
+  Use tenant specific options.  
 - [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
   activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
 - [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
