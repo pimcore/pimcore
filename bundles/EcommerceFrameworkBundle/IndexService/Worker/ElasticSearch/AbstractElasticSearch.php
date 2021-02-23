@@ -432,10 +432,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             if ($metadata !== null && $routingId != $metadata) {
                 //routing has changed, need to delete old ES entry
-                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $metadata]];
+                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_id' => $objectId, $this->routingParamName => $metadata]];
             }
 
-            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
+            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_id' => $objectId, $this->routingParamName => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
                 return $value !== null;
             }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
