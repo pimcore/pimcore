@@ -26,7 +26,15 @@ trait VarExport
     /**
      * @return array
      */
-    public function resolveBlockedVars()
+    public function getBlockedVarsForExport(): array
+    {
+        return $this->blockedVarsForExport;
+    }
+
+    /**
+     * @return array
+     */
+    public function resolveBlockedVars(): array
     {
         $defaultBlockedVars = [
             'fieldDefinitionsCache',
@@ -34,7 +42,7 @@ trait VarExport
             'queryColumnType',
         ];
 
-        return array_merge($defaultBlockedVars, $this->blockedVarsForExport);
+        return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
     }
 
     /**
