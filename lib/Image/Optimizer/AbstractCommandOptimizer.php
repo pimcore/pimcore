@@ -19,9 +19,6 @@ use Pimcore\Exception\ImageOptimizationFailedException;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Process;
 
-/**
- * @ abstract protected function getCommand(string $executable, string $input, string $output): string;
- */
 abstract class AbstractCommandOptimizer implements OptimizerInterface
 {
     /**
