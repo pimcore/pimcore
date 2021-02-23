@@ -30,5 +30,4 @@ class DefaultElasticSearch6 extends AbstractElasticSearch
             E_USER_DEPRECATED
         );
     }
-
 }
