@@ -55,7 +55,7 @@ The table below, describes the most useful of available options in the configura
 
 ## Simple example
 
-In the [Example File](https://github.com/pimcore/skeleton/blob/master/app/config/pimcore/perspectives.example.php) you 
+In the [Example File](https://github.com/pimcore/skeleton/blob/master/config/pimcore/perspectives.example.php) you 
 can find advance usage. Below, I showed how to create the simple structure which would be use for catalog administrators.
 
 We need only to see 
