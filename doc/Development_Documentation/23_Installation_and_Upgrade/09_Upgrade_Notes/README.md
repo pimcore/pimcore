@@ -58,7 +58,8 @@
     does not exist anymore.
   - Removed deprecated method `initPayment` from `PaymentInterface`
 - [Ecommerce] Removed deprecated `ecommerce:indexservice:process-queue` command, 
-  use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead 
+  use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead
+- [Ecommerce] Removed deprecated `mapping` option in index attributes configuration (never worked properly anyway) 
 - [Ecommerce] Removed deprecated `IndexUpdater` tool
 - [Ecommerce] Removed legacy BatchProcessing worker mode, product centric batch processing is now standard
   - Removed abstract class `AbstractBatchProcessingWorker`, use `ProductCentricBatchProcessing` instead

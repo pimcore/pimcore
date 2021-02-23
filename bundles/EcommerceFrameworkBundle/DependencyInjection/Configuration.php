@@ -835,13 +835,6 @@ class Configuration implements ConfigurationInterface
                                                 'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype',
                                             ]);
 
-                                            // this option was never properly supported
-                                            // and is ignored
-                                            if (isset($v['mapping'])) {
-                                                @trigger_error('The "mapping" config entry on the ecommerce index attribute level is unsupported and will be removed in Pimcore 10. Please set "options.mapping" instead.', E_USER_DEPRECATED);
-                                                unset($v['mapping']);
-                                            }
-
                                             return $v;
                                         })
                                     ->end()
@@ -856,7 +849,6 @@ class Configuration implements ConfigurationInterface
                                         ->append($this->buildOptionsNode('getter_options'))
                                         ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
-                                        ->append($this->buildOptionsNode('mapping')) // TODO Symfony 3.4 set as deprecated. TODO Pimcore 10 remove option completely.
                                         ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
                                     ->end()
                                 ->end()
