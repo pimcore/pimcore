@@ -41,6 +41,7 @@
 - [Ecommerce] Removed deprecated functions `getGeneralSearchColumns`, `createOrUpdateTable`, `getIndexColumns` and `getIndexColumnsByFilterGroup` 
   of `IndexService`  
 - [Ecommerce] Removed deprecated function `getPaginatorAdapter` from `ProductList\MySql`, `ProductList\DefaultFindologic` and `ProductList\ElasticSearch\AbstractElasticSearch`
+- [Ecommerce] Removed deprecated functions `getCalculatedPrice` and `getCalculatedPriceInfo` from `AbstractSetProduct` 
 - [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
   activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
 - [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
