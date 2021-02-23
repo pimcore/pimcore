@@ -187,7 +187,6 @@ pimcore:
             device: Pimcore\Targeting\DataProvider\Device
             geoip: Pimcore\Targeting\DataProvider\GeoIp
             geolocation: Pimcore\Targeting\DataProvider\GeoLocation
-            piwik: Pimcore\Targeting\DataProvider\Piwik
             targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
             visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
         conditions:
@@ -202,7 +201,6 @@ pimcore:
             target_group: Pimcore\Targeting\Condition\TargetGroup
             timeonsite: Pimcore\Targeting\Condition\TimeOnSite
             url: Pimcore\Targeting\Condition\Url
-            visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
             visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
         action_handlers:
             assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup

@@ -759,8 +759,6 @@ class Installer
             ['key' => 'http_errors'],
             ['key' => 'notes_events'],
             ['key' => 'objects'],
-            ['key' => 'piwik_settings'],
-            ['key' => 'piwik_reports'],
             ['key' => 'plugins'],
             ['key' => 'predefined_properties'],
             ['key' => 'asset_metadata'],

@@ -389,7 +389,7 @@ class DefaultFindologic implements ProductListInterface
                     $this->products[] = $product;
                 }
             } else {
-                $this->getLogger()->err(sprintf('object "%s" not found', $id));
+                $this->getLogger()->error(sprintf('object "%s" not found', $id));
             }
         }
 
