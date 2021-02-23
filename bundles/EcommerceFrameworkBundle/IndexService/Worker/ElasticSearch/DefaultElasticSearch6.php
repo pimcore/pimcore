@@ -15,12 +15,17 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Db\ConnectionInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  *  Use this for ES Version >= 6
  *
  * @property ElasticSearch $tenantConfig
+ *
+ * @deprecated since version 6.9.0 and will be removed in 10.0.0.
  */
 class DefaultElasticSearch6 extends AbstractElasticSearch
 {
@@ -30,6 +35,16 @@ class DefaultElasticSearch6 extends AbstractElasticSearch
      * @var string
      */
     protected $routingParamName = '_routing';
+
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    {
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
+
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.9.0 and will be removed in 10.0.0.',
+            E_USER_DEPRECATED
+        );
+    }
 
     // type will be removed in ES 7
     protected function getMappingParams($type = null)
