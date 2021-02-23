@@ -62,7 +62,11 @@
      - `ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC`
   - Removed configuration node `worker_mode` in `index_service` configuration  
 - [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is 
-  implemented in `AbstractConfig` this should not have any consequences.   
+  implemented in `AbstractConfig` this should not have any consequences.
+- [Web2Print] 
+   - Removed `PdfReactor8`, use `PdfReactor` instead.
+   - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib
+     should be backwards compatible to older versions.       
 - [Email & Newsletter] Swiftmailer has been replaced with Symfony Mailer. `\Pimcore\Mail` class now extends from `Symfony\Component\Mime\Email` and new mailer service `Pimcore\Mail\Mailer` has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
 
     Email method and transport setting has been removed from System settings. Cleanup Swiftmailer config and setup mailer transports "main" & "newsletter" in config.yaml:
