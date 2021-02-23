@@ -77,13 +77,13 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
         if ($builder instanceof ArrayNodeDefinition) {
             $builder
                 ->children()
-                ->scalarNode('provider')
-                ->defaultValue('pimcore_admin')
-                ->validate()
-                ->ifNotInArray(['pimcore_admin'])
-                ->thenInvalid('The pimcore_admin_pre_auth authenticator can only handle Pimcore admin users through the "pimcore_admin" provider')
-                ->end()
-                ->end()
+                    ->scalarNode('provider')
+                        ->defaultValue('pimcore_admin')
+                        ->validate()
+                            ->ifNotInArray(['pimcore_admin'])
+                            ->thenInvalid('The pimcore_admin_pre_auth authenticator can only handle Pimcore admin users through the "pimcore_admin" provider')
+                        ->end()
+                    ->end()
                 ->end();
         }
     }
