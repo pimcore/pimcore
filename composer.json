@@ -63,7 +63,7 @@
     "google/apiclient": "^2.8",
     "guzzlehttp/guzzle": "^7.2",
     "http-interop/http-factory-guzzle": "^1.0.0",
-    "lcobucci/jwt": "^3.2",
+    "lcobucci/jwt": "^4.0",
     "league/csv": "^9.1",
     "mjaschen/phpgeo": "^3.0",
     "mpratt/embera": "^2.0.14",
