@@ -109,7 +109,8 @@
       $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
       ...
     ```
-    
+ - [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
+
 ## 6.9.0
 - [Ecommerce] `getClientConfig` method will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
 - [ECommerce] `setSuccessorOrder` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
