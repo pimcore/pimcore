@@ -264,7 +264,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
                 /* relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {
-                    $db->insert('object_url_slugs', $slug);
+                    $db->insertOrUpdate('object_url_slugs', $slug);
                 } catch (\Exception $e) {
                     Logger::error($e);
                     if ($e instanceof UniqueConstraintViolationException) {
