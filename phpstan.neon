@@ -23,7 +23,6 @@ parameters:
     ignoreErrors:
         - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\FilterMultiSelectFromMultiSelect/'
         - '/(snappy|lz4)_(un)?compress/'
-        # - '/(Order|Checkout)Manager.*__construct\(\) does not call parent constructor/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
         - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
         - '/Matcher::__construct\(\).*TypeMatcher/'
