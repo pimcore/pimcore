@@ -1,9 +1,11 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
-{% spaceless -%}
-    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
-    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
-{%- endspaceless %}
+{% block styles %}
+    {% apply spaceless %}
+        {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
+        {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
+    {% endapply %}
+{% endblock %}
 
 {% set urlParams = app.request.query.all %}
 {% block content %}
