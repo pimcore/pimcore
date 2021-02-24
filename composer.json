@@ -112,7 +112,7 @@
     "composer/composer": "*"
   },
   "suggest": {
-    "ext-imagick": "*",
+    "ext-imagick": "^3.2.0",
     "ext-redis": "*",
     "elasticsearch/elasticsearch": "Required for Elastic Search service"
   },
