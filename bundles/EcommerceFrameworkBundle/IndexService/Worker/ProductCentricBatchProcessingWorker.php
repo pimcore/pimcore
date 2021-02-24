@@ -14,11 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Ecommerce\IndexServiceEvents;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
@@ -26,7 +24,6 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implements BatchProcessingWorkerInterface
 {
@@ -51,8 +48,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      * @param array|null $metadata
      */
     abstract protected function doUpdateIndex($objectId, $data = null, $metadata = null);
-
-
 
     public function updateItemInIndex($objectId): void
     {
@@ -154,7 +149,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         }
     }
 
-
     /**
      * prepare data for index creation and store is in store table
      *
@@ -236,7 +230,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
         return $data;
     }
-
 
     /**
      * @inheritDoc

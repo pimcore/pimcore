@@ -170,6 +170,7 @@ class PdfReactor extends Processor
 
         $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         $result = $pdfreactor->getDocument($processId);
+
         return base64_decode($result->document);
     }
 
