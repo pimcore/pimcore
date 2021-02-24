@@ -109,7 +109,8 @@
       $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
       ...
     ```
-    
+ - [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
+
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
