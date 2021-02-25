@@ -91,8 +91,12 @@ class Dao extends Model\Dao\PhpArrayTable
             }
         }
 
+        $thumbnailDefinitionAlreadyExisted = $this->db->getById($this->model->getName()) !== null;
         $this->db->insertOrUpdate($data, $this->model->getName());
-        $this->autoClearTempFiles();
+
+        if(!$thumbnailDefinitionAlreadyExisted) {
+            $this->autoClearTempFiles();
+        }
     }
 
     /**
