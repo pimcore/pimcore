@@ -109,9 +109,7 @@
       $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
       ...
     ```
-- JWTCookieSaveHandler 
-    - $signer argument of JWTCookieSaveHandler::__construct() has been removed.
-    - `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
+- [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
 
 ## 6.9.0
 - [ECommerce] `setSuccessorOrder` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10

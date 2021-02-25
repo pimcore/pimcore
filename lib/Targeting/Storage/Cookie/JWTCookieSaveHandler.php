@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage\Cookie;
 
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\Plain;
@@ -43,11 +44,13 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     public function __construct(
         string $secret,
         array $options = [],
-        LoggerInterface $logger = null) {
+        Signer $signer = null,
+        LoggerInterface $logger = null
+    ) {
         parent::__construct($options);
 
         $config = Configuration::forSymmetricSigner(
-            new Sha256(),
+            $signer ?? new Sha256(),
             InMemory::plainText($secret)
         );
         $config->setValidationConstraints(new SignedWith($config->signer(), $config->verificationKey()));
