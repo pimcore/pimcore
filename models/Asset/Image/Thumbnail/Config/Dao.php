@@ -112,8 +112,8 @@ class Dao extends Model\Dao\PhpArrayTable
                 Console::getPhpCli(),
                 PIMCORE_PROJECT_ROOT.'/bin/console',
                 'pimcore:thumbnails:clear',
-                'image',
-                $this->model->getName()
+                '--type=image',
+                '--name='.$this->model->getName()
             ];
 
             $process = new Process($arguments);
