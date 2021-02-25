@@ -1814,13 +1814,13 @@ class DataObjectHelperController extends AdminController
 
         $list = $gridHelperService->prepareListingForGrid($allParams, $requestedLanguage, $this->getAdminUser());
 
-        $beforeListLoadEvent = new GenericEvent($this, [
+        $beforeListPrepareEvent = new GenericEvent($this, [
             'list' => $list,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_PREPARE, $beforeListPrepareEvent);
 
-        $list = $beforeListLoadEvent->getArgument('list');
+        $list = $beforeListPrepareEvent->getArgument('list');
 
         $ids = $list->loadIdList();
 
@@ -1877,13 +1877,13 @@ class DataObjectHelperController extends AdminController
         $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
         $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
 
-        $beforeListLoadEvent = new GenericEvent($this, [
+        $beforeListExportEvent = new GenericEvent($this, [
             'list' => $list,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_EXPORT, $beforeListExportEvent);
 
-        $list = $beforeListLoadEvent->getArgument('list');
+        $list = $beforeListExportEvent->getArgument('list');
 
         $fields = $request->get('fields');
 
