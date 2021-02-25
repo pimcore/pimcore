@@ -134,6 +134,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o->save();
 
         Cache::clearAll();
+        Cache\Runtime::clear();
 
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         /** @var \Pimcore\Model\DataObject\Data\QuantityValue $value1 */
@@ -141,17 +142,32 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($value->getValue(), $value1->getValue());
         $this->assertEquals($value->getUnit(), $value1->getUnit());
 
-        //clear values
+        //clear value
+        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(null, 1);
+        $o->getCsstore()->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $value);
+        $o->save();
+
+        Cache::clearAll();
+        Cache\Runtime::clear();
+
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
+        /** @var \Pimcore\Model\DataObject\Data\QuantityValue $value1 */
+        $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
+        $this->assertNull($value1->getValue());
+
+        //clear value+unit (nullify field)
         $value = new \Pimcore\Model\DataObject\Data\QuantityValue(null, null);
         $o->getCsstore()->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $value);
         $o->save();
 
         Cache::clearAll();
+        Cache\Runtime::clear();
+
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         /** @var \Pimcore\Model\DataObject\Data\QuantityValue $value1 */
         $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
-        $this->assertEquals($value->getValue(), $value1->getValue());
-        $this->assertEquals($value->getUnit(), $value1->getUnit());
+        $this->assertNull($value1);
+
 
         Cache::enable();
     }
