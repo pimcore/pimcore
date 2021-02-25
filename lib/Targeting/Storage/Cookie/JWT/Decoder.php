@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage\Cookie\JWT;
 
 /**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ *
  * Extends core decoder and decodes to array instead of object.
  */
 class Decoder extends \Lcobucci\JWT\Parsing\Decoder
