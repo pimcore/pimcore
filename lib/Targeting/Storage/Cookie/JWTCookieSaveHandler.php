@@ -127,7 +127,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
             ->withClaim(self::CLAIM_TARGETING_DATA, $data);
 
         if (0 === $expire) {
-            $builder->expiresAt($time->add(new \DateInterval("PT30M"))); // expire in 30 min
+            $builder->expiresAt($time->modify("+30 minutes")); // expire in 30 min
         } elseif (is_int($expire) && $expire > 0) {
             $expire = new \DateTimeImmutable('@'. $expire);
             $builder->expiresAt($expire);
