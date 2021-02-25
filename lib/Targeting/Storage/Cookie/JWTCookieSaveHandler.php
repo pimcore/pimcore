@@ -20,6 +20,7 @@ namespace Pimcore\Targeting\Storage\Cookie;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Configuration;
 use Psr\Log\LoggerInterface;
@@ -64,6 +65,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
         }
 
         try {
+            /** @var Plain $token */
             $token = $this->config->parser()->parse($data);
             $validator = $this->config->validator();
 
