@@ -18,6 +18,8 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Model;
+use Pimcore\Tool\Console;
+use Symfony\Component\Process\Process;
 
 /**
  * @internal
@@ -106,7 +108,16 @@ class Dao extends Model\Dao\PhpArrayTable
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            $this->model->clearTempFiles();
+            $arguments = [
+                Console::getPhpCli(),
+                PIMCORE_PROJECT_ROOT.'/bin/console',
+                'pimcore:thumbnails:clear',
+                'image',
+                $this->model->getName()
+            ];
+
+            $process = new Process($arguments);
+            $process->start();
         }
     }
 }
