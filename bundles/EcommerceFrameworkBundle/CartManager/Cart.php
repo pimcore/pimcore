@@ -103,7 +103,7 @@ class Cart extends AbstractCart implements CartInterface
         } catch (\Exception $e) {
             try {
                 $cartClass = get_called_class();
-                /* @var CartInterface $cart */
+                /* @var Cart $cart */
                 $cart = new $cartClass;
                 $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);
