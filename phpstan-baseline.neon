@@ -258,6 +258,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
 
 		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:getById\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:setSortIndex\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
