@@ -151,7 +151,7 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -165,7 +165,7 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
