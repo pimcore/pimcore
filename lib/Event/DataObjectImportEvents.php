@@ -17,7 +17,7 @@ namespace Pimcore\Event;
 final class DataObjectImportEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\DataObject\DataObjectImportEvent")
+     * @Event("Pimcore\Event\Model\DataObjectImportEvent")
      *
      * fired before the first data set is imported
      *
@@ -35,7 +35,7 @@ final class DataObjectImportEvents
     const PRE_SAVE = 'pimcore.dataobject.import.preSave';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\DataObjectImportEvent")
+     * @Event("Pimcore\Event\Model\DataObjectImportEvent")
      *
      * fired befere the preview data gets prepared
      *
@@ -44,7 +44,7 @@ final class DataObjectImportEvents
     const PREVIEW = 'pimcore.dataobject.import.preview';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\DataObjectImportEvent")
+     * @Event("Pimcore\Event\Model\DataObjectImportEvent")
      *
      * fired after an object (row) gets saved
      *
@@ -53,7 +53,7 @@ final class DataObjectImportEvents
     const POST_SAVE = 'pimcore.dataobject.import.postSave';
 
     /**
-     * @Event("Pimcore\Event\Model\DataObject\DataObjectImportEvent")
+     * @Event("Pimcore\Event\Model\DataObjectImportEvent")
      *
      * fired after the entire import is done
      *

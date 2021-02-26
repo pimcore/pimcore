@@ -20,7 +20,7 @@ namespace Pimcore\Event;
 final class TestEvents
 {
     /**
-     * @Event("\Symfony\Component\EventDispatcher\Event")
+     * @Event("\Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
