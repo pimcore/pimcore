@@ -1818,7 +1818,7 @@ class DataObjectHelperController extends AdminController
             'list' => $list,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch($beforeListPrepareEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_PREPARE);
+        $eventDispatcher->dispatch($beforeListPrepareEvent, AdminEvents::OBJECT_LIST_BEFORE_EXPORT_PREPARE);
 
         $list = $beforeListPrepareEvent->getArgument('list');
 
@@ -1881,7 +1881,7 @@ class DataObjectHelperController extends AdminController
             'list' => $list,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch($beforeListExportEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_EXPORT);
+        $eventDispatcher->dispatch($beforeListExportEvent, AdminEvents::OBJECT_LIST_BEFORE_EXPORT);
 
         $list = $beforeListExportEvent->getArgument('list');
 

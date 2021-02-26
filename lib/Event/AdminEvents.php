@@ -155,7 +155,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const OBJECT_LIST_BEFORE_LIST_PREPARE = 'pimcore.admin.object.list.beforeListPrepare';
+    const OBJECT_LIST_BEFORE_EXPORT_PREPARE = 'pimcore.admin.object.list.beforeExportPrepare';
 
     /**
      * Allows you to modify the object list before it is exported.
@@ -169,7 +169,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const OBJECT_LIST_BEFORE_LIST_EXPORT = 'pimcore.admin.object.list.beforeListExport';
+    const OBJECT_LIST_BEFORE_EXPORT = 'pimcore.admin.object.list.beforeExport';
 
     /**
      * Allows you to modify the the result after the list was loaded. This event apply to the grid list.
