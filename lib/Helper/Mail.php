@@ -247,6 +247,8 @@ CSS;
                 } elseif (strpos($path, '/') === 0) {
                     $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
                     $absolutePath = $hostUrl . $absolutePath;
+                } elseif (strpos($path, 'file://') === 0) {
+                    continue;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
                     if ($path[0] == '?') {
@@ -267,7 +269,11 @@ CSS;
             foreach ($parts as $key => $v) {
                 $v = trim($v);
                 // ignore absolute urls
-                if (strpos($v, 'http://') === 0 || strpos($v, 'https://') === 0 || strpos($v, '//') === 0) {
+                if (strpos($v, 'http://') === 0 ||
+                    strpos($v, 'https://') === 0 ||
+                    strpos($v, '//') === 0 ||
+                    strpos($v, 'file://') === 0
+                ) {
                     continue;
                 }
                 $parts[$key] = $hostUrl.$v;
