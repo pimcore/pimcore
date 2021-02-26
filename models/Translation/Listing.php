@@ -28,6 +28,7 @@ use Pimcore\Model\Exception\NotFoundException;
  * @method int getTotalCount()
  * @method void onCreateQuery(callable $callback)
  * @method void onCreateQueryBuilder(?callable $callback)
+ * @method void cleanup()
  *
  */
 class Listing extends Model\Listing\AbstractListing
