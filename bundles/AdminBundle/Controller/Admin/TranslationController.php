@@ -651,24 +651,18 @@ class TranslationController extends AdminController
     public function cleanupAction(Request $request)
     {
         $admin = $request->get('admin');
-
-        $listClass = '\\Pimcore\\Model\\Translation\\Listing';
         $domain = Translation::DOMAIN_DEFAULT;
         if ($admin) {
             $domain = Translation::DOMAIN_ADMIN;
         }
 
-        if (Tool::classExists($listClass)) {
-            $list = new $listClass();
-            $list->setDomain($domain);
-            $list->cleanup();
+        $list = new Translation\Listing();
+        $list->setDomain($domain);
+        $list->cleanup();
 
-            \Pimcore\Cache::clearTags(['translator', 'translate']);
+        \Pimcore\Cache::clearTags(['translator', 'translate']);
 
-            return $this->adminJson(['success' => true]);
-        }
-
-        return $this->adminJson(['success' => false]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
