@@ -109,6 +109,7 @@
       $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
       ...
     ```
+- [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
 - [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
 
 ## 6.9.0
