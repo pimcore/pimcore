@@ -170,8 +170,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
 
             if ($filter) {
-                $db = Db::get();
-
                 $condition = '(' . $condition . ')' . ' AND CAST(documents.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 

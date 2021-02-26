@@ -38,13 +38,35 @@
   activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
 - [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
 - [Ecommerce] Added type declarations to Ecommerce Framework product interfaces (`ProductInterface`, `IndexableInterface`, `CheckoutableInterface`).
-- [Ecommerce] Removed elasticsearch 5 support 
+- [Ecommerce] Removed Elasticsearch 5 and 6 support 
 - [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
 `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
 - [Ecommerce] Removed legacy CheckoutManager architecture, migrate your project to V7 if not already
   - `CancelPaymentOrRecreateOrderStrategy` is now default strategy for handling active payments 
   - Removed method `isCartReadOnly` from cart and `cart_readonly_mode` configuration option as readonly mode 
     does not exist anymore.
+- [Ecommerce] Removed deprecated `ecommerce:indexservice:process-queue` command, 
+  use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead 
+- [Ecommerce] Removed deprecated `IndexUpdater` tool
+- [Ecommerce] Removed legacy BatchProcessing worker mode, product centric batch processing is now standard
+  - Removed abstract class `AbstractBatchProcessingWorker`, use `ProductCentricBatchProcessing` instead
+  - Removed methods from interface `BatchProcessingWorkerInterface` and its implementations:
+     - `BatchProcessingWorkerInterface::processPreparationQueue`
+     - `BatchProcessingWorkerInterface::processUpdateIndexQueue`
+  - Added methods to interface `BatchProcessingWorkerInterface`
+    - `BatchProcessingWorkerInterface::prepareDataForIndex`
+    - `BatchProcessingWorkerInterface::resetPreparationQueue`
+    - `BatchProcessingWorkerInterface::resetIndexingQueue`
+  - Removed constants 
+     - `ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY` 
+     - `ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC`
+  - Removed configuration node `worker_mode` in `index_service` configuration  
+- [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is 
+  implemented in `AbstractConfig` this should not have any consequences.
+- [Web2Print] 
+   - Removed `PdfReactor8`, use `PdfReactor` instead.
+   - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib
+     should be backwards compatible to older versions.       
 - [Email & Newsletter] Swiftmailer has been replaced with Symfony Mailer. `\Pimcore\Mail` class now extends from `Symfony\Component\Mime\Email` and new mailer service `Pimcore\Mail\Mailer` has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
 
     Email method and transport setting has been removed from System settings. Cleanup Swiftmailer config and setup mailer transports "main" & "newsletter" in config.yaml:
@@ -87,8 +109,17 @@
       $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
       ...
     ```
-    
+- [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
+- [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
+
 ## 6.9.0
+- [Ecommerce] `getClientConfig` method will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [ECommerce] `setSuccessorOrder` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
+- [Ecommerce] `getFieldNameMapped` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [Ecommerce] `getReverseMappedFieldName` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [Ecommerce] Tenant config type hint will be changed to `FindologicConfigInterface` in `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic::__construct` in Pimcore 10
+- Calling static methods on `Pimcore\Model\DataObject\AbstractObject` is deprecated, use `Pimcore\Model\DataObject` instead.
+- [Ecommerce] Abstract method `setCartHash` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
 - Abstract method `load` will be added to `Pimcore\Model\Listing\Dao\AbstractDao` in Pimcore 10
 - [Elastic Search] `getClientConfig` will be added to the `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config` interface in Pimcore 10
 - `PageSnippet::$elements` property visibility changed from `protected` to `private` 
@@ -127,10 +158,11 @@
     );
 ```
 - Using Zend\Paginator for listing classes has been deprecated and will be removed in Pimcore 10. Use Knp\Component\Pager\Paginator instead.
-- [Ecommerce] Elasticsearch 5 support is deprecated, use newer versions of elasticsearch.
+- [Ecommerce] Elasticsearch 5 and 6 support is deprecated, use newer versions of elasticsearch.
 - [Ecommerce] Calling `getItemAmount` and `getItemCount` of `Carts` with boolean parameter is deprecated. Use one of 
   `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS` 
   instead. 
+- `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` class has been deprecated and will be removed in Pimcore 10.
 
 - [Analytics] Matomo(Piwik) integration has been deprecated in Core and Ecommerce bundle, and will be removed in Pimcore 10.
 - [Targeting and Personalization] VisitedPageBefore condition has been deprecated, as it is based on deprecated Piwik integration and will be removed in Pimcore 10.

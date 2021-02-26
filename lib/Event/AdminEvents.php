@@ -82,7 +82,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -96,7 +96,7 @@ final class AdminEvents
      *  - list | the search backend list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -110,7 +110,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -123,7 +123,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -137,7 +137,7 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -179,7 +179,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -192,7 +192,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -206,7 +206,7 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -220,7 +220,7 @@ final class AdminEvents
      *  - processed
      *  - result
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -234,7 +234,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -248,7 +248,7 @@ final class AdminEvents
      *  - data | raw data as an array
      *  - processed | true to stop processing
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -262,7 +262,7 @@ final class AdminEvents
      *  - params |
      *  - processed | true to stop processing
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -275,7 +275,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -289,7 +289,7 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -303,7 +303,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -317,7 +317,7 @@ final class AdminEvents
      *  - data | array | the response data, this can be modified
      *  - asset | Asset | the current asset
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -328,7 +328,7 @@ final class AdminEvents
      * Arguments:
      *  - assets | array | the list of asset tree nodes
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -342,7 +342,7 @@ final class AdminEvents
      *  - data | array | the response data, this can be modified
      *  - document | Document | the current document
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -353,7 +353,7 @@ final class AdminEvents
      * Arguments:
      *  - documents | array | the list of document tree nodes
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -367,7 +367,7 @@ final class AdminEvents
      *  - data | array | the response data, this can be modified
      *  - object | AbstractObject | the current object
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -378,7 +378,7 @@ final class AdminEvents
      * Arguments:
      *  - objects | array | the list of object tree nodes
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -390,7 +390,7 @@ final class AdminEvents
      *  - list | array | the list of field collections
      *  - objectId | int | id of the origin object
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -402,7 +402,7 @@ final class AdminEvents
      *  - icons | array | the list of selectable icons
      *  - classId | string | classid of class definition
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -414,7 +414,7 @@ final class AdminEvents
      *  - list | array | the list of object bricks
      *  - objectId | int | id of the origin object
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -425,7 +425,7 @@ final class AdminEvents
      * Arguments:
      *  - brickDefinition | the brick definition
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -439,7 +439,7 @@ final class AdminEvents
      *  - list | the search backend list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -453,7 +453,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -507,7 +507,7 @@ final class AdminEvents
      *  - id | int | asset id
      *  - metadata | array | contains the data received from the editor UI
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */

@@ -18,11 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage\Cookie;
 
 use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\ValidationData;
-use Pimcore\Targeting\Storage\Cookie\JWT\Decoder;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Configuration;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -31,14 +32,9 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     const CLAIM_TARGETING_DATA = 'ptg';
 
     /**
-     * @var string
+     * @var Configuration
      */
-    private $secret;
-
-    /**
-     * @var Signer
-     */
-    private $signer;
+    private $config;
 
     /**
      * @var LoggerInterface
@@ -53,8 +49,12 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     ) {
         parent::__construct($options);
 
-        $this->secret = $secret;
-        $this->signer = $signer ?? new Sha256();
+        $config = Configuration::forSymmetricSigner(
+            $signer ?? new Sha256(),
+            InMemory::plainText($secret)
+        );
+        $config->setValidationConstraints(new SignedWith($config->signer(), $config->verificationKey()));
+        $this->config = $config;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -67,29 +67,23 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
             return [];
         }
 
-        $parser = new Parser(new Decoder());
-
         try {
-            $token = $parser->parse($data);
-
-            $data = new ValidationData();
+            /** @var Plain $token */
+            $token = $this->config->parser()->parse($data);
+            $validator = $this->config->validator();
 
             // validate token (expiry, ...)
-            if (!$token->validate($data)) {
+            if (!$validator->validate($token, ...$this->config->validationConstraints())) {
                 return [];
             }
 
-            // verify token signature
-            if (!$token->verify($this->signer, $this->secret)) {
-                return [];
-            }
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
             return [];
         }
 
-        $data = $token->getClaim(self::CLAIM_TARGETING_DATA, []);
+        $data = $token->claims()->get(self::CLAIM_TARGETING_DATA, []);
 
         if (!is_array($data)) {
             $data = [];
@@ -108,30 +102,41 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
         }
 
         $builder = $this->createTokenBuilder($scope, $name, $expire, $data);
-        $token = $builder->getToken();
-        $result = (string)$token;
+        $token = $builder->getToken($this->config->signer(), $this->config->signingKey());
+        $result = $token->toString();
 
         return $result;
     }
 
+    /**
+     * @param string $scope
+     * @param string $name
+     * @param int|string|\DateTimeInterface $expire
+     * @param array|null $data
+     *
+     * @return Builder
+     * @throws \Exception
+     */
     protected function createTokenBuilder(string $scope, string $name, $expire, $data): Builder
     {
-        $time = time();
+        $time = new \DateTimeImmutable();
 
-        $builder = new Builder();
+        $builder = $this->config->builder();
         $builder
-            ->setIssuedAt($time)
-            ->set(self::CLAIM_TARGETING_DATA, $data);
+            ->issuedAt($time)
+            ->withClaim(self::CLAIM_TARGETING_DATA, $data);
 
         if (0 === $expire) {
-            $builder->setExpiration($time + (60 * 30)); // expire in 30 min
+            $builder->expiresAt($time->modify("+30 minutes")); // expire in 30 min
         } elseif (is_int($expire) && $expire > 0) {
-            $builder->setExpiration($expire);
+            $expire = new \DateTimeImmutable('@'. $expire);
+            $builder->expiresAt($expire);
         } elseif ($expire instanceof \DateTimeInterface) {
-            $builder->setExpiration($expire->getTimestamp());
+            $expire = new \DateTimeImmutable('@'. $expire->getTimestamp());
+            $builder->expiresAt($expire);
         }
 
-        $builder->sign($this->signer, $this->secret);
+        $builder->getToken($this->config->signer(), $this->config->signingKey());
 
         return $builder;
     }

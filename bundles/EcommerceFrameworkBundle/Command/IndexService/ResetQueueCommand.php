@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -61,12 +61,12 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
 
         foreach ($tenants as $tenant) {
 
-            /** @var AbstractBatchProcessingWorker $worker */
+            /** @var ProductCentricBatchProcessingWorker $worker */
             $worker = $updater->getTenantWorker($tenant);
 
             $output->writeln("<info>Process tenant {$tenant}...</info>");
 
-            if (!$worker instanceof AbstractBatchProcessingWorker) {
+            if (!$worker instanceof ProductCentricBatchProcessingWorker) {
                 throw new \Exception('Tenant is not of type AbstractBatchProcessingWorker');
             }
 

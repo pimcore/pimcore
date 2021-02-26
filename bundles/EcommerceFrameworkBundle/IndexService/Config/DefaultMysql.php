@@ -103,22 +103,6 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
     }
 
     /**
-     * returns column type for id
-     *
-     * @param bool $isPrimary
-     *
-     * @return string
-     */
-    public function getIdColumnType($isPrimary)
-    {
-        if ($isPrimary) {
-            return "int(11) NOT NULL default '0'";
-        } else {
-            return 'int(11) NOT NULL';
-        }
-    }
-
-    /**
      * @inheritDoc
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)

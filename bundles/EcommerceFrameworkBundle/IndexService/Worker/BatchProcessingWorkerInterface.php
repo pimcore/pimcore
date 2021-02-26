@@ -29,28 +29,25 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
     public function fillupPreparationQueue(IndexableInterface $object);
 
     /**
-     * @deprecated will be removed in Pimcore 10.0
-     * @TODO Pimcore 10 - remove this
+     * prepare data for index creation and store is in store table
      *
-     * processes elements in the queue for preparation of index data
-     * can be run in parallel since each thread marks the entries it is working on and only processes these entries
+     * @param IndexableInterface $object
      *
-     * @param int $limit
-     *
-     * @return int number of entries
+     * @return array returns the processed subobjects that can be used for the index update.
      */
-    public function processPreparationQueue($limit = 200);
+    public function prepareDataForIndex(IndexableInterface $object);
 
     /**
-     * @deprecated will be removed in Pimcore 10.0
-     * @TODO Pimcore 10 - remove this
+     * resets the store table by marking all items as "in preparation", so items in store will be regenerated
      *
-     * processes the update index queue - updates all elements where current_crc != index_crc
-     * can be run in parallel since each thread marks the entries it is working on and only processes these entries
-     *
-     * @param int $limit
-     *
-     * @return int number of entries processed
+     * @return void
      */
-    public function processUpdateIndexQueue($limit = 200);
+    public function resetPreparationQueue();
+
+    /**
+     * resets the store table to initiate a re-indexing
+     *
+     * @return void
+     */
+    public function resetIndexingQueue();
 }
