@@ -18,12 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage\Cookie;
 
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Configuration;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -76,7 +76,6 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
             if (!$validator->validate($token, ...$this->config->validationConstraints())) {
                 return [];
             }
-
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
@@ -115,6 +114,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
      * @param array|null $data
      *
      * @return Builder
+     *
      * @throws \Exception
      */
     protected function createTokenBuilder(string $scope, string $name, $expire, $data): Builder
@@ -127,7 +127,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
             ->withClaim(self::CLAIM_TARGETING_DATA, $data);
 
         if (0 === $expire) {
-            $builder->expiresAt($time->modify("+30 minutes")); // expire in 30 min
+            $builder->expiresAt($time->modify('+30 minutes')); // expire in 30 min
         } elseif (is_int($expire) && $expire > 0) {
             $expire = new \DateTimeImmutable('@'. $expire);
             $builder->expiresAt($expire);
