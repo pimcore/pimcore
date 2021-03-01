@@ -14,6 +14,7 @@
 
 namespace Pimcore\Tool;
 
+use Symfony\Component\DomCrawler\Crawler;
 use Onnov\DetectEncoding\EncodingDetector;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
@@ -186,12 +187,12 @@ class Text
     public static function replaceWysiwygTextRelationIds($idMapping, $text)
     {
         if (!empty($text)) {
-            $html = str_get_html($text);
+            $html = new Crawler($text);
             if (!$html) {
                 return $text;
             }
 
-            $s = $html->find('a[pimcore_id],img[pimcore_id]');
+            $s = $html->filter('a[pimcore_id], img[pimcore_id]');
 
             foreach ($s as $el) {
                 $type = null;
@@ -202,10 +203,10 @@ class Text
                 }
 
                 // link
-                if ($el->href) {
-                    if ($el->pimcore_type == 'asset') {
+                if ($el->getAttribute('href')) {
+                    if ($el->getAttribute('pimcore_type') == 'asset') {
                         $type = 'asset';
-                    } elseif ($el->pimcore_type == 'document') {
+                    } elseif ($el->getAttribute('pimcore_type') == 'document') {
                         $type = 'document';
                     }
                 }
@@ -222,16 +223,16 @@ class Text
 
                     //TODO
 
-                    $el->pimcore_id = $newId;
-                    $el->src = $pimcoreElement->getFullPath();
+                    $el->setAttribute('pimcore_id', $newId);
+                    $el->setAttribute('src', $pimcoreElement->getFullPath());
                 } else {
                     //remove relation, not found in mapping
-                    $el->pimcore_id = null;
-                    $el->src = null;
+                    $el->setAttribute('pimcore_id', null);
+                    $el->setAttribute('src', null);
                 }
             }
 
-            $return = $html->save();
+            $return = $html->html();
 
             $html->clear();
             unset($html);

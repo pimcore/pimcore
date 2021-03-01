@@ -27,6 +27,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Newsletter
@@ -80,16 +81,16 @@ class Newsletter
 
         // render the document and rewrite the links (if analytics is enabled)
         if ($contentHTML && $newsletterDocument->getEnableTrackingParameters()) {
-            $html = str_get_html($contentHTML);
+            $html = new Crawler($contentHTML);
             if ($html) {
-                $links = $html->find('a');
+                $links = $html->filter('a');
                 foreach ($links as $link) {
-                    if (preg_match('/^(mailto|#)/i', trim($link->href))) {
+                    if (preg_match('/^(mailto|#)/i', trim($link->getAttribute('href')))) {
                         // No tracking for mailto and hash only links
                         continue;
                     }
 
-                    $urlParts = parse_url($link->href);
+                    $urlParts = parse_url($link->getAttribute('href'));
                     $glue = '?';
                     $params = sprintf(
                         'utm_source=%s&utm_medium=%s&utm_campaign=%s',
@@ -102,14 +103,15 @@ class Newsletter
                         $glue = '&';
                     }
 
-                    $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
+                    $href = preg_replace('/[#].+$/', '', $link->getAttribute('href')).$glue.$params;
 
                     if (isset($urlParts['fragment'])) {
-                        $link->href .= '#'.$urlParts['fragment'];
+                        $href .= '#'.$urlParts['fragment'];
                     }
-                }
 
-                $contentHTML = $html->save();
+                    $link->setAttribute('href', $href);
+                }
+                $contentHTML = $html->html();
 
                 $html->clear();
                 unset($html);
