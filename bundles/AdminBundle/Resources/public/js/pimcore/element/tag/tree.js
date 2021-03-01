@@ -113,7 +113,7 @@ pimcore.element.tag.tree = Class.create({
             this.filterButton = new Ext.Button({
                 iconCls: "pimcore_icon_search",
                 text: t("filter"),
-                handler: this.updateTagFilter.bind(this)
+                handler: this.tagFilter.bind(this)
             });
 
             this.tree = Ext.create('Ext.tree.Panel', {
