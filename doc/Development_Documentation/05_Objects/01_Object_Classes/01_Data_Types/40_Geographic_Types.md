@@ -19,7 +19,7 @@ represented by `Pimcore\Model\DataObject\Data\Geopoint`. To set a geopoint progr
 ```php
 $longitude = 107.6191228;
 $latitude = -6.9174639;
-$point = new \Pimcore\Model\DataObject\Data\Geopoint($longitude, $latitude);
+$point = new \Pimcore\Model\DataObject\Data\GeoCoordinates($latitude, $longitude);
 $object->setPoint($point);
 $object->save();
 ```
@@ -38,8 +38,8 @@ geobounds. Programmatically both points are `Pimcore\Model\DataObject\Data\Geopo
 use Pimcore\Model\DataObject\Data\Geobounds;
 use Pimcore\Model\DataObject\Data\Geopoint;
  
-$northEast = new Geopoint(150.96588134765625, -33.704920213014425);
-$southWest = new Geopoint(150.60333251953125, -33.893217379440884)
+$northEast = new \Pimcore\Model\DataObject\Data\GeoCoordinates(150.96588134765625, -33.704920213014425);
+$southWest = new \Pimcore\Model\DataObject\Data\GeoCoordinates(150.60333251953125, -33.893217379440884)
 $object->setBounds(new Geobounds($northEast,$southWest));
 $object->save();
 ```

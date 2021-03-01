@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 6.9.0
+- [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` will go away in Pimcore 10. Use `GeoCoordinates` instead which changes the signature of `__construct` parameters
 - [Ecommerce] `getClientConfig` method will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
 - [ECommerce] `setSuccessorOrder` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
 - [Ecommerce] `getFieldNameMapped` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
