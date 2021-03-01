@@ -25,7 +25,7 @@ class GeoCoordinates extends Geopoint
      */
     public function __construct($latitude = null, $longitude = null)
     {
-        parent::__construct($longitude, $longitude);
+        parent::__construct($longitude, $latitude);
 
     }
 
