@@ -201,7 +201,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         if ($generateDefinitionFile) {
             $this->cleanupOldFiles($definitionFile);
 
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             unset($clone->oldClassDefinitions);
             unset($clone->fieldDefinitions);
