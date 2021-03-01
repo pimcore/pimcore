@@ -24,7 +24,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
-class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -606,24 +606,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public static function __set_state($data)
     {
         $obj = parent::__set_state($data);
-
-        //@TODO Implement a decent solution to take column type changes for class updates.
-        $columnType = $obj->getColumnType();
-        if (is_array($columnType)) {
-            $columnType['unit'] = 'varchar(50)';
-        } elseif (is_object($columnType)) {
-            $columnType->unit = 'varchar(50)';
-        }
-
-        $obj->setColumnType($columnType);
-
-        $queryColumnType = $obj->getQueryColumnType();
-        if (is_array($queryColumnType)) {
-            $queryColumnType['unit'] = 'varchar(50)';
-        } elseif (is_object($queryColumnType)) {
-            $queryColumnType->unit = 'varchar(50)';
-        }
-        $obj->setQueryColumnType($queryColumnType);
 
         $obj->configureOptions();
 
