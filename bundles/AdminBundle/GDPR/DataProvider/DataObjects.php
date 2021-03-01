@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -73,14 +74,14 @@ class DataObjects extends Elements implements DataProviderInterface
 
         if (!empty($this->exportIds['object'])) {
             foreach (array_keys($this->exportIds['object']) as $id) {
-                // @TODO: this needs to be done independently from the REST webservices
-                //$exportResult[] = $this->service->getObjectConcreteById($id);
+                $object = AbstractObject::getById($id);
+                $exportResult[] = Exporter::exportObject($object);
             }
         }
         if (!empty($this->exportIds['image'])) {
             foreach (array_keys($this->exportIds['image']) as $id) {
-                // @TODO: this needs to be done independently from the REST webservices
-                //$exportResult[] = $this->service->getAssetFileById($id);
+                $theAsset = Asset::getById($id);
+                $exportResult[] = Exporter::exportAsset($theAsset);
             }
         }
 
@@ -92,7 +93,7 @@ class DataObjects extends Elements implements DataProviderInterface
         $this->exportIds[$element->getType()][$element->getId()] = true;
 
         if ($element instanceof Concrete) {
-            $subFields = $this->config['classes'][$element->getClass()->getName()]['includedRelations'];
+            $subFields = $this->config['classes'][$element->getClass()->getName()]['includedRelations'] ?? [];
             if ($subFields) {
                 foreach ($subFields as $field) {
                     $getter = 'get' . ucfirst($field);
@@ -210,7 +211,7 @@ class DataObjects extends Elements implements DataProviderInterface
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element instanceof Concrete) {
                 $data = \Pimcore\Model\DataObject\Service::gridObjectData($element);
-                $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'];
+                $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;
                 $elements[] = $data;
             }
         }
