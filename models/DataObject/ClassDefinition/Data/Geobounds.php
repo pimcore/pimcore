@@ -104,7 +104,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     {
         if ($data[$this->getName() . '__NElongitude'] && $data[$this->getName() . '__NElatitude'] && $data[$this->getName() . '__SWlongitude'] && $data[$this->getName() . '__SWlatitude']) {
             $ne = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__NElatitude'], $data[$this->getName() . '__NElongitude']);
-            $sw = new DataObject\Data\Geopoint($data[$this->getName() . '__SWlatitude'], $data[$this->getName() . '__SWlongitude']);
+            $sw = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__SWlatitude'], $data[$this->getName() . '__SWlongitude']);
 
             $geobounds = new DataObject\Data\Geobounds($ne, $sw);
 
@@ -180,7 +180,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     {
         if ($data['NElongitude'] !== null && $data['NElatitude'] !== null && $data['SWlongitude'] !== null && $data['SWlatitude'] !== null) {
             $ne = new DataObject\Data\GeoCoordinates($data['NElatitude'], $data['NElongitude']);
-            $sw = new DataObject\Data\Geopoint($data['SWlatitude'], $data['SWlongitude']);
+            $sw = new DataObject\Data\GeoCoordinates($data['SWlatitude'], $data['SWlongitude']);
 
             return new DataObject\Data\Geobounds($ne, $sw);
         }
@@ -303,8 +303,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         } else {
             $value = (array) $value;
             if ($value['NElongitude'] !== null && $value['NElatitude'] !== null && $value['SWlongitude'] !== null && $value['SWlatitude'] !== null) {
-                $ne = new DataObject\Data\Geopoint($value['NElatitude'], $value['NElongitude']);
-                $sw = new DataObject\Data\Geopoint($value['NElatitude'], $value['SWlongitude']);
+                $ne = new DataObject\Data\GeoCoordinates($value['NElatitude'], $value['NElongitude']);
+                $sw = new DataObject\Data\GeoCoordinates($value['NElatitude'], $value['SWlongitude']);
 
                 return new DataObject\Data\Geobounds($ne, $sw);
             } else {
