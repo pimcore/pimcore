@@ -296,8 +296,17 @@ class ClassDefinition extends Model\AbstractModel
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {
@@ -578,8 +587,8 @@ class ClassDefinition extends Model\AbstractModel
                     'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
                 );
             }
-
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
 

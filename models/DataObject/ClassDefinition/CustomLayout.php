@@ -268,8 +268,17 @@ class CustomLayout extends Model\AbstractModel
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {

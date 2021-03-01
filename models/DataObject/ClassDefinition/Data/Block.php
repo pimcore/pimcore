@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -793,8 +793,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport'
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }

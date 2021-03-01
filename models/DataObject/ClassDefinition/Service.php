@@ -38,6 +38,8 @@ class Service
     public static function generateClassDefinitionJson($class)
     {
         $class = clone $class;
+        self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+
         $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
@@ -45,13 +47,26 @@ class Service
         unset($data->userModification);
         unset($data->fieldDefinitions);
 
-        self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
+
 
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
+        if (method_exists($layout, 'resolveBlockedVars')) {
+            $blockedVars = $layout->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($layout->{$blockedVar})) {
+                    unset($layout->{$blockedVar});
+                }
+            }
+
+            if (isset($layout->blockedVarsForExport)) {
+                unset($layout->blockedVarsForExport);
+            }
+        }
+
         if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
@@ -280,6 +295,12 @@ class Service
                         }
                     }
                 } else {
+                    //for BC reasons
+                    $blockedVars = [];
+                    if (method_exists($item, 'resolveBlockedVars')) {
+                        $blockedVars = $item->resolveBlockedVars();
+                    }
+                    self::removeDynamicOptionsFromArray($array, $blockedVars);
                     $item->setValues($array);
 
                     if ($item instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -295,6 +316,19 @@ class Service
         }
 
         return false;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $blockedVars
+     */
+    public static function removeDynamicOptionsFromArray(&$data, $blockedVars)
+    {
+        foreach ($blockedVars as $blockedVar) {
+            if (isset($data[$blockedVar])) {
+                unset($data[$blockedVar]);
+            }
+        }
     }
 
     /**
