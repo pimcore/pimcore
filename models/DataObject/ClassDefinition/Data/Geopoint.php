@@ -90,7 +90,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint|null
+     * @return DataObject\Data\GeoCoordinates|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -149,7 +149,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint|null
+     * @return DataObject\Data\GeoCoordinates|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -165,7 +165,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint|null
+     * @return DataObject\Data\GeoCoordinates|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -215,7 +215,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\Geopoint
+     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\GeoCoordinates
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
