@@ -25,7 +25,7 @@ final class FrontendEvents
      *  - filesystemPath | string | Absolute path of the thumbnail on the filesystem
      *  - frontendPath | string | Web-path, relative
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -40,7 +40,7 @@ final class FrontendEvents
      *  - filesystemPath | string | Absolute path of the thumbnail on the filesystem
      *  - frontendPath | string | Web-path, relative
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -55,7 +55,7 @@ final class FrontendEvents
      *  - filesystemPath | string | Absolute path of the thumbnail on the filesystem
      *  - frontendPath | string | Web-path, relative
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -70,7 +70,7 @@ final class FrontendEvents
      *  - filesystemPath | string | Absolute path of the thumbnail on the filesystem
      *  - frontendPath | string | Web-path, relative
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -84,7 +84,7 @@ final class FrontendEvents
      * Arguments:
      *  - frontendPath | string | Web-path, relative
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -98,7 +98,7 @@ final class FrontendEvents
      * Arguments:
      *  - frontendPath | string | Web-path, relative
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -115,7 +115,7 @@ final class FrontendEvents
      *  - reset | bool
      *  - encode | bool
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -126,7 +126,7 @@ final class FrontendEvents
      * Arguments:
      *  - item | stdClass
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -137,7 +137,7 @@ final class FrontendEvents
      * Arguments:
      *  - item | stdClass
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */

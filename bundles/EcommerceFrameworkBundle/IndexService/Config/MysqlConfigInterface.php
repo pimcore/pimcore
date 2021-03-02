@@ -53,5 +53,4 @@ interface MysqlConfigInterface extends ConfigInterface
      * @return string
      */
     public function getCondition();
-
 }

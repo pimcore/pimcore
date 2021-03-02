@@ -92,7 +92,7 @@ final class TargetingEvents
      * pages. Will be used by VisitedPagesCountListener to update the page count
      * if there are conditions depending on it.
      *
-     * @Event("Symfony\Component\EventDispatcher\Event")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */

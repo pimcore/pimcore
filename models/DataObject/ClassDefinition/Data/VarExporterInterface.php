@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -11,18 +8,26 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
+ * @category   Pimcore
+ * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Event;
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-final class TestEvents
+interface VarExporterInterface
 {
     /**
-     * @Event("\Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
+     * @return array
      */
-    const KERNEL_BOOTED = 'pimcore.test.kernel.booted';
+    public function getBlockedVarsForExport(): array;
+
+    /**
+     * Resolves blocked vars to cleanup on export
+     *
+     * @return array
+     */
+    public function resolveBlockedVars(): array;
 }
