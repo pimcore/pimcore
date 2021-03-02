@@ -20,6 +20,9 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
+/**
+ * @deprecated Replace this with GeoCoordinates until Pimcore 10 as the constructor will change
+ */
 class Geopoint implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
