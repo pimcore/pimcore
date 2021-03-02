@@ -3181,3 +3181,40 @@ pimcore.helpers.reloadUserImage = function (userId) {
         Ext.getCmp("pimcore_profile_image_" + userId).setSrc(image);
     }
 };
+
+/**
+ * Takes a number representing seconds and formats it as a human-readable string such as "1hr 2m 15s"
+ * @param {int|float} dataDuration duration in seconds
+ * @returns {string|*}
+ */
+pimcore.helpers.formatTimeDuration = function (dataDuration) {
+    if (!is_numeric(dataDuration)) {
+        // Unknown data, return as is
+        return dataDuration;
+    }
+
+    let formatString = '';
+
+    let hours = Math.floor(dataDuration / 3600);
+    dataDuration %= 3600;
+    if (hours > 0) {
+        formatString += hours + "hr ";
+    }
+
+    let minutes = Math.floor(dataDuration / 60);
+    if (minutes > 0) {
+        formatString += minutes + "m ";
+    }
+
+    let seconds = Math.floor(dataDuration % 60);
+    formatString += seconds;
+
+    let subseconds = Math.round((dataDuration - Math.floor(dataDuration)) * 100);
+    if (subseconds > 0) {
+        formatString += "." + subseconds;
+    }
+
+    formatString += "s";
+
+    return formatString;
+}
