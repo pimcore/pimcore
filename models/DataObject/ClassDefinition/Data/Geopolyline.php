@@ -108,7 +108,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
                 $valid = false;
             } else {
                 foreach ($data as $point) {
-                    if (!$point instanceof DataObject\Data\Geopoint) {
+                    if (!$point instanceof DataObject\Data\GeoCoordinates) {
                         $valid = false;
                         break;
                     }

@@ -80,7 +80,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
                 $valid = false;
             } else {
                 foreach ($data as $point) {
-                    if (!$point instanceof DataObject\Data\Geopoint) {
+                    if (!$point instanceof DataObject\Data\GeoCoordinates) {
                         $valid = false;
                         break;
                     }
