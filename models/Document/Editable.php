@@ -477,6 +477,24 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return self
      */
+    public function addConfig(string $name, $value): self
+    {
+        if (!is_array($this->config)) {
+            $this->config = [];
+        }
+
+        $this->config[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated
+     * @param string $name
+     * @param mixed $value
+     *
+     * @return self
+     */
     public function setOption(string $name, $value): self
     {
         if (!is_array($this->options)) {
