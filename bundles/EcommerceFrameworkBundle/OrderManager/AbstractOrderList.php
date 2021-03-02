@@ -164,9 +164,8 @@ abstract class AbstractOrderList implements OrderListInterface
     public function getItems($offset, $itemCountPerPage)
     {
         // load
-        return $this
-            ->setLimit($itemCountPerPage, $offset)
-            ->load();
+        $this->setLimit($itemCountPerPage, $offset)->load();
+        return $this->list->getArrayCopy();
     }
 
     /**
