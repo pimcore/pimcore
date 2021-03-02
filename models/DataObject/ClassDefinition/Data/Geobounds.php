@@ -103,8 +103,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__NElongitude'] && $data[$this->getName() . '__NElatitude'] && $data[$this->getName() . '__SWlongitude'] && $data[$this->getName() . '__SWlatitude']) {
-            $ne = new DataObject\Data\Geopoint($data[$this->getName() . '__NElongitude'], $data[$this->getName() . '__NElatitude']);
-            $sw = new DataObject\Data\Geopoint($data[$this->getName() . '__SWlongitude'], $data[$this->getName() . '__SWlatitude']);
+            $ne = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__NElatitude'], $data[$this->getName() . '__NElongitude']);
+            $sw = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__SWlatitude'], $data[$this->getName() . '__SWlongitude']);
 
             $geobounds = new DataObject\Data\Geobounds($ne, $sw);
 
@@ -179,8 +179,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data['NElongitude'] !== null && $data['NElatitude'] !== null && $data['SWlongitude'] !== null && $data['SWlatitude'] !== null) {
-            $ne = new DataObject\Data\Geopoint($data['NElongitude'], $data['NElatitude']);
-            $sw = new DataObject\Data\Geopoint($data['SWlongitude'], $data['SWlatitude']);
+            $ne = new DataObject\Data\GeoCoordinates($data['NElatitude'], $data['NElongitude']);
+            $sw = new DataObject\Data\GeoCoordinates($data['SWlatitude'], $data['SWlongitude']);
 
             return new DataObject\Data\Geobounds($ne, $sw);
         }
@@ -241,7 +241,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $northEast = explode(',', $points[0]);
             $southWest = explode(',', $points[1]);
             if ($northEast[0] && $northEast[1] && $southWest[0] && $southWest[1]) {
-                $value = new DataObject\Data\Geobounds(new DataObject\Data\Geopoint($northEast[0], $northEast[1]), new DataObject\Data\Geopoint($southWest[0], $southWest[1]));
+                $value = new DataObject\Data\Geobounds(new DataObject\Data\GeoCoordinates($northEast[1], $northEast[0]), new DataObject\Data\GeoCoordinates($southWest[1], $southWest[0]));
             }
         }
 
@@ -303,8 +303,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         } else {
             $value = (array) $value;
             if ($value['NElongitude'] !== null && $value['NElatitude'] !== null && $value['SWlongitude'] !== null && $value['SWlatitude'] !== null) {
-                $ne = new DataObject\Data\Geopoint($value['NElongitude'], $value['NElatitude']);
-                $sw = new DataObject\Data\Geopoint($value['SWlongitude'], $value['SWlatitude']);
+                $ne = new DataObject\Data\GeoCoordinates($value['NElatitude'], $value['NElongitude']);
+                $sw = new DataObject\Data\GeoCoordinates($value['SWlatitude'], $value['SWlongitude']);
 
                 return new DataObject\Data\Geobounds($ne, $sw);
             } else {
