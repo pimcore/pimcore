@@ -961,5 +961,6 @@
   "batch_change_language": "Batch update language",
   "generate_type_declarations" : "Generate Type Declarations",
   "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
-  "preview_item": "Preview Item"
+  "preview_item": "Preview Item",
+  "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>"
 }
