@@ -689,7 +689,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $blockedVars = [
             'fieldDefinitionsCache',
             'referencedFields',
-            'blockedVarsForExport'
+            'blockedVarsForExport',
         ];
 
         foreach ($blockedVars as $blockedVar) {
