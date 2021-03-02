@@ -327,8 +327,8 @@ class TestDataHelper extends AbstractTestDataHelper
     protected function getGeoboundsFixture()
     {
         return new DataObject\Data\Geobounds(
-            new DataObject\Data\Geopoint(150.96588134765625, -33.704920213014425),
-            new DataObject\Data\Geopoint(150.60333251953125, -33.893217379440884)
+            new DataObject\Data\GeoCoordinates(-33.704920213014425, 150.60333251953125),
+            new DataObject\Data\GeoCoordinates(-33.893217379440884, 150.60333251953125)
         );
     }
 
@@ -341,11 +341,11 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var DataObject\Data\Geopoint $value */
+        /** @var DataObject\Data\GeoCoordinates $value */
         $value = $object->$getter();
 
         $this->assertNotNull($value);
-        $this->assertInstanceOf(DataObject\Data\Geopoint::class, $value);
+        $this->assertInstanceOf(DataObject\Data\GeoCoordinates::class, $value);
 
         $expected = $this->getGeopointFixture();
 
@@ -354,13 +354,13 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @return DataObject\Data\Geopoint
+     * @return DataObject\Data\GeoCoordinates
      */
     protected function getGeopointFixture()
     {
         $longitude = 2.2008440814678;
         $latitude = 102.25112915039;
-        $point = new DataObject\Data\Geopoint($longitude, $latitude);
+        $point = new DataObject\Data\GeoCoordinates($latitude, $longitude);
 
         return $point;
     }
@@ -375,7 +375,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var DataObject\Data\Geopoint[] $value */
+        /** @var DataObject\Data\GeoCoordinates[] $value */
         $value = $object->$getter();
 
         $expected = $this->getGeopolygonFixture();
@@ -388,21 +388,21 @@ class TestDataHelper extends AbstractTestDataHelper
             $expectedPoint = $expected[$i];
 
             $this->assertNotNull($point);
-            $this->assertInstanceOf(DataObject\Data\Geopoint::class, $point);
+            $this->assertInstanceOf(DataObject\Data\GeoCoordinates::class, $point);
             $this->assertEquals($expectedPoint->__toString(), $point->__toString(), 'String representations are equal');
             $this->assertEquals($expectedPoint, $point, 'Objects are equal');
         }
     }
 
     /**
-     * @return DataObject\Data\Geopoint[]
+     * @return DataObject\Data\GeoCoordinates[]
      */
     protected function getGeopolygonFixture()
     {
         return [
-            new DataObject\Data\Geopoint(150.54428100585938, -33.464671118242684),
-            new DataObject\Data\Geopoint(150.73654174804688, -33.913733814316245),
-            new DataObject\Data\Geopoint(151.2542724609375, -33.9946115848146),
+            new DataObject\Data\GeoCoordinates(-33.464671118242684, 150.54428100585938),
+            new DataObject\Data\GeoCoordinates(-33.913733814316245, 150.73654174804688),
+            new DataObject\Data\GeoCoordinates(-33.9946115848146, 151.2542724609375),
         ];
     }
 

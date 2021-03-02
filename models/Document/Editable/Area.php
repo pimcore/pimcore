@@ -19,7 +19,10 @@ namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\EditableHandler;
+use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
+use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -51,14 +54,95 @@ class Area extends Model\Document\Editable
         $options = $this->getEditmodeConfig();
         $this->outputEditmodeConfig($options);
 
+        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
+
+        $dialogConfig = null;
+        $brick = $areabrickManager->getBrick($this->config['type']);
+        $info = $this->buildInfoObject();
+        if ($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
+            $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
+            $dialogConfig->setId('dialogBox-' . $this->getName());
+        }
+
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
-
         $this->outputEditmode('<div ' . $attributeString . '>');
+
+        if ($dialogConfig) {
+            $dialogAttributes = [
+                'data-dialog-id' => $dialogConfig->getId(),
+            ];
+
+            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
+            $this->outputEditmode('<div class="pimcore_area_dialog" data-name="' . $attributes['data-name'] . '" data-real-name="' . $attributes['data-real-name'] . '" ' . $dialogAttributes . '></div>');
+        }
 
         $this->frontend();
 
         $this->outputEditmode('</div>');
+
+        if($dialogConfig) {
+            $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
+            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param EditableRenderer $editableRenderer
+     * @param string $dialogId
+     */
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId)
+    {
+        if (isset($config['items']) && is_array($config['items'])) {
+            // layout component
+            foreach ($config['items'] as $child) {
+                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
+            }
+        } elseif (isset($config['name']) && isset($config['type'])) {
+            $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
+            if (!$editable instanceof Model\Document\Editable) {
+                throw new \Exception(sprintf('Invalid editable type "%s" configured for Dialog Box', $config['type']));
+            }
+
+            $editable->setInDialogBox($dialogId);
+            $editable->setOption('dialogBoxConfig', $config);
+            $this->outputEditmode($editable->admin());
+        } elseif (is_array($config) && isset($config[0])) {
+            foreach ($config as $item) {
+                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
+            }
+        }
+    }
+
+    protected function buildInfoObject(): Area\Info
+    {
+        $config = $this->getConfig();
+        // create info object and assign it to the view
+        try {
+            $info = new Area\Info();
+            $info->setId($config['type']);
+            $info->setEditable($this);
+            $info->setIndex(0);
+        } catch (\Exception $e) {
+            $info = null;
+        }
+
+        $params = [];
+        if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
+            if (is_array($config['params'][$config['type']])) {
+                $params = $config['params'][$config['type']];
+            }
+        }
+
+        if (isset($config['globalParams'])) {
+            $params = array_merge($config['globalParams'], (array)$params);
+        }
+
+        $info->setParams($params);
+
+        return $info;
     }
 
     /**
@@ -81,15 +165,8 @@ class Area extends Model\Document\Editable
         $blockState->pushBlock(BlockName::createFromEditable($this));
 
         // create info object and assign it to the view
-        $info = null;
-        try {
-            $info = new Area\Info();
-            $info->setId($config['type']);
-            $info->setEditable($this);
-            $info->setIndex(0);
-        } catch (\Exception $e) {
-            $info = null;
-        }
+        $info = $this->buildInfoObject();
+
 
         // start at first index
         $blockState->pushIndex(1);

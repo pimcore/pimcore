@@ -337,6 +337,7 @@ class EditmodeListener implements EventSubscriberInterface
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/table.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/video.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/multiselect.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/area_abstract.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/areablock.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/area.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/pdf.js',

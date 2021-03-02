@@ -169,7 +169,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         if (is_array($data)) {
             $points = [];
             foreach ($data as $point) {
-                $points[] = new DataObject\Data\Geopoint($point['longitude'], $point['latitude']);
+                $points[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
             }
 
             return $points;
@@ -234,7 +234,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         if (is_array($rows)) {
             foreach ($rows as $row) {
                 $coords = explode(';', $row);
-                $points[] = new  DataObject\Data\Geopoint($coords[1], $coords[0]);
+                $points[] = new  DataObject\Data\GeoCoordinates($coords[0], $coords[1]);
             }
         }
 
@@ -327,7 +327,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $result[] = new DataObject\Data\Geopoint($point[1], $point[0]);
+                    $result[] = new DataObject\Data\GeoCoordinates($point[0], $point[1]);
                 }
             }
             $result = Serialize::serialize($result);

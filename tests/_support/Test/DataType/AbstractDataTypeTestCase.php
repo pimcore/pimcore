@@ -6,6 +6,7 @@ use Pimcore\Cache;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\Consent;
 use Pimcore\Model\DataObject\Data\UrlSlug;
