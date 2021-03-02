@@ -878,7 +878,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $blockedVars = [
             'fieldDefinitionsCache',
             'referencedFields',
-            'blockedVarsForExport'
+            'blockedVarsForExport',
         ];
 
         foreach ($blockedVars as $blockedVar) {
