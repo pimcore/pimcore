@@ -85,4 +85,39 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
             $keygroupconfig->save();
         }
     }
+
+    /**
+     * @param Classificationstore\StoreConfig $store
+     */
+    protected function configureStoreWithQuantityValueField(Classificationstore\StoreConfig $store)
+    {
+        // create group
+        $group = new Classificationstore\GroupConfig();
+        $group->setStoreId($store->getId());
+        $group->setName('testgroupQvalue');
+        $group->save();
+
+        //create key
+        $keyConfig = new Classificationstore\KeyConfig();
+        $keyConfig->setStoreId($store->getId());
+        $keyConfig->setName('qValue');
+        $keyConfig->setDescription('Quantity Value Field');
+        $keyConfig->setEnabled(true);
+        $keyConfig->setType('quantityValue');
+
+        //QuantityValue definition
+        $definition = new ClassDefinition\Data\QuantityValue();
+        $definition->setName('qValue');
+        $definition = json_encode($definition);
+
+        $keyConfig->setDefinition($definition); // The definition is used in object editor to render fields
+        $keyConfig->save();
+
+        //create key group relation
+        $keygroupconfig = new Classificationstore\KeyGroupRelation();
+        $keygroupconfig->setKeyId($keyConfig->getId());
+        $keygroupconfig->setGroupId($group->getId());
+        $keygroupconfig->setSorter(1);
+        $keygroupconfig->save();
+    }
 }

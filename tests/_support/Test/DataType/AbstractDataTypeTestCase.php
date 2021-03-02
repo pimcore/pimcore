@@ -3,7 +3,7 @@
 namespace Pimcore\Tests\Test\DataType;
 
 use Pimcore\Cache;
-use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Unittest;
@@ -452,7 +452,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         Cache::clearAll();
         Cache\Runtime::clear();
 
-        $this->testObject = DataObject::getById($this->testObject->getId());
+        $this->testObject = AbstractObject::getById($this->testObject->getId());
 
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'en');
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
