@@ -304,7 +304,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $value = (array) $value;
             if ($value['NElongitude'] !== null && $value['NElatitude'] !== null && $value['SWlongitude'] !== null && $value['SWlatitude'] !== null) {
                 $ne = new DataObject\Data\GeoCoordinates($value['NElatitude'], $value['NElongitude']);
-                $sw = new DataObject\Data\GeoCoordinates($value['NElatitude'], $value['SWlongitude']);
+                $sw = new DataObject\Data\GeoCoordinates($value['SWlatitude'], $value['SWlongitude']);
 
                 return new DataObject\Data\Geobounds($ne, $sw);
             } else {

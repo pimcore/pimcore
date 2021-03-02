@@ -774,8 +774,8 @@ class TestDataHelper extends Module
     protected function getGeoboundsFixture()
     {
         return new DataObject\Data\Geobounds(
-            new DataObject\Data\GeoCoordinates(-33.704920213014425, 150.96588134765625),
-            new DataObject\Data\GeoCoordinates(-33.893217379440884, 150.60333251953125)
+            new DataObject\Data\GeoCoordinates(-33.704920213014425, 130.96588134765625),
+            new DataObject\Data\GeoCoordinates(-17.893217379440884, 150.60333251953125)
         );
     }
 
