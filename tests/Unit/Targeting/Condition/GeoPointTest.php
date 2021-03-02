@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Targeting\Condition;
 
-use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Targeting\Condition\GeoPoint;
 use Pimcore\Targeting\DataProvider\GeoLocation;
 use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
@@ -126,13 +125,13 @@ class GeoPointTest extends TestCase
 
     public function noMatchProvider(): \Generator
     {
-        yield [new GeoCoordinates(2.3, 1.2, null)];
-        yield [new GeoCoordinates(null, 1.2, 4)];
-        yield [new GeoCoordinates(2.3,null,  4)];
-        yield [new GeoCoordinates(null,1.2,  null)];
-        yield [new GeoCoordinates(2.3,null,  null)];
-        yield [new GeoCoordinates(null,null,  4)];
-        yield [new GeoCoordinates(null, null, null)];
+        yield [new GeoPoint(1.2, 2.3, null)];
+        yield [new GeoPoint(1.2, null, 4)];
+        yield [new GeoPoint(null, 2.3, 4)];
+        yield [new GeoPoint(1.2, null, null)];
+        yield [new GeoPoint(null, 2.3, null)];
+        yield [new GeoPoint(null, null, 4)];
+        yield [new GeoPoint(null, null, null)];
     }
 
     private function createCondition(string $point, int $radius): GeoPoint
@@ -141,7 +140,7 @@ class GeoPointTest extends TestCase
             throw new \InvalidArgumentException(sprintf('Point "%s" is not defined', $point));
         }
 
-        return new GeoCoordinates(
+        return new GeoPoint(
             $this->points[$point][0],
             $this->points[$point][1],
             $radius
