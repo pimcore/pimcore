@@ -303,6 +303,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         ];
 
         //@TODO change to Process::fromShellCommandline in Pimcore 10
+        Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->mustRun(null, $params);
 

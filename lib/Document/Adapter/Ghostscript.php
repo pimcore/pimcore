@@ -177,6 +177,8 @@ class Ghostscript extends Adapter
 
         $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
 
+        Console::addLowProcessPriority($command);
+
         return $command;
     }
 
@@ -214,7 +216,9 @@ class Ghostscript extends Adapter
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             }
 
-            $process = new Process([self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r', $resolution, '-o', $path, $this->path]);
+            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r', $resolution, '-o', $path, $this->path];
+            Console::addLowProcessPriority($cmd);
+            $process = new Process($cmd);
             $process->setTimeout(240);
             $process->run();
 
@@ -249,6 +253,7 @@ class Ghostscript extends Adapter
                     array_push($cmd, '-f', $page, '-l', $page);
                 }
                 array_push($cmd, $path, '-');
+                Console::addLowProcessPriority($cmd);
                 $process = new Process($cmd);
                 $process->setTimeout(120);
                 $process->mustRun();
@@ -262,6 +267,7 @@ class Ghostscript extends Adapter
                 $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
                 array_push($cmd, '-dTextFormat=2', '-sOutputFile=', $textFile, $path);
 
+                Console::addLowProcessPriority($cmd);
                 $process = new Process($cmd);
                 $process->setTimeout(120);
                 $process->mustRun();
