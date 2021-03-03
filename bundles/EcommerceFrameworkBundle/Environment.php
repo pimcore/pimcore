@@ -183,66 +183,6 @@ class Environment implements EnvironmentInterface
     }
 
     /**
-     * @deprecated
-     *
-     * use setCurrentAssortmentTenant instead
-     *
-     * @param string $currentTenant
-     *
-     * @return mixed|void
-     */
-    public function setCurrentTenant($currentTenant)
-    {
-        $this->load();
-
-        $this->setCurrentAssortmentTenant($currentTenant);
-    }
-
-    /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentTenant instead
-     *
-     * @return string
-     */
-    public function getCurrentTenant()
-    {
-        $this->load();
-
-        return $this->getCurrentAssortmentTenant();
-    }
-
-    /**
-     * @deprecated
-     *
-     * use setCurrentAssortmentSubTenant instead
-     *
-     * @param mixed $currentSubTenant
-     *
-     * @return mixed|void
-     */
-    public function setCurrentSubTenant($currentSubTenant)
-    {
-        $this->load();
-
-        $this->setCurrentAssortmentSubTenant($currentSubTenant);
-    }
-
-    /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentSubTenant instead
-     *
-     * @return mixed
-     */
-    public function getCurrentSubTenant()
-    {
-        $this->load();
-
-        return $this->getCurrentAssortmentSubTenant();
-    }
-
-    /**
      * @param Currency $currency
      */
     public function setDefaultCurrency(Currency $currency)

@@ -34,6 +34,17 @@
   You can change that behavior with event listeners.     
 
 - [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
+- [Ecommerce] Removed deprecated configuration options `enabled`, `pricing_manager_id` and `pricing_manager_options` for pricing_manager. 
+  Use tenant specific options.  
+- [Ecommerce] Removed deprecated functions `get/setCurrentTenant` and `get/setCurrentSubTenant` 
+  of `EnvironmentInterface`
+- [Ecommerce] Removed deprecated service alias for `Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment`
+- [Ecommerce] Removed deprecated functions `getGeneralSearchColumns`, `createOrUpdateTable`, `getIndexColumns` and `getIndexColumnsByFilterGroup` 
+  of `IndexService`  
+- [Ecommerce] Removed deprecated function `getPaginatorAdapter` from 
+  `ProductList\MySql`, `ProductList\DefaultFindologic`, `ProductList\ElasticSearch\AbstractElasticSearch`, `Token\Listing` and `AbstractOrderList`
+- [Ecommerce] Removed deprecated functions `getCalculatedPrice` and `getCalculatedPriceInfo` from `AbstractSetProduct`
+- [Ecommerce] Removed deprecated protected function `getAvailableFilterValues` from `Order\Listing`  
 - [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
   activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
 - [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
@@ -45,8 +56,10 @@
   - `CancelPaymentOrRecreateOrderStrategy` is now default strategy for handling active payments 
   - Removed method `isCartReadOnly` from cart and `cart_readonly_mode` configuration option as readonly mode 
     does not exist anymore.
+  - Removed deprecated method `initPayment` from `PaymentInterface`
 - [Ecommerce] Removed deprecated `ecommerce:indexservice:process-queue` command, 
-  use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead 
+  use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead
+- [Ecommerce] Removed deprecated `mapping` option in index attributes configuration (never worked properly anyway) 
 - [Ecommerce] Removed deprecated `IndexUpdater` tool
 - [Ecommerce] Removed legacy BatchProcessing worker mode, product centric batch processing is now standard
   - Removed abstract class `AbstractBatchProcessingWorker`, use `ProductCentricBatchProcessing` instead

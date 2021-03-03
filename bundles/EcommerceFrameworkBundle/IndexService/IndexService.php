@@ -109,18 +109,6 @@ class IndexService
     }
 
     /**
-     * @deprecated
-     *
-     * @param string|null $tenant
-     *
-     * @return array
-     */
-    public function getGeneralSearchColumns(string $tenant = null)
-    {
-        return $this->getGeneralSearchAttributes($tenant);
-    }
-
-    /**
      * Returns all attributes marked as general search attributes for full text search
      *
      * @param string $tenant
@@ -138,14 +126,6 @@ class IndexService
         } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    public function createOrUpdateTable()
-    {
-        $this->createOrUpdateIndexStructures();
     }
 
     /**
@@ -204,21 +184,6 @@ class IndexService
     }
 
     /**
-     * @deprecated
-     *
-     * @param bool $considerHideInFieldList
-     * @param string|null $tenant
-     *
-     * @return mixed
-     *
-     * @throws InvalidConfigException
-     */
-    public function getIndexColumns($considerHideInFieldList = false, $tenant = null)
-    {
-        return $this->getIndexAttributes($considerHideInFieldList, $tenant);
-    }
-
-    /**
      * Returns all filter groups
      *
      * @param string $tenant
@@ -257,21 +222,6 @@ class IndexService
         } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $filterType
-     * @param string|null $tenant
-     *
-     * @return mixed
-     *
-     * @throws InvalidConfigException
-     */
-    public function getIndexColumnsByFilterGroup($filterType, $tenant = null)
-    {
-        return $this->getIndexAttributesByFilterGroup($filterType, $tenant);
     }
 
     /**
