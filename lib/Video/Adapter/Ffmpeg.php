@@ -116,7 +116,9 @@ class Ffmpeg extends Adapter
             } elseif ($this->getFormat() == 'webm') {
                 // check for vp9 support
                 $webmCodec = 'libvpx';
-                $codecs = Console::exec(self::getFfmpegCli() . ' -codecs');
+                $process = new Process([self::getFfmpegCli(), '-codecs']);
+                $process->run();
+                $codecs = $process->getOutput();
                 if (stripos($codecs, 'vp9')) {
                     //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
                 }
@@ -139,7 +141,7 @@ class Ffmpeg extends Adapter
             $process->start();
 
             $logHandle = fopen($this->getConversionLogFile(), 'a');
-            fwrite($logHandle, 'Command: ' . $cmd . "\n\n\n");
+            fwrite($logHandle, 'Command: ' . $process->getCommandLine() . "\n\n\n");
 
             $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
@@ -180,8 +182,13 @@ class Ffmpeg extends Adapter
             $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ffmpeg-tmp-' . uniqid() . '.' . File::getFileExtension($file);
         }
 
-        $cmd = self::getFfmpegCli() . ' -ss ' . $timeOffset . ' -i ' . escapeshellarg(realpath($this->file)) . ' -vcodec png -vframes 1 -vf scale=iw*sar:ih ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $file));
-        Console::exec($cmd, null, 60);
+        $cmd = [
+            self::getFfmpegCli(),
+            '-ss', $timeOffset, '-i', realpath($this->file),
+            '-vcodec', 'png', '-vframes', 1, '-vf', 'scale=iw*sar:ih',
+            str_replace('/', DIRECTORY_SEPARATOR, $file)];
+        $process = new Process($cmd);
+        $process->run();
 
         if ($realTargetPath) {
             File::rename($file, $realTargetPath);
@@ -197,8 +204,15 @@ class Ffmpeg extends Adapter
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
-        $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file));
-        Console::exec($cmd, $tmpFile, 60);
+        $cmd = [self::getFfmpegCli(), '-i', realpath($this->file)];
+        $process = new Process($cmd);
+        $process->start();
+
+        $tmpHandle = fopen($tmpFile, 'a');
+        $process->wait(function ($type, $buffer) use ($tmpHandle) {
+            fwrite($tmpHandle, $buffer);
+        });
+        fclose($tmpHandle);
 
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);

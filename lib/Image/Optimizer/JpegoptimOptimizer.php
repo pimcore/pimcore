@@ -40,15 +40,24 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
-    protected function getCommand(string $executable, string $input, string $output): string
+    protected function getCommandArray(string $executable, string $input, string $output): array
     {
         $additionalParams = '';
 
         if (filesize($input) > 10000) {
-            $additionalParams = ' --all-progressive';
+            $additionalParams = '--all-progressive';
         }
 
-        return $executable.$additionalParams.' -o --strip-all --max=85 '.' -d '.escapeshellarg($output).escapeshellarg($input);
+        return [$executable, $additionalParams, '-o',  '--strip-all', '--max=85', '-d', $output, $input];
+    }
+
+    /**
+     * @deprecated
+     * {@inheritdoc}
+     */
+    protected function getCommand(string $executable, string $input, string $output): string
+    {
+        return implode(' ', $this->getCommandArray($executable, $input, $output));
     }
 
     /**

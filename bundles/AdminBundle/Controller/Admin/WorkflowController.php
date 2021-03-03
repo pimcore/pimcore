@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Workflow\Registry;
@@ -294,15 +295,18 @@ class WorkflowController extends AdminController implements EventedControllerInt
             throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['dot']));
         }
 
-        $cmd = sprintf('%s %s/bin/console pimcore:workflow:dump %s %s | %s -Tsvg',
-            $php,
-            PIMCORE_PROJECT_ROOT,
-            $workflow->getName(),
-            implode(' ', array_keys($marking->getPlaces())),
-            $dot
-        );
+        $cmd = $php . ' ' . PIMCORE_PROJECT_ROOT . '/bin/console pimcore:workflow:dump ${WNAME} ${WPLACES} | ${DOT} -Tsvg';
+        $params = [
+            'WNAME' => $workflow->getName(),
+            'WPLACES' => implode(' ', array_keys($marking->getPlaces())),
+            'DOT' => $dot
+        ];
 
-        return Console::exec($cmd);
+        //@TODO change to Process::fromShellCommandline in Pimcore 10
+        $process = new Process($cmd);
+        $process->mustRun(null, $params);
+
+        return $process->getOutput();
     }
 
     /**

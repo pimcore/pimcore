@@ -40,9 +40,18 @@ final class PngOutOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
+    protected function getCommandArray(string $executable, string $input, string $output): array
+    {
+        return [$executable, $input, $output];
+    }
+
+    /**
+     * @deprecated
+     * {@inheritdoc}
+     */
     protected function getCommand(string $executable, string $input, string $output): string
     {
-        return $executable.' '.escapeshellarg($input).' '.$output;
+        return implode(' ', $this->getCommandArray($executable, $input, $output));
     }
 
     /**
