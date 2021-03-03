@@ -132,10 +132,10 @@ class Processor
 
         foreach ($es->children() as $e) {
             $text = $e->ownerDocument->saveHTML($e);
-            /** @var \DOMNode|null $parentNode */
+            /** @var \DOMElement|null $parentNode */
             $parentNode = $e->parentNode;
             if (
-                $parentNode instanceof \DOMNode &&
+                $parentNode instanceof \DOMElement &&
                 !in_array((string)$parentNode->tagName, $this->blockedTags) &&
                 strlen(trim($text))
             ) {
