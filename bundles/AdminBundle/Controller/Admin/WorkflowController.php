@@ -368,6 +368,9 @@ class WorkflowController extends AdminController implements KernelControllerEven
             'DOT' => $dot
         ];
 
+        $process = Process::fromShellCommandline($cmd);
+        $process->run(null, $params);
+
         //@TODO change to Process::fromShellCommandline in Pimcore 10
         $process = new Process($cmd);
         $process->mustRun(null, $params);
