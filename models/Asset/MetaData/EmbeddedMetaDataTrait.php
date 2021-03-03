@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Asset\MetaData;
 
 use Pimcore\Logger;
-use Pimcore\Tool;
+use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
@@ -70,11 +70,13 @@ trait EmbeddedMetaDataTrait
         }
 
         if (stream_is_local($this->getStream()) && $exiftool && $useExifTool) {
-            $path = escapeshellarg($filePath);
+            $path = $filePath;
             if (!file_exists($path)) {
-                $path = escapeshellarg($this->getTemporaryFile());
+                $path = $this->getTemporaryFile();
             }
-            $output = Tool\Console::exec($exiftool . ' -j ' . $path);
+            $process = new Process([$exiftool, '-j', $path]);
+            $process->run();
+            $output = $process->getOutput();
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
 
             foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
