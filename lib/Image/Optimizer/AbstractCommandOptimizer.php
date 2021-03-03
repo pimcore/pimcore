@@ -30,6 +30,8 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
 
         if ($executable) {
             $command = $this->getCommandArray($executable, $input, $output);
+
+            Console::addLowProcessPriority($command);
             $process = new Process($command);
             $process->run();
 

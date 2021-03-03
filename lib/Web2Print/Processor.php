@@ -83,6 +83,7 @@ abstract class Processor
         }
 
         $cmd = array_merge([Tool\Console::getPhpCli(), realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), 'pimcore:web2print:pdf-creation'], $args);
+        Tool\Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         Logger::info($process->getCommandLine());
         $disableBackgroundExecution = $config['disableBackgroundExecution'] ?? false;

@@ -368,6 +368,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
             'DOT' => $dot
         ];
 
+        Console::addLowProcessPriority($cmd);
         $process = Process::fromShellCommandline($cmd);
         $process->run(null, $params);
 
