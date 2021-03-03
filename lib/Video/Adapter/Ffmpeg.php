@@ -135,7 +135,7 @@ class Ffmpeg extends Adapter
 
             Logger::debug('Executing FFMPEG Command: ' . $cmd);
 
-            $process = new Process($cmd);
+            $process = Process::fromShellCommandline($cmd);
             //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
             $process->setTimeout(null);
             $process->start();
