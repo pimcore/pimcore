@@ -126,7 +126,7 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * @return OrderListItemInterface[]
+     * @return self
      */
     public function load()
     {
