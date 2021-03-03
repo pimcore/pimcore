@@ -81,6 +81,7 @@ class HtmlToImage
             $command = self::getWkhtmltoimageBinary();
         }
         $command = array_merge($command, $options);
+        Console::addLowProcessPriority($command);
         $process = new Process($command);
         $process->start();
 
