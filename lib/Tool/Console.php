@@ -259,6 +259,7 @@ class Console
     public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null, $background = false)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
+        self::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         if ($timeout) {
             $process->setTimeout($timeout);
@@ -336,5 +337,23 @@ class Console
         if (php_sapi_name() != 'cli') {
             throw new \Exception('Script execution is restricted to CLI');
         }
+    }
+
+    /**
+     * @internal
+     * @param array|string $cmd
+     * @return array|string
+     */
+    public static function addLowProcessPriority($cmd) {
+        $nice = (string) self::getExecutable('nice');
+        if ($nice) {
+            if(is_string($cmd)) {
+                $cmd = $nice . ' -n 19 ' . $cmd;
+            } elseif(is_array($cmd)) {
+                array_unshift($cmd, $nice, '-n 19');
+            }
+        }
+
+        return $cmd;
     }
 }
