@@ -125,9 +125,8 @@ abstract class AbstractOrderList implements OrderListInterface
         return $this;
     }
 
-    /**
-     * @return self
-     */
+
+    /** @inheritDoc */
     public function load()
     {
         if ($this->list === null) {
