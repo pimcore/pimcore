@@ -130,21 +130,21 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $this->microKernelRegisterContainerConfiguration($loader);
-
         $loader->load(function (ContainerBuilder $container) {
             $this->registerExtensionConfigFileResources($container);
         });
+
+        $bundleConfigLocator = new BundleConfigLocator($this);
+        foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
+            $loader->load($bundleConfig);
+        }
+
+        $this->microKernelRegisterContainerConfiguration($loader);
 
         //load system configuration
         $systemConfigFile = Config::locateConfigFile('system.yml');
         if (file_exists($systemConfigFile)) {
             $loader->load($systemConfigFile);
-        }
-
-        $bundleConfigLocator = new BundleConfigLocator($this);
-        foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
-            $loader->load($bundleConfig);
         }
     }
 
