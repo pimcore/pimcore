@@ -52,17 +52,17 @@ jobs:
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
 
-            - name: "Secure original baseline"
-              run: "cp phpstan-baseline.neon phpstan-baseline-original.neon"
-
-            - name: "Run a static analysis with phpstan/phpstan"
-              run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline"
-
-            - name: "Dump generated baseline with phpstan/phpstan"
-              run: "cat phpstan-baseline.neon"
-
-            - name: "Restore original baseline"
-              run: "cp phpstan-baseline-original.neon phpstan-baseline.neon"
+#            - name: "Secure original baseline"
+#              run: "cp phpstan-baseline.neon phpstan-baseline-original.neon"
+#
+#            - name: "Run a static analysis with phpstan/phpstan"
+#              run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline"
+#
+#            - name: "Dump generated baseline with phpstan/phpstan"
+#              run: "cat phpstan-baseline.neon"
+#
+#            - name: "Restore original baseline"
+#              run: "cp phpstan-baseline-original.neon phpstan-baseline.neon"
 
             - name: "Run a static analysis with phpstan/phpstan"
               run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1"
