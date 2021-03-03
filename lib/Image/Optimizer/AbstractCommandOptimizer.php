@@ -30,12 +30,6 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
 
         if ($executable) {
             $command = $this->getCommandArray($executable, $input, $output);
-
-            //@TODO Remove in Pimcore 10
-            if (empty($command)) {
-                $command = $this->getCommand($executable, $input, $output);
-            }
-
             $process = new Process($command);
             $process->run();
 
@@ -56,26 +50,10 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
     abstract protected function getExecutable(): string;
 
     /**
-     * @deprecated use getCommandArray() instead.
-     *
-     * @param string $executable
-     * @param string $input
-     * @param string $output
-     *
-     * @return string
-     */
-    abstract protected function getCommand(string $executable, string $input, string $output): string;
-
-    /**
-     * @TODO make abstract in Pimcore 10
-     *
      * @param string $executable
      * @param string $input
      * @param string $output
      * @return array
      */
-    protected function getCommandArray(string $executable, string $input, string $output): array
-    {
-        return [];
-    }
+    abstract protected function getCommandArray(string $executable, string $input, string $output): array;
 }

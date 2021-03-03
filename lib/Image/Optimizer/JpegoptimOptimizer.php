@@ -52,15 +52,6 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
     }
 
     /**
-     * @deprecated
-     * {@inheritdoc}
-     */
-    protected function getCommand(string $executable, string $input, string $output): string
-    {
-        return implode(' ', $this->getCommandArray($executable, $input, $output));
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function supports(string $input): bool
