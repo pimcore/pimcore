@@ -3183,7 +3183,7 @@ pimcore.helpers.reloadUserImage = function (userId) {
 };
 
 /**
- * Takes a number representing seconds and formats it as a human-readable string such as "1hr 2m 15s"
+ * Takes a number representing seconds and formats it as a human-readable string such as "1:15:05" for 1 hour 15 minutes 5 seconds
  * @param {int|float} dataDuration duration in seconds
  * @returns {string|*}
  */
