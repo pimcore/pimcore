@@ -879,6 +879,7 @@ class Document extends Element\AbstractElement
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
             if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
+                    $hardlinkPath = '';
                     $hardlink = $masterDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
 
@@ -889,7 +890,7 @@ class Document extends Element\AbstractElement
                             $hardlinkPath, $this->getRealFullPath());
                     }
 
-                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false) {
+                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
                         $link = null;
                     }
                 }
@@ -916,7 +917,7 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if (!$link && !empty($config['domain'])) {
+                if (!$link && !empty($config['domain']) && !($this instanceof WrapperInterface)) {
                     $link = $scheme . $config['domain'] . $this->getRealFullPath();
                 }
             }
