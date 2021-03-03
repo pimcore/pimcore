@@ -148,8 +148,7 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        //@TODO change to Process::fromShellCommandline in Pimcore 10
-        $process = new Process($this->buildPageCountCommand());
+        $process = Process::fromShellCommandline($this->buildPageCountCommand());
         $process->setTimeout(120);
         $process->mustRun();
         $pages = trim($process->getOutput());
