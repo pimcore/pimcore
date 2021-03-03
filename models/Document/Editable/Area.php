@@ -81,7 +81,7 @@ class Area extends Model\Document\Editable
 
         $this->outputEditmode('</div>');
 
-        if($dialogConfig) {
+        if ($dialogConfig) {
             $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
             $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
             $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
@@ -107,7 +107,7 @@ class Area extends Model\Document\Editable
             }
 
             $editable->setInDialogBox($dialogId);
-            $editable->setOption('dialogBoxConfig', $config);
+            $editable->addConfig('dialogBoxConfig', $config);
             $this->outputEditmode($editable->admin());
         } elseif (is_array($config) && isset($config[0])) {
             foreach ($config as $item) {
@@ -166,7 +166,6 @@ class Area extends Model\Document\Editable
 
         // create info object and assign it to the view
         $info = $this->buildInfoObject();
-
 
         // start at first index
         $blockState->pushIndex(1);

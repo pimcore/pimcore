@@ -961,11 +961,6 @@ parameters:
 			path: lib/Targeting/Storage/SessionStorage.php
 
 		-
-			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Console.php
-
-		-
 			message: "#^Method Pimcore\\\\Tool\\\\Session\\:\\:get\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\Attribute\\\\AttributeBagInterface but returns Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\SessionBagInterface\\.$#"
 			count: 1
 			path: lib/Tool/Session.php

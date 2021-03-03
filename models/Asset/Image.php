@@ -22,6 +22,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Process\Process;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -148,7 +149,9 @@ class Image extends Model\Asset
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
-            $result = \Pimcore\Tool\Console::exec($facedetectBin . ' ' . escapeshellarg($image));
+            $process = new Process([$facedetectBin, $image]);
+            $process->run();
+            $result = $process->getOutput();
             if (strpos($result, "\n")) {
                 $faces = explode("\n", trim($result));
 
@@ -208,7 +211,8 @@ class Image extends Model\Asset
             $sqipConfig->setFormat('png');
             $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
             $svgPath = $this->getLowQualityPreviewFileSystemPath();
-            \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . escapeshellarg($svgPath) . ' '. escapeshellarg($pngPath));
+            $process = new Process([$sqipBin, '-o', $svgPath, $pngPath]);
+            $process->run();
             unlink($pngPath);
 
             if (file_exists($svgPath)) {

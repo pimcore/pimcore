@@ -37,12 +37,13 @@ final class CjpegOptimizer extends AbstractCommandOptimizer
         return 'cjpeg';
     }
 
+
     /**
      * {@inheritdoc}
      */
-    protected function getCommand(string $executable, string $input, string $output): string
+    protected function getCommandArray(string $executable, string $input, string $output): array
     {
-        return $executable.' -outfile '.$output.' '.escapeshellarg($input);
+        return [$executable, '-outfile', $output, $input];
     }
 
     /**

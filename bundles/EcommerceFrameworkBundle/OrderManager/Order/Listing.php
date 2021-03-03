@@ -330,35 +330,6 @@ class Listing extends AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * get all available values that can bee used for filter
-     *
-     * @param string $field
-     *
-     * @return array
-     *
-     * @deprecated refactoring
-     */
-    protected function getAvailableFilterValues($field)
-    {
-        if (!$this->availableFilterValues) {
-            $listing = new self();
-
-            $queryBuilder = $listing->getQueryBuilder();
-            $queryBuilder = str_replace('-- [GET_AVAILABLE_OPTIONS]', '
-                , ifnull(GROUP_CONCAT(DISTINCT product.o_id, "|", product.o_parentId SEPARATOR "|"),0) as "available_productId"
-                , ifnull(GROUP_CONCAT(DISTINCT pricingRule.ruleId SEPARATOR "|"),0) as "available_pricingRules"
-            ', $queryBuilder);
-            $queryBuilder = str_replace('GROUP BY orderItem', '', $queryBuilder);
-
-            $conn = \Pimcore\Db::getConnection();
-            $conn->query('SET SESSION group_concat_max_len = 1000000');
-            $this->availableFilterValues = $conn->fetchRow($queryBuilder);
-        }
-
-        return explode('|', $this->availableFilterValues['available_' . $field]);
-    }
-
-    /**
      * @return bool
      */
     public function useSubItems()

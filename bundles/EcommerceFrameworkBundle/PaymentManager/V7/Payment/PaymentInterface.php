@@ -28,19 +28,6 @@ interface PaymentInterface
     public function getName();
 
     /**
-     * Start payment
-     *
-     * @param PriceInterface $price
-     * @param array $config
-     *
-     * @deprecated use startPayment instead.
-     *
-     * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
-     *                 an symfony form builder which needs to submitted (e.g. datatrans and wirecard)
-     */
-    public function initPayment(PriceInterface $price, array $config);
-
-    /**
      * Starts payment
      *
      * @param OrderAgentInterface $orderAgent
