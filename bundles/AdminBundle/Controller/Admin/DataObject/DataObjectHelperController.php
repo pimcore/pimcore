@@ -23,6 +23,7 @@ use Pimcore\DataObject\Import\Resolver\ImportErrorException;
 use Pimcore\DataObject\Import\Resolver\ImportWarningException;
 use Pimcore\DataObject\Import\Service as ImportService;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\DataObjectImportEvents;
 use Pimcore\Event\Model\DataObjectImportEvent;
 use Pimcore\File;
@@ -39,6 +40,7 @@ use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -1801,15 +1803,24 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function getExportJobsAction(Request $request, GridHelperService $gridHelperService)
+    public function getExportJobsAction(Request $request, GridHelperService $gridHelperService, EventDispatcherInterface $eventDispatcher)
     {
         $requestedLanguage = $this->extractLanguage($request);
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $list = $gridHelperService->prepareListingForGrid($allParams, $requestedLanguage, $this->getAdminUser());
+
+        $beforeListPrepareEvent = new GenericEvent($this, [
+            'list' => $list,
+            'context' => $allParams,
+        ]);
+        $eventDispatcher->dispatch($beforeListPrepareEvent, AdminEvents::OBJECT_LIST_BEFORE_EXPORT_PREPARE);
+
+        $list = $beforeListPrepareEvent->getArgument('list');
 
         $ids = $list->loadIdList();
 
@@ -1826,18 +1837,21 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      * @param LocaleServiceInterface $localeService
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function doExportAction(Request $request, LocaleServiceInterface $localeService)
+    public function doExportAction(Request $request, LocaleServiceInterface $localeService, EventDispatcherInterface $eventDispatcher)
     {
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ?? ';';
+
+        $allParams = array_merge($request->request->all(), $request->query->all());
 
         $enableInheritance = $settings['enableInheritance'] ?? null;
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
@@ -1862,6 +1876,14 @@ class DataObjectHelperController extends AdminController
         $list->setObjectTypes(['object', 'folder', 'variant']);
         $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
         $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
+
+        $beforeListExportEvent = new GenericEvent($this, [
+            'list' => $list,
+            'context' => $allParams,
+        ]);
+        $eventDispatcher->dispatch($beforeListExportEvent, AdminEvents::OBJECT_LIST_BEFORE_EXPORT);
+
+        $list = $beforeListExportEvent->getArgument('list');
 
         $fields = $request->get('fields');
 
@@ -1889,7 +1911,7 @@ class DataObjectHelperController extends AdminController
         $firstLine = true;
         $lineCount = count($csv);
 
-        if (!$addTitles) {
+        if (!$addTitles && $lineCount > 0) {
             fwrite($fp, "\r\n");
         }
 
