@@ -12,6 +12,7 @@ parameters:
         #container_xml_path: ../../../var/cache/dev/App_KernelDevDebugContainer.xml # optional when running in project scope
 
     excludes_analyse:
+        - '**/PreAuthenticatedAdminSessionFactory.php'
         - '**/DependencyInjection/Configuration.php'
         - '**/External/AdminerController.php'
         - '**/Processor/PdfReactor.php'
