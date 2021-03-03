@@ -98,8 +98,8 @@ class Xliff12Escaper
             if ($xml) {
                 $els = $xml->filter('bpt, ept, ph');
                 foreach ($els as $el) {
-                    $content = html_entity_decode($el->innertext, null, 'UTF-8');
-                    $el->outertext = $content;
+                    $content = html_entity_decode($el->text(), null, 'UTF-8');
+                    $el->ownerDocument->textContent = $content;
                 }
             }
             $content = $xml->html();

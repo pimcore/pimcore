@@ -84,6 +84,7 @@ class Newsletter
             $html = new Crawler($contentHTML);
             if ($html) {
                 $links = $html->filter('a');
+                /** @var \DOMElement $link */
                 foreach ($links as $link) {
                     if (preg_match('/^(mailto|#)/i', trim($link->getAttribute('href')))) {
                         // No tracking for mailto and hash only links

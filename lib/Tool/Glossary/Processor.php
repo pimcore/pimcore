@@ -132,7 +132,11 @@ class Processor
 
         foreach ($es->children() as $e) {
             $text = $e->ownerDocument->saveHTML($e);
-            if (!in_array((string)$e->parentNode->tagName, $this->blockedTags) && strlen(trim($text))) {
+            if (
+                $e->parentNode instanceof \DOMNode &&
+                !in_array((string)$e->parentNode->tagName, $this->blockedTags) &&
+                strlen(trim($text))
+            ) {
                 if ($options['limit'] < 0) {
                     $text = preg_replace($data['search'], $data['replace'], $text);
                 } else {

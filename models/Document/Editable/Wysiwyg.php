@@ -175,10 +175,8 @@ class Wysiwyg extends Model\Document\Editable
                     $type = $el->getAttribute('pimcore_type');
                     $id = (int)$el->getAttribute('pimcore_id');
 
-                    if (array_key_exists($type, $idMapping)) {
-                        if (array_key_exists($id, $idMapping[$type])) {
-                            $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
-                        }
+                    if ($idMapping[$type][$id] ?? false) {
+                        $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                     }
                 }
             }

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Http\Response;
 
 use Pimcore\Http\ResponseHelper;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
 class CodeInjector
@@ -118,20 +119,20 @@ class CodeInjector
 
     private function injectIntoDomSelector(string $html, string $code, string $selector, string $position, string $charset): string
     {
-        $dom = str_get_html($html);
+        $dom = new Crawler($html);
         if ($dom) {
-            $element = $dom->find($selector, 0);
+            $element = $dom->filter($selector)->eq(0);
             if ($element) {
                 if (self::REPLACE === $position) {
-                    $element->innertext = $code;
+                    $element->getNode(0)->textContent = $code;
                 } elseif (self::POSITION_BEGINNING === $position) {
-                    $element->innertext = $code . $element->innertext;
+                    $element->getNode(0)->textContent = $code . $element->getNode(0)->textContent;
                 } elseif (self::POSITION_END === $position) {
-                    $element->innertext = $element->innertext . $code;
+                    $element->getNode(0)->textContent = $element->getNode(0)->textContent . $code;
                 }
             }
 
-            $html = $dom->save();
+            $html = $dom->html();
             $dom->clear();
             unset($dom);
 

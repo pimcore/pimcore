@@ -194,16 +194,17 @@ class Text
 
             $s = $html->filter('a[pimcore_id], img[pimcore_id]');
 
+            /** @var \DOMElement $el */
             foreach ($s as $el) {
                 $type = null;
 
                 // image
-                if ($el->src) {
+                if ($el->hasAttribute('src')) {
                     $type = 'asset';
                 }
 
                 // link
-                if ($el->getAttribute('href')) {
+                if ($el->hasAttribute('href')) {
                     if ($el->getAttribute('pimcore_type') == 'asset') {
                         $type = 'asset';
                     } elseif ($el->getAttribute('pimcore_type') == 'document') {
@@ -211,7 +212,7 @@ class Text
                     }
                 }
 
-                $newId = $idMapping[$type][$el->attr['pimcore_id']] ?? null;
+                $newId = $idMapping[$type][$el->getAttribute('pimcore_id')] ?? null;
                 if ($newId) {
                     //update id
 
@@ -220,8 +221,6 @@ class Text
                     } else {
                         $pimcoreElement = Document::getById($newId);
                     }
-
-                    //TODO
 
                     $el->setAttribute('pimcore_id', $newId);
                     $el->setAttribute('src', $pimcoreElement->getFullPath());

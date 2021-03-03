@@ -362,7 +362,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return mixed
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
@@ -371,15 +371,14 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         if ($html) {
             $es = $html->filter('body > a[pimcore_id], img[pimcore_id]');
 
+            /** @var \DOMElement $el */
             foreach ($es as $el) {
                 if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
                     $type = $el->getAttribute('pimcore_type');
                     $id = (int) $el->getAttribute('pimcore_id');
 
-                    if (array_key_exists($type, $idMapping)) {
-                        if (array_key_exists($id, $idMapping[$type])) {
-                            $el->ownerDocument->textContent = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->parentNode->outerHtml());
-                        }
+                    if ($idMapping[$type][$id] ?? false) {
+                        $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                     }
                 }
             }
