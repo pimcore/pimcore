@@ -1402,18 +1402,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @deprecated will be removed in Pimcore 10
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
      *

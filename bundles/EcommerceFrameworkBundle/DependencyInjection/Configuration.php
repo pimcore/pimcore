@@ -416,74 +416,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet();
 
         $pricingManager
-            // support deprecated options at the root level of the pricing_manager
-            // values set here will OVERWRITE the value in every tenant, even if the
-            // tenant defines the value!
-            // TODO remove in Pimcore 10
-            ->validate()
-                ->always(function ($v) {
-                    $enabled = null;
-                    if (isset($v['enabled']) && is_bool($v['enabled'])) {
-                        $enabled = $v['enabled'];
-                        unset($v['enabled']);
-                    }
-
-                    $pricingManagerId = null;
-                    if (isset($v['pricing_manager_id'])) {
-                        $pricingManagerId = $v['pricing_manager_id'];
-                        unset($v['pricing_manager_id']);
-                    }
-
-                    $pricingManagerOptions = null;
-                    if (isset($v['pricing_manager_options']) && !empty($v['pricing_manager_options'])) {
-                        $pricingManagerOptions = $v['pricing_manager_options'];
-                        unset($v['pricing_manager_options']);
-                    }
-
-                    if (null === $enabled && null === $pricingManagerId && null === $pricingManagerOptions) {
-                        return $v;
-                    }
-
-                    foreach ($v['tenants'] as $tenant => &$tenantConfig) {
-                        if (null !== $enabled) {
-                            $tenantConfig['enabled'] = $enabled;
-                        }
-
-                        if (null !== $pricingManagerId) {
-                            $tenantConfig['pricing_manager_id'] = $pricingManagerId;
-                        }
-
-                        if (null !== $pricingManagerOptions) {
-                            $tenantConfig['pricing_manager_options'] = array_merge(
-                                $tenantConfig['pricing_manager_options'],
-                                $pricingManagerOptions
-                            );
-                        }
-                    }
-
-                    return $v;
-                })
-            ->end()
             ->children()
-                ->booleanNode('enabled')
-                    ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                ->end()
-                ->scalarNode('pricing_manager_id')
-                    ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                ->end()
-                ->arrayNode('pricing_manager_options')
-                    ->children()
-                        ->scalarNode('rule_class')
-                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                        ->end()
-                        ->scalarNode('price_info_class')
-                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                        ->end()
-                        ->scalarNode('environment_class')
-                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                        ->end()
-                    ->end()
-                ->end()
                 ->arrayNode('conditions')
                     ->info('Condition mapping from name to used class')
                     ->useAttributeAsKey('name')
@@ -901,13 +834,6 @@ class Configuration implements ConfigurationInterface
                                                 'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype',
                                             ]);
 
-                                            // this option was never properly supported
-                                            // and is ignored
-                                            if (isset($v['mapping'])) {
-                                                @trigger_error('The "mapping" config entry on the ecommerce index attribute level is unsupported and will be removed in Pimcore 10. Please set "options.mapping" instead.', E_USER_DEPRECATED);
-                                                unset($v['mapping']);
-                                            }
-
                                             return $v;
                                         })
                                     ->end()
@@ -922,7 +848,6 @@ class Configuration implements ConfigurationInterface
                                         ->append($this->buildOptionsNode('getter_options'))
                                         ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
-                                        ->append($this->buildOptionsNode('mapping')) // TODO Symfony 3.4 set as deprecated. TODO Pimcore 10 remove option completely.
                                         ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
                                     ->end()
                                 ->end()
