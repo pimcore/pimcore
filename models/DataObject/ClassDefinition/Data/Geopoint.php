@@ -83,12 +83,12 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint|null
+     * @return DataObject\Data\GeoCoordinates|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__longitude'] && $data[$this->getName() . '__latitude']) {
-            $geopoint = new DataObject\Data\Geopoint($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude']);
+            $geopoint = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__latitude'], $data[$this->getName() . '__longitude']);
 
             if (isset($params['owner'])) {
                 $geopoint->_setOwner($params['owner']);
@@ -144,12 +144,12 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint|null
+     * @return DataObject\Data\GeoCoordinates|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (is_array($data) && ($data['longitude'] || $data['latitude'])) {
-            return new DataObject\Data\Geopoint($data['longitude'], $data['latitude']);
+            return new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
         }
 
         return null;
@@ -160,7 +160,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint|null
+     * @return DataObject\Data\GeoCoordinates|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -198,8 +198,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof DataObject\Data\Geopoint) {
-            //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
+        if ($data instanceof DataObject\Data\GeoCoordinates) {
             return $data->getLatitude() . ',' . $data->getLongitude();
         }
 
@@ -211,16 +210,15 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\Geopoint
+     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\GeoCoordinates
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $coords = explode(',', $importValue);
 
         $value = null;
-        if ($coords[1] && $coords[0]) {
-            //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
-            $value = new DataObject\Data\Geopoint($coords[1], $coords[0]);
+        if ($coords[0] && $coords[1]) {
+            $value = new DataObject\Data\GeoCoordinates($coords[0], $coords[1]);
         }
 
         return $value;
@@ -275,7 +273,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $data = new DataObject\Data\Geopoint($value['value2'], $value['value']);
+            $data = new DataObject\Data\GeoCoordinates($value['value'], $value['value2']);
 
             return $data;
         }

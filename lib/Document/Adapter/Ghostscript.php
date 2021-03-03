@@ -18,6 +18,8 @@ use Pimcore\Document\Adapter;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class Ghostscript extends Adapter
 {
@@ -146,8 +148,11 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        $pages = Console::exec($this->buildPageCountCommand(), null, 120);
-        $pages = trim($pages);
+        //@TODO change to Process::fromShellCommandline in Pimcore 10
+        $process = new Process($this->buildPageCountCommand());
+        $process->setTimeout(120);
+        $process->mustRun();
+        $pages = trim($process->getOutput());
 
         if (! is_numeric($pages)) {
             throw new \Exception('Unable to get page-count of ' . $this->path);
@@ -167,10 +172,10 @@ class Ghostscript extends Adapter
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            $command .= ' --permit-file-read=' . escapeshellarg($this->path);
+            $command .= " --permit-file-read='" . $this->path . "'";
         }
 
-        $command .= " -c '(" . escapeshellcmd($this->path) . ") (r) file runpdfbegin pdfpagecount = quit'";
+        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
 
         return $command;
     }
@@ -185,7 +190,9 @@ class Ghostscript extends Adapter
     protected function getVersion()
     {
         if (is_null($this->version)) {
-            $this->version = trim(Console::exec(self::getGhostscriptCli() . ' --version'));
+            $process = new Process([self::getGhostscriptCli(), '--version']);
+            $process->mustRun();
+            $this->version = trim($process->getOutput());
         }
 
         return $this->version;
@@ -207,7 +214,9 @@ class Ghostscript extends Adapter
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             }
 
-            Console::exec(self::getGhostscriptCli() . ' -sDEVICE=pngalpha -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
+            $process = new Process([self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r', $resolution, '-o', $path, $this->path]);
+            $process->setTimeout(240);
+            $process->run();
 
             if ($realTargetPath) {
                 File::rename($path, $realTargetPath);
@@ -231,22 +240,31 @@ class Ghostscript extends Adapter
     {
         try {
             $path = $path ? $this->preparePath($path) : $this->path;
-            $pageRange = '';
+            $cmd = [self::getPdftotextCli()];
             $text = null;
 
             try {
                 // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript
                 if ($page) {
-                    $pageRange = '-f ' . $page . ' -l ' . $page . ' ';
+                    array_push($cmd, '-f', $page, '-l', $page);
                 }
-                $text = Console::exec(self::getPdftotextCli() . ' ' . $pageRange . escapeshellarg($path) . ' -', null, 120);
-            } catch (\Exception $e) {
+                array_push($cmd, $path, '-');
+                $process = new Process($cmd);
+                $process->setTimeout(120);
+                $process->mustRun();
+                $text = $process->getOutput();
+            } catch (ProcessFailedException $e) {
                 // pure ghostscript way
+                $cmd = [self::getPdftotextCli(), '-dBATCH', '-dNOPAUSE', '-sDEVICE=txtwrite'];
                 if ($page) {
-                    $pageRange = '-dFirstPage=' . $page . ' -dLastPage=' . $page . ' ';
+                    array_push($cmd, '-dFirstPage=' . $page, '-dLastPage=' . $page);
                 }
                 $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
-                Console::exec(self::getGhostscriptCli() . ' -dBATCH -dNOPAUSE -sDEVICE=txtwrite ' . $pageRange . '-dTextFormat=2 -sOutputFile=' . $textFile . ' ' . escapeshellarg($path), null, 120);
+                array_push($cmd, '-dTextFormat=2', '-sOutputFile=', $textFile, $path);
+
+                $process = new Process($cmd);
+                $process->setTimeout(120);
+                $process->mustRun();
 
                 if (is_file($textFile)) {
                     $text = file_get_contents($textFile);

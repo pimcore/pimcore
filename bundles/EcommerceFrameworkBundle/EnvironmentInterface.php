@@ -160,43 +160,4 @@ interface EnvironmentInterface extends ComponentInterface
      */
     public function getSystemLocale();
 
-    /**
-     * ===========================================
-     *
-     *  deprecated functions
-     *
-     * ===========================================
-     */
-
-    /**
-     * @deprecated use setCurrentAssortmentTenant instead
-     *
-     * @param string $tenant
-     *
-     * @return mixed
-     */
-    public function setCurrentTenant($tenant);
-
-    /**
-     * @deprecated use getCurrentAssortmentTenant instead
-     *
-     * @return string
-     */
-    public function getCurrentTenant();
-
-    /**
-     * @deprecated use setCurrentAssortmentSubTenant instead
-     *
-     * @param mixed $tenant
-     *
-     * @return mixed
-     */
-    public function setCurrentSubTenant($tenant);
-
-    /**
-     * @deprecated use getCurrentAssortmentSubTenant instead
-     *
-     * @return mixed
-     */
-    public function getCurrentSubTenant();
 }

@@ -160,8 +160,8 @@ class Asset extends Data
      */
     public function resolveDependencies($data, $params = [])
     {
-        if (isset($params['data'])) {
-            $elementId = $params['data'];
+        if ($data instanceof \Pimcore\Model\Asset && isset($params['type'])) {
+            $elementId = $data->getId();
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;

@@ -44,7 +44,7 @@ abstract class AbstractOrderList implements OrderListInterface
     protected $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
-     * @var \ArrayIterator|null
+     * @var \ArrayIterator
      */
     protected $list;
 
@@ -126,7 +126,7 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * @return OrderListInterface
+     * @return OrderListItemInterface[]
      */
     public function load()
     {
@@ -142,19 +142,7 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @deprecated will be removed in Pimcore 10
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
-     * Returns a collection of items for a page.
+     * Returns an collection of items for a page.
      *
      * @param  int $offset           Page offset
      * @param  int $itemCountPerPage Number of items per page
@@ -164,8 +152,9 @@ abstract class AbstractOrderList implements OrderListInterface
     public function getItems($offset, $itemCountPerPage)
     {
         // load
-        $this->setLimit($itemCountPerPage, $offset)->load();
-        return $this->list->getArrayCopy();
+        return $this
+            ->setLimit($itemCountPerPage, $offset)
+            ->load();
     }
 
     /**
