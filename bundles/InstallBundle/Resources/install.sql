@@ -633,6 +633,8 @@ CREATE TABLE `translations_messages` (
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
+CREATE OR REPLACE VIEW translations_website AS SELECT * FROM translations_messages;
+
 DROP TABLE IF EXISTS `tree_locks`;
 CREATE TABLE `tree_locks` (
   `id` int(11) NOT NULL DEFAULT '0',
