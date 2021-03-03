@@ -3193,28 +3193,16 @@ pimcore.helpers.formatTimeDuration = function (dataDuration) {
         return dataDuration;
     }
 
-    let formatString = '';
+    let durationString = '';
 
     let hours = Math.floor(dataDuration / 3600);
     dataDuration %= 3600;
     if (hours > 0) {
-        formatString += hours + "hr ";
+        durationString += hours + ":";
     }
 
-    let minutes = Math.floor(dataDuration / 60);
-    if (minutes > 0) {
-        formatString += minutes + "m ";
-    }
+    durationString += Math.floor(dataDuration / 60) + ":";
+    durationString += ("0" + Math.round(dataDuration % 60)).slice(-2);
 
-    let seconds = Math.floor(dataDuration % 60);
-    formatString += seconds;
-
-    let subseconds = Math.round((dataDuration - Math.floor(dataDuration)) * 100);
-    if (subseconds > 0) {
-        formatString += "." + subseconds;
-    }
-
-    formatString += "s";
-
-    return formatString;
+    return durationString;
 }
