@@ -132,9 +132,11 @@ class Processor
 
         foreach ($es->children() as $e) {
             $text = $e->ownerDocument->saveHTML($e);
+            /** @var \DOMNode|null $parentNode */
+            $parentNode = $e->parentNode;
             if (
-                $e->parentNode instanceof \DOMNode &&
-                !in_array((string)$e->parentNode->tagName, $this->blockedTags) &&
+                $parentNode instanceof \DOMNode &&
+                !in_array((string)$parentNode->tagName, $this->blockedTags) &&
                 strlen(trim($text))
             ) {
                 if ($options['limit'] < 0) {
