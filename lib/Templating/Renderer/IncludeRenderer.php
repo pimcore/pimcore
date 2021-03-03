@@ -89,7 +89,7 @@ class IncludeRenderer
         $cacheKey = null;
         $cacheConfig = false;
 
-        if ($cacheEnabled) {
+        if ($cacheEnabled && !$editmode) {
             if ($cacheConfig = Frontend::isOutputCacheEnabled()) {
                 // cleanup params to avoid serializing Element\ElementInterface objects
                 $cacheParams = $params;
@@ -136,8 +136,8 @@ class IncludeRenderer
 
         \Pimcore\Cache\Runtime::set('pimcore_editmode', $editmodeBackup);
 
-        // write contents to the cache, if output-cache is enabled
-        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+        // write contents to the cache, if output-cache is enabled & not in editmode
+        if ($cacheConfig  && !$editmode &&  !DeviceDetector::getInstance()->wasUsed()) {
             Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
         }
 
