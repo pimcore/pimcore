@@ -769,6 +769,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'objectbrick',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname()
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -777,6 +778,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'fieldcollection',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname()
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Concrete) {
@@ -1141,6 +1143,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     $context = $data->getContext();
                                     $containerType = $context['containerType'] ?? null;
                                     if ($containerType === 'objectbrick') {
+                                        //TODO data is a localized field
                                         $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
                                         $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
                                         if ($brick) {
