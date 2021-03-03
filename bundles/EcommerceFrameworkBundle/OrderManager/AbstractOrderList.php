@@ -44,7 +44,7 @@ abstract class AbstractOrderList implements OrderListInterface
     protected $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator|null
      */
     protected $list;
 
