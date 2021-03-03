@@ -1143,7 +1143,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     $context = $data->getContext();
                                     $containerType = $context['containerType'] ?? null;
                                     if ($containerType === 'objectbrick') {
-                                        //TODO data is a localized field
                                         $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
                                         $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
                                         if ($brick) {
