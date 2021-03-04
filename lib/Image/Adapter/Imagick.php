@@ -59,23 +59,19 @@ class Imagick extends Adapter
 
         // support image URLs
         if (!stream_is_local($imagePath)) {
-            if (isset($options['asset'])) {
-                // imagick is only able to deal with local files
-                // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-                $imagePath = $options['asset']->getTemporaryFile();
-            } else {
-                $tmpFilename = 'imagick_auto_download_'.md5($imagePath).'.'.File::getFileExtension($imagePath);
-                $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$tmpFilename;
+            // imagick is only able to deal with local files
+            // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
+            $tmpFilename = 'imagick_auto_download_'.md5($imagePath).'.'.File::getFileExtension($imagePath);
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$tmpFilename;
 
-                $this->tmpFiles[] = $tmpFilePath;
+            $this->tmpFiles[] = $tmpFilePath;
 
-                $src = fopen($imagePath, 'rb');
-                $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
-                stream_copy_to_stream($src, $dest);
-                fclose($dest);
+            $src = fopen($imagePath, 'rb');
+            $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
+            stream_copy_to_stream($src, $dest);
+            fclose($dest);
 
-                $imagePath = $tmpFilePath;
-            }
+            $imagePath = $tmpFilePath;
         }
 
         if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
