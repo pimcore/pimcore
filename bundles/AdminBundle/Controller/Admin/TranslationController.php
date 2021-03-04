@@ -30,6 +30,7 @@ use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
 use Pimcore\Translation\ImporterService\ImporterServiceInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 use Pimcore\Translation\Translator;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -1008,17 +1009,13 @@ class TranslationController extends AdminController
                     );
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
-                    $dom = str_get_html($html);
+                    $dom = new Crawler($html);
                     if ($dom) {
 
                         // remove containers including their contents
-                        $elements = $dom->find(
-                            'form,script,style,noframes,noscript,object,area,mapm,video,audio,iframe,textarea,input,select,button,'
-                        );
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $el->outertext = '';
-                            }
+                        $elements = $dom->filter('form, script, style, noframes, noscript, object, area, mapm, video, audio, iframe, textarea, input, select, button');
+                        foreach ($elements as $element) {
+                           $element->parentNode->removeChild($element);
                         }
 
                         $clearText = function ($string) {
@@ -1033,30 +1030,22 @@ class TranslationController extends AdminController
                         };
 
                         // remove empty tags (where it matters)
-                        $elements = $dom->find('a, li');
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $string = $clearText($el->plaintext);
-                                if (empty($string)) {
-                                    $el->outertext = '';
-                                }
-                            }
-                        }
-
                         // replace links => links get [Linktext]
-                        $elements = $dom->find('a');
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $string = $clearText($el->plaintext);
-                                if (!empty($string)) {
-                                    $el->outertext = '[' . $el->plaintext . ']';
-                                } else {
-                                    $el->outertext = '';
-                                }
+                        $elements = $dom->filter('a');
+                        foreach ($elements as $element) {
+                            $string = $clearText($element->textContent);
+                            if (!empty($string)) {
+                                $newNode = $element->ownerDocument->createTextNode('[' . $element->textContent . ']');
+                                $element->parentNode->replaceChild($newNode, $element);
+                            } else {
+                                $element->ownerDocument->textContent = '';
                             }
                         }
 
-                        $html = $dom->save();
+                        if ($dom->count() > 0) {
+                            $html = $dom->html();
+                        }
+
                         $dom->clear();
                         unset($dom);
 
