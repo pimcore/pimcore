@@ -3193,3 +3193,28 @@ pimcore.helpers.reloadUserImage = function (userId) {
         Ext.getCmp("pimcore_profile_image_" + userId).setSrc(image);
     }
 };
+
+/**
+ * Takes a number representing seconds and formats it as a human-readable string such as "1:15:05" for 1 hour 15 minutes 5 seconds
+ * @param {int|float} dataDuration duration in seconds
+ * @returns {string|*}
+ */
+pimcore.helpers.formatTimeDuration = function (dataDuration) {
+    if (!is_numeric(dataDuration)) {
+        // Unknown data, return as is
+        return dataDuration;
+    }
+
+    let durationString = '';
+
+    let hours = Math.floor(dataDuration / 3600);
+    dataDuration %= 3600;
+    if (hours > 0) {
+        durationString += hours + ":";
+    }
+
+    durationString += Math.floor(dataDuration / 60) + ":";
+    durationString += ("0" + Math.round(dataDuration % 60)).slice(-2);
+
+    return durationString;
+}
