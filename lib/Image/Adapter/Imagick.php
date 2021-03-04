@@ -78,8 +78,6 @@ class Imagick extends Adapter
             }
         }
 
-
-
         if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
             // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes
             // Inkscape to completely go crazy -> Debian 8.10, Inkscape 0.48.5 r10040, Imagick 6.8.9-9 Q16, Imagick 3.4.3
