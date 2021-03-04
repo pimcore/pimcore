@@ -14,7 +14,6 @@
 
 namespace Pimcore\Image\Optimizer;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Product;
 use Pimcore\Exception\ImageOptimizationFailedException;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Process;
@@ -53,6 +52,7 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
      * @param string $executable
      * @param string $input
      * @param string $output
+     *
      * @return array
      */
     abstract protected function getCommandArray(string $executable, string $input, string $output): array;

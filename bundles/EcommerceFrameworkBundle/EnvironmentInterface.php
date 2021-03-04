@@ -159,5 +159,4 @@ interface EnvironmentInterface extends ComponentInterface
      * @return null|string
      */
     public function getSystemLocale();
-
 }
