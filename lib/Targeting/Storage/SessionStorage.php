@@ -21,6 +21,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Session\SessionConfigurator;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 class SessionStorage implements TargetingStorageInterface
 {
@@ -149,7 +150,7 @@ class SessionStorage implements TargetingStorageInterface
      * @param string $scope
      * @param bool $checkPreviousSession
      *
-     * @return null|NamespacedAttributeBag
+     * @return null|SessionBagInterface
      */
     private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
     {
