@@ -122,17 +122,17 @@ class CodeInjector
         $dom = new Crawler($html);
         if ($dom) {
             $element = $dom->filter($selector)->eq(0);
-            if ($element) {
+            if ($element && $node = $element->getNode(0)) {
                 if (self::REPLACE === $position) {
-                    $element->getNode(0)->textContent = $code;
+                    $node->textContent = $code;
                 } elseif (self::POSITION_BEGINNING === $position) {
-                    $element->getNode(0)->textContent = $code . $element->getNode(0)->textContent;
+                    $node->textContent = $code . $element->html();
                 } elseif (self::POSITION_END === $position) {
-                    $element->getNode(0)->textContent = $element->getNode(0)->textContent . $code;
+                    $node->textContent = $element->html() . $code;
                 }
             }
 
-            $html = $dom->html();
+            $html = html_entity_decode($dom->outerHtml());
             $dom->clear();
             unset($dom);
 
