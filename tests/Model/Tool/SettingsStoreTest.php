@@ -81,4 +81,22 @@ class SettingsStoreTest extends ModelTestCase
         $ids = SettingsStore::getIdsByScope('scopeX');
         $this->assertEquals(0, count($ids));
     }
+
+    public function testNotExistingSettings() {
+
+        SettingsStore::set('my-id1', true, 'scope1', 'bool');
+
+        $setting = SettingsStore::get('my-id1');
+        $this->assertTrue($setting->getData());
+
+        SettingsStore::set('my-id1', false, 'scope1', 'bool');
+
+        $setting = SettingsStore::get('my-id1');
+        $this->assertFalse($setting->getData());
+
+        SettingsStore::delete('my-id1');
+        $setting = SettingsStore::get('my-id1');
+        $this->assertNull($setting);
+
+    }
 }
