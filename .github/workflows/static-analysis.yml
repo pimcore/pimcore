@@ -56,7 +56,7 @@ jobs:
               run: "cp phpstan-baseline.neon phpstan-baseline-original.neon"
 
 
-            - name: "Run a static analysis with phpstan/phpstan"
+            - name: "Generate baseline"
               run: |
                 set +e
                 vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
