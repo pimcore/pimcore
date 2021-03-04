@@ -426,7 +426,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
     /**
      * saved
      */
-    saveOnComplete: function () {
+    saveOnComplete: function (response) {
         this.parent.refresh(this.parent.getTree().getRootNode());
 
         var response = Ext.decode(response.responseText);
