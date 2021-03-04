@@ -443,6 +443,20 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
+     * @param DataObject\Classificationstore|null $data
+     *
+     * @return bool
+     */
+    public function isEmpty($data)
+    {
+        if ($data instanceof DataObject\Classificationstore) {
+            return empty($data->getItems());
+        }
+
+        return is_null($data);
+    }
+
+    /**
      * @return array
      */
     public function getChildren()
