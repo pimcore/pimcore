@@ -17,11 +17,14 @@ namespace Pimcore\Image\Adapter;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 
 class Imagick extends Adapter
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @var string
      */
@@ -57,22 +60,7 @@ class Imagick extends Adapter
             $this->setPreserveColor($options['preserveColor']);
         }
 
-        // support image URLs
-        if (!stream_is_local($imagePath)) {
-            // imagick is only able to deal with local files
-            // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilename = 'imagick_auto_download_'.md5($imagePath).'.'.File::getFileExtension($imagePath);
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$tmpFilename;
-
-            $this->tmpFiles[] = $tmpFilePath;
-
-            $src = fopen($imagePath, 'rb');
-            $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
-            stream_copy_to_stream($src, $dest);
-            fclose($dest);
-
-            $imagePath = $tmpFilePath;
-        }
+        $imagePath = $this->getLocalFile($imagePath);
 
         if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
             // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes
