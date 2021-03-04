@@ -365,7 +365,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
         $params = [
             'WNAME' => $workflow->getName(),
             'WPLACES' => implode(' ', array_keys($marking->getPlaces())),
-            'DOT' => $dot
+            'DOT' => $dot,
         ];
 
         Console::addLowProcessPriority($cmd);

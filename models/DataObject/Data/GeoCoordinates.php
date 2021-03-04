@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class GeoCoordinates implements OwnerAwareFieldInterface
 {
-
     use OwnerAwareFieldTrait;
 
     /**

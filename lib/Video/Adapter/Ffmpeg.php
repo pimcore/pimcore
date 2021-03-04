@@ -187,7 +187,7 @@ class Ffmpeg extends Adapter
             self::getFfmpegCli(),
             '-ss', $timeOffset, '-i', realpath($this->file),
             '-vcodec', 'png', '-vframes', 1, '-vf', 'scale=iw*sar:ih',
-            str_replace('/', DIRECTORY_SEPARATOR, $file)];
+            str_replace('/', DIRECTORY_SEPARATOR, $file), ];
         Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->run();

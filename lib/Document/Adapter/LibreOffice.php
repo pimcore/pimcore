@@ -149,7 +149,7 @@ class LibreOffice extends Ghostscript
                 self::getLibreOfficeCli(),
                 '--headless', '--nologo', '--nofirststartwizard',
                 '--norestore', '--convert-to', 'pdf:writer_web_pdf_Export',
-                '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $path
+                '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $path,
             ];
 
             $lock->acquire(true);
@@ -164,7 +164,6 @@ class LibreOffice extends Ghostscript
                 fwrite($tmpHandle, $buffer);
             });
             fclose($tmpHandle);
-
 
             $out = $process->getOutput();
             $lock->release();

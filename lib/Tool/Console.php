@@ -15,7 +15,6 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Config;
-use Pimcore\Logger;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -341,15 +340,18 @@ class Console
 
     /**
      * @internal
+     *
      * @param array|string $cmd
+     *
      * @return array|string
      */
-    public static function addLowProcessPriority($cmd) {
+    public static function addLowProcessPriority($cmd)
+    {
         $nice = (string) self::getExecutable('nice');
         if ($nice) {
-            if(is_string($cmd)) {
+            if (is_string($cmd)) {
                 $cmd = $nice . ' -n 19 ' . $cmd;
-            } elseif(is_array($cmd)) {
+            } elseif (is_array($cmd)) {
                 array_unshift($cmd, $nice, '-n 19');
             }
         }
