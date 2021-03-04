@@ -1,6 +1,8 @@
 <?php
 namespace Pimcore\Helper;
 
+use Pimcore\File;
+
 trait TemporaryFileHelperTrait
 {
     private function getLocalFile($path) {
