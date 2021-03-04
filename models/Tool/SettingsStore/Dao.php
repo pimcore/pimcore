@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $id
-     * @param $data
+     * @param mixed $data
      * @param string|null $scope
      * @param string $type
      * @return bool
