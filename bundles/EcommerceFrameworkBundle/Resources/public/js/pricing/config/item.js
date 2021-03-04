@@ -428,7 +428,14 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
      */
     saveOnComplete: function () {
         this.parent.refresh(this.parent.getTree().getRootNode());
-        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
+
+        var response = Ext.decode(response.responseText);
+
+        if (response.success) {
+            pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
+        } else {
+            pimcore.helpers.showNotification(t("error"), t(response.message), "error", );
+        }
     },
 
     recalculateButtonStatus: function () {
