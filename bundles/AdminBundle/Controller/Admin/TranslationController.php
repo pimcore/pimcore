@@ -1049,7 +1049,7 @@ class TranslationController extends AdminController
                         $dom->clear();
                         unset($dom);
 
-                        // force closing tags (simple_html_dom doesn't seem to support this anymore)
+                        // force closing tags
                         $doc = new \DOMDocument();
                         libxml_use_internal_errors(true);
                         $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . '</article>');
