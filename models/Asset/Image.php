@@ -30,7 +30,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Image extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
-    use TemporaryFileHelperTrait;
 
     /**
      * @var string
