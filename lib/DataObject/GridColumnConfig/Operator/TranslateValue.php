@@ -22,9 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslateValue extends AbstractOperator
 {
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var Translator  */
     private $translator;
 
     /** @var string */
@@ -33,7 +31,7 @@ class TranslateValue extends AbstractOperator
     /** @var string|null */
     private $locale;
 
-    public function __construct(TranslatorInterface $translator, \stdClass $config, $context = null)
+    public function __construct(Translator $translator, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
