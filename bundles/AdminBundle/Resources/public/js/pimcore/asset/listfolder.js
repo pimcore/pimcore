@@ -272,9 +272,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                     this.store.load();
                 }.bind(this),
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                    var columnName = grid.ownerGrid.getColumns();
-                    if(columnName[cellIndex].dataIndex == 'id~system' || columnName[cellIndex].dataIndex == 'fullpath~system'
-                        || columnName[cellIndex].dataIndex == 'preview~system') {
+                    var columns = grid.ownerGrid.getColumns();
+                    if(columns[cellIndex+1].dataIndex == 'id~system' || columns[cellIndex+1].dataIndex == 'fullpath~system'
+                        || columns[cellIndex+1].dataIndex == 'preview~system') {
                         var data = this.store.getAt(rowIndex);
                         pimcore.helpers.openAsset(data.id, data.get("type~system"));
                     }
