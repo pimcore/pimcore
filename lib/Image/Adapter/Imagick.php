@@ -58,28 +58,27 @@ class Imagick extends Adapter
         }
 
         // support image URLs
-        if (preg_match('@^https?://|^s3://@', $imagePath)) {
-            $tmpFilename = 'imagick_auto_download_' . md5($imagePath) . '.' . File::getFileExtension($imagePath);
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFilename;
-
-            $this->tmpFiles[] = $tmpFilePath;
-
-            if (preg_match('@^s3://@', $imagePath)) {
-                $imageContent = file_get_contents($imagePath);
+        if (!stream_is_local($imagePath)) {
+            if (isset($options['asset'])) {
+                // imagick is only able to deal with local files
+                // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
+                $imagePath = $options['asset']->getTemporaryFile();
             } else {
-                $imageContent = \Pimcore\Tool::getHttpData($imagePath);
+                $tmpFilename = 'imagick_auto_download_'.md5($imagePath).'.'.File::getFileExtension($imagePath);
+                $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$tmpFilename;
+
+                $this->tmpFiles[] = $tmpFilePath;
+
+                $src = fopen($imagePath, 'rb');
+                $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
+                stream_copy_to_stream($src, $dest);
+                fclose($dest);
+
+                $imagePath = $tmpFilePath;
             }
-
-            File::put($tmpFilePath, $imageContent);
-            $imagePath = $tmpFilePath;
         }
 
-        if (!stream_is_local($imagePath) && isset($options['asset'])) {
-            // imagick is only able to deal with local files
-            // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $imagePath = $options['asset']->getTemporaryFile();
-            $this->tmpFiles[] = $imagePath;
-        }
+
 
         if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
             // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes

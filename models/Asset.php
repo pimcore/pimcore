@@ -1313,17 +1313,14 @@ class Asset extends Element\AbstractElement
         if ($this->stream) {
             if (get_resource_type($this->stream) !== 'stream') {
                 $this->stream = null;
-            } else {
-                $streamMeta = stream_get_meta_data($this->stream);
-                if (!@rewind($this->stream) && $streamMeta['stream_type'] === 'STDIO') {
-                    $this->stream = null;
-                }
+            } elseif (!@rewind($this->stream)) {
+                $this->stream = null;
             }
         }
 
-        if (!$this->stream && $this->getType() != 'folder') {
+        if (!$this->stream && $this->getType() !== 'folder') {
             if (file_exists($this->getFileSystemPath())) {
-                $this->stream = fopen($this->getFileSystemPath(), 'r', false, File::getContext());
+                $this->stream = fopen($this->getFileSystemPath(), 'rb', false, File::getContext());
             } else {
                 $this->stream = tmpfile();
             }
@@ -1556,7 +1553,7 @@ class Asset extends Element\AbstractElement
         }
 
         $src = $this->getStream();
-        $dest = fopen($destinationPath, 'w+', false, File::getContext());
+        $dest = fopen($destinationPath, 'wb', false, File::getContext());
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 
