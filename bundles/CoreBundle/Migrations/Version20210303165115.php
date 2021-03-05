@@ -18,7 +18,7 @@ class Version20210303165115 extends AbstractPimcoreMigration
                   `scope` varchar(190) DEFAULT NULL,
                   `data` longtext,
                   `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
-                  PRIMARY KEY (`id`),
+                  PRIMARY KEY (`id`, `scope`),
                   KEY `scope` (`scope`)
                 ) DEFAULT CHARSET=utf8mb4;"
             );

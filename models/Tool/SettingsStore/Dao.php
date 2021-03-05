@@ -73,7 +73,6 @@ class Dao extends Model\Dao\AbstractDao
             $this->assignVariablesToModel($item);
 
             $data = $item['data'] ?? null;
-            settype($data, $this->model->getType());
             $this->model->setData($data);
             return true;
         }
