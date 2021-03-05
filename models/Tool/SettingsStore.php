@@ -86,7 +86,7 @@ class SettingsStore extends Model\AbstractModel
      * @return bool
      * @throws \Exception
      */
-    public static function set(string $id, $data, string $type = 'string', string $scope = null): bool
+    public static function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
     {
         self::validateType($type);
         $instance = self::getInstance();
