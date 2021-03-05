@@ -580,7 +580,7 @@ CREATE TABLE `tmp_store` (
 DROP TABLE IF EXISTS `settings_store`;
 CREATE TABLE `settings_store` (
   `id` varchar(190) NOT NULL DEFAULT '',
-  `scope` varchar(190) DEFAULT NULL,
+  `scope` varchar(190) NOT NULL DEFAULT '',
   `data` longtext,
   `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
   PRIMARY KEY (`id`, `scope`),

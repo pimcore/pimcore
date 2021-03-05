@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore\Dao;
 
 /**
- * @method Dao getById(string $id)
+ * @method Dao getById(string $id, ?string $scope)
  * @method Dao getDao()
  */
 class SettingsStore extends Model\AbstractModel
@@ -95,24 +95,25 @@ class SettingsStore extends Model\AbstractModel
 
     /**
      * @param string $id
-     *
+     * @param string|null $scope
      * @return mixed
      */
-    public static function delete(string $id)
+    public static function delete(string $id, ?string $scope = null)
     {
         $instance = self::getInstance();
 
-        return $instance->getDao()->delete($id);
+        return $instance->getDao()->delete($id, $scope);
     }
 
     /**
      * @param string $id
+     * @param string|null $scope
      * @return SettingsStore|null
      */
-    public static function get(string $id): ?SettingsStore
+    public static function get(string $id, ?string $scope = null): ?SettingsStore
     {
         $item = new self();
-        if ($item->getById($id)) {
+        if ($item->getById($id, $scope)) {
             return $item;
         }
 
@@ -158,7 +159,7 @@ class SettingsStore extends Model\AbstractModel
      */
     public function setScope(?string $scope): void
     {
-        $this->scope = $scope;
+        $this->scope = (string) $scope;
     }
 
     /**

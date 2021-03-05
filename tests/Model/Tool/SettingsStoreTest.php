@@ -20,7 +20,10 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertEquals($data, $setting->getData());
         $assetMethod = 'assertIs' . ucfirst($type);
         $this->$assetMethod($setting->getData());
-        $queryResult = $db->fetchOne('SELECT id FROM ' . SettingsStore\Dao::TABLE_NAME . ' WHERE id = ?', $id);
+        $queryResult = $db->fetchOne('SELECT id FROM ' . SettingsStore\Dao::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
+            'id' => $id,
+            'scope' => (string) $scope,
+        ]);
         $this->assertEquals($id, $queryResult);
 
         $this->assertEquals($scope, $setting->getScope());
@@ -40,7 +43,10 @@ class SettingsStoreTest extends ModelTestCase
 
         //test delete
         SettingsStore::delete($id);
-        $queryResult = $db->fetchOne('SELECT id FROM ' . SettingsStore\Dao::TABLE_NAME . ' WHERE id = ?', $id);
+        $queryResult = $db->fetchOne('SELECT id FROM ' . SettingsStore\Dao::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
+            'id' => $id,
+            'scope' => (string) $scope,
+        ]);
         $this->assertFalse($queryResult);
 
     }

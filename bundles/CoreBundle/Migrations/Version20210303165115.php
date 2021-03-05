@@ -15,7 +15,7 @@ class Version20210303165115 extends AbstractPimcoreMigration
         if (!$schema->hasTable('settings_store')) {
             $this->addSql("CREATE TABLE `settings_store` (
                   `id` varchar(190) NOT NULL DEFAULT '',
-                  `scope` varchar(190) DEFAULT NULL,
+                  `scope` varchar(190) NOT NULL DEFAULT '',
                   `data` longtext,
                   `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
                   PRIMARY KEY (`id`, `scope`),
