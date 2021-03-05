@@ -22,6 +22,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Listing;
@@ -40,6 +41,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Asset extends Element\AbstractElement
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * possible types of an asset
      *
@@ -1547,19 +1550,8 @@ class Asset extends Element\AbstractElement
      */
     public function getTemporaryFile()
     {
-        $destinationPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-temporary/asset_' . $this->getId() . '_' . md5(microtime()) . '__' . $this->getFilename();
-        if (!is_dir(dirname($destinationPath))) {
-            File::mkdir(dirname($destinationPath));
-        }
-
-        $src = $this->getStream();
-        $dest = fopen($destinationPath, 'wb', false, File::getContext());
-        stream_copy_to_stream($src, $dest);
-        fclose($dest);
-
+        $destinationPath = $this->getLocalFile($this->getFileSystemPath());
         @chmod($destinationPath, File::getDefaultMode());
-
-        $this->_temporaryFiles[] = $destinationPath;
 
         return $destinationPath;
     }
