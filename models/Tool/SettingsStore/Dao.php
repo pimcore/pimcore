@@ -30,12 +30,12 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $id
-     * @param mixed $data
+     * @param int|string|bool|float $data
      * @param string|null $scope
      * @param string $type
      * @return bool
      */
-    public function set(string $id, $data, string $scope = null, string $type = 'string'): bool
+    public function set(string $id, $data, string $type = 'string', string $scope = null): bool
     {
         try {
             $this->db->insertOrUpdate(self::TABLE_NAME, [

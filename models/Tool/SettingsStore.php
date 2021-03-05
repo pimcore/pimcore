@@ -80,17 +80,17 @@ class SettingsStore extends Model\AbstractModel
 
     /**
      * @param string $id
-     * @param mixed $data
-     * @param string|null $scope
+     * @param int|string|bool|float $data
      * @param string $type
+     * @param string|null $scope
      * @return bool
      * @throws \Exception
      */
-    public static function set(string $id, $data, string $scope = null, string $type = 'string'): bool
+    public static function set(string $id, $data, string $type = 'string', string $scope = null): bool
     {
         self::validateType($type);
         $instance = self::getInstance();
-        return $instance->getDao()->set($id, $data, $scope, $type);
+        return $instance->getDao()->set($id, $data, $type, $scope);
     }
 
     /**
@@ -181,7 +181,7 @@ class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int|string|bool|float
      */
     public function getData()
     {
@@ -189,7 +189,7 @@ class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $data
+     * @param int|string|bool|float $data
      */
     public function setData($data): void
     {

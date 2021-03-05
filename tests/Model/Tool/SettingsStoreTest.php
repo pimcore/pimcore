@@ -89,12 +89,12 @@ class SettingsStoreTest extends ModelTestCase
         $ids = SettingsStore::getIdsByScope('scopeX');
         $this->assertEquals(0, count($ids));
 
-        $this->assertEquals(SettingsStore::get('my-id1'), 'some-data-1-scopeless');
-        $this->assertEquals(SettingsStore::get('my-id1', 'scope1'), 'some-data-1');
-        $this->assertEquals(SettingsStore::get('my-id1', 'scope2'), 'some-data-1-scope-2');
+        $this->assertEquals(SettingsStore::get('my-id1')->getData(), 'some-data-1-scopeless');
+        $this->assertEquals(SettingsStore::get('my-id1', 'scope1')->getData(), 'some-data-1');
+        $this->assertEquals(SettingsStore::get('my-id1', 'scope2')->getData(), 'some-data-1-scope-2');
 
         SettingsStore::delete('my-id1');
-        $this->assertEquals(SettingsStore::get('my-id1', 'scope1'), 'some-data-1');
+        $this->assertEquals(SettingsStore::get('my-id1', 'scope1')->getData(), 'some-data-1');
         $this->assertNull(SettingsStore::get('my-id1'));
     }
 
