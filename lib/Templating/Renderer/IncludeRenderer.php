@@ -137,7 +137,7 @@ class IncludeRenderer
         \Pimcore\Cache\Runtime::set('pimcore_editmode', $editmodeBackup);
 
         // write contents to the cache, if output-cache is enabled & not in editmode
-        if ($cacheConfig  && !$editmode &&  !DeviceDetector::getInstance()->wasUsed()) {
+        if ($cacheConfig && !$editmode && !DeviceDetector::getInstance()->wasUsed()) {
             Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
         }
 
