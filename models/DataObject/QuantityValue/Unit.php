@@ -48,7 +48,7 @@ class Unit extends Model\AbstractModel
     public $longname;
 
     /**
-     * @var int
+     * @var string
      */
     public $baseunit;
 
