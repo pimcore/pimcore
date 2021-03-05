@@ -21,7 +21,6 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore\Dao;
 
 /**
- * @method Dao getById(string $id)
  * @method Dao getDao()
  */
 class SettingsStore extends Model\AbstractModel
@@ -83,43 +82,42 @@ class SettingsStore extends Model\AbstractModel
 
     /**
      * @param string $id
-     * @param mixed $data
-     * @param string|null $scope
+     * @param int|string|bool|float $data
      * @param string $type
-     *
+     * @param string|null $scope
      * @return bool
      *
      * @throws \Exception
      */
-    public static function set(string $id, $data, string $scope = null, string $type = 'string'): bool
+    public static function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
     {
         self::validateType($type);
         $instance = self::getInstance();
 
-        return $instance->getDao()->set($id, $data, $scope, $type);
+        return $instance->getDao()->set($id, $data, $type, $scope);
     }
 
     /**
      * @param string $id
-     *
+     * @param string|null $scope
      * @return mixed
      */
-    public static function delete(string $id)
+    public static function delete(string $id, ?string $scope = null)
     {
         $instance = self::getInstance();
 
-        return $instance->getDao()->delete($id);
+        return $instance->getDao()->delete($id, $scope);
     }
 
     /**
      * @param string $id
-     *
+     * @param string|null $scope
      * @return SettingsStore|null
      */
-    public static function get(string $id): ?SettingsStore
+    public static function get(string $id, ?string $scope = null): ?SettingsStore
     {
         $item = new self();
-        if ($item->getById($id)) {
+        if ($item->getDao()->getById($id, $scope)) {
             return $item;
         }
 
@@ -163,11 +161,11 @@ class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $scope
+     * @param string|null $scope
      */
     public function setScope(?string $scope): void
     {
-        $this->scope = $scope;
+        $this->scope = (string) $scope;
     }
 
     /**
@@ -190,7 +188,7 @@ class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int|string|bool|float
      */
     public function getData()
     {
@@ -198,7 +196,7 @@ class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $data
+     * @param int|string|bool|float $data
      */
     public function setData($data): void
     {

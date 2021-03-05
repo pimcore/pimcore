@@ -9,12 +9,15 @@ Sample use cases for settings store are:
 - Runtime settings of a bundle. 
 - ... 
 
-The stored settings can be grouped with a `scope` attribute and can be of following scalar data 
+The stored settings can be namespaced/grouped with a `scope` attribute and can be of following scalar data 
 types: 
 - `string`
 - `bool`
 - `int`
 - `float`
+
+We highly recommend to use the `scope` attribute when using the settings store for a bundle (e.g. the bundles name), 
+while you can omit it when using the settings store for your app. 
 
 ### Sample Usage
 
