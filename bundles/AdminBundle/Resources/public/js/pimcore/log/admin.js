@@ -294,14 +294,6 @@ pimcore.log.admin = Class.create({
                     handler: this.find.bind(this),
                     iconCls: "pimcore_icon_search"
                 }],
-                listeners: {
-                    afterRender: function(formCmp) {
-                        this.keyNav = Ext.create('Ext.util.KeyNav', formCmp.el, {
-                            enter: formSearch,
-                            scope: this
-                        });
-                    }
-                },
                 items: [ {
                     xtype:'fieldset',
                     autoHeight:true,
