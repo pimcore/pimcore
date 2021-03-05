@@ -13,7 +13,7 @@ class SettingsStoreTest extends ModelTestCase
 
         //test creating
         $id = 'my-id';
-        SettingsStore::set($id, $data, $scope, $type);
+        SettingsStore::set($id, $data, $type, $scope);
 
         //test loading
         $setting = SettingsStore::get($id);
@@ -36,7 +36,7 @@ class SettingsStoreTest extends ModelTestCase
 
         //test updating
         $data = 'updated_data';
-        SettingsStore::set($id, $data, $scope, 'string');
+        SettingsStore::set($id, $data, 'string', $scope);
         $setting = SettingsStore::get($id);
         $this->assertEquals($data, $setting->getData());
 
@@ -73,12 +73,12 @@ class SettingsStoreTest extends ModelTestCase
 
     public function testScoping() {
 
-        SettingsStore::set('my-id1', 'some-data-1-scopeless', null, 'string');
-        SettingsStore::set('my-id1', 'some-data-1', 'scope1', 'string');
-        SettingsStore::set('my-id1', 'some-data-1-scope-2', 'scope2', 'string');
-        SettingsStore::set('my-id2', 'some-data-2', 'scope1', 'string');
-        SettingsStore::set('my-id3', 'some-data-3', 'scope2', 'string');
-        SettingsStore::set('my-id4', 'some-data-4', 'scope1', 'string');
+        SettingsStore::set('my-id1', 'some-data-1-scopeless', 'string');
+        SettingsStore::set('my-id1', 'some-data-1', 'string', 'scope1');
+        SettingsStore::set('my-id1', 'some-data-1-scope-2', 'string', 'scope2');
+        SettingsStore::set('my-id2', 'some-data-2', 'string', 'scope1');
+        SettingsStore::set('my-id3', 'some-data-3', 'string', 'scope2');
+        SettingsStore::set('my-id4', 'some-data-4', 'string', 'scope1');
 
         $ids = SettingsStore::getIdsByScope('scope1');
         $this->assertTrue(in_array('my-id1', $ids), 'Get settings store by scope');
@@ -100,12 +100,12 @@ class SettingsStoreTest extends ModelTestCase
 
     public function testNotExistingSettings() {
 
-        SettingsStore::set('my-id1', true, 'scope1', 'bool');
+        SettingsStore::set('my-id1', true, 'bool', 'scope1');
 
         $setting = SettingsStore::get('my-id1');
         $this->assertTrue($setting->getData());
 
-        SettingsStore::set('my-id1', false, 'scope1', 'bool');
+        SettingsStore::set('my-id1', false, 'bool', 'scope1');
 
         $setting = SettingsStore::get('my-id1');
         $this->assertFalse($setting->getData());
