@@ -67,14 +67,17 @@ class SettingsStore extends Model\AbstractModel
 
     /**
      * @param string $type
+     *
      * @return bool
+     *
      * @throws \Exception
      */
     protected static function validateType(string $type): bool
     {
-        if(!in_array($type, self::$allowedTypes)) {
+        if (!in_array($type, self::$allowedTypes)) {
             throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::$allowedTypes)));
         }
+
         return true;
     }
 
@@ -83,13 +86,16 @@ class SettingsStore extends Model\AbstractModel
      * @param mixed $data
      * @param string|null $scope
      * @param string $type
+     *
      * @return bool
+     *
      * @throws \Exception
      */
     public static function set(string $id, $data, string $scope = null, string $type = 'string'): bool
     {
         self::validateType($type);
         $instance = self::getInstance();
+
         return $instance->getDao()->set($id, $data, $scope, $type);
     }
 
@@ -107,6 +113,7 @@ class SettingsStore extends Model\AbstractModel
 
     /**
      * @param string $id
+     *
      * @return SettingsStore|null
      */
     public static function get(string $id): ?SettingsStore
@@ -121,11 +128,13 @@ class SettingsStore extends Model\AbstractModel
 
     /**
      * @param string $scope
+     *
      * @return string[]
      */
     public static function getIdsByScope(string $scope): array
     {
         $instance = self::getInstance();
+
         return $instance->getDao()->getIdsByScope($scope);
     }
 
@@ -171,6 +180,7 @@ class SettingsStore extends Model\AbstractModel
 
     /**
      * @param string $type
+     *
      * @throws \Exception
      */
     public function setType(string $type): void
@@ -192,7 +202,7 @@ class SettingsStore extends Model\AbstractModel
      */
     public function setData($data): void
     {
-        if(!empty($this->getType())) {
+        if (!empty($this->getType())) {
             settype($data, $this->getType());
         }
         $this->data = $data;

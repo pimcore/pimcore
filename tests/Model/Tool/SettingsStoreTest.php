@@ -1,4 +1,5 @@
 <?php
+
 namespace Pimcore\Tests\Model\Tool;
 
 use Pimcore\Db;
@@ -7,8 +8,8 @@ use Pimcore\Tests\Test\ModelTestCase;
 
 class SettingsStoreTest extends ModelTestCase
 {
-
-    protected function doTest($data, $scope, $type) {
+    protected function doTest($data, $scope, $type)
+    {
         $db = Db::get();
 
         //test creating
@@ -26,7 +27,7 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertEquals($scope, $setting->getScope());
 
         //test scope
-        if($scope) {
+        if ($scope) {
             $ids = SettingsStore::getIdsByScope($scope);
             $this->assertTrue(in_array($id, $ids), 'Get settings store by scope');
         }
@@ -37,36 +38,38 @@ class SettingsStoreTest extends ModelTestCase
         $setting = SettingsStore::get($id);
         $this->assertEquals($data, $setting->getData());
 
-
         //test delete
         SettingsStore::delete($id);
         $queryResult = $db->fetchOne('SELECT id FROM ' . SettingsStore\Dao::TABLE_NAME . ' WHERE id = ?', $id);
         $this->assertFalse($queryResult);
-
     }
 
-    public function testCreateStringEntry() {
+    public function testCreateStringEntry()
+    {
         $this->doTest('this is a string', null, 'string');
         $this->doTest('this is another string with scope', 'my-scope', 'string');
     }
 
-    public function testCreateIntegerEntry() {
+    public function testCreateIntegerEntry()
+    {
         $this->doTest(123, null, 'int');
         $this->doTest(321, 'my-scope', 'int');
     }
 
-    public function testCreateBoolEntry() {
+    public function testCreateBoolEntry()
+    {
         $this->doTest(true, null, 'bool');
         $this->doTest(false, 'my-scope', 'bool');
     }
 
-    public function testCreateFloatEntry() {
+    public function testCreateFloatEntry()
+    {
         $this->doTest(2154.12, null, 'float');
         $this->doTest(2541.1247, 'my-scope', 'float');
     }
 
-    public function testScoping() {
-
+    public function testScoping()
+    {
         SettingsStore::set('my-id1', 'some-data-1', 'scope1', 'string');
         SettingsStore::set('my-id2', 'some-data-2', 'scope1', 'string');
         SettingsStore::set('my-id3', 'some-data-3', 'scope2', 'string');
@@ -77,13 +80,12 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertFalse(in_array('my-id3', $ids), 'Get settings store by scope');
         $this->assertEquals(3, count($ids));
 
-
         $ids = SettingsStore::getIdsByScope('scopeX');
         $this->assertEquals(0, count($ids));
     }
 
-    public function testNotExistingSettings() {
-
+    public function testNotExistingSettings()
+    {
         SettingsStore::set('my-id1', true, 'scope1', 'bool');
 
         $setting = SettingsStore::get('my-id1');
@@ -97,6 +99,5 @@ class SettingsStoreTest extends ModelTestCase
         SettingsStore::delete('my-id1');
         $setting = SettingsStore::get('my-id1');
         $this->assertNull($setting);
-
     }
 }
