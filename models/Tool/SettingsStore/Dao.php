@@ -30,18 +30,18 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $id
-     * @param mixed $data
-     * @param string|null $scope
+     * @param int|string|bool|float $data
      * @param string $type
+     * @param string|null $scope
      * @return bool
      */
-    public function set(string $id, $data, string $scope = null, string $type = 'string'): bool
+    public function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
     {
         try {
             $this->db->insertOrUpdate(self::TABLE_NAME, [
                 'id' => $id,
                 'data' => $data,
-                'scope' => $scope,
+                'scope' => (string) $scope,
                 'type' => $type,
             ]);
 
@@ -53,27 +53,33 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $id
+     * @param string|null $scope
      * @return mixed
      */
-    public function delete(string $id)
+    public function delete(string $id, ?string $scope = null)
     {
-        return $this->db->delete(self::TABLE_NAME, ['id' => $id]);
+        return $this->db->delete(self::TABLE_NAME, [
+            'id' => $id,
+            'scope' => (string) $scope,
+        ]);
     }
 
     /**
      * @param string $id
-     *
+     * @param string|null $scope
      * @return bool
      */
-    public function getById(string $id): bool
+    public function getById(string $id, ?string $scope = null): bool
     {
-        $item = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = ?', $id);
+        $item = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
+            'id' => $id,
+            'scope' => (string) $scope,
+        ]);
 
         if (is_array($item) && array_key_exists('id', $item)) {
             $this->assignVariablesToModel($item);
 
             $data = $item['data'] ?? null;
-            settype($data, $this->model->getType());
             $this->model->setData($data);
             return true;
         }
