@@ -67,10 +67,7 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
     protected function markUninstalled() {
         $configuration = $this->migrationManager->getBundleConfiguration($this->bundle);
         if($configuration) {
-            foreach($configuration->getMigratedVersions() as $migratedVersion) {
-                $version = $this->migrationManager->getBundleVersion($this->bundle, $migratedVersion);
-                $this->migrationManager->markVersionAsNotMigrated($version);
-            }
+            $configuration->clearMigratedVersions();
         }
 
         SettingsStore::set($this->getSettingsStoreInstallationId(), false, 'bool', 'pimcore');
