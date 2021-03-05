@@ -21,9 +21,7 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
      */
     protected $migrationManager;
 
-    /**
-     * @param BundleInterface $bundle
-     */
+
     public function __construct(BundleInterface $bundle, MigrationManager $migrationManager)
     {
         parent::__construct();
@@ -31,8 +29,8 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
         $this->migrationManager = $migrationManager;
     }
 
-    protected function getSettingsStoreInstallationId() {
-        return 'INSTALLED__' . $this->bundle->getNamespace() . '\\' . $this->bundle->getName();
+    protected function getSettingsStoreInstallationId(): string {
+        return 'BUNDLE_INSTALLED__' . $this->bundle->getNamespace() . '\\' . $this->bundle->getName();
     }
 
     public function getLastMigrationVersionClassName(): ?string
@@ -40,9 +38,6 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
         return null;
     }
 
-    /**
-     * @return string|null
-     */
     private function getMigrationVersion(): ?string
     {
         $className = $this->getLastMigrationVersionClassName();
@@ -66,7 +61,7 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
 
         }
 
-        SettingsStore::set($this->getSettingsStoreInstallationId(), true, null, 'bool');
+        SettingsStore::set($this->getSettingsStoreInstallationId(), true, 'bool', 'pimcore');
     }
 
     protected function markUninstalled() {
@@ -78,7 +73,8 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
             }
         }
 
-        SettingsStore::set($this->getSettingsStoreInstallationId(), false, null, 'bool');
+        SettingsStore::set($this->getSettingsStoreInstallationId(), false, 'bool', 'pimcore');
+
     }
 
     public function install()
@@ -95,7 +91,7 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
 
     public function isInstalled()
     {
-        $installSetting = SettingsStore::get($this->getSettingsStoreInstallationId());
+        $installSetting = SettingsStore::get($this->getSettingsStoreInstallationId(), 'pimcore');
         return $installSetting ? $installSetting->getData() : false;
     }
 
