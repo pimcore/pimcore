@@ -107,7 +107,7 @@ class SettingsStoreTest extends ModelTestCase
 
         SettingsStore::set('my-id1x', false, 'bool');
 
-        $setting = SettingsStore::get('my-id1x',);
+        $setting = SettingsStore::get('my-id1x');
         $this->assertFalse($setting->getData());
 
         SettingsStore::delete('my-id1x');
