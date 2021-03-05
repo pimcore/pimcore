@@ -274,7 +274,6 @@ pimcore.log.admin = Class.create({
                 xtype: 'timefield'
             });
 
-            var formSearch = this.find.bind(this);
             this.searchpanel = new Ext.FormPanel({
                 region: "east",
                 title: t("log_search_form"),
