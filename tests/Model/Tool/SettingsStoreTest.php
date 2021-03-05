@@ -73,7 +73,9 @@ class SettingsStoreTest extends ModelTestCase
 
     public function testScoping() {
 
+        SettingsStore::set('my-id1', 'some-data-1-scopeless', null, 'string');
         SettingsStore::set('my-id1', 'some-data-1', 'scope1', 'string');
+        SettingsStore::set('my-id1', 'some-data-1-scope-2', 'scope2', 'string');
         SettingsStore::set('my-id2', 'some-data-2', 'scope1', 'string');
         SettingsStore::set('my-id3', 'some-data-3', 'scope2', 'string');
         SettingsStore::set('my-id4', 'some-data-4', 'scope1', 'string');
@@ -86,6 +88,14 @@ class SettingsStoreTest extends ModelTestCase
 
         $ids = SettingsStore::getIdsByScope('scopeX');
         $this->assertEquals(0, count($ids));
+
+        $this->assertEquals(SettingsStore::get('my-id1'), 'some-data-1-scopeless');
+        $this->assertEquals(SettingsStore::get('my-id1', 'scope1'), 'some-data-1');
+        $this->assertEquals(SettingsStore::get('my-id1', 'scope2'), 'some-data-1-scope-2');
+
+        SettingsStore::delete('my-id1');
+        $this->assertEquals(SettingsStore::get('my-id1', 'scope1'), 'some-data-1');
+        $this->assertNull(SettingsStore::get('my-id1'));
     }
 
     public function testNotExistingSettings() {
