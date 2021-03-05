@@ -16,6 +16,26 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
 
 		-
+			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCartItem\\:\\:\\$addedDateTimestamp \\(int\\) does not accept null\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:save\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:delete\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:getById\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:setSortIndex\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
@@ -939,11 +959,6 @@ parameters:
 			message: "#^Method Pimcore\\\\Targeting\\\\Storage\\\\SessionStorage\\:\\:getSessionBag\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\Attribute\\\\NamespacedAttributeBag\\|null but returns Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\SessionBagInterface\\.$#"
 			count: 1
 			path: lib/Targeting/Storage/SessionStorage.php
-
-		-
-			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Console.php
 
 		-
 			message: "#^Method Pimcore\\\\Tool\\\\Session\\:\\:get\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\Attribute\\\\AttributeBagInterface but returns Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\SessionBagInterface\\.$#"

@@ -592,6 +592,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'objectbrick',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -600,6 +601,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'fieldcollection',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Concrete) {
@@ -1161,10 +1163,17 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
-        unset($vars['permissionView']);
-        unset($vars['permissionEdit']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport',
+            'permissionView',
+            'permissionEdit',
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }

@@ -144,6 +144,34 @@ final class AdminEvents
     const OBJECT_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.object.list.beforeListLoad';
 
     /**
+     * Allows you to modify the object list before it is prepared for export.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | the object list
+     *  - context | contains contextual information
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_LIST_BEFORE_EXPORT_PREPARE = 'pimcore.admin.object.list.beforeExportPrepare';
+
+    /**
+     * Allows you to modify the object list before it is exported.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | the object list
+     *  - context | contains contextual information
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_LIST_BEFORE_EXPORT = 'pimcore.admin.object.list.beforeExport';
+
+    /**
      * Allows you to modify the the result after the list was loaded. This event apply to the grid list.
      *
      * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController

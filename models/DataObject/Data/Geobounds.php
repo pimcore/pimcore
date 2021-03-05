@@ -25,18 +25,18 @@ class Geobounds implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
 
     /**
-     * @var Geopoint
+     * @var GeoCoordinates
      */
     protected $northEast;
 
     /**
-     * @var Geopoint
+     * @var GeoCoordinates
      */
     protected $southWest;
 
     /**
-     * @param Geopoint|null $northEast
-     * @param Geopoint|null $southWest
+     * @param GeoCoordinates|null $northEast
+     * @param GeoCoordinates|null $southWest
      */
     public function __construct($northEast = null, $southWest = null)
     {
@@ -50,7 +50,7 @@ class Geobounds implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Geopoint
+     * @return GeoCoordinates
      */
     public function getNorthEast()
     {
@@ -58,7 +58,7 @@ class Geobounds implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param Geopoint $northEast
+     * @param GeoCoordinates $northEast
      *
      * @return $this
      */
@@ -71,7 +71,7 @@ class Geobounds implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Geopoint
+     * @return GeoCoordinates
      */
     public function getSouthWest()
     {
@@ -79,7 +79,7 @@ class Geobounds implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param Geopoint $southWest
+     * @param GeoCoordinates $southWest
      *
      * @return $this
      */

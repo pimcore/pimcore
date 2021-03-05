@@ -103,8 +103,8 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     $value = $fd->marshal($value, $object);
 
-                    $data['value'] = isset($value['value']) ? $value['value'] : '';
-                    $data['value2'] = isset($value['value2']) ? $value['value2'] : '';
+                    $data['value'] = $value['value'] ?? null;
+                    $data['value2'] = $value['value2'] ?? null;
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }

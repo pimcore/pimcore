@@ -142,18 +142,6 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @deprecated will be removed in Pimcore 10
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * Returns an collection of items for a page.
      *
      * @param  int $offset           Page offset

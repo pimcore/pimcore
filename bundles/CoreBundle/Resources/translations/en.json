@@ -945,5 +945,7 @@
   "generate_type_declarations" : "Generate Type Declarations",
   "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
   "preview_item": "Preview Item",
-  "version_currently_saved_in_database": "Currently saved in database (but not published)"
+  "version_currently_saved_in_database": "Currently saved in database (but not published)",
+  "preview_item": "Preview Item",
+  "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>"
 }

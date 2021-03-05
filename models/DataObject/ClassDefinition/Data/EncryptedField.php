@@ -29,7 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
 

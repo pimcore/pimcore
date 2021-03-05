@@ -23,7 +23,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;

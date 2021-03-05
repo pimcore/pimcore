@@ -78,40 +78,6 @@ abstract class AbstractSetProduct extends AbstractProduct
     }
 
     /**
-     * Delivers price of set product with given products
-     *
-     * @throws UnsupportedException
-     *
-     * @param AbstractSetProductEntry[] $products
-     * @param int $quantityScale
-     *
-     * @return PriceInterface
-     *
-     * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
-     */
-    public function getCalculatedPrice($products, $quantityScale = 1): ?PriceInterface
-    {
-        return $this->getOSPrice($quantityScale, $products);
-    }
-
-    /**
-     * Delivers priceInfo of setproduct with given products
-     *
-     * @throws UnsupportedException
-     *
-     * @param AbstractSetProductEntry[] $products
-     * @param int $quantityScale
-     *
-     * @return PriceInfoInterface
-     *
-     * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
-     */
-    public function getCalculatedPriceInfo($products, $quantityScale = 1): ?PriceInfoInterface
-    {
-        return $this->getOSPriceInfo($quantityScale, $products);
-    }
-
-    /**
      * Delivers min price for given products or with default mandatory products of set product
      *
      * @throws UnsupportedException

@@ -494,7 +494,7 @@ class TestHelper
         $testDataHelper->fillPassword($object, 'password', $seed);
         $testDataHelper->fillMultiSelect($object, 'countries', $seed);
         $testDataHelper->fillMultiSelect($object, 'languages', $seed);
-        $testDataHelper->fillGeopoint($object, 'point', $seed);
+        $testDataHelper->fillGeoCoordinates($object, 'point', $seed);
         $testDataHelper->fillGeobounds($object, 'bounds', $seed);
         $testDataHelper->fillGeopolygon($object, 'poly', $seed);
         $testDataHelper->fillTable($object, 'table', $seed);
