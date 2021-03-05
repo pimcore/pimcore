@@ -16,7 +16,7 @@ class SettingsStoreTest extends ModelTestCase
         SettingsStore::set($id, $data, $type, $scope);
 
         //test loading
-        $setting = SettingsStore::get($id);
+        $setting = SettingsStore::get($id, $scope);
         $this->assertEquals($data, $setting->getData());
         $assetMethod = 'assertIs' . ucfirst($type);
         $this->$assetMethod($setting->getData());
@@ -42,7 +42,7 @@ class SettingsStoreTest extends ModelTestCase
 
 
         //test delete
-        SettingsStore::delete($id);
+        SettingsStore::delete($id, $scope);
         $queryResult = $db->fetchOne('SELECT id FROM ' . SettingsStore\Dao::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
             'id' => $id,
             'scope' => (string) $scope,
