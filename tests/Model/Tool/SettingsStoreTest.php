@@ -100,18 +100,18 @@ class SettingsStoreTest extends ModelTestCase
 
     public function testNotExistingSettings() {
 
-        SettingsStore::set('my-id1', true, 'bool', 'scope1');
+        SettingsStore::set('my-id1x', true, 'bool');
 
-        $setting = SettingsStore::get('my-id1');
+        $setting = SettingsStore::get('my-id1x');
         $this->assertTrue($setting->getData());
 
-        SettingsStore::set('my-id1', false, 'bool', 'scope1');
+        SettingsStore::set('my-id1x', false, 'bool');
 
-        $setting = SettingsStore::get('my-id1');
+        $setting = SettingsStore::get('my-id1x',);
         $this->assertFalse($setting->getData());
 
-        SettingsStore::delete('my-id1');
-        $setting = SettingsStore::get('my-id1');
+        SettingsStore::delete('my-id1x');
+        $setting = SettingsStore::get('my-id1x');
         $this->assertNull($setting);
 
     }
