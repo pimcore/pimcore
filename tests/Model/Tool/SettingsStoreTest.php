@@ -37,7 +37,7 @@ class SettingsStoreTest extends ModelTestCase
         //test updating
         $data = 'updated_data';
         SettingsStore::set($id, $data, 'string', $scope);
-        $setting = SettingsStore::get($id);
+        $setting = SettingsStore::get($id, $scope);
         $this->assertEquals($data, $setting->getData());
 
 
