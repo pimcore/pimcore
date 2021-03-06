@@ -85,6 +85,7 @@ class SettingsStore extends Model\AbstractModel
      * @param int|string|bool|float $data
      * @param string $type
      * @param string|null $scope
+     *
      * @return bool
      *
      * @throws \Exception
@@ -100,6 +101,7 @@ class SettingsStore extends Model\AbstractModel
     /**
      * @param string $id
      * @param string|null $scope
+     *
      * @return mixed
      */
     public static function delete(string $id, ?string $scope = null)
@@ -112,6 +114,7 @@ class SettingsStore extends Model\AbstractModel
     /**
      * @param string $id
      * @param string|null $scope
+     *
      * @return SettingsStore|null
      */
     public static function get(string $id, ?string $scope = null): ?SettingsStore
