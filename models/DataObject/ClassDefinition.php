@@ -1,6 +1,6 @@
 <?php
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -9,7 +9,6 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
- * @package    Object
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
@@ -69,21 +68,21 @@ class ClassDefinition extends Model\AbstractModel
     public $userModification;
 
     /**
-     * Name of the parent class if set
+     * Name of the parent class if set.
      *
      * @var string
      */
     public $parentClass;
 
     /**
-     * Comma separated list of interfaces
+     * Comma separated list of interfaces.
      *
      * @var string|null
      */
     public $implementsInterfaces;
 
     /**
-     * Name of the listing parent class if set
+     * Name of the listing parent class if set.
      *
      * @var string
      */
@@ -201,9 +200,9 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $id
-     * @param bool $force
+     * @param bool   $force
      *
-     * @return null|ClassDefinition
+     * @return ClassDefinition|null
      *
      * @throws \Exception
      */
@@ -213,7 +212,7 @@ class ClassDefinition extends Model\AbstractModel
             throw new \Exception('Class id is null');
         }
 
-        $cacheKey = 'class_' . $id;
+        $cacheKey = 'class_'.$id;
 
         try {
             if ($force) {
@@ -231,7 +230,7 @@ class ClassDefinition extends Model\AbstractModel
                 $class = @include $definitionFile;
 
                 if (!$class instanceof self) {
-                    throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                    throw new \Exception('Class definition with name '.$name.' or ID '.$id.' does not exist');
                 }
 
                 $class->setId($id);
@@ -309,7 +308,7 @@ class ClassDefinition extends Model\AbstractModel
             }
         }
 
-        if (method_exists($data, 'getChildren')) {
+        if ($data != null && method_exists($data, 'getChildren')) {
             $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
@@ -453,14 +452,14 @@ class ClassDefinition extends Model\AbstractModel
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.$implements.' {';
         $cd .= "\n\n";
 
         $useParts = [];
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
-        $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
+        $cd .= 'protected $o_classId = "'.$this->getId()."\";\n";
         $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
@@ -539,7 +538,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 
-        $cd .= 'protected $classId = "'. $this->getId()."\";\n";
+        $cd .= 'protected $classId = "'.$this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
 
         $cd .= "\n\n";
@@ -628,8 +627,8 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param ClassDefinition|ClassDefinition\Data $definition
-     * @param string $text
-     * @param int $level
+     * @param string                               $text
+     * @param int                                  $level
      *
      * @return string
      */
@@ -706,7 +705,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * Deletes PHP files from Filesystem
+     * Deletes PHP files from Filesystem.
      */
     protected function deletePhpClasses()
     {
@@ -812,7 +811,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setCreationDate($creationDate)
     {
-        $this->creationDate = (int)$creationDate;
+        $this->creationDate = (int) $creationDate;
 
         return $this;
     }
@@ -824,7 +823,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setModificationDate($modificationDate)
     {
-        $this->modificationDate = (int)$modificationDate;
+        $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
@@ -836,7 +835,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setUserOwner($userOwner)
     {
-        $this->userOwner = (int)$userOwner;
+        $this->userOwner = (int) $userOwner;
 
         return $this;
     }
@@ -848,7 +847,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setUserModification($userModification)
     {
-        $this->userModification = (int)$userModification;
+        $this->userModification = (int) $userModification;
 
         return $this;
     }
@@ -906,7 +905,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
+     * @param string                          $key
      * @param DataObject\ClassDefinition\Data $data
      *
      * @return $this
@@ -920,7 +919,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $key
-     * @param array $context
+     * @param array  $context
      *
      * @return DataObject\ClassDefinition\Data|null
      */
@@ -1080,17 +1079,12 @@ class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getEncryption(): bool
     {
         return $this->encryption;
     }
 
     /**
-     * @param bool $encryption
-     *
      * @return $this
      */
     public function setEncryption(bool $encryption)
@@ -1100,18 +1094,12 @@ class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param array $tables
-     */
     public function addEncryptedTables(array $tables)
     {
         $this->encryptedTables = array_merge($this->encryptedTables, $tables);
         array_unique($this->encryptedTables);
     }
 
-    /**
-     * @param array $tables
-     */
     public function removeEncryptedTables(array $tables)
     {
         foreach ($tables as $table) {
@@ -1121,27 +1109,17 @@ class ClassDefinition extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $table
-     *
-     * @return bool
-     */
     public function isEncryptedTable(string $table): bool
     {
         return (array_search($table, $this->encryptedTables) === false) ? false : true;
     }
 
-    /**
-     * @return bool
-     */
     public function hasEncryptedTables(): bool
     {
         return (bool) count($this->encryptedTables);
     }
 
     /**
-     * @param array $encryptedTables
-     *
      * @return $this
      */
     public function setEncryptedTables(array $encryptedTables)
@@ -1158,7 +1136,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowInherit($allowInherit)
     {
-        $this->allowInherit = (bool)$allowInherit;
+        $this->allowInherit = (bool) $allowInherit;
 
         return $this;
     }
@@ -1170,7 +1148,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowVariants($allowVariants)
     {
-        $this->allowVariants = (bool)$allowVariants ? true : null;
+        $this->allowVariants = (bool) $allowVariants ? true : null;
 
         return $this;
     }
@@ -1284,7 +1262,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setShowVariants($showVariants)
     {
-        $this->showVariants = (bool)$showVariants;
+        $this->showVariants = (bool) $showVariants;
 
         return $this;
     }
@@ -1365,33 +1343,22 @@ class ClassDefinition extends Model\AbstractModel
         return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
     }
 
-    /**
-     * @return bool
-     */
     public function isEnableGridLocking(): bool
     {
         return $this->enableGridLocking;
     }
 
-    /**
-     * @param bool $enableGridLocking
-     */
     public function setEnableGridLocking(bool $enableGridLocking): void
     {
         $this->enableGridLocking = $enableGridLocking;
     }
 
-    /**
-     * @return string|null
-     */
     public function getImplementsInterfaces(): ?string
     {
         return $this->implementsInterfaces;
     }
 
     /**
-     * @param string|null $implementsInterfaces
-     *
      * @return $this
      */
     public function setImplementsInterfaces(?string $implementsInterfaces)
@@ -1401,9 +1368,6 @@ class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getCompositeIndices(): array
     {
         return $this->compositeIndices;
