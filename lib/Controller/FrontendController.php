@@ -21,15 +21,24 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
  * @property Document|Document\PageSnippet $document
  * @property bool $editmode
  */
-abstract class FrontendController extends Controller implements EventedControllerInterface
+abstract class FrontendController extends Controller
 {
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
+        $services[DocumentResolver::class] = '?'.DocumentResolver::class;
+        $services[ResponseHeaderResolver::class] = '?'.ResponseHeaderResolver::class;
+        $services[EditableRenderer::class] = '?'.EditableRenderer::class;
+
+        return $services;
+    }
+
     /**
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
@@ -66,20 +75,6 @@ abstract class FrontendController extends Controller implements EventedControlle
     }
 
     /**
-     * @inheritDoc
-     */
-    public function onKernelController(FilterControllerEvent $event)
-    {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-    }
-
-    /**
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      *
@@ -100,25 +95,6 @@ abstract class FrontendController extends Controller implements EventedControlle
     /**
      * Loads a document editable
      *
-     * e.g. `$this->getDocumentTag('input', 'foobar')`
-     *
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     * @param Document\PageSnippet|null $document
-     *
-     * @return null|Document\Tag
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use getDocumentEditable() instead.
-     */
-    public function getDocumentTag($type, $inputName, array $options = [], Document\PageSnippet $document = null)
-    {
-        return $this->getDocumentEditable($type, $inputName, $options, $document);
-    }
-
-    /**
-     * Loads a document editable
-     *
      * e.g. `$this->getDocumentEditable('input', 'foobar')`
      *
      * @param string $type
@@ -126,7 +102,7 @@ abstract class FrontendController extends Controller implements EventedControlle
      * @param array $options
      * @param Document\PageSnippet|null $document
      *
-     * @return null|Document\Tag
+     * @return Document\Editable\EditableInterface
      */
     public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {

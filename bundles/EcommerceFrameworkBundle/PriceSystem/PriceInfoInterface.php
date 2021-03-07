@@ -86,5 +86,3 @@ interface PriceInfoInterface
      */
     public function getProduct();
 }
-
-class_alias(PriceInfoInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo');

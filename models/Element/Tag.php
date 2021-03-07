@@ -103,11 +103,11 @@ class Tag extends Model\AbstractModel
             'elementType' => $cType,
             'elementId' => $cId,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_ADD_TO_ELEMENT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::PRE_ADD_TO_ELEMENT);
 
         $tag->getDao()->addTagToElement($cType, $cId);
 
-        \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_ADD_TO_ELEMENT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::POST_ADD_TO_ELEMENT);
     }
 
     /**
@@ -123,11 +123,11 @@ class Tag extends Model\AbstractModel
             'elementType' => $cType,
             'elementId' => $cId,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_REMOVE_FROM_ELEMENT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::PRE_REMOVE_FROM_ELEMENT);
 
         $tag->getDao()->removeTagFromElement($cType, $cId);
 
-        \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_REMOVE_FROM_ELEMENT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::POST_REMOVE_FROM_ELEMENT);
     }
 
     /**
@@ -196,18 +196,18 @@ class Tag extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_UPDATE, new TagEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_ADD, new TagEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::PRE_ADD);
         }
 
         $this->correctPath();
         $this->getDao()->save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_UPDATE, new TagEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_ADD, new TagEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::POST_ADD);
         }
     }
 
@@ -377,11 +377,11 @@ class Tag extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_DELETE, new TagEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::PRE_DELETE);
 
         $this->getDao()->delete();
 
-        \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_DELETE, new TagEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::POST_DELETE);
     }
 
     /**

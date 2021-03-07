@@ -14,44 +14,36 @@
 
 namespace Pimcore\Templating\Renderer;
 
-use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
+use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 
 class ActionRenderer
 {
     /**
-     * @var ActionsHelper
+     * @var HttpKernelRuntime
      */
-    protected $actionsHelper;
+    protected $httpKernelRuntime;
 
     /**
-     * @var ConfigNormalizer
+     * @param HttpKernelRuntime $httpKernelRuntime
      */
-    protected $configNormalizer;
-
-    /**
-     * @param ActionsHelper $actionsHelper
-     * @param ConfigNormalizer $configNormalizer
-     */
-    public function __construct(ActionsHelper $actionsHelper, ConfigNormalizer $configNormalizer)
+    public function __construct(HttpKernelRuntime $httpKernelRuntime)
     {
-        $this->actionsHelper = $actionsHelper;
-        $this->configNormalizer = $configNormalizer;
+        $this->httpKernelRuntime = $httpKernelRuntime;
     }
 
     /**
      * Render an URI
      *
-     * @param string $uri     A URI
+     * @param mixed $uri     A URI
      * @param array  $options An array of options
      *
      * @return string
      *
-     * @see ActionsHelper::render()
+     * @see HttpKernelRuntime::renderFragment()
      */
     public function render($uri, array $options = [])
     {
@@ -59,29 +51,7 @@ class ActionRenderer
             $uri = $this->createDocumentReference($uri);
         }
 
-        return $this->actionsHelper->render($uri, $options);
-    }
-
-    /**
-     * Create a controller reference
-     *
-     * @param string $bundle
-     * @param string $controller
-     * @param string $action
-     * @param array $attributes
-     * @param array $query
-     *
-     * @return ControllerReference
-     */
-    public function createControllerReference($bundle, $controller, $action, array $attributes = [], array $query = [])
-    {
-        $controller = $this->configNormalizer->formatControllerReference(
-            $bundle,
-            $controller,
-            $action
-        );
-
-        return $this->actionsHelper->controller($controller, $attributes, $query);
+        return $this->httpKernelRuntime->renderFragment($uri, $options);
     }
 
     /**
@@ -97,13 +67,7 @@ class ActionRenderer
     {
         $attributes = $this->addDocumentAttributes($document, $attributes);
 
-        return $this->createControllerReference(
-            $document->getModule(),
-            $document->getController(),
-            $document->getAction(),
-            $attributes,
-            $query
-        );
+        return new ControllerReference($document->getController(), $attributes, $query);
     }
 
     /**
@@ -130,8 +94,7 @@ class ActionRenderer
         $attributes[DynamicRouter::CONTENT_KEY] = $document;
 
         if ($document->getTemplate()) {
-            $template = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
-            $attributes[DynamicRouter::CONTENT_TEMPLATE] = $template;
+            $attributes[DynamicRouter::CONTENT_TEMPLATE] = $document->getTemplate();
         }
 
         if ($language = $document->getProperty('language')) {

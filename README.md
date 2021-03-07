@@ -1,21 +1,19 @@
-[![Pimcore - Own the digital World](https://pimcore.com/events/pcx/phase2-register-now/GITHUB-banner-02.jpg)](https://hopin.to/events/pimcore-inspire)
+![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
   
   
 Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & eCommerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
-[![Build Status](https://travis-ci.com/pimcore/pimcore.svg)](https://travis-ci.com/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
 * 📖 [Documentation](https://pimcore.com/docs/)
-* 📚 [API Documentation](https://pimcore.com/docs/api/)
 * 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
 * 👍 Like us on [Facebook](https://www.facebook.com/pimcore)
 * 🕊 Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * 🐞 [Issue Tracker](https://github.com/pimcore/pimcore/issues) - Report bugs or suggest new features
-* 🗨  [Forums](https://talk.pimcore.org/) - Community support and discussions
+* 🗨  [Forums](https://github.com/pimcore/pimcore/discussions) - Community support and discussions
 * 👪 [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter
   
 
@@ -77,11 +75,8 @@ cd ./my-project
 
 This will install an empty skeleton application, 
 but we're also offering a demo package for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html)
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/pimcore/current/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
-Copyright: [Pimcore](http://www.pimcore.org) GmbH  
-For licensing details please visit [LICENSE.md](LICENSE.md) 
-  
-  
-
+Copyright: [Pimcore](https://www.pimcore.org) GmbH
+For licensing details please visit [LICENSE.md](LICENSE.md)

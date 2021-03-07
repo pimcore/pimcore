@@ -14,11 +14,11 @@
 
 namespace Pimcore\Cache\Core;
 
-use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-class WriteLock implements WriteLockInterface, LoggerAwareInterface
+class WriteLock implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -28,7 +28,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     protected $enabled = true;
 
     /**
-     * @var PimcoreCacheItemPoolInterface
+     * @var TagAwareAdapterInterface
      */
     protected $itemPool;
 
@@ -58,9 +58,9 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     protected $lockInitialized = false;
 
     /**
-     * @param PimcoreCacheItemPoolInterface $itemPool
+     * @param TagAwareAdapterInterface $itemPool
      */
-    public function __construct(PimcoreCacheItemPoolInterface $itemPool)
+    public function __construct(TagAwareAdapterInterface $itemPool)
     {
         $this->itemPool = $itemPool;
     }

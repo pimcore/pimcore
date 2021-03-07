@@ -16,13 +16,14 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Google;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
@@ -36,12 +37,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class IndexController extends AdminController implements EventedControllerInterface
+class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -63,7 +63,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      * @param Config $config
      *
      * @return Response
@@ -75,7 +75,7 @@ class IndexController extends AdminController implements EventedControllerInterf
         SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
         Executor $maintenanceExecutor,
-        CsrfProtectionListener $csrfProtectionListener,
+        CsrfProtectionHandler $csrfProtection,
         Config $config
     ) {
         $user = $this->getAdminUser();
@@ -87,7 +87,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             ->addRuntimePerspective($templateParams, $user)
             ->addPluginAssets($templateParams);
 
-        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtectionListener, $siteConfigProvider);
+        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
             // only one login is allowed to setup 2FA by the user himself
@@ -104,10 +104,10 @@ class IndexController extends AdminController implements EventedControllerInterf
 
         // allow to alter settings via an event
         $settingsEvent = new IndexActionSettingsEvent($templateParams);
-        $this->eventDispatcher->dispatch(AdminEvents::INDEX_ACTION_SETTINGS, $settingsEvent);
+        $this->eventDispatcher->dispatch($settingsEvent, AdminEvents::INDEX_ACTION_SETTINGS);
         $templateParams = $settingsEvent->getSettings();
 
-        return $this->render('PimcoreAdminBundle:Admin/Index:index.html.php', $templateParams);
+        return $this->render('@PimcoreAdmin/Admin/Index/index.html.twig', $templateParams);
     }
 
     /**
@@ -184,7 +184,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     protected function addPluginAssets(array &$templateParams)
     {
-        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+        $bundleManager = $this->get(PimcoreBundleManager::class);
 
         $templateParams['pluginJsPaths'] = $bundleManager->getJsPaths();
         $templateParams['pluginCssPaths'] = $bundleManager->getCssPaths();
@@ -198,14 +198,13 @@ class IndexController extends AdminController implements EventedControllerInterf
      * @param User $user
      * @param KernelInterface $kernel
      * @param ExecutorInterface $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      * @param SiteConfigProvider $siteConfigProvider
      *
      * @return $this
      */
-    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener, SiteConfigProvider $siteConfigProvider)
+    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider)
     {
-        $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
         $config = $templateParams['config'];
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
 
@@ -232,7 +231,6 @@ class IndexController extends AdminController implements EventedControllerInterf
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],
             'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
-            'document_naming_strategy' => $namingStrategy->getName(),
             'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
@@ -246,6 +244,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
+            'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
@@ -263,7 +262,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
 
-        $settings['csrfToken'] = $csrfProtectionListener->getCsrfToken();
+        $settings['csrfToken'] = $csrfProtection->getCsrfToken();
 
         $templateParams['settings'] = $settings;
 
@@ -382,7 +381,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
                 if ($rootNode) {
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ?? null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node
@@ -398,11 +397,10 @@ class IndexController extends AdminController implements EventedControllerInterf
         return $this;
     }
 
-    public function onKernelController(FilterControllerEvent $event)
-    {
-    }
-
-    public function onKernelResponse(FilterResponseEvent $event)
+    /**
+     * @inheritdoc
+     */
+    public function onKernelResponseEvent(ResponseEvent $event)
     {
         $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }

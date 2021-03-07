@@ -474,15 +474,15 @@ class Data extends \Pimcore\Model\AbstractModel
             $this->published = true;
         } elseif ($element instanceof DataObject\AbstractObject) {
             if ($element instanceof DataObject\Concrete) {
-                $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
-                DataObject\AbstractObject::setGetInheritedValues(true);
+                $getInheritedValues = DataObject::doGetInheritedValues();
+                DataObject::setGetInheritedValues(true);
 
                 $this->published = $element->isPublished();
                 foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
                     $this->data .= ' ' . $value->getDataForSearchIndex($element);
                 }
 
-                DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
+                DataObject::setGetInheritedValues($getInheritedValues);
             } elseif ($element instanceof DataObject\Folder) {
                 $this->published = true;
             }
@@ -567,7 +567,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function save()
     {
         if ($this->id instanceof Data\Id) {
-            \Pimcore::getEventDispatcher()->dispatch(SearchBackendEvents::PRE_SAVE, new SearchBackendEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new SearchBackendEvent($this), SearchBackendEvents::PRE_SAVE);
 
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
@@ -591,7 +591,7 @@ class Data extends \Pimcore\Model\AbstractModel
                 }
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(SearchBackendEvents::POST_SAVE, new SearchBackendEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new SearchBackendEvent($this), SearchBackendEvents::POST_SAVE);
         } else {
             throw new \Exception('Search\\Backend\\Data cannot be saved - no id set!');
         }

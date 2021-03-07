@@ -14,40 +14,35 @@
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
-use Pimcore\Templating\PhpEngine;
-use Pimcore\Tool\Session;
-use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Twig\Environment;
 
 class CsrfProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
-    use LoggerAwareTrait;
-
-    protected $excludedRoutes = [];
-
-    protected $csrfToken = null;
 
     /**
-     * @var PhpEngine
+     * @var Environment
      */
-    protected $phpTemplatingEngine;
+    protected $twig;
 
     /**
-     * @param array $excludedRoutes
-     * @param PhpEngine $phpTemplatingEngine
+     * @var CsrfProtectionHandler $handler
      */
-    public function __construct($excludedRoutes, PhpEngine $phpTemplatingEngine)
+    protected $csrfProtectionHandler;
+
+    /**
+     * @param CsrfProtectionHandler $csrfProtectionHandler
+     */
+    public function __construct(CsrfProtectionHandler $csrfProtectionHandler)
     {
-        $this->excludedRoutes = $excludedRoutes;
-        $this->phpTemplatingEngine = $phpTemplatingEngine;
+        $this->csrfProtectionHandler = $csrfProtectionHandler;
     }
 
     /**
@@ -61,16 +56,16 @@ class CsrfProtectionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      */
-    public function handleRequest(GetResponseEvent $event)
+    public function handleRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             return;
         }
 
-        $this->phpTemplatingEngine->addGlobal('csrfToken', $this->getCsrfToken());
+        $this->csrfProtectionHandler->generateCsrfToken();
 
         if ($request->getMethod() == Request::METHOD_GET) {
             return;
@@ -87,63 +82,10 @@ class CsrfProtectionListener implements EventSubscriberInterface
         ];
 
         $route = $request->attributes->get('_route');
-        if (in_array($route, $exludedRoutes) || in_array($route, $this->excludedRoutes)) {
+        if (in_array($route, $exludedRoutes) || in_array($route, $this->csrfProtectionHandler->getExcludedRoutes())) {
             return;
         }
 
-        $this->checkCsrfToken($request);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function checkCsrfToken(Request $request)
-    {
-        $csrfToken = $this->getCsrfToken();
-        $requestCsrfToken = $request->headers->get('x_pimcore_csrf_token');
-        if (!$requestCsrfToken) {
-            $requestCsrfToken = $request->get('csrfToken');
-        }
-
-        if (!$csrfToken || $csrfToken !== $requestCsrfToken) {
-            $this->logger->error('Detected CSRF attack on {request}', [
-                'request' => $request->getPathInfo(),
-            ]);
-
-            throw new AccessDeniedHttpException('Detected CSRF Attack! Do not do evil things with pimcore ... ;-)');
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getCsrfToken()
-    {
-        if (!$this->csrfToken) {
-            $this->csrfToken = Session::getReadOnly()->get('csrfToken');
-            if (!$this->csrfToken) {
-                $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-                    if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
-                        $adminSession->set('csrfToken', sha1(generateRandomSymfonySecret()));
-                    }
-
-                    return $adminSession->get('csrfToken');
-                });
-            }
-        }
-
-        return $this->csrfToken;
-    }
-
-    public function regenerateCsrfToken()
-    {
-        $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-            $token = sha1(generateRandomSymfonySecret());
-            $adminSession->set('csrfToken', $token);
-
-            return $token;
-        });
-
-        $this->phpTemplatingEngine->addGlobal('csrfToken', $this->csrfToken);
+        $this->csrfProtectionHandler->checkCsrfToken($request);
     }
 }

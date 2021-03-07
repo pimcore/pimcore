@@ -37,14 +37,9 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: init }
-            - { name: pimcore.templating.vars_provider }
 
-    Pimcore\Http\Request\Resolver\DocumentResolver:
-        tags:
-            - { name: pimcore.templating.vars_provider }
+    Pimcore\Http\Request\Resolver\DocumentResolver: ~
 
     Pimcore\Http\Request\Resolver\TemplateResolver: ~
-
-    Pimcore\Http\Request\Resolver\TemplateVarsResolver: ~
 
     Pimcore\Http\Request\Resolver\ResponseHeaderResolver: ~

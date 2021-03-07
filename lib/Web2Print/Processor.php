@@ -21,10 +21,11 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
-use Pimcore\Web2Print\Processor\PdfReactor8;
+use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
+use Symfony\Component\Process\Process;
 
 abstract class Processor
 {
@@ -34,7 +35,7 @@ abstract class Processor
     private static $lock = null;
 
     /**
-     * @return PdfReactor8|WkHtmlToPdf
+     * @return PdfReactor|WkHtmlToPdf
      *
      * @throws \Exception
      */
@@ -43,7 +44,7 @@ abstract class Processor
         $config = Config::getWeb2PrintConfig();
 
         if ($config->get('generalTool') === 'pdfreactor') {
-            return new PdfReactor8();
+            return new PdfReactor();
         } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
         } else {
@@ -74,20 +75,26 @@ abstract class Processor
         $this->saveJobConfigObjectFile($jobConfig);
         $this->updateStatus($documentId, 0, 'prepare_pdf_generation');
 
-        $args = ['-p ' . $jobConfig->documentId];
+        $args = ['-p', $jobConfig->documentId];
 
         $env = \Pimcore\Config::getEnvironment();
         if ($env !== false) {
-            $args[] = '--env=' . $env;
+            array_push($args, '--env=' . $env);
         }
 
-        $cmd = Tool\Console::getPhpCli() . ' ' . realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'). ' pimcore:web2print:pdf-creation ' . implode(' ', $args);
-
-        Logger::info($cmd);
+        $cmd = array_merge([Tool\Console::getPhpCli(), realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), 'pimcore:web2print:pdf-creation'], $args);
+        Tool\Console::addLowProcessPriority($cmd);
+        $process = new Process($cmd);
+        Logger::info($process->getCommandLine());
         $disableBackgroundExecution = $config['disableBackgroundExecution'] ?? false;
 
         if (!$disableBackgroundExecution) {
-            Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log');
+            $process->start();
+            $logHandle = fopen(PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log', 'a');
+            $process->wait(function ($type, $buffer) use ($logHandle) {
+                fwrite($logHandle, $buffer);
+            });
+            fclose($logHandle);
 
             return true;
         }
@@ -113,18 +120,20 @@ abstract class Processor
         $pdf = null;
 
         try {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
+            $preEvent = new DocumentEvent($document, [
                 'processor' => $this,
                 'jobConfig' => $jobConfigFile->config,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRINT_PRE_PDF_GENERATION);
 
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
             file_put_contents($document->getPdfFileName(), $pdf);
 
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_POST_PDF_GENERATION, new DocumentEvent($document, [
+            $postEvent = new DocumentEvent($document, [
                 'filename' => $document->getPdfFileName(),
                 'pdf' => $pdf,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::PRINT_POST_PDF_GENERATION);
 
             $document->setLastGenerated((time() + 1));
             $document->setLastGenerateMessage('');

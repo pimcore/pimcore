@@ -22,6 +22,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 
@@ -62,7 +63,7 @@ class ImageThumbnail
             'filesystemPath' => $fsPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -93,17 +94,17 @@ class ImageThumbnail
                         \Pimcore\File::mkdir(dirname($path));
                     }
 
-                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('document-thumbnail-' . $this->asset->getId() . '-' . $this->page);
+                    if (!is_file($path)) {
+                        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('document-thumbnail-' . $this->asset->getId() . '-' . $this->page);
+                        if ($lock->acquire()) {
+                            $converter->saveImage($path, $this->page);
+                            $generated = true;
+                            $lock->release();
+                        } else {
+                            $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
 
-                    if (!is_file($path) && !$lock->isAcquired()) {
-                        $lock->acquire();
-                        $converter->saveImage($path, $this->page);
-                        $generated = true;
-                        $lock->release();
-                    } elseif ($lock->isAcquired()) {
-                        $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
-
-                        return;
+                            return;
+                        }
                     }
                 }
 
@@ -118,10 +119,11 @@ class ImageThumbnail
                 $this->filesystemPath = $errorImage;
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::DOCUMENT_IMAGE_THUMBNAIL, new GenericEvent($this, [
+            $event = new GenericEvent($this, [
                 'deferred' => $deferred,
                 'generated' => $generated,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
         }
     }
 
@@ -145,6 +147,11 @@ class ImageThumbnail
     protected function createConfig($selector)
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $config === null) {
+            throw new NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
         if ($config) {
             $format = strtolower($config->getFormat());
             if ($format == 'source') {

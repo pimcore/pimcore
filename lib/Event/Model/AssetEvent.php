@@ -16,7 +16,7 @@ namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Asset;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class AssetEvent extends Event implements ElementEventInterface
 {

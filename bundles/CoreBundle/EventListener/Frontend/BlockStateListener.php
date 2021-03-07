@@ -15,13 +15,13 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Document\Tag\Block\BlockStateStack;
+use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -38,7 +38,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     protected $blockStateStack;
 
     /**
-     * @param \Pimcore\Document\Tag\Block\BlockStateStack $blockStateStack
+     * @param BlockStateStack $blockStateStack
      */
     public function __construct(BlockStateStack $blockStateStack)
     {
@@ -57,9 +57,9 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -82,9 +82,9 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param ResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
 

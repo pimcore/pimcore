@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model\DataObject\ClassificationStore;
 
 use Pimcore\Model\DataObject\Classificationstore\StoreConfig;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class StoreConfigEvent extends Event
 {

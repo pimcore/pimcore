@@ -1,6 +1,6 @@
 # Examples for Personalization and Targeting
 
-The following pages show a few examples to better understand how things can be archived with the Pimcore targeting 
+The following pages show a few examples to better understand how things can be achieved with the Pimcore targeting 
 engine. 
 
 All mentioned rules here are configured and set up in our [demo](https://demo.pimcore.fun) and can be 

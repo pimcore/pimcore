@@ -69,7 +69,7 @@ to interact with the bundle installer (install/uninstall/update).
 To avoid compatibility problems with plugins or custom components, that are compatible with a special Pimcore version only, Pimcore
 has following requirement `pimcore/core-version` that defines its current version: 
 
-```jsonmus
+```json
 {
     ...
     "require": {

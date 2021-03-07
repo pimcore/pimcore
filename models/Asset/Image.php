@@ -21,7 +21,9 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool\Console;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Process\Process;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -148,7 +150,9 @@ class Image extends Model\Asset
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
-            $result = \Pimcore\Tool\Console::exec($facedetectBin . ' ' . escapeshellarg($image));
+            $process = new Process(Console::addLowProcessPriority([$facedetectBin, $image]));
+            $process->run();
+            $result = $process->getOutput();
             if (strpos($result, "\n")) {
                 $faces = explode("\n", trim($result));
 
@@ -208,7 +212,8 @@ class Image extends Model\Asset
             $sqipConfig->setFormat('png');
             $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
             $svgPath = $this->getLowQualityPreviewFileSystemPath();
-            \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . escapeshellarg($svgPath) . ' '. escapeshellarg($pngPath));
+            $process = new Process(Console::addLowProcessPriority([$sqipBin, '-o', $svgPath, $pngPath]));
+            $process->run();
             unlink($pngPath);
 
             if (file_exists($svgPath)) {
@@ -279,7 +284,7 @@ EOT;
             'filesystemPath' => $fsPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -478,7 +483,7 @@ EOT;
             $exif = @exif_read_data($path);
             if (is_array($exif)) {
                 if (array_key_exists('Orientation', $exif)) {
-                    $orientation = intval($exif['Orientation']);
+                    $orientation = (int)$exif['Orientation'];
                     if (in_array($orientation, [5, 6, 7, 8])) {
                         // flip height & width
                         $dimensions = [

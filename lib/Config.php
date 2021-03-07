@@ -17,9 +17,8 @@ namespace Pimcore;
 use Pimcore\Cache\Runtime;
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User\UserRole;
-use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -157,20 +156,6 @@ class Config implements \ArrayAccess
             $config = $container->getParameter('pimcore.config');
             $adminConfig = $container->getParameter('pimcore_admin.config');
 
-            //add email settings
-            foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
-                if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
-                    $config[$key]['smtp'] = [
-                        'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
-                        'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
-                        'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
-                        'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
-                        'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
-                        'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
-                    ];
-                }
-            }
-
             static::$systemConfig = array_merge_recursive($config, $adminConfig);
         }
 
@@ -252,7 +237,6 @@ class Config implements \ArrayAccess
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 
@@ -305,7 +289,7 @@ class Config implements \ArrayAccess
             } else {
                 $data = $config->toArray();
                 foreach ($data as $key => $setting) {
-                    if ($setting instanceof AbstractElement) {
+                    if ($setting instanceof ElementInterface) {
                         $elementCacheKey = $setting->getCacheTag();
                         if (!Runtime::isRegistered($elementCacheKey)) {
                             Runtime::set($elementCacheKey, $setting);
@@ -391,7 +375,6 @@ class Config implements \ArrayAccess
                     'disableusagestatistics' => self::getArrayValue(['general', 'disable_usage_statistics'], $config),
                     'debug_admin_translations' => self::getArrayValue(['general', 'debug_admin_translations'], $config),
                     'instanceIdentifier' => self::getArrayValue(['general', 'instance_identifier'], $config),
-                    'show_cookie_notice' => self::getArrayValue(['general', 'show_cookie_notice'], $config),
                 ],
                 'documents' => [
                     'versions' => [
@@ -431,9 +414,6 @@ class Config implements \ArrayAccess
                     'lifetime' => self::getArrayValue(['full_page_cache', 'lifetime'], $config),
                     'excludePatterns' => self::getArrayValue(['full_page_cache', 'exclude_patterns'], $config),
                     'excludeCookie' => self::getArrayValue(['full_page_cache', 'exclude_cookie'], $config),
-                ],
-                'webservice' => [
-                    'enabled' => self::getArrayValue(['webservice', 'enabled'], $config),
                 ],
                 'httpclient' => [
                     'adapter' => self::getArrayValue(['httpclient', 'adapter'], $config),
@@ -504,6 +484,7 @@ class Config implements \ArrayAccess
                     ],
                     'archive_treshold' => self::getArrayValue(['applicationlog', 'archive_treshold'], $config),
                     'archive_alternative_database' => self::getArrayValue(['applicationlog', 'archive_alternative_database'], $config),
+                    'delete_archive_threshold' => self::getArrayValue(['applicationlog', 'delete_archive_threshold'], $config),
                 ],
             ]);
         }
@@ -513,7 +494,7 @@ class Config implements \ArrayAccess
 
     /**
      * @deprecated use getSystemConfiguration()/Pimcore\Config service instead
-     * to be removed in v7.0
+     * to be removed in Pimcore 10
      *
      * @return mixed|null|\Pimcore\Config\Config
      *
@@ -848,7 +829,7 @@ class Config implements \ArrayAccess
                 if ($rootNode) {
                     $tmpData['type'] = 'customview';
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ?? null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId] = $tmpData;
@@ -882,17 +863,11 @@ class Config implements \ArrayAccess
             }
         }
 
-        usort($result, function ($treeA, $treeB) {
-            $a = $treeA['sort'] ? $treeA['sort'] : 0;
-            $b = $treeB['sort'] ? $treeB['sort'] : 0;
+        usort($result, static function ($treeA, $treeB) {
+            $a = $treeA['sort'] ?: 0;
+            $b = $treeB['sort'] ?: 0;
 
-            if ($a > $b) {
-                return 1;
-            } elseif ($a < $b) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return $a <=> $b;
         });
 
         return $result;
@@ -1053,7 +1028,7 @@ class Config implements \ArrayAccess
 
             // check env vars - fall back to default (prod)
             if (!$environment) {
-                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $envVarName) {
                     $environment = self::resolveEnvVarValue($envVarName);
                     if ($environment) {
                         break;

@@ -27,13 +27,14 @@ use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -115,7 +116,7 @@ class Installer
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
         'install_custom_layouts' => 'Installing custom layouts ...',
-        'migrations' => 'Mark existing migrations as done ...',
+        'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
 
@@ -221,7 +222,7 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch(self::EVENT_NAME_STEP, $event);
+        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
 
         return $event;
     }
@@ -359,6 +360,11 @@ class Installer
             unset($dbConfig['driverOptions']);
         }
 
+        $dbConfig['mapping_types'] = [
+            'enum' => 'string',
+            'bit' => 'boolean',
+        ];
+
         $this->createConfigFiles([
             'doctrine' => [
                 'dbal' => [
@@ -375,7 +381,7 @@ class Installer
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment(true, 'dev');
-        $kernel = new \AppKernel($environment, true);
+        $kernel = new \App\Kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -391,47 +397,32 @@ class Installer
         $this->installAssets($kernel);
 
         $this->dispatchStepEvent('install_classes');
-        $this->installClasses($kernel);
+        $this->installClasses();
 
         $this->dispatchStepEvent('install_custom_layouts');
-        $this->installCustomLayouts($kernel);
+        $this->installCustomLayouts();
 
         $this->dispatchStepEvent('migrations');
-        $this->markMigrationsAsDone($kernel);
+        $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
 
         return $errors;
     }
 
-    private function markMigrationsAsDone(KernelInterface $kernel)
+    private function runCommand(array $arguments, string $taskName)
     {
-        /** @var \Pimcore\Migrations\MigrationManager $manager */
-        $manager = $kernel->getContainer()->get(\Pimcore\Migrations\MigrationManager::class);
-        $config = $manager->getConfiguration('pimcore_core');
-        $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
-        $migrations = $config->getMigrations();
-        $latest = end($migrations);
-        $manager->markVersionAsMigrated($latest);
-    }
-
-    private function installClasses(KernelInterface $kernel)
-    {
-        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:classes-rebuild']);
         $io = $this->commandLineOutput;
 
         try {
-            $arguments = [
+            array_splice($arguments, 0, 0, [
                 Console::getPhpCli(),
                 PIMCORE_PROJECT_ROOT . '/bin/console',
-                'pimcore:deployment:classes-rebuild',
-                '-c',
-            ];
+            ]);
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
+            $this->logger->info('Running {command} command', ['command' => $arguments]);
 
-            $process = new Process($parts);
+            $process = new Process($arguments);
             $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();
@@ -460,59 +451,38 @@ class Installer
 
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
-            $stdErr->note('Installing classes failed. Please run the following command manually:');
+            $stdErr->note($taskName . ' failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
         }
     }
 
-    private function installCustomLayouts(KernelInterface $kernel)
+    private function markMigrationsAsDone()
     {
-        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:custom-layouts-rebuild']);
-        $io = $this->commandLineOutput;
+        $this->runCommand([
+            'doctrine:migrations:sync-metadata-storage',
+            '-q',
+        ], 'Sync migrations metadata storage');
 
-        try {
-            $arguments = [
-                Console::getPhpCli(),
-                PIMCORE_PROJECT_ROOT . '/bin/console',
-                'pimcore:deployment:custom-layouts-rebuild',
-                '-c',
-            ];
+        $this->runCommand([
+            'doctrine:migrations:version',
+            '--all', '--add', '-n', '-q',
+        ], 'Marking all migrations as done');
+    }
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
+    private function installClasses()
+    {
+        $this->runCommand([
+            'pimcore:deployment:classes-rebuild',
+            '-c',
+        ], 'Installing class definitions');
+    }
 
-            $process = new Process($parts);
-            $process->setTimeout(0);
-            $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
-            $process->run();
-
-            if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            }
-
-            if (null !== $io) {
-                $io->writeln($process->getOutput());
-            }
-        } catch (ProcessFailedException $e) {
-            $this->logger->error($e->getMessage());
-
-            if (null === $io) {
-                return;
-            }
-
-            $stdErr = $io->getErrorStyle();
-            $process = $e->getProcess();
-
-            $errorOutput = trim($process->getErrorOutput());
-            if (!empty($errorOutput)) {
-                $stdErr->write($errorOutput);
-            }
-
-            $stdErr->write($process->getOutput());
-            $stdErr->write($process->getErrorOutput());
-            $stdErr->note('Installing custom layouts failed. Please run the following command manually:');
-            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
-        }
+    private function installCustomLayouts()
+    {
+        $this->runCommand([
+            'pimcore:deployment:custom-layouts-rebuild',
+            '-c',
+        ], 'Installing custom layout definitions');
     }
 
     private function installAssets(KernelInterface $kernel)
@@ -564,7 +534,6 @@ class Installer
 
         $writer->writeSystemConfig();
         $writer->writeDebugModeConfig();
-        $writer->generateParametersFile();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)
@@ -586,7 +555,11 @@ class Installer
 
         $filesystem->rename($cacheDir, $oldCacheDir);
         $filesystem->mkdir($cacheDir);
-        $filesystem->remove($oldCacheDir);
+        try {
+            $filesystem->remove($oldCacheDir);
+        } catch (IOException $e) {
+            $this->logger->error($e->getMessage());
+        }
     }
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
@@ -609,6 +582,9 @@ class Installer
                     $db->query($sql);
                 }
             }
+
+            $pdoCacheAdapter = new PdoAdapter($db);
+            $pdoCacheAdapter->createTable();
         }
 
         if ($this->importDatabaseData) {
@@ -660,7 +636,6 @@ class Installer
             $user->delete();
         }
 
-        /** @var User $user */
         $user = User::create([
             'parentId' => 0,
             'username' => $settings['username'],
@@ -741,8 +716,7 @@ class Installer
         ]);
         $db->insert('documents_page', [
             'id' => 1,
-            'controller' => 'default',
-            'action' => 'default',
+            'controller' => 'App\\Controller\\DefaultController::defaultAction',
             'template' => '',
             'title' => '',
             'description' => '',
@@ -785,8 +759,6 @@ class Installer
             ['key' => 'http_errors'],
             ['key' => 'notes_events'],
             ['key' => 'objects'],
-            ['key' => 'piwik_settings'],
-            ['key' => 'piwik_reports'],
             ['key' => 'plugins'],
             ['key' => 'predefined_properties'],
             ['key' => 'asset_metadata'],
@@ -800,7 +772,6 @@ class Installer
             ['key' => 'seo_document_editor'],
             ['key' => 'share_configurations'],
             ['key' => 'system_settings'],
-            ['key' => 'tag_snippet_management'],
             ['key' => 'tags_configuration'],
             ['key' => 'tags_assignment'],
             ['key' => 'tags_search'],

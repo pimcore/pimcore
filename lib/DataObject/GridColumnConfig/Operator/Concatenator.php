@@ -48,7 +48,7 @@ class Concatenator extends AbstractOperator
 
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
-            $childValues = (array)$childResult->value;
+            $childValues = (array)($childResult->value ?? []);
 
             foreach ($childValues as $value) {
                 if (!$hasValue) {

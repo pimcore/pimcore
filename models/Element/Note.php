@@ -94,6 +94,8 @@ class Note extends Model\AbstractModel
      * @param string $name
      * @param string $type
      * @param mixed $data
+     *
+     * @return $this
      */
     public function addData($name, $type, $data)
     {
@@ -101,6 +103,8 @@ class Note extends Model\AbstractModel
             'type' => $type,
             'data' => $data,
         ];
+
+        return $this;
     }
 
     /**
@@ -133,7 +137,7 @@ class Note extends Model\AbstractModel
         $this->getDao()->save();
 
         if (!$isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(ElementEvents::POST_ADD, new ElementEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), ElementEvents::POST_ADD);
         }
     }
 

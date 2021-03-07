@@ -22,6 +22,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Classificationstore $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -54,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+        if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return;
         }
         $object = $this->model->getObject();
@@ -101,8 +103,8 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     $value = $fd->marshal($value, $object);
 
-                    $data['value'] = $value['value'];
-                    $data['value2'] = isset($value['value2']) ? $value['value2'] : '';
+                    $data['value'] = $value['value'] ?? null;
+                    $data['value2'] = $value['value2'] ?? null;
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
@@ -144,7 +146,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load()
     {
-        /** @var DataObject\Classificationstore $classificationStore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();

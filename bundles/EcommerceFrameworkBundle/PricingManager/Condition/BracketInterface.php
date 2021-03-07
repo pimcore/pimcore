@@ -24,7 +24,7 @@ interface BracketInterface extends ConditionInterface
 
     /**
      * @param ConditionInterface $condition
-     * @param string $operator IBracket::OPERATOR_*
+     * @param string $operator BracketInterface::OPERATOR_*
      *
      * @return self
      */
@@ -39,5 +39,3 @@ interface BracketInterface extends ConditionInterface
      */
     public function getConditionsByType(string $typeClass): array;
 }
-
-class_alias(BracketInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket');

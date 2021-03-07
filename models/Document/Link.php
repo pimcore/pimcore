@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
@@ -324,14 +325,21 @@ class Link extends Model\Document
      */
     public function setObjectFromId()
     {
-        if ($this->internal) {
-            if ($this->internalType == 'document') {
-                $this->object = Document::getById($this->internal);
-            } elseif ($this->internalType == 'asset') {
-                $this->object = Asset::getById($this->internal);
-            } elseif ($this->internalType == 'object') {
-                $this->object = Model\DataObject\Concrete::getById($this->internal);
+        try {
+            if ($this->internal) {
+                if ($this->internalType == 'document') {
+                    $this->object = Document::getById($this->internal);
+                } elseif ($this->internalType == 'asset') {
+                    $this->object = Asset::getById($this->internal);
+                } elseif ($this->internalType == 'object') {
+                    $this->object = Model\DataObject\Concrete::getById($this->internal);
+                }
             }
+        } catch (\Exception $e) {
+            Logger::warn($e);
+            $this->internalType = '';
+            $this->internal = null;
+            $this->object = null;
         }
 
         return $this->object;
@@ -344,13 +352,28 @@ class Link extends Model\Document
      */
     public function getHtml()
     {
-        $attributes = ['rel', 'tabindex', 'accesskey', 'title', 'name', 'target'];
+        $attributes = [
+            'class',
+            'target',
+            'title',
+            'accesskey',
+            'tabindex',
+            'rel' => 'relation',
+        ];
+
+        $link = $this->getLink();
+        $link .= $this->getProperty('navigation_parameters') . $this->getProperty('navigation_anchor');
+
         $attribs = [];
-        foreach ($attributes as $a) {
-            $attribs[] = $a . '="' . $this->$a . '"';
+        foreach ($attributes as $key => $name) {
+            $key = is_numeric($key) ? $name : $key;
+            $value = $this->getProperty('navigation_' . $name);
+            if ($value) {
+                $attribs[] = $key . '="' . $value . '"';
+            }
         }
 
-        return '<a href="' . $this->getLink() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+        return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
 
     /**

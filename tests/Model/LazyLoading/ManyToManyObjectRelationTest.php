@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Model\LazyLoading;
 
 use Pimcore\Cache;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
@@ -286,9 +287,33 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
-        $brick->getLocalizedfields()->setLocalizedValue('lobjects', $this->loadRelations()->load());
+
+        $relations = $this->loadRelations()->load();
+
+        $brick->getLocalizedfields()->setLocalizedValue('lobjects', $relations, 'en');
+        $brick->getLocalizedfields()->setLocalizedValue('lobjects', $relations, 'de');
+
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
+
+        $object = Concrete::getById($object->getId(), true);
+
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLObjects('en')) > 0);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLObjects('de')) > 0);
+
+        $object = Concrete::getById($object->getId(), true);
+        array_pop($relations);
+
+        $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
+        $lFields = $brick->getLocalizedfields();
+        // change one language and make sure that it does not affect the other one
+        $lFields->setLocalizedValue('lobjects', $relations, 'de');
+        $object->save();
+
+        $object = Concrete::getById($object->getId(), true);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLObjects('en')) > 0);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLObjects('de')) > 0);
+
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 

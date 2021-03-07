@@ -98,11 +98,11 @@ final class ScheduledTasksTask implements TaskInterface
                 } elseif ($task->getCtype() === 'object') {
                     $object = DataObject::getById($task->getCid());
 
-                    if ($object instanceof DataObject) {
+                    if ($object instanceof DataObject\Concrete) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $object->isAllowed('publish', $taskUser) && $object->isAllowed('versions', $taskUser)) {
                             if ($version = Version::getById($task->getVersion())) {
                                 $object = $version->getData();
-                                if ($object instanceof DataObject\AbstractObject) {
+                                if ($object instanceof DataObject\Concrete) {
                                     $object->setPublished(true);
                                     $object->save();
                                 } else {

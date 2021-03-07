@@ -29,7 +29,7 @@ class Date extends Model\Document\Editable
      *
      * @var \Carbon\Carbon|null
      */
-    public $date;
+    protected $date;
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,11 @@ class Date extends Model\Document\Editable
     public function getData()
     {
         return $this->date;
+    }
+
+    public function getDate()
+    {
+        return $this->getData();
     }
 
     /**
@@ -81,20 +86,17 @@ class Date extends Model\Document\Editable
         }
 
         if ($this->date instanceof \DateTimeInterface) {
-            $result = $this->date->formatLocalized($format);
-
-            return $result;
+            return $this->date->formatLocalized($format);
         }
     }
 
     /**
-     * @see Tag::getDataForResource
+     * @see Model\Document\Editable::getDataForResource
      *
      * @return int|null
      */
     public function getDataForResource()
     {
-        $this->checkValidity();
         if ($this->date) {
             return $this->date->getTimestamp();
         }
@@ -148,49 +150,6 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * Receives a Webservice\Data\Document\Element from webservice import and fill the current tag's data
-     *
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        if (!$wsElement or empty($wsElement->value)) {
-            $this->date = null;
-        } elseif (is_numeric($wsElement->value)) {
-            $this->setDateFromTimestamp($wsElement->value);
-        } else {
-            throw new \Exception('cannot get document tag date from WS - invalid value [  '.$wsElement->value.' ]');
-        }
-    }
-
-    /**
-     * Returns the current tag's data for web service export
-     *
-     * @deprecated
-     *
-     * @param Model\Document\PageSnippet|null $document
-     * @param array $params
-     * @abstract
-     *
-     * @return int|null
-     */
-    public function getForWebserviceExport($document = null, $params = [])
-    {
-        if ($this->date) {
-            return $this->date->getTimestamp();
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * @param int $timestamp
      */
     protected function setDateFromTimestamp($timestamp)
@@ -199,5 +158,3 @@ class Date extends Model\Document\Editable
         $this->date->setTimestamp($timestamp);
     }
 }
-
-class_alias(Date::class, 'Pimcore\Model\Document\Tag\Date');

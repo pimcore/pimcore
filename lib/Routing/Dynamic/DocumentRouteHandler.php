@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Config;
-use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
@@ -44,11 +43,6 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private $requestHelper;
 
     /**
-     * @var ConfigNormalizer
-     */
-    private $configNormalizer;
-
-    /**
      * Determines if unpublished documents should be matched, even when not in admin mode. This
      * is mainly needed for maintencance jobs/scripts.
      *
@@ -70,20 +64,17 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
-     * @param ConfigNormalizer $configNormalizer
      * @param Config $config
      */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
         RequestHelper $requestHelper,
-        ConfigNormalizer $configNormalizer,
         Config $config
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
-        $this->configNormalizer = $configNormalizer;
         $this->config = $config;
     }
 
@@ -333,17 +324,10 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route)
     {
-        $controller = $this->configNormalizer->formatControllerReference(
-            $document->getModule(),
-            $document->getController(),
-            $document->getAction()
-        );
-
-        $route->setDefault('_controller', $controller);
+        $route->setDefault('_controller', $document->getController());
 
         if ($document->getTemplate()) {
-            $template = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
-            $route->setDefault('_template', $template);
+            $route->setDefault('_template', $document->getTemplate());
         }
 
         return $route;

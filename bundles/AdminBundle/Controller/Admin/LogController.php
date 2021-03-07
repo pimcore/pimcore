@@ -14,37 +14,30 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LogController extends AdminController implements EventedControllerInterface
+class LogController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @inheritDoc
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$this->getAdminUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
     }
 
     /**
@@ -93,12 +86,12 @@ class LogController extends AdminController implements EventedControllerInterfac
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
             $qb->andWhere('timestamp > :fromDate');
-            $qb->setParameter('fromDate', $fromDate, Type::DATETIME);
+            $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
         if ($toDate = $this->parseDateObject($request->get('toDate'), $request->get('toTime'))) {
             $qb->andWhere('timestamp <= :toDate');
-            $qb->setParameter('toDate', $toDate, Type::DATETIME);
+            $qb->setParameter('toDate', $toDate, Types::DATETIME_MUTABLE);
         }
 
         if (!empty($component = $request->get('component'))) {
@@ -240,24 +233,31 @@ class LogController extends AdminController implements EventedControllerInterfac
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
-        $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
-        $filePath = realpath($filePath);
-        $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
+            $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
+            $filePath = realpath($filePath);
+            $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        } else {
+            $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
+        }
 
         if (!preg_match('@^' . $fileObjectPath . '@', $filePath)) {
             throw new AccessDeniedHttpException('Accessing file out of scope');
         }
 
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/plain');
-
         if (file_exists($filePath)) {
-            $response->setContent(file_get_contents($filePath));
-            if (strpos($response->getContent(), '</html>') > 0 || strpos($response->getContent(), '</pre>') > 0) {
-                $response->headers->set('Content-Type', 'text/html');
-            }
+            $response = new StreamedResponse(
+                static function () use ($filePath) {
+                    $handle = fopen($filePath, 'rb');
+                    fpassthru($handle);
+                    fclose($handle);
+                }
+            );
+            $response->headers->set('Content-Type', 'text/plain');
         } else {
-            $response->setContent('Path `' . $filePath . '` not found.');
+            $response = new Response();
+            $response->headers->set('Content-Type', 'text/plain');
+            $response->setContent('Path `'.$filePath.'` not found.');
             $response->setStatusCode(404);
         }
 

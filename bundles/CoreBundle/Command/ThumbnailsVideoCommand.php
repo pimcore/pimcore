@@ -132,7 +132,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         $finished = false;
 
         // initial delay
-        $video = Asset::getById($videoId);
+        $video = Asset\Video::getById($videoId);
         $thumb = $video->getThumbnail($thumbnail);
         if ($thumb['status'] != 'finished') {
             sleep(20);
@@ -141,7 +141,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         while (!$finished) {
             \Pimcore::collectGarbage();
 
-            $video = Asset::getById($videoId);
+            $video = Asset\Video::getById($videoId);
             $thumb = $video->getThumbnail($thumbnail);
             if ($thumb['status'] == 'finished') {
                 $finished = true;

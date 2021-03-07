@@ -47,11 +47,6 @@ class Glossary extends AbstractModel
     /**
      * @var string
      */
-    public $acronym;
-
-    /**
-     * @var string
-     */
     public $language;
 
     /**
@@ -88,7 +83,7 @@ class Glossary extends AbstractModel
     {
         try {
             $glossary = new self();
-            $glossary->setId(intval($id));
+            $glossary->setId((int)$id);
             $glossary->getDao()->getById();
 
             return $glossary;
@@ -186,26 +181,6 @@ class Glossary extends AbstractModel
     public function getAbbr()
     {
         return $this->abbr;
-    }
-
-    /**
-     * @param string $acronym
-     *
-     * @return $this
-     */
-    public function setAcronym($acronym)
-    {
-        $this->acronym = $acronym;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAcronym()
-    {
-        return $this->acronym;
     }
 
     /**

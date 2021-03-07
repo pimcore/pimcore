@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -50,23 +50,16 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
+     * @var string|int
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery';
-
-    /**
-     * @var int
-     */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var string
@@ -137,7 +130,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -145,15 +138,18 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -161,10 +157,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      */
     public function setHeight($height)
     {
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
         $this->height = $height;
     }
 
@@ -268,7 +267,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery($resultItems);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
@@ -284,7 +285,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery(null);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
@@ -476,66 +479,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $result = [];
-        $data = $this->getDataFromObjectParam($object, $params);
-        $fd = new Hotspotimage();
-        $fd->setName('image');
-
-        if ($data instanceof DataObject\Data\ImageGallery) {
-            foreach ($data as $item) {
-                $dataForResource = $fd->getDataForResource($item, $object, $params);
-
-                if ($dataForResource) {
-                    if ($dataForResource['image__hotspots']) {
-                        $dataForResource['image__hotspots'] = Serialize::unserialize($dataForResource['image__hotspots']);
-                    }
-                }
-                $result[] = $dataForResource;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|DataObject\Data\ImageGallery
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $resultItems = [];
-        if (is_array($value)) {
-            $fd = new Hotspotimage();
-            $fd->setName('image');
-
-            foreach ($value as $item) {
-                $resultItems[] = $fd->getFromWebserviceImport($item, $object, $params, $idMapper);
-            }
-        }
-
-        return new DataObject\Data\ImageGallery($resultItems);
-    }
-
-    /**
      * @param DataObject\Data\ImageGallery|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
@@ -688,5 +631,25 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
 }

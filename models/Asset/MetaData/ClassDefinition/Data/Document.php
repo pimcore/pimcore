@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
@@ -161,8 +160,8 @@ class Document extends Data
      */
     public function resolveDependencies($data, $params = [])
     {
-        if (isset($params['data'])) {
-            $elementId = $params['data'];
+        if ($data instanceof \Pimcore\Model\Document && isset($params['type'])) {
+            $elementId = $data->getId();
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;
@@ -187,7 +186,7 @@ class Document extends Data
     {
         $data = \Pimcore\Model\Document::getByPath($data);
 
-        if ($data instanceof AbstractElement) {
+        if ($data instanceof ElementInterface) {
             return $data->getId();
         }
 

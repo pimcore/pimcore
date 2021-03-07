@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -40,16 +40,16 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public $fieldtype = 'manyToManyRelation';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -67,13 +67,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @var string
      */
     public $queryColumnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
 
     /**
      * @var bool
@@ -437,7 +430,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -445,19 +438,22 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -465,13 +461,16 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -492,6 +491,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
         $allow = true;
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
             foreach ($data as $d) {
                 if ($d instanceof Document) {
                     $allow = $this->allowDocumentRelation($d);
@@ -595,7 +595,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param Element\AbstractElement[]|null $data
+     * @param Element\ElementInterface[]|null $data
      *
      * @return array
      */
@@ -616,88 +616,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         return $dependencies;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (is_array($data)) {
-            $items = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $items[] = [
-                        'type' => Element\Service::getType($eo),
-                        'subtype' => $eo->getType(),
-                        'id' => $eo->getId(),
-                    ];
-                }
-            }
-
-            return $items;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } elseif (is_array($value)) {
-            $hrefs = [];
-            foreach ($value as $href) {
-                // cast is needed to make it work for both SOAP and REST
-                $href = (array) $href;
-                if (is_array($href) and array_key_exists('id', $href) and array_key_exists('type', $href)) {
-                    $type = $href['type'];
-                    $id = $href['id'];
-                    if ($idMapper) {
-                        $id = $idMapper->getMappedId($type, $id);
-                    }
-
-                    $e = null;
-                    if ($id) {
-                        $e = Element\Service::getElementById($type, $id);
-                    }
-
-                    if ($e instanceof Element\ElementInterface) {
-                        $hrefs[] = $e;
-                    } else {
-                        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                            throw new \Exception('cannot get values from web service import - unknown element of type [ ' . $href['type'] . ' ] with id [' . $href['id'] . '] is referenced');
-                        } else {
-                            $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $href['id']);
-                        }
-                    }
-                }
-            }
-
-            return $hrefs;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
     }
 
     /**
@@ -880,7 +798,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }
@@ -1091,5 +1009,3 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 }
-
-class_alias(ManyToManyRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Multihref');

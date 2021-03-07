@@ -72,7 +72,7 @@ class TargetingCodeGenerator
             $data
         );
 
-        $this->eventDispatcher->dispatch(TargetingEvents::TARGETING_CODE, $event);
+        $this->eventDispatcher->dispatch($event, TargetingEvents::TARGETING_CODE);
 
         return $this->renderTemplate($event);
     }

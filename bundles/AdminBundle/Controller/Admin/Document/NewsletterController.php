@@ -364,10 +364,10 @@ class NewsletterController extends DocumentControllerBase
             'progress' => 0,
         ], 'newsletter');
 
-        Console::runPhpScriptInBackground(
+        Console::runPhpScript(
             realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'),
-            'internal:newsletter-document-send ' . escapeshellarg($document->getTmpStoreId()) . ' ' . escapeshellarg(\Pimcore\Tool::getHostUrl()),
-            PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log'
+            ['internal:newsletter-document-send', $document->getTmpStoreId(), \Pimcore\Tool::getHostUrl()],
+            PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log', null, true
         );
 
         return $this->adminJson(['success' => true]);
@@ -384,8 +384,7 @@ class NewsletterController extends DocumentControllerBase
     {
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
-
-        $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
+        $serviceLocator = \Pimcore::getContainer()->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
             $msg = sprintf(
@@ -426,7 +425,7 @@ class NewsletterController extends DocumentControllerBase
             ]);
         }
 
-        $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
+        $serviceLocator = \Pimcore::getContainer()->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
             return $this->adminJson([
@@ -444,8 +443,15 @@ class NewsletterController extends DocumentControllerBase
 
         $sendingContainer = $addressAdapter->getParamsForTestSending($testMailAddress);
 
-        $mail = Newsletter::prepareMail($document);
-        Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingContainer);
+        try {
+            $mail = Newsletter::prepareMail($document);
+            Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingContainer);
+        } catch (\Exception $e) {
+            return $this->adminJson([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return $this->adminJson(['success' => true]);
     }

@@ -61,7 +61,7 @@ class SearchController extends AdminController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -71,8 +71,8 @@ class SearchController extends AdminController
         $subtypes = explode(',', $allParams['subtype'] ?? '');
         $classnames = explode(',', $allParams['class'] ?? '');
 
-        $offset = intval($allParams['start']);
-        $limit = intval($allParams['limit']);
+        $offset = (int)$allParams['start'];
+        $limit = (int)$allParams['limit'];
 
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
@@ -210,10 +210,10 @@ class SearchController extends AdminController
                         $tag = Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
-                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' . intval($tagId) . ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
+                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
                         }
                     } else {
-                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' . intval($tagId) . ')';
+                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' .(int)$tagId. ')';
                     }
                 }
             }
@@ -251,7 +251,7 @@ class SearchController extends AdminController
             'list' => $searcherList,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD);
         /** @var Data\Listing $searcherList */
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
@@ -261,7 +261,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
             /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
@@ -272,7 +272,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
             /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
@@ -283,7 +283,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
             /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
@@ -325,7 +325,7 @@ class SearchController extends AdminController
             'list' => $result,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result);
@@ -459,7 +459,7 @@ class SearchController extends AdminController
             'list' => $searcherList,
             'query' => $query,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD);
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
         $hits = $searcherList->load();
@@ -484,10 +484,13 @@ class SearchController extends AdminController
                     $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
                 }
 
-                $data['preview'] = $this->renderView('PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:' . $hit->getId()->getType() . '.html.php', [
+                $validLanguages = \Pimcore\Tool::getValidLanguages();
+
+                $data['preview'] = $this->renderView('@PimcoreAdmin/SearchAdmin/Search/Quicksearch/' . $hit->getId()->getType() . '.html.twig', [
                     'element' => $element,
                     'iconCls' => $data['iconCls'],
                     'config' => $config,
+                    'validLanguages' => $validLanguages,
                 ]);
 
                 $elements[] = $data;
@@ -498,7 +501,7 @@ class SearchController extends AdminController
             'list' => $elements,
             'context' => $query,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD);
         $elements = $afterListLoadEvent->getArgument('list');
 
         $result = ['data' => $elements, 'success' => true];

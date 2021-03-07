@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -40,9 +40,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public $fieldtype = 'manyToOneRelation';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string
@@ -63,13 +63,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         'id' => 'int(11)',
         'type' => "enum('document','asset','object')",
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject';
 
     /**
      *
@@ -273,7 +266,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param null|DataObject\Concrete $object
      * @param array|null $params
      *
@@ -281,7 +274,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\AbstractElement) {
+        if ($data instanceof Element\ElementInterface) {
             $r = [
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
@@ -327,7 +320,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
@@ -341,7 +334,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getVersionPreview
      *
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -349,7 +342,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\AbstractElement) {
+        if ($data instanceof Element\ElementInterface) {
             return Element\Service::getElementType($data).' '.$data->getRealFullPath();
         }
 
@@ -357,7 +350,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -365,13 +358,16 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
@@ -459,7 +455,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      *
      * @return array
      */
@@ -476,76 +472,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return $dependencies;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Element\ElementInterface) {
-            return [
-                'type' => Element\Service::getType($data),
-                'subtype' => $data->getType(),
-                'id' => $data->getId(),
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        }
-
-        $value = (array) $value;
-        if (array_key_exists('id', $value) and array_key_exists('type', $value)) {
-            $type = $value['type'];
-            $id = $value['id'];
-            $el = null;
-
-            if ($idMapper) {
-                $id = $idMapper->getMappedId($type, $id);
-            }
-
-            if ($id) {
-                $el = Element\Service::getElementById($type, $id);
-            }
-
-            if ($el instanceof Element\ElementInterface) {
-                return $el;
-            } else {
-                if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
-                } else {
-                    throw new \Exception('cannot get values from web service import - invalid ' . $this->getFieldtype() . ' relation');
-                }
-            }
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
     }
 
     /**
@@ -576,7 +502,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
+        if (DataObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }
@@ -670,7 +596,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(false));
     }
@@ -737,13 +663,13 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /** @inheritDoc */
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\Pimcore\Model\Element\AbstractElement';
+        return '?\\' . Element\AbstractElement::class;
     }
 
     /** @inheritDoc */
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\Pimcore\Model\Element\AbstractElement';
+        return '?\\' . Element\AbstractElement::class;
     }
 
     /**
@@ -780,11 +706,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getPhpdocReturnType(): ?string
     {
         if ($this->getPhpdocType()) {
-            return $this->getPhpdocType() . '|null';
+            return '\\' . $this->getPhpdocType() . '|null';
         }
 
         return null;
     }
 }
-
-class_alias(ManyToOneRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Href');

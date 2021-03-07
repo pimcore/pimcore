@@ -20,6 +20,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
+use Pimcore\Model\Translation;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -109,7 +110,7 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
-                    if ($data['baseunit'] === -1) {
+                    if (($data['baseunit'] ?? null) === -1) {
                         $data['baseunit'] = null;
                     }
                     $unit->setValues($data);
@@ -182,15 +183,14 @@ class QuantityValueController extends AdminController
 
         $units = $list->getUnits();
 
-        /** @var Unit $unit */
         foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
-                    $unit->setAbbreviation(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getAbbreviation(),
+                    $unit->setAbbreviation(\Pimcore\Model\Translation::getByKeyLocalized($unit->getAbbreviation(), Translation::DOMAIN_ADMIN,
                         true, true));
                 }
                 if ($unit->getLongname()) {
-                    $unit->setLongname(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getLongname(), true,
+                    $unit->setLongname(\Pimcore\Model\Translation::getByKeyLocalized($unit->getLongname(), Translation::DOMAIN_ADMIN, true,
                         true));
                 }
             } catch (\Exception $e) {
@@ -255,7 +255,6 @@ class QuantityValueController extends AdminController
         $convertedValues = [];
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        /** @var Unit $targetUnit */
         foreach ($units as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);

@@ -45,6 +45,6 @@ class InstallController extends AdminController
         $viewParams = Requirements::checkAll($db);
         $viewParams['headless'] = (bool)$request->get('headless');
 
-        return $this->render('PimcoreAdminBundle:Admin/Install:check.html.twig', $viewParams);
+        return $this->render('@PimcoreAdmin/Admin/Install/check.html.twig', $viewParams);
     }
 }

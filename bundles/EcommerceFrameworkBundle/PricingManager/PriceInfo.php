@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 class PriceInfo implements PriceInfoInterface
 {
     /**
-     * @var PriceInfoInterface
+     * @var PriceSystemPriceInfoInterface
      */
     protected $priceInfo;
 
@@ -38,9 +38,9 @@ class PriceInfo implements PriceInfoInterface
     protected $rules = [];
 
     /**
-     * @var RuleInterface[]
+     * @var RuleInterface[]|null
      */
-    protected $validRules = null;
+    protected $validRules;
 
     /**
      * @var bool
@@ -50,7 +50,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * @var string
      */
-    protected $priceEnvironmentHash = null;
+    protected $priceEnvironmentHash;
 
     /**
      * @var EnvironmentInterface
@@ -103,7 +103,7 @@ class PriceInfo implements PriceInfoInterface
      */
     protected function environmentHashChanged()
     {
-        $hash = $this->getEnvironment() ? $this->getEnvironment()->getHash() : '';
+        $hash = $this->getEnvironment()->getHash();
         if ($this->priceEnvironmentHash != $hash) {
             $this->validRules = null;
             $this->rulesApplied = false;
@@ -146,9 +146,6 @@ class PriceInfo implements PriceInfoInterface
     public function getPrice(): PriceInterface
     {
         $price = clone $this->priceInfo->getPrice();
-        if ($price == null) {
-            return null;
-        }
 
         if (!$this->rulesApplied || $this->environmentHashChanged()) {
             $this->setAmount($price->getAmount());

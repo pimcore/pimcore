@@ -21,11 +21,10 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 
-class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -35,16 +34,16 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $fieldtype = 'image';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var string
@@ -66,14 +65,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'int(11)';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\Asset\\Image';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -81,19 +73,22 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -101,13 +96,16 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -115,7 +113,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param Asset $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -141,7 +139,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if (intval($data) > 0) {
+        if ((int)$data > 0) {
             return Asset\Image::getById($data);
         }
 
@@ -207,7 +205,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data && intval($data['id']) > 0) {
+        if ($data && (int)$data['id'] > 0) {
             return Asset\Image::getById($data['id']);
         }
 
@@ -335,64 +333,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return int|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Asset) {
-            return $data->getId();
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $id = $value;
-
-        $fromMapper = false;
-        if ($idMapper && !empty($value)) {
-            $id = $idMapper->getMappedId('asset', $value);
-            $fromMapper = true;
-        }
-
-        $asset = Asset::getById($id);
-        if (empty($id) && !$fromMapper) {
-            return null;
-        } elseif (is_numeric($value) and $asset instanceof Asset) {
-            return $asset;
-        } else {
-            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                throw new \Exception('cannot get values from web service import - invalid data, referencing unknown asset with id [ '.$value.' ]');
-            } else {
-                $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param string $uploadPath
      *
      * @return $this
@@ -514,7 +454,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function unmarshal($value, $object = null, $params = [])
     {
         $id = $value['id'];
-        if (intval($id) > 0) {
+        if ((int)$id > 0) {
             return Asset\Image::getById($id);
         }
     }
@@ -536,5 +476,25 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $newValue = $newValue instanceof Asset ? $newValue->getId() : null;
 
         return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Asset\Image::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Asset\Image::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Asset\Image::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Asset\Image::class . '|null';
     }
 }

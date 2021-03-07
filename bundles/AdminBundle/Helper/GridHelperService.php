@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -392,7 +393,13 @@ class GridHelperService
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureAndSlugFilters, $me) {
+
+            $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                $featureJoins,
+                $class,
+                $featureAndSlugFilters,
+                $me
+            ) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -406,18 +413,18 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
 
                     $table = $me->getDao()->getTableName();
-                    $select->joinLeft(
-                        [$mappedKey => 'object_classificationstore_data_' . $class->getId()],
+                    $select->addSelect('value AS ' . $mappedKey);
+                    $select->leftJoin(
+                        $table,
+                        'object_classificationstore_data_' . $class->getId(),
+                        $mappedKey,
                         '('
                         . $mappedKey . '.o_id = ' . $table . '.o_id'
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
                         . ' and ' . $mappedKey . '.groupId=' . $featureJoin['groupId']
                         . ' and ' . $mappedKey . '.keyId=' . $featureJoin['keyId']
                         . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
-                        . ')',
-                        [
-                            $mappedKey => 'value',
-                        ]
+                        . ')'
                     );
                 }
 
@@ -441,7 +448,12 @@ class GridHelperService
     {
         if ($slugJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($slugJoins, $featureAndSlugFilters, $me) {
+
+            $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                $slugJoins,
+                $featureAndSlugFilters,
+                $me
+            ) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -453,15 +465,15 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
                     $table = $me->getDao()->getTableName();
 
-                    $select->joinLeft(
-                        [$mappedKey => 'object_url_slugs'],
+                    $select->addSelect('slug AS ' . $mappedKey);
+                    $select->leftJoin(
+                        $table,
+                        'object_url_slugs',
+                        $mappedKey,
                         '('
                         . $mappedKey . '.objectId = ' . $table . '.o_id'
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
-                        . ')',
-                        [
-                            $mappedKey => 'slug',
-                        ]
+                        . ')'
                     );
                 }
 
@@ -551,7 +563,7 @@ class GridHelperService
         $conditionFilters = [];
 
         if ($requestParams['specificId'] ?? false) {
-            $conditionFilters[] = 'o_id = ' . $requestParams['specificId'];
+            $conditionFilters[] = 'oo_id = ' . $requestParams['specificId'];
         }
 
         if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {
@@ -593,7 +605,7 @@ class GridHelperService
         if (!empty($requestParams['query'])) {
             $query = $this->filterQueryParam($requestParams['query']);
             if (!empty($query)) {
-                $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
+                $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE maintype = "object" AND MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
             }
         }
 
@@ -643,7 +655,7 @@ class GridHelperService
         }
 
         if ($class->getShowVariants()) {
-            $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+            $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT]);
         }
 
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureAndSlugFilters);
@@ -792,10 +804,10 @@ class GridHelperService
                     $tag = Model\Element\Tag::getById($tagId);
                     if ($tag) {
                         $tagPath = $tag->getFullIdPath();
-                        $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` INNER JOIN `tags` ON tags.id = tags_assignment.tagid WHERE `ctype` = "asset" AND (`id` = ' . intval($tagId) . ' OR `idPath` LIKE ' . $db->quote($tagPath . '%') . '))';
+                        $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` INNER JOIN `tags` ON tags.id = tags_assignment.tagid WHERE `ctype` = "asset" AND (`id` = ' .(int)$tagId. ' OR `idPath` LIKE ' . $db->quote($tagPath . '%') . '))';
                     }
                 } else {
-                    $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` WHERE `ctype` = "asset" AND tagid = ' . intval($tagId) . ')';
+                    $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` WHERE `ctype` = "asset" AND tagid = ' .(int)$tagId. ')';
                 }
             }
         }

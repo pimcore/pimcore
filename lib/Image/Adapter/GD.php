@@ -34,7 +34,7 @@ class GD extends Adapter
      * @param string $imagePath
      * @param array $options
      *
-     * @return $this|self
+     * @return $this|self|false
      */
     public function load($imagePath, $options = [])
     {
@@ -158,7 +158,7 @@ class GD extends Adapter
      * @param int $width
      * @param int $height
      *
-     * @return resource
+     * @return resource|\GdImage|false
      */
     protected function createImage($width, $height)
     {

@@ -81,7 +81,6 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
 
         $cookies = $response->headers->getCookies();
 
-        /** @var Cookie $cookie */
         foreach ($cookies as $cookie) {
             if ($cookie->getName() === $sessionName) {
                 $response->headers->removeCookie(

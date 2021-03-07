@@ -171,6 +171,13 @@ interface ConfigInterface
      * @return IndexableInterface | array
      */
     public function getObjectMockupById($objectId);
-}
 
-class_alias(ConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig');
+    /**
+     * returns column type for id
+     *
+     * @param bool $isPrimary
+     *
+     * @return string
+     */
+    public function getIdColumnType($isPrimary);
+}

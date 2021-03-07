@@ -46,7 +46,7 @@ class DataObjectParamConverter implements ParamConverterInterface
 
         $class = $configuration->getClass();
 
-        /** @var AbstractObject|Concrete $object */
+        /** @var Concrete|null $object */
         $object = $class::getById($value);
         if (!$object) {
             throw new NotFoundHttpException(sprintf('Invalid data object ID given for parameter "%s".', $param));

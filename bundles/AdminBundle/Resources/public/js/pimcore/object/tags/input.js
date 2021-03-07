@@ -53,7 +53,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
             labelWidth: 100,
-            labelAlign: "right"
+            labelAlign: "left"
         };
 
         if (!this.fieldConfig.showCharCount) {
@@ -73,7 +73,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.labelWidth) {
             input.labelWidth = this.fieldConfig.labelWidth;
         }
-        input.width += input.labelWidth;
+
+        if (this.fieldConfig.labelAlign) {
+            input.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            input.width = this.sumWidths(input.width, input.labelWidth);
+        }
 
         if(this.fieldConfig.columnLength) {
             input.maxLength = this.fieldConfig.columnLength;

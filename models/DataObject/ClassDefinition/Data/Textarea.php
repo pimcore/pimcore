@@ -19,13 +19,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -35,14 +34,14 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $fieldtype = 'textarea';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -74,14 +73,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $columnType = 'longtext';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -89,7 +81,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -97,25 +89,31 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -308,5 +306,25 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
     }
 }

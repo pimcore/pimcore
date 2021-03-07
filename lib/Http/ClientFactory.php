@@ -66,7 +66,7 @@ class ClientFactory
     }
 
     /**
-     * @deprecated Use the ClientFactory service instead of the static method, to be remove in v7.0
+     * @deprecated Use the ClientFactory service instead of the static method, to be remove in Pimcore 10
      */
     public static function createHttpClient()
     {

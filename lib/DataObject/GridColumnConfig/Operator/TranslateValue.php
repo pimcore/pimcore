@@ -49,13 +49,13 @@ class TranslateValue extends AbstractOperator
         $childs = $this->getChilds();
         if (isset($childs[0])) {
             $value = $childs[0]->getLabeledValue($element);
-            if (strval($value->value) != '') {
+            if ((string)$value->value != '') {
                 $currentLocale = $this->translator->getLocale();
                 if (null != $this->locale) {
                     $this->translator->setLocale($this->locale);
                 }
 
-                $value->value = $this->translator->trans($this->prefix . strval($value->value), []);
+                $value->value = $this->translator->trans($this->prefix .(string)$value->value, []);
 
                 $this->translator->setLocale($currentLocale);
             }

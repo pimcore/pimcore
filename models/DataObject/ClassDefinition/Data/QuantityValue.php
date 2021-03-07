@@ -24,13 +24,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
-class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -40,12 +39,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public $fieldtype = 'quantityValue';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
     public $unitWidth;
 
@@ -82,7 +81,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $queryColumnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
@@ -92,18 +91,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\QuantityValue';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -111,15 +103,18 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getUnitWidth()
     {
@@ -127,10 +122,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $unitWidth
+     * @param string|int $unitWidth
      */
     public function setUnitWidth($unitWidth)
     {
+        if (is_numeric($unitWidth)) {
+            $unitWidth = (int)$unitWidth;
+        }
         $this->unitWidth = $unitWidth;
     }
 
@@ -151,7 +149,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if (strlen((string)$defaultValue) > 0) {
             $this->defaultValue = $defaultValue;
         }
     }
@@ -233,7 +231,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
-        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
                 $this->getName() . '__value' => $data->getValue(),
                 $this->getName() . '__unit' => $data->getUnitId(),
@@ -262,7 +260,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             $quantityValue = new Model\DataObject\Data\QuantityValue($value !== null ? (float)$value : null, $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $quantityValue->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $quantityValue->_setOwner($params['owner']);
+                $quantityValue->_setOwnerFieldname($params['fieldname']);
+                $quantityValue->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $quantityValue;
@@ -296,7 +296,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
                 'value' => $data->getValue(),
                 'unit' => $data->getUnitId(),
@@ -330,7 +330,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (strlen($data['value']) > 0 || $data['unit']) {
-            if (is_numeric($data['unit'])) {
+            if ($data['unit']) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return new Model\DataObject\Data\QuantityValue($data['value'], null);
                 }
@@ -353,7 +353,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = '';
             if ($data->getUnitId()) {
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
@@ -392,12 +392,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             if ((!empty($value) && !is_numeric($data->getValue()))) {
                 throw new Model\Element\ValidationException('Invalid dimension unit data ' . $this->getName());
             }
-
-            if (!empty($data->getUnitId())) {
-                if (!is_numeric($data->getUnitId())) {
-                    throw new Model\Element\ValidationException('Unit id has to be empty or numeric ' . $data->getUnitId());
-                }
-            }
         }
     }
 
@@ -414,12 +408,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Model\DataObject\Data\QuantityValue) {
-            if ($unit = $data->getUnit()) {
-                return $data->getValue() . ' ' . $unit->getAbbreviation();
-            }
-
-            return $data->getValue();
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
+            return (string) $data;
         }
 
         return '';
@@ -471,7 +461,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data instanceof  \Pimcore\Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof  Model\DataObject\Data\AbstractQuantityValue) {
             $unit = $data->getUnit();
             $unitAbbreviation = '';
 
@@ -489,71 +479,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
-            return [
-                'value' => $data->getValue(),
-                'unit' => $data->getUnitId(),
-                'unitAbbreviation' => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : '',
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if (array_key_exists('value', $value) && array_key_exists('unit', $value) && array_key_exists('unitAbbreviation', $value)) {
-                $unitId = $value['unit'];
-                if ($idMapper) {
-                    $unitId = $idMapper->getMappedId('unit', $unitId);
-                }
-
-                $unit = Model\DataObject\QuantityValue\Unit::getById($unitId);
-                if ($unit && $unit->getAbbreviation() == $value['unitAbbreviation']) {
-                    return new \Pimcore\Model\DataObject\Data\QuantityValue($value['value'], $unitId);
-                } elseif (!$unit && is_null($value['unit'])) {
-                    return new \Pimcore\Model\DataObject\Data\QuantityValue($value['value']);
-                } else {
-                    throw new \Exception(get_class($this).': cannot get values from web service import - unit id and unit abbreviation do not match with local database');
-                }
-            } else {
-                throw new \Exception(get_class($this).': cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
     /** Encode value for packing it into a single column.
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
@@ -563,7 +488,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\QuantityValue) {
+        if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
                 'value' => $value->getValue(),
                 'value2' => $value->getUnitId(),
@@ -637,7 +562,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                     $list->setOrderKey('abbreviation');
                     $list->setOrder('asc');
                     $list = $list->load();
-                    /** @var Model\DataObject\QuantityValue\Unit $item */
                     foreach ($list as $item) {
                         $table[$item->getId()] = $item;
                     }
@@ -682,6 +606,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public static function __set_state($data)
     {
         $obj = parent::__set_state($data);
+
         $obj->configureOptions();
 
         return $obj;
@@ -740,14 +665,50 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return true;
         }
 
-        if (!$oldValue instanceof Model\DataObject\Data\QuantityValue) {
+        if (!$oldValue instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return false;
         }
 
-        if (!$newValue instanceof Model\DataObject\Data\QuantityValue) {
+        if (!$newValue instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return false;
         }
 
-        return $oldValue->getValue() === $newValue->getValue() && $oldValue->getUnitId() === $newValue->getUnitId();
+        return $oldValue->getValue() === $newValue->getValue()
+            && $this->prepareUnitIdForComparison($oldValue->getUnitId()) === $this->prepareUnitIdForComparison($newValue->getUnitId());
+    }
+
+    /**
+     * @param mixed $unitId
+     *
+     * @return string
+     */
+    private function prepareUnitIdForComparison($unitId): string
+    {
+        $unitId = (string) $unitId;
+        if (empty($unitId)) {
+            $unitId = '';
+        }
+
+        return $unitId;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 }

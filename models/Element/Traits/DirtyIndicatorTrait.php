@@ -70,6 +70,3 @@ trait DirtyIndicatorTrait
         $this->o_dirtyFields = null;
     }
 }
-
-//TODO: remove in Pimcore 7
-class_alias(DirtyIndicatorTrait::class, 'Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait');

@@ -40,6 +40,11 @@ services:
         tags:
             - { name: kernel.cache_warmer }
 
+    Pimcore\HttpKernel\CacheWarmer\PimcoreCoreCacheWarmer:
+        public: false
+        tags:
+            - { name: kernel.cache_warmer }
+
     Pimcore\Cache\Symfony\CacheClearer:
         public: true
 
@@ -68,11 +73,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Controller\Config\ConfigNormalizer:
-        calls:
-            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
-
-
     Pimcore\Controller\Config\ControllerDataProvider:
         public : true
         arguments:
@@ -94,17 +94,6 @@ services:
         public: true
         class: \GuzzleHttp\Client
         factory: ['@Pimcore\Http\ClientFactory', createClient]
-
-    pimcore.rest_client:
-        deprecated: ~
-        alias: Pimcore\Tool\RestClient
-        public: true
-
-    Pimcore\Tool\RestClient:
-        deprecated: ~
-        public: true
-        arguments:
-            - '@pimcore.http_client'
 
     # Newsletter Adapter
     pimcore.document.newsletter.factory.default:
@@ -187,10 +176,15 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
         public: true
 
-    # Override Swiftmailer redirecting plugin
-    swiftmailer.plugin.redirecting.abstract:
-        abstract: true
-        class: Pimcore\Mail\Plugins\RedirectingPlugin
+    Pimcore\Mail\Plugins\RedirectingPlugin: ~
+
+    # Decorates Symfony Mailer
+    Pimcore\Mail\Mailer:
+        decorates: mailer
+        arguments:
+            - '@Pimcore\Mail\Mailer.inner'
+            - '@Pimcore\Mail\Plugins\RedirectingPlugin'
+        public: true
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
         public: true
@@ -219,3 +213,11 @@ services:
         arguments:
             - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
 
+
+    Pimcore\Model\Paginator\EventSubscriber\PaginateListingSubscriber: ~
+
+    Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber: ~
+
+    Knp\Component\Pager\PaginatorInterface:
+        class: Knp\Component\Pager\Paginator
+        public: true

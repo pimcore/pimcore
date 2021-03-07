@@ -20,6 +20,8 @@ namespace Pimcore\Model\DataObject\Classificationstore\StoreConfig;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Classificationstore\StoreConfig $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -63,10 +65,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_STORES . ' WHERE name = ?', $name);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('StoreConfig with name: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf('Classification store config with name "%s" does not exist.', $name));
         }
     }
 

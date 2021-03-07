@@ -16,11 +16,11 @@ Particular useful can be following methods:
 
 ### E-Mail
 There is a convenience function which allows any Pimcore system component or plugin to use a 
-preconfigured `Swift_Message` instance based on the Pimcore system settings' email configuration.
+preconfigured `Symfony\Component\Mime\Email` instance based on the Pimcore system settings' email configuration.
 
 ```php
-$mail = Pimcore\Tool::getMail($recipients,$subject);
-For any plugin or website applications it might be convenient to use this mail configuration instead of having to care for these settings themselves.
+$mail = Pimcore\Tool::getMail($recipients, $subject);
+// For any plugin or website applications it might be convenient to use this mail configuration instead of having to care for these settings themselves.
 ```
 
 

@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Pimcore\Targeting\DataLoader;
-use Pimcore\Targeting\DataProvider\Piwik;
 use Pimcore\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Targeting\EventListener\TargetingListener;
 use Pimcore\Targeting\VisitorInfoResolver;
@@ -49,7 +48,6 @@ class DebugStopwatchPass implements CompilerPassInterface
             VisitorInfoResolver::class,
             TargetingListener::class,
             TargetingDataCollector::class,
-            Piwik::class,
         ];
 
         foreach ($services as $service) {

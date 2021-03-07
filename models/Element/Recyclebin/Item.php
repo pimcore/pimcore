@@ -156,18 +156,18 @@ class Item extends Model\AbstractModel
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $element->getParent();
-            if (!$parent->isAllowed('publish')) {
+            if ($parent && !$parent->isAllowed('publish')) {
                 throw new \Exception('Not sufficient permissions');
             }
         }
 
         try {
-            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-            AbstractObject::disableDirtyDetection();
+            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::disableDirtyDetection();
 
             $this->doRecursiveRestore($element);
 
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         } catch (\Exception $e) {
             Logger::error($e);
             if ($dummy) {

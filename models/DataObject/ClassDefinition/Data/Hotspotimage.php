@@ -28,7 +28,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -50,13 +49,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage';
 
     /**
      * @var int
@@ -124,7 +116,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -213,7 +205,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $value = new DataObject\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
 
             if (isset($params['owner'])) {
-                $value->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $value->_setOwner($params['owner']);
+                $value->_setOwnerFieldname($params['fieldname']);
+                $value->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $value;
@@ -327,7 +321,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
+        return new DataObject\Data\Hotspotimage($data['id'] ?? null, $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
     }
 
     /**
@@ -499,97 +493,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         }
 
         return $dependencies;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        $dataForResource = $this->getDataForResource($data, $object, $params);
-
-        if ($dataForResource) {
-            $hotspotsKey = "{$this->getName()}__hotspots";
-            if ($dataForResource[$hotspotsKey]) {
-                $dataForResource[$hotspotsKey] = Serialize::unserialize($dataForResource[$hotspotsKey]);
-            }
-
-            return $dataForResource;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|DataObject\Data\Hotspotimage
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (!is_null($value)) {
-            $value = json_decode(json_encode($value), true);
-
-            $imageKey = "{$this->getName()}__image";
-
-            if ($value[$imageKey]) {
-                $value[$imageKey] = $idMapper ? $idMapper->getMappedId('asset', $value[$imageKey]) : $value[$imageKey] ;
-            }
-        }
-
-        $hotspotsKey = "{$this->getName()}__hotspots";
-        if (is_array($value) && isset($value[$hotspotsKey]) && $value[$hotspotsKey]) {
-            $value[$hotspotsKey] = serialize($value[$hotspotsKey]);
-        }
-        $hotspotImage = $this->getDataFromResource($value);
-
-        /** @var DataObject\Data\Hotspotimage $hotspotImage */
-        if (!$hotspotImage) {
-            return null;
-        }
-
-        $theImage = $hotspotImage->getImage();
-
-        if (!$theImage) {
-            return null;
-        }
-
-        $id = $theImage->getId();
-
-        $asset = Asset::getById($id);
-        if (empty($id)) {
-            return null;
-        } elseif (is_numeric($id) and $asset instanceof Asset) {
-            $hotspotImage->setImage($asset);
-
-            return $hotspotImage;
-        } else {
-            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                throw new \Exception('cannot get values from web service import - invalid data, referencing unknown (hotspot) asset with id [ '.$id.' ]');
-            } else {
-                $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -796,5 +699,25 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' .DataObject\Data\Hotspotimage::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' .DataObject\Data\Hotspotimage::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 }

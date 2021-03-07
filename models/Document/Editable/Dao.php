@@ -20,6 +20,8 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Editable\Areablock $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -50,5 +52,3 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 }
-
-class_alias(Dao::class, 'Pimcore\Model\Document\Tag\Dao');

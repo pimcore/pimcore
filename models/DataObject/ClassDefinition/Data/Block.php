@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -80,13 +80,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $styleElement = '';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -136,27 +129,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         continue;
                     }
                     $elementData = $blockElement->getData();
-                    //TODO: move validation to checkValidity & throw exception in Pimcore 7
-                    if ($elementData instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
-                        foreach ($elementData->getInternalData() as $language => $fields) {
-                            foreach ($fields as $fieldName => $values) {
-                                $lfd = $fd->getFieldDefinition($fieldName);
-                                if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
-                                    if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {
-                                        $contextParams['language'] = $language;
-                                        $contextParams['context'] = ['containerType' => 'block', 'fieldname' => $fieldName];
-                                        $updateParams = array_merge($params, $contextParams);
-                                        $lfd->filterMultipleAssignments($values, $elementData, $updateParams);
-                                        $elementData = $blockElement->getData();
-                                    }
-                                }
-                            }
-                        }
-                    } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation) {
-                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
-                            $elementData = $fd->filterMultipleAssignments($elementData, $object, $params);
-                        }
-                    }
+
                     $dataForResource = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
                     //                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
 
@@ -216,7 +189,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
-                            $data->setOwner($blockElement, 'localizedfields');
+                            $data->_setOwner($blockElement);
+                            $data->_setOwnerFieldname('localizedfields');
+
                             $data->setContext(['containerType' => 'block',
                                 'fieldname' => $this->getName(),
                                 'index' => $count,
@@ -460,88 +435,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return null;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $result = [];
-        $idx = -1;
-
-        if (is_array($data)) {
-            foreach ($data as $blockElements) {
-                $resultElement = [];
-                $idx++;
-
-                /** @var DataObject\Data\BlockElement $blockElement */
-                foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFieldDefinition($elementName);
-                    if (!$fd) {
-                        // class definition seems to have changed
-                        Logger::warn('class definition seems to have changed, element name: ' . $elementName);
-                        continue;
-                    }
-
-                    $params['context']['containerType'] = 'block';
-                    $params['injectedData'] = $blockElement->getData();
-                    $dataForEditMode = $fd->getForWebserviceExport($object, $params);
-                    $resultElement[$elementName] = $dataForEditMode;
-                }
-                $result[] = $resultElement;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        $result = [];
-
-        if (is_array($value)) {
-            foreach ($value as $blockElementsData) {
-                $resultElement = [];
-
-                foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
-                    $fd = $this->getFieldDefinition($elementName);
-                    if (!$fd) {
-                        // class definition seems to have changed
-                        Logger::warn('class definition seems to have changed, element name: ' . $elementName);
-                        continue;
-                    }
-
-                    $data = $fd->getFromWebserviceImport($blockElementDataRaw, $relatedObject, $params, $idMapper);
-                    $blockElement = new DataObject\Data\BlockElement($elementName, $fd->getFieldtype(), $data);
-
-                    $resultElement[$elementName] = $blockElement;
-                }
-                $result[] = $resultElement;
-            }
-        }
-
-        return $result;
     }
 
     /** True if change is allowed in edit mode.
@@ -793,8 +686,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport',
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }
@@ -1058,10 +958,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function preGetData($object, $params = [])
     {
         $data = null;
+        $params['owner'] = $object;
+        $params['fieldname'] = $this->getName();
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object);
+                $data = $this->load($object, $params);
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
@@ -1163,6 +1065,22 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             }
 
                             $data = $blockElement->getData();
+
+                            if ($data instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
+                                foreach ($data->getInternalData() as $language => $fields) {
+                                    foreach ($fields as $fieldName => $values) {
+                                        $lfd = $fd->getFieldDefinition($fieldName);
+                                        if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
+                                            if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {
+                                                $lfd->performMultipleAssignmentCheck($values);
+                                            }
+                                        }
+                                    }
+                                }
+                            } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation) {
+                                $fd->performMultipleAssignmentCheck($data);
+                            }
+
                             $fd->checkValidity($data);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
@@ -1192,8 +1110,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         if (is_array($blockDefinitions)) {
             foreach ($blockDefinitions as $field) {
-                if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                                                        && $field->getLazyLoading()) {
+                if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
 
                     // Lazy loading inside blocks isn't supported, turn it off if possible
                     if (method_exists($field, 'setLazyLoading')) {
@@ -1237,7 +1154,19 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     throw new \Error('language param missing');
                 }
             }
-            $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $blockElement->_setOwner($params['owner']);
+            $blockElement->_setOwnerFieldname($params['fieldname']);
+            $blockElement->_setOwnerLanguage($params['language'] ?? null);
         }
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\BlockElement::class . '[][]';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
 }

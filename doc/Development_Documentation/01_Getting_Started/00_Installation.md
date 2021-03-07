@@ -63,14 +63,14 @@ After the installer has finished, you can open the admin interface: `https://you
 
 ##### Debugging installation issues
 
-The installer writes a log in `var/logs` which contains any errors encountered during the installation. Please
+The installer writes a log in `var/log` which contains any errors encountered during the installation. Please
 have a look at the logs as a starting point when debugging installation issues.
 
 
 ## 5. Maintenance Cron Job
 
 ```bash
-*/5 * * * * /your/project/bin/console maintenance
+*/5 * * * * /your/project/bin/console pimcore:maintenance
 ```
 
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).

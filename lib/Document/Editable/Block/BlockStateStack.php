@@ -83,5 +83,3 @@ class BlockStateStack implements \Countable
         return count($this->states);
     }
 }
-
-class_alias(BlockStateStack::class, 'Pimcore\Document\Tag\Block\BlockStateStack');

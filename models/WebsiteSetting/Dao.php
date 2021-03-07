@@ -17,6 +17,8 @@ namespace Pimcore\Model\WebsiteSetting;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\WebsiteSetting $model
  */
 class Dao extends Model\Dao\PhpArrayTable
@@ -83,7 +85,7 @@ class Dao extends Model\Dao\PhpArrayTable
         if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
         } else {
-            throw new \Exception(sprintf(
+            throw new Model\Exception\NotFoundException(sprintf(
                 'Website Setting "%s" does not exist.',
                 $this->model->getName() ?? $name
             ));

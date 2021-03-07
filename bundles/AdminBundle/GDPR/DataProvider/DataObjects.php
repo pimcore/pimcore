@@ -26,11 +26,6 @@ use Pimcore\Model\Search\Backend\Data;
 class DataObjects extends Elements implements DataProviderInterface
 {
     /**
-     * @var \Pimcore\Model\Webservice\Service
-     */
-    protected $service;
-
-    /**
      * @var array
      */
     protected $exportIds = [];
@@ -40,9 +35,8 @@ class DataObjects extends Elements implements DataProviderInterface
      */
     protected $config = [];
 
-    public function __construct(\Pimcore\Model\Webservice\Service $service, array $config)
+    public function __construct(array $config)
     {
-        $this->service = $service;
         $this->config = $config;
     }
 
@@ -77,12 +71,16 @@ class DataObjects extends Elements implements DataProviderInterface
 
         $exportResult = [];
 
-        foreach (array_keys($this->exportIds['object']) as $id) {
-            $exportResult[] = $this->service->getObjectConcreteById($id);
+        if (!empty($this->exportIds['object'])) {
+            foreach (array_keys($this->exportIds['object']) as $id) {
+                // @TODO: this needs to be done independently from the REST webservices
+                //$exportResult[] = $this->service->getObjectConcreteById($id);
+            }
         }
-        if ($this->exportIds['image']) {
+        if (!empty($this->exportIds['image'])) {
             foreach (array_keys($this->exportIds['image']) as $id) {
-                $exportResult[] = $this->service->getAssetFileById($id);
+                // @TODO: this needs to be done independently from the REST webservices
+                //$exportResult[] = $this->service->getAssetFileById($id);
             }
         }
 

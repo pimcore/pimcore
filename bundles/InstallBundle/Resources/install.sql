@@ -55,22 +55,7 @@ CREATE TABLE `assets_metadata` (
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `cache`;
-CREATE TABLE `cache` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `data` longblob,
-  `mtime` INT(11) UNSIGNED DEFAULT NULL,
-  `expire` INT(11) UNSIGNED DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `cache_tags`;
-CREATE TABLE `cache_tags` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `tag` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`,`tag`),
-  INDEX `tag` (`tag`)
-) DEFAULT CHARSET=ascii;
+DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
@@ -141,9 +126,7 @@ CREATE TABLE `documents_editables` (
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `to` varchar(255) DEFAULT NULL,
   `from` varchar(255) DEFAULT NULL,
@@ -158,9 +141,7 @@ CREATE TABLE `documents_email` (
 DROP TABLE IF EXISTS `documents_newsletter`;
 CREATE TABLE `documents_newsletter` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `from` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
@@ -197,9 +178,7 @@ CREATE TABLE `documents_link` (
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(383) DEFAULT NULL,
@@ -215,9 +194,7 @@ CREATE TABLE `documents_page` (
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
@@ -237,9 +214,7 @@ CREATE TABLE `documents_translations` (
 DROP TABLE IF EXISTS `documents_printpage`;
 CREATE TABLE `documents_printpage` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
@@ -299,7 +274,6 @@ CREATE TABLE `glossary` (
   `text` varchar(255) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `abbr` varchar(255) DEFAULT NULL,
-  `acronym` varchar(255) DEFAULT NULL,
   `site` int(11) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
@@ -333,6 +307,8 @@ CREATE TABLE `lock_keys` (
   `key_expiration` int(10) unsigned NOT NULL,
   PRIMARY KEY (`key_id`)
 ) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `migration_versions`; /* table is created using doctrine:migrations:sync-metadata-storage command */
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
@@ -570,6 +546,16 @@ CREATE TABLE `tmp_store` (
   KEY `expiryDate` (`expiryDate`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `settings_store`;
+CREATE TABLE `settings_store` (
+  `id` varchar(190) NOT NULL DEFAULT '',
+  `scope` varchar(190) NOT NULL DEFAULT '',
+  `data` longtext,
+  `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
+  PRIMARY KEY (`id`, `scope`),
+  KEY `scope` (`scope`)
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
@@ -581,8 +567,8 @@ CREATE TABLE `translations_admin` (
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `translations_website`;
-CREATE TABLE `translations_website` (
+DROP TABLE IF EXISTS `translations_messages`;
+CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
@@ -624,7 +610,6 @@ CREATE TABLE `users` (
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` text DEFAULT NULL,
-  `apiKey` varchar(255) DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,

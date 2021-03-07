@@ -17,7 +17,7 @@ pimcore:
         type: "state_machine"
         supports: &local_workflow_supports_ref
           - \Pimcore\Model\DataObject\Product
-        initial_place: "local_300_basic_data_pending"
+        initial_markings: "local_300_basic_data_pending"
         marking_store: &local_workflow_marking_store_ref
           type: single_state
           arguments:
@@ -66,7 +66,7 @@ Example cloned workflows:
         type: "state_machine"
         supports:
           <<: *local_workflow_supports_ref
-        initial_place: "local_300_basic_data_pending"
+        initial_markings: "local_300_basic_data_pending"
         marking_store:
           <<: *local_workflow_marking_store_ref
         places:
@@ -84,7 +84,7 @@ Example cloned workflows:
       type: "state_machine"
       supports:
         <<: *local_workflow_supports_ref
-      initial_place: "local_300_basic_data_pending"
+      initial_markings: "local_300_basic_data_pending"
       marking_store:
         <<: *local_workflow_marking_store_ref
       places:
@@ -102,7 +102,7 @@ Example cloned workflows:
       type: "state_machine"
       supports:
         <<: *local_workflow_supports_ref
-      initial_place: "local_300_basic_data_pending"
+      initial_markings: "local_300_basic_data_pending"
       marking_store:
         <<: *local_workflow_marking_store_ref
       places:

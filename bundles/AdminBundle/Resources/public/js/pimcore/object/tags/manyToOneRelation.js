@@ -33,7 +33,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 return false;
             }
             return true;
-        });
+        }.bind(this));
     },
 
 
@@ -41,7 +41,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.tdCls += " grid_value_inherited";
             }
 
@@ -109,7 +109,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
             el.getEl().on('dblclick', function(){
                 var subtype = this.data.subtype;
-                if (this.data.type == "object" && this.data.subtype != "folder") {
+                if (this.data.type === "object" && this.data.subtype !== "folder" && this.data.subtype !== null) {
                     subtype = "object";
                 }
 
@@ -150,8 +150,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             });
         }
 
-
-        this.composite = Ext.create('Ext.form.FieldContainer', {
+        var compositeCfg = {
             fieldLabel: this.fieldConfig.title,
             labelWidth: labelWidth,
             layout: 'hbox',
@@ -166,7 +165,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                     this.requestNicePathData();
                 }.bind(this)
             }
-        });
+        };
+
+        if (this.fieldConfig.labelAlign) {
+            compositeCfg.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        this.composite = Ext.create('Ext.form.FieldContainer', compositeCfg);
 
         return this.composite;
     },
@@ -386,7 +391,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     },
 
     openElement: function () {
-        if (this.data.id && this.data.type && this.data.subtype) {
+        if (this.data.id && this.data.type) {
             pimcore.helpers.openElement(this.data.id, this.data.type, this.data.subtype);
         }
     },
@@ -518,6 +523,3 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         }
     }
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.tags.href = pimcore.object.tags.manyToOneRelation;

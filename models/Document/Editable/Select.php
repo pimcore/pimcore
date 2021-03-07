@@ -29,7 +29,7 @@ class Select extends Model\Document\Editable
      *
      * @var string
      */
-    public $text;
+    protected $text;
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,14 @@ class Select extends Model\Document\Editable
     public function getData()
     {
         return $this->text;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->getData();
     }
 
     /**
@@ -96,26 +104,4 @@ class Select extends Model\Document\Editable
     {
         return empty($this->text);
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->text === null or is_string($data->text)) {
-            $this->text = $data->text;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
 }
-
-class_alias(Select::class, 'Pimcore\Model\Document\Tag\Select');

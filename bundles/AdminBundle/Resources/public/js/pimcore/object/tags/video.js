@@ -35,7 +35,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
                     == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
@@ -54,11 +54,10 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-
-        if (intval(this.fieldConfig.width) < 1) {
+        if (!this.fieldConfig.width) {
             this.fieldConfig.width = 300;
         }
-        if (intval(this.fieldConfig.height) < 1) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = 300;
         }
 
@@ -96,11 +95,10 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutShow: function () {
-
-        if (intval(this.fieldConfig.width) < 1) {
+        if (!this.fieldConfig.width) {
             this.fieldConfig.width = 300;
         }
-        if (intval(this.fieldConfig.height) < 1) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = 300;
         }
 
@@ -181,7 +179,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     updateVideo: function () {
 
         var width = this.component.getWidth();
-        //need to geht height this way, because element has no hight at afterrender (whyever)
+        //need to geht height this way, because element has no height at afterrender (whyever)
         var height = this.fieldConfig.height - 55;
 
         var content = '';

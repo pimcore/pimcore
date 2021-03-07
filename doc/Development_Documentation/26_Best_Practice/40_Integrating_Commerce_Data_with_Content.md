@@ -33,27 +33,18 @@ class MyProductTeaser extends AbstractAreabrick
 ```
 
 **MyProductTeaser Template**
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */
-?>
+```twig
 <div class="row">
-    <?php while($this->block("teaserblock")->loop()) { ?>
-
-        <?php echo $this->renderlet("productteaser", array(
-            "controller" => "shop",
-            "action" => "product-cell",
-            "editmode" => $this->editmode, // needed if editmode should be delivered to controller of renderlet
-            "title" => "Drag a product here",
-            "height" => 370,
-            "width" => 270
-        )); ?>
-
-    <?php } ?>
+    {% for i in pimcore_block('teaserblock').iterator %}
+        {{ pimcore_renderlet('productteaser', {
+            controller: 'shop',
+            action: 'productCell',
+            width: 270,
+            height: 370,
+            title: 'Drag a product here',
+            editmode: editmode
+        }) }}
+    {% endfor %}
 </div>
 ```
 
@@ -71,50 +62,27 @@ class MyProductTeaser extends AbstractAreabrick
         if($type == 'object') {
 
             $product = Product::getById($id);
-            $this->view->product = $product;
-
+            return $this->render('product/product_cell.html.twig', ['product' => $product]);
         } else {
             throw new \Exception("Invalid Type");
         }
-        
     }
 ```
 
 **Template** 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- * @var \AppBundle\Model\DefaultProduct $product
- */
+```twig
+{% set col = app.request.get('editmode') ? 12 : 3 %}
 
-$product = $this->product;
-
-$linkProduct = $product->getLinkProduct();
-$link = $linkProduct->getDetailUrl();
-
-$language = $this->language;
-
-$col = $this->getParam("editmode") ? 12 : 3;
-
-
-?>
-
-<div class="col-sm-<?= $col ?> col-lg-<?= $col ?> col-md-<?= $col ?>">
+<div class="col-sm-{{ col }} col-lg-{{ col }} col-md-{{ col }}">
     <div class="thumbnail product-list-item">
-        <a href="<?= $link ?>">
-            <?=$product->getFirstImage('productList')->getHtml(['class' => 'product-image'])?>
-
+        <a href="{{ product.linkProduct.detailUrl }}">
+            {{ product.getFirstImage('productList').html({class: 'product-image'}) }}
             <div class="caption">
-                <h4 class="pull-right"><?=$product->getOsPrice()?></h4>
+                <h4 class="pull-right">{{ product.OSPrice }}</h4>
 
-                <h4>
-                    <?= $product->getOSName() ?>
-                </h4>
-
-                <p><?=\AppBundle\Tool\Text::cutStringRespectingWhitespace(trim(strip_tags($product->getDescription())), 70)?></p>
+                <h4>{{ product.OSName }}</h4>
+    
+                <p>{{ product.description|striptags|trim[:70] }}</p>
 
             </div>
         </a>
@@ -124,14 +92,13 @@ $col = $this->getParam("editmode") ? 12 : 3;
                 <div class="col-md-6">
                 </div>
                 <div class="col-md-6">
-                    <a href="<?= $this->pimcoreUrl(
-                        [
-                            "language" => $language,
-                            "action" => "add",
-                            "item" => $product->getId()
-                        ], "cart") ?>" class="btn btn-success btn-product">
+                    <a href="{{ pimcore_url({
+                        language: language,
+                        action: 'add',
+                        item: product.id,
+                    }, 'cart') }}" class="btn btn-success btn-product">
                         <span class="glyphicon glyphicon-shopping-cart"></span>
-                        <?= $this->translate("shop.buy") ?>
+                        {{ 'shop.buy'|trans }}
                     </a>
                 </div>
             </div>

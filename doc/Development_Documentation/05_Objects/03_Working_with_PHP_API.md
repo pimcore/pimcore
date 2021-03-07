@@ -3,7 +3,7 @@
 Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities 
 provided by Pimcore and for each Pimcore object class Pimcore generates corresponding PHP classes for working
 with these objects via a comfortable PHP API and take full advantage of a IDE (e.g. code completion etc.). 
-    
+
 ## CRUD Operations
 The following code snippet indicates how to access, create and modify an object programmatically:
 
@@ -46,7 +46,7 @@ $object = DataObject::getByPath("/path/to/the/object");
 $myObject->setName("My Name");
 $myObject->save();
 
- 
+
 //deleting objects
 $city->delete();
 ```
@@ -314,10 +314,10 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 <?php
 
 // revert to the default API behaviour, and setUnpublished can be used as usually
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(true);
+\Pimcore\Model\DataObject::setHideUnpublished(true);
 
 // force to return all objects including unpublished ones, even if setUnpublished is set to false
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(false);
+\Pimcore\Model\DataObject::setHideUnpublished(false);
 ```
 
 ### Filter Objects by attributes from Field Collections
@@ -356,71 +356,82 @@ The object listing of this example only delivers objects of the type Collectiont
 
 <a name="zendPaginatorListing">&nbsp;</a>
 
-### Working with Zend\Paginator
+### Working with Knp\Component\Pager\Paginator
 
 ##### Action 
 ```php
-public function testAction( Request $request )
+public function testAction( Request $request, \Knp\Component\Pager\PaginatorInterface $paginator)
 {
     $list = new DataObject\Simple\Listing();
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
-    $paginator = new \Zend\Paginator\Paginator($list);
-    $paginator->setCurrentPageNumber( $request->get('page') );
-    $paginator->setItemCountPerPage(10);
-    $this->view->paginator  = $paginator;
+    $paginator = $paginator->paginate(
+        $list,
+        $request->get('page', 1),
+        10
+    );
+
+    return $this->render('Test/Test.html.twig', [
+        'paginator' => $paginator,
+        'paginationVariables' => $paginator->getPaginationData()
+    ]);
 }
 ```
 ##### View
-```php
-<?php foreach($this->paginator as $item) { ?>
-    <h2>- <?= $item->getName(); ?></h2>
-<?php } ?>
- 
+```twig
+{% for item in paginator %}
+    <h2>{{ item.name }}</h2>
+{% endfor %}
 <br />
  
-<!-- pagination start -->
-<?=     $this->render("Backend/Includes/paging.html.php", get_object_vars($this->paginator->getPages("Sliding")), [
-       'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the URL)
-       'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the URL)
-    ]); ?>
-<!-- pagination end -->
+{% include 'includes/pagination.html.twig' %}
 ```
 
-##### Partial Script (includes/paging.php)
-```php
-<div>
-    <ul class="pagination">
-        <!-- First page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->first]); ?>">Start</a></li>
-  
-        <!-- Previous page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->previous]); ?>">&lt; Previous</a></li>
- 
-        <!-- Numbered page links -->
-        <?php foreach ($this->pagesInRange as $page): ?>
-            <?php if ($page != $this->current): ?>
-                <li><a href="<?= $this->pimcoreUrl(['page' => $page]); ?>"><?= $page; ?></a></li>
-            <?php else: ?>
-                <li class="disabled"><a href="#"><?= $page; ?></a></li>
-            <?php endif; ?>
-        <?php endforeach; ?>
-         
-        <!-- Next page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->next]); ?>">Next &gt;</a></li>
-         
-        <!-- Last page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->last]); ?>">End</a></li>
-         
+##### Partial Script (`includes/pagination.html.twig`)
+```twig
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {%  if(paginationVariables.previous is defined) %}
+            <li class="page-item">
+                <a class="page-link prev" href="{{  pimcore_url({'page': paginationVariables.previous}) }}" aria-label="Previous">
+                    <span aria-hidden="true"></span>
+                </a>
+            </li>
+        {%  endif %}
+
+        {%  for page in paginationVariables.pagesInRange %}
+
+            {%  if(paginationVariables.current == page) %}
+
+                <li class="page-item active" aria-current="page">
+                                  <span class="page-link">
+                                    {{  page }}
+                                    <span class="sr-only">(current)</span>
+                                  </span>
+                </li>
+
+            {%  else %}
+                <li class="page-item"><a class="page-link" href="{{  pimcore_url({'page': page}) }}">{{ page }}</a></li>
+            {%  endif %}
+
+        {% endfor %}
+
+        {%  if(paginationVariables.next is defined) %}
+            <li class="page-item">
+                <a class="page-link next" href="{{  pimcore_url({'page': paginationVariables.next}) }}" aria-label="Next">
+                    <span class="flip" aria-hidden="true"></span>
+                </a>
+            </li>
+        {%  endif %}
     </ul>
- </div>
+</nav>
 ```
 
 ### Access and modify internal object list query
 
 It is possible to access and modify the internal query from every object listing. The internal query is based 
-on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
+on `\Doctrine\DBAL\Query\QueryBuilder`.
 ```php
 
 <?php
@@ -430,9 +441,9 @@ on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(
-    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list) {
-        $select->join(
+$list->onCreateQueryBuilder(
+    function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) use ($list) {
+        $queryBuilder->join(
         ['rating' => 'plugin_rating_ratings'],
         'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
         ''
@@ -443,7 +454,7 @@ $list->onCreateQuery(
 
 ### Debugging the Object List Query
 
-You can access and print the internal query which is based on `\Pimcore\Db\ZendCompatibility\QueryBuilder` to debug your conditions like this:
+You can access and print the internal query which is based on `\Doctrine\DBAL\Query\QueryBuilder` to debug your conditions like this:
 
 ```php
 <?php
@@ -452,10 +463,10 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 /** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
 $list = new Pimcore\Model\DataObject\News\Listing();
  
-// set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
+// set onCreateQueryBuilder callback
+$list->onCreateQueryBuilder(function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
     // echo query
-    echo $query;
+    echo $queryBuilder;
 });
 ```
 

@@ -91,7 +91,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
             $user = $adminSession->get('user');
             if ($user && $user instanceof User) {
                 $event = new LogoutEvent($request, $user);
-                $this->eventDispatcher->dispatch(AdminEvents::LOGIN_LOGOUT, $event);
+                $this->eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOGOUT);
 
                 $adminSession->remove('user');
             }
@@ -112,7 +112,9 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         $response->headers->setCookie(new Cookie('pimcore_opentabs', false, 315554400, '/'));
         $response->headers->clearCookie('pimcore_admin_sid', '/', null, false, true);
 
-        $this->logger->debug('Logout succeeded, redirecting to ' . $response->getTargetUrl());
+        if ($response instanceof RedirectResponse) {
+            $this->logger->debug('Logout succeeded, redirecting to ' . $response->getTargetUrl());
+        }
 
         return $response;
     }

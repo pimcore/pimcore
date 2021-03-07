@@ -32,10 +32,8 @@ class OrderSearch implements OrderListFilterInterface
     public function apply(OrderListInterface $orderList)
     {
         // init
-        $query = $orderList->getQuery();
-
-        if ($this->getKeyword()) {
-            $condition = <<<'SQL'
+        $queryBuilder = $orderList->getQueryBuilder();
+        $condition = <<<'SQL'
 0
 OR `order`.ordernumber like ?
 OR `order`.comment like ?
@@ -57,7 +55,8 @@ OR `order`.deliveryCity like ?
 OR `order`.deliveryCountry like ?
 SQL;
 
-            $query->where($condition, '%' . $this->getKeyword() . '%');
+        if ($this->getKeyword()) {
+            $queryBuilder->andWhere(str_replace('like ?', 'like :order_keyword', $condition))->setParameter(':order_keyword', $this->getKeyword());
         }
 
         return $this;

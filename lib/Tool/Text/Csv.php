@@ -73,10 +73,10 @@ class Csv
             return "$cr$lf";
         }
         if ($count_cr == 0 && $count_lf > 0) {
-            return "$lf";
+            return (string)$lf;
         }
         if ($count_lf == 0 && $count_cr > 0) {
-            return "$cr";
+            return (string)$cr;
         }
 
         // sane default: cr+lf

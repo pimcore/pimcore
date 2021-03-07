@@ -94,7 +94,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
      * @throws LogicException
      * @throws \Exception
      */
-    public function setMarking($subject, Marking $marking)
+    public function setMarking($subject, Marking $marking, array $context = [])
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $places = array_keys($marking->getPlaces());

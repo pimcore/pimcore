@@ -29,7 +29,7 @@ class Checkbox extends Model\Document\Editable
      *
      * @var bool
      */
-    public $value = false;
+    protected $value = false;
 
     /**
      * @see EditableInterface::getType
@@ -44,11 +44,21 @@ class Checkbox extends Model\Document\Editable
     /**
      * @see EditableInterface::getData
      *
-     * @return mixed
+     * @return bool
      */
     public function getData()
     {
         return $this->value;
+    }
+
+    /**
+     * @see EditableInterface::getData
+     *
+     * @return bool
+     */
+    public function getValue()
+    {
+        return $this->getData();
     }
 
     /**
@@ -104,27 +114,4 @@ class Checkbox extends Model\Document\Editable
     {
         return $this->value;
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     *
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->bool === null || is_bool($data)) {
-            $this->value = (bool) $data->value;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
 }
-
-class_alias(Checkbox::class, 'Pimcore\Model\Document\Tag\Checkbox');

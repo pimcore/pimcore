@@ -43,16 +43,24 @@ final class VersionsCleanupStackTraceDbTask implements TaskInterface
         $list->setOrderKey('date');
         $list->setOrder('DESC');
 
-        $versions = $list->load();
+        $total = $list->getTotalCount();
+        $perIteration = 500;
 
-        foreach ($versions as $version) {
-            try {
-                $version->setGenerateStackTrace(false);
-                $version->setStackTrace(null);
-                $version->getDao()->save();
-            } catch (\Exception $e) {
-                $this->logger->debug('Unable to cleanup stack trace for version ' . $version->getId() . ', reason: '.$e->getMessage());
+        for ($i = 0; $i < (ceil($total / $perIteration)); $i++) {
+            $list->setLimit($perIteration);
+            $list->setOffset($i * $perIteration);
+            $versions = $list->load();
+
+            foreach ($versions as $version) {
+                try {
+                    $version->setGenerateStackTrace(false);
+                    $version->setStackTrace(null);
+                    $version->getDao()->save();
+                } catch (\Exception $e) {
+                    $this->logger->debug('Unable to cleanup stack trace for version ' . $version->getId() . ', reason: ' . $e->getMessage());
+                }
             }
+            \Pimcore::collectGarbage();
         }
     }
 }

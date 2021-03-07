@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
-class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -36,16 +36,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $fieldtype = 'manyToManyObjectRelation';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -58,13 +58,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @var string
      */
     public $queryColumnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
 
     /**
      * @var bool
@@ -298,7 +291,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -306,19 +299,22 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -326,13 +322,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -352,6 +351,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
+
             foreach ($data as $o) {
                 if (empty($o)) {
                     continue;
@@ -446,82 +447,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (is_array($data)) {
-            $items = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $items[] = [
-                        'type' => $eo->getType(),
-                        'id' => $eo->getId(),
-                    ];
-                }
-            }
-
-            return $items;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return array|mixed
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $relatedObjects = [];
-        if (empty($value)) {
-            return null;
-        } elseif (is_array($value)) {
-            foreach ($value as $key => $item) {
-                $item = (array) $item;
-                $id = $item['id'];
-
-                if ($idMapper) {
-                    $id = $idMapper->getMappedId('object', $id);
-                }
-
-                $relatedObject = null;
-                if ($id) {
-                    $relatedObject = DataObject::getById($id);
-                }
-
-                if ($relatedObject instanceof DataObject\AbstractObject) {
-                    $relatedObjects[] = $relatedObject;
-                } else {
-                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                        throw new \Exception('cannot get values from web service import - references unknown object with id [ '.$item['id'].' ]');
-                    } else {
-                        $idMapper->recordMappingFailure('object', $object->getId(), 'object', $item['id']);
-                    }
-                }
-            }
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-
-        return $relatedObjects;
-    }
-
-    /**
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
@@ -548,7 +473,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -749,7 +674,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }
@@ -992,5 +917,3 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return parent::addListingFilter($listing, $data, $operator);
     }
 }
-
-class_alias(ManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Objects');

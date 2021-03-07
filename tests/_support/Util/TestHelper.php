@@ -2,13 +2,14 @@
 
 namespace Pimcore\Tests\Util;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
@@ -18,6 +19,8 @@ use Symfony\Component\Finder\Finder;
 
 class TestHelper
 {
+    public static $thumbnail_configs = [];
+
     /**
      * Constant will be defined upon suite initialization and will result to true
      * if we have a valid DB configuration.
@@ -120,8 +123,8 @@ class TestHelper
     }
 
     /**
-     * @param  Asset $asset1
-     * @param  Asset $asset2
+     * @param Asset $asset1
+     * @param Asset $asset2
      * @param bool $ignoreCopyDifferences
      * @param bool $id
      *
@@ -155,12 +158,12 @@ class TestHelper
 
                 ksort($editables);
 
-                /** @var Document\Tag $value */
+                /** @var Document\Editable $value */
                 foreach ($editables as $key => $value) {
-                    if ($value instanceof Document\Tag\Video) {
+                    if ($value instanceof Document\Editable\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
-                    } elseif (!$value instanceof Document\Tag\Block) {
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->getType() . '_' . $value->getId();
+                    } elseif (!$value instanceof Document\Editable\Block) {
                         $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
                         $d['editable_' . $key] = $value->getName();
@@ -254,7 +257,7 @@ class TestHelper
 
                             if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
                                 $fieldValue = serialize($v);
-                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
                                 $fieldValue = null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -277,7 +280,7 @@ class TestHelper
                 return [];
             }
 
-            $localeService = \Pimcore::getContainer()->get('pimcore.locale');
+            $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
             $localeBackup = $localeService->getLocale();
 
             $validLanguages = Tool::getValidLanguages();
@@ -295,7 +298,7 @@ class TestHelper
             return serialize($lData);
         } elseif (method_exists($object, $getter) && $fd instanceof ObjectModel\Data\Link) {
             return serialize($fd);
-        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
             return $fd->getForCsvExport($object);
         }
     }
@@ -401,7 +404,7 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
+     * @param bool $save
      *
      * @return ObjectModel\Folder
      */
@@ -444,10 +447,10 @@ class TestHelper
 
     /**
      * @param TestDataHelper $testDataHelper
-     * @param string         $keyPrefix
-     * @param bool           $save
-     * @param bool           $publish
-     * @param int            $seed
+     * @param string $keyPrefix
+     * @param bool $save
+     * @param bool $publish
+     * @param int $seed
      *
      * @return Unittest
      */
@@ -491,7 +494,7 @@ class TestHelper
         $testDataHelper->fillPassword($object, 'password', $seed);
         $testDataHelper->fillMultiSelect($object, 'countries', $seed);
         $testDataHelper->fillMultiSelect($object, 'languages', $seed);
-        $testDataHelper->fillGeopoint($object, 'point', $seed);
+        $testDataHelper->fillGeoCoordinates($object, 'point', $seed);
         $testDataHelper->fillGeobounds($object, 'bounds', $seed);
         $testDataHelper->fillGeopolygon($object, 'poly', $seed);
         $testDataHelper->fillTable($object, 'table', $seed);
@@ -518,19 +521,18 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
-     * @param bool   $publish
+     * @param bool $save
+     * @param bool $publish
      *
-     * @return Document\Page
+     * @return Document
      */
-    public static function createEmptyDocumentPage($keyPrefix = '', $save = true, $publish = true)
+    public static function createEmptyDocument($keyPrefix = '', $save = true, $publish = true, $type = '\\Pimcore\\Model\\Document\\Page')
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
         }
 
-        $document = new Document\Page();
-        $document->setType('page');
+        $document = new $type();
         $document->setParentId(1);
         $document->setUserOwner(1);
         $document->setUserModification(1);
@@ -546,6 +548,18 @@ class TestHelper
         }
 
         return $document;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param bool   $save
+     * @param bool   $publish
+     *
+     * @return Document\Page
+     */
+    public static function createEmptyDocumentPage($keyPrefix = '', $save = true, $publish = true)
+    {
+        return self::createEmptyDocument($keyPrefix, $save, $publish);
     }
 
     /**
@@ -578,13 +592,14 @@ class TestHelper
      * @param string $keyPrefix
      * @param string|null $data
      * @param bool $save
+     * @param string $filePath
      *
      * @return Asset\Image
      */
-    public static function createImageAsset($keyPrefix = '', $data = null, $save = true)
+    public static function createImageAsset($keyPrefix = '', $data = null, $save = true, $filePath = 'assets/images/image5.jpg')
     {
         if (!$data) {
-            $path = static::resolveFilePath('assets/images/image5.jpg');
+            $path = static::resolveFilePath($filePath);
             if (!file_exists($path)) {
                 throw new \RuntimeException(sprintf('Path %s was not found', $path));
             }
@@ -765,7 +780,7 @@ class TestHelper
         }
 
         if ($cleanObjects) {
-            static::cleanUpTree(AbstractObject::getById(1), 'object');
+            static::cleanUpTree(DataObject::getById(1), 'object');
             codecept_debug(sprintf('Number of objects is: %d', static::getObjectCount()));
         }
 
@@ -783,10 +798,10 @@ class TestHelper
     }
 
     /**
-     * @param AbstractElement $root
+     * @param ElementInterface|null $root
      * @param string $type
      */
-    public static function cleanUpTree(AbstractElement $root, $type)
+    public static function cleanUpTree(?ElementInterface $root, $type)
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
@@ -800,7 +815,7 @@ class TestHelper
             $children = $root->getChildren();
         }
 
-        /** @var AbstractElement|AbstractObject|Document|Asset $child */
+        /** @var ElementInterface $child */
         foreach ($children as $child) {
             codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
             $child->delete();
@@ -875,5 +890,65 @@ class TestHelper
         }
 
         return $randomString;
+    }
+
+    public static function clearThumbnailConfiguration($name)
+    {
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if ($pipe) {
+            $pipe->delete();
+        }
+    }
+
+    public static function clearThumbnailConfigurations()
+    {
+        foreach (self::$thumbnail_configs as $name) {
+            static::clearThumbnailConfiguration($name);
+        }
+    }
+
+    /**
+     * @param int $angle
+     *
+     * @return Asset\Image\Thumbnail\Config
+     *
+     * @throws \Exception
+     */
+    public static function createThumbnailConfigurationRotate($angle = 90)
+    {
+        $name = 'assettest_rotate_' . $angle;
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config();
+            $pipe->setName($name);
+            $pipe->addItem('rotate', ['angle' => $angle], 'default');
+            $pipe->save();
+            self::$thumbnail_configs[] = $name;
+        }
+
+        return $pipe;
+    }
+
+    /**
+     * @param int $width
+     * @param false $forceResize
+     *
+     * @return Asset\Image\Thumbnail\Config
+     *
+     * @throws \Exception
+     */
+    public static function createThumbnailConfigurationScaleByWidth($width = 256, $forceResize = false)
+    {
+        $name = 'assettest_scaleByWidth_' . $width . '_' . $forceResize;
+        $pipe = Asset\Image\Thumbnail\Config::getByName($name);
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config($name);
+            $pipe->setName($name);
+            $pipe->addItem('scaleByWidth', ['width' => $width, 'forceResize' => $forceResize], 'default');
+            $pipe->save();
+            self::$thumbnail_configs[] = $name;
+        }
+
+        return $pipe;
     }
 }

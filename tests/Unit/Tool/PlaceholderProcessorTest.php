@@ -30,7 +30,7 @@ class PlaceholderProcessorTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processor = new PlaceholderProcessor();
     }

@@ -36,7 +36,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     protected $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
 
     /**
-     * @var array
+     * @param string $key
      *
      * @return bool
      */

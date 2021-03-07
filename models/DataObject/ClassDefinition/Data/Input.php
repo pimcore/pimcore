@@ -19,9 +19,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Input extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Input extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -36,9 +35,9 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $fieldtype = 'input';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string|null
@@ -67,13 +66,6 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnLength = 190;
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
-
-    /**
      * @var string
      */
     public $regex = '';
@@ -89,7 +81,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $showCharCount;
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -97,12 +89,15 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;
@@ -341,5 +336,25 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
     }
 }

@@ -25,31 +25,6 @@ The Multiselect editable generates a **multiselect** box component in editmode.
 The code below renders a multiselectbox in the backend. 
 Also, it shows the list of chosen elements in the frontend. 
 
-<div class="code-section">
-
-```php
-<?php if($this->editmode): ?>
-    <?= $this->multiselect("categories", [
-        "width" => 200,
-        "height" => 100,
-        "store" => [
-            ["cars", "Cars"], //the first array element is a key, the second is a label rendered in editmode
-            ["motorcycles", "Motorcycles"],
-            ["accessories", "Accessories"] 
-        ]
-    ]) ?>
-<?php else: ?>
-    <p><?= $this->translate("This page is linked to"); ?>:
-        <?php foreach($this->multiselect("categories")->getData() as $categoryKey): ?>
-            <span>
-                <?= $this->translate($categoryKey); ?>
-            </span>
-        <?php endforeach; ?>
-        categories
-    </p>
-<?php endif; ?>
-```
-
 ```twig
 {% if editmode %}
     {{ pimcore_multiselect('categories', {
@@ -72,8 +47,6 @@ Also, it shows the list of chosen elements in the frontend.
     </p>
 {% endif %}
 ```
-
-</div>
 
 The editmode preview:
 

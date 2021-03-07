@@ -572,6 +572,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $params = [];
         $params['index'] = $this->getIndexName();
         $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
+        $params['track_total_hits'] = true;
+        $params['rest_total_hits_as_int'] = true;
+
         $params['body']['_source'] = true;
 
         if (is_int($this->getLimit())) { // null not allowed
@@ -1171,30 +1174,43 @@ abstract class AbstractElasticSearch implements ProductListInterface
             // send request
             $result = $this->sendRequest($params);
 
-            if ($result['aggregations']) {
-                foreach ($result['aggregations'] as $fieldname => $aggregation) {
-                    $buckets = $this->searchForBuckets($aggregation);
-
-                    $groupByValueResult = [];
-                    if ($buckets) {
-                        foreach ($buckets as $bucket) {
-                            if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                                $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
-                            } else {
-                                $data = $this->convertBucketValues($bucket);
-                                $groupByValueResult[] = $data;
-                            }
-                        }
-                    }
-
-                    $this->preparedGroupByValuesResults[$fieldname] = $groupByValueResult;
-                }
-            }
+            // process result from elasticsearch
+            $this->processResult($result);
         } else {
             $this->preparedGroupByValuesResults = [];
         }
 
         $this->preparedGroupByValuesLoaded = true;
+    }
+
+    /**
+     * process the result array from elasticsearch
+     *
+     * @param array $result
+     *
+     * @return void
+     */
+    protected function processResult(array $result)
+    {
+        if ($result['aggregations']) {
+            foreach ($result['aggregations'] as $fieldname => $aggregation) {
+                $buckets = $this->searchForBuckets($aggregation);
+
+                $groupByValueResult = [];
+                if ($buckets) {
+                    foreach ($buckets as $bucket) {
+                        if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                            $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
+                        } else {
+                            $data = $this->convertBucketValues($bucket);
+                            $groupByValueResult[] = $data;
+                        }
+                    }
+                }
+
+                $this->preparedGroupByValuesResults[$fieldname] = $groupByValueResult;
+            }
+        }
     }
 
     /**
@@ -1383,16 +1399,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $this->setLimit($itemCountPerPage);
 
         return $this->getProducts();
-    }
-
-    /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

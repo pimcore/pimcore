@@ -23,11 +23,10 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\Asset\Packages;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -65,11 +64,6 @@ class EditmodeListener implements EventSubscriberInterface
     protected $router;
 
     /**
-     * @var Packages
-     */
-    protected $package;
-
-    /**
      * @var array
      */
     protected $contentTypes = [
@@ -82,22 +76,19 @@ class EditmodeListener implements EventSubscriberInterface
      * @param UserLoader $userLoader
      * @param PimcoreBundleManager $bundleManager
      * @param RouterInterface $router
-     * @param Packages $package
      */
     public function __construct(
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver,
         UserLoader $userLoader,
         PimcoreBundleManager $bundleManager,
-        RouterInterface $router,
-        Packages $package
+        RouterInterface $router
     ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
         $this->userLoader = $userLoader;
         $this->bundleManager = $bundleManager;
         $this->router = $router;
-        $this->package = $package;
     }
 
     /**
@@ -111,7 +102,7 @@ class EditmodeListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -128,7 +119,7 @@ class EditmodeListener implements EventSubscriberInterface
         $this->editmodeResolver->isEditmode($request);
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
@@ -274,7 +265,7 @@ class EditmodeListener implements EventSubscriberInterface
                 $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
             }
 
-            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false)) . '"></script>' . "\n";
+            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents)) . '"></script>' . "\n";
         }
         $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
             'language' => $language,
@@ -306,7 +297,7 @@ class EditmodeListener implements EventSubscriberInterface
         return [
             '/bundles/pimcoreadmin/js/pimcore/common.js',
             '/bundles/pimcoreadmin/js/lib/class.js',
-            '/bundles/pimcoreadmin/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
+            '/bundles/pimcoreadmin/extjs/js/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
             '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js',
         ];
     }
@@ -318,7 +309,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
-                $this->package->getUrl('bundles/fosjsrouting/js/router.js'),
+                '/bundles/fosjsrouting/js/router.js',
                 '/bundles/pimcoreadmin/js/pimcore/functions.js',
                 '/bundles/pimcoreadmin/js/pimcore/overrides.js',
                 '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
@@ -346,11 +337,11 @@ class EditmodeListener implements EventSubscriberInterface
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/table.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/video.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/multiselect.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/editables/area_abstract.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/areablock.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/area.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/pdf.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/embed.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/compatibility-layer.js', //@TODO Remove deprecated tag aliases in Pimcore 7.
                 '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
             ],
             $this->bundleManager->getEditmodeJsPaths()
@@ -365,6 +356,8 @@ class EditmodeListener implements EventSubscriberInterface
         return array_merge(
             [
                 '/bundles/pimcoreadmin/css/icons.css',
+                '/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_1.css',
+                '/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_2.css',
                 '/bundles/pimcoreadmin/css/editmode.css?_dc=' . time(),
             ],
             $this->bundleManager->getEditmodeCssPaths()

@@ -13,7 +13,7 @@
 
 
 pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.config.objects");
-pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.object.tags.objects, {
+pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
     type: "objects",
     dataChanged: false,

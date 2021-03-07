@@ -19,12 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 
 interface BlockInterface
 {
-    /**
-     * Loops through the block
-     *
-     * @return bool
-     */
-    public function loop();
+    public function getIterator();
 
     /**
      * Is executed at the beginning of the loop and setup some general settings
@@ -84,5 +79,3 @@ interface BlockInterface
      */
     public function isEmpty();
 }
-
-class_alias(BlockInterface::class, 'Pimcore\Model\Document\Tag\BlockInterface');

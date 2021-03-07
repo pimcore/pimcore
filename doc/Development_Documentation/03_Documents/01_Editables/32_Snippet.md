@@ -30,18 +30,10 @@ You have to create them the same way as other documents (pages).
 ## Examples
 ### Basic Usage
 
-<div class="code-section">
-
-```php
- // Define a place for a snippet to be dragged onto, advanced usage
- <?= $this->snippet("mySnippet", ["width" => 250, "height" => 100]) ?>
-```
-
 ```twig
 {{ pimcore_snippet("mySnippet", {"width": 250, "height": 100}) }}
 ```
 
-</div>
 
 ### Caching 
 
@@ -51,15 +43,6 @@ by enabling the full page cache.
 Regardless if you're using the full page cache or not it's a good practice to
 enable the cache directly on the editable if the snippet result should be cached. 
 
-<div class="code-section">
-
-```php
- // Define a place for a snippet to be dragged onto, advanced usage
- <?= $this->snippet("mySnippet", ["cache" => true]) ?>
-```
-
 ```twig
 {{ pimcore_snippet("mySnippet", {cache: true}) }}
 ```
-
-</div>

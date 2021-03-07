@@ -47,8 +47,13 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             input.labelWidth = this.fieldConfig.labelWidth;
         }
 
-        input.width += input.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            input.labelAlign = this.fieldConfig.labelAlign;
+        }
 
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            input.width = this.sumWidths(input.width, input.labelWidth);
+        }
 
         if (this.data) {
             input.value = this.data;
@@ -56,6 +61,8 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
 
         if(this.fieldConfig.elementType === 'textarea') {
             this.component = new Ext.form.field.TextArea(input);
+        } else if (this.fieldConfig.elementType === 'html') {
+            this.component = new Ext.form.field.Display(input);
         } else {
             this.component = new Ext.form.field.Text(input);
         }

@@ -10,6 +10,4 @@ services:
 
     Pimcore\Controller\ArgumentValueResolver\EditmodeValueResolver: ~
 
-    Pimcore\Controller\ArgumentValueResolver\TemplateVarsValueResolver: ~
-
     Pimcore\Controller\ArgumentValueResolver\WebsiteConfigValueResolver: ~

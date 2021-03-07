@@ -97,6 +97,3 @@ $data = [
 
 $object->setMyBlockField([$data]); 
 ```
-
-
-

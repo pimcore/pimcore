@@ -34,7 +34,7 @@ class Environment implements EnvironmentInterface
     protected $defaultCurrency;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $customItems = [];
 
@@ -49,17 +49,17 @@ class Environment implements EnvironmentInterface
     protected $useGuestCart = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentAssortmentTenant;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentAssortmentSubTenant;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentCheckoutTenant;
 
@@ -69,7 +69,7 @@ class Environment implements EnvironmentInterface
      * This value will not be stored into the session and is only valid for current process
      * set with setCurrentCheckoutTenant('tenant', false');
      *
-     * @var string
+     * @var string|null
      */
     protected $currentTransientCheckoutTenant;
 
@@ -180,66 +180,6 @@ class Environment implements EnvironmentInterface
         $this->currentCheckoutTenant = null;
         $this->currentTransientCheckoutTenant = null;
         $this->useGuestCart = false;
-    }
-
-    /**
-     * @deprecated
-     *
-     * use setCurrentAssortmentTenant instead
-     *
-     * @param string $currentTenant
-     *
-     * @return mixed|void
-     */
-    public function setCurrentTenant($currentTenant)
-    {
-        $this->load();
-
-        $this->setCurrentAssortmentTenant($currentTenant);
-    }
-
-    /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentTenant instead
-     *
-     * @return string
-     */
-    public function getCurrentTenant()
-    {
-        $this->load();
-
-        return $this->getCurrentAssortmentTenant();
-    }
-
-    /**
-     * @deprecated
-     *
-     * use setCurrentAssortmentSubTenant instead
-     *
-     * @param mixed $currentSubTenant
-     *
-     * @return mixed|void
-     */
-    public function setCurrentSubTenant($currentSubTenant)
-    {
-        $this->load();
-
-        $this->setCurrentAssortmentSubTenant($currentSubTenant);
-    }
-
-    /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentSubTenant instead
-     *
-     * @return mixed
-     */
-    public function getCurrentSubTenant()
-    {
-        $this->load();
-
-        return $this->getCurrentAssortmentSubTenant();
     }
 
     /**

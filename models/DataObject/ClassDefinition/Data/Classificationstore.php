@@ -35,13 +35,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $fieldtype = 'classificationstore';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Classificationstore';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -67,14 +60,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $title;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -82,9 +75,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $maxTabs;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $labelWidth;
+    public $labelWidth = 0;
 
     /** @var bool */
     public $localized;
@@ -381,8 +374,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /pimcore/modules/admin/views/scripts/object/preview-version.php
-        return $data;
+        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        return 'CLASSIFICATIONSTORE';
     }
 
     /**
@@ -450,201 +443,17 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @deprecated
+     * @param DataObject\Classificationstore|null $data
      *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * @return bool
      */
-    public function getForWebserviceExport($object, $params = [])
+    public function isEmpty($data)
     {
-        $this->doGetForWebserviceExport($object, $params, $result);
-
-        return $result;
-    }
-
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     * @param array $result
-     * @param int $level
-     *
-     * @throws \Exception
-     */
-    private function doGetForWebserviceExport($object, $params = [], &$result = [], $level = 0)
-    {
-
-        /** @var DataObject\Classificationstore $data */
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        if ($this->isLocalized()) {
-            $validLanguages = Tool::getValidLanguages();
-        } else {
-            $validLanguages = [];
-        }
-        array_unshift($validLanguages, 'default');
-
-        if ($data) {
-            $activeGroups = [];
-            $items = $data->getActiveGroups();
-            if (is_array($items)) {
-                foreach ($items as $groupId => $groupData) {
-                    $groupDef = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                    if (!is_null($groupDef)) {
-                        $activeGroups[$groupId] = [
-                            'id' => $groupId,
-                            'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
-                            'enabled' => $groupData,
-                        ];
-                    }
-                }
-            }
-
-            $result['activeGroups'] = $activeGroups;
-            $items = $data->getItems();
-
-            foreach ($items as $groupId => $groupData) {
-                if (!isset($activeGroups[$groupId])) {
-                    continue;
-                }
-                $groupResult = [];
-
-                foreach ($groupData as $keyId => $keyData) {
-                    $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
-                    $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-                    $context = [
-                        'containerType' => 'classificationstore',
-                        'fieldname' => $this->getName(),
-                        'groupId' => $groupId,
-                        'keyId' => $keyId,
-                    ];
-
-                    foreach ($validLanguages as $language) {
-                        $context['language'] = $language;
-                        $value = $fd->getForWebserviceExport($object, ['context' => $context, 'language' => $language]);
-                        $resultItem = [
-                            'id' => $keyId,
-                            'name' => $keyConfig->getName(),
-                            'description' => $keyConfig->getDescription(),
-                            'value' => $value,
-                        ];
-                        if ($level > 0) {
-                            $resultItem['inheritedFrom'] = $object->getId();
-                        }
-                        $groupResult[$language][] = $resultItem;
-                    }
-                }
-
-                if ($groupResult) {
-                    $groupDef = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                    if (!is_null($groupDef)) {
-                        $groupResult = [
-                            'id' => $groupId,
-                            'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
-                            'keys' => $groupResult,
-                        ];
-                    }
-                }
-
-                $result['groups'][] = $groupResult;
-            }
+        if ($data instanceof DataObject\Classificationstore) {
+            return empty($data->getItems());
         }
 
-        $inheritanceAllowed = $object->getClass()->getAllowInherit();
-        if (DataObject\AbstractObject::doGetInheritedValues($object)) {
-            $parent = DataObject\Service::hasInheritableParentObject($object);
-            if ($parent) {
-                $foundEmptyValue = false;
-
-                $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
-
-                foreach ($validLanguages as $language) {
-                    foreach ($activeGroupIds as $groupId => $enabled) {
-                        if (!$enabled) {
-                            continue;
-                        }
-
-                        $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                        $relation->setCondition('groupId = ' . $relation->quote($groupId));
-                        $relation = $relation->load();
-                        foreach ($relation as $key) {
-                            $keyId = $key->getKeyId();
-                            $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
-
-                            if ($fd->isEmpty($result[$language][$groupId][$keyId])) {
-                                $foundEmptyValue = true;
-                            }
-                        }
-                    }
-                }
-
-                if ($foundEmptyValue) {
-                    // still some values are missing, ask the parent
-                    $getter = 'get' . ucfirst($this->getName());
-                    $parentData = $parent->$getter();
-                    $parentResult = $this->doGetForWebserviceExport($parent, $params, $result, $level + 1);
-                }
-            }
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|null|DataObject\Classificationstore
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if ($value) {
-            $storeData = new DataObject\Classificationstore();
-            $storeData->setFieldname($this->getName());
-            $storeData->setObject($object);
-            $activeGroupsLocal = [];
-            $activeGroupsRemote = $value['activeGroups'];
-
-            if ($activeGroupsRemote instanceof \stdClass) {
-                $activeGroupsRemote = get_object_vars($activeGroupsRemote);
-                foreach ($activeGroupsRemote as $data) {
-                    $localId = $idMapper ? $idMapper->getMappedId('csGroup', $data['id']) : $data['id'];
-                    $activeGroupsLocal[$localId] = $localId;
-                }
-            }
-
-            $storeData->setActiveGroups($activeGroupsLocal);
-
-            $groupsRemote = $value['groups'];
-            if ($groupsRemote instanceof \stdClass) {
-                $groupsRemote = get_object_vars($groupsRemote);
-                foreach ($groupsRemote as $remoteGroupData) {
-                    $localGroupId = $idMapper ? $idMapper->getMappedId('csGroup', $remoteGroupData['id']) : $remoteGroupData['id'];
-                    $remoteKeys = $remoteGroupData['keys'];
-                    $remoteKeys = (array) $remoteKeys;
-
-                    foreach ($remoteKeys as $language => $keyList) {
-                        foreach ($keyList as $keyData) {
-                            $localKeyId = $idMapper ? $idMapper->getMappedId('csKey', $keyData->id) : $keyData->id;
-                            $keyConfig = DataObject\Classificationstore\KeyConfig::getById($localKeyId);
-                            $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyConfig->getDefinition()), $keyConfig->getType());
-                            $value = $keyData->value;
-                            $value = $keyDef->getFromWebserviceImport($value, $object, []);
-                            $storeData->setLocalizedKeyValue($localGroupId, $localKeyId, $value, $language);
-                        }
-                    }
-                }
-            }
-
-            return $storeData;
-        }
+        return is_null($data);
     }
 
     /**
@@ -835,19 +644,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param string|int|null $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -935,19 +747,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -971,7 +786,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
         $subItems = [];
-        $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
+        $getInheritedValues = DataObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
             if ($this->maxItems > 0 && count($activeGroups) > $this->maxItems) {
@@ -989,16 +804,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     $keyGroupRelations = $groupDefinition->getRelations();
 
-                    /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                     foreach ($keyGroupRelations as $keyGroupRelation) {
                         foreach ($validLanguages as $validLanguage) {
                             $keyId = $keyGroupRelation->getKeyId();
 
                             $object = $data->getObject();
                             if ($object->getClass()->getAllowInherit()) {
-                                DataObject\AbstractObject::setGetInheritedValues(true);
+                                DataObject::setGetInheritedValues(true);
                                 $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
-                                DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
+                                DataObject::setGetInheritedValues($getInheritedValues);
                             } else {
                                 $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
@@ -1075,8 +889,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport',
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }
@@ -1098,15 +919,18 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $labelWidth
+     * @param string|int $labelWidth
      */
     public function setLabelWidth($labelWidth)
     {
-        $this->labelWidth = (int) $labelWidth;
+        if (is_numeric($labelWidth)) {
+            $labelWidth = (int)$labelWidth;
+        }
+        $this->labelWidth = $labelWidth;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getLabelWidth()
     {
@@ -1254,7 +1078,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $groupList->setOrder(['ASC', 'ASC']);
         $groupList = $groupList->load();
 
-        /** @var DataObject\Classificationstore\GroupConfig $group */
         foreach ($groupList as $group) {
             $keyList = [];
 
@@ -1263,7 +1086,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
             $relation = $relation->load();
-            /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
             foreach ($relation as $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
@@ -1317,7 +1139,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation = $relation->load();
 
             $sorting = [];
-            /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
             foreach ($relation as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }
@@ -1436,5 +1257,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->disallowAddRemove = $disallowAddRemove;
 
         return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Classificationstore::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Classificationstore::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Classificationstore::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Classificationstore::class . '|null';
     }
 }

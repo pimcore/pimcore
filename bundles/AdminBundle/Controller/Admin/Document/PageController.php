@@ -148,13 +148,6 @@ class PageController extends DocumentControllerBase
 
         $page->setUserModification($this->getAdminUser()->getId());
 
-        if ($request->get('task') == 'unpublish') {
-            $page->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $page->setPublished(true);
-        }
-
         if ($request->get('missingRequiredEditable') !== null) {
             $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
         }
@@ -181,6 +174,12 @@ class PageController extends DocumentControllerBase
         // only save when publish or unpublish
         if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
             $this->setValuesToDocument($request, $page);
+
+            if ($request->get('task') == 'unpublish') {
+                $page->setPublished(false);
+            } elseif ($request->get('task') == 'publish') {
+                $page->setPublished(true);
+            }
 
             $page->save();
             $this->saveToSession($page);
@@ -348,7 +347,7 @@ class PageController extends DocumentControllerBase
                 }
             } else {
                 // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $editable->getName())) {
+                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '/', $editable->getName())) {
                     $doc->removeEditable($editable->getName());
                 }
             }
@@ -359,6 +358,44 @@ class PageController extends DocumentControllerBase
         return $this->adminJson([
             'success' => true,
         ]);
+    }
+
+    /**
+     * @Route("/qr-code", name="pimcore_admin_document_page_qrcode", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function qrCodeAction(Request $request)
+    {
+        $page = Document\Page::getById($request->query->get('id'));
+
+        if (!$page) {
+            throw $this->createNotFoundException('Page not found');
+        }
+
+        $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
+
+        $code = new \Endroid\QrCode\QrCode;
+        $code->setWriterByName('png');
+        $code->setText($url);
+        $code->setSize(500);
+
+        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $code->writeFile($tmpFile);
+
+        $response = new BinaryFileResponse($tmpFile);
+        $response->headers->set('Content-Type', 'image/png');
+
+        if ($request->query->get('download')) {
+            $code->setSize(4000);
+            $response->setContentDisposition('attachment', 'qrcode-preview.png');
+        }
+
+        $response->deleteFileAfterSend(true);
+
+        return $response;
     }
 
     /**

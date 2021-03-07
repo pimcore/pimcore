@@ -89,6 +89,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
         });
 
         var data = [];
+        data.push(["default", t("default")]);
         for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
             var language = pimcore.settings.websiteLanguages[i];
             data.push([language, t(pimcore.available_languages[language])]);

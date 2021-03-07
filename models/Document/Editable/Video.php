@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -32,31 +33,31 @@ class Video extends Model\Document\Editable
      *
      * @var int|string|null
      */
-    public $id;
+    protected $id;
 
     /**
      * one of asset, youtube, vimeo, dailymotion
      *
      * @var string|null
      */
-    public $type = 'asset';
+    protected $type = 'asset';
 
     /**
      * asset ID of poster image
      *
      * @var int|null
      */
-    public $poster;
+    protected $poster;
 
     /**
      * @var string
      */
-    public $title = '';
+    protected $title = '';
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @param string $title
@@ -106,6 +107,14 @@ class Video extends Model\Document\Editable
         }
 
         return $this->description;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPoster()
+    {
+        return $this->poster;
     }
 
     /**
@@ -364,7 +373,7 @@ class Video extends Model\Document\Editable
                 $image = $this->getPosterThumbnailImage($asset);
 
                 if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview']) {
-                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '. ($config['class'] ?? '') .'">';
+                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">';
                     $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
                     $code .= '</div>';
 
@@ -377,13 +386,13 @@ class Video extends Model\Document\Editable
 
                 if ($thumbnail['status'] === 'inprogress') {
                     // disable the output-cache if enabled
-                    $cacheService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.full_page_cache');
+                    $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
                     $cacheService->disable('Video rendering in progress');
 
                     return $this->getProgressCode($image);
                 }
 
-                return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
+                return $this->getErrorCode('The video conversion failed, please see the log files in /var/log for more details.');
             }
 
             return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailConfig . "'");
@@ -458,8 +467,8 @@ class Video extends Model\Document\Editable
         }
 
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video">
-            <div class="pimcore_tag_video_error pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
+            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
@@ -605,7 +614,7 @@ class Video extends Model\Document\Editable
             }
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '. ($config['class'] ?? '') .'">
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
             <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
@@ -627,7 +636,7 @@ class Video extends Model\Document\Editable
 
         // get vimeo id
         if (preg_match("@vimeo.*/([\d]+)@i", $this->id, $matches)) {
-            $vimeoId = intval($matches[1]);
+            $vimeoId = (int)$matches[1];
         } else {
             // for object-videos
             $vimeoId = $this->id;
@@ -680,7 +689,7 @@ class Video extends Model\Document\Editable
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '. ($config['class'] ?? '') .'">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
                 <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -748,7 +757,7 @@ class Video extends Model\Document\Editable
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '. ($config['class'] ?? '') .'">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
                 <iframe src="https://www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -791,7 +800,7 @@ class Video extends Model\Document\Editable
             $durationParts[] = $duration . 'S';
             $durationString = implode('', $durationParts);
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video">' . "\n";
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">' . "\n";
 
             $uploadDate = new \DateTime();
             $uploadDate->setTimestamp($video->getCreationDate());
@@ -884,9 +893,9 @@ class Video extends Model\Document\Editable
     {
         $uid = 'video_' . uniqid();
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video">
+        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
             <style type="text/css">
-                #' . $uid . ' .pimcore_tag_video_progress_status {
+                #' . $uid . ' .pimcore_editable_video_progress_status {
                     box-sizing:content-box;
                     background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
                     width:66px;
@@ -902,9 +911,9 @@ class Video extends Model\Document\Editable
                     opacity: 0.8;
                 }
             </style>
-            <div class="pimcore_tag_video_progress pimcore_editable_video_progress" id="' . $uid . '">
+            <div class="pimcore_editable_video_progress" id="' . $uid . '">
                 <img src="' . $thumbnail . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
-                <div class="pimcore_tag_video_progress_status pimcore_editable_video_progress_status"></div>
+                <div class="pimcore_editable_video_progress_status"></div>
             </div>
         </div>';
 
@@ -918,7 +927,7 @@ class Video extends Model\Document\Editable
     {
         $uid = 'video_' . uniqid();
 
-        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video"><div class="pimcore_tag_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
+        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
     }
 
     /**
@@ -931,36 +940,6 @@ class Video extends Model\Document\Editable
         }
 
         return true;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id) {
-            if ($data->type == 'asset') {
-                $this->id = $data->id;
-                $asset = Asset::getById($data->id);
-                if (!$asset) {
-                    throw new \Exception('Referencing unknown asset with id [ '.$data->id.' ] in webservice import field [ '.$data->name.' ]');
-                }
-                $this->type = $data->type;
-            } elseif (in_array($data->type, ['dailymotion', 'vimeo', 'youtube', 'url'])) {
-                $this->id = $data->id;
-                $this->type = $data->type;
-            } else {
-                throw new \Exception('cannot get values from web service import - type must be asset,youtube,url, vimeo or dailymotion');
-            }
-        }
     }
 
     /**
@@ -1063,5 +1042,3 @@ class Video extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Video::class, 'Pimcore\Model\Document\Tag\Video');

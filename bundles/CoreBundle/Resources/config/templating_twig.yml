@@ -1,7 +1,3 @@
-imports:
-    # twig aliases are only imported if this file is loaded
-    - { resource: templating_twig_aliases.yml }
-
 services:
     _defaults:
         autowire: true
@@ -10,26 +6,26 @@ services:
 
     # public alias to Twig engine
     pimcore.templating.engine.twig:
-        alias: templating.engine.twig
+        alias: twig
         public: true
 
     Pimcore\Twig\Extension\HelpersExtension: ~
 
-    Pimcore\Twig\Extension\DocumentTagExtension: ~
+    Pimcore\Twig\Extension\DocumentEditableExtension: ~
 
     Pimcore\Twig\Extension\SubrequestExtension:
         lazy: true
 
     Pimcore\Twig\Extension\PimcoreObjectExtension: ~
 
-    Pimcore\Twig\Extension\TemplatingHelperExtension:
-        arguments:
-            $phpEngine: '@templating.engine.php'
-        deprecated: 'The "%service_id%" service is deprecated.'
+    Pimcore\Twig\Extension\PimcoreToolExtension: ~
+
 
     Pimcore\Twig\Extension\NavigationExtension: ~
 
     Pimcore\Twig\Extension\GlossaryExtension: ~
+
+    Pimcore\Twig\Extension\HeaderExtension: ~
 
     Pimcore\Twig\Extension\AssetCompressExtension: ~
 
@@ -37,11 +33,45 @@ services:
 
     Pimcore\Twig\Extension\DumpExtension: ~
 
+    Pimcore\Twig\Extension\CacheExtension: ~
+
+    Pimcore\Twig\Extension\Templating\PimcoreUrl:
+        class: Pimcore\Twig\Extension\Templating\PimcoreUrl
+        arguments:
+            $generator: '@router'
+
+    Pimcore\Twig\Extension\Templating\HeadLink: ~
+
+    Pimcore\Twig\Extension\Templating\HeadMeta: ~
+
+    Pimcore\Twig\Extension\Templating\HeadScript: ~
+
+    Pimcore\Twig\Extension\Templating\HeadStyle: ~
+
+    Pimcore\Twig\Extension\Templating\HeadTitle: ~
+
+    Pimcore\Twig\Extension\Templating\Inc: ~
+
+    Pimcore\Twig\Extension\Templating\InlineScript: ~
+
+    Pimcore\Twig\Extension\Templating\Navigation:
+        lazy: true
+        arguments:
+            $rendererLocator: '@pimcore.templating.navigation.renderer_locator'
+
+    Pimcore\Twig\Extension\Templating\Placeholder: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\ContainerService: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\Container: ~
+
+    Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware: ~
+
     # the deferred extension is needed for placeholder helpers to work
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)
-    Phive\Twig\Extensions\Deferred\DeferredExtension: ~
+    Twig\DeferredExtension\DeferredExtension: ~
 
-    # provides truncate and wordwrap filters
-    Twig_Extensions_Extension_Text:
-        class: Twig_Extensions_Extension_Text
+    Pimcore\Twig\Extension\AdminExtension: ~

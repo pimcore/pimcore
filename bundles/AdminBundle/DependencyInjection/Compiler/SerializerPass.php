@@ -34,11 +34,11 @@ class SerializerPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('pimcore_admin.serializer')) {
+        if (!$container->hasDefinition('Pimcore\\Admin\\Serializer')) {
             return;
         }
 
-        $definition = $container->getDefinition('pimcore_admin.serializer');
+        $definition = $container->getDefinition('Pimcore\\Admin\\Serializer');
 
         // Looks for all the services tagged "serializer.normalizer" and adds them to the Serializer service
         $normalizers = $this->findAndSortTaggedServices('pimcore_admin.serializer.normalizer', $container);

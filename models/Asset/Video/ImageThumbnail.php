@@ -70,7 +70,7 @@ class ImageThumbnail
             'filesystemPath' => $fsPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -168,10 +168,11 @@ class ImageThumbnail
                 $this->filesystemPath = $path;
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::VIDEO_IMAGE_THUMBNAIL, new GenericEvent($this, [
+            $event = new GenericEvent($this, [
                 'deferred' => $deferred,
                 'generated' => $generated,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
         }
     }
 
@@ -191,9 +192,17 @@ class ImageThumbnail
      * @param string|array|Image\Thumbnail\Config $selector
      *
      * @return Image\Thumbnail\Config|null
+     *
+     * @throws Model\Exception\NotFoundException
      */
     protected function createConfig($selector)
     {
-        return Image\Thumbnail\Config::getByAutoDetect($selector);
+        $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $thumbnailConfig === null) {
+            throw new Model\Exception\NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
+        return $thumbnailConfig;
     }
 }

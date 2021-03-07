@@ -19,7 +19,7 @@ namespace Pimcore\Event\Model\Document;
 
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Model\Document;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class EditableNameEvent extends Event
 {
@@ -124,26 +124,4 @@ class EditableNameEvent extends Event
     {
         $this->editableName = $editableName;
     }
-
-    /**
-     * @return string
-     *
-     * @deprecated since 6.8 and will be removed in 7. use getEditableName() instead.
-     */
-    public function getTagName(): string
-    {
-        return $this->getEditableName();
-    }
-
-    /**
-     * @param string $tagName
-     *
-     * @deprecated since 6.8 and will be removed in 7. use setEditableName() instead.
-     */
-    public function setTagName(string $tagName)
-    {
-        $this->setEditableName($tagName);
-    }
 }
-
-class_alias(EditableNameEvent::class, 'Pimcore\Event\Model\Document\TagNameEvent');

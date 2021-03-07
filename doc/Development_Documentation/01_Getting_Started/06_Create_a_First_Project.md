@@ -41,25 +41,15 @@ Now we create a template for our page:
 * Put a new PHP template into this folder and name it like our action in lowercase (`default.html.php`).
 
 Then we can put some template code into it, for example:
+```twig
+{% extends 'layout.html.twig' %}
 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */
+<h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
 
-$this->extend('layout.html.php');
-
-?>
-
-    <h1><?= $this->input("headline", ["width" => 540]); ?></h1>
-
-    <?php while ($this->block("contentblock")->loop()) { ?>
-        <h2><?= $this->input("subline"); ?></h2>
-        <?= $this->wysiwyg("content"); ?>
-    <?php } ?>
+{% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
+    <h2>{{ pimcore_input('subline') }}</h2>
+    {{ pimcore_wysiwyg('content') }}
+{% endfor %}
 ```
 
 Pimcore uses by default an improved version of the Symfony PHP templating engine (`PhpEngine`) and therefore plain PHP as template language. So you have the full power of
@@ -75,22 +65,15 @@ For details concerning editables (like `$this->input`, `$this->block`, ...) see 
 We can use Symfony`s [template inheritance and layout](http://symfony.com/doc/3.4/templating.html#template-inheritance-and-layouts) functionality 
 to wrap our content page with another template which contains the main navigation, a sidebar, … using the following code:
 
-```php
-$this->extend('layout.html.php');
+```twig
+{% extends 'layout.html.twig' %}
 ```
-We tell the engine that we want to use the layout `layout.html.php`. 
+We tell the engine that we want to use the layout `layout.html.twig`. 
   
-Now create a new PHP template in the folder `/app/Resources/views` and name it `layout.html.php`.
+Now create a new Twig template in the folder `/app/Resources/views` and name it `layout.html.twig`.
 Then we can also put some HTML and template code into it:
 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */ 
-?>
+```twig
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,14 +91,14 @@ Then we can also put some HTML and template code into it:
             </div>
         </div>
         <div class="info">
-            <?php $this->slots()->output('_content') ?>
+            {{ block('content') }}
         </div>
     </div>
 </body>
 </html>
 ```
 
-The code `<?php $this->slots()->output('_content') ?>` is the placeholder where the content of the page will be inserted.
+The code `{{ block('content') }}` is the placeholder where the content of the page will be inserted.
 
 ### Putting it all together with Pimcore Documents
 Now we need to connect the action to a page in the Pimcore backend, so that the page knows which action 
@@ -228,51 +211,45 @@ namespace AppBundle\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class ContentController extends FrontendController
 {
+    /**
+     * @Template
+     */
     public function defaultAction (Request $request)
     {
+        return [];
     }
     
     public function productAction(Request $request)
     {
+        return $this->render('content/product.html.twig');
     }
 }
 ```
 
-Then we also need a new template for our product action: `app/Resources/views/Content/product.html.php` 
+Then we also need a new template for our product action: `app/Resources/views/content/product.html.twig` 
 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */
+```twig
+{% extends 'layout.html.twig' %}
 
-$this->extend('layout.html.php');
-
-?>
-
-<h1><?= $this->input("headline", ["width" => 540]); ?></h1>
+<h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
 
 <div class="product-info">
-    <?php if($this->editmode):
-        echo $this->relation('product');
-    else: ?>
-
-    <!-- Product information-->
-
-    <?php endif; ?>
+    {% if editmode %}
+        {{ pimcore_relation("product") }}
+    {% else %}
+        <!-- Product information-->
+    {% endif %}
 </div>
-
 ```
 
-`$this->editmode` is a standard variable (it's always set) that checks if the view is called from the Pimcore admin backend and gives you the 
+`{{ editmode }}` is a standard variable (it's always set), that checks if the view is called from the Pimcore admin backend and gives you the 
  possibility to do different stuff in editmode and in the frontend. 
 
-`$this->relation('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations. A cool 
+`{{ pimcore_relation("product") }}` is one of the possible editable placeholders. It can be used to make 1 to 1 relations. A cool 
 alternative for that would be the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  
 Click [here](../03_Documents/01_Editables/README.md) for a full list of available editables in Pimcore.
 
@@ -295,43 +272,30 @@ Go to the product page. In my case, let's say `http://pimcore.local/tshirt` wher
 
 We haven't implemented frontend features yet, therefore the page doesn't contain any product information.
 
-Add a few lines in the template file (`app/Resources/views/Content/product.html.php`):
+Add a few lines in the template file (`app/Resources/views/content/product.html.php`):
 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */
+```twig
+{% extends 'layout.html.twig' %}
 
-$this->extend('layout.html.php');
+<h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
 
-?>
-
-<h1><?= $this->input("headline", ["width" => 540]); ?></h1>
 <div class="product-info">
-    <?php if($this->editmode):
-        echo $this->relation('product');
-    else: ?>
-    <div id="product">
-        <?php
-        /** @var \Pimcore\Model\DataObject\Product $product */
-        $product = $this->relation('product')->getElement();
-        ?>
-        <h2><?= $this->escape($product->getName()); ?></h2>
-        <div class="content">
-            <?= $product->getDescription(); ?>
-        </div>
-    </div>
-    <?php endif; ?>
+    {% if editmode %}
+        {{ pimcore_relation("product") }}
+    {% else %}
+        {% set product = pimcore_relation("product").element %} 
+        {% if product %} 
+            <h2>{{ product.name }}</h2>
+            <div class="content">
+                {{ product.description }}
+            </div>
+        {% endif %}
+    {% endif %}
 </div>
-
 ```
 
 You are now able to access the linked object above by using the method `getElement()`.
 Now you have access to the entire data from the linked object (name, description, ...).
-It's a good practice to add `@var` PHPDoc in every view, to benefit from auto-complete in your IDE.
 
 ## Add a Thumbnail Configuration
 To show the product image in the view, we need to add a thumbnail configuration first. Using [thumbnail configurations](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md),
@@ -344,21 +308,17 @@ Adding a thumbnail configuration can be achieved by adding a configuration as de
 ## Showing the Image in the View
 Last but not least, we would like to show the product picture: 
 
-```php
+```twig
 <div class="content">
-    <?php
-    $picture = $product->getPicture();
-    if($picture instanceof \Pimcore\Model\Asset\Image):
-        /** @var \Pimcore\Model\Asset\Image $picture */
-        
-    ?>
-        <?= $picture->getThumbnail("content")->getHtml(); ?>
-    <?php endif; ?>
-    <?= $product->getDescription(); ?>
+    {% if product.picture %}
+        {{ product.picture.thumbnail("content").html }}
+    {% endif %}
+
+    {{ product.description }}
 </div>
 ```
 As you can see, Image is an additional class with useful attributes and functions.
-To print out the image in the right size just use the method `getThumbnail()->getHtml()` which returns the `<img>` or `<picture>` (when using media queries in your config) tag with the 
+To print out the image in the right size just use the method `thumbnail.html` which returns the `<img>` or `<picture>` (when using media queries in your config) tag with the 
 correct image path and also sets alt attributes to values based on the asset meta data. 
 
 Now the product page should look like this:

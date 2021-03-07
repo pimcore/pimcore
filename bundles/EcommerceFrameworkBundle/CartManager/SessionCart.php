@@ -73,8 +73,6 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function delete()
     {
-        $this->setIgnoreReadonly();
-
         $session = static::getSessionBag();
 
         if (!$this->getId()) {
@@ -108,12 +106,6 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function modified()
     {
-        // Reset cached values
-        $this->itemCount = null;
-        $this->subItemCount = null;
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-
         return parent::modified();
     }
 
@@ -174,8 +166,6 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function __wakeup()
     {
-        $this->setIgnoreReadonly();
-
         $timestampBackup = $this->getModificationDate();
 
         // set current cart
@@ -191,6 +181,5 @@ class SessionCart extends AbstractCart implements CartInterface
         $this->modified();
 
         $this->setModificationDate($timestampBackup);
-        $this->unsetIgnoreReadonly();
     }
 }

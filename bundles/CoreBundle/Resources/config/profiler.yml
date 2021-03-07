@@ -12,7 +12,7 @@ services:
         tags:
             -
                 name:     data_collector
-                template: 'PimcoreCoreBundle:Profiler:data_collector.html.twig'
+                template: '@PimcoreCore/Profiler/data_collector.html.twig'
                 id:       'pimcore'
                 priority: 500
 
@@ -20,6 +20,6 @@ services:
         tags:
             -
                 name:     data_collector
-                template: 'PimcoreCoreBundle:Profiler:targeting_data_collector.html.twig'
+                template: '@PimcoreCore/Profiler/targeting_data_collector.html.twig'
                 id:       'pimcore_targeting'
                 priority: 312

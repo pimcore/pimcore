@@ -122,6 +122,8 @@ class Video extends Model\Asset
      * @param string|Video\Thumbnail\Config $config
      *
      * @return Video\Thumbnail\Config|null
+     *
+     * @throws Model\Exception\NotFoundException
      */
     public function getThumbnailConfig($config)
     {
@@ -129,6 +131,10 @@ class Video extends Model\Asset
 
         if (is_string($config)) {
             $thumbnail = Video\Thumbnail\Config::getByName($config);
+
+            if ($thumbnail === null) {
+                throw new Model\Exception\NotFoundException('Video Thumbnail definition "' . $config . '" does not exist');
+            }
         } elseif ($config instanceof Video\Thumbnail\Config) {
             $thumbnail = $config;
         }
@@ -164,7 +170,7 @@ class Video extends Model\Asset
                             'filesystemPath' => $fullPath,
                             'frontendPath' => $path,
                         ]);
-                        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_THUMBNAIL, $event);
+                        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
                         $path = $event->getArgument('frontendPath');
                     }
 

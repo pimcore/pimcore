@@ -43,7 +43,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
             this.getFileInfo(false, null);
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));
-        });
+        }, sprintf(t('deprecated_feature'), 'https://github.com/pimcore/data-hub<br>' +
+            'https://github.com/w-vision/DataDefinitions'));
     },
 
     buildDefaultSelection: function () {

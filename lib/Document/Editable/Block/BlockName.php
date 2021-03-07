@@ -59,21 +59,7 @@ class BlockName implements \JsonSerializable
     }
 
     /**
-     * @TODO remove in v7
-     *
-     * @param Editable $tag
-     *
-     * @return BlockName
-     *
-     * @deprecated since 6.8, will be removed in v7, use createFromEditable() instead
-     */
-    public static function createFromTag(Editable $tag): BlockName
-    {
-        return self::createFromEditable($tag);
-    }
-
-    /**
-     * Create an instance from a document tag
+     * Create an instance from a document editable
      *
      * @param Editable $editable
      *
@@ -111,5 +97,3 @@ class BlockName implements \JsonSerializable
         ];
     }
 }
-
-class_alias(BlockName::class, 'Pimcore\Document\Tag\Block\BlockName');

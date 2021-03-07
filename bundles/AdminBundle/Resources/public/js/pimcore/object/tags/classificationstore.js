@@ -213,6 +213,10 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                     item.labelWidth = this.fieldConfig.labelWidth;
                 }
 
+                if (this.fieldConfig.labelAlign) {
+                    item.labelAlign = this.fieldConfig.labelAlign;
+                }
+
                 panelConf.items.push(item);
             }
 

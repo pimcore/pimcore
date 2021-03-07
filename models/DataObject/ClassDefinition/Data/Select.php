@@ -19,15 +19,15 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
-class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     use DataObject\Traits\DefaultValueTrait;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -44,9 +44,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public $options;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string|null
@@ -83,13 +83,6 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @var int
      */
     public $columnLength = 190;
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
 
     /**
      * @var bool
@@ -175,7 +168,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -183,13 +176,16 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param string|int|null $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
@@ -495,7 +491,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             if ($params['purpose'] == 'editmode') {
                 $result = $data;
             } else {
-                $result = ['value' => $data ? $data : null, 'options' => $this->getOptions()];
+                $result = ['value' => $data ?? null, 'options' => $this->getOptions()];
             }
 
             return $result;
@@ -560,5 +556,37 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         }
 
         return $this->getDefaultValue();
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
     }
 }

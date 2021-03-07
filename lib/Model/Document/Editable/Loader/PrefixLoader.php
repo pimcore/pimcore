@@ -29,5 +29,3 @@ class PrefixLoader extends BasePrefixLoader
         return ucfirst(strtolower($name));
     }
 }
-
-class_alias(PrefixLoader::class, 'Pimcore\Model\Document\Tag\Loader\PrefixLoader');

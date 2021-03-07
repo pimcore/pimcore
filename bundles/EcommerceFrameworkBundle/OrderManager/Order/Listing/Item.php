@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderListItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface;
+use Pimcore\Model\DataObject\Concrete;
 
 class Item extends AbstractOrderListItem implements OrderListItemInterface
 {
@@ -47,16 +48,22 @@ class Item extends AbstractOrderListItem implements OrderListItemInterface
         $object = $this->reference();
         if ($object) {
             return call_user_func_array([$object, $method], $args);
-        } else {
-            throw new \Exception("Object with {$this->getId()} not found.");
         }
+
+        throw new \Exception("Object with {$this->getId()} not found.");
     }
 
     /**
-     * @return Order|OrderItem
+     * @return Order|OrderItem|null
      */
     public function reference()
     {
-        return \Pimcore\Model\DataObject\Concrete::getById($this->getId());
+        $object = Concrete::getById($this->getId());
+
+        if ($object instanceof Order || $object instanceof OrderItem) {
+            return $object;
+        }
+
+        return null;
     }
 }

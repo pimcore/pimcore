@@ -16,13 +16,21 @@ namespace Pimcore;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
-use Html2Text\Html2Text;
+use League\HTMLToMarkdown\HtmlConverter;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
+use Pimcore\Mail\Mailer;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Header\Headers;
+use Symfony\Component\Mime\Header\MailboxListHeader;
+use Symfony\Component\Mime\Part\AbstractPart;
 
-class Mail extends \Swift_Message
+class Mail extends Email
 {
     /**
      * @var bool
@@ -63,7 +71,9 @@ class Mail extends \Swift_Message
      *
      * @var array
      */
-    protected $html2textOptions = [];
+    protected $html2textOptions = [
+        'ignore_errors' => true,
+    ];
 
     /**
      * Prevent adding debug information
@@ -119,14 +129,6 @@ class Mail extends \Swift_Message
     protected $bodyText;
 
     /**
-     * plain text mime part
-     * this is created and attached to mail on send
-     *
-     * @var \Swift_MimePart
-     */
-    protected $bodyTextMimePart;
-
-    /**
      * place to store original data before modifying message when sending in debug mode
      *
      * @var array
@@ -161,30 +163,37 @@ class Mail extends \Swift_Message
     /**
      * Mail constructor.
      *
-     * @param array|string|null $subject
-     * @param string|null $body
+     * @param array|Headers|null $headers
+     * @param AbstractPart|null $body
      * @param string|null $contentType
-     * @param string|null $charset
      */
-    public function __construct($subject = null, $body = null, $contentType = null, $charset = null)
+    public function __construct($headers = null, $body = null, $contentType = null)
     {
-        // using $charset as param to be compatible with old Pimcore Mail
-        if (is_array($subject) || self::$forcePimcoreMode) {
-            $options = $subject;
+        if (is_array($headers) || self::$forcePimcoreMode) {
+            $options = $headers;
 
-            parent::__construct($options['subject'], $body, $contentType, $options['charset'] ? $options['charset'] : 'UTF-8');
+            $headers = $options['headers'] instanceof Headers ? $options['headers'] : null;
+            $body = $options['body'] instanceof AbstractPart ? $options['body'] : null;
+            parent::__construct($headers, $body);
 
-            if ($options['document']) {
+            if ($options['subject'] ?? false) {
+                $this->subject($options['subject']);
+            }
+            if ($options['document'] ?? false) {
                 $this->setDocument($options['document']);
             }
-            if ($options['params']) {
+            if ($options['params'] ?? false) {
                 $this->setParams($options['params']);
             }
-            if ($options['hostUrl']) {
+            if ($options['hostUrl'] ?? false) {
                 $this->setHostUrl($options['hostUrl']);
             }
         } else {
-            parent::__construct($subject, $body, $contentType, ($charset !== null ? $charset : 'UTF-8'));
+            parent::__construct($headers, $body);
+        }
+
+        if ($contentType) {
+            $this->setContentType($contentType);
         }
 
         $this->init();
@@ -201,13 +210,13 @@ class Mail extends \Swift_Message
 
         if (!empty($config['sender']['email'])) {
             if (empty($this->getFrom())) {
-                $this->setFrom($config['sender']['email'], $config['sender']['name']);
+                $this->from(new Address($config['sender']['email'], $config['sender']['name']));
             }
         }
 
         if (!empty($config['return']['email'])) {
             if (empty($this->getReplyTo())) {
-                $this->setReplyTo($config['return']['email'], $config['return']['name']);
+                $this->replyTo(new Address($config['return']['email'], $config['return']['name']));
             }
         }
     }
@@ -269,35 +278,15 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @deprecated Pimcore\Mail::determineHtml2TextIsInstalled is deprecated since 6.6.0 and will be removed with 7.0
-     *
-     * Determines if mbayer html2text is installed (more information at http://www.mbayer.de/html2text/)
-     * and uses it to automatically create a text version of the html email
-     *
-     * @static
-     *
-     * @return bool
-     */
-    public static function determineHtml2TextIsInstalled()
-    {
-        return true;
-    }
-
-    /**
      * Sets options that are passed to html2text
      *
      * @param array $options
      *
      * @return \Pimcore\Mail
      */
-    public function setHtml2TextOptions($options = [])
+    public function setHtml2TextOptions(array $options = [])
     {
-        if (is_array($options)) {
-            $this->html2textOptions = $options;
-        } else {
-            Logger::warn('Pimcore\Mail::setHtml2TextOptions only accepts array since version 6.6.0.' .
-                ' Please see available options: https://github.com/mtibben/html2text/blob/master/src/Html2Text.php#L212');
-        }
+        $this->html2textOptions = $options;
 
         return $this;
     }
@@ -321,10 +310,10 @@ class Mail extends \Swift_Message
     {
         $this->recipientsCleared = true;
 
-        $this->getHeaders()->removeAll('to');
-        $this->getHeaders()->removeAll('cc');
-        $this->getHeaders()->removeAll('bcc');
-        $this->getHeaders()->removeAll('replyTo');
+        $this->getHeaders()->remove('to');
+        $this->getHeaders()->remove('cc');
+        $this->getHeaders()->remove('bcc');
+        $this->getHeaders()->remove('reply-to');
 
         return $this;
     }
@@ -478,28 +467,28 @@ class Mail extends \Swift_Message
                 $to = \Pimcore\Helper\Mail::parseEmailAddressField($document->getTo());
                 if (!empty($to)) {
                     foreach ($to as $toEntry) {
-                        $this->addTo($toEntry['email'], $toEntry['name']);
+                        $this->addTo(new Address($toEntry['name'], $toEntry['email']));
                     }
                 }
 
                 $cc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getCc());
                 if (!empty($cc)) {
                     foreach ($cc as $ccEntry) {
-                        $this->addCc($ccEntry['email'], $ccEntry['name']);
+                        $this->addCc(new Address($ccEntry['email'], $ccEntry['name']));
                     }
                 }
 
                 $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getBcc());
                 if (!empty($bcc)) {
                     foreach ($bcc as $bccEntry) {
-                        $this->addBcc($bccEntry['email'], $bccEntry['name']);
+                        $this->addBcc(new Address($bccEntry['email'], $bccEntry['name']));
                     }
                 }
 
                 $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($document->getReplyTo());
                 if (!empty($replyTo)) {
                     foreach ($replyTo as $replyToEntry) {
-                        $this->addReplyTo($replyToEntry['email'], $replyToEntry['name']);
+                        $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name']));
                     }
                 }
             }
@@ -511,7 +500,7 @@ class Mail extends \Swift_Message
             if (!empty($fromArray)) {
                 list($from) = $fromArray;
                 if ($from) {
-                    $this->setFrom($from['email'], $from['name']);
+                    $this->from(new Address($from['email'], $from['name']));
                 }
             }
         }
@@ -528,27 +517,24 @@ class Mail extends \Swift_Message
      * set DefaultTransport or the internal mail function if no
      * default transport had been set.
      *
-     * @param  \Swift_Mailer $mailer
+     * @param  MailerInterface|null $mailer
      *
      * @return \Pimcore\Mail Provides fluent interface
      */
-    public function send(\Swift_Mailer $mailer = null)
+    public function send(MailerInterface $mailer = null)
     {
-        $this->setSubject($this->getSubjectRendered());
-
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
-            $this->setBody($bodyHtmlRendered, 'text/html');
+            $this->setHtmlBody($bodyHtmlRendered);
         }
 
-        if ($this->bodyTextMimePart) {
-            $this->detach($this->bodyTextMimePart);
-        }
         $bodyTextRendered = $this->getBodyTextRendered();
         if ($bodyTextRendered) {
             //add mime part for plain text body
-            $this->addPart($bodyTextRendered, 'text/plain');
+            $this->setTextBody($bodyTextRendered);
         }
+
+        $this->subject($this->getSubjectRendered());
 
         return $this->sendWithoutRendering($mailer);
     }
@@ -557,15 +543,16 @@ class Mail extends \Swift_Message
      * sends mail without (re)rendering the content.
      * see also comments of send() method
      *
-     * @param \Swift_Mailer $mailer
+     * @param MailerInterface|null $mailer
      *
      * @return \Pimcore\Mail
+     *
+     * @throws \Exception
      */
-    public function sendWithoutRendering(\Swift_Mailer $mailer = null)
+    public function sendWithoutRendering(MailerInterface $mailer = null)
     {
         // filter email addresses
 
-        // preserve email addresses, see Swift_Transport_MailTransport::send lines 140ff :-(
         // ... Remove headers that would otherwise be duplicated
         // $message->getHeaders()->remove('To');
         // $message->getHeaders()->remove('Subject'); ....
@@ -575,14 +562,16 @@ class Mail extends \Swift_Message
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
             $recipients[$key] = null;
             $getterName = 'get' . $key;
-            $setterName = 'set' . $key;
             $addresses = $this->$getterName();
 
             if ($addresses) {
                 $addresses = $this->filterLogAddresses($addresses);
+                /** @var MailboxListHeader $header */
+                $header = $this->getHeaders()->get(strtolower($key));
+                if ($header) {
+                    $header->setAddresses($addresses);
+                }
             }
-
-            $this->$setterName($addresses);
 
             $addresses = $this->$getterName();
             $recipients[$key] = $addresses;
@@ -590,27 +579,26 @@ class Mail extends \Swift_Message
 
         if ($mailer == null) {
             //if no mailer given, get default mailer from container
-            $mailer = \Pimcore::getContainer()->get('mailer');
+            $mailer = \Pimcore::getContainer()->get(Mailer::class);
         }
 
         if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
             // set default "from" address
-            $this->setFrom('no-reply@' . $hostname);
+            $this->from('no-reply@' . $hostname);
         }
 
         $event = new MailEvent($this, [
             'mailer' => $mailer,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(MailEvents::PRE_SEND, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
             try {
-                $mailer->send($this, $failedRecipients);
-            } catch (\Exception $e) {
-                $mailer->getTransport()->stop();
+                $mailer->send($this);
+            } catch (TransportExceptionInterface $e) {
                 if (isset($failedRecipients[0])) {
                     throw new \Exception($failedRecipients[0].' - '.$e->getMessage());
                 } else {
@@ -636,10 +624,17 @@ class Mail extends \Swift_Message
 
     private function filterLogAddresses(array $addresses): array
     {
-        foreach (array_keys($addresses) as $address) {
-            // remove address if blacklisted
-            if (Model\Tool\Email\Blacklist::getByAddress($address)) {
-                unset($addresses[$address]);
+        foreach ($addresses as $addrKey => $address) {
+            if ($address instanceof Address) {
+                // remove address if blacklisted
+                if (Model\Tool\Email\Blacklist::getByAddress($address->getAddress())) {
+                    unset($addrKey);
+                }
+            } else {
+                // remove address if blacklisted
+                if (Model\Tool\Email\Blacklist::getByAddress($addrKey)) {
+                    unset($addresses[$addrKey]);
+                }
             }
         }
 
@@ -655,9 +650,9 @@ class Mail extends \Swift_Message
 
             $headerName = 'X-Pimcore-Debug-' . $key;
             if ($headers->has($headerName)) {
-                /** @var \Swift_Mime_Headers_MailboxHeader $header */
+                /** @var MailboxListHeader $header */
                 $header = $headers->get($headerName);
-                $recipients[$key] = $header->getNameAddresses();
+                $recipients[$key] = $header->getAddresses();
 
                 $headers->remove($headerName);
             }
@@ -708,7 +703,11 @@ class Mail extends \Swift_Message
             $subject = $this->getDocument()->getSubject();
         }
 
-        return $this->renderParams($subject);
+        if ($subject) {
+            return $this->renderParams($subject);
+        }
+
+        return '';
     }
 
     /**
@@ -718,7 +717,7 @@ class Mail extends \Swift_Message
      */
     public function getBodyHtmlRendered()
     {
-        $html = $this->getBody();
+        $html = $this->getHtmlBody();
 
         // if the content was manually set with $obj->setBody(); this content will be used
         // and not the content of the Document!
@@ -746,15 +745,15 @@ class Mail extends \Swift_Message
 
     /**
      * Renders the content (Twig) and returns
-     * the rendered text if a text was set with "$mail->setBodyText()"
+     * the rendered text if a text was set with "$mail->setTextBody()"
      *
      * @return string
      */
     public function getBodyTextRendered()
     {
-        $text = $this->getBodyText();
+        $text = $this->getTextBody();
 
-        //if the content was manually set with $obj->setBodyText(); this content will be used
+        //if the content was manually set with $obj->setTextBody(); this content will be used
         if ($text) {
             $content = $this->renderParams($text);
         } else {
@@ -794,15 +793,19 @@ class Mail extends \Swift_Message
      */
     public function setDocument($document)
     {
-        if ($document instanceof Model\Document) { //document passed
+        if (!empty($document)) {
+            if (is_numeric($document)) { //id of document passed
+                $document = Model\Document\Email::getById($document);
+            } elseif (is_string($document)) { //path of document passed
+                $document = Model\Document\Email::getByPath($document);
+            }
+        }
+
+        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
             $this->document = $document;
             $this->setDocumentSettings();
-        } elseif ((int)$document > 0) { //id of document passed
-            $this->setDocument(Model\Document::getById($document));
-        } elseif (is_string($document) && $document != '') { //path of document passed
-            $this->setDocument(Model\Document::getByPath($document));
         } else {
-            throw new \Exception("$document is not an instance of \\Document\\Email or at least \\Document");
+            throw new \Exception("$document is not an instance of " . Model\Document\Email::class);
         }
 
         return $this;
@@ -841,41 +844,6 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @deprecated Pimcore\Mail::getHtml2TextBinaryEnabled is deprecated since 6.6.0 and will be removed with 7.0
-     *
-     * @return bool
-     */
-    public function getHtml2TextBinaryEnabled()
-    {
-        return false;
-    }
-
-    /**
-     * @deprecated Pimcore\Mail::enableHtml2textBinary is deprecated since 6.6.0 and will be removed with 7.0
-     *
-     * @return $this
-     *
-     * @throws \Exception
-     */
-    public function enableHtml2textBinary()
-    {
-        return $this;
-    }
-
-    /**
-     * @deprecated Pimcore\Mail::getHtml2textInstalled is deprecated since 6.6.0 and will be removed with 7.0
-     *
-     * @static
-     * returns  html2text binary installation status
-     *
-     * @return bool
-     */
-    public static function getHtml2textInstalled()
-    {
-        return true;
-    }
-
-    /**
      * @param string $htmlContent
      *
      * @return string
@@ -885,49 +853,38 @@ class Mail extends \Swift_Message
         $content = '';
 
         if (!empty($htmlContent)) {
-            $html = new Html2Text($htmlContent, $this->getHtml2TextOptions());
-            $content = $html->getText();
+            try {
+                $converter = new HtmlConverter();
+                $converter->getConfig()->merge($this->getHtml2TextOptions());
+                $content = $converter->convert($htmlContent);
+            } catch (\Exception $e) {
+                Logger::warning('Converting HTML to plain text failed, no plain text part will be attached to the sent email');
+            }
         }
 
         return $content;
     }
 
     /**
-     * @return string
-     */
-    public function getBodyText()
-    {
-        return $this->bodyText;
-    }
-
-    /**
      * @param string $bodyText
+     * @param string $charset
      *
      * @return $this
      */
-    public function setBodyText($bodyText)
+    public function setTextBody($bodyText, string $charset = 'utf-8')
     {
-        $this->bodyText = $bodyText;
-
-        return $this;
+        return $this->text($bodyText, $charset);
     }
 
     /**
      * @param string $body
+     * @param string $charset
      *
      * @return \Pimcore\Mail
      */
-    public function setBodyHtml($body)
+    public function setHtmlBody($body, string $charset = 'utf-8')
     {
-        return $this->setBody($body, 'text/html');
-    }
-
-    /**
-     * @return \Swift_MimePart
-     */
-    public function getBodyTextMimePart()
-    {
-        return $this->bodyTextMimePart;
+        return $this->html($body, $charset);
     }
 
     /**
@@ -947,48 +904,15 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @param \Swift_Mime_Attachment $attachment
+     * @param string $data
+     * @param string|null $mimeType
+     * @param string|null $filename
      *
      * @return $this
      */
-    public function addAttachment(\Swift_Mime_Attachment $attachment)
+    public function createAttachment($data, $mimeType = null, $filename = null)
     {
-        return $this->attach($attachment);
-    }
-
-    /**
-     * @param string|\Swift_OutputByteStream $data
-     * @param string|null $mimeType
-     * @param string|null $filename
-     * @param string|null $disposition
-     *
-     * @return \Swift_Mime_Attachment
-     */
-    public function createAttachment($data, $mimeType = null, $filename = null, $disposition = null)
-    {
-        $attachment = new \Swift_Attachment($data, $filename, $mimeType);
-        if ($disposition) {
-            $attachment->setDisposition($disposition);
-        }
-        $this->addAttachment($attachment);
-
-        return $attachment;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function addTo($address, $name = null)
-    {
-        if (is_array($address)) {
-            foreach ($address as $item) {
-                parent::addTo($item, $name);
-            }
-        } else {
-            parent::addTo($address, $name);
-        }
-
-        return $this;
+        return $this->attach($data, $filename, $mimeType);
     }
 
     /**
@@ -997,5 +921,98 @@ class Mail extends \Swift_Message
     public function getLastLogEntry()
     {
         return $this->lastLogEntry;
+    }
+
+    /**
+     * Set the Content-type of this entity.
+     *
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setContentType($type)
+    {
+        $this->getHeaders()->addTextHeader('Content-Type', $type);
+
+        return $this;
+    }
+
+    /**
+     * Set the subject of this message.
+     *
+     * @param string $subject
+     *
+     * @return $this
+     */
+    public function setSubject($subject)
+    {
+        return $this->subject($subject);
+    }
+
+    /**
+     * format Address from old params(string $address, string $name)
+     *
+     * @param string|array $addresses
+     *
+     * @return Address|array
+     */
+    protected function formatAddress(...$addresses)
+    {
+        //old param style with string name as second param
+        if (isset($addresses[1]) && is_string($addresses[1])) {
+            return [ new Address($addresses[0], $addresses[1]) ];
+        }
+
+        return $addresses;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addTo(...$addresses)
+    {
+        $addresses = $this->formatAddress(...$addresses);
+
+        return parent::addTo(...$addresses);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addCc(...$addresses)
+    {
+        $addresses = $this->formatAddress(...$addresses);
+
+        return parent::addCc(...$addresses);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addBcc(...$addresses)
+    {
+        $addresses = $this->formatAddress(...$addresses);
+
+        return parent::addBcc(...$addresses);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addFrom(...$addresses)
+    {
+        $addresses = $this->formatAddress(...$addresses);
+
+        return parent::addFrom(...$addresses);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addReplyTo(...$addresses)
+    {
+        $addresses = $this->formatAddress(...$addresses);
+
+        return parent::addReplyTo(...$addresses);
     }
 }

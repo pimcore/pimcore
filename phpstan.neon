@@ -3,28 +3,26 @@ includes:
 
 parameters:
 
-    #bootstrap: dev/pimcore/pimcore/.travis/phpstan-bootstrap.php # optional when running in project scope
+    bootstrapFiles:
+        #- .github/ci/files/phpstan-bootstrap.php # optional when running in project scope
     reportUnmatchedIgnoredErrors: false
 
     symfony:
-        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml # Symfony ^4.0
-        #container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml # Symfony ^3.4
+        container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
+        #container_xml_path: ../../../var/cache/dev/App_KernelDevDebugContainer.xml # optional when running in project scope
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
         - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
-        - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
-        - '**/EcommerceFrameworkBundle/Resources/views/Includes/paging.html.php'
-        - '**/Processor/PdfReactor8.php'
+        - '**/Processor/PdfReactor.php'
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
-        - '**/Document/MigrateTagNamingStrategyCommand.php'
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
-        - '**/bundles/AdminBundle/Security/Guard/WebserviceAuthenticator.php'
 
     ignoreErrors:
+        - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\FilterMultiSelectFromMultiSelect/'
         - '/(snappy|lz4)_(un)?compress/'
         - '/Instantiated class COM not found/'
         - '/(Order|Checkout)Manager.*__construct\(\) does not call parent constructor/'
@@ -32,23 +30,6 @@ parameters:
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
         - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
         - '/Matcher::__construct\(\).*TypeMatcher/'
-        -
-            message: '/method object::(pimcoreUrl|translateAdmin)/'
-            path: '**/*.html.php'
-        -
-            message: '#Using \$this outside a class\.#'
-            path: '**/*.html.php'
-        -
-            message: '#Variable \$(this|view|app) might not be defined.#'
-            paths:
-                - '**/*.html.php'
-                - '**/EcommerceFrameworkBundle/Resources/views/**/*.js.php'
-        -
-            message: '#Using \$this outside a class\.#'
-            path: '**/*.js.php'
-        -
-            message: '#Undefined variable: \$(this|view|app)#'
-            path: '**/*.js.php'
         -
             message: '/ALPHACHANNEL_REMOVE/'
             path: '**/Imagick.php'
@@ -69,4 +50,5 @@ parameters:
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
+        -  Pimcore\Config\Config
         -  Pimcore\Templating\Model\ViewModel

@@ -35,7 +35,7 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
                 elementEditor.reload({layoutId: transition.objectLayout});
 
             } else {
-                Ext.MessageBox.alert(data.message, data.reason);
+                Ext.MessageBox.alert(t(data.message), data.reasons.map(function(reason){ return t(reason); }).join('<br>'));
             }
 
 

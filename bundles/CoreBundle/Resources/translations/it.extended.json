@@ -581,7 +581,7 @@
     "assign_target_group_weight": "Peso",
     "target_group_multiselect": "Gruppo Obiettivo selezione multipla",
     "select_a_target_group": "Seleziona un Gruppo Obiettivo",
-    "usage_statistics_explanation": "Non disattivare se non ne hai bisogno. Puoi impostare i dati in /var/logs/usagelog.log",
+    "usage_statistics_explanation": "Non disattivare se non ne hai bisogno. Puoi impostare i dati in /var/log/usagelog.log",
     "turn_off_usage_statistics": "Disattiva statistiche di utilizzo",
     "redirects_type_entire_uri": "URI completo",
     "redirects_type_path_query": "Percorso ed interrogazione",

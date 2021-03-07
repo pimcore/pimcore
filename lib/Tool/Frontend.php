@@ -14,8 +14,7 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Document\DocumentStack;
-use Pimcore\Http\RequestHelper;
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
@@ -128,13 +127,11 @@ class Frontend
     public static function isOutputCacheEnabled()
     {
         $container = \Pimcore::getContainer();
-
-        $serviceId = 'pimcore.event_listener.frontend.full_page_cache';
-        if (!$container->has($serviceId)) {
+        if (!$container->has(FullPageCacheListener::class)) {
             return false;
         }
 
-        $cacheService = $container->get($serviceId);
+        $cacheService = $container->get(FullPageCacheListener::class);
         if ($cacheService && $cacheService->isEnabled()) {
             return [
                 'enabled' => true,
@@ -143,103 +140,5 @@ class Frontend
         }
 
         return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function hasWebpSupport()
-    {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
-        if ($config) {
-            if (self::hasClientWebpSupport() && self::hasDocumentWebpSupport()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected static $clientWebpSupport = null;
-
-    /**
-     * @return bool
-     */
-    protected static function hasClientWebpSupport(): bool
-    {
-        if (self::$clientWebpSupport === null) {
-            self::$clientWebpSupport = self::determineClientWebpSupport();
-        }
-
-        return self::$clientWebpSupport;
-    }
-
-    /**
-     * @return bool
-     */
-    private static function determineClientWebpSupport(): bool
-    {
-        try {
-            $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
-            if ($requestHelper->hasMasterRequest()) {
-                $contentTypes = $requestHelper->getMasterRequest()->getAcceptableContentTypes();
-                if (in_array('image/webp', $contentTypes)) {
-                    return true;
-                }
-
-                // not nice to do a browser detection but for now the easiest way to get around the topic described in #4345
-                $userAgent = strtolower($requestHelper->getMasterRequest()->headers->get('User-Agent'));
-
-                // order of browsers important since edge also sends chrome in user agent
-                $browsersToCheck = ['firefox' => 65, 'edge' => 18, 'chrome' => 32];
-                foreach ($browsersToCheck as $browser => $version) {
-                    if (preg_match('@(' . $browser . ')/([\d]+)@', $userAgent, $matches)) {
-                        if ($matches[1] == $browser) {
-                            if (intval($matches[2]) >= $version) {
-                                return true;
-                            } else {
-
-                                //explicitly return false if version constraint is not met - since edge also sends chrome in user agent
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            // nothing to do
-        }
-
-        return false;
-    }
-
-    protected static $documentWebpSupport = [];
-
-    /**
-     * @return bool
-     */
-    protected static function hasDocumentWebpSupport(): bool
-    {
-        try {
-            $documentStack = \Pimcore::getContainer()->get(DocumentStack::class);
-            $hash = $documentStack->getHash();
-
-            if (!isset(self::$documentWebpSupport[$hash])) {
-                // if a parent is from one of the below types, no WebP images should be rendered
-                // e.g. when an email is sent from within a document, the email shouldn't contain WebP images, even when the
-                // triggering client (browser) has WebP support, because the email client (e.g. Outlook) might not support WebP
-                self::$documentWebpSupport[$hash] = !(bool)$documentStack->findOneBy(function (Document $doc) {
-                    if (in_array($doc->getType(), ['email', 'newsletter', 'printpage', 'printcontainer'])) {
-                        return true;
-                    }
-
-                    return false;
-                });
-            }
-
-            return self::$documentWebpSupport[$hash];
-        } catch (\Exception $e) {
-            return false;
-        }
     }
 }

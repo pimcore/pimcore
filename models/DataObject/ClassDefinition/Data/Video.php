@@ -22,11 +22,10 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -36,16 +35,16 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $fieldtype = 'video';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * Type for the column to query
@@ -62,14 +61,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Video';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -77,19 +69,22 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -97,13 +92,16 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -121,7 +119,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
-            $data->setOwner(null, '');
+            $data->_setOwner(null);
+            $data->_setOwnerFieldname('');
+            $data->_setOwnerLanguage(null);
 
             if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
@@ -167,7 +167,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($raw['data']) {
                 $video = new DataObject\Data\Video();
                 if (isset($params['owner'])) {
-                    $video->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                    $video->_setOwner($params['owner']);
+                    $video->_setOwnerFieldname($params['fieldname']);
+                    $video->_setOwnerLanguage($params['language'] ?? null);
                 }
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
@@ -442,101 +444,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $dependencies;
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data) {
-            return $this->getDataForResource($data, $object, $params);
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param mixed $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        if (is_string($value)) {
-            if (! strlen($value)) {
-                return null;
-            }
-            $data = Serialize::unserialize($value);
-            if ($data === false) {
-                throw new \Exception('cannot get object video data from web service import - value cannot be decoded');
-            }
-            if (is_array($data)) {
-                if (isset($data['type']) && isset($data['data'])) {
-                    if (in_array($data['type'], ['youtube', 'vimeo', 'dailymotion'])) {
-                        return $this->getDataFromEditmode($data, $relatedObject, $params);
-                    } elseif ($data['type'] === 'asset') {
-                        $video = new DataObject\Data\Video();
-                        $video->setType($data['type']);
-                        $video->setTitle($data['title']);
-                        $video->setDescription($data['description']);
-                        if (is_int($id = $data['data'])) {
-                            if ($idMapper) {
-                                $id = $idMapper->getMappedId('asset', $id);
-                            }
-                            if ($asset = Asset::getById($id)) {
-                                $video->setData($asset);
-                            } else {
-                                if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $data['data']);
-                                } else {
-                                    throw new \Exception('cannot get object video data from web service import - referencing unknown asset with [ '.$data['data'].' ]');
-                                }
-                            }
-                        }
-                        if (is_int($id = $data['poster'])) {
-                            if ($idMapper) {
-                                $id = $idMapper->getMappedId('asset', $id);
-                            }
-                            if ($poster = Asset::getById($id)) {
-                                $video->setPoster($poster);
-                            } else {
-                                if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $data['poster']);
-                                } else {
-                                    throw new \Exception('cannot get object video data from web service import - referencing unknown asset with [ '.$data['poster'].' ]');
-                                }
-                            }
-                        }
-
-                        return $video;
-                    } else {
-                        throw new \Exception('cannot get object video data from web service import - type [ '.$data['type'].' ] is not implemented');
-                    }
-                }
-            } else {
-                throw new \Exception('cannot get object video data from web service import - value decoded into invalid type');
-            }
-        } elseif ($value) {
-            throw new \Exception('cannot get object video data from web service import - unexpected value');
-        }
-
-        return null;
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -724,5 +631,25 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
     }
 }

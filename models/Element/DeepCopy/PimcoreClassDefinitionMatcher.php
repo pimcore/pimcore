@@ -57,6 +57,3 @@ class PimcoreClassDefinitionMatcher implements Matcher
         return false;
     }
 }
-
-//TODO: remove in Pimcore 7
-class_alias(PimcoreClassDefinitionMatcher::class, 'Pimcore\Model\Version\PimcoreClassDefinitionMatcher');

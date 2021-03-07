@@ -47,12 +47,10 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-
-
-        if (intval(this.fieldConfig.width) < 1) {
+        if (!this.fieldConfig.width) {
             this.fieldConfig.width = 250;
         }
-        if (intval(this.fieldConfig.height) < 1) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = 250;
         }
 
@@ -70,7 +68,13 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
             conf.componentCls = "object_field object_field_type_" + this.type;
         }
 
-        conf.width += conf.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            conf.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            conf.width = this.sumWidths(conf.width, conf.labelWidth);
+        }
 
         if (this.data) {
             conf.value = this.data;

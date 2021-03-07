@@ -23,6 +23,7 @@ use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Service\VisitedPagesCounter as VisitedPagesCounterService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class VisitedPagesBefore extends AbstractVariableCondition implements DataProviderDependentInterface, EventDispatchingConditionInterface
 {
@@ -84,7 +85,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher)
     {
         // emit event which instructs VisitedPagesCountListener to increment the count after matching
-        $eventDispatcher->dispatch(TargetingEvents::VISITED_PAGES_COUNT_MATCH);
+        $eventDispatcher->dispatch(new GenericEvent(), TargetingEvents::VISITED_PAGES_COUNT_MATCH);
     }
 
     /**

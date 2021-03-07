@@ -17,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\Tool;
 
 class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
@@ -129,5 +130,17 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         }
 
         return $obj;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

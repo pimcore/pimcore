@@ -13,8 +13,8 @@
  */
 use Pimcore\Cache;
 use Pimcore\File;
-use Pimcore\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
@@ -152,7 +152,7 @@ class Pimcore
     public static function isInstalled()
     {
         try {
-            \Pimcore\Db::get();
+            \Pimcore\Db::get()->fetchOne('SELECT VERSION()');
 
             return true;
         } catch (\Exception $e) {
@@ -161,7 +161,7 @@ class Pimcore
     }
 
     /**
-     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @return EventDispatcherInterface
      */
     public static function getEventDispatcher()
     {

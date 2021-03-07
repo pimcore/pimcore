@@ -114,11 +114,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param Model\Property[] $properties
-     */
-    abstract public function setProperties($properties);
-
-    /**
      * @param string $name
      */
     public function removeProperty($name)
@@ -252,7 +247,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
         return (bool) $event->getArgument('isAllowed');
     }

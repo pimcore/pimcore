@@ -29,7 +29,7 @@ For further debug information see below.
 
 In addition to Pimcore document delivery, global targeting rules provide two actions with further possibilities to 
 deliver personalized content to the visitor.
- c
+ 
 1) **Redirect**: The visitor can be redirected when certain conditions match. E.g. redirect visitor on its first visit 
    to your site to a special landing page. 
   

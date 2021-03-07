@@ -51,43 +51,21 @@ Ext.Loader.setConfig({
 });
 Ext.enableAriaButtons = false;
 
-Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/ext/ux');
+Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/extjs/ext-ux/src/classic/src');
 
 Ext.require([
-    'Ext.button.Split',
-    'Ext.container.Viewport',
-    'Ext.data.JsonStore',
-    'Ext.grid.column.Action',
-    'Ext.grid.plugin.CellEditing',
-    'Ext.form.field.ComboBox',
-    'Ext.form.field.Hidden',
-    'Ext.grid.column.Check',
-    'Ext.grid.property.Grid',
-    'Ext.form.field.Time',
-    'Ext.form.FieldSet',
-    'Ext.form.Label',
-    'Ext.form.Panel',
-    'Ext.grid.feature.Grouping',
-    'Ext.grid.Panel',
-    'Ext.grid.plugin.DragDrop',
-    'Ext.layout.container.Accordion',
-    'Ext.layout.container.Border',
-    'Ext.tip.QuickTipManager',
-    'Ext.tab.Panel',
-    'Ext.toolbar.Paging',
-    'Ext.toolbar.Spacer',
-    'Ext.tree.plugin.TreeViewDragDrop',
-    'Ext.tree.Panel',
     'Ext.ux.colorpick.Field',
     'Ext.ux.colorpick.SliderAlpha',
-    'Ext.ux.DataTip',
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
     'Ext.ux.TabReorderer',
     'Ext.ux.grid.SubTable',
-    'Ext.window.Toast'
+    'Ext.window.Toast',
+    'Ext.slider.Single',
+    'Ext.form.field.Tag'
 ]);
 
+Ext.ariaWarn = Ext.emptyFn;
 
 Ext.onReady(function () {
 
@@ -186,11 +164,13 @@ Ext.onReady(function () {
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 
-        var jsonData = null;
-        try {
-            jsonData = Ext.decode(response.responseText);
-        } catch (e) {
+        var jsonData = response.responseJson;
+        if (!jsonData) {
+            try {
+                jsonData = Ext.decode(response.responseText);
+            } catch (e) {
 
+            }
         }
 
         var date = new Date();
@@ -292,9 +272,18 @@ Ext.onReady(function () {
                 },
                 depends : ['name']
             },
-            'module',
+            'group',
+            {
+                name: "translatedGroup",
+                convert: function (v, rec) {
+                    if (rec.data.group) {
+                        return t(rec.data.group);
+                    }
+                    return '';
+                },
+                depends : ['group']
+            },
             'controller',
-            'action',
             'template',
             {name: 'type', allowBlank: false},
             'priority',
@@ -346,12 +335,24 @@ Ext.onReady(function () {
         {name: 'id'},
         {name: 'text', allowBlank: false},
         {
-            name: "translatedText", convert: function (v, rec) {
+            name: "translatedText",
+            convert: function (v, rec) {
                 return t(rec.data.text);
-            }
+            },
+            depends : ['text']
         },
         {name: 'icon'},
         {name: 'group'},
+        {
+            name: "translatedGroup",
+            convert: function (v, rec) {
+                if (rec.data.group) {
+                    return t(rec.data.group);
+                }
+                return '';
+            },
+            depends : ['group']
+        },
         {name: "propertyVisibility"}
     ];
 

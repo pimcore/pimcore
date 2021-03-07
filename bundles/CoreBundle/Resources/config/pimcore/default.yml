@@ -8,13 +8,10 @@ framework:
     serializer:
         enabled: true
     router:
-        resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
     form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
-    templating:
-        engines: ['php', 'twig']
     web_link:
         enabled: true
     default_locale:  "%locale%"
@@ -24,6 +21,9 @@ framework:
         handler_id:  null
     php_errors:
         log: true
+    assets: ~
+    mailer:
+        enabled: true
 
 # Twig Configuration
 twig:
@@ -33,7 +33,9 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
-        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener'
+        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
+    paths:
+        '%kernel.project_dir%/templates': App
 
 # Doctrine Configuration
 doctrine:
@@ -49,9 +51,6 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_general_ci
-                mapping_types:
-                    enum: string
-                    bit: boolean
 
 # Monolog Configuration
 monolog:
@@ -136,7 +135,7 @@ pimcore:
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
-                    reverseManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation
+                    reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
@@ -169,21 +168,9 @@ pimcore:
 
     documents:
         editables:
-            map:
-                # @TODO: BC layer, to be removed in v7
-                href: \Pimcore\Model\Document\Editable\Relation
-                multihref: \Pimcore\Model\Document\Editable\Relations
-
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        tags: # @TODO to be removed in v7
-            map:
-                href: \Pimcore\Model\Document\Tag\Relation
-                multihref: \Pimcore\Model\Document\Tag\Relations
 
-            prefixes:
-                - \Pimcore\Model\Document\Tag\
-                - \Document_Tag_ # @TODO to be removed in v7
     newsletter:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default
@@ -200,7 +187,6 @@ pimcore:
             device: Pimcore\Targeting\DataProvider\Device
             geoip: Pimcore\Targeting\DataProvider\GeoIp
             geolocation: Pimcore\Targeting\DataProvider\GeoLocation
-            piwik: Pimcore\Targeting\DataProvider\Piwik
             targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
             visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
         conditions:
@@ -215,7 +201,6 @@ pimcore:
             target_group: Pimcore\Targeting\Condition\TargetGroup
             timeonsite: Pimcore\Targeting\Condition\TimeOnSite
             url: Pimcore\Targeting\Condition\Url
-            visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
             visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
         action_handlers:
             assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
@@ -231,10 +216,6 @@ pimcore:
             routes:
                 - { path: ^/admin(/.*)?$ }
                 - { route: ^pimcore_admin_ }
-        webservice:
-            routes:
-                - { path: ^/webservice(/.*)?$ }
-                - { route: ^pimcore_webservice }
         plugin:
             routes:
                 - { path: ^/plugin(/.*)?$ }
@@ -267,13 +248,13 @@ pimcore:
             app:
                 name: Migrations
                 namespace: App\Migrations
-                directory: "%kernel.root_dir%/Migrations"
+                directory: "%kernel.project_dir%/Migrations"
 
             # this is the core migration set used for Composer post-package-update event
             pimcore_core:
                 name: Pimcore Core Migrations
                 namespace: Pimcore\Bundle\CoreBundle\Migrations
-                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
+                directory: "%kernel.project_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
 
     sitemaps:
         generators:
@@ -489,8 +470,6 @@ pimcore:
             movie: 'video/x-sgi-movie'
             ice: 'x-conference/x-cooltalk'
 
-swiftmailer:
-    default_mailer: pimcore_mailer
 
 presta_sitemap:
     # override default dump_directory from public to web

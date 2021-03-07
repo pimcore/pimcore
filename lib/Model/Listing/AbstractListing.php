@@ -14,6 +14,8 @@
 
 namespace Pimcore\Model\Listing;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
 
@@ -22,7 +24,7 @@ use Pimcore\Model\AbstractModel;
  *
  * @package Pimcore\Model\Listing
  *
- * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
+ * @method QueryBuilder getQueryBuilder()
  */
 abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
@@ -152,8 +154,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if (intval($limit) > 0) {
-            $this->limit = intval($limit);
+        if ((int)$limit > 0) {
+            $this->limit = (int)$limit;
         }
 
         return $this;
@@ -168,8 +170,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if (intval($offset) > 0) {
-            $this->offset = intval($offset);
+        if ((int)$offset > 0) {
+            $this->offset = (int)$offset;
         }
 
         return $this;
@@ -331,9 +333,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         foreach ($params as $pkey => $param) {
             if (is_array($param)) {
                 if (isset($param[0]) && is_string($param[0])) {
-                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+                    $conditionVariableTypes[$pkey] = Connection::PARAM_STR_ARRAY;
                 } else {
-                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
+                    $conditionVariableTypes[$pkey] = Connection::PARAM_INT_ARRAY;
                 }
             } else {
                 if (is_bool($param)) {
@@ -515,7 +517,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                 $this->getDao()->load();
             } else {
                 @trigger_error(
-                    'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 7.',
+                    'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 10.',
                     \E_USER_DEPRECATED
                 );
             }

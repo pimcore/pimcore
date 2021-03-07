@@ -205,10 +205,6 @@ class Dependency extends AbstractModel
      */
     public function isRequired()
     {
-        if (is_array($this->getRequiredBy()) && $this->getRequiredByTotalCount() > 0) {
-            return true;
-        }
-
-        return false;
+        return $this->getRequiredByTotalCount() > 0;
     }
 }

@@ -22,12 +22,14 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Version;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\PageSnippet $model
  */
 abstract class Dao extends Model\Document\Dao
 {
     /**
-     * Delete all editables containing the content (tags) from the database
+     * Delete all editables containing the content from the database
      */
     public function deleteAllEditables()
     {
@@ -35,7 +37,7 @@ abstract class Dao extends Model\Document\Dao
     }
 
     /**
-     * Get all editables containing the content (tags) from the database
+     * Get all editables containing the content from the database
      *
      * @return Document\Editable[]
      */

@@ -1,7 +1,6 @@
-<head>
-    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+{% extends '@PimcoreEcommerceFramework/voucher/voucher_layout.html.twig' %}
+
+{% block content %}
     <div class="alert alert-danger">
         {% if errors is iterable %}
             {% for error in errors %}
@@ -9,4 +8,4 @@
             {% endfor %}
         {% endif %}
     </div>
-</body>
+{% endblock %}

@@ -20,11 +20,10 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -34,9 +33,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public $fieldtype = 'rgbaColor';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
@@ -58,14 +57,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     ];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\RgbaColor';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -73,12 +65,15 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
 
         return $this;
@@ -122,16 +117,20 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if ($data && $data[$this->getName() . '__rgb'] && $data[$this->getName() . '__a']) {
+        if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
             list($r, $g, $b) = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
             $a = hexdec($data[$this->getName() . '__a']);
-            $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
+            $data = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
+        }
 
+        if ($data instanceof Model\DataObject\Data\RgbaColor) {
             if (isset($params['owner'])) {
-                $color->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $data->_setOwner($params['owner']);
+                $data->_setOwnerFieldname($params['fieldname']);
+                $data->_setOwnerLanguage($params['language'] ?? null);
             }
 
-            return $color;
+            return $data;
         }
 
         return null;
@@ -216,6 +215,22 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         parent::checkValidity($data, $omitMandatoryCheck);
+
+        if ($data instanceof Model\DataObject\Data\RgbaColor) {
+            $this->checkColorComponent($data->getR());
+            $this->checkColorComponent($data->getG());
+            $this->checkColorComponent($data->getB());
+            $this->checkColorComponent($data->getA());
+        }
+    }
+
+    public function checkColorComponent($color)
+    {
+        if (!is_null($color)) {
+            if (!($color >= 0 && $color <= 255)) {
+                throw new Model\Element\ValidationException('Color component out of range');
+            }
+        }
     }
 
     /**
@@ -234,46 +249,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public function isEmpty($data)
     {
         return $data === null;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        if ($data instanceof Model\DataObject\Data\RgbaColor) {
-            return $this->getDataForEditmode($data, $object, $params);
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return Model\DataObject\Data\RgbaColor|null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        return $this->getDataFromEditmode($value, $object, $params);
     }
 
     /**
@@ -327,7 +302,14 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
                 'value' => $rgb,
                 'value2' => $a,
             ];
+        } elseif (is_array($value)) {
+            return [
+                'value' => $value[$this->getName() . '__rgb'],
+                'value2' => $value[$this->getName() . '__a'],
+            ];
         }
+
+        return $value;
     }
 
     /** See marshal
@@ -471,5 +453,25 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         $newValue = $newValue instanceof Model\DataObject\Data\RgbaColor ? $newValue->getHex(true, false) : null;
 
         return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\RgbaColor::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\RgbaColor::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 }

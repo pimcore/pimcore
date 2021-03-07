@@ -29,6 +29,3 @@ class UnmarshalMatcher extends TypeMatcher
         parent::__construct(\Pimcore\Model\Element\ElementDescriptor::class);
     }
 }
-
-//TODO: remove in Pimcore 7
-class_alias(UnmarshalMatcher::class, 'Pimcore\Model\Version\UnmarshalMatcher');

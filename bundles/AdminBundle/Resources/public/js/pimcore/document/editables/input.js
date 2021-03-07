@@ -97,12 +97,6 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
         if (this.config["placeholder"]) {
             this.element.dom.setAttribute('data-placeholder', this.config["placeholder"]);
         }
-
-        // @TODO validator is based on \Zend\Json\Expr and does not work with Twig templates, to be removed in v7.0
-        if(this.config["validator"]) {
-            this.element.isValid = this.config["validator"];
-            this.validateElement();
-        }
     },
 
     checkValue: function (mark) {
@@ -125,8 +119,6 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
         if (this.required) {
             this.validateRequiredValue(value, this.element, this, mark);
         }
-
-        this.validateElement(value);
     },
 
     getValue: function () {
@@ -165,31 +157,5 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
         } else {
             this.element.dom.setAttribute("contenteditable", true);
         }
-    },
-
-    /**
-     *
-     * validation for dedicated validator which could be added in an element view helper as the validator option
-     *
-     *
-     * @returns {pimcore.document.editables.input}
-     */
-    validateElement: function(value){
-
-        if(this.element.isValid && typeof this.element.isValid == 'function') {
-
-            value = !value ? this.element.dom.innerText : value;
-
-            var validatorMessage = this.element.isValid(strip_tags(value));
-            if(true !== validatorMessage) {
-                this.element.addCls('invalid-document-element');
-                this.element.setStyle('border', '1px solid #f40204');
-            } else {
-                this.element.removeCls('invalid-document-element');
-                this.element.setStyle('border', '');
-            }
-        }
-
-        return this;
     }
 });

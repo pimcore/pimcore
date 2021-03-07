@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 abstract class CachingPriceSystem extends AbstractPriceSystem implements CachingPriceSystemInterface
 {
     /**
-     * @var PriceInfoInterface[] $priceInfos
+     * @var PriceInfoInterface[][] $priceInfos
      */
     protected $priceInfos = [];
 

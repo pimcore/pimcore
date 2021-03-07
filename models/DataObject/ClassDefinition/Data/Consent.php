@@ -21,11 +21,10 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -57,16 +56,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     ];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Consent';
-
-    /**
      * Width of field
      *
-     * @var int
+     * @var string|int
      */
     public $width = 0;
 
@@ -112,7 +104,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         if (isset($params['owner'])) {
-            $consent->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            $consent->_setOwner($params['owner']);
+            $consent->_setOwnerFieldname($params['fieldname']);
+            $consent->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $consent;
@@ -318,7 +312,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return $data ? strval($data->getConsent()) : '';
+        return $data ? (string)$data->getConsent() : '';
     }
 
     /**
@@ -335,38 +329,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return new DataObject\Data\Consent((bool)$importValue);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data ? (bool) $data->getConsent() : false;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return DataObject\Data\Consent
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        return new DataObject\Data\Consent((bool)$value);
     }
 
     /** True if change is allowed in edit mode.
@@ -441,18 +403,21 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return string|int
      */
-    public function getWidth(): int
+    public function getWidth()
     {
-        return (int) $this->width;
+        return $this->width;
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
@@ -476,5 +441,25 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $newValue = $newValue instanceof DataObject\Data\Consent ? $newValue->getConsent() : null;
 
         return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Consent::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Consent::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Consent::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Consent::class . '|null';
     }
 }

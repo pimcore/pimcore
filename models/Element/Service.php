@@ -23,8 +23,8 @@ use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
@@ -261,7 +261,7 @@ class Service extends Model\AbstractModel
     public static function getDependedElement($config)
     {
         if ($config['type'] == 'object') {
-            return AbstractObject::getById($config['id']);
+            return DataObject::getById($config['id']);
         } elseif ($config['type'] == 'asset') {
             return Asset::getById($config['id']);
         } elseif ($config['type'] == 'document') {
@@ -278,7 +278,7 @@ class Service extends Model\AbstractModel
      */
     public static function doHideUnpublished($element)
     {
-        return ($element instanceof AbstractObject && AbstractObject::doHideUnpublished())
+        return ($element instanceof AbstractObject && DataObject::doHideUnpublished())
             || ($element instanceof Document && Document::doHideUnpublished());
     }
 
@@ -313,7 +313,7 @@ class Service extends Model\AbstractModel
      */
     public static function filterUnpublishedAdvancedElements($data)
     {
-        if (DataObject\AbstractObject::doHideUnpublished() && is_array($data)) {
+        if (DataObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
             $mapping = [];
             foreach ($data as $advancedElement) {
@@ -404,7 +404,7 @@ class Service extends Model\AbstractModel
         if ($type == 'asset') {
             $element = Asset::getByPath($path);
         } elseif ($type == 'object') {
-            $element = AbstractObject::getByPath($path);
+            $element = DataObject::getByPath($path);
         } elseif ($type == 'document') {
             $element = Document::getByPath($path);
         }
@@ -458,8 +458,8 @@ class Service extends Model\AbstractModel
                 // If key already ends with _copy or copy_N, append a digit to avoid _copy_copy_copy naming
                 $keyParts = explode('_', $sourceKey);
                 $counterKey = array_key_last($keyParts);
-                if (intval($keyParts[$counterKey]) > 0) {
-                    $keyParts[$counterKey] = intval($keyParts[$counterKey]) + 1;
+                if ((int)$keyParts[$counterKey] > 0) {
+                    $keyParts[$counterKey] = (int)$keyParts[$counterKey] + 1;
                 } else {
                     $keyParts[] = 1;
                 }
@@ -510,7 +510,7 @@ class Service extends Model\AbstractModel
         if ($type === 'asset') {
             $element = Asset::getById($id, $force);
         } elseif ($type === 'object') {
-            $element = AbstractObject::getById($id, $force);
+            $element = DataObject::getById($id, $force);
         } elseif ($type === 'document') {
             $element = Document::getById($id, $force);
         }
@@ -780,7 +780,7 @@ class Service extends Model\AbstractModel
             } else {
 
                 // if this is the initial element set the correct path and key
-                if ($data instanceof ElementInterface && $initial) {
+                if ($data instanceof ElementInterface && $initial && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
                     $originalElement = self::getElementById(self::getElementType($data), $data->getId());
 
                     if ($originalElement) {
@@ -795,9 +795,7 @@ class Service extends Model\AbstractModel
                             $data->setKey($originalElement->getKey());
                         }
 
-                        if (!DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
-                            $data->setPath($originalElement->getRealPath());
-                        }
+                        $data->setPath($originalElement->getRealPath());
                     }
                 }
 
@@ -969,21 +967,24 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(static function (QueryBuilder $select) use ($cv) {
+            $childsList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->where($where);
                 }
 
+                $fromAlias = $select->getQueryPart('form')[1];
+
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
-                        $method = $type == 'left' || $type == 'right' ? $method = 'join' . ucfirst($type) : 'join';
+                        $method = $type == 'left' || $type == 'right' ? $method = $type . 'Join' : 'join';
                         $name = $joinConfig['name'];
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->$method($name, $condition, $columns);
+                        $select->addSelect($columns);
+                        $select->$method($fromAlias, $name, $name, $condition);
                     }
                 }
 
@@ -1025,7 +1026,7 @@ class Service extends Model\AbstractModel
             'key' => $key,
             'type' => $type,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_VALID_KEY);
         $key = $event->getArgument('key');
         $key = trim($key);
 
@@ -1372,7 +1373,7 @@ class Service extends Model\AbstractModel
                     'conversion' => 'unmarshal',
                 ];
 
-                $copier = Self::getDeepCopyInstance($data, $context);
+                $copier = Self::getDeepCopyInstance($element, $context);
 
                 if ($element instanceof Concrete) {
                     $copier->addFilter(
@@ -1469,7 +1470,7 @@ class Service extends Model\AbstractModel
 
         $event = new ElementAdminStyleEvent($element, $adminStyle, $context);
 
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
         $adminStyle = $event->getAdminStyle();
 
         return $adminStyle;
@@ -1537,7 +1538,7 @@ class Service extends Model\AbstractModel
             'context' => $context,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_DEEP_COPY, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_DEEP_COPY);
 
         return $event->getArgument('copier');
     }

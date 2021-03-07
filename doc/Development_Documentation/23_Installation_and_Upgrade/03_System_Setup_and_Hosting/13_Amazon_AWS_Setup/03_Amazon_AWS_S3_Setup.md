@@ -23,7 +23,7 @@ composer require aws/aws-sdk-php
 
 ## Create a Custom `startup.php`
 
-Create a new file (or re-use existing) with the following code in `/app/startup.php`. 
+Create a new file (or re-use existing) with the following code in `/config/pimcore/startup.php`. 
 
 Please read the comments in the following code to better understand what it does and how to customize the settings. 
 
@@ -42,12 +42,20 @@ $s3Client = new S3Client([
     ],
 ]);
 
+// Set right ACL
+$s3Options = [
+    's3' => [
+        'ACL' => 'private',
+        'seekable' => true
+    ],
+];
+
+$default = stream_context_set_default($s3Options);
+
 $s3Client->registerStreamWrapper();
 
 // set default file context
-\Pimcore\File::setContext(stream_context_create([
-    's3' => ['seekable' => true]
-]));
+\Pimcore\File::setContext(stream_context_create($s3Options));
 
 ```
 

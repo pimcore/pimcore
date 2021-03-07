@@ -125,6 +125,11 @@ class Config extends Model\AbstractModel
     public $forcePictureTag = false;
 
     /**
+     * @var bool
+     */
+    public $preserveAnimation = false;
+
+    /**
      * @param string|array|self $config
      *
      * @return self|null
@@ -159,6 +164,8 @@ class Config extends Model\AbstractModel
      * @param string $name
      *
      * @return null|Config
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -179,7 +186,7 @@ class Config extends Model\AbstractModel
                 $thumbnail = new self();
                 $thumbnail->getDao()->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }
@@ -257,20 +264,6 @@ class Config extends Model\AbstractModel
         }
 
         return $thumbnail;
-    }
-
-    /**
-     * Returns thumbnail config for webservice export.
-     *
-     * @deprecated
-     */
-    public function getForWebserviceExport()
-    {
-        $arrayConfig = object2array($this);
-        $items = $arrayConfig['items'];
-        $arrayConfig['items'] = $items;
-
-        return $arrayConfig;
     }
 
     /**
@@ -731,8 +724,8 @@ class Config extends Model\AbstractModel
         }
 
         // ensure we return int's, sometimes $arg[...] contain strings
-        $dimensions['width'] = (int) $dimensions['width'];
-        $dimensions['height'] = (int) $dimensions['height'];
+        $dimensions['width'] = (int) $dimensions['width'] * ($this->getHighResolution() ?: 1);
+        $dimensions['height'] = (int) $dimensions['height'] * ($this->getHighResolution() ?: 1);
 
         return $dimensions;
     }
@@ -880,6 +873,22 @@ class Config extends Model\AbstractModel
     public function setForcePictureTag(bool $forcePictureTag): void
     {
         $this->forcePictureTag = $forcePictureTag;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPreserveAnimation(): bool
+    {
+        return $this->preserveAnimation;
+    }
+
+    /**
+     * @param bool $preserveAnimation
+     */
+    public function setPreserveAnimation(bool $preserveAnimation): void
+    {
+        $this->preserveAnimation = $preserveAnimation;
     }
 
     /**

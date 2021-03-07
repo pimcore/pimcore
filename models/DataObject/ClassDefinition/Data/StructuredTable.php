@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -34,19 +34,19 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     public $fieldtype = 'structuredTable';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $labelWidth;
+    public $labelWidth = 0;
 
     /**
      * @var string
@@ -64,14 +64,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     public $rows = [];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\StructuredTable';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -79,19 +72,22 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -99,19 +95,22 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getLabelWidth()
     {
@@ -119,12 +118,15 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param int $labelWidth
+     * @param string|int $labelWidth
      *
      * @return $this
      */
     public function setLabelWidth($labelWidth)
     {
+        if (is_numeric($labelWidth)) {
+            $labelWidth = (int)$labelWidth;
+        }
         $this->labelWidth = $labelWidth;
 
         return $this;
@@ -274,7 +276,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $structuredTable = new DataObject\Data\StructuredTable($structuredData);
 
         if (isset($params['owner'])) {
-            $structuredTable->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            $structuredTable->_setOwner($params['owner']);
+            $structuredTable->_setOwnerFieldname($params['fieldname']);
+            $structuredTable->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $structuredTable;
@@ -470,72 +474,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $webserviceArray = [];
-        $table = $this->getDataFromObjectParam($object, $params);
-
-        if ($table instanceof DataObject\Data\StructuredTable) {
-            $dataArray = $table->getData();
-            foreach ($this->getRows() as $r) {
-                foreach ($this->getCols() as $c) {
-                    $name = $r['key'] . '#' . $c['key'];
-                    $webserviceArray[$name] = $dataArray[$r['key']][$c['key']];
-                }
-            }
-
-            return $webserviceArray;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            if ($value instanceof \stdClass) {
-                $value = (array) $value;
-            }
-            if (is_array($value)) {
-                $dataArray = [];
-                foreach ($this->getRows() as $r) {
-                    foreach ($this->getCols() as $c) {
-                        $name = $r['key'] . '#' . $c['key'];
-                        $dataArray[$r['key']][$c['key']] = $value[$name];
-                    }
-                }
-
-                return new DataObject\Data\StructuredTable($dataArray);
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
-    /**
      * @return array|string
      */
     public function getColumnType()
@@ -674,5 +612,25 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $newData = $newValue instanceof DataObject\Data\StructuredTable ? $newValue->getData() : [];
 
         return $this->isEqualArray($oldData, $newData);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\StructuredTable::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\StructuredTable::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\StructuredTable::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
 }

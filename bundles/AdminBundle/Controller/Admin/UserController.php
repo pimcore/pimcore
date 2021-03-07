@@ -17,22 +17,22 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
 use Pimcore\Tool;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class UserController extends AdminController implements EventedControllerInterface
+class UserController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/user/tree-get-childs-by-id", name="pimcore_admin_user_treegetchildsbyid", methods={"GET"})
@@ -44,7 +44,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function treeGetChildsByIdAction(Request $request)
     {
         $list = new User\Listing();
-        $list->setCondition('parentId = ?', intval($request->get('node')));
+        $list->setCondition('parentId = ?', (int)$request->get('node'));
         $list->setOrder('ASC');
         $list->setOrderKey('name');
         $list->load();
@@ -117,7 +117,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             $className = User\Service::getClassNameForType($type);
             $user = $className::create([
-                'parentId' => intval($request->get('parentId')),
+                'parentId' => (int)$request->get('parentId'),
                 'name' => trim($request->get('name')),
                 'password' => '',
                 'active' => $request->get('active'),
@@ -240,7 +240,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function deleteAction(Request $request)
     {
-        $user = User\AbstractUser::getById(intval($request->get('id')));
+        $user = User\AbstractUser::getById((int)$request->get('id'));
 
         // only admins are allowed to delete admins and folders
         // because a folder might contain an admin user, so it is simply not allowed for users with the "users" permission
@@ -278,7 +278,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function updateAction(Request $request)
     {
         /** @var User|User\Role $user */
-        $user = User\AbstractUser::getById(intval($request->get('id')));
+        $user = User\AbstractUser::getById((int)$request->get('id'));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -336,7 +336,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                     $newWorkspaces = [];
                     foreach ($spaces as $space) {
                         if (in_array($space['path'], $processedPaths[$type])) {
-                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans("$type") . 's');
+                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans((string)$type) . 's');
                         }
 
                         $element = Element\Service::getElementByPath($type, $space['path']);
@@ -387,12 +387,12 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getAction(Request $request, Config $config)
     {
-        if (intval($request->get('id')) < 1) {
+        if ((int)$request->get('id') < 1) {
             return $this->adminJson(['success' => false]);
         }
 
         /** @var User $user */
-        $user = User::getById(intval($request->get('id')));
+        $user = User::getById((int)$request->get('id'));
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -457,7 +457,6 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => true,
-            'wsenabled' => $config['webservice']['enabled'],
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),
@@ -481,7 +480,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function getMinimalAction(Request $request)
     {
         /** @var User $user */
-        $user = User::getById(intval($request->get('id')));
+        $user = User::getById((int)$request->get('id'));
         $user->setPassword(null);
 
         $minimalUserData['id'] = $user->getId();
@@ -648,7 +647,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function roleTreeGetChildsByIdAction(Request $request)
     {
         $list = new User\Role\Listing();
-        $list->setCondition('parentId = ?', intval($request->get('node')));
+        $list->setCondition('parentId = ?', (int)$request->get('node'));
         $list->load();
 
         $roles = [];
@@ -708,7 +707,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function roleGetAction(Request $request)
     {
         /** @var User\UserRole $role */
-        $role = User\Role::getById(intval($request->get('id')));
+        $role = User\Role::getById((int)$request->get('id'));
 
         // workspaces
         $types = ['asset', 'document', 'object'];
@@ -797,16 +796,16 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @Route("/user/renew-2fa-qr-secret", name="pimcore_admin_user_renew2fasecret", methods={"GET"})
      *
      * @param Request $request
+     * @param GoogleAuthenticatorInterface $twoFactor
      *
      * @return BinaryFileResponse
      */
-    public function renew2FaSecretAction(Request $request)
+    public function renew2FaSecretAction(Request $request, GoogleAuthenticatorInterface $twoFactor)
     {
         $user = $this->getAdminUser();
         $proxyUser = $this->getAdminUser(true);
 
-        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
-        $newSecret = $twoFactorService->generateSecret();
+        $newSecret = $twoFactor->generateSecret();
         $user->setTwoFactorAuthentication('enabled', true);
         $user->setTwoFactorAuthentication('type', 'google');
         $user->setTwoFactorAuthentication('secret', $newSecret);
@@ -817,8 +816,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             $adminSession->set('2fa_required', true);
         });
 
-        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
-        $url = $twoFactorService->getQRContent($proxyUser);
+        $url = $twoFactor->getQRContent($proxyUser);
 
         $code = new \Endroid\QrCode\QrCode;
         $code->setWriterByName('png');
@@ -869,7 +867,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         /**
          * @var User $user
          */
-        $user = User::getById(intval($request->get('id')));
+        $user = User::getById((int)$request->get('id'));
         $success = true;
         $user->setTwoFactorAuthentication('enabled', false);
         $user->setTwoFactorAuthentication('secret', '');
@@ -957,7 +955,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $q = '%' . $request->get('query') . '%';
 
         $list = new User\Listing();
-        $list->setCondition('name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?', [$q, $q, $q, $q, intval($request->get('query'))]);
+        $list->setCondition('name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?', [$q, $q, $q, $q, (int)$request->get('query')]);
         $list->setOrder('ASC');
         $list->setOrderKey('name');
         $list->load();
@@ -984,9 +982,9 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -1001,14 +999,6 @@ class UserController extends AdminController implements EventedControllerInterfa
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 
     /**
@@ -1092,7 +1082,6 @@ class UserController extends AdminController implements EventedControllerInterfa
         $list->load();
         $roleList = $list->getRoles();
 
-        /** @var User\Role $role */
         foreach ($roleList as $role) {
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [
@@ -1164,8 +1153,8 @@ class UserController extends AdminController implements EventedControllerInterfa
                 try {
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
-                    $res = $mail->send();
+                    $mail->setTextBody("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
+                    $mail->send();
 
                     $success = true;
                     $message = sprintf($this->trans('invitation_link_sent'), $user->getEmail());

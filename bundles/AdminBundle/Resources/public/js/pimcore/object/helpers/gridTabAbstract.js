@@ -231,7 +231,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         );
         proxy.setExtraParam("condition", this.sqlEditor.getValue());
-        if (this.grid) {
+        if (this.grid && this.grid.filters) {
             this.grid.filters.clearFilters();
         }
 
