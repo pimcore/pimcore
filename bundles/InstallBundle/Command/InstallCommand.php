@@ -87,7 +87,7 @@ class InstallCommand extends Command
             'mysql-host-socket' => [
                 'description' => 'MySQL Host or Socket',
                 'mode' => InputOption::VALUE_REQUIRED,
-                'default' => '',
+                'default' => 'localhost',
                 'group' => 'db_credentials',
             ],
             'mysql-username' => [
@@ -111,7 +111,7 @@ class InstallCommand extends Command
             'mysql-port' => [
                 'description' => 'MySQL Port (will be omitted if socket is set)',
                 'mode' => InputOption::VALUE_REQUIRED,
-                'default' => '',
+                'default' => 3306,
                 'group' => 'db_credentials',
             ],
             'mysql-ssl-cert-path' => [
