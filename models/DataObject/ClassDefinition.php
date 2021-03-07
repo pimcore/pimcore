@@ -309,7 +309,7 @@ class ClassDefinition extends Model\AbstractModel
             }
         }
 
-        if (method_exists($data, 'getChildren')) {
+        if ($data != null && method_exists($data, 'getChildren')) {
             $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
