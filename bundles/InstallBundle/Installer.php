@@ -399,11 +399,13 @@ class Installer
         if (!$this->skipDatabaseConfig) {
             // now we're able to write the server version to the database.yml
             $db = \Pimcore\Db::get();
-            $connection = $db->getWrappedConnection();
-            if ($connection instanceof ServerInfoAwareConnection) {
-                $writer = new ConfigWriter();
-                $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
-                $writer->writeDbConfig($doctrineConfig);
+            if($db instanceof Connection) {
+                $connection = $db->getWrappedConnection();
+                if ($connection instanceof ServerInfoAwareConnection) {
+                    $writer = new ConfigWriter();
+                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    $writer->writeDbConfig($doctrineConfig);
+                }
             }
         }
 
