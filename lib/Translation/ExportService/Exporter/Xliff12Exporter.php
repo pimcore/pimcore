@@ -28,7 +28,7 @@ class Xliff12Exporter implements ExporterInterface
     private $xliffEscaper;
 
     /**
-     * @var \SimpleXMLElement
+     * @var \SimpleXMLElement|null
      */
     private $xliffFile;
 
@@ -98,15 +98,12 @@ class Xliff12Exporter implements ExporterInterface
     /**
      * @param string $exportFilePath
      *
-     * @return \SimpleXMLElement
      */
-    protected function prepareExportFile(string $exportFilePath): string
+    protected function prepareExportFile(string $exportFilePath)
     {
-        if ($this->xliffFile == null) {
+        if ($this->xliffFile === null) {
             $this->xliffFile = simplexml_load_file($exportFilePath, null, LIBXML_NOCDATA);
         }
-
-        return $this->xliffFile;
     }
 
     /**
