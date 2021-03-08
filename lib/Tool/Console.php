@@ -287,17 +287,22 @@ class Console
         }
         $process->start();
 
+        if ($background) {
+            return 0;
+        }
+
+        //write to output file is only possible when background = false
         if (!empty($outputFile)) {
             $logHandle = fopen($outputFile, 'a');
-            $exitCode = $process->wait(function ($type, $buffer) use ($logHandle) {
+            $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
             });
             fclose($logHandle);
         } else {
-            $exitCode = $process->wait();
+            $process->wait();
         }
 
-        return $background ? $exitCode : $process->getOutput();
+        return $process->getOutput();
     }
 
     /**
@@ -310,7 +315,7 @@ class Console
      */
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
-        return self::runPhpScript($script, $arguments, $outputFile);
+        return self::runPhpScript($script, $arguments, $outputFile, null, true);
     }
 
     /**
