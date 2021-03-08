@@ -18,11 +18,12 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslateValue extends AbstractOperator
 {
-    /** @var Translator  */
+    /** @var TranslatorInterface|LocaleAwareInterface  */
     private $translator;
 
     /** @var string */
