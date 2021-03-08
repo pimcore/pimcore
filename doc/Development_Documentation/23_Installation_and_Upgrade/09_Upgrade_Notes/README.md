@@ -53,6 +53,7 @@
   `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS` 
   instead. 
 - `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` class has been deprecated and will be removed in Pimcore 10.
+- `Pimcore\Tool\Console`: Methods `getSystemEnvironment()`, `exec()`, `execInBackground()` has been deprecated, use `Symfony\Component\Process\Process` instead. Also `runPhpScriptInBackground()` has been deprecated in favor of `runPhpScript()` with `$background` param (Note: `$outputFile` & `$background` params will not work together, since writing to the output file blocks the execution, which means it is not running in background anymore.)
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
