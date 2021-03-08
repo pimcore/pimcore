@@ -95,7 +95,8 @@ class Bracket implements BracketInterface
                     if ($check === true) {
                         return false;
                     } else {
-                        $state = true;
+                        //consider current state with check, if not default.
+                        $state = ($state === null) ? !$check : (!$check && $state);
                     }
                     break;
 
