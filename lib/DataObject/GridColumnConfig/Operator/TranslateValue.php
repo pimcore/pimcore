@@ -20,7 +20,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TranslateValue extends AbstractOperator
+/**
+ * @internal
+ */
+final class TranslateValue extends AbstractOperator
 {
     /**
      * @var Translator

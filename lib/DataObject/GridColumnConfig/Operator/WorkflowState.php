@@ -19,7 +19,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Workflow\Place\StatusInfo;
 
-class WorkflowState extends AbstractOperator
+/**
+ * @internal
+ */
+final class WorkflowState extends AbstractOperator
 {
     /**
      * @var StatusInfo

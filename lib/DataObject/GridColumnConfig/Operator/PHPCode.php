@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class PHPCode extends AbstractOperator
+/**
+ * @internal
+ */
+final class PHPCode extends AbstractOperator
 {
     /**
      * @var \stdClass

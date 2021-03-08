@@ -19,7 +19,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\Fieldcollection;
 
-class FieldCollectionGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class FieldCollectionGetter extends AbstractOperator
 {
     /** @var string */
     private $attr;

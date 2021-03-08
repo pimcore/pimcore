@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Substring extends AbstractOperator
+/**
+ * @internal
+ */
+final class Substring extends AbstractOperator
 {
     /** @var int */
     private $start;
