@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
 use Pimcore\Tool\Text;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -158,39 +159,30 @@ class Wysiwyg extends Model\Document\Editable
      *
      * @param array $idMapping
      *
-     * @return string|void
+     * @return void
      *
-     * @todo: no rewriteIds method ever returns anything, why this one?
      */
     public function rewriteIds($idMapping)
     {
-        $html = str_get_html($this->text);
-        if (!$html) {
-            return $this->text;
-        }
+        $html = new Crawler($this->text);
 
-        $s = $html->find('a[pimcore_id],img[pimcore_id]');
+        $elements = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-        if ($s) {
-            foreach ($s as $el) {
-                if ($el->href || $el->src) {
-                    $type = $el->pimcore_type;
-                    $id = (int) $el->pimcore_id;
+        /** @var \DOMElement $el */
+        foreach ($elements as $el) {
+            if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
+                $type = $el->getAttribute('pimcore_type');
+                $id = (int)$el->getAttribute('pimcore_id');
 
-                    if (array_key_exists($type, $idMapping)) {
-                        if (array_key_exists($id, $idMapping[$type])) {
-                            $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
-                        }
-                    }
+                if ($idMapping[$type][$id] ?? false) {
+                    $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                 }
             }
         }
 
-        $this->text = $html->save();
+        $this->text = $html->filter('body')->html();
 
         $html->clear();
         unset($html);
-
-        return;
     }
 }

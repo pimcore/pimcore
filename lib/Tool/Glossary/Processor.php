@@ -22,6 +22,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Glossary;
 use Pimcore\Model\Site;
+use Symfony\Component\DomCrawler\Crawler;
 
 class Processor
 {
@@ -90,12 +91,9 @@ class Processor
         // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content of the html must be reloaded every searchterm to ensure that there is no replacement within a blocked tag
         // kind of a hack but,
         // changed to this because of that: http://www.pimcore.org/issues/browse/PIMCORE-687
-        $html = str_get_html($content);
-        if (!$html) {
-            return $content;
-        }
+        $html = new Crawler($content);
 
-        $es = $html->find('text');
+        $es = $html->filter('body');
 
         $tmpData = [
             'search' => [],
@@ -128,12 +126,19 @@ class Processor
             $tmpData['replace'][] = $entry['replace'];
         }
 
+        $result = '';
         $data = $tmpData;
         $data['count'] = array_fill(0, count($data['search']), 0);
 
-        foreach ($es as $e) {
-            $text = $e->innertext;
-            if (!in_array((string)$e->parent()->tag, $this->blockedTags) && strlen(trim($text))) {
+        foreach ($es->children() as $e) {
+            $text = $e->ownerDocument->saveHTML($e);
+            /** @var \DOMElement|null $parentNode */
+            $parentNode = $e->parentNode;
+            if (
+                $parentNode instanceof \DOMElement &&
+                !in_array((string)$parentNode->tagName, $this->blockedTags) &&
+                strlen(trim($text))
+            ) {
                 if ($options['limit'] < 0) {
                     $text = preg_replace($data['search'], $data['replace'], $text);
                 } else {
@@ -145,12 +150,9 @@ class Processor
                         }
                     }
                 }
-
-                $e->innertext = $text;
             }
+            $result .= $text;
         }
-
-        $result = $html->save();
 
         $html->clear();
         unset($html);
