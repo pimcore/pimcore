@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
@@ -365,15 +366,17 @@ class Installer
             'bit' => 'boolean',
         ];
 
-        $this->createConfigFiles([
+        $doctrineConfig = [
             'doctrine' => [
                 'dbal' => [
-                  'connections' => [
-                      'default' => $dbConfig,
-                  ],
+                    'connections' => [
+                        'default' => $dbConfig,
+                    ],
                 ],
             ],
-        ]);
+        ];
+
+        $this->createConfigFiles($doctrineConfig);
 
         $this->dispatchStepEvent('boot_kernel');
 
@@ -392,6 +395,19 @@ class Installer
         $this->dispatchStepEvent('setup_database');
 
         $errors = $this->setupDatabase($userCredentials, $errors);
+
+        if (!$this->skipDatabaseConfig) {
+            // now we're able to write the server version to the database.yml
+            $db = \Pimcore\Db::get();
+            if($db instanceof Connection) {
+                $connection = $db->getWrappedConnection();
+                if ($connection instanceof ServerInfoAwareConnection) {
+                    $writer = new ConfigWriter();
+                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    $writer->writeDbConfig($doctrineConfig);
+                }
+            }
+        }
 
         $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
