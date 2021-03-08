@@ -187,8 +187,9 @@ class Text
     public static function replaceWysiwygTextRelationIds($idMapping, $text)
     {
         if (!empty($text)) {
-            $html = new Crawler($text);
-            if (!$html) {
+            try {
+                $html = new Crawler($text);
+            } catch (\Exception $e) {
                 return $text;
             }
 

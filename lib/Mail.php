@@ -763,19 +763,18 @@ class Mail extends Email
                 $htmlContent = $this->getBodyHtmlRendered();
                 $html = new Crawler($htmlContent);
 
-                if ($html) {
-                    $body = $html->filter('body')->eq(0);
-                    if ($body) {
-                        $style = $body->filter('style')->eq(0);
-                        if ($style) {
-                            $style->clear();
-                        }
-                        $htmlContent = $body->html();
+                $body = $html->filter('body')->eq(0);
+                if ($body) {
+                    $style = $body->filter('style')->eq(0);
+                    if ($style) {
+                        $style->clear();
                     }
-
-                    $html->clear();
-                    unset($html);
+                    $htmlContent = $body->html();
                 }
+
+                $html->clear();
+                unset($html);
+
                 $content = $this->html2Text($htmlContent);
             } catch (\Exception $e) {
                 Logger::err($e);

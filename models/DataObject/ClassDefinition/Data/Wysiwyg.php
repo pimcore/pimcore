@@ -368,26 +368,24 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataFromObjectParam($object, $params);
         $html = new Crawler($data);
-        if ($html) {
-            $es = $html->filter('body > a[pimcore_id], img[pimcore_id]');
+        $es = $html->filter('body > a[pimcore_id], img[pimcore_id]');
 
-            /** @var \DOMElement $el */
-            foreach ($es as $el) {
-                if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
-                    $type = $el->getAttribute('pimcore_type');
-                    $id = (int) $el->getAttribute('pimcore_id');
+        /** @var \DOMElement $el */
+        foreach ($es as $el) {
+            if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
+                $type = $el->getAttribute('pimcore_type');
+                $id = (int) $el->getAttribute('pimcore_id');
 
-                    if ($idMapping[$type][$id] ?? false) {
-                        $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
-                    }
+                if ($idMapping[$type][$id] ?? false) {
+                    $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                 }
             }
-
-            $data = $html->filter('body')->html();
-
-            $html->clear();
-            unset($html);
         }
+
+        $data = $html->filter('body')->html();
+
+        $html->clear();
+        unset($html);
 
         return $data;
     }

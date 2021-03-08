@@ -172,7 +172,8 @@ class IncludeRenderer
 
         // this is if the content that is included does already contain markup/html
         // this is needed by the editmode to highlight included documents
-        if ($html = new Crawler($content)) {
+        try {
+            $html = new Crawler($content);
             $childs = $html->filter('body > div');
             /** @var \DOMElement $child */
             foreach ($childs as $child) {
@@ -184,7 +185,7 @@ class IncludeRenderer
 
             $html->clear();
             unset($html);
-        } else {
+        } catch (\Exception $e) {
             // add a div container if the include doesn't contain markup/html
             $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
         }

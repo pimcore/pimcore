@@ -166,25 +166,23 @@ class Wysiwyg extends Model\Document\Editable
     {
         $html = new Crawler($this->text);
 
-        if ($html) {
-            $elements = $html->filter('a[pimcore_id], img[pimcore_id]');
+        $elements = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-            /** @var \DOMElement $el */
-            foreach ($elements as $el) {
-                if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
-                    $type = $el->getAttribute('pimcore_type');
-                    $id = (int)$el->getAttribute('pimcore_id');
+        /** @var \DOMElement $el */
+        foreach ($elements as $el) {
+            if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
+                $type = $el->getAttribute('pimcore_type');
+                $id = (int)$el->getAttribute('pimcore_id');
 
-                    if ($idMapping[$type][$id] ?? false) {
-                        $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
-                    }
+                if ($idMapping[$type][$id] ?? false) {
+                    $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                 }
             }
-
-            $this->text = $html->filter('body')->html();
-
-            $html->clear();
-            unset($html);
         }
+
+        $this->text = $html->filter('body')->html();
+
+        $html->clear();
+        unset($html);
     }
 }
