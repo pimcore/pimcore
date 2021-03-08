@@ -125,6 +125,7 @@
     ```
 - [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
 - [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
+- `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.
 
 ## 6.9.0
 - [Data Objects] CSV import feature will be removed in Pimcore 10. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead

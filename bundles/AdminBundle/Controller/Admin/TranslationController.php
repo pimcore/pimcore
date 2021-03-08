@@ -30,6 +30,7 @@ use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
 use Pimcore\Translation\ImporterService\ImporterServiceInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 use Pimcore\Translation\Translator;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -1008,73 +1009,59 @@ class TranslationController extends AdminController
                     );
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
-                    $dom = str_get_html($html);
-                    if ($dom) {
-
-                        // remove containers including their contents
-                        $elements = $dom->find(
-                            'form,script,style,noframes,noscript,object,area,mapm,video,audio,iframe,textarea,input,select,button,'
-                        );
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $el->outertext = '';
-                            }
-                        }
-
-                        $clearText = function ($string) {
-                            $string = str_replace("\r\n", '', $string);
-                            $string = str_replace("\n", '', $string);
-                            $string = str_replace("\r", '', $string);
-                            $string = str_replace("\t", '', $string);
-                            $string = preg_replace('/&[a-zA-Z0-9]+;/', '', $string); // remove html entities
-                            $string = preg_replace('#[ ]+#', '', $string);
-
-                            return $string;
-                        };
-
-                        // remove empty tags (where it matters)
-                        $elements = $dom->find('a, li');
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $string = $clearText($el->plaintext);
-                                if (empty($string)) {
-                                    $el->outertext = '';
-                                }
-                            }
-                        }
-
-                        // replace links => links get [Linktext]
-                        $elements = $dom->find('a');
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $string = $clearText($el->plaintext);
-                                if (!empty($string)) {
-                                    $el->outertext = '[' . $el->plaintext . ']';
-                                } else {
-                                    $el->outertext = '';
-                                }
-                            }
-                        }
-
-                        $html = $dom->save();
-                        $dom->clear();
-                        unset($dom);
-
-                        // force closing tags (simple_html_dom doesn't seem to support this anymore)
-                        $doc = new \DOMDocument();
-                        libxml_use_internal_errors(true);
-                        $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . '</article>');
-                        libxml_clear_errors();
-                        $html = $doc->saveHTML();
-
-                        $bodyStart = strpos($html, '<body>') + 6;
-                        $bodyEnd = strpos($html, '</body>');
-                        if ($bodyStart && $bodyEnd) {
-                            $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
-                        }
-
-                        $output .= $html;
+                    $dom = new Crawler($html);
+                    // remove containers including their contents
+                    $elements = $dom->filter('form, script, style, noframes, noscript, object, area, mapm, video, audio, iframe, textarea, input, select, button');
+                    foreach ($elements as $element) {
+                        $element->parentNode->removeChild($element);
                     }
+
+                    $clearText = function ($string) {
+                        $string = str_replace("\r\n", '', $string);
+                        $string = str_replace("\n", '', $string);
+                        $string = str_replace("\r", '', $string);
+                        $string = str_replace("\t", '', $string);
+                        $string = preg_replace('/&[a-zA-Z0-9]+;/', '', $string); // remove html entities
+                        $string = preg_replace('#[ ]+#', '', $string);
+
+                        return $string;
+                    };
+
+                    // remove empty tags (where it matters)
+                    // replace links => links get [Linktext]
+                    $elements = $dom->filter('a');
+                    foreach ($elements as $element) {
+                        $string = $clearText($element->textContent);
+                        if (!empty($string)) {
+                            $newNode = $element->ownerDocument->createTextNode('[' . $element->textContent . ']');
+
+                            $element->parentNode->replaceChild($newNode, $element);
+                        } else {
+                            $element->ownerDocument->textContent = '';
+                        }
+                    }
+
+                    if ($dom->count() > 0) {
+                        $html = $dom->html();
+                    }
+
+                    $dom->clear();
+                    unset($dom);
+
+                    // force closing tags
+                    $doc = new \DOMDocument();
+                    libxml_use_internal_errors(true);
+                    $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . '</article>');
+                    libxml_clear_errors();
+                    $html = $doc->saveHTML();
+
+                    $bodyStart = strpos($html, '<body>') + 6;
+                    $bodyEnd = strpos($html, '</body>');
+                    if ($bodyStart && $bodyEnd) {
+                        $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
+                    }
+
+                    $output .= $html;
                 } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 

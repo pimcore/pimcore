@@ -14,6 +14,7 @@
 
 namespace Pimcore\Tool;
 
+use Symfony\Component\DomCrawler\Crawler;
 use Onnov\DetectEncoding\EncodingDetector;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
@@ -186,31 +187,33 @@ class Text
     public static function replaceWysiwygTextRelationIds($idMapping, $text)
     {
         if (!empty($text)) {
-            $html = str_get_html($text);
-            if (!$html) {
+            try {
+                $html = new Crawler($text);
+            } catch (\Exception $e) {
                 return $text;
             }
 
-            $s = $html->find('a[pimcore_id],img[pimcore_id]');
+            $s = $html->filter('a[pimcore_id], img[pimcore_id]');
 
+            /** @var \DOMElement $el */
             foreach ($s as $el) {
                 $type = null;
 
                 // image
-                if ($el->src) {
+                if ($el->hasAttribute('src')) {
                     $type = 'asset';
                 }
 
                 // link
-                if ($el->href) {
-                    if ($el->pimcore_type == 'asset') {
+                if ($el->hasAttribute('href')) {
+                    if ($el->getAttribute('pimcore_type') == 'asset') {
                         $type = 'asset';
-                    } elseif ($el->pimcore_type == 'document') {
+                    } elseif ($el->getAttribute('pimcore_type') == 'document') {
                         $type = 'document';
                     }
                 }
 
-                $newId = $idMapping[$type][$el->attr['pimcore_id']] ?? null;
+                $newId = $idMapping[$type][$el->getAttribute('pimcore_id')] ?? null;
                 if ($newId) {
                     //update id
 
@@ -220,18 +223,16 @@ class Text
                         $pimcoreElement = Document::getById($newId);
                     }
 
-                    //TODO
-
-                    $el->pimcore_id = $newId;
-                    $el->src = $pimcoreElement->getFullPath();
+                    $el->setAttribute('pimcore_id', $newId);
+                    $el->setAttribute('src', $pimcoreElement->getFullPath());
                 } else {
                     //remove relation, not found in mapping
-                    $el->pimcore_id = null;
-                    $el->src = null;
+                    $el->setAttribute('pimcore_id', null);
+                    $el->setAttribute('src', null);
                 }
             }
 
-            $return = $html->save();
+            $return = $html->html();
 
             $html->clear();
             unset($html);

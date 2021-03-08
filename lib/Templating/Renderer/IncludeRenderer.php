@@ -22,6 +22,7 @@ use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\Frontend;
+use Symfony\Component\DomCrawler\Crawler;
 
 class IncludeRenderer
 {
@@ -171,20 +172,20 @@ class IncludeRenderer
 
         // this is if the content that is included does already contain markup/html
         // this is needed by the editmode to highlight included documents
-        if ($html = str_get_html($content)) {
-            $childs = $html->find('*');
-            if (is_array($childs)) {
-                foreach ($childs as $child) {
-                    $child->class = $child->class . $editmodeClass;
-                    $child->pimcore_type = $include->getType();
-                    $child->pimcore_id = $include->getId();
-                }
+        try {
+            $html = new Crawler($content);
+            $childs = $html->filter('body > div');
+            /** @var \DOMElement $child */
+            foreach ($childs as $child) {
+                $child->setAttribute('class' , $child->getAttribute('class') . $editmodeClass);
+                $child->setAttribute('pimcore_type', $include->getType());
+                $child->setAttribute('pimcore_id', $include->getId());
             }
-            $content = $html->save();
+            $content = $html->filter('body')->html();
 
             $html->clear();
             unset($html);
-        } else {
+        } catch (\Exception $e) {
             // add a div container if the include doesn't contain markup/html
             $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
         }

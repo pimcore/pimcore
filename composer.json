@@ -94,7 +94,8 @@
     "matthiasmullie/minify": "^1.3",
     "webmozarts/console-parallelization": "^1.2.0",
     "onnov/detect-encoding": "^2.0",
-    "knplabs/knp-paginator-bundle": "^5.4.2"
+    "knplabs/knp-paginator-bundle": "^5.4.2",
+    "masterminds/html5" : "^2.7"
   },
   "conflict": {
     "symfony/monolog-bundle": "3.6.0",
@@ -118,8 +119,7 @@
   },
   "autoload": {
     "files": [
-      "lib/helper-functions.php",
-      "lib/simple_html_dom.php"
+      "lib/helper-functions.php"
     ],
     "psr-4": {
       "Pimcore\\Model\\": "models",

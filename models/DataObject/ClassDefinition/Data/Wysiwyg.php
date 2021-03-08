@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Text;
+use Symfony\Component\DomCrawler\Crawler;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
@@ -361,35 +362,30 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return mixed
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        $html = str_get_html($data);
-        if ($html) {
-            $s = $html->find('a[pimcore_id],img[pimcore_id]');
+        $html = new Crawler($data);
+        $es = $html->filter('body > a[pimcore_id], img[pimcore_id]');
 
-            if ($s) {
-                foreach ($s as $el) {
-                    if ($el->href || $el->src) {
-                        $type = $el->pimcore_type;
-                        $id = (int) $el->pimcore_id;
+        /** @var \DOMElement $el */
+        foreach ($es as $el) {
+            if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
+                $type = $el->getAttribute('pimcore_type');
+                $id = (int) $el->getAttribute('pimcore_id');
 
-                        if (array_key_exists($type, $idMapping)) {
-                            if (array_key_exists($id, $idMapping[$type])) {
-                                $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
-                            }
-                        }
-                    }
+                if ($idMapping[$type][$id] ?? false) {
+                    $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                 }
             }
-
-            $data = $html->save();
-
-            $html->clear();
-            unset($html);
         }
+
+        $data = $html->filter('body')->html();
+
+        $html->clear();
+        unset($html);
 
         return $data;
     }
