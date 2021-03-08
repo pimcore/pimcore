@@ -90,11 +90,13 @@ abstract class Processor
 
         if (!$disableBackgroundExecution) {
             $process->start();
-            $logHandle = fopen(PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log', 'a');
-            $process->wait(function ($type, $buffer) use ($logHandle) {
-                fwrite($logHandle, $buffer);
-            });
-            fclose($logHandle);
+            //we can't write output to log file, since wait() is a blocking method
+            //see https://github.com/pimcore/pimcore/issues/8355
+//            $logHandle = fopen(PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log', 'a');
+//            $process->wait(function ($type, $buffer) use ($logHandle) {
+//                fwrite($logHandle, $buffer);
+//            });
+//            fclose($logHandle);
 
             return true;
         }
