@@ -1542,7 +1542,7 @@ class Asset extends Element\AbstractElement
      */
     public function getTemporaryFile()
     {
-        $destinationPath = $this->getLocalFile($this->getFileSystemPath());
+        $destinationPath = $this->getLocalFile($this->getStream());
         @chmod($destinationPath, File::getDefaultMode());
 
         return $destinationPath;
