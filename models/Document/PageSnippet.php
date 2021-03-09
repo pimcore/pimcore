@@ -694,6 +694,23 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
+    /**
+     * @TODO: remove with $this->elements
+     */
+    public function __clone()
+    {
+        unset($this->elements, $this->inheritedElements, $this->editables, $this->inheritedEditables);
+
+        $this->inheritedEditables = [];
+        $this->elements = & $this->editables;
+        $this->inheritedElements = & $this->inheritedEditables;
+
+        parent::__clone();
+    }
+
+    /**
+     * @TODO: remove with $this->elements
+     */
     public function __wakeup()
     {
         if ($this->editables === null && $this->elements !== null) {
