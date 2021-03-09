@@ -283,13 +283,13 @@
 {% endblock %}
 
 {% block css %}
-    {% apply spaceless %}
+    {%- apply spaceless -%}
     <style type="text/css">
         {%- pimcoreassetcompress -%}
         {{ include('@PimcoreCore/Targeting/toolbar/toolbar.css') }}
         {%- endpimcoreassetcompress -%}
     </style>
-    {% endapply %}
+    {%- endapply -%}
 {% endblock %}
 
 {% block js %}
