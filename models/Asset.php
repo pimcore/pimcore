@@ -203,11 +203,6 @@ class Asset extends Element\AbstractElement
     protected $versionCount;
 
     /**
-     * @var string[]
-     */
-    protected $_temporaryFiles = [];
-
-    /**
      *
      * @return array
      */
@@ -1351,12 +1346,9 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($this->getFilename());
-                $dest = fopen($tmpFile, 'w+', false, File::getContext());
-                stream_copy_to_stream($this->stream, $dest);
+                $tempFile = $this->getLocalFile($this->stream);
+                $dest = fopen($tempFile, 'w+', false, File::getContext());
                 $this->stream = $dest;
-
-                $this->_temporaryFiles[] = $tmpFile;
             }
         } elseif (is_null($stream)) {
             $this->stream = null;
@@ -1550,7 +1542,7 @@ class Asset extends Element\AbstractElement
      */
     public function getTemporaryFile()
     {
-        $destinationPath = $this->getLocalFile($this->getFileSystemPath());
+        $destinationPath = $this->getTemporaryFileFromStream($this->getStream());
         @chmod($destinationPath, File::getDefaultMode());
 
         return $destinationPath;
@@ -1946,7 +1938,7 @@ class Asset extends Element\AbstractElement
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
@@ -2011,13 +2003,6 @@ class Asset extends Element\AbstractElement
     {
         // close open streams
         $this->closeStream();
-
-        // delete temporary files
-        foreach ($this->_temporaryFiles as $tempFile) {
-            if (file_exists($tempFile)) {
-                @unlink($tempFile);
-            }
-        }
     }
 
     /**

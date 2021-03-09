@@ -74,9 +74,6 @@ trait EmbeddedMetaDataTrait
 
         if ($exiftool && $useExifTool) {
             $path = escapeshellarg($filePath);
-            if (!file_exists($path)) {
-                $path = escapeshellarg($this->getTemporaryFile());
-            }
             $output = Tool\Console::exec($exiftool . ' -j ' . $path);
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
 
