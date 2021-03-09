@@ -8,7 +8,7 @@ use Pimcore\Migrations\MigrationManager;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class SettingsStoreAwareInstaller extends AbstractInstaller
+abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 {
 
     /**
@@ -22,10 +22,18 @@ class SettingsStoreAwareInstaller extends AbstractInstaller
     protected $migrationManager;
 
 
-    public function __construct(BundleInterface $bundle, MigrationManager $migrationManager)
+    public function __construct(BundleInterface $bundle)
     {
         parent::__construct();
         $this->bundle = $bundle;
+    }
+
+    /**
+     * @param MigrationManager $migrationManager
+     * @required
+     */
+    public function setMigrationManager(MigrationManager $migrationManager): void
+    {
         $this->migrationManager = $migrationManager;
     }
 
