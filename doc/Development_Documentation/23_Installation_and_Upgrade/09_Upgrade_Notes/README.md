@@ -180,6 +180,7 @@
   `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS` 
   instead. 
 - `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` class has been deprecated and will be removed in Pimcore 10.
+- `Pimcore\Tool\Console`: Methods `getSystemEnvironment()`, `exec()`, `execInBackground()` and `runPhpScriptInBackground()` have been deprecated, use `Symfony\Component\Process\Process` instead where possible. For long running background tasks (which should run even when parent process has exited), switch to a queue implementation.
 
 - [Analytics] Matomo(Piwik) integration has been deprecated in Core and Ecommerce bundle, and will be removed in Pimcore 10.
 - [Targeting and Personalization] VisitedPageBefore condition has been deprecated, as it is based on deprecated Piwik integration and will be removed in Pimcore 10.

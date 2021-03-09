@@ -251,7 +251,7 @@ class Processor
     public function convert()
     {
         $this->save();
-        Console::runPhpScript(realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), ['internal:video-converter', $this->getProcessId()], null, null, true);
+        Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), 'internal:video-converter ' . $this->getProcessId());
     }
 
     /**
