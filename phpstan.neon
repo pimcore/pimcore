@@ -24,7 +24,7 @@ parameters:
         - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\FilterMultiSelectFromMultiSelect/'
         - '/(snappy|lz4)_(un)?compress/'
         - '/Instantiated class COM not found/'
-        - '/Call to an undefined method COM::Run()/'
+        - '/Call to an undefined method COM::Run\(\)/'
         - '/(Order|Checkout)Manager.*__construct\(\) does not call parent constructor/'
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
