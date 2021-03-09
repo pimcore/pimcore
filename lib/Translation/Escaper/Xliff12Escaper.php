@@ -30,6 +30,7 @@ class Xliff12Escaper
         $count = 1;
         $openTags = [];
         $final = [];
+        $content = htmlspecialchars($content);
 
         // remove nasty device control characters
         $content = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $content);
