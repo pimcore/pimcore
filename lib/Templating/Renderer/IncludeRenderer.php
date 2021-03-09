@@ -177,7 +177,7 @@ class IncludeRenderer
             $childs = $html->filter('body > div');
             /** @var \DOMElement $child */
             foreach ($childs as $child) {
-                $child->setAttribute('class' , $child->getAttribute('class') . $editmodeClass);
+                $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
                 $child->setAttribute('pimcore_type', $include->getType());
                 $child->setAttribute('pimcore_id', $include->getId());
             }

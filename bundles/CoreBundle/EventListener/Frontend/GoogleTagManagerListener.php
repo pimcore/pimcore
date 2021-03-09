@@ -28,9 +28,9 @@ use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
 use Pimcore\Event\Analytics\GoogleTagManagerEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class GoogleTagManagerListener
 {

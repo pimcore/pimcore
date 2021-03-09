@@ -46,8 +46,8 @@ use Pimcore\Model\DataObject\Listing\Concrete;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\FactoryInterface;
 use Pimcore\Tool;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class OrderManager implements OrderManagerInterface
 {
