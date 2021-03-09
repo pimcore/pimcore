@@ -83,6 +83,7 @@
     "symfony/symfony": "^5.2.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/twig": "^3.0",
+    "twig/string-extra": "^3.0",
     "rybakit/twig-deferred-extension": "^3.0",
     "umpirsky/country-list": "^2.0.4",
     "vrana/adminer": "^4.8.0",

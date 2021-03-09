@@ -74,4 +74,6 @@ services:
     # content was added (e.g. headTitle)
     Twig\DeferredExtension\DeferredExtension: ~
 
+    Twig\Extra\String\StringExtension: ~
+
     Pimcore\Twig\Extension\AdminExtension: ~
