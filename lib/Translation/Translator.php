@@ -116,7 +116,11 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $id = mb_strtolower($id);
         }
 
-        $term = $this->translator->trans($id, $parameters, $domain, $locale);
+        if (isset($parameters['%count%']) && strpos($id, '|') !== false) {
+            $term = $this->translator->transChoice($id, $parameters['%count%'], $parameters, $domain, $locale);
+        } else {
+            $term = $this->translator->trans($id, $parameters, $domain, $locale);
+        }
 
         // only check for empty translation on original ID - we don't want to create empty
         // translations for normalized IDs when case insensitive
@@ -288,9 +292,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
             $normalizedId = $id = $translated;
             // Symfony 3.4 compatibility: use transChoice() for pluralization
-            p_r($normalizedId);
             $translated = $this->translator->transChoice($normalizedId, $parameters['%count%'], $parameters, $domain, $locale);
-            p_r($translated); die;
         }
 
         $lookForFallback = empty($translated);
