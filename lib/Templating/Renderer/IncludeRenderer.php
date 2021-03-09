@@ -174,7 +174,7 @@ class IncludeRenderer
         // this is needed by the editmode to highlight included documents
         try {
             $html = new Crawler($content);
-            $childs = $html->filter('body > div');
+            $childs = $html->filterXPath('//body/*');
             /** @var \DOMElement $child */
             foreach ($childs as $child) {
                 $child->setAttribute('class' , $child->getAttribute('class') . $editmodeClass);
