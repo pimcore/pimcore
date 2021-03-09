@@ -26,6 +26,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
+    applyDefaultValue: function() {
+        this.defaultValue = null;
+        if ((typeof this.data === "undefined" || !this.data) && this.fieldConfig.defaultValue && this.context.type === "classificationstore") {
+            this.data = this.fieldConfig.defaultValue;
+            this.defaultValue = this.fieldConfig.defaultValue;
+        }
+    },
+
     getGridColumnEditor: function(field) {
         var editorConfig = {};
 
