@@ -287,7 +287,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         //translate only plural form(seperated by pipe "|") with count param
         if (isset($parameters['%count%']) && $translated && strpos($id, '|') !== false) {
             $normalizedId = $id = $translated;
-            $translated = $this->translator->trans($translated, $parameters, $domain, $locale);
         }
 
         $lookForFallback = empty($translated);
@@ -297,7 +296,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
                 if ($normalizedId != $translated && $translated) {
-                    return $translated;
+                    return strtr($translated, $parameters);
                 }
             } elseif ($backend = $this->getBackendForDomain($domain)) {
                 if (strlen($id) > 190) {
