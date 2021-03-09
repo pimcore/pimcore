@@ -19,7 +19,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Carbon\Carbon;
 
-class DateFormatter extends AbstractOperator
+/**
+ * @internal
+ */
+final class DateFormatter extends AbstractOperator
 {
     /**
      * @var string|null

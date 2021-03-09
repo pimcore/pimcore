@@ -20,7 +20,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Tool\Admin;
 
-class AnyGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class AnyGetter extends AbstractOperator
 {
     /** @var string */
     private $attribute;
