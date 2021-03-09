@@ -14,12 +14,13 @@
 
 namespace Pimcore\Tool;
 
-
 use Symfony\Component\DomCrawler\Crawler;
 
 class DomCrawler extends Crawler
 {
-    private $wrappedHtmlFragment = false;
+    public const FRAGMENT_WRAPPER_TAG = 'pimcore-fragment-wrapper';
+
+    private bool $wrappedHtmlFragment = false;
 
     /**
      * {@inheritDoc}
@@ -30,7 +31,7 @@ class DomCrawler extends Crawler
             // check if given node is an HTML fragment, if so wrap it in a custom tag, otherwise
             // DomDocument wraps standalone text-nodes (without a parent node) into <p> tags
             if(!preg_match('@</(body|html)>@i', $node)) {
-                $node = '<!doctype html><pimcore-wrapper>' . $node . '</pimcore-wrapper></html>';
+                $node = sprintf('<!doctype html><html><%s>%s</%s></html>', self::FRAGMENT_WRAPPER_TAG, $node, self::FRAGMENT_WRAPPER_TAG);
                 $this->wrappedHtmlFragment = true;
             }
         }
