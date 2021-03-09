@@ -213,7 +213,7 @@ class TranslatorTest extends TestCase
         $translations->setDomain('messages');
 
         $translations = $translations->getTranslations();
-        $this->assertCount(7, $translations);
+        $this->assertCount(9, $translations);
 
 
         $translations = new Translation\Listing();
