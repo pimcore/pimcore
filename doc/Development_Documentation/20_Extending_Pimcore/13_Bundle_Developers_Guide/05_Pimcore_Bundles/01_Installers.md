@@ -53,9 +53,16 @@ supporting fresh installs of your bundle. To be able to apply versioned changes 
 provides a powerful migration framework.
 For details how to work with migrations, please have a look at the [Doctrine Migrations Bundle documentation](https://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html).
 
-Pimcore has added an additional option (`--prefix=`) to the migration commands of Doctrine, to be able to filter the migration versions
+### Pimcore Specifics
+
+Pimcore added an additional option (`--prefix=`) to the migration commands of Doctrine, to be able to filter the migration versions
 for a specific namespace. This gives you the possibility to control which migrations should be executed or not.
 A typical use case for that would be to just run the Pimcore core migrations or just the migrations for a specific bundle.
+
+To make sure, the migration command only executes migrations from installed Pimcore bundles, it is recommended to extend
+the bundle migrations from `Pimcore\Migrations\BundleAwareMigration` and implement the `getBundleName` method.
+This abstract class checks if the given bundle is installed and skips the migration if necessary.  
+
 
 #### Console Examples
 
@@ -156,7 +163,7 @@ During uninstallation of the bundle following things will happen:
 
 
 ### Migrations
-Working with migrations is the same as described in the Migration Installer section.
+Working with migrations is the same as described in the Migration section above.
 
 ---
 
