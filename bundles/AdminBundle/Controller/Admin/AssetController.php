@@ -27,6 +27,7 @@ use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -54,6 +55,7 @@ class AssetController extends ElementControllerBase implements EventedController
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
+    use TemporaryFileHelperTrait;
 
     /**
      * @var Asset\Service
@@ -1208,7 +1210,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $thumbnail = $image->getThumbnail($thumbnailConfig);
-            $thumbnailFile = $thumbnail->getFileSystemPath();
+            $thumbnailFile = $this->getLocalFile($thumbnail->getFileSystemPath());
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
