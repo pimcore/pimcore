@@ -27,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class Translator implements LegacyTranslatorInterface, TranslatorInterface, TranslatorBagInterface
 {
     /**
-     * @var TranslatorInterface|TranslatorBagInterface
+     * @var LegacyTranslatorInterface
      */
     protected $translator;
 
