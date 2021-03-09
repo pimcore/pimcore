@@ -46,6 +46,8 @@ class TranslatorTest extends TestCase
             'text_params' => 'Text with %Param1% and %Param2%',
             'count_key' => '%count% Count',
             'count_key_190' => 'This is a translated text generated from translator service, using count parameter to be replaced from passed parameters and having %count% characters to test text greater than 190 characters.',
+            'count_plural_1' => '1 Item',
+            'count_plural_n' => '%count% Items',
             'case_key' => 'Lower Case Key',
             'CASE_KEY' => 'Upper Case Key',
         ],
@@ -178,6 +180,13 @@ class TranslatorTest extends TestCase
     {
         $this->translator->setLocale('en');
         $this->assertEquals(strtr($this->translations['en']['count_key_190'], ['%count%' => 192]), $this->translator->trans('count_key_190', ['%count%' => 192]));
+    }
+
+    public function testTranslatePluralizationWithCountParam()
+    {
+        $this->translator->setLocale('en');
+        $this->assertEquals($this->translations['en']['count_plural_1'], $this->translator->trans('count_plural_1|count_plural_n', ['%count%' => 1]));
+        $this->assertEquals(strtr($this->translations['en']['count_plural_n'], ['%count%' => 5]), $this->translator->trans('count_plural_1|count_plural_n', ['%count%' => 5]));
     }
 
     public function testTranslateCaseSensitive()

@@ -284,8 +284,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $normalizedId = mb_strtolower($id);
         }
 
-        if (isset($parameters['%count%']) && $translated) {
+        //translate only plural form(seperated by pipe "|") with count param
+        if (isset($parameters['%count%']) && $translated && strpos($id, '|') !== false) {
             $normalizedId = $id = $translated;
+            $translated = $this->translator->trans($translated, $parameters, $domain, $locale);
         }
 
         $lookForFallback = empty($translated);
