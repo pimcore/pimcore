@@ -22,7 +22,7 @@ use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail\Mailer;
-use Symfony\Component\DomCrawler\Crawler;
+use Pimcore\Tool\DomCrawler;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -761,7 +761,7 @@ class Mail extends Email
             //creating text version from html email
             try {
                 $htmlContent = $this->getBodyHtmlRendered();
-                $html = new Crawler($htmlContent);
+                $html = new DomCrawler($htmlContent);
 
                 $body = $html->filter('body')->eq(0);
                 if ($body) {

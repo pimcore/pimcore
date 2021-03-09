@@ -21,8 +21,8 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
+use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
-use Symfony\Component\DomCrawler\Crawler;
 
 class IncludeRenderer
 {
@@ -173,15 +173,15 @@ class IncludeRenderer
         // this is if the content that is included does already contain markup/html
         // this is needed by the editmode to highlight included documents
         try {
-            $html = new Crawler($content);
-            $childs = $html->filter('body > div');
+            $html = new DomCrawler($content);
+            $childs = $html->filterXPath('//pimcore-wrapper/*'); // pimcore-wrapper is added by DomCrawler for fragments
             /** @var \DOMElement $child */
             foreach ($childs as $child) {
                 $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
                 $child->setAttribute('pimcore_type', $include->getType());
                 $child->setAttribute('pimcore_id', $include->getId());
             }
-            $content = $html->filter('body')->html();
+            $content = $html->html();
 
             $html->clear();
             unset($html);

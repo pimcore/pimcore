@@ -20,8 +20,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
+use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
-use Symfony\Component\DomCrawler\Crawler;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
@@ -367,8 +367,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        $html = new Crawler($data);
-        $es = $html->filter('body > a[pimcore_id], img[pimcore_id]');
+        $html = new DomCrawler($data);
+        $es = $html->filter('a[pimcore_id], img[pimcore_id]');
 
         /** @var \DOMElement $el */
         foreach ($es as $el) {
@@ -382,7 +382,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             }
         }
 
-        $data = $html->filter('body')->html();
+        $data = $html->html();
 
         $html->clear();
         unset($html);
