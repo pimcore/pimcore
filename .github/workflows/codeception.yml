@@ -48,27 +48,27 @@ jobs:
                         experimental: false
                         database: "mysql:5.7"
                         symfony-version: "^3.4"
-
-                    -   name: "All Tests - PHP 7.2 | Symfony 4 | MariaDB 10.3"
-                        php-version: 7.2
-                        dependencies: highest
-                        experimental: false
-                        database: "mariadb:10.3"
-                        symfony-version: "^4.0"
-
-                    -   name: "All Tests - PHP 7.3 | Symfony 4 | MariaDB 10.4"
-                        php-version: 7.3
-                        dependencies: highest
-                        experimental: false
-                        database: "mariadb:10.4"
-                        symfony-version: "^4.0"
-
-                    -   name: "All Tests - PHP 7.4 | Symfony 4 | Percona 5.6"
-                        php-version: 7.4
-                        dependencies: highest
-                        experimental: false
-                        database: "percona:5.6"
-                        symfony-version: "^4.0"
+#
+#                    -   name: "All Tests - PHP 7.2 | Symfony 4 | MariaDB 10.3"
+#                        php-version: 7.2
+#                        dependencies: highest
+#                        experimental: false
+#                        database: "mariadb:10.3"
+#                        symfony-version: "^4.0"
+#
+#                    -   name: "All Tests - PHP 7.3 | Symfony 4 | MariaDB 10.4"
+#                        php-version: 7.3
+#                        dependencies: highest
+#                        experimental: false
+#                        database: "mariadb:10.4"
+#                        symfony-version: "^4.0"
+#
+#                    -   name: "All Tests - PHP 7.4 | Symfony 4 | Percona 5.6"
+#                        php-version: 7.4
+#                        dependencies: highest
+#                        experimental: false
+#                        database: "percona:5.6"
+#                        symfony-version: "^4.0"
         services:
             redis:
                 image: redis

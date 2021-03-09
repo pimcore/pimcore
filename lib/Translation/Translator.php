@@ -285,10 +285,12 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         }
 
         //translate only plural form(seperated by pipe "|") with count param
-        if (isset($parameters['%count%']) && $translated && strpos($id, '|') !== false) {
+        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
             $normalizedId = $id = $translated;
             // Symfony 3.4 compatibility: use transChoice() for pluralization
-            $translated = $this->translator->transChoice($translated, $parameters['%count%'], $parameters, $domain, $locale);
+            p_r($normalizedId);
+            $translated = $this->translator->transChoice($normalizedId, $parameters['%count%'], $parameters, $domain, $locale);
+            p_r($translated); die;
         }
 
         $lookForFallback = empty($translated);
