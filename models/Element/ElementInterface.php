@@ -208,10 +208,9 @@ interface ElementInterface extends ModelInterface
     public function getParentId();
 
     /**
-     * This method will be required in Pimcore 10
-     * @return mixed
+     * @return ElementInterface|null
      */
-    //public function getParent();
+    public function getParent();
 
     /**
      * @return string
