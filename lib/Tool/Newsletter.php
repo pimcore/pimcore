@@ -27,7 +27,6 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Newsletter
@@ -81,7 +80,7 @@ class Newsletter
 
         // render the document and rewrite the links (if analytics is enabled)
         if ($contentHTML && $newsletterDocument->getEnableTrackingParameters()) {
-            $html = new Crawler($contentHTML);
+            $html = new DomCrawler($contentHTML);
             $links = $html->filter('a');
             /** @var \DOMElement $link */
             foreach ($links as $link) {

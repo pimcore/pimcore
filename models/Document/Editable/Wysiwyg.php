@@ -18,8 +18,8 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
+use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -164,7 +164,7 @@ class Wysiwyg extends Model\Document\Editable
      */
     public function rewriteIds($idMapping)
     {
-        $html = new Crawler($this->text);
+        $html = new DomCrawler($this->text);
 
         $elements = $html->filter('a[pimcore_id], img[pimcore_id]');
 
@@ -180,7 +180,7 @@ class Wysiwyg extends Model\Document\Editable
             }
         }
 
-        $this->text = $html->filter('body')->html();
+        $this->text = $html->html();
 
         $html->clear();
         unset($html);

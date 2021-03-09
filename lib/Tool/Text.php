@@ -14,7 +14,6 @@
 
 namespace Pimcore\Tool;
 
-use Symfony\Component\DomCrawler\Crawler;
 use Onnov\DetectEncoding\EncodingDetector;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
