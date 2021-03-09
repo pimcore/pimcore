@@ -14,12 +14,12 @@
 
 namespace Pimcore\Tool;
 
-use Symfony\Component\DomCrawler\Crawler;
 use Onnov\DetectEncoding\EncodingDetector;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Symfony\Component\DomCrawler\Crawler;
 
 class Text
 {

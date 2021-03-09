@@ -32,7 +32,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,6 +42,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/asset")

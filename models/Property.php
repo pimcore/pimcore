@@ -348,17 +348,17 @@ class Property extends AbstractModel
         }
     }
 
-
     /**
      * @internal
      *
      * @return array
      */
-    public function serialize() {
+    public function serialize()
+    {
         return [
-          "name" => $this->getName(),
-          "type" => $this->getType(),
-          "data" => $this->getData()
+          'name' => $this->getName(),
+          'type' => $this->getType(),
+          'data' => $this->getData(),
         ];
     }
 }
