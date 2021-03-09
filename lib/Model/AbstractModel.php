@@ -175,13 +175,14 @@ abstract class AbstractModel implements ModelInterface
      * @param array $data
      *
      * @return $this
+     * @throws \Exception
      */
     public function setValues($data = [])
     {
         if (is_array($data) && count($data) > 0) {
 
             if(isset($data['id'])) {
-                @trigger_error(sprintf('Calling %s including `id` key in the data-array is deprecated and will throw an exception in Pimcore 10', __METHOD__), E_USER_DEPRECATED);
+                throw new \Exception('Using key `id` in data-array is not supported');
             }
 
             foreach ($data as $key => $value) {
