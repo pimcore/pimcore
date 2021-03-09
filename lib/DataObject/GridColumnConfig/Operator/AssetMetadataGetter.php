@@ -20,7 +20,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 
-class AssetMetadataGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class AssetMetadataGetter extends AbstractOperator
 {
     /** @var string */
     private $metaField;

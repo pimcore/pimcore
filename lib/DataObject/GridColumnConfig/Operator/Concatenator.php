@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Concatenator extends AbstractOperator
+/**
+ * @internal
+ */
+final class Concatenator extends AbstractOperator
 {
     /** @var string */
     private $glue;
