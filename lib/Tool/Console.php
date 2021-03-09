@@ -301,7 +301,8 @@ class Console
     }
 
     /**
-     * @deprecated since v6.9. Use runPhpScript instead.
+     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
+     *
      * @param string $script
      * @param string $arguments
      * @param string|null $outputFile
@@ -310,7 +311,8 @@ class Console
      */
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
-        return self::runPhpScript($script, $arguments, $outputFile);
+        $cmd = self::buildPhpScriptCmd($script, $arguments);
+        return self::execInBackground(implode(' ', $cmd), $outputFile);
     }
 
     /**
@@ -361,8 +363,7 @@ class Console
     }
 
     /**
-     *
-     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead.
+     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
      * @static
      *
      * @param string $cmd
@@ -372,7 +373,6 @@ class Console
      */
     public static function execInBackground($cmd, $outputFile = null)
     {
-
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
@@ -384,7 +384,7 @@ class Console
     }
 
     /**
-     * @deprecated since v.6.9.
+     * @deprecated since v.6.9. For long running background tasks use queues.
      * @static
      *
      * @param string $cmd
@@ -434,7 +434,7 @@ class Console
     }
 
     /**
-     * @deprecated since v.6.9.
+     * @deprecated since v.6.9. For long running background tasks use queues.
      * @static
      *
      * @param string $cmd
