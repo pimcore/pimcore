@@ -260,7 +260,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
         $normalizedId = $id;
         if (isset($parameters['%count%']) && $translated) {
+
+        //translate only plural form(seperated by pipe "|") with count param
+        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
             $normalizedId = $id = $translated;
+            $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
 
         $lookForFallback = empty($translated);
