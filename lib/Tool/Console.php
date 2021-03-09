@@ -273,11 +273,10 @@ class Console
      * @param string|array $arguments
      * @param string|null $outputFile
      * @param int|null $timeout
-     * @param bool $background
      *
-     * @return string|int
+     * @return string
      */
-    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null, $background = false)
+    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -289,15 +288,15 @@ class Console
 
         if (!empty($outputFile)) {
             $logHandle = fopen($outputFile, 'a');
-            $exitCode = $process->wait(function ($type, $buffer) use ($logHandle) {
+            $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
             });
             fclose($logHandle);
         } else {
-            $exitCode = $process->wait();
+            $process->wait();
         }
 
-        return $background ? $exitCode : $process->getOutput();
+        return $process->getOutput();
     }
 
     /**
