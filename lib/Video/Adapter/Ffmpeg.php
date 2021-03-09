@@ -15,6 +15,7 @@
 namespace Pimcore\Video\Adapter;
 
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
@@ -22,6 +23,8 @@ use Symfony\Component\Process\Process;
 
 class Ffmpeg extends Adapter
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @var string
      */
@@ -78,11 +81,7 @@ class Ffmpeg extends Adapter
      */
     public function load($file, $options = [])
     {
-        if (!stream_is_local($file) && isset($options['asset'])) {
-            $tmpFile = $options['asset']->getTemporaryFile();
-            $file = $tmpFile;
-            $this->tmpFiles[] = $tmpFile;
-        }
+        $file = $this->getLocalFile($file);
 
         $this->file = $file;
         $this->setProcessId(uniqid());
