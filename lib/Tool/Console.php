@@ -273,11 +273,10 @@ class Console
      * @param string|array $arguments
      * @param string|null $outputFile
      * @param int|null $timeout
-     * @param bool $background
      *
-     * @return string|int
+     * @return string
      */
-    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null, $background = false)
+    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -289,28 +288,32 @@ class Console
 
         if (!empty($outputFile)) {
             $logHandle = fopen($outputFile, 'a');
-            $exitCode = $process->wait(function ($type, $buffer) use ($logHandle) {
+            $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
             });
             fclose($logHandle);
         } else {
-            $exitCode = $process->wait();
+            $process->wait();
         }
 
-        return $background ? $exitCode : $process->getOutput();
+        return $process->getOutput();
     }
 
     /**
-     * @deprecated since v6.9. Use runPhpScript instead.
+     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
+     *
      * @param string $script
-     * @param string $arguments
+     * @param string|array $arguments
      * @param string|null $outputFile
      *
      * @return int
      */
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
-        return self::runPhpScript($script, $arguments, $outputFile);
+        $cmd = self::buildPhpScriptCmd($script, $arguments);
+        $process = new Process($cmd);
+        $commandLine = $process->getCommandLine();
+        return self::execInBackground($commandLine, $outputFile);
     }
 
     /**
@@ -361,8 +364,7 @@ class Console
     }
 
     /**
-     *
-     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead.
+     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
      * @static
      *
      * @param string $cmd
@@ -372,7 +374,6 @@ class Console
      */
     public static function execInBackground($cmd, $outputFile = null)
     {
-
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
@@ -384,7 +385,7 @@ class Console
     }
 
     /**
-     * @deprecated since v.6.9.
+     * @deprecated since v.6.9. For long running background tasks use queues.
      * @static
      *
      * @param string $cmd
@@ -434,7 +435,7 @@ class Console
     }
 
     /**
-     * @deprecated since v.6.9.
+     * @deprecated since v.6.9. For long running background tasks use queues.
      * @static
      *
      * @param string $cmd

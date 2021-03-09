@@ -17,11 +17,14 @@ namespace Pimcore\Image\Adapter;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 
 class Imagick extends Adapter
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @var string
      */
@@ -57,29 +60,7 @@ class Imagick extends Adapter
             $this->setPreserveColor($options['preserveColor']);
         }
 
-        // support image URLs
-        if (preg_match('@^https?://|^s3://@', $imagePath)) {
-            $tmpFilename = 'imagick_auto_download_' . md5($imagePath) . '.' . File::getFileExtension($imagePath);
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFilename;
-
-            $this->tmpFiles[] = $tmpFilePath;
-
-            if (preg_match('@^s3://@', $imagePath)) {
-                $imageContent = file_get_contents($imagePath);
-            } else {
-                $imageContent = \Pimcore\Tool::getHttpData($imagePath);
-            }
-
-            File::put($tmpFilePath, $imageContent);
-            $imagePath = $tmpFilePath;
-        }
-
-        if (!stream_is_local($imagePath) && isset($options['asset'])) {
-            // imagick is only able to deal with local files
-            // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $imagePath = $options['asset']->getTemporaryFile();
-            $this->tmpFiles[] = $imagePath;
-        }
+        $imagePath = $this->getLocalFile($imagePath);
 
         if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
             // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes
