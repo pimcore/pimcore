@@ -304,7 +304,7 @@ class Console
      * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      *
      * @param string $script
-     * @param string $arguments
+     * @param string|array $arguments
      * @param string|null $outputFile
      *
      * @return int
