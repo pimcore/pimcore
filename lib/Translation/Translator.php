@@ -27,7 +27,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class Translator implements LegacyTranslatorInterface, TranslatorInterface, TranslatorBagInterface
 {
     /**
-     * @var TranslatorInterface|TranslatorBagInterface
+     * @var LegacyTranslatorInterface|TranslatorBagInterface
      */
     protected $translator;
 
@@ -122,7 +122,11 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $id = mb_strtolower($id);
         }
 
-        $term = $this->translator->trans($id, $parameters, $domain, $locale);
+        if (isset($parameters['%count%']) && strpos($id, '|') !== false) {
+            $term = $this->translator->transChoice($id, $parameters['%count%'], $parameters, $domain, $locale);
+        } else {
+            $term = $this->translator->trans($id, $parameters, $domain, $locale);
+        }
 
         // only check for empty translation on original ID - we don't want to create empty
         // translations for normalized IDs when case insensitive
@@ -290,8 +294,11 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $normalizedId = mb_strtolower($id);
         }
 
-        if (isset($parameters['%count%']) && $translated) {
+        //translate only plural form(seperated by pipe "|") with count param
+        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
             $normalizedId = $id = $translated;
+            // Symfony 3.4 compatibility: use transChoice() for pluralization
+            $translated = $this->translator->transChoice($normalizedId, $parameters['%count%'], $parameters, $domain, $locale);
         }
 
         $lookForFallback = empty($translated);
