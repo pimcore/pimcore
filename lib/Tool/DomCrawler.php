@@ -21,6 +21,9 @@ class DomCrawler extends Crawler
 {
     private $wrappedHtmlFragment = false;
 
+    /**
+     * {@inheritDoc}
+     */
     public function __construct($node = null, string $uri = null, string $baseHref = null)
     {
         if(is_string($node)) {
@@ -35,6 +38,9 @@ class DomCrawler extends Crawler
         parent::__construct($node, $uri, $baseHref);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function html(string $default = null)
     {
         if($this->wrappedHtmlFragment) {
