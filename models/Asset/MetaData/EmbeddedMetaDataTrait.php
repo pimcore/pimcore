@@ -70,9 +70,10 @@ trait EmbeddedMetaDataTrait
             $filePath = $this->getFileSystemPath();
         }
 
+        $filePath = $this->getLocalFile($filePath);
+
         if ($exiftool && $useExifTool) {
-            $path = $this->getLocalFile($filePath);
-            $process = new Process([$exiftool, '-j', $path]);
+            $process = new Process([$exiftool, '-j', $filePath]);
             $process->run();
             $output = $process->getOutput();
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
