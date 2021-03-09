@@ -15,6 +15,7 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Config;
+use Pimcore\Logger;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -34,6 +35,27 @@ class Console
      * @var array
      */
     protected static $executableCache = [];
+
+    /**
+     * @deprecated since v.6.9.
+     * @static
+     *
+     * @return string "windows" or "unix"
+     */
+    public static function getSystemEnvironment()
+    {
+        if (self::$systemEnvironment == null) {
+            if (stripos(php_uname('s'), 'windows') !== false) {
+                self::$systemEnvironment = 'windows';
+            } elseif (stripos(php_uname('s'), 'darwin') !== false) {
+                self::$systemEnvironment = 'darwin';
+            } else {
+                self::$systemEnvironment = 'unix';
+            }
+        }
+
+        return self::$systemEnvironment;
+    }
 
     /**
      * @param string $name
