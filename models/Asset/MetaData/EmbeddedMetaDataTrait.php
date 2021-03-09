@@ -17,10 +17,13 @@
 
 namespace Pimcore\Model\Asset\MetaData;
 
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Tool;
 
 trait EmbeddedMetaDataTrait
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @param bool $force
      * @param bool $useExifTool
@@ -62,13 +65,14 @@ trait EmbeddedMetaDataTrait
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
-        $embeddedMetaData = [];
 
         if (!$filePath) {
             $filePath = $this->getFileSystemPath();
         }
 
-        if (stream_is_local($this->getStream()) && $exiftool && $useExifTool) {
+        $filePath = $this->getLocalFile($filePath);
+
+        if ($exiftool && $useExifTool) {
             $path = escapeshellarg($filePath);
             if (!file_exists($path)) {
                 $path = escapeshellarg($this->getTemporaryFile());

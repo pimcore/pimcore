@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -144,7 +145,7 @@ class Image extends Model\Asset
         if ($facedetectBin) {
             $faceCoordinates = [];
             $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
-            $image = $thumbnail->getFileSystemPath();
+            $image = $this->getLocalFile($thumbnail->getFileSystemPath());
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
