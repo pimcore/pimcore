@@ -312,7 +312,9 @@ class Console
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
-        return self::execInBackground(implode(' ', $cmd), $outputFile);
+        $process = new Process($cmd);
+        $commandLine = $process->getCommandLine();
+        return self::execInBackground($commandLine, $outputFile);
     }
 
     /**
