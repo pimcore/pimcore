@@ -174,7 +174,7 @@ class IncludeRenderer
         // this is needed by the editmode to highlight included documents
         try {
             $html = new DomCrawler($content);
-            $childs = $html->filterXPath('//pimcore-wrapper/*'); // pimcore-wrapper is added by DomCrawler for fragments
+            $childs = $html->filterXPath('//' . DomCrawler::FRAGMENT_WRAPPER_TAG . '/*'); // pimcore-wrapper is added by DomCrawler for fragments
             /** @var \DOMElement $child */
             foreach ($childs as $child) {
                 $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
