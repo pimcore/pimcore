@@ -45,7 +45,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

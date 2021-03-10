@@ -28,7 +28,7 @@ use Pimcore\Tool\HtmlUtils;
 class Area extends Model\Document\Editable
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -36,7 +36,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -44,7 +44,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function admin()
     {
@@ -62,7 +62,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -111,7 +111,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -119,7 +119,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -127,7 +127,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isEmpty()
     {

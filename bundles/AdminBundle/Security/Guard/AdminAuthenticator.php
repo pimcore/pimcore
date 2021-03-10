@@ -108,7 +108,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(Request $request)
     {
@@ -117,7 +117,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
@@ -135,7 +135,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getCredentials(Request $request)
     {
@@ -176,7 +176,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -256,7 +256,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
@@ -269,7 +269,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
@@ -283,7 +283,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
@@ -335,7 +335,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsRememberMe()
     {

@@ -1305,7 +1305,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setProperties(array $properties)
     {

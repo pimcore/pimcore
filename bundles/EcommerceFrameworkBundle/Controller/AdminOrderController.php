@@ -58,7 +58,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     protected $paymentManager;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

@@ -52,7 +52,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     private function setPrefixes(array $prefixes)
     {
@@ -73,7 +73,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(string $name): bool
     {
@@ -81,7 +81,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getClassName(string $name)
     {

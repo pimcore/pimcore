@@ -51,7 +51,7 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -59,7 +59,7 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -69,7 +69,7 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {

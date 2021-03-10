@@ -62,7 +62,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

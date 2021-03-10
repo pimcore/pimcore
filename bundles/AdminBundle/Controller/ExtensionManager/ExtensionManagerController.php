@@ -56,7 +56,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

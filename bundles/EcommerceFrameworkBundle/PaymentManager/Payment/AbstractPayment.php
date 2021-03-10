@@ -75,7 +75,7 @@ abstract class AbstractPayment implements PaymentInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConfigurationKey()
     {

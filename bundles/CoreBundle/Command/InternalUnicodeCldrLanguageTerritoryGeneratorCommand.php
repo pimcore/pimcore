@@ -40,7 +40,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

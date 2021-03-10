@@ -25,7 +25,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EsSyncCommand extends AbstractIndexServiceCommand
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -47,7 +47,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

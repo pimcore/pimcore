@@ -65,7 +65,7 @@ class GoogleTagManager extends Tracker implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function trackProductImpression(ProductInterface $product, string $list = 'default')
     {

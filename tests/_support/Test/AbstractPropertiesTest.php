@@ -42,7 +42,7 @@ abstract class AbstractPropertiesTest extends ModelTestCase
     abstract public function reloadElement(): ElementInterface;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function needsDb()
     {

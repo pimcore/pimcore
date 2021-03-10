@@ -122,7 +122,7 @@ abstract class Tracker implements TrackerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAssortmentTenants(): array
     {
@@ -130,7 +130,7 @@ abstract class Tracker implements TrackerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCheckoutTenants(): array
     {

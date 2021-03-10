@@ -22,7 +22,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class Pimcore extends Module\Symfony
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
@@ -278,7 +278,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _before(TestInterface $test): void
     {

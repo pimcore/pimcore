@@ -1433,7 +1433,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setProperties(array $properties)
     {
@@ -2026,7 +2026,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {

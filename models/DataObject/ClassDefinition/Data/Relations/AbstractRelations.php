@@ -267,7 +267,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function appendData($existingData, $additionalData)
     {
@@ -298,7 +298,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeData($existingData, $removeData)
     {
@@ -463,7 +463,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -471,7 +471,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {

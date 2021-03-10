@@ -48,7 +48,7 @@ class ConditionFactory implements ConditionFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(array $config): ConditionInterface
     {

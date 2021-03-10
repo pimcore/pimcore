@@ -500,7 +500,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

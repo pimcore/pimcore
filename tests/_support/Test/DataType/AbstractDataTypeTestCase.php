@@ -98,7 +98,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function needsDb()
     {

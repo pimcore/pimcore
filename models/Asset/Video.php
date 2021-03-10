@@ -77,7 +77,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function delete(bool $isNested = false)
     {

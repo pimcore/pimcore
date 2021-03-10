@@ -59,7 +59,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function parseData(string $scope, string $name, $data): array
     {
@@ -92,7 +92,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function prepareData(string $scope, string $name, $expire, $data)
     {

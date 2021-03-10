@@ -9,7 +9,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition;
 class Model extends AbstractDefinitionHelper
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _beforeSuite($settings = [])
     {

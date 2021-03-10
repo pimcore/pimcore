@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class NavigationRendererPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {

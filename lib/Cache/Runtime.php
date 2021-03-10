@@ -153,7 +153,7 @@ final class Runtime extends \ArrayObject
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function offsetSet($index, $value)
     {

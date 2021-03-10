@@ -405,7 +405,7 @@ class OrderAgent implements OrderAgentInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws PaymentNotAllowedException
      * @throws Exception

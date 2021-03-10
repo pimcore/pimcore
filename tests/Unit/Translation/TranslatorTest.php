@@ -63,7 +63,7 @@ class TranslatorTest extends TestCase
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {

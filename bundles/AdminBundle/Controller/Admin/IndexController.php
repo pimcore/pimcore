@@ -398,7 +398,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelResponseEvent(ResponseEvent $event)
     {
