@@ -63,7 +63,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof DataObject\Data\Geopoint) {
+        if ($data instanceof DataObject\Data\GeoCoordinates) {
             return [
                 $this->getName() . '__longitude' => $data->getLongitude(),
                 $this->getName() . '__latitude' => $data->getLatitude(),
@@ -127,7 +127,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof DataObject\Data\Geopoint) {
+        if ($data instanceof DataObject\Data\GeoCoordinates) {
             return [
                 'longitude' => $data->getLongitude(),
                 'latitude' => $data->getLatitude(),
@@ -170,7 +170,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\Geopoint|null $data
+     * @param DataObject\Data\GeoCoordinates|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -178,7 +178,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof DataObject\Data\Geopoint) {
+        if ($data instanceof DataObject\Data\GeoCoordinates) {
             return $data->getLongitude() . ',' . $data->getLatitude();
         }
 
@@ -255,7 +255,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof DataObject\Data\Geopoint) {
+        if ($value instanceof DataObject\Data\GeoCoordinates) {
             return [
                 'value' => $value->getLatitude(),
                 'value2' => $value->getLongitude(),
@@ -280,7 +280,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param DataObject\Data\Geopoint|null $data
+     * @param DataObject\Data\GeoCoordinates|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
@@ -304,8 +304,8 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         $isEmpty = true;
 
         if ($data) {
-            if (!$data instanceof DataObject\Data\Geopoint) {
-                throw new ValidationException('Expected an instance of Geopoint');
+            if (!$data instanceof DataObject\Data\GeoCoordinates) {
+                throw new ValidationException('Expected an instance of GeoCoordinates');
             }
             $isEmpty = false;
         }
@@ -317,8 +317,8 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
 
     /**
      *
-     * @param DataObject\Data\Geopoint|null $oldValue
-     * @param DataObject\Data\Geopoint|null $newValue
+     * @param DataObject\Data\GeoCoordinates|null $oldValue
+     * @param DataObject\Data\GeoCoordinates|null $newValue
      *
      * @return bool
      */
@@ -328,8 +328,8 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
             return true;
         }
 
-        if (!$oldValue instanceof DataObject\Data\Geopoint
-            || !$newValue instanceof DataObject\Data\Geopoint) {
+        if (!$oldValue instanceof DataObject\Data\GeoCoordinates
+            || !$newValue instanceof DataObject\Data\GeoCoordinates) {
             return false;
         }
 
@@ -339,21 +339,21 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\' . DataObject\Data\Geopoint::class;
+        return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\' . DataObject\Data\Geopoint::class;
+        return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . DataObject\Data\Geopoint::class . '|null';
+        return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . DataObject\Data\Geopoint::class . '|null';
+        return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
     }
 }

@@ -37,6 +37,27 @@ class Console
     protected static $executableCache = [];
 
     /**
+     * @deprecated since v.6.9.
+     * @static
+     *
+     * @return string "windows" or "unix"
+     */
+    public static function getSystemEnvironment()
+    {
+        if (self::$systemEnvironment == null) {
+            if (stripos(php_uname('s'), 'windows') !== false) {
+                self::$systemEnvironment = 'windows';
+            } elseif (stripos(php_uname('s'), 'darwin') !== false) {
+                self::$systemEnvironment = 'darwin';
+            } else {
+                self::$systemEnvironment = 'unix';
+            }
+        }
+
+        return self::$systemEnvironment;
+    }
+
+    /**
      * @param string $name
      * @param bool $throwException
      *
@@ -252,13 +273,13 @@ class Console
      * @param string|array $arguments
      * @param string|null $outputFile
      * @param int|null $timeout
-     * @param bool $background
      *
-     * @return string|int
+     * @return string
      */
-    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null, $background = false)
+    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
+        self::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         if ($timeout) {
             $process->setTimeout($timeout);
@@ -267,15 +288,129 @@ class Console
 
         if (!empty($outputFile)) {
             $logHandle = fopen($outputFile, 'a');
-            $exitCode = $process->wait(function ($type, $buffer) use ($logHandle) {
+            $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
             });
             fclose($logHandle);
         } else {
-            $exitCode = $process->wait();
+            $process->wait();
         }
 
-        return $background ? $exitCode : $process->getOutput();
+        return $process->getOutput();
+    }
+
+    /**
+     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
+     *
+     * @param string $script
+     * @param string|array $arguments
+     * @param string|null $outputFile
+     *
+     * @return int
+     */
+    public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
+    {
+        $cmd = self::buildPhpScriptCmd($script, $arguments);
+        $process = new Process($cmd);
+        $commandLine = $process->getCommandLine();
+
+        return self::execInBackground($commandLine, $outputFile);
+    }
+
+    /**
+     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
+     * @static
+     *
+     * @param string $cmd
+     * @param null|string $outputFile
+     *
+     * @return int
+     */
+    public static function execInBackground($cmd, $outputFile = null)
+    {
+        // windows systems
+        if (self::getSystemEnvironment() == 'windows') {
+            return self::execInBackgroundWindows($cmd, $outputFile);
+        } elseif (self::getSystemEnvironment() == 'darwin') {
+            return self::execInBackgroundUnix($cmd, $outputFile, false);
+        } else {
+            return self::execInBackgroundUnix($cmd, $outputFile);
+        }
+    }
+
+    /**
+     * @deprecated since v.6.9. For long running background tasks use queues.
+     * @static
+     *
+     * @param string $cmd
+     * @param string $outputFile
+     * @param bool $useNohup
+     *
+     * @return int
+     */
+    protected static function execInBackgroundUnix($cmd, $outputFile, $useNohup = true)
+    {
+        if (!$outputFile) {
+            $outputFile = '/dev/null';
+        }
+
+        $nice = (string) self::getExecutable('nice');
+        if ($nice) {
+            $nice .= ' -n 19 ';
+        }
+
+        if ($useNohup) {
+            $nohup = (string) self::getExecutable('nohup');
+            if ($nohup) {
+                $nohup .= ' ';
+            }
+        } else {
+            $nohup = '';
+        }
+
+        /**
+         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
+         */
+        if (strpos(php_sapi_name(), 'apache') !== false) {
+            foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                if ($envValue = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? null) {
+                    putenv($envVarName . '='.$envValue);
+                }
+            }
+        }
+
+        $commandWrapped = $nohup . $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
+        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
+        $pid = shell_exec($commandWrapped);
+
+        Logger::debug('Process started with PID ' . $pid);
+
+        return (int)$pid;
+    }
+
+    /**
+     * @deprecated since v.6.9. For long running background tasks use queues.
+     * @static
+     *
+     * @param string $cmd
+     * @param string $outputFile
+     *
+     * @return int
+     */
+    protected static function execInBackgroundWindows($cmd, $outputFile)
+    {
+        if (!$outputFile) {
+            $outputFile = 'NUL';
+        }
+
+        $commandWrapped = 'cmd /c ' . $cmd . ' > '. $outputFile . ' 2>&1';
+        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
+
+        $WshShell = new \COM('WScript.Shell');
+        $WshShell->Run($commandWrapped, 0, false);
+        Logger::debug('Process started - returning the PID is not supported on Windows Systems');
+
+        return 0;
     }
 
     /**
@@ -336,5 +471,26 @@ class Console
         if (php_sapi_name() != 'cli') {
             throw new \Exception('Script execution is restricted to CLI');
         }
+    }
+
+    /**
+     * @internal
+     *
+     * @param array|string $cmd
+     *
+     * @return array|string
+     */
+    public static function addLowProcessPriority($cmd)
+    {
+        $nice = (string) self::getExecutable('nice');
+        if ($nice) {
+            if (is_string($cmd)) {
+                $cmd = $nice . ' -n 19 ' . $cmd;
+            } elseif (is_array($cmd)) {
+                array_unshift($cmd, $nice, '-n 19');
+            }
+        }
+
+        return $cmd;
     }
 }

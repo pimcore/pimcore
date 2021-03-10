@@ -1,10 +1,7 @@
 # Security Policy
 
 ## Supported Versions
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 6.8.x   | :white_check_mark: |
+see [suppored versions here](https://github.com/pimcore/pimcore#supported-versions). 
 
 ## Reporting a Vulnerability
 

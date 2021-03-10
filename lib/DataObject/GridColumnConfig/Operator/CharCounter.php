@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class CharCounter extends AbstractOperator
+/**
+ * @internal
+ */
+final class CharCounter extends AbstractOperator
 {
     public function getLabeledValue($element)
     {

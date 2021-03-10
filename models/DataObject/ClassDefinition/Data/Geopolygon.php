@@ -80,7 +80,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
                 $valid = false;
             } else {
                 foreach ($data as $point) {
-                    if (!$point instanceof DataObject\Data\Geopoint) {
+                    if (!$point instanceof DataObject\Data\GeoCoordinates) {
                         $valid = false;
                         break;
                     }
@@ -162,7 +162,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint[]|null
+     * @return DataObject\Data\GeoCoordinates[]|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -181,7 +181,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\Geopoint[]|null $data
+     * @param DataObject\Data\GeoCoordinates[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -298,7 +298,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var DataObject\Data\Geopoint $point */
+                /** @var DataObject\Data\GeoCoordinates $point */
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),
@@ -340,8 +340,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
     /**
      *
-     * @param DataObject\Data\Geopoint[]|null $oldValue
-     * @param DataObject\Data\Geopoint[]|null $newValue
+     * @param DataObject\Data\GeoCoordinates[]|null $oldValue
+     * @param DataObject\Data\GeoCoordinates[]|null $newValue
      *
      * @return bool
      */

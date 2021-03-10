@@ -76,11 +76,12 @@ class HtmlToImage
         // use xvfb if possible
         if ($xvfb = Console::getExecutable('xvfb-run')) {
             $command = [$xvfb, '--auto-servernum', '--server-args=-screen 0, 1280x1024x24',
-                self::getWkhtmltoimageBinary(), '--use-xserver'];
+                self::getWkhtmltoimageBinary(), '--use-xserver', ];
         } else {
             $command = self::getWkhtmltoimageBinary();
         }
         $command = array_merge($command, $options);
+        Console::addLowProcessPriority($command);
         $process = new Process($command);
         $process->start();
 

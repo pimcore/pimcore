@@ -214,6 +214,8 @@ class PricingManager implements PricingManagerInterface
             $rules->setOrderKey('prio');
             $rules->setOrder('ASC');
 
+            $rules->getDao()->setRuleClass($this->options['rule_class']);
+
             $this->rules = $rules->getRules();
         }
 

@@ -17,11 +17,14 @@
 
 namespace Pimcore\Model\Asset\MetaData;
 
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @param bool $force
      * @param bool $useExifTool
@@ -63,18 +66,15 @@ trait EmbeddedMetaDataTrait
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
-        $embeddedMetaData = [];
 
         if (!$filePath) {
             $filePath = $this->getFileSystemPath();
         }
 
-        if (stream_is_local($this->getStream()) && $exiftool && $useExifTool) {
-            $path = $filePath;
-            if (!file_exists($path)) {
-                $path = $this->getTemporaryFile();
-            }
-            $process = new Process([$exiftool, '-j', $path]);
+        $filePath = $this->getLocalFile($filePath);
+
+        if ($exiftool && $useExifTool) {
+            $process = new Process([$exiftool, '-j', $filePath]);
             $process->run();
             $output = $process->getOutput();
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
