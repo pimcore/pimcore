@@ -69,9 +69,10 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
+     * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      * @throws \Exception
      */
-    public function save($autoClearThumbnails = true)
+    public function save($forceClearTempFiles = false)
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -91,23 +92,28 @@ class Dao extends Model\Dao\PhpArrayTable
             }
         }
 
-        $thumbnailDefinitionAlreadyExisted = $this->db->getById($this->model->getName()) !== null;
-        $this->db->insertOrUpdate($data, $this->model->getName());
+        if($forceClearTempFiles) {
+            $this->model->clearTempFiles();
+        } else {
+            $thumbnailDefinitionAlreadyExisted = $this->db->getById($this->model->getName()) !== null;
+            $this->db->insertOrUpdate($data, $this->model->getName());
 
-        if(!$thumbnailDefinitionAlreadyExisted && $autoClearThumbnails) {
-            $this->autoClearTempFiles();
+            if (!$thumbnailDefinitionAlreadyExisted) {
+                $this->autoClearTempFiles();
+            }
         }
     }
 
     /**
      * Deletes object from database
+     * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      */
-    public function delete($autoClearThumbnails = true)
+    public function delete($forceClearTempFiles = false)
     {
         $this->db->delete($this->model->getName());
 
-        if($autoClearThumbnails) {
-            $this->autoClearTempFiles();
+        if($forceClearTempFiles) {
+            $this->model->clearTempFiles();
         }
     }
 
