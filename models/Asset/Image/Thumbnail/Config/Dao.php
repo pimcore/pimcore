@@ -114,6 +114,8 @@ class Dao extends Model\Dao\PhpArrayTable
 
         if($forceClearTempFiles) {
             $this->model->clearTempFiles();
+        } else {
+            $this->autoClearTempFiles();
         }
     }
 
