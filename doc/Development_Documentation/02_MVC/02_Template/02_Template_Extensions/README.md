@@ -182,24 +182,6 @@ My content
 {% endpimcoreglossary %}
 ``` 
 
-### `pimcore_placeholder` 
-See [Placeholder Template Extension](00_Placeholder.md)
-
-### `pimcore_head_link` 
-See [HeadLink Template Extension](01_HeadLink.md)
-
-### `pimcore_head_meta` 
-See [HeadMeta Template Extension](02_HeadMeta.md)
-
-### `pimcore_head_script` 
-See [HeadScript Template Extension](03_HeadScript.md)
-
-### `pimcore_head_style` 
-See [HeadStyle Template Extension](04_HeadStyle.md)
-
-### `pimcore_head_title` 
-See [HeadTitle Template Extension](05_HeadTitle.md)
-
 
 ### `pimcore_inc` 
 Use `pimcore_inc()` to include documents (eg. snippets) within views. 
@@ -260,10 +242,6 @@ someOtherDocument.html.twig (whatever Twig template is actually for /some/other/
 {{ parameterToPass }}
 ...
 ```
-
-
-### `pimcore_inline_script` 
-See [InlineScript Template Extension](06_InlineScript.md)
 
 ### Navigation
 
