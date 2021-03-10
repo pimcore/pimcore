@@ -120,8 +120,7 @@ class Dao extends Model\Dao\PhpArrayTable
                 '--name='.$this->model->getName()
             ];
 
-            $process = new Process($arguments);
-            $process->start();
+            Console::execInBackground(implode(' ', $arguments));
         }
     }
 }
