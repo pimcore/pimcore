@@ -27,41 +27,41 @@ All Twig extension functions are described below in detail, the following tables
 
 | Extension                                | Description                                                     |
 |------------------------------------------|-----------------------------------------------------------------|
-| `pimcore_action()`        | (Deprecated) Call an arbitrary action and renders the respective template  |
+| `pimcore_action()`        | (Deprecated) Calls an arbitrary action and renders the respective template  |
 | `pimcore_cache()`         | Simple in-template caching functionality                                         |
-| `pimcore_device()`        | Helps implementing adaptive designs.                                             |
+| `pimcore_device()`        | Helps implementing adaptive designs                                              |
 | `pimcoreglossary()`       | Extension to control the glossary engine                                         |
 | `pimcore_placeholder()`   | Adding and embedding custom placeholders, e.g. for special header tags, etc.     |
 | `pimcore_head_link()`     | Embeding / managing referenced stylesheets (alternative to `assets()`)           |
 | `pimcore_head_meta()`     | Managing your \<meta\> elements in your HTML document                            |
-| `pimcore_head_script()`   | Managing your <scripts> elements                                                 |
+| `pimcore_head_script()`   | Managing your \<scripts\> elements                                               |
 | `pimcore_head_style()`    | Managing inline styles (pendant to `headLink()` for inline styles)               |
 | `pimcore_head_title()`    | Create and store the HTML document's `<title>` for later retrieval and output    |
-| `pimcore_inc()`           | Use this function to directly include a Pimcore document.                        |
+| `pimcore_inc()`           | Use this function to directly include a Pimcore document                         |
 | `pimcore_inline_script`   | Managing inline scripts (pendant to `headScript()` for inline scripts)           |
 | `pimcore_build_nav()`, `pimcore_render_nav()`, `pimcore_nav_renderer()`   | Embed and build navigations based on the document structure                             |
 | `pimcore_url()`           | An alternative to `url()` and `path()` with the building behavior of Pimcore 4   |
-| `pimcore_website_config()`| Fetch website settings or specific setting(first param: key) for the current site |
+| `pimcore_website_config()`| Fetch website settings or specific setting (first param: key) for the current site |
 | `pimcore_image_thumbnail()` | Returns a path to a given thumbnail on image                                   |
-| `pimcore_image_thumbnail_html()` | Returns html for displaying the thumbnail image.                          |
-| `pimcore_supported_locales()` | Use this function to get list of support locales.                            |
-| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail or an thumbnail configuration.             |
-| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail or an thumbnail configuration.             |
+| `pimcore_image_thumbnail_html()` | Returns html for displaying the thumbnail image                           |
+| `pimcore_supported_locales()` | Use this function to get a list of supported locales                         |
+| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail or thumbnail configuration                 |
+| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail or thumbnail configuration                 |
 
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
 {# using 'instaceof' checks if object is instanceof provided classname #}
-{% if( product is instanceof('AppBundle\\Model\\Product\\Car')) %}
+{% if (product is instanceof('AppBundle\\Model\\Product\\Car')) %}
     ...
 {% endif %}
 
 {# using 'pimcore_data_object' checks if object is instanceof \Pimcore\Model\DataObject\Concrete #}
-{% if( product is pimcore_data_object) %}
+{% if (product is pimcore_data_object) %}
  ...
 {% endif %}
 ```
 
-The following tables give an overview of all available tests:
+The following table gives an overview of all available tests:
 
 | Test                      | Description                                                                      |
 |---------------------------|----------------------------------------------------------------------------------|
@@ -195,7 +195,7 @@ This is especially useful for footers, headers, navigations, sidebars, teasers, 
 | `params`       |  array       | Is optional and should be an array with key value pairs like in `$this->action()` from ZF. |
 | `enabledCache` |  bool        | Is true by default, set it to false to disable the cache. Hashing is done across source and parameters to ensure a consistent result. |
  
- ##### Example
+##### Example
 ```twig
 {#include path#}
 {{ pimcore_inc("/shared/boxes/buttons") }}
@@ -281,7 +281,7 @@ All parameters are optional here:
 | `encode`     | bool   | Is true by default, set it to false to disable encoding |
 | `relative`   | bool   | Is false by default, set it to true to generate a relative path based on the current request path |
 
- ##### Example
+##### Example
 ```twig
 {% set object = pimcore_object(769) %}
 {{  pimcore_url({'object': object}) }}
