@@ -19,7 +19,6 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Model;
 use Pimcore\Tool\Console;
-use Symfony\Component\Process\Process;
 
 /**
  * @internal
