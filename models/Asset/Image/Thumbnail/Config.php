@@ -23,7 +23,7 @@ use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
- * @method void save()
+ * @method void save(bool $autoClearThumbnails = true)
  * @method void delete()
  */
 class Config extends Model\AbstractModel

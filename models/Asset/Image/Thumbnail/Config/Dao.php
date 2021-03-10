@@ -71,7 +71,7 @@ class Dao extends Model\Dao\PhpArrayTable
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save($autoClearThumbnails = true)
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -94,7 +94,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $thumbnailDefinitionAlreadyExisted = $this->db->getById($this->model->getName()) !== null;
         $this->db->insertOrUpdate($data, $this->model->getName());
 
-        if(!$thumbnailDefinitionAlreadyExisted) {
+        if(!$thumbnailDefinitionAlreadyExisted && $autoClearThumbnails) {
             $this->autoClearTempFiles();
         }
     }
@@ -102,10 +102,13 @@ class Dao extends Model\Dao\PhpArrayTable
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete($autoClearThumbnails = true)
     {
         $this->db->delete($this->model->getName());
-        $this->autoClearTempFiles();
+
+        if($autoClearThumbnails) {
+            $this->autoClearTempFiles();
+        }
     }
 
     protected function autoClearTempFiles()
