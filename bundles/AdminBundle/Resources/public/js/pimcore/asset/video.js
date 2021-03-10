@@ -125,7 +125,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 detailsData[t("height")] = this.data.customSettings.videoHeight;
             }
             if(this.data.customSettings['duration']) {
-                detailsData[t("duration")] = this.data.customSettings.duration;
+                detailsData[t("duration")] = pimcore.helpers.formatTimeDuration(this.data.customSettings.duration);
             }
 
             var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {

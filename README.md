@@ -24,6 +24,16 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
+## Supported Versions
+
+| Version | Supported | LTS** | LTS Version |
+| ------- |    :---:  | :---: |    :---:    |
+| `<= 4.x`|    ❌     |  ❌    |             |
+| `5.x`   |    ❌     |  ✅    | `5.8`       |
+| `6.x`   |    ✅     |  ✅    |             |
+
+** [LTS](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription). 
+
 ## Overview
 ![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
 

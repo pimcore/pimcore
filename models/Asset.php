@@ -22,6 +22,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
@@ -42,6 +43,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Asset extends Element\AbstractElement
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * possible types of an asset
      *
@@ -200,11 +203,6 @@ class Asset extends Element\AbstractElement
      * @var int
      */
     protected $versionCount;
-
-    /**
-     * @var string[]
-     */
-    protected $_temporaryFiles = [];
 
     /**
      *
@@ -1317,17 +1315,14 @@ class Asset extends Element\AbstractElement
         if ($this->stream) {
             if (get_resource_type($this->stream) !== 'stream') {
                 $this->stream = null;
-            } else {
-                $streamMeta = stream_get_meta_data($this->stream);
-                if (!@rewind($this->stream) && $streamMeta['stream_type'] === 'STDIO') {
-                    $this->stream = null;
-                }
+            } elseif (!@rewind($this->stream)) {
+                $this->stream = null;
             }
         }
 
-        if (!$this->stream && $this->getType() != 'folder') {
+        if (!$this->stream && $this->getType() !== 'folder') {
             if (file_exists($this->getFileSystemPath())) {
-                $this->stream = fopen($this->getFileSystemPath(), 'r', false, File::getContext());
+                $this->stream = fopen($this->getFileSystemPath(), 'rb', false, File::getContext());
             } else {
                 $this->stream = tmpfile();
             }
@@ -1355,12 +1350,9 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($this->getFilename());
-                $dest = fopen($tmpFile, 'w+', false, File::getContext());
-                stream_copy_to_stream($this->stream, $dest);
+                $tempFile = $this->getLocalFile($this->stream);
+                $dest = fopen($tempFile, 'w+', false, File::getContext());
                 $this->stream = $dest;
-
-                $this->_temporaryFiles[] = $tmpFile;
             }
         } elseif (is_null($stream)) {
             $this->stream = null;
@@ -1552,19 +1544,8 @@ class Asset extends Element\AbstractElement
      */
     public function getTemporaryFile()
     {
-        $destinationPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-temporary/asset_' . $this->getId() . '_' . md5(microtime()) . '__' . $this->getFilename();
-        if (!is_dir(dirname($destinationPath))) {
-            File::mkdir(dirname($destinationPath));
-        }
-
-        $src = $this->getStream();
-        $dest = fopen($destinationPath, 'w+', false, File::getContext());
-        stream_copy_to_stream($src, $dest);
-        fclose($dest);
-
+        $destinationPath = $this->getTemporaryFileFromStream($this->getStream());
         @chmod($destinationPath, File::getDefaultMode());
-
-        $this->_temporaryFiles[] = $destinationPath;
 
         return $destinationPath;
     }
@@ -1959,7 +1940,7 @@ class Asset extends Element\AbstractElement
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
@@ -2024,13 +2005,6 @@ class Asset extends Element\AbstractElement
     {
         // close open streams
         $this->closeStream();
-
-        // delete temporary files
-        foreach ($this->_temporaryFiles as $tempFile) {
-            if (file_exists($tempFile)) {
-                @unlink($tempFile);
-            }
-        }
     }
 
     /**

@@ -27,6 +27,11 @@ class Xliff12Exporter implements ExporterInterface
      */
     private $xliffEscaper;
 
+    /**
+     * @var \SimpleXMLElement|null
+     */
+    private $xliffFile;
+
     public function __construct(Xliff12Escaper $xliffEscaper)
     {
         $this->xliffEscaper = $xliffEscaper;
@@ -45,10 +50,10 @@ class Xliff12Exporter implements ExporterInterface
             return $exportFile;
         }
 
-        $xliff = simplexml_load_file($exportFile, null, LIBXML_NOCDATA);
+        $this->prepareExportFile($exportFile);
 
         foreach ($attributeSet->getTargetLanguages() as $targetLanguage) {
-            $file = $xliff->addChild('file');
+            $file = $this->xliffFile->addChild('file');
             $file->addAttribute('original', $attributeSet->getTranslationItem()->getType() . '-' . $attributeSet->getTranslationItem()->getId());
             $file->addAttribute('source-language', $attributeSet->getSourceLanguage());
             $file->addAttribute('target-language', $targetLanguage);
@@ -71,7 +76,7 @@ class Xliff12Exporter implements ExporterInterface
             }
         }
 
-        $xliff->asXML($exportFile);
+        $this->xliffFile->asXML($exportFile);
 
         return $exportFile;
     }
@@ -88,6 +93,17 @@ class Xliff12Exporter implements ExporterInterface
         }
 
         return $exportFile;
+    }
+
+    /**
+     * @param string $exportFilePath
+     *
+     */
+    protected function prepareExportFile(string $exportFilePath)
+    {
+        if ($this->xliffFile === null) {
+            $this->xliffFile = simplexml_load_file($exportFilePath, null, LIBXML_NOCDATA);
+        }
     }
 
     /**

@@ -19,7 +19,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Localization\LocaleServiceInterface;
 
-class LocaleSwitcher extends AbstractOperator
+/**
+ * @internal
+ */
+final class LocaleSwitcher extends AbstractOperator
 {
     /**
      * @var LocaleServiceInterface

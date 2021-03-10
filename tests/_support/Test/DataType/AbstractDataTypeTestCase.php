@@ -331,14 +331,14 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject([
             [
-                'method' => 'fillGeopoint',
+                'method' => 'fillGeoCoordinates',
                 'field' => 'point',
             ],
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertGeopoint($this->testObject, 'point', $this->seed);
-        $this->testDataHelper->checkValidityGeopoint($this->testObject, 'point', $this->seed);
+        $this->testDataHelper->assertGeoCoordinates($this->testObject, 'point', $this->seed);
+        $this->testDataHelper->checkValidityGeoCoordinates($this->testObject, 'point', $this->seed);
     }
 
     public function testGeopolygon()

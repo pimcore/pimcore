@@ -337,7 +337,7 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param string $field
      * @param int $seed
      */
-    public function assertGeopoint(Concrete $object, $field, $seed = 1)
+    public function assertGeoCoordinates(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
 
@@ -347,7 +347,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertNotNull($value);
         $this->assertInstanceOf(DataObject\Data\GeoCoordinates::class, $value);
 
-        $expected = $this->getGeopointFixture();
+        $expected = $this->getGeoCoordinatesFixture();
 
         $this->assertEquals($expected->__toString(), $value->__toString(), 'String representations are equal');
         $this->assertEquals($expected, $value, 'Objects are equal');
@@ -356,7 +356,7 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @return DataObject\Data\GeoCoordinates
      */
-    protected function getGeopointFixture()
+    protected function getGeoCoordinatesFixture()
     {
         $longitude = 2.2008440814678;
         $latitude = 102.25112915039;
@@ -1187,7 +1187,7 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param string $field
      * @param int $seed
      */
-    public function checkValidityGeopoint(Concrete $object, $field, $seed = 1)
+    public function checkValidityGeoCoordinates(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1465,10 +1465,10 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param string $field
      * @param int $seed
      */
-    public function fillGeopoint(Concrete $object, $field, $seed = 1)
+    public function fillGeoCoordinates(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter($this->getGeopointFixture());
+        $object->$setter($this->getGeoCoordinatesFixture());
     }
 
     /**

@@ -149,10 +149,11 @@ class LibreOffice extends Ghostscript
                 self::getLibreOfficeCli(),
                 '--headless', '--nologo', '--nofirststartwizard',
                 '--norestore', '--convert-to', 'pdf:writer_web_pdf_Export',
-                '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $path
+                '--outdir', PIMCORE_SYSTEM_TEMP_DIRECTORY, $path,
             ];
 
             $lock->acquire(true);
+            Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
             $process->start();
@@ -163,7 +164,6 @@ class LibreOffice extends Ghostscript
                 fwrite($tmpHandle, $buffer);
             });
             fclose($tmpHandle);
-
 
             $out = $process->getOutput();
             $lock->release();
@@ -204,6 +204,7 @@ class LibreOffice extends Ghostscript
         } elseif (File::getFileExtension($path)) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
             $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_TEMPORARY_DIRECTORY, $path];
+            Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
             $process->run();

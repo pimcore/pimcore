@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class IsEqual extends AbstractOperator
+/**
+ * @internal
+ */
+final class IsEqual extends AbstractOperator
 {
     /** @var bool */
     private $skipNull;

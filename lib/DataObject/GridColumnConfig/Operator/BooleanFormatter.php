@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class BooleanFormatter extends AbstractOperator
+/**
+ * @internal
+ */
+final class BooleanFormatter extends AbstractOperator
 {
     /** @var string */
     private $yesValue;

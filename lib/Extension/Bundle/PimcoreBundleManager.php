@@ -25,8 +25,8 @@ use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\Kernel;
 use Pimcore\Routing\RouteReferenceInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class PimcoreBundleManager
 {
@@ -550,7 +550,6 @@ class PimcoreBundleManager
      */
     public function isInstalled(PimcoreBundleInterface $bundle): bool
     {
-        return true;
         if (null === $installer = $bundle->getInstaller()) {
             // bundle has no dedicated installer, so we can treat it as installed
             return true;

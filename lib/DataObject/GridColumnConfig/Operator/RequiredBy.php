@@ -20,7 +20,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 use Pimcore\Db;
 use Pimcore\Model\Element\Service;
 
-class RequiredBy extends AbstractOperator
+/**
+ * @internal
+ */
+final class RequiredBy extends AbstractOperator
 {
     /** @var string|null */
     private $elementType;

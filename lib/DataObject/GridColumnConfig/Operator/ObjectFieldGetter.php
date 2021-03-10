@@ -20,7 +20,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 
-class ObjectFieldGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class ObjectFieldGetter extends AbstractOperator
 {
     /** @var string */
     private $attribute;

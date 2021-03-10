@@ -48,7 +48,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
     private function libraryClasses(array &$classes): void
     {
-        $excludePattern = '@/lib/(Migrations|Maintenance|Sitemap|Workflow|Console|Composer|Translation/(Import|Export)|Image/Optimizer|DataObject/(GridColumnConfig|Import)|Test|Tool/Transliteration|(Pimcore|simple_html_dom)\.php)@';
+        $excludePattern = '@/lib/(Migrations|Maintenance|Sitemap|Workflow|Console|Composer|Translation/(Import|Export)|Image/Optimizer|DataObject/(GridColumnConfig|Import)|Test|Tool/Transliteration|(Pimcore)\.php)@';
 
         $reflection = new \ReflectionClass(Bootstrap::class);
         $dir = dirname($reflection->getFileName());
