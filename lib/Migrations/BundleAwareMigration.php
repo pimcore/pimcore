@@ -20,16 +20,17 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 
 abstract class BundleAwareMigration extends AbstractMigration
 {
-
     abstract protected function getBundleName(): string;
 
-    protected function checkBundleInstalled() {
+    protected function checkBundleInstalled()
+    {
         $kernel = \Pimcore::getContainer()->get('kernel');
         $bundle = $kernel->getBundle($this->getBundleName());
-        if($bundle instanceof PimcoreBundleInterface) {
+        if ($bundle instanceof PimcoreBundleInterface) {
             $installer = $bundle->getInstaller();
             $this->skipIf($installer && !$installer->isInstalled(), 'Bundle not installed.');
         }
+
         return true;
     }
 
@@ -44,5 +45,4 @@ abstract class BundleAwareMigration extends AbstractMigration
         $this->checkBundleInstalled();
         parent::preDown($schema);
     }
-
 }
