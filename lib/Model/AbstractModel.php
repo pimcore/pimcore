@@ -279,11 +279,12 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @internal
      * @param array $data
+     * @throws \Exception
      */
     protected static function checkCreateData(array $data)
     {
         if(isset($data['id'])) {
-            @trigger_error(sprintf('Calling %s including `id` key in the data-array is deprecated and will throw an exception in Pimcore 10', __METHOD__), E_USER_DEPRECATED);
+            throw new \Exception(sprintf('Calling %s including `id` key in the data-array is not supported, use setId() instead.', __METHOD__));
         }
     }
 }
