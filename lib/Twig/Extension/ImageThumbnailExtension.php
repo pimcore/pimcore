@@ -48,7 +48,7 @@ final class ImageThumbnailExtension extends AbstractExtension
 
     /**
      * @param Image  $image
-     * @param string $thumbnail
+     * @param string|array|Image\Thumbnail\Config $thumbnail
      * @param bool   $deferred
      *
      * @return Image\Thumbnail
