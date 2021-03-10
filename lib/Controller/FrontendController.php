@@ -43,7 +43,7 @@ abstract class FrontendController extends Controller
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __get($name)
     {
@@ -59,7 +59,7 @@ abstract class FrontendController extends Controller
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __set($name, $value)
     {

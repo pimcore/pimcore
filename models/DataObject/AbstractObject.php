@@ -1190,7 +1190,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setProperties(array $properties)
     {

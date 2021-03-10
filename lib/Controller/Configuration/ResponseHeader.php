@@ -65,7 +65,7 @@ class ResponseHeader extends ConfigurationAnnotation
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getAliasName(): string
     {
@@ -73,7 +73,7 @@ class ResponseHeader extends ConfigurationAnnotation
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function allowArray(): bool
     {

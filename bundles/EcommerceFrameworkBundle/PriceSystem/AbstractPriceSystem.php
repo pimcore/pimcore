@@ -39,7 +39,7 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPriceInfo(CheckoutableInterface $product, $quantityScale = null, $products = null): PriceInfoInterface
     {

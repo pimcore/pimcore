@@ -92,7 +92,7 @@ trait Parallelization
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getItemName(int $count): string
     {
@@ -100,7 +100,7 @@ trait Parallelization
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getContainer()
     {
@@ -108,7 +108,7 @@ trait Parallelization
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getConsolePath(): string
     {

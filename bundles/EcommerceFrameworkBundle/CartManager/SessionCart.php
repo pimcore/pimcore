@@ -102,7 +102,7 @@ class SessionCart extends AbstractCart implements CartInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function modified()
     {

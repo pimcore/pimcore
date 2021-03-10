@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

@@ -180,7 +180,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasActivePayment()
     {
@@ -238,7 +238,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initOrderPayment()
     {
@@ -251,7 +251,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @throws \Exception
      */
@@ -278,7 +278,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function cancelStartedOrderPayment()
     {
@@ -295,7 +295,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOrder()
     {
@@ -326,7 +326,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws UnsupportedException
      * @throws \Exception
@@ -441,7 +441,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws UnsupportedException
      */
@@ -467,7 +467,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws UnsupportedException
      */
@@ -526,7 +526,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCart()
     {
@@ -534,7 +534,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCheckoutStep($stepName)
     {
@@ -542,7 +542,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCheckoutSteps()
     {
@@ -550,7 +550,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCurrentStep()
     {
@@ -567,7 +567,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isFinished()
     {
@@ -575,7 +575,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isCommitted()
     {
@@ -585,7 +585,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPayment()
     {
@@ -593,7 +593,7 @@ class CheckoutManager implements CheckoutManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function cleanUpPendingOrders()
     {

@@ -616,7 +616,7 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
@@ -751,7 +751,7 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getLazyLoadedFieldNames(): array
     {

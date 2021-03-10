@@ -968,7 +968,7 @@ class Mail extends Email
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addTo(...$addresses)
     {
@@ -978,7 +978,7 @@ class Mail extends Email
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addCc(...$addresses)
     {
@@ -988,7 +988,7 @@ class Mail extends Email
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addBcc(...$addresses)
     {
@@ -998,7 +998,7 @@ class Mail extends Email
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addFrom(...$addresses)
     {
@@ -1008,7 +1008,7 @@ class Mail extends Email
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addReplyTo(...$addresses)
     {

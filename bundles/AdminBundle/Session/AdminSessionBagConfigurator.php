@@ -39,7 +39,7 @@ class AdminSessionBagConfigurator implements SessionConfiguratorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function configure(SessionInterface $session)
     {

@@ -27,7 +27,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     use StateHelperTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getVersion()
     {
@@ -35,7 +35,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {

@@ -137,7 +137,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @throws UnsupportedException
      */
@@ -157,7 +157,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function committedOrderWithSamePaymentExists($paymentResponseParams, PaymentInterface $paymentProvider)
     {
@@ -188,7 +188,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws UnsupportedException|PaymentNotSuccessfulException
      * @throws \Exception
@@ -274,7 +274,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function commitOrder(AbstractOrder $order)
     {
@@ -307,7 +307,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function sendConfirmationMail(AbstractOrder $order)
     {

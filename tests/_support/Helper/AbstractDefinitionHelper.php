@@ -37,7 +37,7 @@ abstract class AbstractDefinitionHelper extends Module
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _beforeSuite($settings = [])
     {
@@ -54,7 +54,7 @@ abstract class AbstractDefinitionHelper extends Module
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _afterSuite()
     {

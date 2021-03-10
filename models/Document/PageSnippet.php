@@ -183,7 +183,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {

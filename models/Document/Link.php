@@ -377,7 +377,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {

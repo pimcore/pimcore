@@ -47,7 +47,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     protected $id;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setId($id)
     {
@@ -64,7 +64,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -88,7 +88,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getVersion()
     {
@@ -104,7 +104,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function hasTemplate()
     {

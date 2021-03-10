@@ -35,7 +35,7 @@ class PimcoreUsers implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -43,7 +43,7 @@ class PimcoreUsers implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getJsClassName(): string
     {
@@ -51,7 +51,7 @@ class PimcoreUsers implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortPriority(): int
     {

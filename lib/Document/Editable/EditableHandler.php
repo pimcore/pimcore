@@ -126,7 +126,7 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isBrickEnabled(Editable $editable, $brick)
     {

@@ -412,7 +412,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     /**
      * Allows us to prepend/modify configurations of different extensions
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function prepend(ContainerBuilder $container)
     {

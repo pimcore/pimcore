@@ -33,7 +33,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function commit($data)
     {
@@ -54,7 +54,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getData()
     {

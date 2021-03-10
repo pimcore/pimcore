@@ -23,7 +23,7 @@ use Pimcore\Translation\AttributeSet\AttributeSet;
 class AbstractElementImporter implements ImporterInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function import(AttributeSet $attributeSet, bool $saveElement = true)
     {

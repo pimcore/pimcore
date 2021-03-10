@@ -64,7 +64,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {

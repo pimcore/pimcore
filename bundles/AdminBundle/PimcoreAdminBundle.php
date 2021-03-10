@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class PimcoreAdminBundle extends Bundle
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {

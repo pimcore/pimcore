@@ -71,7 +71,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getEditmodeElementClasses($options = []): array
     {

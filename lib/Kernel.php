@@ -174,7 +174,7 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function boot()
     {
@@ -195,7 +195,7 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function shutdown()
     {
@@ -208,7 +208,7 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function initializeContainer()
     {

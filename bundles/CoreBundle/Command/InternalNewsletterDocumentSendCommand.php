@@ -54,7 +54,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @throws Exception
      */

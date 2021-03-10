@@ -22,7 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader as Bas
 class AnnotatedRouteControllerLoader extends BaseAnnotatedRouteControllerLoader
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method)
     {

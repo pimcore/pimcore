@@ -71,7 +71,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $visibleFieldDefinitions = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
     {
@@ -103,7 +103,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadData($data, $container = null, $params = [])
     {
@@ -1019,7 +1019,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {

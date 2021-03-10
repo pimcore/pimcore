@@ -83,7 +83,7 @@ class EnvironmentConfig implements EnvironmentConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDefaultDebugModeEnvironment(): string
     {

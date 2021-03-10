@@ -81,7 +81,7 @@ class ObjectUserProvider implements UserProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function loadUserByUsername($username)
     {
@@ -97,7 +97,7 @@ class ObjectUserProvider implements UserProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function refreshUser(UserInterface $user)
     {
@@ -111,7 +111,7 @@ class ObjectUserProvider implements UserProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsClass($class)
     {

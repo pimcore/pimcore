@@ -25,7 +25,7 @@ namespace Pimcore\Extension\Document\Areabrick;
 abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements TemplateAreabrickInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTemplate()
     {
@@ -34,7 +34,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTemplateLocation()
     {
@@ -42,7 +42,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTemplateSuffix()
     {

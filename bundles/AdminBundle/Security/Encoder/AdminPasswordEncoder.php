@@ -28,7 +28,7 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 class AdminPasswordEncoder extends AbstractUserAwarePasswordEncoder
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function encodePassword($raw, $salt)
     {
@@ -40,7 +40,7 @@ class AdminPasswordEncoder extends AbstractUserAwarePasswordEncoder
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isPasswordValid($encoded, $raw, $salt)
     {
