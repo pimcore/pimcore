@@ -19,7 +19,6 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
-use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Console;

@@ -313,6 +313,7 @@ class Console
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $process = new Process($cmd);
         $commandLine = $process->getCommandLine();
+
         return self::execInBackground($commandLine, $outputFile);
     }
 

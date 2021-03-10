@@ -14,7 +14,6 @@
 
 namespace Pimcore\Document;
 
-use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 
 abstract class Adapter
