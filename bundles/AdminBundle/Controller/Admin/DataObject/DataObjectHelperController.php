@@ -141,35 +141,6 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param ImportService $importService
-     * @param User $user
-     * @param string $classId
-     *
-     * @return array
-     */
-    private function getImportConfigs(ImportService $importService, $user, $classId)
-    {
-        $list = $importService->getMyOwnImportConfigs($user, $classId);
-
-        if (!is_array($list)) {
-            $list = [];
-        }
-        $list = array_merge($list, $importService->getSharedImportConfigs($user, $classId));
-        $result = [];
-        if ($list) {
-            /** @var ImportConfig $config */
-            foreach ($list as $config) {
-                $result[] = [
-                    'id' => $config->getId(),
-                    'name' => $config->getName(),
-                ];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * @Route("/get-export-configs", name="pimcore_admin_dataobject_dataobjecthelper_getexportconfigs", methods={"GET"})
      *
      * @param Request $request
