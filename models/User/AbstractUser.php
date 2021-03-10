@@ -84,6 +84,7 @@ class AbstractUser extends Model\AbstractModel
     public static function create($values = [])
     {
         $user = new static();
+        self::checkCreateData($values);
         $user->setValues($values);
         $user->save();
 

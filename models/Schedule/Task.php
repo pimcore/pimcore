@@ -100,6 +100,7 @@ class Task extends Model\AbstractModel
     public static function create($data)
     {
         $task = new self();
+        self::checkCreateData($data);
         $task->setValues($data);
 
         return $task;
