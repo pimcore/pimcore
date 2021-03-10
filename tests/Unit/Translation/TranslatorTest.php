@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Translation;
 
 use Codeception\Util\Stub;
+use Pimcore\Model\Translation;
 use Pimcore\Model\Translation\Website;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Translation\Translator;
@@ -204,5 +205,23 @@ class TranslatorTest extends TestCase
         $translator = Stub::construct(Translator::class, [$this->translator, true]);
 
         $this->assertEquals($this->translations['en']['case_key'], $translator->trans('CASE_KEY'));
+    }
+
+    public function testLoadingTranslationList() {
+
+        $translations = new Translation\Listing();
+        $translations->setDomain('messages');
+
+        $translations = $translations->getTranslations();
+        $this->assertCount(count($this->translations['en']), $translations);
+
+
+        $translations = new Translation\Listing();
+        $translations->setDomain('messages');
+        $translations->addConditionParam('`key` like :key', ['key' => "simple%"]);
+
+        $translations = $translations->getTranslations();
+        $this->assertCount(1, $translations);
+
     }
 }
