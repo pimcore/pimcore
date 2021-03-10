@@ -366,6 +366,7 @@ class Asset extends Element\AbstractElement
         /** @var Asset $asset */
         $asset = self::getModelFactory()->build($class);
         $asset->setParentId($parentId);
+        self::checkCreateData($data);
         $asset->setValues($data);
 
         if ($save) {

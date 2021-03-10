@@ -37,6 +37,7 @@ class Folder extends DataObject
     public static function create($values)
     {
         $object = new static();
+        self::checkCreateData($values);
         $object->setValues($values);
 
         $object->save();
