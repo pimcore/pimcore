@@ -192,6 +192,7 @@ class Site extends AbstractModel
     public static function create($data)
     {
         $site = new self();
+        self::checkCreateData($data);
         $site->setValues($data);
 
         return $site;
