@@ -128,14 +128,12 @@ class Dao extends Model\Dao\PhpArrayTable
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
             $arguments = [
-                Console::getPhpCli(),
-                PIMCORE_PROJECT_ROOT.'/bin/console',
                 'pimcore:thumbnails:clear',
                 '--type=image',
                 '--name='.$this->model->getName()
             ];
 
-            Console::execInBackground(implode(' ', $arguments));
+            Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console'), implode(' ', $arguments));
         }
     }
 }
