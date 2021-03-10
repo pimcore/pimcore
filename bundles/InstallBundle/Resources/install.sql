@@ -138,6 +138,8 @@ CREATE TABLE `documents_elements` (
   PRIMARY KEY (`documentId`,`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
+CREATE OR REPLACE VIEW documents_editables AS SELECT * FROM documents_elements;
+
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
