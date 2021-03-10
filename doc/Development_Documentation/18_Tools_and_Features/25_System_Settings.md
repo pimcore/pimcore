@@ -63,15 +63,6 @@ Settings for default values of Mails sent via `Pimcore\Mail`.
 ## Website
 System settings about the CMS part of Pimcore.
 
-##### Use a Custom Template Code
-
-```php
-<?php
-// this example is inside a controller, but you can also inject the listener as dependency
-$cookieListener = $this->get(\Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener::class);
-$cookieListener->setTemplateCode("<b>Your Custom Template</b> ...");
-```
-
 ## Documents
 Settings for documents like version steps, default values and URL settings. 
 
