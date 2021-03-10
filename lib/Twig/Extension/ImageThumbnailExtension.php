@@ -69,7 +69,7 @@ final class ImageThumbnailExtension extends AbstractExtension
      */
     public function getImageThumbnailHtml(
         Image $image,
-        string $thumbnail,
+        string|array|Image\Thumbnail\Config $thumbnail,
         array $options = [],
         array $removeAttributes = [],
         bool $deferred = true
