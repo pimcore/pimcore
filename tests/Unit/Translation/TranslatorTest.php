@@ -198,4 +198,22 @@ class TranslatorTest extends TestCase
         //Upper case key
         $this->assertEquals($this->translations['en']['CASE_KEY'], $this->translator->trans('CASE_KEY'));
     }
+
+    public function testLoadingTranslationList() {
+
+        $translations = new Translation\Listing();
+        $translations->setDomain('messages');
+
+        $translations = $translations->getTranslations();
+        $this->assertCount(count($this->translations['en']), $translations);
+
+
+        $translations = new Translation\Listing();
+        $translations->setDomain('messages');
+        $translations->addConditionParam('`key` like :key', ['key' => "simple%"]);
+
+        $translations = $translations->getTranslations();
+        $this->assertCount(1, $translations);
+
+    }
 }
