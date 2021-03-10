@@ -248,6 +248,7 @@ CREATE TABLE `documents_printpage` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
+CREATE OR REPLACE VIEW documents_editables AS SELECT * FROM documents_elements;
 
 DROP TABLE IF EXISTS `edit_lock`;
 CREATE TABLE `edit_lock` (
