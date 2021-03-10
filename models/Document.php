@@ -323,10 +323,8 @@ class Document extends Element\AbstractElement
     {
         $document = new static();
         $document->setParentId($parentId);
-
-        foreach ($data as $key => $value) {
-            $document->setValue($key, $value);
-        }
+        self::checkCreateData($data);
+        $document->setValues($data);
 
         if ($save) {
             $document->save();
