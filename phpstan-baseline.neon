@@ -1,2 +1,6 @@
 parameters:
 	ignoreErrors:
+		-
+			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Console.php
