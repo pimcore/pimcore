@@ -896,7 +896,7 @@ class TestHelper
     {
         $pipe = Asset\Image\Thumbnail\Config::getByName($name);
         if ($pipe) {
-            $pipe->delete(false);
+            $pipe->delete(true);
         }
     }
 

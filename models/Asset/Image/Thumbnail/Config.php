@@ -24,7 +24,7 @@ use Pimcore\Tool\Serialize;
 /**
  * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
  * @method void save(bool $forceClearTempFiles = false)
- * @method void delete()
+ * @method void delete(bool $forceClearTempFiles = false)
  */
 class Config extends Model\AbstractModel
 {
