@@ -450,15 +450,6 @@ pimcore.object.tree = Class.create({
                         }));
                     }
 
-                    if (perspectiveCfg.inTreeContextMenu("object.importCsv")) {
-                        menu.add({
-                            text: t('import_csv'),
-                            hideOnClick: false,
-                            iconCls: "pimcore_icon_object pimcore_icon_overlay_upload",
-                            menu: objectMenu.importer
-                        });
-                    }
-
                     menu.add("-");
 
                     //paste
