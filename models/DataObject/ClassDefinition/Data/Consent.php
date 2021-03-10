@@ -422,7 +422,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supportsInheritance()
     {

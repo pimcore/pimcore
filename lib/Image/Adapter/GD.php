@@ -442,7 +442,7 @@ class GD extends Adapter
     protected static $supportedFormatsCache = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supportsFormat(string $format, bool $force = false)
     {

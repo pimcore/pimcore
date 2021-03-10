@@ -28,7 +28,7 @@ class NotificationServiceTest extends TestCase
     protected $notificationService;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {
@@ -38,7 +38,7 @@ class NotificationServiceTest extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _after()
     {

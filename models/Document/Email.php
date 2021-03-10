@@ -76,7 +76,7 @@ class Email extends Model\Document\PageSnippet
     protected $bcc = '';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected $supportsContentMaster = false;
 

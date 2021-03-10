@@ -562,7 +562,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {

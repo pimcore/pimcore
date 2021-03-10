@@ -73,7 +73,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onLogoutSuccess(Request $request)
     {

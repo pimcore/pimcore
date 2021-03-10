@@ -58,7 +58,7 @@ class Folder extends DataObject
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function delete()
     {

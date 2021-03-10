@@ -47,7 +47,7 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -55,7 +55,7 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataProviderKeys(): array
     {
@@ -63,7 +63,7 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -71,7 +71,7 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {

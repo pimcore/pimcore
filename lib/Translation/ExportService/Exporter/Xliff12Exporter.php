@@ -38,7 +38,7 @@ class Xliff12Exporter implements ExporterInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function export(AttributeSet $attributeSet, string $exportId = null): string
     {
@@ -82,7 +82,7 @@ class Xliff12Exporter implements ExporterInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getExportFilePath(string $exportId): string
     {
@@ -107,7 +107,7 @@ class Xliff12Exporter implements ExporterInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getContentType(): string
     {

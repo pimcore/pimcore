@@ -41,7 +41,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

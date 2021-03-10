@@ -53,7 +53,7 @@ class PaymentManager implements PaymentManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getProvider(string $name): PaymentInterface
     {

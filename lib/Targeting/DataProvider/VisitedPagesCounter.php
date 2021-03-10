@@ -35,7 +35,7 @@ class VisitedPagesCounter implements DataProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function load(VisitorInfo $visitorInfo)
     {

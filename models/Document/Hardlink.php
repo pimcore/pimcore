@@ -228,7 +228,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasChildren($unpublished = false)
     {
@@ -236,7 +236,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {

@@ -11,7 +11,7 @@ use Pimcore\Tests\ModelTester;
 abstract class ModelTestCase extends TestCase
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {
@@ -32,7 +32,7 @@ abstract class ModelTestCase extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function needsDb()
     {

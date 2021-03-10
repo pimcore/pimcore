@@ -35,7 +35,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
     protected $guesser;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(RequestStack $requestStack, PimcoreContextGuesser $guesser)
     {

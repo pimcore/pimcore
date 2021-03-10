@@ -240,7 +240,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -758,7 +758,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLazyLoadedFieldNames(): array
     {
@@ -774,7 +774,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {

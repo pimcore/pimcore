@@ -37,7 +37,7 @@ class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

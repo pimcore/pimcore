@@ -85,7 +85,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products): PriceInfoInterface
     {
@@ -111,7 +111,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
     {

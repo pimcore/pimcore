@@ -45,7 +45,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -64,7 +64,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -73,7 +73,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function fetchItems(InputInterface $input): array
     {
@@ -109,7 +109,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runSingleCommand(string $productId, InputInterface $input, OutputInterface $output): void
     {
@@ -136,7 +136,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
@@ -168,7 +168,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getItemName(int $count): string
     {

@@ -24,7 +24,7 @@ use Twig\TokenParser\AbstractTokenParser;
 class GlossaryTokenParser extends AbstractTokenParser
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function parse(Token $token)
     {
@@ -45,7 +45,7 @@ class GlossaryTokenParser extends AbstractTokenParser
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTag(): string
     {

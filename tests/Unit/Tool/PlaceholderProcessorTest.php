@@ -28,7 +28,7 @@ class PlaceholderProcessorTest extends TestCase
     private $processor;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {

@@ -107,7 +107,7 @@ class DocumentRenderer implements DocumentRendererInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {

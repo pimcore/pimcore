@@ -54,7 +54,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
      * The services below are defined as public as the Factory loads services via get() on
      * demand.
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function loadInternal(array $config, ContainerBuilder $container)
     {

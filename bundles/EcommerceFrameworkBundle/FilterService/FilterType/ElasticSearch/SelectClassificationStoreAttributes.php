@@ -41,7 +41,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $keyCollection)
     {
@@ -63,7 +63,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
@@ -125,7 +125,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {

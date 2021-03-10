@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ImportConfigListener implements EventSubscriberInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

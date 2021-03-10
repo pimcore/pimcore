@@ -58,7 +58,7 @@ class DynamicRouteProvider implements RouteProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRouteCollectionForRequest(Request $request)
     {
@@ -78,7 +78,7 @@ class DynamicRouteProvider implements RouteProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRouteByName($name)
     {
@@ -94,7 +94,7 @@ class DynamicRouteProvider implements RouteProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRoutesByNames($names)
     {

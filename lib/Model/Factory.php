@@ -23,7 +23,7 @@ use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 class Factory extends ImplementationLoader implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getClassMap(): array
     {

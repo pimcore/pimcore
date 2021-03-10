@@ -72,7 +72,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelResponseEvent(ResponseEvent $event)
     {

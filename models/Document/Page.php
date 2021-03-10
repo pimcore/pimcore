@@ -65,7 +65,7 @@ class Page extends TargetingDocument
     protected $targetGroupIds = '';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -146,7 +146,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getFullPath(bool $force = false)
     {

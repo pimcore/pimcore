@@ -33,7 +33,7 @@ class AdminExceptionListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
     {

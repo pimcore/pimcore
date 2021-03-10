@@ -113,7 +113,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
@@ -133,7 +133,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {

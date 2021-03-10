@@ -316,7 +316,7 @@ EOT;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function delete(bool $isNested = false)
     {

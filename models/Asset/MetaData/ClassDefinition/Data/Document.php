@@ -120,7 +120,7 @@ class Document extends Data
         return $data;
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function getDataForEditMode($data, $params = [])
     {
         if (is_numeric($data)) {

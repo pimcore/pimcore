@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 class ProfilerAliasPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {

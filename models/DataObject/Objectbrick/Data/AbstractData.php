@@ -254,7 +254,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getLazyLoadedFieldNames(): array
     {
@@ -270,7 +270,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
