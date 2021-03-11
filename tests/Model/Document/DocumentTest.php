@@ -2,6 +2,8 @@
 
 namespace Pimcore\Tests\Model\Document;
 
+use Pimcore\Model\Document\Editable\Input;
+use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -105,4 +107,21 @@ class DocumentTest extends ModelTestCase
         $document->save();
         $this->assertGreaterThanOrEqual($currentTime, $document->getModificationDate(), 'Expected auto assigned modification date');
     }
+
+    public function testDocumentSerialization()
+    {
+        $document = TestHelper::createEmptyDocumentPage('some-prefix', true, false);
+
+        $input = new Input();
+        $input->setName('testinput');
+        $input->setDataFromEditmode('foo');
+
+        $document->setEditable($input);
+
+        Service::saveElementToSession($document);
+        $loadedDocument = \Pimcore\Model\Document\Service::getElementFromSession('document', $document->getId());
+
+        $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
+    }
+
 }
