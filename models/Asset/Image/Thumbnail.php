@@ -182,6 +182,10 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
+        if(!empty($removeAttributes)) {
+            @trigger_error(sprintf('Calling %s with parameter $removeAttributes is deprecated and will be removed in Pimcore 10', __METHOD__), E_USER_DEPRECATED);
+        }
+
         /** @var Image $image */
         $image = $this->getAsset();
         $attributes = [];

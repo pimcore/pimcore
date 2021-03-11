@@ -62,7 +62,6 @@ final class ImageThumbnailExtension extends AbstractExtension
      * @param Image  $image
      * @param string $thumbnail
      * @param array  $options
-     * @param array  $removeAttributes
      * @param bool   $deferred
      *
      * @return string
