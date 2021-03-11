@@ -86,6 +86,8 @@ Although we're working on adding Twig examples throughout the documentation wher
 available Twig extensions. You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Twig)
 for further details. Note that all of Pimcore's Twig extensions are prefixed with `pimcore` to avoid naming collisions.
 
+See complete list of Twig Extensions [here](./02_Template_Extensions)
+
 ### Pimcore editables
 
 You can use any Pimcore document editable in Twig by prefixing it with `pimcore_` and using the same arguments as in PHP:
