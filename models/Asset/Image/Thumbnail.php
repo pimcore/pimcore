@@ -167,91 +167,12 @@ class Thumbnail
         return $path;
     }
 
-    protected function getImageTag(array $options = [])
-    {
-        if(!empty($removeAttributes)) {
-            @trigger_error(sprintf('Calling %s with parameter $removeAttributes is deprecated and will be removed in Pimcore 10', __METHOD__), E_USER_DEPRECATED);
-        }
-
-        /** @var Image $image */
-        $image = $this->getAsset();
-        $attributes = $options['imgAttributes'] ?? [];
-        $callback = $options['imgCallback'] ?? null;
-
-        if (isset($options['previewDataUri'])) {
-            $attributes['src'] = $options['previewDataUri'];
-        } else {
-            $path = $this->getPath(true);
-            $attributes['src'] = $this->addCacheBuster($path, $options, $image);
-        }
-
-        if ($this->getWidth()) {
-            $attributes['width'] = $this->getWidth();
-        }
-
-        if ($this->getHeight()) {
-            $attributes['height'] = $this->getHeight();
-        }
-
-        $altText = $attributes['alt'] ?? '';
-        $titleText = $attributes['title'] ?? '';
-
-        if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
-            if ($image->getMetadata('title')) {
-                $titleText = $image->getMetadata('title');
-            }
-        }
-
-        if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
-            if ($image->getMetadata('alt')) {
-                $altText = $image->getMetadata('alt');
-            } elseif (isset($options['defaultalt'])) {
-                $altText = $options['defaultalt'];
-            } else {
-                $altText = $titleText;
-            }
-        }
-
-        // get copyright from asset
-        if ($image->getMetadata('copyright') && (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright'])) {
-            if (!empty($altText)) {
-                $altText .= ' | ';
-            }
-            if (!empty($titleText)) {
-                $titleText .= ' | ';
-            }
-            $altText .= ('© ' . $image->getMetadata('copyright'));
-            $titleText .= ('© ' . $image->getMetadata('copyright'));
-        }
-
-        $attributes['alt'] = $altText;
-        if (!empty($titleText)) {
-            $attributes['title'] = $titleText;
-        }
-
-        $attributes['loading'] = 'lazy';
-
-        if ($callback) {
-            $attributes = $callback($attributes);
-        }
-
-        $htmlImgTag = '';
-        if (!empty($attributes)) {
-            $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
-        }
-
-        return $htmlImgTag;
-    }
-
     /**
-     * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
-     * Attributes can be added as a parameter. Attributes containing illegal characters are ignored.
-     * Width and Height attribute can be overridden. SRC-attribute not.
-     * Values of attributes are escaped.
+     * Get generated HTML for displaying the thumbnail image in a HTML document.
      *
-     * @param array $options Custom configurations and HTML attributes.
+     * @param array $options Custom configuration
      *
-     * @return string IMG-element with at least the attributes src, width, height, alt.
+     * @return string <picture> HTML markup
      */
     public function getHtml($options = [])
     {
