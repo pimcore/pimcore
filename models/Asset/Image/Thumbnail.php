@@ -172,7 +172,7 @@ class Thumbnail
      *
      * @param array $options Custom configuration
      *
-     * @return string <picture> HTML markup
+     * @return string
      */
     public function getHtml($options = [])
     {
