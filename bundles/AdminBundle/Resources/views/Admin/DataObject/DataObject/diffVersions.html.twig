@@ -25,6 +25,14 @@
             <th>Version 2</th>
         {% endif %}
     </tr>
+    {% if versionNote1 or versionNote2 %}
+        <tr class="system">
+            <td>Version Note</td>
+            <td>&nbsp;</td>
+            <td>{{ versionNote1 }}</td>
+            <td>{{ versionNote2 }}</td>
+        </tr>
+    {% endif %}
     <tr class="system">
         <td>Date</td>
         <td>o_modificationDate</td>
