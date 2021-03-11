@@ -116,7 +116,7 @@ class DocumentTest extends ModelTestCase
         $input->setName('testinput');
         $input->setDataFromEditmode('foo');
 
-        $document->setEditable('testinput', $input);
+        $document->setEditable($input);
 
         Service::saveElementToSession($document);
         $loadedDocument = \Pimcore\Model\Document\Service::getElementFromSession('document', $document->getId());
