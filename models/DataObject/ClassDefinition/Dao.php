@@ -171,8 +171,6 @@ class Dao extends Model\Dao\AbstractDao
                             $protectedDatastoreColumns[] = $key;
                         }
                     }
-
-                    $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
                 if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
@@ -187,7 +185,7 @@ class Dao extends Model\Dao\AbstractDao
                         $protectedColumns[] = $key;
                     }
 
-                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType', true);
+                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
                 }
             }
         }
