@@ -61,43 +61,6 @@ class Navigation implements RuntimeExtensionInterface
     }
 
     /**
-     * Builds a navigation container by passing arguments
-     *
-     * @deprecated
-     *
-     * @param Document $activeDocument
-     * @param Document|null $navigationRootDocument
-     * @param string|null $htmlMenuPrefix
-     * @param callable|null $pageCallback
-     * @param bool|string $cache
-     * @param int|null $maxDepth
-     * @param int|null $cacheLifetime
-     *
-     * @return Container
-     *
-     * @throws \Exception
-     */
-    public function buildNavigation(
-        Document $activeDocument,
-        Document $navigationRootDocument = null,
-        string $htmlMenuPrefix = null,
-        callable $pageCallback = null,
-        $cache = true,
-        $maxDepth = null,
-        $cacheLifetime = null
-    ): Container {
-        return $this->builder->getNavigation(
-            $activeDocument,
-            $navigationRootDocument,
-            $htmlMenuPrefix,
-            $pageCallback,
-            $cache,
-            $maxDepth,
-            $cacheLifetime
-        );
-    }
-
-    /**
      * Builds a navigation container by passing params
      * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'maxDepth', 'active'
      *
