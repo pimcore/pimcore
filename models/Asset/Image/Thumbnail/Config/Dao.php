@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Model;
+use Pimcore\Tool\Console;
 
 /**
  * @internal
@@ -67,9 +68,10 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
+     * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      * @throws \Exception
      */
-    public function save()
+    public function save($forceClearTempFiles = false)
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -89,24 +91,48 @@ class Dao extends Model\Dao\PhpArrayTable
             }
         }
 
-        $this->db->insertOrUpdate($data, $this->model->getName());
-        $this->autoClearTempFiles();
+        if($forceClearTempFiles) {
+            $this->db->insertOrUpdate($data, $this->model->getName());
+            $this->model->clearTempFiles();
+        } else {
+            $thumbnailDefinitionAlreadyExisted = $this->db->getById($this->model->getName()) !== null;
+
+            $this->db->insertOrUpdate($data, $this->model->getName());
+
+            if ($thumbnailDefinitionAlreadyExisted) {
+                $this->autoClearTempFiles();
+            }
+        }
+
+
     }
 
     /**
      * Deletes object from database
+     * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      */
-    public function delete()
+    public function delete($forceClearTempFiles = false)
     {
         $this->db->delete($this->model->getName());
-        $this->autoClearTempFiles();
+
+        if($forceClearTempFiles) {
+            $this->model->clearTempFiles();
+        } else {
+            $this->autoClearTempFiles();
+        }
     }
 
     protected function autoClearTempFiles()
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
-            $this->model->clearTempFiles();
+            $arguments = [
+                'pimcore:thumbnails:clear',
+                '--type=image',
+                '--name='.$this->model->getName()
+            ];
+
+            Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console'), $arguments);
         }
     }
 }

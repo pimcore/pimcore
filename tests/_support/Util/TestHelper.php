@@ -896,7 +896,7 @@ class TestHelper
     {
         $pipe = Asset\Image\Thumbnail\Config::getByName($name);
         if ($pipe) {
-            $pipe->delete();
+            $pipe->delete(true);
         }
     }
 
@@ -922,7 +922,7 @@ class TestHelper
             $pipe = new Asset\Image\Thumbnail\Config();
             $pipe->setName($name);
             $pipe->addItem('rotate', ['angle' => $angle], 'default');
-            $pipe->save();
+            $pipe->save(true);
             self::$thumbnail_configs[] = $name;
         }
 
@@ -945,7 +945,7 @@ class TestHelper
             $pipe = new Asset\Image\Thumbnail\Config($name);
             $pipe->setName($name);
             $pipe->addItem('scaleByWidth', ['width' => $width, 'forceResize' => $forceResize], 'default');
-            $pipe->save();
+            $pipe->save(true);
             self::$thumbnail_configs[] = $name;
         }
 
