@@ -187,7 +187,7 @@ class Dao extends Model\Dao\AbstractDao
                         $protectedColumns[] = $key;
                     }
 
-                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
+                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType', true);
                 }
             }
         }
