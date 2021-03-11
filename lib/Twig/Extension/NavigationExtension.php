@@ -76,6 +76,7 @@ class NavigationExtension extends AbstractExtension
             // using param configuration
             return $this->navigationHelper->build($params);
         } else {
+            @trigger_error(sprintf('Passing active document as first param to "pimcore_build_nav" Twig function or %s is deprecated and will throw exception in Pimcore 10. Pass array arguments instead.', __METHOD__), E_USER_DEPRECATED);
             // using deprecated argument configuration ($params = navigation root document)
             return $this->navigationHelper->buildNavigation(
                 $params,
