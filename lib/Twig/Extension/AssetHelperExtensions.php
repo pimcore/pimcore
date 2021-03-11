@@ -32,7 +32,7 @@ final class AssetHelperExtensions extends AbstractExtension
             new TwigTest('pimcore_asset_archive', static function ($object) {
                 return $object instanceof Asset\Archive;
             }),
-            new TwigTest('pimcore_asset_audio',static  function ($object) {
+            new TwigTest('pimcore_asset_audio', static function ($object) {
                 return $object instanceof Asset\Audio;
             }),
             new TwigTest('pimcore_asset_document', static function ($object) {
