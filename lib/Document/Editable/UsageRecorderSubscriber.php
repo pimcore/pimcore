@@ -29,7 +29,7 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
     protected $recordedEditableNames = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
     {

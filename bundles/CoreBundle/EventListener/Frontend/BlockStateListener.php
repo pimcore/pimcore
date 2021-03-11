@@ -46,7 +46,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

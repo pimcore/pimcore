@@ -38,7 +38,7 @@ class ClassMapLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(string $name): bool
     {
@@ -51,7 +51,7 @@ class ClassMapLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getClassName(string $name)
     {

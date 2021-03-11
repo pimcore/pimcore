@@ -175,7 +175,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {
@@ -202,7 +202,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTenantWorker()
     {

@@ -177,7 +177,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getEditmodeElementAttributes(array $options): array
     {

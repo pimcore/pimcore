@@ -102,7 +102,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteByName(string $name)
     {
@@ -118,7 +118,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {

@@ -312,7 +312,7 @@ final class AdminEvents
     /**
      * Fired before the request params are parsed.
      *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\Asset\AssetController
      * Arguments:
      *  - data | array | the response data, this can be modified
      *  - asset | Asset | the current asset
@@ -324,7 +324,7 @@ final class AdminEvents
     const ASSET_GET_PRE_SEND_DATA = 'pimcore.admin.asset.get.preSendData';
 
     /**
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\Asset\AssetController
      * Arguments:
      *  - assets | array | the list of asset tree nodes
      *
@@ -502,7 +502,7 @@ final class AdminEvents
     const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.admin.permissions.elementIsAllowed';
 
     /**
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\Asset\AssetController
      * Arguments:
      *  - id | int | asset id
      *  - metadata | array | contains the data received from the editor UI

@@ -46,7 +46,7 @@ final class BruteforceProtectionListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

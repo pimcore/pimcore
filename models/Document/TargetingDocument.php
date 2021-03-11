@@ -30,7 +30,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     private $useTargetGroup;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUseTargetGroup(int $useTargetGroup = null)
     {
@@ -38,7 +38,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUseTargetGroup()
     {
@@ -46,7 +46,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTargetGroupEditablePrefix(int $targetGroupId = null): string
     {
@@ -64,7 +64,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTargetGroupEditableName(string $name): string
     {
@@ -81,7 +81,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function hasTargetGroupSpecificEditables(): bool
     {
@@ -89,7 +89,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTargetGroupSpecificEditableNames(): array
     {
@@ -97,7 +97,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setEditable(Editable $editable)
     {

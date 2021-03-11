@@ -1475,14 +1475,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/previewVersion.html.twig',
                     [
                         'object' => $object,
+                        'versionNote' => $version->getNote(),
                         'validLanguages' => Tool::getValidLanguages(),
                     ]);
-            } else {
-                throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
             }
-        } else {
-            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
+            throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
         }
+
+        throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
     }
 
     /**
@@ -1516,15 +1516,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig',
                     [
                         'object1' => $object1,
+                        'versionNote1' => $version1->getNote(),
                         'object2' => $object2,
+                        'versionNote2' => $version2->getNote(),
                         'validLanguages' => Tool::getValidLanguages(),
                     ]);
-            } else {
-                throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }
-        } else {
-            throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+
+            throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
         }
+
+        throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
     }
 
     /**

@@ -163,7 +163,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getWriteLock()
     {
@@ -181,7 +181,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function enable()
     {
@@ -192,7 +192,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function disable()
     {

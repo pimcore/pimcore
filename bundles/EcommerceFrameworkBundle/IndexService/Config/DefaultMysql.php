@@ -103,7 +103,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {

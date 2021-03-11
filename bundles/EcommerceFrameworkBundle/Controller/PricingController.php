@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PricingController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

@@ -40,7 +40,7 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
     private $encoders = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getEncoder($user)
     {

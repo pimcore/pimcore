@@ -36,7 +36,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     protected $db;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(
         string $tenantName,

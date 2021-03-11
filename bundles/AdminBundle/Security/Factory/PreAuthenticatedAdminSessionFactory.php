@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint): array
     {
@@ -53,7 +53,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getPosition(): string
     {
@@ -61,7 +61,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getKey(): string
     {

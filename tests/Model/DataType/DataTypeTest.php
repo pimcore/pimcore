@@ -15,7 +15,7 @@ class DataTypeTest extends AbstractDataTypeTestCase
     /**
      * Creates and saves object locally without testing against a comparison object
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function createTestObject($fields = [], &$returnData = [])
     {

@@ -55,7 +55,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     protected static $logHandlers = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {
@@ -156,7 +156,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function setUpBeforeClass(): void
     {
@@ -164,7 +164,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function tearDownAfterClass(): void
     {

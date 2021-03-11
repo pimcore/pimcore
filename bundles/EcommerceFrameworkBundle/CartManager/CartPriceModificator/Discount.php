@@ -87,7 +87,7 @@ class Discount implements DiscountInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setAmount(Decimal $amount)
     {
@@ -97,7 +97,7 @@ class Discount implements DiscountInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAmount(): Decimal
     {

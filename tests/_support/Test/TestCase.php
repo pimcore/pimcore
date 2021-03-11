@@ -25,7 +25,7 @@ abstract class TestCase extends Test
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {

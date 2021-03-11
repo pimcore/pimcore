@@ -32,7 +32,7 @@ use Symfony\Component\Workflow\Exception\LogicException;
 class WorkflowPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {

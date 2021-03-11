@@ -27,7 +27,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class UUIDListener implements EventSubscriberInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

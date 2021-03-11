@@ -151,7 +151,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -195,7 +195,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -247,7 +247,7 @@ class InstallCommand extends Command
     /**
      * Prompt options which are not set interactively
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
@@ -306,7 +306,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

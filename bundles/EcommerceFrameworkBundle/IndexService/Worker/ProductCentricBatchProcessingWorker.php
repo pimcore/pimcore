@@ -232,7 +232,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function prepareDataForIndex(IndexableInterface $object)
     {
@@ -386,7 +386,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function resetPreparationQueue()
     {
@@ -404,7 +404,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function resetIndexingQueue()
     {

@@ -59,7 +59,7 @@ class Translation extends AbstractModel
     protected $domain = self::DOMAIN_DEFAULT;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function IsAValidLanguage(string $domain, string $locale): bool
     {

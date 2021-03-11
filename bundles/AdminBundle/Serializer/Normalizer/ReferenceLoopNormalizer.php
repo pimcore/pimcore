@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class ReferenceLoopNormalizer implements NormalizerInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function normalize($object, $format = null, array $context = [])
     {
@@ -29,7 +29,7 @@ class ReferenceLoopNormalizer implements NormalizerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsNormalization($data, $format = null)
     {

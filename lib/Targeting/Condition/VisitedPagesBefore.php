@@ -38,7 +38,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -46,7 +46,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataProviderKeys(): array
     {
@@ -54,7 +54,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -62,7 +62,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
@@ -80,7 +80,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher)
     {
@@ -89,7 +89,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function preMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher)
     {

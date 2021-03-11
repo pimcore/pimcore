@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ResetQueueCommand extends AbstractIndexServiceCommand
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -38,7 +38,7 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

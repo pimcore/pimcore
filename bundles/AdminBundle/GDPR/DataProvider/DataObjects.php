@@ -42,7 +42,7 @@ class DataObjects extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -50,7 +50,7 @@ class DataObjects extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getJsClassName(): string
     {
@@ -227,7 +227,7 @@ class DataObjects extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortPriority(): int
     {

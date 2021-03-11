@@ -73,7 +73,7 @@ class ConditionMatcher implements ConditionMatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo, array $conditions, bool $collectVariables = false): bool
     {
@@ -105,7 +105,7 @@ class ConditionMatcher implements ConditionMatcherInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getCollectedVariables(): array
     {

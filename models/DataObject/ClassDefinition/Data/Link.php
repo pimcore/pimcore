@@ -213,7 +213,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function unmarshal($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\Link) {

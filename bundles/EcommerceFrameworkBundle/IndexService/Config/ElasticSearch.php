@@ -78,7 +78,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     protected $synonymProviders = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param SynonymProviderInterface[] $synonymProviders
      */
@@ -337,7 +337,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {

@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isOptional()
     {
@@ -30,7 +30,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function warmUp($cacheDir)
     {

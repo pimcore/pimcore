@@ -43,7 +43,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function exists($name)
     {
@@ -55,7 +55,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws \Exception
      */
@@ -69,7 +69,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supports($name)
     {

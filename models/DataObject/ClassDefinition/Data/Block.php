@@ -1122,7 +1122,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -1130,7 +1130,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {
