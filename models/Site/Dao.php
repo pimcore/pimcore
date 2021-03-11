@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getByDomain($domain)
     {
         $data = $this->db->fetchRow('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
-        if (!empty($data['id'])) {
+        if (empty($data['id'])) {
 
             // check for wildcards
             // @TODO: refactor this to be more clear
@@ -88,7 +88,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            if (!empty($data['id'])) {
+            if (empty($data['id'])) {
                 throw new \Exception('there is no site for the requested domain: `' . $domain . '´');
             }
         }
