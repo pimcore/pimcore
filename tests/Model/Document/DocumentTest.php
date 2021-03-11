@@ -7,6 +7,7 @@ use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Service;
+use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -242,4 +243,21 @@ class DocumentTest extends ModelTestCase
 
         $this->assertSame($parentDoc->getChildren()[0], $childDoc);
     }
+
+    public function testDocumentSerialization()
+    {
+        $document = TestHelper::createEmptyDocumentPage('some-prefix', true, false);
+
+        $input = new Input();
+        $input->setName('testinput');
+        $input->setDataFromEditmode('foo');
+
+        $document->setEditable($input);
+
+        ElementService::saveElementToSession($document);
+        $loadedDocument = Service::getElementFromSession('document', $document->getId());
+
+        $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
+    }
+
 }
