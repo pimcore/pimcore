@@ -19,7 +19,6 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Model\DataObject;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
 
