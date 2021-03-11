@@ -42,7 +42,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
                 WHERE assets.id = ?", $id);
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {

@@ -41,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?', $this->model->getId());
 
-        if ($data) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('KeyConfig with id: ' . $this->model->getId() . ' does not exist');
@@ -66,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow($stmt);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('KeyConfig with name: ' . $this->model->getName() . ' does not exist');

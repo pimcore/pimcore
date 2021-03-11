@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM targeting_rules WHERE id = ?', $this->model->getId());
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $data['conditions'] = (isset($data['conditions']) ? Serialize::unserialize($data['conditions']) : []);
             $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
