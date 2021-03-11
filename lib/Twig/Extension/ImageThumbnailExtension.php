@@ -62,7 +62,6 @@ final class ImageThumbnailExtension extends AbstractExtension
      * @param Image  $image
      * @param string $thumbnail
      * @param array  $options
-     * @param array  $removeAttributes
      * @param bool   $deferred
      *
      * @return string
@@ -71,9 +70,8 @@ final class ImageThumbnailExtension extends AbstractExtension
         Image $image,
         string $thumbnail,
         array $options = [],
-        array $removeAttributes = [],
         bool $deferred = true
     ): string {
-        return $this->getImageThumbnail($image, $thumbnail, $deferred)->getHTML($options, $removeAttributes);
+        return $this->getImageThumbnail($image, $thumbnail, $deferred)->getHTML($options);
     }
 }
