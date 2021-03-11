@@ -302,9 +302,7 @@ class Thumbnail
         if (isset($options['previewDataUri'])) {
             $attributes['src'] = $options['previewDataUri'];
         } else {
-            $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
             $path = $this->getPath(true);
-            Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
             $attributes['src'] = $this->addCacheBuster($path, $options, $image);
         }
 
