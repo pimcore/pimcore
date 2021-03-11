@@ -182,6 +182,10 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
+        if(!empty($removeAttributes)) {
+            @trigger_error(sprintf('Calling %s with parameter $removeAttributes is deprecated and will be removed in Pimcore 10', __METHOD__), E_USER_DEPRECATED);
+        }
+
         /** @var Image $image */
         $image = $this->getAsset();
         $attributes = [];
@@ -427,6 +431,89 @@ class Thumbnail
 
         if (isset($options['useDataSrc']) && $options['useDataSrc']) {
             $htmlImgTag = preg_replace('/ src(set)?=/i', ' data-src$1=', $htmlImgTag);
+        }
+
+        return $htmlImgTag;
+    }
+
+    /**
+     * @param array $options
+     * @param array $removeAttributes
+     * @return string
+     */
+    public function getImageTag(array $options = [], array $removeAttributes = []): string
+    {
+        /** @var Image $image */
+        $image = $this->getAsset();
+        $attributes = $options['imgAttributes'] ?? [];
+        $callback = $options['imgCallback'] ?? null;
+
+        if (isset($options['previewDataUri'])) {
+            $attributes['src'] = $options['previewDataUri'];
+        } else {
+            $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
+            $path = $this->getPath(true);
+            Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
+            $attributes['src'] = $this->addCacheBuster($path, $options, $image);
+        }
+
+        if ($this->getWidth()) {
+            $attributes['width'] = $this->getWidth();
+        }
+
+        if ($this->getHeight()) {
+            $attributes['height'] = $this->getHeight();
+        }
+
+        $altText = $attributes['alt'] ?? '';
+        $titleText = $attributes['title'] ?? '';
+
+        if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
+            if ($image->getMetadata('title')) {
+                $titleText = $image->getMetadata('title');
+            }
+        }
+
+        if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
+            if ($image->getMetadata('alt')) {
+                $altText = $image->getMetadata('alt');
+            } elseif (isset($options['defaultalt'])) {
+                $altText = $options['defaultalt'];
+            } else {
+                $altText = $titleText;
+            }
+        }
+
+        // get copyright from asset
+        if ($image->getMetadata('copyright') && (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright'])) {
+            if (!empty($altText)) {
+                $altText .= ' | ';
+            }
+            if (!empty($titleText)) {
+                $titleText .= ' | ';
+            }
+            $altText .= ('© ' . $image->getMetadata('copyright'));
+            $titleText .= ('© ' . $image->getMetadata('copyright'));
+        }
+
+        $attributes['alt'] = $altText;
+        if (!empty($titleText)) {
+            $attributes['title'] = $titleText;
+        }
+
+        $attributes['loading'] = 'lazy';
+
+        foreach ($removeAttributes as $attribute) {
+            unset($attributes[$attribute]);
+        }
+
+        if ($callback) {
+            $attributes = $callback($attributes);
+        }
+
+        $htmlImgTag = '';
+        if (!empty($attributes)) {
+            $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
         }
 
         return $htmlImgTag;
