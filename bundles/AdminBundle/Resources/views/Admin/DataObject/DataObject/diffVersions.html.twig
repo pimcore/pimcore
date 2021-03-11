@@ -325,36 +325,38 @@
 
             {% if fieldItems2 is iterable and fieldItems2|length > 0 %}
 
-                {% for fkey2,fieldItem2  in fieldItems2 if fkey2 not in skipFieldItems2|keys %}
-                    {% set fieldKeys2 = fieldDefinitions2[fieldItem2.getType()].getFieldDefinitions() %}
+                {% for fkey2,fieldItem2  in fieldItems2 %}
+                    {% if fkey2 not in skipFieldItems2|keys %}
+                        {% set fieldKeys2 = fieldDefinitions2[fieldItem2.getType()].getFieldDefinitions() %}
 
-                    {% if fieldItems1[fkey2] is defined and fieldItem2.getType() == fieldItems1[fkey2].getType() %}
-                        {% set ffkey1 = fieldItems1[fkey2]  %}
-                        {% set fieldKeys1 = fieldDefinitions1[ffkey1.getType()].getFieldDefinitions() %}
-                    {% endif %}
-
-                    {% for fkey,fieldKey2 in fieldKeys2 %}
-                        {% set v1,keyData1 = null,null %}
-                        {% set keyData2 = fieldItem2.get(fieldKey2.name) %}
-                        {% set v2 = fieldKey2.getVersionPreview(keyData2) %}
-
-                        {% if ffkey1 is defined and fieldKeys1[fkey] is defined %}
-                            {% set keyData1 = ffkey1.get(fieldKeys1[fkey].name) %}
-                            {% set v1 = fieldKey2.getVersionPreview(keyData1) %}
+                        {% if fieldItems1[fkey2] is defined and fieldItem2.getType() == fieldItems1[fkey2].getType() %}
+                            {% set ffkey1 = fieldItems1[fkey2]  %}
+                            {% set fieldKeys1 = fieldDefinitions1[ffkey1.getType()].getFieldDefinitions() %}
                         {% endif %}
 
-                        {% set trClass = (c % 2) ? 'odd' : '' %}
-                        <tr class="{{ trClass }}">
-                            <td>{{ fieldItem2.getType() ~ " - " ~ fieldKey2.getTitle()|trans([],'admin') }}</td>
-                            <td>{{ fieldKey2.name }}</td>
-                            {% if isImportPreview is not defined or isNew is not defined %}
-                                <td>{{ v1 | raw }}</td>
+                        {% for fkey,fieldKey2 in fieldKeys2 %}
+                            {% set v1,keyData1 = null,null %}
+                            {% set keyData2 = fieldItem2.get(fieldKey2.name) %}
+                            {% set v2 = fieldKey2.getVersionPreview(keyData2) %}
+
+                            {% if ffkey1 is defined and fieldKeys1[fkey] is defined %}
+                                {% set keyData1 = ffkey1.get(fieldKeys1[fkey].name) %}
+                                {% set v1 = fieldKey2.getVersionPreview(keyData1) %}
                             {% endif %}
-                            {% set fieldIsEqual = fieldKey2 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey2.isEqual(v1, keyData2) ? 'modified' : '' %}
-                            <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
-                        </tr>
-                        {% set c = c + 1 %}
-                    {% endfor %}
+
+                            {% set trClass = (c % 2) ? 'odd' : '' %}
+                            <tr class="{{ trClass }}">
+                                <td>{{ fieldItem2.getType() ~ " - " ~ fieldKey2.getTitle()|trans([],'admin') }}</td>
+                                <td>{{ fieldKey2.name }}</td>
+                                {% if isImportPreview is not defined or isNew is not defined %}
+                                    <td>{{ v1 | raw }}</td>
+                                {% endif %}
+                                {% set fieldIsEqual = fieldKey2 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey2.isEqual(v1, keyData2) ? 'modified' : '' %}
+                                <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
+                            </tr>
+                            {% set c = c + 1 %}
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         {% else %}
