@@ -51,6 +51,14 @@
         {% set modifiedPublishedClass = object1.getPublished() is not same as(object2.getPublished()) ? 'modified' : ''  %}
         <td class="{{ modifiedPublishedClass }}">{{ object2.getPublished() ? 'true' : 'false' }}</td>
     </tr>
+    {% if versionNote1 or versionNote2 %}
+        <tr class="system">
+            <td>Version Note</td>
+            <td>&nbsp;</td>
+            <td>{{ versionNote1 }}</td>
+            <td>{{ versionNote2 }}</td>
+        </tr>
+    {% endif %}
     <tr class="system">
         <td>Id</td>
         <td>o_id</td>
