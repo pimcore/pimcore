@@ -132,7 +132,7 @@ class Dao extends Model\Dao\PhpArrayTable
                 '--name='.$this->model->getName()
             ];
 
-            Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console'), implode(' ', $arguments));
+            Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console'), $arguments);
         }
     }
 }
