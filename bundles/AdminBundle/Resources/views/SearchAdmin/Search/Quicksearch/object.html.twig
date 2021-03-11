@@ -6,140 +6,142 @@
 <table class="data-table" style="top: 70px;">
     {% set c = 0 %}
     {% set break = false %}
-    {% for fieldName, definition in fields|slice(0,30) if not break %}
-        {% if definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
-            {% for language in validLanguages %}
-                {% for lfd in definition.getFieldDefinitions() %}
-                    {% set trClass = (c % 2) ? 'odd' : '' %}
-                    <tr class="{{ trClass }}">
-                        <th>{{ lfd.getTitle() ? lfd.getTitle()|trans([],'admin') : lfd.getName() }} ({{ language }})</th>
-                        <td>
-                            <div class="limit-height">
-                                {% if element.getValueForFieldName(fieldName) %}
-                                    {{ lfd.getVersionPreview(element.getValueForFieldName(fieldName).getLocalizedValue(lfd.getName(), language)) | raw }}
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% set c = c + 1 %}
+    {% for fieldName, definition in fields|slice(0,30) %}
+        {% if not break %}
+            {% if definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
+                {% for language in validLanguages %}
+                    {% for lfd in definition.getFieldDefinitions() %}
+                        {% set trClass = (c % 2) ? 'odd' : '' %}
+                        <tr class="{{ trClass }}">
+                            <th>{{ lfd.getTitle() ? lfd.getTitle()|trans([],'admin') : lfd.getName() }} ({{ language }})</th>
+                            <td>
+                                <div class="limit-height">
+                                    {% if element.getValueForFieldName(fieldName) %}
+                                        {{ lfd.getVersionPreview(element.getValueForFieldName(fieldName).getLocalizedValue(lfd.getName(), language)) | raw }}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% set c = c + 1 %}
+                    {% endfor %}
+                    {% set break = true %}
                 {% endfor %}
-                {% set break = true %}
-            {% endfor %}
-        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Classificationstore') %}
-            {% set storedata = definition.getVersionPreview(element.getValueForFieldName(fieldName)) %}
+            {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Classificationstore') %}
+                {% set storedata = definition.getVersionPreview(element.getValueForFieldName(fieldName)) %}
 
-            {% set existingGroups = [] %}
-            {% set activeGroups = [] %}
+                {% set existingGroups = [] %}
+                {% set activeGroups = [] %}
 
-            {% if storedata %}
-                {% set activeGroups = storedata.getActiveGroups() %}
-            {% endif %}
-
-            {% for activeGroupId, enabled in activeGroups %}
-                {% set arr = existingGroups|merge({activeGroupId: activeGroupId}) %}
-            {% endfor %}
-
-            {% if existingGroups is not empty %}
-                {% set languages = ['default'] %}
-                {% if definition.isLocalized() %}
-                    {% set languages = validLanguages|merge(languages) %}
+                {% if storedata %}
+                    {% set activeGroups = storedata.getActiveGroups() %}
                 {% endif %}
 
-                {% for activeGroupId, enabled in existingGroups %}
-                    {% if activeGroups[activeGroupId] is not empty %}
-                        {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
-                        {% if groupDefinition is not empty %}
-                            {% set keyGroupRelations = groupDefinition.getRelations() %}
+                {% for activeGroupId, enabled in activeGroups %}
+                    {% set arr = existingGroups|merge({activeGroupId: activeGroupId}) %}
+                {% endfor %}
 
-                            {% for keyGroupRelation in keyGroupRelations %}
-                                {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
+                {% if existingGroups is not empty %}
+                    {% set languages = ['default'] %}
+                    {% if definition.isLocalized() %}
+                        {% set languages = validLanguages|merge(languages) %}
+                    {% endif %}
 
-                                {% if keyDef is not empty %}
-                                    {% for language in languages %}
-                                        {% set keyData = storeData ? storeData.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+                    {% for activeGroupId, enabled in existingGroups %}
+                        {% if activeGroups[activeGroupId] is not empty %}
+                            {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
+                            {% if groupDefinition is not empty %}
+                                {% set keyGroupRelations = groupDefinition.getRelations() %}
 
-                                        {% set preview = keyDef.getVersionPreview(keyData) %}
-                                        {% set trClass2 = (c % 2) ? 'odd' : '' %}
-                                        <tr class=" {{ trClass2 }}">
-                                            <td>{{ definition.getTitle()|trans([],'admin') }}</td>
-                                            <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " . language : ""  }}</td>
-                                            {% if isImportPreview or isNew %}
-                                                {{ preview }}
-                                            {% endif %}
+                                {% for keyGroupRelation in keyGroupRelations %}
+                                    {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
+
+                                    {% if keyDef is not empty %}
+                                        {% for language in languages %}
+                                            {% set keyData = storeData ? storeData.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+
+                                            {% set preview = keyDef.getVersionPreview(keyData) %}
+                                            {% set trClass2 = (c % 2) ? 'odd' : '' %}
+                                            <tr class=" {{ trClass2 }}">
+                                                <td>{{ definition.getTitle()|trans([],'admin') }}</td>
+                                                <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " . language : ""  }}</td>
+                                                {% if isImportPreview or isNew %}
+                                                    {{ preview }}
+                                                {% endif %}
+                                            </tr>
+                                            {% set c = c + 1 %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+
+            {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Objectbricks') %}
+                {% for asAllowedType in definition.getAllowedTypes() %}
+                    {% set collectionDef = pimcore_object_brick_definition_key(asAllowedType) %}
+
+                    {% for lfd in collectionDef.getFieldDefinitions() %}
+                        {% set value = null %}
+
+                        {% set fieldGetter = "get" ~ (fieldName|capitalize) %}
+                        {% set brick = attribute(element, fieldGetter) %}
+
+                        {% if brick is not empty %}
+                            {% set allowedMethod = "get" ~ asAllowedType %}
+                            {% set brickValue = attribute(brick,allowedMethod) %}
+
+                            {% if lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
+                                {% for language in languages %}
+                                    {% for localizedFieldDefinition in lfd.getFieldDefinitions() %}
+                                        {% set trClass = (c % 2) ? 'odd' : '' %}
+                                        <tr class="{{ trClass }}">
+                                            <th>{{ localizedFieldDefinition.getTitle() ? localizedFieldDefinition.getTitle()|trans([],'admin') : localizedFieldDefinition.getName() }} ({{ language }})</th>
+                                            <td>
+                                                <div class="limit-height">
+                                                    {% if brickValue %}
+                                                        {% set localizedBrickValues = brickValue.getLocalizedFields() %}
+                                                        {% set localizedBrickValue = localizedBrickValues.getLocalizedValue(localizedFieldDefinition.getName(), language) %}
+                                                        {{ localizedFieldDefinition.getVersionPreview(localizedBrickValue) | raw }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
                                         </tr>
                                         {% set c = c + 1 %}
                                     {% endfor %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-
-
-        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Objectbricks') %}
-            {% for asAllowedType in definition.getAllowedTypes() %}
-                {% set collectionDef = pimcore_object_brick_definition_key(asAllowedType) %}
-
-                {% for lfd in collectionDef.getFieldDefinitions() %}
-                    {% set value = null %}
-
-                    {% set fieldGetter = "get" ~ (fieldName|capitalize) %}
-                    {% set brick = attribute(element, fieldGetter) %}
-
-                    {% if brick is not empty %}
-                        {% set allowedMethod = "get" ~ asAllowedType %}
-                        {% set brickValue = attribute(brick,allowedMethod) %}
-
-                        {% if lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
-                            {% for language in languages %}
-                                {% for localizedFieldDefinition in lfd.getFieldDefinitions() %}
-                                    {% set trClass = (c % 2) ? 'odd' : '' %}
-                                    <tr class="{{ trClass }}">
-                                        <th>{{ localizedFieldDefinition.getTitle() ? localizedFieldDefinition.getTitle()|trans([],'admin') : localizedFieldDefinition.getName() }} ({{ language }})</th>
-                                        <td>
-                                            <div class="limit-height">
-                                                {% if brickValue %}
-                                                    {% set localizedBrickValues = brickValue.getLocalizedFields() %}
-                                                    {% set localizedBrickValue = localizedBrickValues.getLocalizedValue(localizedFieldDefinition.getName(), language) %}
-                                                    {{ localizedFieldDefinition.getVersionPreview(localizedBrickValue) | raw }}
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% set c = c + 1 %}
+                                    {% set break = true %}
                                 {% endfor %}
-                                {% set break = true %}
-                            {% endfor %}
-                        {% else %}
-                            {% if brickValue %}
-                                {% set value = lfd.getVersionPreview(brickValue.getValueForFieldName(lfd.getName())) %}
+                            {% else %}
+                                {% if brickValue %}
+                                    {% set value = lfd.getVersionPreview(brickValue.getValueForFieldName(lfd.getName())) %}
+                                {% endif %}
+                                {% set trClass = (c % 2) ? 'odd' : '' %}
+                                <tr class="{{ trClass }}">
+                                    <th>{{ asAllowedType|capitalize ~ " - " ~ (lfd.getTitle() ? lfd.getTitle()|trans([],'admin') : lfd.getName() ) }}</th>
+                                    <td>
+                                        <div class="limit-height">
+                                            {{ value | raw }}
+                                        </div>
+                                    </td>
+                                </tr>
                             {% endif %}
-                            {% set trClass = (c % 2) ? 'odd' : '' %}
-                            <tr class="{{ trClass }}">
-                                <th>{{ asAllowedType|capitalize ~ " - " ~ (lfd.getTitle() ? lfd.getTitle()|trans([],'admin') : lfd.getName() ) }}</th>
-                                <td>
-                                    <div class="limit-height">
-                                        {{ value | raw }}
-                                    </div>
-                                </td>
-                            </tr>
                         {% endif %}
-                    {% endif %}
 
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-        {% else %}
-            {% set trClass = (c % 2) ? 'odd' : '' %}
-            <tr class="{{ trClass }}">
-            <th>{{ definition.getTitle() ? definition.getTitle()|trans([],'admin') : definition.getName() }}</th>
-            <td>
-                <div class="limit-height">
-                    {{ definition.getVersionPreview(element.getValueForFieldName(fieldName)) | raw }}
-                </div>
-            </td>
-            </tr>
+            {% else %}
+                {% set trClass = (c % 2) ? 'odd' : '' %}
+                <tr class="{{ trClass }}">
+                <th>{{ definition.getTitle() ? definition.getTitle()|trans([],'admin') : definition.getName() }}</th>
+                <td>
+                    <div class="limit-height">
+                        {{ definition.getVersionPreview(element.getValueForFieldName(fieldName)) | raw }}
+                    </div>
+                </td>
+                </tr>
+            {% endif %}
+            {% set c = c + 1 %}
         {% endif %}
-        {% set c = c + 1 %}
     {% endfor %}
 </table>
