@@ -87,6 +87,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore_ecommerce_framework');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
 
@@ -128,6 +129,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $pimcore */
         $pimcore = $builder->getRootNode();
         $pimcore
             ->addDefaultsIfNotSet()
@@ -1004,12 +1006,12 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('offer_class')
                             ->info('Pimcore object class for offers')
                             ->cannotBeEmpty()
-                            ->defaultValue(OfferToolOffer::class)
+                            ->defaultValue('Pimcore\\Model\\DataObject\\OfferToolOffer')
                         ->end()
                         ->scalarNode('offer_item_class')
                             ->info('Pimcore object class for offer items')
                             ->cannotBeEmpty()
-                            ->defaultValue(OfferToolOfferItem::class)
+                            ->defaultValue('Pimcore\\Model\\DataObject\\OfferToolOfferItem')
                         ->end()
                         ->scalarNode('parent_folder_path')
                             ->info('default path for new offers')

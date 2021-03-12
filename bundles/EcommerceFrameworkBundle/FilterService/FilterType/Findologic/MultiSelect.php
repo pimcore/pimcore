@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
+
     /**
      * @param FilterMultiSelect $filterDefinition
      * @param ProductListInterface $productList

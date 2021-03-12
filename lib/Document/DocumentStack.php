@@ -46,7 +46,7 @@ class DocumentStack
     public function pop()
     {
         if (!$this->documents) {
-            return;
+            return null;
         }
 
         $returnValue = array_pop($this->documents);
@@ -69,7 +69,7 @@ class DocumentStack
     public function getMasterDocument()
     {
         if (!$this->documents) {
-            return;
+            return null;
         }
 
         return $this->documents[0];

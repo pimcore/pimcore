@@ -16,19 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange;
 
 class NumberRange extends AbstractFilterType
 {
-    /**
-     * @param FilterNumberRange $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
+
+    /** @inheritDoc */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         return [
@@ -64,19 +58,21 @@ class NumberRange extends AbstractFilterType
 
         $currentFilter[$field] = $value;
 
+        $db = Db::get();
+
         if (!empty($value)) {
             if (!empty($value['from'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $productList->quote($value['from']), 'PRECONDITION_' . $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), 'PRECONDITION_' . $this->getField($filterDefinition));
                 } elseif ($value['from'] != AbstractFilterType::EMPTY_STRING) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $productList->quote($value['from']), $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), $this->getField($filterDefinition));
                 }
             }
             if (!empty($value['to'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
                 } elseif ($value['to'] != AbstractFilterType::EMPTY_STRING) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), $this->getField($filterDefinition));
                 }
             }
         }

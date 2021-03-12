@@ -49,6 +49,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
         $rootNode->ignoreExtraKeys();
@@ -953,7 +954,7 @@ class Configuration implements ConfigurationInterface
     {
         $node = $parent->children()->arrayNode($name);
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
+        /** @var ArrayNodeDefinition $prototype */
         $prototype = $node->prototype('array');
         $prototype
             ->beforeNormalization()

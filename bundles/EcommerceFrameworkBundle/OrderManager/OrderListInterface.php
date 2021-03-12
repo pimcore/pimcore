@@ -39,7 +39,7 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
     public function getQuery();
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface[]
+     * @return OrderListInterface
      */
     public function load();
 

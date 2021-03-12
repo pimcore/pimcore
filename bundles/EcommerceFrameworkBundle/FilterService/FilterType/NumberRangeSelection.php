@@ -14,8 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection;
 
 class NumberRangeSelection extends AbstractFilterType
@@ -110,6 +112,9 @@ class NumberRangeSelection extends AbstractFilterType
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
+        if (!$filterDefinition instanceof FilterNumberRangeSelection) {
+            throw new InvalidConfigException("excpected a FilterNumberRangeSelection filter");
+        }
         $field = $this->getField($filterDefinition);
         $rawValue = $params[$field] ?? null;
 
@@ -126,19 +131,21 @@ class NumberRangeSelection extends AbstractFilterType
 
         $currentFilter[$field] = $value;
 
+        $db = Db::get();
+
         if (!empty($value)) {
             if (!empty($value['from'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($field . ' >= ' . $productList->quote($value['from']), 'PRECONDITION_' . $field);
+                    $productList->addCondition($field . ' >= ' . $db->quote($value['from']), 'PRECONDITION_' . $field);
                 } else {
-                    $productList->addCondition($field . ' >= ' . $productList->quote($value['from']), $field);
+                    $productList->addCondition($field . ' >= ' . $db->quote($value['from']), $field);
                 }
             }
             if (!empty($value['to'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($field . ' <= ' . $productList->quote($value['to']), 'PRECONDITION_' . $field);
+                    $productList->addCondition($field . ' <= ' . $db->quote($value['to']), 'PRECONDITION_' . $field);
                 } else {
-                    $productList->addCondition($field . ' < ' . $productList->quote($value['to']), $field);
+                    $productList->addCondition($field . ' < ' . $db->quote($value['to']), $field);
                 }
             }
         }

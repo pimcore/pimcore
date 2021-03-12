@@ -46,7 +46,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @param int $objectId
      *
-     * @return IndexableInterface | array
+     * @return mixed
      */
     public function getObjectMockupById($objectId)
     {

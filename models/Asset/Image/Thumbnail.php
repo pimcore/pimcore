@@ -387,7 +387,9 @@ class Thumbnail
             $thumbConfigRes->selectMedia($name);
             $thumbConfigRes->setHighResolution($highRes);
             $thumbConfigRes->setMedias([]);
-            $thumb = $this->getAsset()->getThumbnail($thumbConfigRes);
+            /** @var Image $asset */
+            $asset = $this->getAsset();
+            $thumb = $asset->getThumbnail($thumbConfigRes);
 
             return $thumb;
         } else {

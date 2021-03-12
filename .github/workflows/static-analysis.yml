@@ -44,10 +44,29 @@ jobs:
               run: |
                   .github/ci/scripts/setup-pimcore-environment.sh
 
+            - name: "Copy models"
+              run: "cp -rv .github/ci/files/models ."
+
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
+
+            - name: "Secure original baseline"
+              run: "cp phpstan-baseline.neon phpstan-baseline-original.neon"
+
+
+            - name: "Generate baseline"
+              run: |
+                set +e
+                vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
+                set -e
+
+            - name: "Dump generated baseline with phpstan/phpstan"
+              run: "cat phpstan-baseline.neon"
+
+            - name: "Restore original baseline"
+              run: "cp phpstan-baseline-original.neon phpstan-baseline.neon"
 
             - name: "Run a static analysis with phpstan/phpstan"
               run: "vendor/bin/phpstan analyse -c .github/ci/files/phpstan.actions.neon bundles/ lib/ models/ -l 3 --memory-limit=-1"
