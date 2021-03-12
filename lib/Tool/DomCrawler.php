@@ -45,7 +45,7 @@ class DomCrawler extends Crawler
     public function html(string $default = null)
     {
         if ($this->wrappedHtmlFragment) {
-            $html = $this->filter('pimcore-wrapper')->html();
+            $html = $this->filter(self::FRAGMENT_WRAPPER_TAG)->html();
         } else {
             $html = parent::html($default);
         }
