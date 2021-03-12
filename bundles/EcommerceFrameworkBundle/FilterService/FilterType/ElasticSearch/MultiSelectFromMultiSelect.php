@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
@@ -24,6 +25,11 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
         $useAndCondition = false;
+
+        if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+            throw new InvalidConfigException("invalid configuration");
+        }
+
         if (method_exists($filterDefinition, 'getUseAndCondition')) {
             $useAndCondition = $filterDefinition->getUseAndCondition();
         }
@@ -69,7 +75,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 
         if (!empty($value)) {
             if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
-                throw new \Exception("invalid configuration");
+                throw new InvalidConfigException("invalid configuration");
             }
 
             if ($filterDefinition->getUseAndCondition()) {
