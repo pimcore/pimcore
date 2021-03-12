@@ -289,7 +289,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 $object = new Model\DataObject();
                 $typeInfo = $object->getDao()->getTypeById($id);
 
-                if ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder') {
+                if (!empty($typeInfo['o_type']) && ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder')) {
                     if ($typeInfo['o_type'] == 'folder') {
                         $className = Folder::class;
                     } else {

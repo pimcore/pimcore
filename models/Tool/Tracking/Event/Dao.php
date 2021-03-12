@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getById($id)
     {
         $data = $this->db->fetchRow('SELECT * FROM tracking_events WHERE id = ?', $id);
-        if (!$data['id']) {
+        if (empty($data['id'])) {
             throw new \Exception('there is no event for the requested id');
         }
         $this->assignVariablesToModel($data);
@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getByDate($category, $action, $label, $day, $month, $year)
     {
         $data = $this->db->fetchRow('SELECT * FROM tracking_events WHERE category = ? AND action = ? AND label = ? AND day = ? AND month = ? AND year = ?', [(string) $category, (string) $action, (string) $label, $day, $month, $year]);
-        if (!$data['id']) {
+        if (empty($data['id'])) {
             throw new \Exception('there is no event for the requested id');
         }
         $this->assignVariablesToModel($data);

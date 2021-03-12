@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM email_blacklist WHERE address = ?', $address);
 
-        if (!$data['address']) {
+        if (empty($data['address'])) {
             throw new \Exception('blacklist item with address ' . $address . ' not found');
         }
         $this->assignVariablesToModel($data);

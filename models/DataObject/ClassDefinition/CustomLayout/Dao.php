@@ -42,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $layoutRaw = $this->db->fetchRow('SELECT * FROM custom_layouts WHERE id = ?', $id);
 
-        if ($layoutRaw['id']) {
+        if (!empty($layoutRaw['id'])) {
             $this->assignVariablesToModel($layoutRaw);
 
             $this->model->setLayoutDefinitions($this->getLayoutData());

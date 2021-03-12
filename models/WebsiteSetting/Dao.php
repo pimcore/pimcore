@@ -40,7 +40,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $data = $this->db->getById($this->model->getId());
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('Website Setting with id: ' . $this->model->getId() . ' does not exist');

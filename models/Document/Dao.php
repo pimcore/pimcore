@@ -69,7 +69,7 @@ class Dao extends Model\Element\Dao
                 'prettyUrl' => $path,
             ]);
 
-            if ($data['id']) {
+            if (!empty($data['id'])) {
                 $this->assignVariablesToModel($data);
             } else {
                 throw new \Exception("document with path $path doesn't exist");
