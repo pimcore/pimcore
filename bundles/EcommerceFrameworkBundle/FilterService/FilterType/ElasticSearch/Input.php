@@ -23,10 +23,7 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
-       $preSelect = null; 
-        if (method_exists($filterDefinition, 'getPreSelect')) {
-            $preSelect = $filterDefinition->getPreSelect($filterDefinition);
-        } 
+        if (!method_exists($filterDefinition, 'getPreSelect')) {
             return $currentFilter;
         }
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);
