@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Db;
@@ -112,7 +113,7 @@ class NumberRangeSelection extends AbstractFilterType
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         if (!$filterDefinition instanceof FilterNumberRangeSelection) {
-            throw new \Exception("excpected a FilterNumberRangeSelection filter");
+            throw new InvalidConfigException("excpected a FilterNumberRangeSelection filter");
         }
         $field = $this->getField($filterDefinition);
         $rawValue = $params[$field] ?? null;
