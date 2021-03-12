@@ -742,9 +742,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
         this.elements.splice.apply(this.elements, args);
 
-        editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
-
-        this.reloadDocument();
+        if(this.config.types[brickIndex].template) {
+            console.log(this.config.types[brickIndex].template);
+        } else {
+            editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
+            this.reloadDocument();
+        }
     },
 
     removeBlock: function (element) {
@@ -752,7 +755,14 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         var index = this.getElementIndex(element);
 
         this.elements.splice(index, 1);
-        Ext.get(element).remove();
+
+        let container = Ext.get(element);
+        let editablesContainer = container.query('[data-block-names]');
+        editablesContainer.forEach(editableDiv => {
+            editableManager.remove(editableDiv.dataset.name);
+        });
+
+        container.remove();
 
         // there is no existing block element anymore
         if (this.elements.length < 1) {
@@ -760,7 +770,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         }
 
         // this is necessary because of the limit which is only applied when initializing
-        this.reloadDocument();
+        //this.reloadDocument();
     },
 
     moveBlockTo: function (block, toIndex) {

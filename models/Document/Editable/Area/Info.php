@@ -53,6 +53,8 @@ class Info
      */
     public $index;
 
+    protected bool $isPreRendering = false;
+
     /**
      * @return string
      */
@@ -223,5 +225,21 @@ class Info
         }
 
         return $editable;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPreRendering(): bool
+    {
+        return $this->isPreRendering;
+    }
+
+    /**
+     * @param bool $isPreRendering
+     */
+    public function setIsPreRendering(bool $isPreRendering): void
+    {
+        $this->isPreRendering = $isPreRendering;
     }
 }

@@ -92,6 +92,8 @@ class EditableHandler implements LoggerAwareInterface
 
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
+    private EditmodeEditableDefinitionCollector $definitionCollector;
+
     /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
@@ -102,6 +104,7 @@ class EditableHandler implements LoggerAwareInterface
      * @param ResponseStack $responseStack
      * @param EditmodeResolver $editmodeResolver
      * @param HttpKernelRuntime $httpKernelRuntime
+     * @param EditmodeEditableDefinitionCollector $definitionCollector
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -112,7 +115,8 @@ class EditableHandler implements LoggerAwareInterface
         TranslatorInterface $translator,
         ResponseStack $responseStack,
         EditmodeResolver $editmodeResolver,
-        HttpKernelRuntime $httpKernelRuntime
+        HttpKernelRuntime $httpKernelRuntime,
+        EditmodeEditableDefinitionCollector $definitionCollector
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
@@ -123,6 +127,7 @@ class EditableHandler implements LoggerAwareInterface
         $this->responseStack = $responseStack;
         $this->editmodeResolver = $editmodeResolver;
         $this->httpKernelRuntime = $httpKernelRuntime;
+        $this->definitionCollector = $definitionCollector;
     }
 
     /**
@@ -142,6 +147,8 @@ class EditableHandler implements LoggerAwareInterface
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
     {
+        $this->definitionCollector->stop();
+
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
             // don't show disabled bricks
@@ -184,15 +191,29 @@ class EditableHandler implements LoggerAwareInterface
                 $desc = $this->translator->trans($desc);
             }
 
+            $template = null;
+
+            if(!$brick->needsReload()) {
+                $info = $editable->buildInfoObject();
+                $info->setId($brick->getId());
+                $info->setIndex(999999);
+                $info->setIsPreRendering(true);
+
+                $template = $this->renderAreaFrontend($info, true);
+            }
+
             $areas[$brick->getId()] = [
                 'name' => $name,
                 'description' => $desc,
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
+                'template' => $template,
                 'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
             ];
         }
+
+        $this->definitionCollector->start();
 
         return $areas;
     }
@@ -200,7 +221,7 @@ class EditableHandler implements LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAreaFrontend(Info $info)
+    public function renderAreaFrontend(Info $info, $return = false)
     {
         $brick = $this->brickManager->getBrick($info->getId());
 
@@ -239,7 +260,7 @@ class EditableHandler implements LoggerAwareInterface
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
         // instead of actually parsing the php template
-        echo $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', [
+        $html = $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', [
             'brick' => $brick,
             'info' => $info,
             'templating' => $this->templating,
@@ -256,6 +277,12 @@ class EditableHandler implements LoggerAwareInterface
 
         // call post render
         $this->handleBrickActionResult($brick->postRenderAction($info));
+
+        if($return) {
+            return $html;
+        }
+
+        echo $html;
     }
 
     protected function handleBrickActionResult($result)

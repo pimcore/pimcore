@@ -197,12 +197,16 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    protected function buildInfoObject(): Area\Info
+    /**
+     * @internal
+     * @return Area\Info
+     */
+    public function buildInfoObject(): Area\Info
     {
         // create info object and assign it to the view
         $info = new Area\Info();
         try {
-            $info->setId($this->currentIndex['type']);
+            $info->setId($this->currentIndex ? $this->currentIndex['type'] : null);
             $info->setEditable($this);
             $info->setIndex($this->current);
         } catch (\Exception $e) {

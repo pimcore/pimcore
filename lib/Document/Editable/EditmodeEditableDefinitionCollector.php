@@ -17,11 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
-
 use Pimcore\Model\Document\Editable;
 
 final class EditmodeEditableDefinitionCollector
 {
+    private bool $stopped = false;
+
     /**
      * @var Editable[]
      */
@@ -29,14 +30,32 @@ final class EditmodeEditableDefinitionCollector
 
     public function add(Editable $editable): void
     {
+        if($this->stopped) {
+            return;
+        }
+
         $this->editables[$editable->getName()] = $editable;
     }
 
     public function remove(Editable $editable): void
     {
+        if($this->stopped) {
+            return;
+        }
+
         if(isset($this->editables[$editable->getName()])) {
             unset($this->editables[$editable->getName()]);
         }
+    }
+
+    public function start(): void
+    {
+        $this->stopped = false;
+    }
+
+    public function stop(): void
+    {
+        $this->stopped = true;
     }
 
     /**
