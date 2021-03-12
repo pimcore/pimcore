@@ -176,13 +176,10 @@ class Scheduledblock extends Block implements BlockInterface
      */
     public function start()
     {
-        $options = $this->getEditmodeConfig();
-        $this->outputEditmodeConfig($options);
-
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
