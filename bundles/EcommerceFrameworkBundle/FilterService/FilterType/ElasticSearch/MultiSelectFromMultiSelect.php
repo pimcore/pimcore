@@ -68,19 +68,22 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
         $currentFilter[$field] = $value;
 
         if (!empty($value)) {
-            if (method_exists($filterDefinition, 'getUseAndCondition'))
-                if ($filterDefinition->getUseAndCondition()) {
-                    foreach ($value as $entry) {
-                        $productList->addCondition(['term' => ['attributes.' . $field => $entry]], $field);
-                    }
-                } else {
-                    $boolArray = [];
-                    foreach ($value as $entry) {
-                        $boolArray[] = ['term' => ['attributes.' . $field => $entry]];
-                    }
+            if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+                throw new \Exception("invalid configuration");
+            }
 
-                    $productList->addCondition(['bool' => ['should' => $boolArray, 'minimum_should_match' => 1]], $field);
+            if ($filterDefinition->getUseAndCondition()) {
+                foreach ($value as $entry) {
+                    $productList->addCondition(['term' => ['attributes.' . $field => $entry]], $field);
                 }
+            } else {
+                $boolArray = [];
+                foreach ($value as $entry) {
+                    $boolArray[] = ['term' => ['attributes.' . $field => $entry]];
+                }
+
+                $productList->addCondition(['bool' => ['should' => $boolArray, 'minimum_should_match' => 1]], $field);
+            }
         }
 
         return $currentFilter;
