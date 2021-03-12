@@ -21,13 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
-use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect;
 
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
-        if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+        if (!$filterDefinition instanceof FilterMultiSelect) {
             throw new InvalidConfigException("invalid configuration");
         }
 
