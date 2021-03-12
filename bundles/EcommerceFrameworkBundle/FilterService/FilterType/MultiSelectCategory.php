@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect;
+use Pimcore\Model\Element\ElementInterface;
 
 class MultiSelectCategory extends AbstractFilterType
 {
@@ -33,6 +34,7 @@ class MultiSelectCategory extends AbstractFilterType
         }
 
         if ($filterDefinition->getAvailableCategories()) {
+            /** @var ElementInterface $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[$rel->getId()] = true;
             }
