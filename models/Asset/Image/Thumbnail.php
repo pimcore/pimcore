@@ -290,6 +290,7 @@ class Thumbnail
     /**
      * @param array $options
      * @param array $removeAttributes
+     *
      * @return string
      */
     public function getImageTag(array $options = [], array $removeAttributes = []): string
