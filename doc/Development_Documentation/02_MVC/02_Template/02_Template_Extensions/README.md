@@ -25,9 +25,8 @@ In addition to the standard Twig extensions, Pimcore adds some additional powerf
 
 All Twig extension functions are described below in detail, the following tables give just a short overview of all available extensions.
 
-| Extension                                | Description                                                     |
-|------------------------------------------|-----------------------------------------------------------------|
-| `pimcore_action()`        | (Deprecated) Calls an arbitrary action and renders the respective template  |
+| Extension                                | Description                                                       |
+|------------------------------------------|-------------------------------------------------------------------|
 | `pimcore_cache()`         | Simple in-template caching functionality                                         |
 | `pimcore_device()`        | Helps implementing adaptive designs                                              |
 | `pimcoreglossary()`       | Extension to control the glossary engine                                         |
@@ -40,13 +39,11 @@ All Twig extension functions are described below in detail, the following tables
 | `pimcore_inc()`           | Use this function to directly include a Pimcore document                         |
 | `pimcore_inline_script`   | Managing inline scripts (pendant to `headScript()` for inline scripts)           |
 | `pimcore_build_nav()`, `pimcore_render_nav()`, `pimcore_nav_renderer()`   | Embed and build navigations based on the document structure                             |
-| `pimcore_url()`           | An alternative to `url()` and `path()` with the building behavior of Pimcore 4   |
+| `pimcore_url()`           | An alternative to `url()` and `path()`                                           |
 | `pimcore_website_config()`| Fetch website settings or specific setting (first param: key) for the current site |
 | `pimcore_image_thumbnail()` | Returns a path to a given thumbnail on image                                   |
 | `pimcore_image_thumbnail_html()` | Returns html for displaying the thumbnail image                           |
 | `pimcore_supported_locales()` | Use this function to get a list of supported locales                         |
-| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail or thumbnail configuration                 |
-| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail or thumbnail configuration                 |
 
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
@@ -96,32 +93,6 @@ The following table gives an overview of all available tests:
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
 Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)
 your own Twig Extension.
-
-### `pimcore_action`
-
-Use `pimcore_action()` to render an action within views. 
-
-```twig
-{{ pimcore_action(action, controller, bundle, attributes, query) }}
-```
-   
-| Name         | Type         | Description  |
-|--------------|--------------|--------------|
-| `action`     |  string      | Name of the action (eg. `foo`) |
-| `controller` |  string      | Name of the controller (eg. `Bar`) |
-| `module`     |  string      | Optional name of the bundle where the controller/action lives |
-| `attributes` |  array       | Optional params added to the request object for the action |
-| `query`      |  array       | Optional params added to the request query string |
-
-   
-##### Example
-
-```twig
-<section id="foo-bar">
-    {{ pimcore_action('foo', 'Bar', null, { awesome: 'value' }) }}
-</section>
-```
-   
     
 ### `pimcore_cache`
 This is an implementation of an in-template cache. You can use this to cache some parts directly in the template, 
@@ -210,7 +181,7 @@ This is especially useful for footers, headers, navigations, sidebars, teasers, 
 | Name           | Type         | Description  |
 |----------------|--------------|--------------|
 | `document`     | PageSnippet &#124; int &#124; string  | Document to include, can be either an ID, a path or even the Document object itself |
-| `params`       |  array       | Is optional and should be an array with key value pairs like in `$this->action()` from ZF. |
+| `params`       |  array       | Is optional and should be an array with key value pairs. |
 | `enabledCache` |  bool        | Is true by default, set it to false to disable the cache. Hashing is done across source and parameters to ensure a consistent result. |
  
  ##### Example
