@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect;
 
 class MultiSelectCategory extends AbstractFilterType
 {
@@ -26,11 +28,13 @@ class MultiSelectCategory extends AbstractFilterType
         $values = [];
 
         $availableRelations = [];
-        if (method_exists($filterDefinition, 'getAvailableCategories')) {
-            if ($filterDefinition->getAvailableCategories()) {
-                foreach ($filterDefinition->getAvailableCategories() as $rel) {
-                    $availableRelations[$rel->getId()] = true;
-                }
+        if (!$filterDefinition instanceof FilterCategoryMultiselect) {
+            throw new InvalidConfigException("invalid configuration");
+        }
+
+        if ($filterDefinition->getAvailableCategories()) {
+            foreach ($filterDefinition->getAvailableCategories() as $rel) {
+                $availableRelations[$rel->getId()] = true;
             }
         }
 
