@@ -58,7 +58,7 @@ class AbstractElementImporter implements ImporterInterface
             if ($property) {
                 $property->setData($attribute->getContent());
             } else {
-                $element->setProperty($attribute->getName(), 'text', $attribute->getContent());
+                $element->setProperty($attribute->getName(), 'text', $attribute->getContent(), false, true);
             }
         }
     }
