@@ -14,6 +14,7 @@
 
 namespace Pimcore\Templating\Renderer;
 
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
@@ -35,14 +36,18 @@ class EditableRenderer implements LoggerAwareInterface
      */
     protected $editmodeResolver;
 
+    private ?EditmodeEditableDefinitionCollector $configCollector;
+
     /**
      * @param EditableLoaderInterface $editableLoader
      * @param EditmodeResolver $editmodeResolver
+     * @param EditmodeEditableDefinitionCollector $configCollector
      */
-    public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver)
+    public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver, EditmodeEditableDefinitionCollector $configCollector)
     {
         $this->editableLoader = $editableLoader;
         $this->editmodeResolver = $editmodeResolver;
+        $this->configCollector = $configCollector;
     }
 
     /**
@@ -94,6 +99,10 @@ class EditableRenderer implements LoggerAwareInterface
 
         // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
         $editable->setRealName($realName);
+
+        if($editmode) {
+            $this->configCollector->add($editable);
+        }
 
         return $editable;
     }

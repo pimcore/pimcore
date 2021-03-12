@@ -51,9 +51,6 @@ class Area extends Model\Document\Editable
      */
     public function admin()
     {
-        $options = $this->getEditmodeConfig();
-        $this->outputEditmodeConfig($options);
-
         $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
 
         $dialogConfig = null;
@@ -64,7 +61,7 @@ class Area extends Model\Document\Editable
             $dialogConfig->setId('dialogBox-' . $this->getName());
         }
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
         $this->outputEditmode('<div ' . $attributeString . '>');
 
