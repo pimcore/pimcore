@@ -259,5 +259,4 @@ class DocumentTest extends ModelTestCase
 
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
     }
-
 }

@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
-use Pimcore\Model\Document;
 use Pimcore\Navigation\Builder;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Renderer\Breadcrumbs;

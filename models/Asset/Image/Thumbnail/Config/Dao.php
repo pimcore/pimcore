@@ -69,6 +69,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
     /**
      * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
+     *
      * @throws \Exception
      */
     public function save($forceClearTempFiles = false)
@@ -91,7 +92,7 @@ class Dao extends Model\Dao\PhpArrayTable
             }
         }
 
-        if($forceClearTempFiles) {
+        if ($forceClearTempFiles) {
             $this->db->insertOrUpdate($data, $this->model->getName());
             $this->model->clearTempFiles();
         } else {
@@ -103,19 +104,18 @@ class Dao extends Model\Dao\PhpArrayTable
                 $this->autoClearTempFiles();
             }
         }
-
-
     }
 
     /**
      * Deletes object from database
+     *
      * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      */
     public function delete($forceClearTempFiles = false)
     {
         $this->db->delete($this->model->getName());
 
-        if($forceClearTempFiles) {
+        if ($forceClearTempFiles) {
             $this->model->clearTempFiles();
         } else {
             $this->autoClearTempFiles();
@@ -129,7 +129,7 @@ class Dao extends Model\Dao\PhpArrayTable
             $arguments = [
                 'pimcore:thumbnails:clear',
                 '--type=image',
-                '--name='.$this->model->getName()
+                '--name='.$this->model->getName(),
             ];
 
             Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'console'), $arguments);
