@@ -27,6 +27,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 use Pimcore\Cache;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -91,7 +92,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function listAction(Request $request, IntlFormatter $formatter, PaginatorInterface $paginator)
     {
         // create new order list
-        /** @var Listing $list */
+        /** @var OrderListInterface $list */
         $list = $this->orderManager->createOrderList();
 
         // set list type
