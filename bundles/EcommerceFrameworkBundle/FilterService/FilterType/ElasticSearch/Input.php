@@ -14,17 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterInputfield;
 
 class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Input
 {
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
-        if (!method_exists($filterDefinition, 'getPreSelect')) {
-            return $currentFilter;
+
+        if (!$filterDefinition instanceof FilterInputfield) {
+            throw new InvalidConfigException("invalid config");
         }
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);
 
