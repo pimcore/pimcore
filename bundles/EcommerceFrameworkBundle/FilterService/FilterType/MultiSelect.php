@@ -26,10 +26,12 @@ class MultiSelect extends AbstractFilterType
     {
         $field = $this->getField($filterDefinition);
 
-        $useAndCondition = false;
-        if (method_exists($filterDefinition, 'getUseAndCondition')) {
-            $useAndCondition = $filterDefinition->getUseAndCondition();
+        if (!$filterDefinition instanceof FilterMultiSelect) {
+            throw new InvalidConfigException("invalid configuration");
         }
+
+        $useAndCondition = $filterDefinition->getUseAndCondition();
+
 
         return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
