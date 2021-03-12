@@ -36,7 +36,7 @@ class MultiSelectCategory extends AbstractFilterType
         if ($filterDefinition->getAvailableCategories()) {
             /** @var ElementInterface $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
-                $availableRelations[$rel->getId()] = true;
+                $availableRelations[(string) $rel->getId()] = true;
             }
         }
 
