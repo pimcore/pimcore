@@ -103,6 +103,9 @@ class Xliff12Escaper
             $content = $xml->save();
         }
 
+        //parse comments
+        $content = strtr($content, ["&lt;!--" => "<!--", "--&gt;" => "-->"]);
+
         return $content;
     }
 
