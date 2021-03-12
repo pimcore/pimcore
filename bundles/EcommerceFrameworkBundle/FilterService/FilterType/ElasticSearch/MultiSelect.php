@@ -47,9 +47,6 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
-        if (!$productList instanceof WorkerInterface) {
-            throw new InvalidConfigException("invalid configuration");
-        }
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
