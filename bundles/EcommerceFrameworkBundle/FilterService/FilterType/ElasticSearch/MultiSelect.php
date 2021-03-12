@@ -77,11 +77,11 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 }
             }
 
-            $tenantConfig = $productList->getTenantConfig();
-            if (!$tenantConfig instanceof AbstractElasticSearch) {
+            if (!$productList instanceof AbstractElasticSearch) {
                 throw new InvalidConfigException("invalid configuration");
             }
 
+            $tenantConfig = $productList->getTenantConfig();
             $attributeConfig = $tenantConfig->getAttributeConfig()[$field];
             if ($attributeConfig['type'] == 'boolean') {
                 foreach ($quotedValues as $k => $v) {
