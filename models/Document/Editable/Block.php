@@ -179,9 +179,9 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    protected function getEditmodeElementAttributes(array $options): array
+    protected function getEditmodeElementAttributes(): array
     {
-        $attributes = parent::getEditmodeElementAttributes($options);
+        $attributes = parent::getEditmodeElementAttributes();
 
         $attributes = array_merge($attributes, [
             'name' => $this->getName(),
@@ -198,13 +198,10 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function start()
     {
-        $options = $this->getEditmodeConfig();
-        $this->outputEditmodeConfig($options);
-
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
