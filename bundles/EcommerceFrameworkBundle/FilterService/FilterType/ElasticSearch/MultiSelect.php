@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Elast
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\AbstractElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
@@ -80,7 +81,11 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 }
             }
 
-            $attributeConfig = $productList->getTenantConfig()->getAttributeConfig()[$field];
+            $tenantConfig = $productList->getTenantConfig();
+            if (!$tenantConfig instanceof AbstractConfig) {
+                throw new InvalidConfigException("invalid configuration");
+            }
+            $attributeConfig = $tenantConfig->getAttributeConfig()[$field];
             if ($attributeConfig['type'] == 'boolean') {
                 foreach ($quotedValues as $k => $v) {
                     $quotedValues[$k] = (bool)$v;
