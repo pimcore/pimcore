@@ -30,9 +30,8 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
             throw new InvalidConfigException("invalid configuration");
         }
 
-        if (method_exists($filterDefinition, 'getUseAndCondition')) {
-            $useAndCondition = $filterDefinition->getUseAndCondition();
-        }
+        $useAndCondition = $filterDefinition->getUseAndCondition();
+
 
         $field = $this->getField($filterDefinition);
         $productList->prepareGroupByValues($field, true, !$useAndCondition);
