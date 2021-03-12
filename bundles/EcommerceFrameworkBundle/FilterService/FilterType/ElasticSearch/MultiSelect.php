@@ -14,21 +14,23 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect;
 
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
-        if (method_exists($filterDefinition, 'getUseAndCondition')) {
-            $field = $this->getField($filterDefinition);
-            $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
+        if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+            throw new InvalidConfigException("invalid configuration");
         }
+
+        $field = $this->getField($filterDefinition);
+        $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
     }
 
     /**
@@ -72,31 +74,20 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 }
             }
 
-            if (method_exists($productList, 'getTenantConfig')) {
-                $config = $productList->getTenantConfig();
-                $attributeConfig = $config->getAttributeConfig()[$field];
-                if ($attributeConfig['type'] == 'boolean') {
-                    foreach ($quotedValues as $k => $v) {
-                        $quotedValues[$k] = (bool)$v;
-                    }
+            $attributeConfig = $productList->getTenantConfig()->getAttributeConfig()[$field];
+            if ($attributeConfig['type'] == 'boolean') {
+                foreach ($quotedValues as $k => $v) {
+                    $quotedValues[$k] = (bool)$v;
                 }
             }
-                $config = $productList->getTenantConfig();
-                $attributeConfig = $config->getAttributeConfig()[$field];
-                if ($attributeConfig['type'] == 'boolean') {
-                    foreach ($quotedValues as $k => $v) {
-                        $quotedValues[$k] = (bool)$v;
-                    }
-                }
 
-                if (!empty($quotedValues)) {
-                    if ($filterDefinition->getUseAndCondition()) {
-                        foreach ($quotedValues as $value) {
-                            $productList->addCondition($value, $field);
-                        }
-                    } else {
-                        $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], $field);
+            if (!empty($quotedValues)) {
+                if ($filterDefinition->getUseAndCondition()) {
+                    foreach ($quotedValues as $value) {
+                        $productList->addCondition($value, $field);
                     }
+                } else {
+                    $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], $field);
                 }
             }
         }
