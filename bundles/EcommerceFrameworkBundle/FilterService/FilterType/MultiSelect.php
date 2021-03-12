@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 
 class MultiSelect extends AbstractFilterType
 {
@@ -73,7 +75,11 @@ class MultiSelect extends AbstractFilterType
                 }
             }
             if (!empty($quotedValues)) {
-                if (method_exists($filterDefinition, 'getUseAndCondition') && $filterDefinition->getUseAndCondition()) {
+                if (!$filterDefinition instanceof FilterMultiSelect) {
+                    throw new InvalidConfigException("invalid configuration");
+                }
+
+                if ($filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
                         if ($isPrecondition) {
                             $productList->addCondition($field . ' = ' . $value, 'PRECONDITION_' . $field);
