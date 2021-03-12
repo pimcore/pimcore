@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Listing\Dao\AbstractDao;
 
 /**
  * Class AbstractListing
@@ -514,7 +515,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         if ($this->data === null) {
             $dao = $this->getDao();
             if (\method_exists($dao, 'load')) {
-                $this->getDao()->load();
+                /** @var AbstractDao $dao */
+                $dao = $this->getDao();
+                $dao->load();
             } else {
                 @trigger_error(
                     'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 10.',

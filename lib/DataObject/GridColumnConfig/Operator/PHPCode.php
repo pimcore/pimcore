@@ -33,7 +33,7 @@ final class PHPCode extends AbstractOperator
     private $phpClass;
 
     /**
-     * @var OperatorInterface
+     * @var OperatorInterface|null
      */
     private $instance;
 

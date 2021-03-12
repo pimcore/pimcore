@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Symfony\Component\HttpFoundation\Request;
@@ -148,6 +149,8 @@ abstract class AbstractFilterType
      * @param bool $isPrecondition
      *
      * @return array
+     *
+     * @throws InvalidConfigException
      */
     abstract public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false);
 
@@ -156,6 +159,8 @@ abstract class AbstractFilterType
      *
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
+     *
+     * @throws InvalidConfigException
      */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {

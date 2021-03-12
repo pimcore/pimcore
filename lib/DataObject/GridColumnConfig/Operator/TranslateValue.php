@@ -18,6 +18,7 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -25,9 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class TranslateValue extends AbstractOperator
 {
-    /**
-     * @var Translator
-     */
+    /** @var TranslatorInterface|LocaleAwareInterface  */
     private $translator;
 
     /** @var string */
@@ -36,7 +35,7 @@ final class TranslateValue extends AbstractOperator
     /** @var string|null */
     private $locale;
 
-    public function __construct(TranslatorInterface $translator, \stdClass $config, $context = null)
+    public function __construct(Translator $translator, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 

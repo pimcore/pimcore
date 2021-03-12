@@ -184,7 +184,15 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
-        return $bag;
+        if ($bag) {
+            if ($bag instanceof NamespacedAttributeBag) {
+                return $bag;
+            } else {
+                throw new \Exception("wrong type");
+            }
+        }
+
+        return null;
     }
 
     private function updateTimestamps(

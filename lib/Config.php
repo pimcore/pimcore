@@ -1105,7 +1105,7 @@ class Config implements \ArrayAccess
      * @param string $file
      * @param bool $asArray
      *
-     * @return null|Config\Config
+     * @return null|Config\Config|array
      *
      * @throws \Exception
      */

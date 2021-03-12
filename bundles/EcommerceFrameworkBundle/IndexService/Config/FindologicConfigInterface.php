@@ -33,7 +33,7 @@ interface FindologicConfigInterface extends ConfigInterface
     /**
      * returns condition for current subtenant
      *
-     * @return string
+     * @return array
      */
     public function getSubTenantCondition();
 

@@ -150,9 +150,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
         return $this;
     }
 
-    /**
-     * @return AbstractProduct[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         return $this->products;

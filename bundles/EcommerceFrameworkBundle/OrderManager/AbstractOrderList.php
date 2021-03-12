@@ -44,7 +44,7 @@ abstract class AbstractOrderList implements OrderListInterface
     protected $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator|null
      */
     protected $list;
 
@@ -125,9 +125,8 @@ abstract class AbstractOrderList implements OrderListInterface
         return $this;
     }
 
-    /**
-     * @return OrderListItemInterface[]
-     */
+
+    /** @inheritDoc */
     public function load()
     {
         if ($this->list === null) {
@@ -142,7 +141,7 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * Returns an collection of items for a page.
+     * Returns a collection of items for a page.
      *
      * @param  int $offset           Page offset
      * @param  int $itemCountPerPage Number of items per page
@@ -152,9 +151,8 @@ abstract class AbstractOrderList implements OrderListInterface
     public function getItems($offset, $itemCountPerPage)
     {
         // load
-        return $this
-            ->setLimit($itemCountPerPage, $offset)
-            ->load();
+        $this->setLimit($itemCountPerPage, $offset)->load();
+        return $this->list->getArrayCopy();
     }
 
     /**

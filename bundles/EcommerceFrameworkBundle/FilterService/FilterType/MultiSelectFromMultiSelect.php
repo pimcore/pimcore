@@ -14,16 +14,29 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect;
 
 class MultiSelectFromMultiSelect extends SelectFromMultiSelect
 {
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
-        $rawValues = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
+
+        $useAndCondition = false;
+
+        if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+            throw new InvalidConfigException("invalid configuration");
+        }
+
+        $useAndCondition = $filterDefinition->getUseAndCondition();
+
+
+        $rawValues = $productList->getGroupByValues($field, true, !$useAndCondition);
 
         $values = [];
         foreach ($rawValues as $v) {
@@ -89,12 +102,18 @@ class MultiSelectFromMultiSelect extends SelectFromMultiSelect
 
         if (!empty($value)) {
             $quotedValues = [];
+            $db = Db::get();
             foreach ($value as $v) {
                 $v = '%' . WorkerInterface::MULTISELECT_DELIMITER  . $v .  WorkerInterface::MULTISELECT_DELIMITER . '%' ;
-                $quotedValues[] = $field . ' like '.$productList->quote($v);
+                $quotedValues[] = $field . ' like '.$db->quote($v);
             }
 
-            if ($filterDefinition->getUseAndCondition()) {
+            $useAndCondition = false;
+            if (method_exists($filterDefinition, 'getUseAndCondition')) {
+                $useAndCondition = $filterDefinition->getUseAndCondition();
+            }
+
+            if ($useAndCondition) {
                 $quotedValues = implode(' and ', $quotedValues);
             } else {
                 $quotedValues = implode(' or ', $quotedValues);
