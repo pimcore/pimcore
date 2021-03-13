@@ -31,7 +31,7 @@ class MultiSelectCategory extends AbstractFilterType
         /** @var array<string, boolean> $availableRelations */
         $availableRelations = [];
         if (!$filterDefinition instanceof FilterCategoryMultiselect) {
-            throw new InvalidConfigException("invalid configuration");
+            throw new InvalidConfigException('invalid configuration');
         }
 
         if ($filterDefinition->getAvailableCategories()) {

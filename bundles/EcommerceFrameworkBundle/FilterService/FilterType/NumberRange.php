@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange;
 
 class NumberRange extends AbstractFilterType
 {
-
     /** @inheritDoc */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {

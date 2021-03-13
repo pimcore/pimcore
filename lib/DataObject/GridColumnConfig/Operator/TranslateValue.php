@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class TranslateValue extends AbstractOperator
 {
-    /** @var TranslatorInterface|LocaleAwareInterface  */
+    /** @var TranslatorInterface|LocaleAwareInterface */
     private $translator;
 
     /** @var string */

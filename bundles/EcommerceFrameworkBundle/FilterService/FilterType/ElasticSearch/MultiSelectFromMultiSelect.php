@@ -27,11 +27,10 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
         $useAndCondition = false;
 
         if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
-            throw new InvalidConfigException("invalid configuration");
+            throw new InvalidConfigException('invalid configuration');
         }
 
         $useAndCondition = $filterDefinition->getUseAndCondition();
-
 
         $field = $this->getField($filterDefinition);
         $productList->prepareGroupByValues($field, true, !$useAndCondition);
@@ -74,7 +73,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 
         if (!empty($value)) {
             if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
-                throw new InvalidConfigException("invalid configuration");
+                throw new InvalidConfigException('invalid configuration');
             }
 
             if ($filterDefinition->getUseAndCondition()) {

@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation;
 
 class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
 {
-
     /** @inheritDoc */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {

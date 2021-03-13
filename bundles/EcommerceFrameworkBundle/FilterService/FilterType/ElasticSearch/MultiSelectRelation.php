@@ -24,13 +24,11 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
-
         if (!$filterDefinition instanceof FilterMultiRelation) {
-            throw new InvalidConfigException("invalid configuration");
+            throw new InvalidConfigException('invalid configuration');
         }
-            $field = $this->getField($filterDefinition);
-            $productList->prepareGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
-
+        $field = $this->getField($filterDefinition);
+        $productList->prepareGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
     }
 
     /**

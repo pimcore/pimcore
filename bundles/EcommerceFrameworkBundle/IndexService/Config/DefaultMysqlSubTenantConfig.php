@@ -93,7 +93,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     public function inIndex(IndexableInterface $object)
     {
         $tenants = null;
-        if (method_exists($object, "getTenants")) {
+        if (method_exists($object, 'getTenants')) {
             $tenants = $object->getTenants();
         }
 
@@ -152,7 +152,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         if ($this->inIndex($object)) {
             //implementation specific tenant get logic
             $tenants = [];
-            if (method_exists($object, "getTenants")) {
+            if (method_exists($object, 'getTenants')) {
                 $tenants = $object->getTenants();
             }
 

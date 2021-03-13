@@ -30,11 +30,10 @@ class MultiSelectFromMultiSelect extends SelectFromMultiSelect
         $useAndCondition = false;
 
         if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
-            throw new InvalidConfigException("invalid configuration");
+            throw new InvalidConfigException('invalid configuration');
         }
 
         $useAndCondition = $filterDefinition->getUseAndCondition();
-
 
         $rawValues = $productList->getGroupByValues($field, true, !$useAndCondition);
 

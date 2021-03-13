@@ -16,17 +16,11 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\Element;
-
 /**
  * @internal
  */
 trait ImageTrait
 {
-
     /**
      * @var string|int
      */
@@ -109,5 +103,4 @@ trait ImageTrait
     {
         return $this->uploadPath;
     }
-
 }
