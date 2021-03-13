@@ -27,7 +27,7 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
         $field = $this->getField($filterDefinition);
 
         if (!$filterDefinition instanceof FilterInputfield) {
-            throw new InvalidConfigException("invalid config");
+            throw new InvalidConfigException('invalid config');
         }
         $preSelect = $filterDefinition->getPreSelect();
 

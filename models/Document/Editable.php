@@ -20,7 +20,6 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
-use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -200,6 +199,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds attributes used on the editmode HTML element
+     *
      * @return array
      */
     protected function getEditmodeElementAttributes(): array

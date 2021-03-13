@@ -1421,7 +1421,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $var = next($this->products);
     }
 
-
     /** @inheritDoc */
     public function rewind()
     {

@@ -113,7 +113,7 @@ class NumberRangeSelection extends AbstractFilterType
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         if (!$filterDefinition instanceof FilterNumberRangeSelection) {
-            throw new InvalidConfigException("excpected a FilterNumberRangeSelection filter");
+            throw new InvalidConfigException('excpected a FilterNumberRangeSelection filter');
         }
         $field = $this->getField($filterDefinition);
         $rawValue = $params[$field] ?? null;

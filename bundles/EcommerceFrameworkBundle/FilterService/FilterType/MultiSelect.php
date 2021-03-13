@@ -27,11 +27,10 @@ class MultiSelect extends AbstractFilterType
         $field = $this->getField($filterDefinition);
 
         if (!$filterDefinition instanceof FilterMultiSelect) {
-            throw new InvalidConfigException("invalid configuration");
+            throw new InvalidConfigException('invalid configuration');
         }
 
         $useAndCondition = $filterDefinition->getUseAndCondition();
-
 
         return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
@@ -78,7 +77,7 @@ class MultiSelect extends AbstractFilterType
             }
             if (!empty($quotedValues)) {
                 if (!$filterDefinition instanceof FilterMultiSelect) {
-                    throw new InvalidConfigException("invalid configuration");
+                    throw new InvalidConfigException('invalid configuration');
                 }
 
                 if ($filterDefinition->getUseAndCondition()) {

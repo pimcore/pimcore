@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
-
 use Pimcore\Model\Document\Editable;
 
 final class EditmodeEditableDefinitionCollector
@@ -34,13 +33,14 @@ final class EditmodeEditableDefinitionCollector
 
     public function remove(Editable $editable): void
     {
-        if(isset($this->editables[$editable->getName()])) {
+        if (isset($this->editables[$editable->getName()])) {
             unset($this->editables[$editable->getName()]);
         }
     }
 
     /**
      * @param mixed $value
+     *
      * @return mixed
      */
     private function clearConfig($value)
@@ -59,7 +59,7 @@ final class EditmodeEditableDefinitionCollector
     public function getCode(): string
     {
         $configs = [];
-        foreach($this->editables as $editable) {
+        foreach ($this->editables as $editable) {
             $configs[] = $this->clearConfig($editable->getEditmodeDefinition());
         }
 

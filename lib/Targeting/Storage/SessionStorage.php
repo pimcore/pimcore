@@ -188,7 +188,7 @@ class SessionStorage implements TargetingStorageInterface
             if ($bag instanceof NamespacedAttributeBag) {
                 return $bag;
             } else {
-                throw new \Exception("wrong type");
+                throw new \Exception('wrong type');
             }
         }
 

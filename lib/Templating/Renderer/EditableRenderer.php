@@ -100,7 +100,7 @@ class EditableRenderer implements LoggerAwareInterface
         // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
         $editable->setRealName($realName);
 
-        if($editmode) {
+        if ($editmode) {
             $this->configCollector->add($editable);
         }
 

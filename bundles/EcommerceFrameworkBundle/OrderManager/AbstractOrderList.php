@@ -125,7 +125,6 @@ abstract class AbstractOrderList implements OrderListInterface
         return $this;
     }
 
-
     /** @inheritDoc */
     public function load()
     {
@@ -152,6 +151,7 @@ abstract class AbstractOrderList implements OrderListInterface
     {
         // load
         $this->setLimit($itemCountPerPage, $offset)->load();
+
         return $this->list->getArrayCopy();
     }
 

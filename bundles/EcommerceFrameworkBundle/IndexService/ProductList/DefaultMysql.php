@@ -19,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexField
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 /**

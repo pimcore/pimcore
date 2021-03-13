@@ -148,15 +148,12 @@ class TargetingListener implements EventSubscriberInterface
     {
         $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
 
-
-
-        if (method_exists($this->actionHandler, "getActionHandler")) {
+        if (method_exists($this->actionHandler, 'getActionHandler')) {
             /** @var AssignTargetGroup $assignTargetGroupHandler */
             $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
 
             $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
         }
-
 
         $this->stopStopwatch('Targeting:loadStoredAssignments');
     }
@@ -217,7 +214,7 @@ class TargetingListener implements EventSubscriberInterface
 
         foreach ($actions as $type => $typeActions) {
             $handler = null;
-            if (method_exists( $this->actionHandler, "getActionHandler")) {
+            if (method_exists($this->actionHandler, 'getActionHandler')) {
                 $handler = $this->actionHandler->getActionHandler($type);
             }
 
