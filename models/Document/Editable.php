@@ -93,6 +93,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     protected $inDialogBox = null;
 
+    private ?EditmodeEditableDefinitionCollector $editableDefinitionCollector;
+
     /**
      * @param string $type
      * @param string $name
@@ -448,9 +450,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return mixed
      */
-    public function render()
+    final public function render()
     {
         if ($this->editmode) {
+            if($collector = $this->getEditableDefinitionCollector()) {
+                $collector->add($this);
+            }
             return $this->admin();
         }
 
@@ -771,6 +776,24 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $this->inDialogBox = $inDialogBox;
 
+        return $this;
+    }
+
+    /**
+     * @return EditmodeEditableDefinitionCollector|null
+     */
+    public function getEditableDefinitionCollector(): ?EditmodeEditableDefinitionCollector
+    {
+        return $this->editableDefinitionCollector;
+    }
+
+    /**
+     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
+     * @return $this
+     */
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    {
+        $this->editableDefinitionCollector = $editableDefinitionCollector;
         return $this;
     }
 }
