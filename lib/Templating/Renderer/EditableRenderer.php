@@ -101,7 +101,7 @@ class EditableRenderer implements LoggerAwareInterface
         $editable->setRealName($realName);
 
         if ($editmode) {
-            $this->configCollector->add($editable);
+            $editable->setEditableDefinitionCollector($this->configCollector);
         }
 
         return $editable;
