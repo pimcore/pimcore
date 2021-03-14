@@ -305,7 +305,7 @@ pimcore.document.edit = Class.create({
         this.areaToolbarTrigger.toggle(false);
 
         if (this.reloadInProgress) {
-            disableSaveToSession = true;
+            return;
         }
 
         this.reloadInProgress = true;
@@ -328,8 +328,7 @@ pimcore.document.edit = Class.create({
         if (disableSaveToSession === true) {
             this.frame = null;
             Ext.get(this.iframeName).dom.src = this.getEditLink();
-        }
-        else {
+        } else {
             this.document.saveToSession(function () {
                 this.frame = null;
                 Ext.get(this.iframeName).dom.src = this.getEditLink();
