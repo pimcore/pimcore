@@ -21,21 +21,61 @@ use Pimcore\Model\Document\Editable;
 
 final class EditmodeEditableDefinitionCollector
 {
+    private bool $stopped = false;
+
+    /**
+     * @var array
+     */
+    private array $editableDefinitions = [];
+
     /**
      * @var Editable[]
      */
-    private array $editables = [];
+    private array $stash = [];
 
+    /**
+     * @param Editable $editable
+     * @throws \Exception
+     */
     public function add(Editable $editable): void
     {
-        $this->editables[$editable->getName()] = $editable;
+        if($this->stopped) {
+            return;
+        }
+
+        if(isset($this->editableDefinitions[$editable->getName()]))
+        {
+            throw new \Exception(sprintf('Duplicate editable name `%s`', $editable->getName()));
+        }
+
+        $this->editableDefinitions[$editable->getName()] = $editable->getEditmodeDefinition();
     }
 
     public function remove(Editable $editable): void
     {
-        if (isset($this->editables[$editable->getName()])) {
-            unset($this->editables[$editable->getName()]);
+        if (isset($this->editableDefinitions[$editable->getName()])) {
+            unset($this->editableDefinitions[$editable->getName()]);
         }
+    }
+
+    public function start(): void
+    {
+        $this->stopped = false;
+    }
+
+    public function stop(): void
+    {
+        $this->stopped = true;
+    }
+
+    public function stashPush(): void
+    {
+        $this->stash = $this->editableDefinitions;
+    }
+
+    public function stashPull(): void
+    {
+        $this->editableDefinitions = $this->stash;
     }
 
     /**
@@ -56,22 +96,33 @@ final class EditmodeEditableDefinitionCollector
         return $value;
     }
 
-    public function getCode(): string
+    public function getDefinitions(): array
     {
         $configs = [];
-        foreach ($this->editables as $editable) {
-            $configs[] = $this->clearConfig($editable->getEditmodeDefinition());
+        foreach ($this->editableDefinitions as $definition) {
+            $configs[] = $this->clearConfig($definition);
         }
 
-        $code = '
-            <script>
-                var editableDefinitions = ' . json_encode($configs, JSON_PRETTY_PRINT) . ';
-            </script>
-        ';
+        return $configs;
+    }
 
+    private function getJson(): string
+    {
+        $json = json_encode($this->getDefinitions(), JSON_PRETTY_PRINT);
         if (json_last_error()) {
             throw new \Exception('json encode failed: ' . json_last_error_msg());
         }
+
+        return $json;
+    }
+
+    public function getHtml(): string
+    {
+        $code = '
+            <script>
+                var editableDefinitions = ' . $this->getJson() . ';
+            </script>
+        ';
 
         return $code;
     }

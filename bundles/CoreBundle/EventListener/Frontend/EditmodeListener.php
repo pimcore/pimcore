@@ -217,7 +217,7 @@ class EditmodeListener implements EventSubscriberInterface
                 $startupJavascript = '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js';
 
                 $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
-                $bodyHtml = "\n\n" . $this->editableConfigCollector->getCode() . "\n\n";
+                $bodyHtml = "\n\n" . $this->editableConfigCollector->getHtml() . "\n\n";
                 $bodyHtml .= "\n\n" . '<script src="' . $startupJavascript . '?_dc=' . Version::getRevision() . '"></script>' . "\n\n";
 
                 $html = $this->insertBefore('</head>', $html, $headHtml);

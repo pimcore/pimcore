@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -92,6 +93,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @var string
      */
     protected $inDialogBox = null;
+
+    /**
+     * @var EditmodeEditableDefinitionCollector|null
+     */
+    private $editableDefinitionCollector;
 
     /**
      * @param string $type
@@ -448,9 +454,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return mixed
      */
-    public function render()
+    final public function render()
     {
         if ($this->editmode) {
+            if($collector = $this->getEditableDefinitionCollector()) {
+                $collector->add($this);
+            }
             return $this->admin();
         }
 
@@ -771,6 +780,24 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $this->inDialogBox = $inDialogBox;
 
+        return $this;
+    }
+
+    /**
+     * @return EditmodeEditableDefinitionCollector|null
+     */
+    public function getEditableDefinitionCollector(): ?EditmodeEditableDefinitionCollector
+    {
+        return $this->editableDefinitionCollector;
+    }
+
+    /**
+     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
+     * @return $this
+     */
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    {
+        $this->editableDefinitionCollector = $editableDefinitionCollector;
         return $this;
     }
 }
