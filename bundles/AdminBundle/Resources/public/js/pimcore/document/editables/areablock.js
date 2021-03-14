@@ -723,9 +723,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             return;
         }
 
+        let brickName = type;
+        let brickIndex = this.allowedTypes.indexOf(brickName);
+
         if(typeof limits[type] != "undefined" && this.brickTypeUsageCounter[type] >= limits[type]) {
-            let brickName = type;
-            let brickIndex = this.allowedTypes.indexOf(brickName);
             if (brickIndex >= 0 && typeof this.config.types[brickIndex].name != "undefined") {
                 brickName = this.config.types[brickIndex].name;
             }
@@ -743,7 +744,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         this.elements.splice.apply(this.elements, args);
 
         if(this.config.types[brickIndex].template) {
-            console.log(this.config.types[brickIndex].template);
+            console.log(this.config.types[brickIndex].template['code']);
+            console.log(this.config.types[brickIndex].template['editableDefinitions']);
         } else {
             editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
             this.reloadDocument();
