@@ -36,10 +36,6 @@ pimcore.document.editables.manager = Class.create({
             throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
         }
 
-        if (this.editables[name]) {
-            pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + name, "error");
-        }
-
         let editable = new EditableClass(definition.id, name, definition.config, definition.data, inherited);
         editable.setRealName(definition.realName);
         editable.setInDialogBox(definition.inDialogBox);
