@@ -24,6 +24,7 @@ use Pimcore\Model\Element;
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
+    use ImageTrait;
     use Extension\QueryColumnType;
 
     /**
@@ -32,23 +33,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $fieldtype = 'image';
-
-    /**
-     * @var string|int
-     */
-    public $width = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string|int
-     */
-    public $height = 0;
-
-    /**
-     * @var string
-     */
-    public $uploadPath;
 
     /**
      * Type for the column to query
@@ -63,52 +47,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $columnType = 'int(11)';
-
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -330,26 +268,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return $dependencies;
-    }
-
-    /**
-     * @param string $uploadPath
-     *
-     * @return $this
-     */
-    public function setUploadPath($uploadPath)
-    {
-        $this->uploadPath = $uploadPath;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUploadPath()
-    {
-        return $this->uploadPath;
     }
 
     /** True if change is allowed in edit mode.

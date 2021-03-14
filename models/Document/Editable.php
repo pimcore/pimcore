@@ -95,6 +95,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $inDialogBox = null;
 
     /**
+     * @var EditmodeEditableDefinitionCollector|null
+     */
+    private $editableDefinitionCollector;
+
+    /**
      * @param string $type
      * @param string $name
      * @param int $documentId
@@ -200,6 +205,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds attributes used on the editmode HTML element
+     *
      * @return array
      */
     protected function getEditmodeElementAttributes(): array
@@ -448,9 +454,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return mixed
      */
-    public function render()
+    final public function render()
     {
         if ($this->editmode) {
+            if($collector = $this->getEditableDefinitionCollector()) {
+                $collector->add($this);
+            }
             return $this->admin();
         }
 
@@ -771,6 +780,24 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $this->inDialogBox = $inDialogBox;
 
+        return $this;
+    }
+
+    /**
+     * @return EditmodeEditableDefinitionCollector|null
+     */
+    public function getEditableDefinitionCollector(): ?EditmodeEditableDefinitionCollector
+    {
+        return $this->editableDefinitionCollector;
+    }
+
+    /**
+     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
+     * @return $this
+     */
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    {
+        $this->editableDefinitionCollector = $editableDefinitionCollector;
         return $this;
     }
 }

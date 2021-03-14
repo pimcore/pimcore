@@ -46,8 +46,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService as DefaultVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
-use Pimcore\Model\DataObject\OfferToolOffer;
-use Pimcore\Model\DataObject\OfferToolOfferItem;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -87,6 +85,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore_ecommerce_framework');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
 
@@ -128,6 +127,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $pimcore */
         $pimcore = $builder->getRootNode();
         $pimcore
             ->addDefaultsIfNotSet()
@@ -1004,12 +1004,12 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('offer_class')
                             ->info('Pimcore object class for offers')
                             ->cannotBeEmpty()
-                            ->defaultValue(OfferToolOffer::class)
+                            ->defaultValue('Pimcore\\Model\\DataObject\\OfferToolOffer')
                         ->end()
                         ->scalarNode('offer_item_class')
                             ->info('Pimcore object class for offer items')
                             ->cannotBeEmpty()
-                            ->defaultValue(OfferToolOfferItem::class)
+                            ->defaultValue('Pimcore\\Model\\DataObject\\OfferToolOfferItem')
                         ->end()
                         ->scalarNode('parent_folder_path')
                             ->info('default path for new offers')

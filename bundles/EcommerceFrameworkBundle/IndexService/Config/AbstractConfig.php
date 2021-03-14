@@ -64,7 +64,7 @@ abstract class AbstractConfig implements ConfigInterface
     protected $tenantWorker;
 
     /**
-     * @var Config
+     * @var array|null
      */
     protected $filterTypeConfig;
 

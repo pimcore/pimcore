@@ -35,7 +35,7 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
     public function getQueryBuilder(): DoctrineQueryBuilder;
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface[]
+     * @return OrderListInterface
      */
     public function load();
 

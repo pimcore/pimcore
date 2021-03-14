@@ -180,4 +180,11 @@ interface ConfigInterface
      * @return string
      */
     public function getIdColumnType($isPrimary);
+
+    /**
+     * Attribute configuration
+     *
+     * @return array
+     */
+    public function getAttributeConfig();
 }

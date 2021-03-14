@@ -328,7 +328,9 @@ class Pimcore
 
             $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);
 
-            foreach (self::getContainer()->getServiceIds() as $id) {
+            /** @var \Symfony\Component\DependencyInjection\Container $container */
+            $container = self::getContainer();
+            foreach ($container->getServiceIds() as $id) {
                 if (strpos($id, 'monolog.logger.') === 0) {
                     $logger = self::getContainer()->get($id);
                     if ($logger->getName() != 'event') {
