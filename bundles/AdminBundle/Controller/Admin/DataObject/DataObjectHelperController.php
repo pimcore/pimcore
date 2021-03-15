@@ -176,34 +176,6 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/delete-import-config", name="pimcore_admin_dataobject_dataobjecthelper_deleteimportconfig", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteImportConfigAction(Request $request)
-    {
-        $configId = $request->get('importConfigId');
-        $config = null;
-        try {
-            $config = ImportConfig::getById($configId);
-        } catch (\Exception $e) {
-        }
-        $success = false;
-        if ($config) {
-            if ($config->getOwnerId() != $this->getAdminUser()->getId()) {
-                throw new \Exception("don't mess with someone elses grid config");
-            }
-
-            $config->delete();
-            $success = true;
-        }
-
-        return $this->adminJson(['deleteSuccess' => $success]);
-    }
-
-    /**
      * @Route("/grid-delete-column-config", name="pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig", methods={"DELETE"})
      *
      * @param Request $request
