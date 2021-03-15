@@ -147,8 +147,6 @@ class EditableHandler implements LoggerAwareInterface
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
     {
-        $this->definitionCollector->stop();
-
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
             // don't show disabled bricks
@@ -199,7 +197,16 @@ class EditableHandler implements LoggerAwareInterface
                 $info->setIndex(999999);
                 $info->setIsPreRendering(true);
 
-                $template = $this->renderAreaFrontend($info, true);
+                $templateParams = $editable->blockStart($info);
+
+                $this->definitionCollector->stashPush();
+
+                $template = [
+                    'code' => $this->renderAreaFrontend($info, true, $templateParams),
+                    'editableDefinitions' => $this->definitionCollector->getDefinitions(),
+                ];
+
+                $this->definitionCollector->stashPull();
             }
 
             $areas[$brick->getId()] = [
@@ -213,15 +220,16 @@ class EditableHandler implements LoggerAwareInterface
             ];
         }
 
-        $this->definitionCollector->start();
-
         return $areas;
     }
 
     /**
-     * {@inheritdoc}
+     * @param Info $info
+     * @param false $return
+     * @param array $templateParams
+     * @return string
      */
-    public function renderAreaFrontend(Info $info, $return = false)
+    public function renderAreaFrontend(Info $info, $return = false, $templateParams = [])
     {
         $brick = $this->brickManager->getBrick($info->getId());
 
@@ -260,14 +268,14 @@ class EditableHandler implements LoggerAwareInterface
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
         // instead of actually parsing the php template
-        $html = $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', [
+        $html = $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', array_merge([
             'brick' => $brick,
             'info' => $info,
             'templating' => $this->templating,
             'editmode' => $editmode,
             'viewTemplate' => $viewTemplate,
             'viewParameters' => $params,
-        ]);
+        ], $templateParams));
 
         if ($brickInfoRestoreValue === null) {
             $request->attributes->remove(self::ATTRIBUTE_AREABRICK_INFO);

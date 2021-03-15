@@ -117,9 +117,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->current = $index;
 
         $this->blockConstruct();
-        $this->blockStart();
+        $templateParams = $this->blockStart();
 
-        $this->content();
+        $this->content(null, $templateParams);
 
         $this->blockDestruct();
         $this->blockEnd();
@@ -179,10 +179,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
             if (!$manual && !$disabled) {
                 $this->blockConstruct();
-                $this->blockStart($info);
+                $templateParams = $this->blockStart($info);
 
                 $this->blockStarted = true;
-                $this->content($info);
+                $this->content($info, $templateParams);
             } elseif (!$manual) {
                 $this->current++;
             }
@@ -231,14 +231,14 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $info;
     }
 
-    public function content($info = null)
+    public function content($info = null, $templateParams = [])
     {
         if (!$info) {
             $info = $this->buildInfoObject();
         }
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
-            $this->getEditableHandler()->renderAreaFrontend($info);
+            $this->getEditableHandler()->renderAreaFrontend($info, false, $templateParams);
             $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
             $this->brickTypeUsageCounter[$this->currentIndex['type']]++;
         }
@@ -416,56 +416,40 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $attr = HtmlUtils::assembleAttributeString($attributes);
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
-        // outer element
-        $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
-
-        $this->outputEditmode('<div class="pimcore_area_buttons" ' . $attr . '>');
-        $this->outputEditmode('<div class="pimcore_area_buttons_inner">');
-
-        $this->outputEditmode('<div class="pimcore_block_plus_up" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_down" ' . $attr . '></div>');
-
-        $this->outputEditmode('<div class="pimcore_block_type" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
-
+        $dialogAttributes = '';
         if ($dialogConfig) {
-            $dialogAttributes = [
+            $dialogAttributes = HtmlUtils::assembleAttributeString([
                 'data-dialog-id' => $dialogConfig->getId(),
-            ];
-
-            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
-
-            $this->outputEditmode('<div class="pimcore_block_dialog" ' . $attr . ' ' . $dialogAttributes . '></div>');
+            ]);
         }
-
-        $this->outputEditmode('<div class="pimcore_block_label" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
-
-        $this->outputEditmode('</div>'); // .pimcore_area_buttons_inner
-        $this->outputEditmode('</div>'); // .pimcore_area_buttons
 
         if ($dialogConfig) {
             $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
-            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \htmlspecialchars(\json_encode($dialogConfig)) . '</template>');
-            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
+            $dialogHtml = '';
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
         }
+
+        return [
+            'editmodeOuterAttributes' => $oAttr,
+            'editmodeGenericAttributes' => $attr,
+            'editableDialog' => $dialogConfig,
+            'editableDialogAttributes' => $dialogAttributes,
+        ];
     }
 
     /**
      * @param array $config
      * @param EditableRenderer $editableRenderer
      * @param string $dialogId
+     * @param string $html
+     * @throws \Exception
      */
-    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId)
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
     {
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
             foreach ($config['items'] as $child) {
-                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
+                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId, $html);
             }
         } elseif (isset($config['name']) && isset($config['type'])) {
             $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
@@ -475,10 +459,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
             $editable->setInDialogBox($dialogId);
             $editable->addConfig('dialogBoxConfig', $config);
-            $this->outputEditmode($editable->admin());
+            $html .= $editable->admin();
         } elseif (is_array($config) && isset($config[0])) {
             foreach ($config as $item) {
-                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
+                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);
             }
         }
     }
@@ -488,8 +472,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function blockEnd()
     {
-        // close outer element
-        $this->outputEditmode('</div>');
+
     }
 
     /**

@@ -736,18 +736,36 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
         var nextKey = this.getNextKey();
         nextKey++;
-        var args = [index, 0, {
-            key: nextKey,
-            type: type
-        }];
-
-        this.elements.splice.apply(this.elements, args);
 
         if(this.config.types[brickIndex].template) {
-            console.log(this.config.types[brickIndex].template['code']);
-            console.log(this.config.types[brickIndex].template['editableDefinitions']);
+
+            let brickCode = this.config.types[brickIndex].template['code'];
+            let editableDefinitions = this.config.types[brickIndex].template['editableDefinitions'];
+            let newBlock = null;
+
+            console.log(brickCode);
+            console.log(editableDefinitions);
+
+            if(this.elements.length === 1) {
+                newBlock = Ext.get(this.id).insertHtml('afterBegin', brickCode, true);
+            } else if (this.elements[index-1]) {
+                newBlock = Ext.get(this.elements[index-1]).insertHtml('afterEnd', brickCode, true);
+            } else if (this.elements[index+1]) {
+                newBlock = Ext.get(this.elements[index+1]).insertHtml('beforeBegin', brickCode, true);
+            }
+
+            this.elements.splice.apply(this.elements, [index, 0, newBlock]);
+
+            console.log(this);
+
         } else {
             editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
+
+            this.elements.splice.apply(this.elements, [index, 0, {
+                key: nextKey,
+                type: type
+            }]);
+
             this.reloadDocument();
         }
     },

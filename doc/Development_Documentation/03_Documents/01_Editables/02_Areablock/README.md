@@ -133,9 +133,7 @@ The manual mode offers you the possibility to use areablocks with custom HTML, t
         {% do areaBlock.blockConstruct() %}
             <tr>
                 <td>
-                    {% do areaBlock.blockStart() %}
                     {% do areaBlock.content() %}
-                    {% do areaBlock.blockEnd() %}
                 </td>
             </tr>
         {% do areaBlock.blockDestruct() %}
