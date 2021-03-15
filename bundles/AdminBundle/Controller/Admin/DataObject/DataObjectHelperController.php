@@ -1774,32 +1774,4 @@ class DataObjectHelperController extends AdminController
         }
     }
 
-    /**
-     * @Route("/export-csv-import-config-as-json", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function exportCsvImportConfigAsJsonAction(Request $request)
-    {
-        $classId = $request->get('classId');
-        $configData = json_decode($request->get('config'), true);
-
-        try {
-            $configName = $configData['shareSettings']['configName'];
-
-            if (empty($configName)) {
-                $configName = date('YmdHis').'_'.$classId.'_configuration';
-            }
-
-            $jsonResponse = new JsonResponse(json_encode($configData), 200, [
-                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"',
-            ], true);
-
-            return $jsonResponse;
-        } catch (\Exception $e) {
-            throw new \Exception('Error retrieving import configuration - '.$e->getMessage());
-        }
-    }
 }
