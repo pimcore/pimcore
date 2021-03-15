@@ -100,6 +100,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     private $editableDefinitionCollector;
 
     /**
+     * @deprecated Will be removed in Pimcore, use EditableLoader instead
      * @param string $type
      * @param string $name
      * @param int $documentId
