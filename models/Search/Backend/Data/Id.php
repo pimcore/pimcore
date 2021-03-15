@@ -21,12 +21,12 @@ class Id
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @param Element\ElementInterface $webResource

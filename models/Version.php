@@ -39,57 +39,57 @@ class Version extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var int
      */
-    public $userId;
+    protected $userId;
 
     /**
      * @var User
      */
-    public $user;
+    protected $user;
 
     /**
      * @var string
      */
-    public $note;
+    protected $note;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var mixed
      */
-    public $data;
+    protected $data;
 
     /**
      * @var bool
      */
-    public $public = false;
+    protected $public = false;
 
     /**
      * @var bool
      */
-    public $serialized = false;
+    protected $serialized = false;
 
     /**
      * @var string|null
      */
-    public $stackTrace = '';
+    protected $stackTrace = '';
 
     /**
      * @var bool
@@ -99,17 +99,17 @@ class Version extends AbstractModel
     /**
      * @var int
      */
-    public $versionCount = 0;
+    protected $versionCount = 0;
 
     /**
      * @var string|null
      */
-    public $binaryFileHash;
+    protected $binaryFileHash;
 
     /**
      * @var int|null
      */
-    public $binaryFileId;
+    protected $binaryFileId;
 
     /**
      * @var bool

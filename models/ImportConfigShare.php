@@ -25,12 +25,12 @@ class ImportConfigShare extends AbstractModel
     /**
      * @var int
      */
-    public $importConfigId;
+    protected $importConfigId;
 
     /**
      * @var int
      */
-    public $sharedWithUserId;
+    protected $sharedWithUserId;
 
     /**
      * @param int $importConfigId

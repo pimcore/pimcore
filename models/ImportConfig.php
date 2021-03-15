@@ -25,47 +25,47 @@ class ImportConfig extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $ownerId;
+    protected $ownerId;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $config;
+    protected $config;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var bool
      */
-    public $shareGlobally;
+    protected $shareGlobally;
 
     /**
      * @param int $id

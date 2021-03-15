@@ -30,22 +30,22 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @param int $id
