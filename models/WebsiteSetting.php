@@ -20,7 +20,6 @@ use Pimcore\Model\Element\Service;
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
- * @method void delete()
  */
 class WebsiteSetting extends AbstractModel
 {
@@ -310,5 +309,20 @@ class WebsiteSetting extends AbstractModel
     public function clearDependentCache()
     {
         \Pimcore\Cache::clearTag('website_config');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function delete()
+    {
+        $nameCacheKey = $name . '~~~' . $siteId . '~~~' . $language;
+
+        // Remove cached element to avoid returning it with e.g. getByName() after if it is deleted
+        if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {
+            unset(self::$nameIdMappingCache[$nameCacheKey]);
+        }
+
+        $this->getDao()->delete($this->getId());
     }
 }
