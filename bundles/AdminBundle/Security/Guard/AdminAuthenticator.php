@@ -43,6 +43,9 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
