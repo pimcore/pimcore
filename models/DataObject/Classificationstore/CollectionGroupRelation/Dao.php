@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_RELATIONS
-            . ',' . Model\DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS. ' WHERE colId = ? AND groupId = `?', $this->model->getColId(), $this->model->groupId);
+            . ',' . Model\DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS. ' WHERE colId = ? AND groupId = `?', $this->model->getColId(), $this->model->getGroupId());
 
         $this->assignVariablesToModel($data);
     }
