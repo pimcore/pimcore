@@ -1174,12 +1174,17 @@ class Configuration implements ConfigurationInterface
         ->end();
     }
 
+    /**
+     * @deprecated
+     * @param ArrayNodeDefinition $rootNode
+     */
     private function addMimeNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode
             ->children()
                 ->arrayNode('mime')
                     ->addDefaultsIfNotSet()
+                    ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10.')
                     ->children()
                         ->arrayNode('extensions')
                             ->useAttributeAsKey('name')

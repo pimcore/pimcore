@@ -14,6 +14,11 @@
 
 namespace Pimcore\Tool;
 
+use GuzzleHttp\Psr7\MimeType;
+
+/**
+ * @deprecated
+ */
 class Mime
 {
     /**
@@ -26,6 +31,11 @@ class Mime
      */
     public static function detect($file, $filename = null)
     {
+        @trigger_error(
+            sprintf('Method %s is deprecated and will be removed in Pimcore 10, use Symfony\Component\Mime\MimeTypes instead', __METHOD__),
+            E_USER_DEPRECATED
+        );
+
         if (!file_exists($file)) {
             throw new \Exception('File ' . $file . " doesn't exist");
         }
