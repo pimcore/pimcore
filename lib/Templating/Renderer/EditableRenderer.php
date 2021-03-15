@@ -88,17 +88,17 @@ class EditableRenderer implements LoggerAwareInterface
             if (method_exists($editable, 'load')) {
                 $editable->load();
             }
-
-            $editable->setEditmode($editmode);
-            $editable->setConfig($config);
-            $editable->setDocument($document);
         } else {
-            $editable = Editable::factory($type, $name, $document->getId(), $config, null, null, $editmode);
+            $editable = $this->editableLoader->build($type);
+            $editable->setName($name);
             $document->setEditable($editable);
         }
 
+        $editable->setDocument($document);
+        $editable->setEditmode($editmode);
         // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
         $editable->setRealName($realName);
+        $editable->setConfig($config);
 
         if ($editmode) {
             $editable->setEditableDefinitionCollector($this->configCollector);
