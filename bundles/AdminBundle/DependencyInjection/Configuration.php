@@ -20,8 +20,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Adds configuration for gdpr data provider
+ *
+ * @internal
  */
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}
