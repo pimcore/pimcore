@@ -23,7 +23,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class OutputTimestampListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class OutputTimestampListener implements EventSubscriberInterface
 {
     const TIMESTAMP_OVERRIDE_PARAM_NAME = 'pimcore_override_output_timestamp';
 

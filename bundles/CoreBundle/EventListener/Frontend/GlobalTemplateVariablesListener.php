@@ -26,7 +26,10 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
 
-class GlobalTemplateVariablesListener implements EventSubscriberInterface, LoggerAwareInterface
+/**
+ * @internal
+ */
+final class GlobalTemplateVariablesListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
