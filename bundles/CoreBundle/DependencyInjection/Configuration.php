@@ -163,7 +163,6 @@ class Configuration implements ConfigurationInterface
         $this->addCustomReportsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
-        $this->addMimeNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -1167,28 +1166,6 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    /**
-     * @deprecated
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addMimeNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('mime')
-                    ->addDefaultsIfNotSet()
-                    ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10.')
-                    ->children()
-                        ->arrayNode('extensions')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()
