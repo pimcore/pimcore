@@ -24,7 +24,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class UsageStatisticsListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class UsageStatisticsListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
