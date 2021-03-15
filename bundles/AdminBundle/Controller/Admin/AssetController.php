@@ -44,7 +44,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -549,7 +548,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($request->get('id'));
 
         $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
-        $mimetype = MimeTypes::getDefault()->guessMimeType($_FILES['Filedata']['tmp_name']);
+        $mimetype = Tool\Mime::detect($_FILES['Filedata']['tmp_name'], $newFilename);
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
         if ($newType != $asset->getType()) {
