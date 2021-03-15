@@ -29,36 +29,36 @@ class CollectionConfig extends Model\AbstractModel
     /** Group id.
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Store ID
      *
      * @var int
      */
-    public $storeId = 1;
+    protected $storeId = 1;
 
     /** The collection name.
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The collection description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
