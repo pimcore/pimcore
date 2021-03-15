@@ -20,6 +20,9 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractCommand
 {
     /** @var LocaleServiceInterface */

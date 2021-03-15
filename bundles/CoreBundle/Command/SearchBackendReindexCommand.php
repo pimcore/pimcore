@@ -23,6 +23,9 @@ use Pimcore\Model\Search;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class SearchBackendReindexCommand extends AbstractCommand
 {
     protected function configure()
