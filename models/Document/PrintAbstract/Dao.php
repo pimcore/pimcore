@@ -58,7 +58,7 @@ class Dao extends Document\PageSnippet\Dao
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", $this->model->getId());
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('Print Document with the ID ' . $this->model->getId() . " doesn't exists");

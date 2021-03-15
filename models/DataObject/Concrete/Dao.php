@@ -53,7 +53,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
                     WHERE o_id = ?", $id);
 
-            if ($data['o_id']) {
+            if (!empty($data['o_id'])) {
                 $this->assignVariablesToModel($data);
                 $this->getData();
             } else {

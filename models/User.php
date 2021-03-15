@@ -606,7 +606,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param null|string $contentLanguages
+     * @param null|string|array $contentLanguages
      */
     public function setContentLanguages($contentLanguages)
     {

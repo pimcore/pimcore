@@ -43,7 +43,7 @@ class Dao extends Model\Document\Dao
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                     WHERE documents.id = ?", $this->model->getId());
 
-            if ($data['id'] > 0) {
+            if (!empty($data['id'])) {
                 $this->assignVariablesToModel($data);
             } else {
                 throw new \Exception('Hardlink with the ID ' . $this->model->getId() . " doesn't exists");
