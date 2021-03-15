@@ -39,7 +39,10 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
+/**
+ * @internal
+ */
+final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_FACTORY = 'pimcore_ecommerce.factory';
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
