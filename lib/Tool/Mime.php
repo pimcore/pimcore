@@ -30,21 +30,22 @@ class Mime
             throw new \Exception('File ' . $file . " doesn't exist");
         }
 
+
+        if (!$filename) {
+            $filename = basename($file);
+        }
+
+        $extensionMapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
+
+        // check for an extension mapping first
+        if ($filename) {
+            $extension = \Pimcore\File::getFileExtension($filename);
+            if (array_key_exists($extension, $extensionMapping)) {
+                return $extensionMapping[$extension];
+            }
+        }
+        
         if (filesize($file) !== 0) {
-            if (!$filename) {
-                $filename = basename($file);
-            }
-
-            $extensionMapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
-
-            // check for an extension mapping first
-            if ($filename) {
-                $extension = \Pimcore\File::getFileExtension($filename);
-                if (array_key_exists($extension, $extensionMapping)) {
-                    return $extensionMapping[$extension];
-                }
-            }
-
             // check with fileinfo, if there's no extension mapping
             $finfo = finfo_open(FILEINFO_MIME);
             $type = finfo_file($finfo, $file);
