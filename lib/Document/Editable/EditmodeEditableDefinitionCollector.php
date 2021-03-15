@@ -35,16 +35,16 @@ final class EditmodeEditableDefinitionCollector
 
     /**
      * @param Editable $editable
+     *
      * @throws \Exception
      */
     public function add(Editable $editable): void
     {
-        if($this->stopped) {
+        if ($this->stopped) {
             return;
         }
 
-        if(isset($this->editableDefinitions[$editable->getName()]))
-        {
+        if (isset($this->editableDefinitions[$editable->getName()])) {
             throw new \Exception(sprintf('Duplicate editable name `%s`', $editable->getName()));
         }
 
