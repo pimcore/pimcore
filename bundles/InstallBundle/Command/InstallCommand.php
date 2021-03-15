@@ -33,6 +33,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @method Application getApplication()
+ *
+ * @internal
  */
 class InstallCommand extends Command
 {

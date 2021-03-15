@@ -41,6 +41,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class Installer
 {
     const EVENT_NAME_STEP = 'pimcore.installer.step';
