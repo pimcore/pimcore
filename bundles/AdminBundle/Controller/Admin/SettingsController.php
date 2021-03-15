@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
 
@@ -72,7 +73,7 @@ class SettingsController extends AdminController
             $customLogoFile = $customLogoPath . $format;
             if (file_exists($customLogoFile)) {
                 try {
-                    $mime = Tool\Mime::detect($customLogoFile);
+                    $mime = MimeTypes::getDefault()->guessMimeType($customLogoFile);
                     $logo = $customLogoFile;
                     break;
                 } catch (\Exception $e) {
