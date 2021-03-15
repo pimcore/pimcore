@@ -73,11 +73,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getAllTranslations()
     {
-        $cacheKey = $this->getDatabaseTableName().'_data';
-        if (!$translations = Cache::load($cacheKey)) {
+        $queryBuilder = $this->getQueryBuilder(['*']);
+        $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
+        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
-
-            $queryBuilder = $this->getQueryBuilder(['*']);
             $queryBuilder->setMaxResults(null); //retrieve all results
             $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
@@ -99,7 +98,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $translations[$t['key']]->setModificationDate($t['modificationDate']);
             }
 
-            Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);
+            if(empty($this->model->getConditionParams())) {
+                Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);    
+            }
         }
 
         return $translations;

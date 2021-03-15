@@ -22,11 +22,6 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
         config.listeners = {};
 
-        // onchange event
-        if (config.onchange) {
-            config.listeners.select = eval(config.onchange);
-        }
-
         if (config["reload"]) {
             config.listeners.select = this.reloadDocument;
         }

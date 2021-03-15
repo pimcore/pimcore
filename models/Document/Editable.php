@@ -457,9 +457,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     final public function render()
     {
         if ($this->editmode) {
-            if($collector = $this->getEditableDefinitionCollector()) {
+            if ($collector = $this->getEditableDefinitionCollector()) {
                 $collector->add($this);
             }
+
             return $this->admin();
         }
 
@@ -793,11 +794,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
+     *
      * @return $this
      */
     public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
     {
         $this->editableDefinitionCollector = $editableDefinitionCollector;
+
         return $this;
     }
 }
