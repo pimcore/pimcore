@@ -992,47 +992,6 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param ImportConfig $importConfig
-     * @param array $configData
-     *
-     * @throws \Exception
-     */
-    protected function updateImportConfigShares($importConfig, $configData)
-    {
-        $user = $this->getAdminUser();
-        if (!$importConfig || !$user->isAllowed('share_configurations')) {
-            // nothing to do
-            return;
-        }
-
-        if ($importConfig->getOwnerId() != $this->getAdminUser()->getId()) {
-            throw new \Exception("don't mess with someone elses grid config");
-        }
-        $combinedShares = [];
-        $sharedUserIds = $configData['shareSettings'] ? $configData['shareSettings']['sharedUserIds'] : [];
-        $sharedRoleIds = $configData['shareSettings'] ? $configData['shareSettings']['sharedRoleIds'] : [];
-
-        if ($sharedUserIds) {
-            $combinedShares = explode(',', $sharedUserIds);
-        }
-
-        if ($sharedRoleIds) {
-            $sharedRoleIds = explode(',', $sharedRoleIds);
-            $combinedShares = array_merge($combinedShares, $sharedRoleIds);
-        }
-
-        $db = Db::get();
-        $db->delete('importconfig_shares', ['importConfigId' => $importConfig->getId()]);
-
-        foreach ($combinedShares as $id) {
-            $share = new ImportConfigShare();
-            $share->setImportConfigId($importConfig->getId());
-            $share->setSharedWithUserId($id);
-            $share->save();
-        }
-    }
-
-    /**
      * @param GridConfig $gridConfig
      * @param array $metadata
      *
