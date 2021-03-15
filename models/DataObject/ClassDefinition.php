@@ -36,68 +36,68 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var string
      */
-    protected $id;
+    public $id;
 
     /**
      * @var string
      */
-    protected $name;
+    public $name;
 
     /**
      * @var string
      */
-    protected $description;
+    public $description;
 
     /**
      * @var int
      */
-    protected $creationDate;
+    public $creationDate;
 
     /**
      * @var int
      */
-    protected $modificationDate;
+    public $modificationDate;
 
     /**
      * @var int
      */
-    protected $userOwner;
+    public $userOwner;
 
     /**
      * @var int
      */
-    protected $userModification;
+    public $userModification;
 
     /**
      * Name of the parent class if set
      *
      * @var string
      */
-    protected $parentClass;
+    public $parentClass;
 
     /**
      * Comma separated list of interfaces
      *
      * @var string|null
      */
-    protected $implementsInterfaces;
+    public $implementsInterfaces;
 
     /**
      * Name of the listing parent class if set
      *
      * @var string
      */
-    protected $listingParentClass = '';
+    public $listingParentClass = '';
 
     /**
      * @var string
      */
-    protected $useTraits = '';
+    public $useTraits = '';
 
     /**
      * @var string
      */
-    protected $listingUseTraits = '';
+    public $listingUseTraits = '';
 
     /**
      * @var bool
@@ -112,22 +112,22 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
-    protected $allowInherit = false;
+    public $allowInherit = false;
 
     /**
      * @var bool
      */
-    protected $allowVariants = false;
+    public $allowVariants = false;
 
     /**
      * @var bool
      */
-    protected $showVariants = false;
+    public $showVariants = false;
 
     /**
      * @var DataObject\ClassDefinition\Data[]
      */
-    protected $fieldDefinitions = [];
+    public $fieldDefinitions = [];
 
     /**
      * @var DataObject\ClassDefinition\Layout|null
@@ -137,42 +137,42 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var string
      */
-    protected $icon;
+    public $icon;
 
     /**
      * @var string
      */
-    protected $previewUrl;
+    public $previewUrl;
 
     /**
      * @var string
      */
-    protected $group;
+    public $group;
 
     /**
      * @var bool
      */
-    protected $showAppLoggerTab = false;
+    public $showAppLoggerTab = false;
 
     /**
      * @var string
      */
-    protected $linkGeneratorReference;
+    public $linkGeneratorReference;
 
     /**
      * @var array
      */
-    protected $compositeIndices = [];
+    public $compositeIndices = [];
 
     /**
      * @var bool
      */
-    protected $generateTypeDeclarations = true;
+    public $generateTypeDeclarations = true;
 
     /**
      * @var bool
      */
-    protected $showFieldLookup = false;
+    public $showFieldLookup = false;
 
     /**
      * @var array
