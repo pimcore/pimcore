@@ -44,6 +44,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 
 /**
  * @Route("/settings")
@@ -72,7 +73,7 @@ class SettingsController extends AdminController
             $customLogoFile = $customLogoPath . $format;
             if (file_exists($customLogoFile)) {
                 try {
-                    $mime = Tool\Mime::detect($customLogoFile);
+                    $mime = MimeTypeGuesser::getInstance()->guess($customLogoFile);
                     $logo = $customLogoFile;
                     break;
                 } catch (\Exception $e) {

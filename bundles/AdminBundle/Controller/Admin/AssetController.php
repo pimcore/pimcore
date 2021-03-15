@@ -46,6 +46,7 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 
 /**
  * @Route("/asset")
@@ -548,7 +549,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($request->get('id'));
 
         $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
-        $mimetype = Tool\Mime::detect($_FILES['Filedata']['tmp_name'], $newFilename);
+        $mimetype = MimeTypeGuesser::getInstance()->guess($_FILES['Filedata']['tmp_name']);
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
         if ($newType != $asset->getType()) {
