@@ -325,16 +325,28 @@ class EditableHandler implements LoggerAwareInterface
         if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_BUNDLE) {
             $bundle = $this->bundleLocator->getBundle($brick);
 
-            return sprintf(
-                '%s:Areas/%s:%s.%s',
-                $bundle->getName(),
-                $brick->getId(),
-                $type,
-                $brick->getTemplateSuffix()
-            );
+            $templateReference = '';
+
+            foreach(['areas', 'Areas'] as $folderName) {
+                $templateReference = sprintf(
+                    '%s:%s/%s:%s.%s',
+                    $bundle->getName(),
+                    $folderName,
+                    $brick->getId(),
+                    $type,
+                    $brick->getTemplateSuffix()
+                );
+
+                if($this->templating->exists($templateReference)) {
+                    return $templateReference;
+                }
+            }
+
+            // return the last reference, even we know that it doesn't exist -> let care the templating engine
+            return $templateReference;
         } else {
             return sprintf(
-                'Areas/%s/%s.%s',
+                'areas/%s/%s.%s',
                 $brick->getId(),
                 $type,
                 $brick->getTemplateSuffix()
