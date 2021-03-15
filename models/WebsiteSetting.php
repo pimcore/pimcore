@@ -316,13 +316,13 @@ class WebsiteSetting extends AbstractModel
      */
     public function delete()
     {
-        $nameCacheKey = $name . '~~~' . $siteId . '~~~' . $language;
+        $nameCacheKey = $this->getName() . '~~~' . $this->getSiteId() . '~~~' . $this->getLanguage();
 
         // Remove cached element to avoid returning it with e.g. getByName() after if it is deleted
         if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {
             unset(self::$nameIdMappingCache[$nameCacheKey]);
         }
 
-        $this->getDao()->delete($this->getId());
+        $this->getDao()->delete();
     }
 }
