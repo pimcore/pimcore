@@ -17,6 +17,9 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 abstract class AbstractResolver implements ResolverInterface
 {
     protected function getIdColumn(\stdClass $config)

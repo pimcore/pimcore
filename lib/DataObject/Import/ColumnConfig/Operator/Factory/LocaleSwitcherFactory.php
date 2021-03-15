@@ -21,6 +21,9 @@ use Pimcore\DataObject\Import\ColumnConfig\Operator\LocaleSwitcher;
 use Pimcore\DataObject\Import\ColumnConfig\Operator\OperatorInterface;
 use Pimcore\Localization\LocaleServiceInterface;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class LocaleSwitcherFactory implements OperatorFactoryInterface
 {
     /**

@@ -22,6 +22,9 @@ namespace Pimcore\DataObject\Import\ColumnConfig;
 
 use Pimcore\Model\Element\ElementInterface;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 interface ConfigElementInterface
 {
     /**
