@@ -46,12 +46,12 @@ class Info
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var int
      */
-    public $index;
+    protected $index;
 
     /**
      * @return string

@@ -38,7 +38,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @var array
      */
-    public $classDefinitions = [];
+    protected $classDefinitions = [];
 
     /**
      * @var array
