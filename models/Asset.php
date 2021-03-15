@@ -32,6 +32,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -324,19 +325,19 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
-                    $mimeType = Mime::detect($tmpFile);
+                    $mimeType = MimeTypeGuesser::getInstance()->guess($tmpFile);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
-                        $mimeType = Mime::detect($streamMeta['uri']);
+                        $mimeType = MimeTypeGuesser::getInstance()->guess($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
-                        $mimeType = Mime::detect($tmpFile);
+                        $mimeType = MimeTypeGuesser::getInstance()->guess($tmpFile);
 
                         if (!$isRewindable) {
                             $data['stream'] = $dest;
@@ -347,7 +348,7 @@ class Asset extends Element\AbstractElement
                     }
                 }
             } else {
-                $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
+                $mimeType = MimeTypeGuesser::getInstance()->guess($data['sourcePath']);
                 if (is_file($data['sourcePath'])) {
                     $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                 }
@@ -728,7 +729,7 @@ class Asset extends Element\AbstractElement
                 }
 
                 // set mime type
-                $mimetype = Mime::detect($destinationPath, $this->getFilename());
+                $mimetype = MimeTypeGuesser::getInstance()->guess($destinationPath);
                 $this->setMimetype($mimetype);
 
                 // set type
