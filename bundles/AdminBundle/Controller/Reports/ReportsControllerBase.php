@@ -17,6 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 
+/**
+ * @internal
+ */
 class ReportsControllerBase extends AdminController
 {
     /**

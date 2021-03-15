@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @internal
+ */
 class PrintpageControllerBase extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;

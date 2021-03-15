@@ -31,7 +31,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ElementController extends AdminController
+/**
+ *
+ * @internal
+ */
+final class ElementController extends AdminController
 {
     /**
      * @Route("/element/lock-element", name="pimcore_admin_element_lockelement", methods={"PUT"})

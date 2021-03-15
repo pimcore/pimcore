@@ -45,8 +45,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/object")
+ *
+ * @internal
  */
-class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
+final class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;

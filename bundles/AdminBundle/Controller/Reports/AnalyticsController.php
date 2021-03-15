@@ -27,6 +27,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/analytics")
+ *
+ * @internal
  */
 class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {

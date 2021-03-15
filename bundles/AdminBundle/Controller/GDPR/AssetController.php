@@ -28,8 +28,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/asset")
  *
  * @package GDPRDataExtractorBundle\Controller
+ *
+ * @internal
  */
-class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+final class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

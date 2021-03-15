@@ -47,8 +47,10 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * @Route("/settings")
+ *
+ * @internal
  */
-class SettingsController extends AdminController
+final class SettingsController extends AdminController
 {
     /**
      * @Route("/display-custom-logo", name="pimcore_settings_display_custom_logo", methods={"GET"})

@@ -22,7 +22,10 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
-class OpcacheController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class OpcacheController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/external_opcache", name="pimcore_admin_external_opcache_index")

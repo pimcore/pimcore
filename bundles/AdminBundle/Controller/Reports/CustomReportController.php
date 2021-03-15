@@ -24,6 +24,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/custom-report")
+ *
+ * @internal
  */
 class CustomReportController extends ReportsControllerBase
 {

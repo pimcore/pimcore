@@ -22,6 +22,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/settings")
+ *
+ * @internal
  */
 class SettingsController extends ReportsControllerBase
 {

@@ -25,7 +25,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuantityValueController extends AdminController
+/**
+ *  @internal
+ */
+final class QuantityValueController extends AdminController
 {
     /**
      * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxyget", methods={"GET"})

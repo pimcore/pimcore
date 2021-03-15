@@ -26,6 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/page")
+ *
+ * @internal
  */
 class PageController extends DocumentControllerBase
 {
