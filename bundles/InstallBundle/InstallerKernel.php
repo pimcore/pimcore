@@ -28,6 +28,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
+/**
+ * @internal
+ */
 class InstallerKernel extends Kernel
 {
     use MicroKernelTrait;

@@ -19,6 +19,9 @@ namespace Pimcore\Bundle\InstallBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * @internal
+ */
 class InstallerStepEvent extends Event
 {
     /**

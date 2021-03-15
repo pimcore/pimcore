@@ -20,7 +20,10 @@ namespace Pimcore\Bundle\InstallBundle\SystemConfig;
 use Pimcore\File;
 use Symfony\Component\Yaml\Yaml;
 
-class ConfigWriter
+/**
+ * @internal
+ */
+final class ConfigWriter
 {
     /**
      * @var array
