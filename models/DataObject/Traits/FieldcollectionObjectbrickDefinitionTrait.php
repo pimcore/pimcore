@@ -25,39 +25,39 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @var string|null
      */
-    protected $key;
+    public $key;
 
     /**
      * @var string
      */
-    protected $parentClass;
+    public $parentClass;
 
     /**
      * Comma separated list of interfaces
      *
      * @var string|null
      */
-    protected $implementsInterfaces;
+    public $implementsInterfaces;
 
     /**
      * @var string
      */
-    protected $title;
+    public $title;
 
     /**
      * @var string
      */
-    protected $group;
+    public $group;
 
     /**
      * @var Layout|null
      */
-    protected $layoutDefinitions;
+    public $layoutDefinitions;
 
     /**
      * @var bool
      */
-    protected $generateTypeDeclarations = true;
+    public $generateTypeDeclarations = true;
 
     /**
      * @var Data[]
