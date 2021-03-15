@@ -21,6 +21,9 @@ use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
 {
     /**
