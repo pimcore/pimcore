@@ -227,7 +227,6 @@ class EditableHandler implements LoggerAwareInterface
      * @param Info $info
      * @param false $return
      * @param array $templateParams
-     * @return string
      */
     public function renderAreaFrontend(Info $info, $return = false, $templateParams = [])
     {
