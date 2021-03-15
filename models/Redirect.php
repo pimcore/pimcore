@@ -556,4 +556,13 @@ class Redirect extends AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::POST_DELETE);
         $this->clearDependentCache();
     }
+
+    /**
+     * @return string[]
+     */
+    public static function getStatusCodes(): array
+    {
+        return self::$statusCodes;
+    }
+
 }

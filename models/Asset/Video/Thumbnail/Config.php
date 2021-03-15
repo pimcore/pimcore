@@ -43,42 +43,42 @@ class Config extends Model\AbstractModel
      *
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var string
      */
-    public $group = '';
+    protected $group = '';
 
     /**
      * @var int
      */
-    public $videoBitrate;
+    protected $videoBitrate;
 
     /**
      * @var int
      */
-    public $audioBitrate;
+    protected $audioBitrate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @param string $name

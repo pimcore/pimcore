@@ -24,17 +24,17 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
      * @var string
      */
-    public $type = '';
+    protected $type = '';
 
     /**
      * @var mixed
      */
-    public $value;
+    protected $value;
 
     /**
      * @param array $data

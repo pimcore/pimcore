@@ -39,12 +39,12 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @var bool
      */
-    public $objectTypeDocument = false;
+    protected $objectTypeDocument = false;
 
     /**
      * @var bool
      */
-    public $unpublished = false;
+    protected $unpublished = false;
 
     /**
      * @return Document[]
