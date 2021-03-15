@@ -28,6 +28,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
 
+/**
+ * @internal
+ */
 class GridHelperService
 {
     /**
