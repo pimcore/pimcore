@@ -19,6 +19,9 @@ namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
 
 use Pimcore\DataObject\Import\ColumnConfig\AbstractConfigElement;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class Splitter extends AbstractOperator
 {
     /**

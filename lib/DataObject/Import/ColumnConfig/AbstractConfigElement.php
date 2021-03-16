@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\Import\ColumnConfig;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 abstract class AbstractConfigElement implements ConfigElementInterface
 {
     /**

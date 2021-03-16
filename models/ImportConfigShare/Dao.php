@@ -23,6 +23,8 @@ use Pimcore\Model;
  * @internal
  *
  * @property \Pimcore\Model\ImportConfigShare $model
+ *
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
  */
 class Dao extends Model\Dao\AbstractDao
 {

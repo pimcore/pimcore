@@ -21,6 +21,9 @@ use Pimcore\DataObject\Import\ColumnConfig\Operator\ObjectBrickSetter;
 use Pimcore\DataObject\Import\ColumnConfig\Operator\OperatorInterface;
 use Pimcore\Model\FactoryInterface;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class ObjectBrickSetterFactory implements OperatorFactoryInterface
 {
     /**
