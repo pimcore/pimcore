@@ -98,8 +98,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $translations[$t['key']]->setModificationDate($t['modificationDate']);
             }
 
-            if(empty($this->model->getConditionParams())) {
-                Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);    
+            if (empty($this->model->getConditionParams())) {
+                Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);
             }
         }
 

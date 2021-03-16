@@ -105,7 +105,7 @@ class Xliff12Escaper
         }
 
         //parse comments
-        $content = strtr($content, ["&lt;!--" => "<!--", "--&gt;" => "-->"]);
+        $content = strtr($content, ['&lt;!--' => '<!--', '--&gt;' => '-->']);
 
         return $content;
     }

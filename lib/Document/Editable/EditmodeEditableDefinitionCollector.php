@@ -108,7 +108,7 @@ final class EditmodeEditableDefinitionCollector
 
     private function getJson(): string
     {
-        return json_encode($this->getDefinitions(), JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR);
+        return json_encode($this->getDefinitions(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
     }
 
     public function getHtml(): string

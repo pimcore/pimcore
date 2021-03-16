@@ -366,7 +366,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
 
             $templateReference = '';
 
-            foreach(['areas', 'Areas'] as $folderName) {
+            foreach (['areas', 'Areas'] as $folderName) {
                 $templateReference = sprintf(
                     '%s:%s/%s:%s.%s',
                     $bundle->getName(),
@@ -376,7 +376,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                     $brick->getTemplateSuffix()
                 );
 
-                if($this->templating->exists($templateReference)) {
+                if ($this->templating->exists($templateReference)) {
                     return $templateReference;
                 }
             }
