@@ -613,6 +613,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         // plus button
         var plusButton = new Ext.Button({
             cls: "pimcore_block_button_plus",
+            arrowVisible: false,
             iconCls: "pimcore_icon_plus",
             menu: this.getTypeMenu(this, null)
         });

@@ -454,9 +454,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             ]);
         }
 
+        $dialogHtml = '';
         if ($dialogConfig) {
             $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
-            $dialogHtml = '';
             $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
         }
 
@@ -465,6 +465,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             'editmodeGenericAttributes' => $attr,
             'editableDialog' => $dialogConfig,
             'editableDialogAttributes' => $dialogAttributes,
+            'dialogHtml' => $dialogHtml,
         ];
     }
 
@@ -490,7 +491,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
             $editable->setInDialogBox($dialogId);
             $editable->addConfig('dialogBoxConfig', $config);
-            $html .= $editable->admin();
+            $html .= $editable->render();
         } elseif (is_array($config) && isset($config[0])) {
             foreach ($config as $item) {
                 $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);

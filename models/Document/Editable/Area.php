@@ -153,7 +153,7 @@ class Area extends Model\Document\Editable
         $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
 
         // don't show disabled bricks
-        if (!$editableHandler->isBrickEnabled($this, $config['type'] && $config['dontCheckEnabled'] != true)) {
+        if (!$editableHandler->isBrickEnabled($this, $config['type'] && ($config['dontCheckEnabled'] ?? false) !== true)) {
             return;
         }
 
@@ -168,7 +168,7 @@ class Area extends Model\Document\Editable
         $blockState->pushIndex(1);
 
         $params = [];
-        if (is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
+        if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
             if (is_array($config['params'][$config['type']])) {
                 $params = $config['params'][$config['type']];
             }

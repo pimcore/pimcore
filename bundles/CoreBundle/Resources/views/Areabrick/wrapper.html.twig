@@ -32,6 +32,7 @@
         </div>
         {% if editableDialog %}
             <template id="dialogBoxConfig-{{ editableDialog.id }}">{{ editableDialog|json_encode() }}</template>
+            {{ dialogHtml|raw }}
         {% endif %}
 {% endif %}
 
