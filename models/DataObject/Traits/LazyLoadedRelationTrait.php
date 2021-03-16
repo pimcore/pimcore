@@ -34,6 +34,14 @@ trait LazyLoadedRelationTrait
 
     /**
      * @param string $key
+     */
+    public function unmarkLazyKeyAsLoaded(string $key)
+    {
+        unset($this->loadedLazyKeys[$key]);
+    }
+
+    /**
+     * @param string $key
      *
      * @return bool
      */
