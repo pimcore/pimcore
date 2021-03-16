@@ -72,8 +72,9 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param string $name
-     * @param null $siteId
-     * @param null $language
+     * @param int|null $siteId
+     * @param string|null $language
+     *
      * @return string
      */
     protected static function getCacheKey($name, $siteId = null, $language = null): string
@@ -322,10 +323,7 @@ class WebsiteSetting extends AbstractModel
         \Pimcore\Cache::clearTag('website_config');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete()
+    public function delete(): void
     {
         $nameCacheKey = static::getCacheKey($this->getName(), $this->getSiteId(), $this->getLanguage());
 
