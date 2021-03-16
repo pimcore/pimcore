@@ -14,6 +14,7 @@
 
 namespace Pimcore\Templating\Renderer;
 
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
@@ -35,14 +36,18 @@ class EditableRenderer implements LoggerAwareInterface
      */
     protected $editmodeResolver;
 
+    private ?EditmodeEditableDefinitionCollector $configCollector;
+
     /**
      * @param EditableLoaderInterface $editableLoader
      * @param EditmodeResolver $editmodeResolver
+     * @param EditmodeEditableDefinitionCollector $configCollector
      */
-    public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver)
+    public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver, EditmodeEditableDefinitionCollector $configCollector)
     {
         $this->editableLoader = $editableLoader;
         $this->editmodeResolver = $editmodeResolver;
+        $this->configCollector = $configCollector;
     }
 
     /**
@@ -83,17 +88,21 @@ class EditableRenderer implements LoggerAwareInterface
             if (method_exists($editable, 'load')) {
                 $editable->load();
             }
-
-            $editable->setEditmode($editmode);
-            $editable->setConfig($config);
-            $editable->setDocument($document);
         } else {
-            $editable = Editable::factory($type, $name, $document->getId(), $config, null, null, $editmode);
+            $editable = $this->editableLoader->build($type);
+            $editable->setName($name);
             $document->setEditable($editable);
         }
 
+        $editable->setDocument($document);
+        $editable->setEditmode($editmode);
         // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
         $editable->setRealName($realName);
+        $editable->setConfig($config);
+
+        if ($editmode) {
+            $editable->setEditableDefinitionCollector($this->configCollector);
+        }
 
         return $editable;
     }

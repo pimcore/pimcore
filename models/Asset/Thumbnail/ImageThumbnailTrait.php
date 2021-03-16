@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset\Thumbnail;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Symfony\Component\Mime\MimeTypes;
 
 trait ImageThumbnailTrait
 {
@@ -234,10 +235,10 @@ trait ImageThumbnailTrait
                 $this->mimetype = substr($filesystemPath, 5, strpos($filesystemPath, ';') - 5);
             } else {
                 $fileExt = $this->getFileExtension();
-                $mapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
+                $mimeTypes = MimeTypes::getDefault()->getMimeTypes($fileExt);
 
-                if (isset($mapping[$fileExt])) {
-                    $this->mimetype = $mapping[$fileExt];
+                if (!empty($mimeTypes)) {
+                    $this->mimetype = $mimeTypes[0];
                 } else {
                     // unknown
                     $this->mimetype = 'application/octet-stream';

@@ -27,10 +27,6 @@ pimcore.document.editables.multiselect = Class.create(pimcore.document.editable,
         config.valueField = "id";
 
         config.listeners = {};
-        // onchange event
-        if (config.onchange) {
-            config.listeners.change = eval(config.onchange);
-        }
 
         if (config["reload"]) {
             config.listeners.change = this.reloadDocument;

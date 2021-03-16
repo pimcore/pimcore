@@ -164,8 +164,6 @@ class TrackingManager implements TrackingManagerInterface
      * Track product view
      *
      * @param ProductInterface $product
-     *
-     * @implements ProductInterfaceView
      */
     public function trackProductView(ProductInterface $product)
     {
@@ -225,8 +223,6 @@ class TrackingManager implements TrackingManagerInterface
     /**
      * Track start checkout with first step
      *
-     * @implements CheckoutCompleteInterface
-     *
      * @param CartInterface $cart
      */
     public function trackCheckout(CartInterface $cart)
@@ -240,8 +236,6 @@ class TrackingManager implements TrackingManagerInterface
 
     /**
      * Track checkout complete
-     *
-     * @implements CheckoutCompleteInterface
      *
      * @param AbstractOrder $order
      */
@@ -264,8 +258,6 @@ class TrackingManager implements TrackingManagerInterface
 
     /**
      * Track checkout step
-     *
-     * @implements CheckoutStepInterface
      *
      * @param CheckoutManagerCheckoutStepInterface $step
      * @param CartInterface $cart

@@ -190,14 +190,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $parts;
     }
 
-    /**
-     * returns the full field name
-     *
-     * @param string $fieldName
-     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
-     *
-     * @return string
-     */
+    /** @inheritDoc */
     public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
     {
         if ($this->fieldMapping[$fieldName]) {
@@ -217,14 +210,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $fieldName;
     }
 
-    /**
-     * returns short field name based on full field name
-     * also considers subfield names like name.analyzed etc.
-     *
-     * @param string $fullFieldName
-     *
-     * @return false|int|string
-     */
+    /** @inheritDoc */
     public function getReverseMappedFieldName($fullFieldName)
     {
         //check for direct match of field name

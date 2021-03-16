@@ -448,7 +448,7 @@ class Container implements \RecursiveIterator, \Countable
      * @param  bool   $useRegex  [optional] if true PHP's preg_match is used.
      *                           Default is false.
      *
-     * @return Page|Page[]|null  matching page or null
+     * @return Page|array<Page>|null  matching page or null
      */
     public function findBy($property, $value, $all = false, $useRegex = false)
     {

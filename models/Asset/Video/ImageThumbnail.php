@@ -113,7 +113,7 @@ class ImageThumbnail
                 }
 
                 // fallback
-                if (!$timeOffset) {
+                if (!$timeOffset && $this->asset instanceof Model\Asset\Video) {
                     $timeOffset = ceil($this->asset->getDuration() / 3);
                 }
 

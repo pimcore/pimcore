@@ -53,10 +53,6 @@ pimcore.document.editables.checkbox = Class.create(pimcore.document.editable, {
 
         this.elComponent = Ext.get(this.htmlId);
 
-        // onchange event
-        if (this.config.onchange) {
-            this.elComponent.on('change', eval(this.config.onchange));
-        }
         if (this.config.reload) {
             this.elComponent.on('change', this.reloadDocument);
         }

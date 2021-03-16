@@ -64,7 +64,7 @@ abstract class AbstractSearch implements OrderListFilterInterface
     public function apply(OrderListInterface $orderList)
     {
         if (empty($this->value)) {
-            return $orderList;
+            return $this;
         }
 
         $this->prepareApply($orderList);

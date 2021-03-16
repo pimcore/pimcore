@@ -49,6 +49,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
         $rootNode->ignoreExtraKeys();
@@ -162,7 +163,6 @@ class Configuration implements ConfigurationInterface
         $this->addCustomReportsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
-        $this->addMimeNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -943,7 +943,7 @@ class Configuration implements ConfigurationInterface
     {
         $node = $parent->children()->arrayNode($name);
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
+        /** @var ArrayNodeDefinition $prototype */
         $prototype = $node->prototype('array');
         $prototype
             ->beforeNormalization()
@@ -1166,23 +1166,6 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    private function addMimeNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('mime')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('extensions')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()

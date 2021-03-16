@@ -230,7 +230,7 @@ class Service extends Model\Element\Service
         }
 
         if ($language) {
-            $new->setProperty('language', 'text', $language, false);
+            $new->setProperty('language', 'text', $language, false, true);
         }
 
         $new->save();

@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 10.0.0
+- [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
 - [Data Objects] Removed CSV import feature. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead.
 - [DataObjects] marked `Pimcore\DataObject\GridColumnConfig\Operator` operator classes as final and internal
 - [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` has been replaced with `GeoCoordinates`. Changed the signature of `__construct`.
@@ -32,10 +33,15 @@
 - Calling `$imageAsset->getThumbnail('non-existing-thumbnail-definition)` with a non-existing thumbnail definition will now throw an exception. Same goes for video assets and video image thumbnails.
 - Removed grid column operator `ObjectBrickGetter` since it is obsolete
 - Grid operator `AnyGetter` available only for admin users from now on
-   
+- [Ecommerce] Added `getAttributeConfig` method to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface` interface
+- [Ecommerce] Added `getClientConfig` method to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`   
+- [Ecommerce] Added abstract method `setSuccessorOrder` to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder`
 - [Ecommerce] Indexing doesn't catch any exceptions that occur during preprocessing of attributes in BatchProcessing workers (e.g. elasticsearch). 
-  You can change that behavior with event listeners.     
-
+  You can change that behavior with event listeners.
+- [Ecommerce] Added abstract method `setCartHash` to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder`  
+- [Ecommerce] Added `getFieldNameMapped` to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`
+- [Ecommerce] Added `getReverseMappedFieldName` to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`
+- [Ecommerce] Changed tenant config type hint to `FindologicConfigInterface` in `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic::__construct`
 - [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
 - [Ecommerce] Removed deprecated configuration options `enabled`, `pricing_manager_id` and `pricing_manager_options` for pricing_manager. 
   Use tenant specific options.  
@@ -128,8 +134,10 @@
 - [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
 - [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
 - `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.
+- Removed deprecated Twig extension `pimcore_action()`.
 
 ## 6.9.0
+- [Documents] `Editable::factory()` is deprecated and will be removed in Pimcore 10, use `EditableLoader` service instead. 
 - [Data Objects] CSV import feature will be removed in Pimcore 10. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead
 - [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` will go away in Pimcore 10. Use `GeoCoordinates` instead which changes the signature of `__construct` parameters
 - [Ecommerce] `getClientConfig` method will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
@@ -184,6 +192,7 @@
 - `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` class has been deprecated and will be removed in Pimcore 10.
 - `Pimcore\Tool\Console`: Methods `getSystemEnvironment()`, `exec()`, `execInBackground()` and `runPhpScriptInBackground()` have been deprecated, use `Symfony\Component\Process\Process` instead where possible. For long running background tasks (which should run even when parent process has exited), switch to a queue implementation.
 - Image thumbnails: Using getHtml() on Image Thumbnails will return `<picture>` tag instead of `<img>` tag in Pimcore 10. Please use `getImageTag()` method instead. Also, passing `$removeAttribute` param to `getHtml()` has been deprecated and will throw Exception in Pimcore 10.
+- Deprecated `Pimcore\Tool\Mime`, use `Symfony\Component\Mime\MimeTypes` instead.  
 
 - [Analytics] Matomo(Piwik) integration has been deprecated in Core and Ecommerce bundle, and will be removed in Pimcore 10.
 - [Targeting and Personalization] VisitedPageBefore condition has been deprecated, as it is based on deprecated Piwik integration and will be removed in Pimcore 10.

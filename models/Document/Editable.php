@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -94,29 +95,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $inDialogBox = null;
 
     /**
-     * @param string $type
-     * @param string $name
-     * @param int $documentId
-     * @param array|null $config
-     * @param string|null $controller
-     * @param null $view
-     * @param bool|null $editmode
-     *
-     * @return Editable
+     * @var EditmodeEditableDefinitionCollector|null
      */
-    public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
-    {
-        $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
-
-        /** @var Editable $editable */
-        $editable = $loader->build($type);
-        $editable->setName($name);
-        $editable->setDocumentId($documentId);
-        $editable->setEditmode($editmode);
-        $editable->setConfig($config);
-
-        return $editable;
-    }
+    private $editableDefinitionCollector;
 
     /**
      * @return string|void
@@ -125,10 +106,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function admin()
     {
-        $config = $this->getEditmodeConfig();
-        $code = $this->outputEditmodeConfig($config, true);
-
-        $attributes = $this->getEditmodeElementAttributes($config);
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $htmlContainerCode = ('<div ' . $attributeString . '></div>');
@@ -137,9 +115,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             $htmlContainerCode = $this->wrapEditmodeContainerCodeForDialogBox($attributes['id'], $htmlContainerCode);
         }
 
-        $code .= $htmlContainerCode;
-
-        return $code;
+        return $htmlContainerCode;
     }
 
     /**
@@ -167,7 +143,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return array
      */
-    protected function getEditmodeConfig(): array
+    public function getEditmodeDefinition(): array
     {
         $config = [
             // we don't use : and . in IDs (although it's allowed in HTML spec)
@@ -205,12 +181,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Builds attributes used on the editmode HTML element
      *
-     * @param array $config
-     *
      * @return array
      */
-    protected function getEditmodeElementAttributes(array $config): array
+    protected function getEditmodeElementAttributes(): array
     {
+        $config = $this->getEditmodeDefinition();
+
         if (!isset($config['id'])) {
             throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable config array', $this->getName()));
         }
@@ -275,49 +251,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         if ($this->getEditmode()) {
             echo $value . "\n";
         }
-    }
-
-    /**
-     * Push editmode config into the JS config array
-     *
-     * @param array $config
-     * @param bool $return
-     *
-     * @return string|void
-     */
-    protected function outputEditmodeConfig(array $config, $return = false)
-    {
-        // filter all non-scalar values before we pass them to the config object (JSON)
-        $clean = function ($value) use (&$clean) {
-            if (is_array($value)) {
-                foreach ($value as &$item) {
-                    $item = $clean($item);
-                }
-            } elseif (!is_scalar($value)) {
-                $value = null;
-            }
-
-            return $value;
-        };
-        $config = $clean($config);
-
-        $code = '
-            <script>
-                editableDefinitions.push(' . json_encode($config, JSON_PRETTY_PRINT) . ');
-            </script>
-        ';
-
-        if (json_last_error()) {
-            throw new \Exception('json encode failed: ' . json_last_error_msg());
-        }
-
-        if ($return) {
-            return $code;
-        }
-
-        $this->outputEditmode($code);
-
-        return;
     }
 
     /**
@@ -496,9 +429,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return mixed
      */
-    public function render()
+    final public function render()
     {
         if ($this->editmode) {
+            if ($collector = $this->getEditableDefinitionCollector()) {
+                $collector->add($this);
+            }
+
             return $this->admin();
         }
 
@@ -818,6 +755,26 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function setInDialogBox(?string $inDialogBox): self
     {
         $this->inDialogBox = $inDialogBox;
+
+        return $this;
+    }
+
+    /**
+     * @return EditmodeEditableDefinitionCollector|null
+     */
+    public function getEditableDefinitionCollector(): ?EditmodeEditableDefinitionCollector
+    {
+        return $this->editableDefinitionCollector;
+    }
+
+    /**
+     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
+     *
+     * @return $this
+     */
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    {
+        $this->editableDefinitionCollector = $editableDefinitionCollector;
 
         return $this;
     }

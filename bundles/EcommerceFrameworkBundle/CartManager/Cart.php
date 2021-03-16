@@ -84,6 +84,7 @@ class Cart extends AbstractCart implements CartInterface
 
         $arrayKeys = array_keys($this->items);
         foreach ($arrayKeys as $index => $key) {
+            /** @var CartItem $ite */
             $ite = $this->items[$key];
             $ite->setSortIndex($index);
         }

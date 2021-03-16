@@ -343,7 +343,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $properties = $translationsBaseDocument->getProperties();
                 $properties = array_merge($properties, $document->getProperties());
                 $document->setProperties($properties);
-                $document->setProperty('language', 'text', $request->get('language'));
+                $document->setProperty('language', 'text', $request->get('language'), false, true);
                 $document->save();
 
                 $service = new Document\Service();

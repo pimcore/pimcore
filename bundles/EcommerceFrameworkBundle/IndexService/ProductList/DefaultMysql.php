@@ -19,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexField
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 /**
@@ -91,9 +90,7 @@ class DefaultMysql implements ProductListInterface
         $this->resource = new DefaultMysql\Dao($this, $this->logger);
     }
 
-    /**
-     * @return AbstractProduct[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -104,12 +101,12 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @var string[]
+     * @var array<string[]>
      */
     protected $conditions = [];
 
     /**
-     * @var string[]
+     * @var array<string[]>
      */
     protected $relationConditions = [];
 
@@ -119,12 +116,12 @@ class DefaultMysql implements ProductListInterface
     protected $queryConditions = [];
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceFrom = null;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceTo = null;
 
@@ -423,7 +420,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return array|\Pimcore\Model\DataObject\AbstractObject
+     * @return array|IndexableInterface
      */
     protected function loadElementById($elementId)
     {
@@ -807,20 +804,11 @@ class DefaultMysql implements ProductListInterface
         return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function next()
     {
         $this->getProducts();
         $var = next($this->products);
-
-        return $var;
     }
 
     /**

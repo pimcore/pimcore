@@ -43,7 +43,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
     use LoggerAwareTrait;
 
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     protected $tokenStorage;
 
