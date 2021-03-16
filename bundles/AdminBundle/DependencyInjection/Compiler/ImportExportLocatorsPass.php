@@ -30,37 +30,7 @@ class ImportExportLocatorsPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $this->processImport($container);
         $this->processGridColumns($container);
-    }
-
-    private function processImport(ContainerBuilder $container)
-    {
-        $importService = $container->getDefinition(ImportService::class);
-
-        $this->createLocatorForTaggedServices(
-            $container,
-            $importService,
-            'import resolver',
-            'pimcore.data_object.import.resolver',
-            '$resolvers'
-        );
-
-        $this->createLocatorForTaggedServices(
-            $container,
-            $importService,
-            'import operator factory',
-            'pimcore.data_object.import.operator_factory',
-            '$operatorFactories'
-        );
-
-        $this->createLocatorForTaggedServices(
-            $container,
-            $importService,
-            'import value factory',
-            'pimcore.data_object.import.value_factory',
-            '$valueFactories'
-        );
     }
 
     private function processGridColumns(ContainerBuilder $container)
