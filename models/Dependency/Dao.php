@@ -229,17 +229,17 @@ class Dao extends Model\Dao\AbstractDao
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.o_path, o.o_key) as path
                 FROM dependencies d
                 JOIN objects o ON o.o_id = d.sourceid
-                WHERE d.targetid = ' . $targetId . " AND  d.targettype = '" . $targetType. "'
+                WHERE d.targetid = ' . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'object'
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
-                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
+                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'document'
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(a.path, a.filename) as path
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
-                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
+                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'asset'
             ) dep
             ORDER BY " . $orderBy . ' ' . $orderDirection;
 
