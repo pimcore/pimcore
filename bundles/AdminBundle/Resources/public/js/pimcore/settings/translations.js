@@ -351,7 +351,7 @@ pimcore.settings.translations = Class.create({
     },
 
     showImportForm: function () {
-        this.csvSettingsPanel = new pimcore.object.helpers.import.csvSettingsTab(this.config, false, this);
+        this.csvSettingsPanel = new pimcore.settings.translation.translationSettingsTab(this.config, false, this);
 
         var ImportForm = new Ext.form.FormPanel({
             width: 500,

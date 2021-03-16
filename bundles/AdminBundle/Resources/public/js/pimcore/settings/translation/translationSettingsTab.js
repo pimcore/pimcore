@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.helpers.import.csvSettingsTab");
-pimcore.object.helpers.import.csvSettingsTab = Class.create({
+pimcore.registerNS("pimcore.settings.translation.translationSettingsTab");
+pimcore.settings.translation.translationSettingsTab = Class.create({
 
     initialize: function (config, showReload, callback) {
         this.config = config;
