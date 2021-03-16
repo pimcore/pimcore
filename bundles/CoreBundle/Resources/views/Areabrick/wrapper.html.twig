@@ -8,7 +8,7 @@
 {# @var viewParameters array #}
 {# @var editableDialog \Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration #}
 
-{% if editmode %}
+{% if editmode and isAreaBlock %}
     <div class="pimcore_area_entry pimcore_block_entry" {{ editmodeOuterAttributes|raw }} {{ editmodeGenericAttributes|raw }}>
         <div class="pimcore_area_buttons" {{ editmodeGenericAttributes|raw }}>
             <div class="pimcore_area_buttons_inner">
@@ -49,6 +49,6 @@
             {% endblock %}
         {% endblock %}
 
-{% if editmode %}
+{% if editmode and isAreaBlock %}
     </div>
 {% endif %}

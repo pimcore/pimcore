@@ -107,11 +107,12 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @param int $index
+     * @param $index
+     * @param bool $return
      */
-    public function renderIndex($index)
+    public function renderIndex($index, $return = false)
     {
-        $this->start();
+        $this->start($return);
 
         $this->currentIndex = $this->indices[$index];
         $this->current = $index;
@@ -119,11 +120,18 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->blockConstruct();
         $templateParams = $this->blockStart();
 
-        $this->content(null, $templateParams);
+        $content = $this->content(null, $templateParams, $return);
+        if(!$return) {
+            echo $content;
+        }
 
         $this->blockDestruct();
         $this->blockEnd();
-        $this->end();
+        $this->end($return);
+
+        if($return) {
+            return $content;
+        }
     }
 
     /**
@@ -231,19 +239,27 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $info;
     }
 
-    public function content($info = null, $templateParams = [])
+    public function content($info = null, $templateParams = [], $return = false)
     {
         if (!$info) {
             $info = $this->buildInfoObject();
         }
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
-            $this->getEditableHandler()->renderAreaFrontend($info, false, $templateParams);
+            $templateParams['isAreaBlock'] = true;
+            $content = $this->getEditableHandler()->renderAreaFrontend($info, $templateParams);
+            if(!$return) {
+                echo $content;
+            }
             $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
             $this->brickTypeUsageCounter[$this->currentIndex['type']]++;
         }
 
         $this->current++;
+
+        if($return) {
+            return $content;
+        }
     }
 
     /**
@@ -351,9 +367,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
-     * @return $this
+     * @param bool $return
+     * @return string
      */
-    public function start()
+    public function start($return = false)
     {
         reset($this->indices);
 
@@ -363,7 +380,13 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $this->outputEditmode('<div ' . $attributeString . '>');
+        $html = '<div ' . $attributeString . '>';
+
+        if($return) {
+            return $html;
+        } else {
+            $this->outputEditmode($html);
+        }
 
         return $this;
     }
@@ -371,14 +394,20 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * Is executed at the end of the loop and removes the settings set in start()
      */
-    public function end()
+    public function end($return = false)
     {
         $this->current = 0;
 
         // remove the current block which was set by $this->start()
         $this->getBlockState()->popBlock();
 
-        $this->outputEditmode('</div>');
+        $html = '</div>';
+
+        if($return) {
+            return $html;
+        } else {
+            $this->outputEditmode($html);
+        }
     }
 
     /**
@@ -532,6 +561,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         if (empty($config['limit'])) {
             $config['limit'] = 1000000;
         }
+
+        $config['blockStateStack'] = json_encode($this->getBlockStateStack());
 
         $this->config = $config;
 

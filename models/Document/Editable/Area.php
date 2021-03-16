@@ -176,7 +176,7 @@ class Area extends Model\Document\Editable
 
         $info->setParams($params);
 
-        $editableHandler->renderAreaFrontend($info);
+        echo $editableHandler->renderAreaFrontend($info);
 
         // remove current block and index from stack
         $blockState->popIndex();

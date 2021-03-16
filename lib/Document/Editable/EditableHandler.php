@@ -36,6 +36,9 @@ use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class EditableHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -189,33 +192,13 @@ class EditableHandler implements LoggerAwareInterface
                 $desc = $this->translator->trans($desc);
             }
 
-            $template = null;
-
-            if(!$brick->needsReload()) {
-                $info = $editable->buildInfoObject();
-                $info->setId($brick->getId());
-                $info->setIndex(999999);
-                $info->setIsPreRendering(true);
-
-                $templateParams = $editable->blockStart($info);
-
-                $this->definitionCollector->stashPush();
-
-                $template = [
-                    'code' => $this->renderAreaFrontend($info, true, $templateParams),
-                    'editableDefinitions' => $this->definitionCollector->getDefinitions(),
-                ];
-
-                $this->definitionCollector->stashPull();
-            }
-
             $areas[$brick->getId()] = [
                 'name' => $name,
                 'description' => $desc,
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
-                'template' => $template,
+                'needsReload' => $brick->needsReload(),
                 'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
             ];
         }
@@ -225,10 +208,10 @@ class EditableHandler implements LoggerAwareInterface
 
     /**
      * @param Info $info
-     * @param false $return
      * @param array $templateParams
+     * @return string
      */
-    public function renderAreaFrontend(Info $info, $return = false, $templateParams = [])
+    public function renderAreaFrontend(Info $info, $templateParams = []): string
     {
         $brick = $this->brickManager->getBrick($info->getId());
 
@@ -263,6 +246,10 @@ class EditableHandler implements LoggerAwareInterface
         // general parameters
         $editmode = $this->editmodeResolver->isEditmode();
 
+        if(!isset($templateParams['isAreaBlock'])) {
+            $templateParams['isAreaBlock'] = false;
+        }
+
         // render complete areabrick
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
@@ -285,11 +272,7 @@ class EditableHandler implements LoggerAwareInterface
         // call post render
         $this->handleBrickActionResult($brick->postRenderAction($info));
 
-        if($return) {
-            return $html;
-        }
-
-        echo $html;
+        return $html;
     }
 
     protected function handleBrickActionResult($result)

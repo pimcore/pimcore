@@ -23,8 +23,6 @@ interface BlockInterface
 
     /**
      * Is executed at the beginning of the loop and setup some general settings
-     *
-     * @return $this
      */
     public function start();
 

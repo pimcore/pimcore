@@ -15,14 +15,19 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Document\Editable\Block\BlockStateStack;
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
 
 /**
  * @Route("/page")
@@ -396,6 +401,52 @@ class PageController extends DocumentControllerBase
         $response->deleteFileAfterSend(true);
 
         return $response;
+    }
+
+    /**
+     * @Route("/areabrick-render-index-editmode", name="pimcore_admin_document_page_areabrick-render-index-editmode", methods={"POST"})
+     *
+     * @param Request $request
+     * @param BlockStateStack $blockStateStack
+     * @param EditmodeEditableDefinitionCollector $definitionCollector
+     * @param Environment $twig
+     * @param EditableRenderer $editableRenderer
+     *
+     * @return JsonResponse
+     */
+    public function areabrickRenderIndexEditmode(
+        Request $request,
+        BlockStateStack $blockStateStack,
+        EditmodeEditableDefinitionCollector $definitionCollector,
+        Environment $twig,
+        EditableRenderer $editableRenderer,
+    )
+    {
+        $blockStateStackData = json_decode($request->get('blockStateStack'), true);
+        $blockStateStack->loadArray($blockStateStackData);
+
+        $document = Document\PageSnippet::getById($request->get('documentId'));
+
+        $twig->addGlobal('document', $document);
+        $twig->addGlobal('editmode', true);
+
+        // we can't use EditmodeResolver::setForceEditmode() here, because it would also render included documents in editmode
+        // so we use the attribute as a workaround
+        $request->attributes->set(EditmodeResolver::ATTRIBUTE_EDITMODE, true);
+
+        $areaBlockConfig = json_decode($request->get('areablockConfig'), true);
+        /** @var Document\Editable\Areablock $areablock */
+        $areablock = $editableRenderer->getEditable($document, 'areablock', $request->get('realName'), $areaBlockConfig,true);
+        $areablock->setRealName($request->get('realName'));
+        $areablock->setEditmode(true);
+        $areaBrickData = json_decode($request->get('areablockData'), true);
+        $areablock->setDataFromEditmode($areaBrickData);
+        $htmlCode = trim($areablock->renderIndex($request->get('index'), true));
+
+        return new JsonResponse([
+            'editableDefinitions' => $definitionCollector->getDefinitions(),
+            'htmlCode' => $htmlCode,
+        ]);
     }
 
     /**
