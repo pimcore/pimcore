@@ -19,6 +19,8 @@ namespace Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\ImportConfigShare\Dao getDao()
+ *
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
  */
 class ImportConfigShare extends AbstractModel
 {

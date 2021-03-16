@@ -23,6 +23,8 @@ use Pimcore\Model;
  * @method \Pimcore\Model\ImportConfigShare\Listing\Dao getDao()
  * @method Model\ImportConfigShare[] load()
  * @method Model\ImportConfigShare current()
+ *
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
  */
 class Listing extends Model\Listing\AbstractListing
 {
