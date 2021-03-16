@@ -23,6 +23,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class DefaultValue extends AbstractConfigElement implements ValueInterface
 {
     /**

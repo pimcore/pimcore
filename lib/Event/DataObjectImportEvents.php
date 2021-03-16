@@ -14,6 +14,9 @@
 
 namespace Pimcore\Event;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 final class DataObjectImportEvents
 {
     /**

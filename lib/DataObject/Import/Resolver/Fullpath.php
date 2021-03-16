@@ -24,6 +24,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\FactoryInterface;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class Fullpath extends AbstractResolver
 {
     /**

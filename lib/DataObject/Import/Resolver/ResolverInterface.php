@@ -19,6 +19,9 @@ namespace Pimcore\DataObject\Import\Resolver;
 
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 interface ResolverInterface
 {
     /**

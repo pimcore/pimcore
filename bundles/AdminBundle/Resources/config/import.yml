@@ -5,7 +5,8 @@ services:
         public: false
 
     # resolvers and operator/value factories will be injected from compiler pass
-    Pimcore\DataObject\Import\Service: ~
+    Pimcore\DataObject\Import\Service:
+        deprecated: ~
 
     #
     # RESOLVERS
