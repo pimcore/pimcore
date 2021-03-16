@@ -107,7 +107,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @param $index
+     * @param int $index
      * @param bool $return
      */
     public function renderIndex($index, $return = false)
@@ -244,6 +244,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         if (!$info) {
             $info = $this->buildInfoObject();
         }
+
+        $content = '';
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
             $templateParams['isAreaBlock'] = true;
