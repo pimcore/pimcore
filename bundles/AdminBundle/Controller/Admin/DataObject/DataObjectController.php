@@ -1466,7 +1466,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $id = intval($request->get('id'));
         $version = Model\Version::getById($id);
-        $object = $version->loadData();
+        $object = $version->loadData(false);
 
         DataObject\AbstractObject::setDoNotRestoreKeyAndPath(false);
 
@@ -1501,10 +1501,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $id2 = intval($to);
 
         $version1 = Model\Version::getById($id1);
-        $object1 = $version1->loadData();
+        $object1 = $version1->loadData(false);
 
         $version2 = Model\Version::getById($id2);
-        $object2 = $version2->loadData();
+        $object2 = $version2->loadData(false);
 
         DataObject\AbstractObject::setDoNotRestoreKeyAndPath(false);
 
