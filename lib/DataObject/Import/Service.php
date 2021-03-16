@@ -35,6 +35,9 @@ use Pimcore\Model\User;
 use Pimcore\Tool;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class Service
 {
     const FORBIDDEN_KEYS = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate', 'key'];

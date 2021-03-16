@@ -17,6 +17,9 @@
 
 namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class PHPCode extends AbstractOperator
 {
     /**

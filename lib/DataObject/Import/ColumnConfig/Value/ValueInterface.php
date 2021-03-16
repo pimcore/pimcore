@@ -19,6 +19,9 @@ namespace Pimcore\DataObject\Import\ColumnConfig\Value;
 
 use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 interface ValueInterface extends ConfigElementInterface
 {
 }

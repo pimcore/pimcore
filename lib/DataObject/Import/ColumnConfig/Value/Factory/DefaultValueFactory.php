@@ -19,6 +19,9 @@ namespace Pimcore\DataObject\Import\ColumnConfig\Value\Factory;
 
 use Pimcore\DataObject\Import\ColumnConfig\Value\ValueInterface;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class DefaultValueFactory implements ValueFactoryInterface
 {
     /**
