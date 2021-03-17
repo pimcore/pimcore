@@ -171,9 +171,9 @@ Ext.onReady(function () {
             ) {
                 new Ext.ToolTip({
                     target: tmpEl,
-                    showDelay: 100,
+                    showDelay: 1000,
                     hideDelay: 0,
-                    trackMouse: true,
+                    trackMouse: false,
                     html: t("click_right_for_more_options")
                 });
             }
