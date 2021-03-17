@@ -419,7 +419,7 @@ class PageController extends DocumentControllerBase
         BlockStateStack $blockStateStack,
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
-        EditableRenderer $editableRenderer,
+        EditableRenderer $editableRenderer
     )
     {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
