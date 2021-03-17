@@ -340,7 +340,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function unmarshal($value, $object = null, $params = [])
     {
@@ -352,7 +352,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
                     $result[] = new DataObject\Data\Geopoint($point[1], $point[0]);
                 }
             }
-            $result = Serialize::serialize($result);
 
             return $result;
         }
