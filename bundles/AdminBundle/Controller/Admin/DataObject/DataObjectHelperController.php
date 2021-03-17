@@ -19,23 +19,15 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\DataObject\Import\Resolver\ImportErrorException;
-use Pimcore\DataObject\Import\Resolver\ImportWarningException;
-use Pimcore\DataObject\Import\Service as ImportService;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Event\DataObjectImportEvents;
-use Pimcore\Event\Model\DataObjectImportEvent;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\FactoryInterface;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
-use Pimcore\Model\ImportConfig;
-use Pimcore\Model\ImportConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
@@ -43,7 +35,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -1704,5 +1695,4 @@ class DataObjectHelperController extends AdminController
             }
         }
     }
-
 }

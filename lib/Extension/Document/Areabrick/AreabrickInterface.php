@@ -115,9 +115,9 @@ interface AreabrickInterface
      */
     public function getHtmlTagClose(Info $info);
 
-
     /**
      * Whether the UI needs a reload after this brick was added or removed
+     *
      * @return bool
      */
     public function needsReload(): bool;

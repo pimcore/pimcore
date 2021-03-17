@@ -91,17 +91,18 @@ class BlockStateStack implements \Countable, \JsonSerializable
         return $this->states;
     }
 
-    public function loadArray(array $array) {
+    public function loadArray(array $array)
+    {
         $this->states = [];
 
-        foreach($array as $blockStateData) {
+        foreach ($array as $blockStateData) {
             $blockState = new BlockState();
 
-            foreach($blockStateData['blocks'] as $blockData) {
+            foreach ($blockStateData['blocks'] as $blockData) {
                 $blockState->pushBlock(new BlockName($blockData['name'], $blockData['realName']));
             }
 
-            foreach($blockStateData['indexes'] as $indexData) {
+            foreach ($blockStateData['indexes'] as $indexData) {
                 $blockState->pushIndex($indexData);
             }
 

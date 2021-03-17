@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
 
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnService;
-use Pimcore\DataObject\Import\Service as ImportService;
 use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
