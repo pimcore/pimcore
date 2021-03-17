@@ -321,7 +321,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
     copyToClipboard: function (element) {
 
-        var ea;
         var areaIdentifier = {
             name: this.getName(),
             realName: this.getRealName(),
@@ -335,22 +334,20 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         };
 
         // check which editables are inside this area and get the data
-        for (var i = 0; i < editables.length; i++) {
+        Object.values(editableManager.getEditables()).forEach(editable => {
             try {
-                ea = editables[i];
-
-                if (!ea.getName()) {
-                    continue;
+                if (!editable.getName()) {
+                    return;
                 }
 
-                var editableData = this.copyData(areaIdentifier, ea);
+                var editableData = this.copyData(areaIdentifier, editable);
                 if (editableData) {
-                    item.values[ea.getName()] = editableData;
+                    item.values[editable.getName()] = editableData;
                 }
             } catch (e) {
                 console.error(e);
             }
-        }
+        });
 
         pimcore.globalmanager.add("areablock_clipboard", Ext.encode(item));
     },
@@ -475,7 +472,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                     Ext.iterate(item.values, function (key, value, object) {
                         var editableName = that.getPasteName(areaIdentifier, item, value);
 
-                        editables.push({
+                        editableManager.add({
                             getName: function () {
                                 return editableName;
                             },
@@ -494,7 +491,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                         });
                     });
 
-                    this.addBlockAfter(element, item.type);
+                    this.addBlockAfter(element, item.type, true);
+                    this.reloadDocument();
                 }.bind(this)
             }));
         }
@@ -717,14 +715,14 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         return nextKey;
     },
 
-    addBlockAfter : function (element, type) {
+    addBlockAfter : function (element, type, forceReload) {
         var index = this.getElementIndex(element) + 1;
 
         if(!this.elements.length) {
             index = 0;
         }
 
-        this.addBlockAt(type, index);
+        this.addBlockAt(type, index, forceReload);
     },
 
     addBlockBefore : function (element, type) {
@@ -732,7 +730,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         this.addBlockAt(type, index);
     },
 
-    addBlockAt: function (type, index) {
+    addBlockAt: function (type, index, forceReload) {
         var limits = this.config["limits"] || {};
 
         if(typeof this.config["limit"] != "undefined" && this.elements.length >= this.config.limit) {
@@ -754,8 +752,16 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         var nextKey = this.getNextKey();
         nextKey++;
 
-        if(!this.config.types[brickIndex]['needsReload']) {
+        if(this.config.types[brickIndex]['needsReload'] || forceReload) {
+            editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
 
+            this.elements.splice.apply(this.elements, [index, 0, {
+                key: nextKey,
+                type: type
+            }]);
+
+            this.reloadDocument();
+        } else {
             let saveData = this.getValue();
             saveData.splice.apply(saveData, [index, 0, {
                 key: nextKey,
@@ -792,16 +798,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
                 }.bind(this)
             });
-
-        } else {
-            editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
-
-            this.elements.splice.apply(this.elements, [index, 0, {
-                key: nextKey,
-                type: type
-            }]);
-
-            this.reloadDocument();
         }
     },
 
