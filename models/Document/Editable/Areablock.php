@@ -108,22 +108,30 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * @param int $index
+     * @param bool $return
      */
-    public function renderIndex($index)
+    public function renderIndex($index, $return = false)
     {
-        $this->start();
+        $this->start($return);
 
         $this->currentIndex = $this->indices[$index];
         $this->current = $index;
 
         $this->blockConstruct();
-        $this->blockStart();
+        $templateParams = $this->blockStart();
 
-        $this->content();
+        $content = $this->content(null, $templateParams, $return);
+        if(!$return) {
+            echo $content;
+        }
 
         $this->blockDestruct();
         $this->blockEnd();
-        $this->end();
+        $this->end($return);
+
+        if($return) {
+            return $content;
+        }
     }
 
     /**
@@ -179,10 +187,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
             if (!$manual && !$disabled) {
                 $this->blockConstruct();
-                $this->blockStart($info);
+                $templateParams = $this->blockStart($info);
 
                 $this->blockStarted = true;
-                $this->content($info);
+                $this->content($info, $templateParams);
             } elseif (!$manual) {
                 $this->current++;
             }
@@ -197,12 +205,16 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    protected function buildInfoObject(): Area\Info
+    /**
+     * @internal
+     * @return Area\Info
+     */
+    public function buildInfoObject(): Area\Info
     {
         // create info object and assign it to the view
         $info = new Area\Info();
         try {
-            $info->setId($this->currentIndex['type']);
+            $info->setId($this->currentIndex ? $this->currentIndex['type'] : null);
             $info->setEditable($this);
             $info->setIndex($this->current);
         } catch (\Exception $e) {
@@ -227,19 +239,29 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $info;
     }
 
-    public function content($info = null)
+    public function content($info = null, $templateParams = [], $return = false)
     {
         if (!$info) {
             $info = $this->buildInfoObject();
         }
 
+        $content = '';
+
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
-            $this->getEditableHandler()->renderAreaFrontend($info);
+            $templateParams['isAreaBlock'] = true;
+            $content = $this->getEditableHandler()->renderAreaFrontend($info, $templateParams);
+            if(!$return) {
+                echo $content;
+            }
             $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
             $this->brickTypeUsageCounter[$this->currentIndex['type']]++;
         }
 
         $this->current++;
+
+        if($return) {
+            return $content;
+        }
     }
 
     /**
@@ -347,9 +369,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
-     * @return $this
+     * @param bool $return
+     * @return string
      */
-    public function start()
+    public function start($return = false)
     {
         reset($this->indices);
 
@@ -359,7 +382,13 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $this->outputEditmode('<div ' . $attributeString . '>');
+        $html = '<div ' . $attributeString . '>';
+
+        if($return) {
+            return $html;
+        } else {
+            $this->outputEditmode($html);
+        }
 
         return $this;
     }
@@ -367,14 +396,20 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * Is executed at the end of the loop and removes the settings set in start()
      */
-    public function end()
+    public function end($return = false)
     {
         $this->current = 0;
 
         // remove the current block which was set by $this->start()
         $this->getBlockState()->popBlock();
 
-        $this->outputEditmode('</div>');
+        $html = '</div>';
+
+        if($return) {
+            return $html;
+        } else {
+            $this->outputEditmode($html);
+        }
     }
 
     /**
@@ -412,56 +447,41 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $attr = HtmlUtils::assembleAttributeString($attributes);
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
-        // outer element
-        $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
-
-        $this->outputEditmode('<div class="pimcore_area_buttons" ' . $attr . '>');
-        $this->outputEditmode('<div class="pimcore_area_buttons_inner">');
-
-        $this->outputEditmode('<div class="pimcore_block_plus_up" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_down" ' . $attr . '></div>');
-
-        $this->outputEditmode('<div class="pimcore_block_type" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
-
+        $dialogAttributes = '';
         if ($dialogConfig) {
-            $dialogAttributes = [
+            $dialogAttributes = HtmlUtils::assembleAttributeString([
                 'data-dialog-id' => $dialogConfig->getId(),
-            ];
-
-            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
-
-            $this->outputEditmode('<div class="pimcore_block_dialog" ' . $attr . ' ' . $dialogAttributes . '></div>');
+            ]);
         }
 
-        $this->outputEditmode('<div class="pimcore_block_label" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
-
-        $this->outputEditmode('</div>'); // .pimcore_area_buttons_inner
-        $this->outputEditmode('</div>'); // .pimcore_area_buttons
-
+        $dialogHtml = '';
         if ($dialogConfig) {
             $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
-            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \htmlspecialchars(\json_encode($dialogConfig)) . '</template>');
-            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
         }
+
+        return [
+            'editmodeOuterAttributes' => $oAttr,
+            'editmodeGenericAttributes' => $attr,
+            'editableDialog' => $dialogConfig,
+            'editableDialogAttributes' => $dialogAttributes,
+            'dialogHtml' => $dialogHtml,
+        ];
     }
 
     /**
      * @param array $config
      * @param EditableRenderer $editableRenderer
      * @param string $dialogId
+     * @param string $html
+     * @throws \Exception
      */
-    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId)
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
     {
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
             foreach ($config['items'] as $child) {
-                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
+                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId, $html);
             }
         } elseif (isset($config['name']) && isset($config['type'])) {
             $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
@@ -471,10 +491,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
             $editable->setInDialogBox($dialogId);
             $editable->addConfig('dialogBoxConfig', $config);
-            $this->outputEditmode($editable->admin());
+            $html .= $editable->render();
         } elseif (is_array($config) && isset($config[0])) {
             foreach ($config as $item) {
-                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
+                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);
             }
         }
     }
@@ -484,8 +504,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function blockEnd()
     {
-        // close outer element
-        $this->outputEditmode('</div>');
+
     }
 
     /**
@@ -545,6 +564,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         if (empty($config['limit'])) {
             $config['limit'] = 1000000;
         }
+
+        $config['blockStateStack'] = json_encode($this->getBlockStateStack());
 
         $this->config = $config;
 

@@ -69,7 +69,7 @@ pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
 
     getEditablesInDialogBox: function (id) {
         let editablesInDialogBox = {};
-        window.editables.forEach(function (editable) {
+        Object.values(editableManager.getEditables()).forEach(editable => {
             if(editable.getInDialogBox() === id) {
                 editablesInDialogBox[editable.getRealName()] = editable;
             }

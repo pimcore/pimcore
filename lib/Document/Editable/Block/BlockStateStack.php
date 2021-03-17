@@ -22,7 +22,7 @@ namespace Pimcore\Document\Editable\Block;
  * data which previously was handled in Registry pimcore_tag_block_current and
  * pimcore_tag_block_numeration.
  */
-class BlockStateStack implements \Countable
+class BlockStateStack implements \Countable, \JsonSerializable
 {
     /**
      * @var BlockState[]
@@ -81,5 +81,31 @@ class BlockStateStack implements \Countable
     public function count(): int
     {
         return count($this->states);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->states;
+    }
+
+    public function loadArray(array $array) {
+        $this->states = [];
+
+        foreach($array as $blockStateData) {
+            $blockState = new BlockState();
+
+            foreach($blockStateData['blocks'] as $blockData) {
+                $blockState->pushBlock(new BlockName($blockData['name'], $blockData['realName']));
+            }
+
+            foreach($blockStateData['indexes'] as $indexData) {
+                $blockState->pushIndex($indexData);
+            }
+
+            $this->states[] = $blockState;
+        }
     }
 }
