@@ -1215,6 +1215,9 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                                 areablocks[i].removeDropZones();
                             }
                         }.bind(this),
+                        beforeDragOut: function (target) {
+                            return target ? true : false;
+                        },
                         afterInvalidDrop: function () {
                             var areablocks = pimcore.document.editables[this.toolbarGlobalVar].areablocks;
                             for(var i=0; i<areablocks.length; i++) {
