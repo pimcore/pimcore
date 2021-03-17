@@ -298,12 +298,19 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value) {
+        if ($value instanceof DataObject\Data\Geobounds) {
+            return [
+                'value' => json_encode([$value->getNorthEast()->getLatitude(), $value->getNorthEast()->getLongitude()]),
+                'value2' => json_encode([$value->getSouthWest()->getLatitude(), $value->getSouthWest()->getLongitude()]),
+            ];
+        } elseif (is_array($value)) {
             return [
                 'value' => json_encode([$value[$this->getName() . '__NElatitude'], $value[$this->getName() . '__NElongitude']]),
                 'value2' => json_encode([$value[$this->getName() . '__SWlatitude'], $value[$this->getName() . '__SWlongitude']]),
             ];
         }
+
+        return $value;
     }
 
     /** See marshal
@@ -319,14 +326,13 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $dataNE = json_decode($value['value']);
             $dataSW = json_decode($value['value2']);
 
-            $result = [];
-            $result[$this->getName() . '__NElatitude'] = $dataNE[0];
-            $result[$this->getName() . '__NElongitude'] = $dataNE[1];
-            $result[$this->getName() . '__SWlatitude'] = $dataSW[0];
-            $result[$this->getName() . '__SWlongitude'] = $dataSW[1];
+            $ne = new DataObject\Data\Geopoint($dataNE[1], $dataNE[0]);
+            $sw = new DataObject\Data\Geopoint($dataSW[1], $dataSW[0]);
 
-            return $result;
+            return new DataObject\Data\Geobounds($ne, $sw);
         }
+
+        return $value;
     }
 
     /**
