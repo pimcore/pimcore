@@ -209,6 +209,7 @@ class EditableHandler implements LoggerAwareInterface
     /**
      * @param Info $info
      * @param array $templateParams
+     *
      * @return string
      */
     public function renderAreaFrontend(Info $info, $templateParams = []): string
@@ -246,7 +247,7 @@ class EditableHandler implements LoggerAwareInterface
         // general parameters
         $editmode = $this->editmodeResolver->isEditmode();
 
-        if(!isset($templateParams['isAreaBlock'])) {
+        if (!isset($templateParams['isAreaBlock'])) {
             $templateParams['isAreaBlock'] = false;
         }
 

@@ -121,7 +121,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $templateParams = $this->blockStart();
 
         $content = $this->content(null, $templateParams, $return);
-        if(!$return) {
+        if (!$return) {
             echo $content;
         }
 
@@ -129,7 +129,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->blockEnd();
         $this->end($return);
 
-        if($return) {
+        if ($return) {
             return $content;
         }
     }
@@ -207,6 +207,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * @internal
+     *
      * @return Area\Info
      */
     public function buildInfoObject(): Area\Info
@@ -250,7 +251,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
             $templateParams['isAreaBlock'] = true;
             $content = $this->getEditableHandler()->renderAreaFrontend($info, $templateParams);
-            if(!$return) {
+            if (!$return) {
                 echo $content;
             }
             $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
@@ -259,7 +260,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         $this->current++;
 
-        if($return) {
+        if ($return) {
             return $content;
         }
     }
@@ -370,6 +371,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      * Is executed at the beginning of the loop and setup some general settings
      *
      * @param bool $return
+     *
      * @return string
      */
     public function start($return = false)
@@ -384,7 +386,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         $html = '<div ' . $attributeString . '>';
 
-        if($return) {
+        if ($return) {
             return $html;
         } else {
             $this->outputEditmode($html);
@@ -405,7 +407,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         $html = '</div>';
 
-        if($return) {
+        if ($return) {
             return $html;
         } else {
             $this->outputEditmode($html);
@@ -474,6 +476,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      * @param EditableRenderer $editableRenderer
      * @param string $dialogId
      * @param string $html
+     *
      * @throws \Exception
      */
     private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
@@ -504,7 +507,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function blockEnd()
     {
-
     }
 
     /**
