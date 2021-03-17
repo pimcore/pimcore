@@ -168,4 +168,9 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     {
         return $this->editableRenderer->getEditable($document, $type, $inputName, $options);
     }
+
+    public function needsReload(): bool
+    {
+        return false;
+    }
 }

@@ -53,6 +53,10 @@ pimcore.document.editables.manager = Class.create({
         }
     },
 
+    add: function(editable) {
+        this.editables[editable.getName()] = editable;
+    },
+
     remove: function(name) {
         delete this.editables[name];
         delete this.requiredEditables[name];

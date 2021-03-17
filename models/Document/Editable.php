@@ -100,31 +100,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     private $editableDefinitionCollector;
 
     /**
-     * @param string $type
-     * @param string $name
-     * @param int $documentId
-     * @param array|null $config
-     * @param string|null $controller
-     * @param null $view
-     * @param bool|null $editmode
-     *
-     * @return Editable
-     */
-    public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
-    {
-        $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
-
-        /** @var Editable $editable */
-        $editable = $loader->build($type);
-        $editable->setName($name);
-        $editable->setDocumentId($documentId);
-        $editable->setEditmode($editmode);
-        $editable->setConfig($config);
-
-        return $editable;
-    }
-
-    /**
      * @return string|void
      *
      * @throws \Exception
@@ -579,13 +554,16 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * TODO inject block state via DI
-     *
      * @return BlockState
      */
     protected function getBlockState(): BlockState
     {
-        return \Pimcore::getContainer()->get(BlockStateStack::class)->getCurrentState();
+        return $this->getBlockStateStack()->getCurrentState();
+    }
+
+    protected function getBlockStateStack(): BlockStateStack
+    {
+        return \Pimcore::getContainer()->get(BlockStateStack::class);
     }
 
     /**
