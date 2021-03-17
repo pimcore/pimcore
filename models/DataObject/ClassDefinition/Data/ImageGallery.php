@@ -586,26 +586,19 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value) {
-            if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\ImageGallery) {
-                $list = [];
-                $items = $value->getItems();
-                $def = new Hotspotimage();
-                if ($items) {
-                    foreach ($items as $item) {
-                        if ($item instanceof DataObject\Data\Hotspotimage) {
-                            $list[] = $def->marshal($item, $object, $params);
-                        }
+        if ($value instanceof Model\DataObject\Data\ImageGallery) {
+            $list = [];
+            $items = $value->getItems();
+            $def = new Hotspotimage();
+            if ($items) {
+                foreach ($items as $item) {
+                    if ($item instanceof DataObject\Data\Hotspotimage) {
+                        $list[] = $def->marshal($item, $object, $params);
                     }
                 }
-
-                return $list;
             }
 
-            return [
-                    'value' => $value[$this->getName() . '__images'],
-                    'value2' => $value[$this->getName() . '__hotspots'],
-                ];
+            return $list;
         }
 
         return null;
@@ -613,31 +606,21 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /** See marshal
      * @param mixed $value
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (($params['blockmode'] ?? false) && is_array($value)) {
+        if (is_array($value)) {
             $items = [];
             $def = new Hotspotimage();
             foreach ($value as $rawValue) {
                 $items[] = $def->unmarshal($rawValue, $object, $params);
             }
 
-            $gal = new DataObject\Data\ImageGallery($items);
-
-            return $gal;
-        }
-
-        if ($value) {
-            $result = [];
-            $result[$this->getName() . '__images'] = $value['value'];
-            $result[$this->getName() . '__hotspots'] = $value['hotspots'];
-
-            return $result;
+            return new DataObject\Data\ImageGallery($items);
         }
 
         return null;
