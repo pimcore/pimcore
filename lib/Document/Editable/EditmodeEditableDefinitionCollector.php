@@ -21,17 +21,10 @@ use Pimcore\Model\Document\Editable;
 
 final class EditmodeEditableDefinitionCollector
 {
-    private bool $stopped = false;
-
     /**
      * @var array
      */
     private array $editableDefinitions = [];
-
-    /**
-     * @var Editable[]
-     */
-    private array $stash = [];
 
     /**
      * @param Editable $editable
@@ -40,10 +33,6 @@ final class EditmodeEditableDefinitionCollector
      */
     public function add(Editable $editable): void
     {
-        if ($this->stopped) {
-            return;
-        }
-
         if (isset($this->editableDefinitions[$editable->getName()])) {
             throw new \Exception(sprintf('Duplicate editable name `%s`', $editable->getName()));
         }
@@ -56,26 +45,6 @@ final class EditmodeEditableDefinitionCollector
         if (isset($this->editableDefinitions[$editable->getName()])) {
             unset($this->editableDefinitions[$editable->getName()]);
         }
-    }
-
-    public function start(): void
-    {
-        $this->stopped = false;
-    }
-
-    public function stop(): void
-    {
-        $this->stopped = true;
-    }
-
-    public function stashPush(): void
-    {
-        $this->stash = $this->editableDefinitions;
-    }
-
-    public function stashPull(): void
-    {
-        $this->editableDefinitions = $this->stash;
     }
 
     /**

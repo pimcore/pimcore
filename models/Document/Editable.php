@@ -554,13 +554,16 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * TODO inject block state via DI
-     *
      * @return BlockState
      */
     protected function getBlockState(): BlockState
     {
-        return \Pimcore::getContainer()->get(BlockStateStack::class)->getCurrentState();
+        return $this->getBlockStateStack()->getCurrentState();
+    }
+
+    protected function getBlockStateStack(): BlockStateStack
+    {
+        return \Pimcore::getContainer()->get(BlockStateStack::class);
     }
 
     /**
