@@ -752,7 +752,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         var nextKey = this.getNextKey();
         nextKey++;
 
-        if(this.config.types[brickIndex]['needsReload'] || forceReload) {
+        if(this.config.types[brickIndex]['needsReload'] || forceReload === true) {
             editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
 
             this.elements.splice.apply(this.elements, [index, 0, {
