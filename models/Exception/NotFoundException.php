@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Exception;
 
+/**
+ * @deprecated since v6.9 and will be removed in Pimcore 10.
+ */
 class NotFoundException extends \RuntimeException
 {
 }

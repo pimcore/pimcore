@@ -318,7 +318,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function unmarshal($value, $object = null, $params = [])
     {
@@ -330,7 +330,6 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
                     $result[] = new DataObject\Data\GeoCoordinates($point[0], $point[1]);
                 }
             }
-            $result = Serialize::serialize($result);
 
             return $result;
         }
