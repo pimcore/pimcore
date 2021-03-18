@@ -115,7 +115,7 @@ class EncryptedField implements OwnerAwareFieldInterface
                 throw new \Exception('could not load key');
             }
 
-            return ['encrypted'];
+            return ['encrypted', '_owner'];
         }
 
         return [];
