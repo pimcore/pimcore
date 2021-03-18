@@ -24,12 +24,12 @@ trait LabelTrait
      *
      * @var string|int
      */
-    public $labelWidth = 100;
+    protected $labelWidth = 100;
 
     /**
      * @var string
      */
-    public $labelAlign = 'left';
+    protected $labelAlign = 'left';
 
     /**
      * @param string|int $labelWidth

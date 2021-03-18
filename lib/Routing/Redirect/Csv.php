@@ -274,7 +274,7 @@ class Csv
         $resolver->setAllowedTypes('statusCode', ['int']);
         $resolver->setAllowedValues('statusCode', array_map(function ($code) {
             return (int)$code;
-        }, array_keys(Redirect::$statusCodes)));
+        }, array_keys(Redirect::getStatusCodes())));
 
         $resolver->setAllowedTypes('priority', ['int']);
         $resolver->setAllowedValues('priority', array_merge(range(1, 10), [99]));

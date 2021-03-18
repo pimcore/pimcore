@@ -85,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
         $amount = 0;
 
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' where parentId= ' . $this->model->id);
+            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' where parentId= ' . $this->model->getId());
         } catch (\Exception $e) {
         }
 

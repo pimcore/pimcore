@@ -31,22 +31,22 @@ class SettingsStore extends Model\AbstractModel
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $scope;
+    protected $scope;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var mixed
      */
-    public $data;
+    protected $data;
 
     /**
      * @var SettingsStore
@@ -207,4 +207,5 @@ class SettingsStore extends Model\AbstractModel
         }
         $this->data = $data;
     }
+
 }

@@ -35,42 +35,42 @@ class Rule extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var string
      */
-    public $scope = self::SCOPE_HIT;
+    protected $scope = self::SCOPE_HIT;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var int
      */
-    public $prio = 0;
+    protected $prio = 0;
 
     /**
      * @var array
      */
-    public $conditions = [];
+    protected $conditions = [];
 
     /**
      * @var array
      */
-    public $actions = [];
+    protected $actions = [];
 
     /**
      * @param mixed $target

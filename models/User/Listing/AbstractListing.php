@@ -29,7 +29,7 @@ class AbstractListing extends Model\Listing\AbstractListing
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @return array

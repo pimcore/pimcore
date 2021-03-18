@@ -25,5 +25,5 @@ class Role extends UserRole
     /**
      * @var string
      */
-    public $type = 'role';
+    protected $type = 'role';
 }

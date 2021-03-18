@@ -41,42 +41,42 @@ class Item extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $path;
+    protected $path;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      */
-    public $subtype;
+    protected $subtype;
 
     /**
      * @var int
      */
-    public $amount = 0;
+    protected $amount = 0;
 
     /**
      * @var Element\ElementInterface
      */
-    public $element;
+    protected $element;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var string
      */
-    public $deletedby;
+    protected $deletedby;
 
     /**
      * @static

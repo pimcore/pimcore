@@ -30,22 +30,22 @@ class UUID extends Model\AbstractModel
     /**
      * @var int
      */
-    public $itemId;
+    protected $itemId;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      */
-    public $uuid;
+    protected $uuid;
 
     /**
      * @var string
      */
-    public $instanceIdentifier;
+    protected $instanceIdentifier;
 
     /**
      * @var mixed

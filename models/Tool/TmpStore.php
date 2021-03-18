@@ -28,32 +28,32 @@ class TmpStore extends Model\AbstractModel
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $tag;
+    protected $tag;
 
     /**
      * @var mixed
      */
-    public $data;
+    protected $data;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var int
      */
-    public $expiryDate;
+    protected $expiryDate;
 
     /**
      * @var bool
      */
-    public $serialized = false;
+    protected $serialized = false;
 
     /**
      * @var TmpStore|null
@@ -275,4 +275,5 @@ class TmpStore extends Model\AbstractModel
 
         return $this->getDao()->add($this->getId(), $this->getData(), $this->getTag(), $lifetime);
     }
+
 }

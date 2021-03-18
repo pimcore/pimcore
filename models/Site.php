@@ -35,54 +35,54 @@ class Site extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var array
      */
-    public $domains;
+    protected $domains;
 
     /**
      * Contains the ID to the Root-Document
      *
      * @var int
      */
-    public $rootId;
+    protected $rootId;
 
     /**
      * @var Document\Page
      */
-    public $rootDocument;
+    protected $rootDocument;
 
     /**
      * @var string
      */
-    public $rootPath;
+    protected $rootPath;
 
     /**
      * @var string
      */
-    public $mainDomain = '';
+    protected $mainDomain = '';
 
     /**
      * @var string
      */
-    public $errorDocument = '';
+    protected $errorDocument = '';
 
     /**
      * @var bool
      */
-    public $redirectToMainDomain = false;
+    protected $redirectToMainDomain = false;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id

@@ -29,102 +29,102 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
      * @var string
      */
-    public $sql = '';
+    protected $sql = '';
 
     /**
      * @var array
      */
-    public $dataSourceConfig = [];
+    protected $dataSourceConfig = [];
 
     /**
      * @var array
      */
-    public $columnConfiguration = [];
+    protected $columnConfiguration = [];
 
     /**
      * @var string
      */
-    public $niceName = '';
+    protected $niceName = '';
 
     /**
      * @var string
      */
-    public $group = '';
+    protected $group = '';
 
     /**
      * @var string
      */
-    public $groupIconClass = '';
+    protected $groupIconClass = '';
 
     /**
      * @var string
      */
-    public $iconClass = '';
+    protected $iconClass = '';
 
     /**
      * @var bool
      */
-    public $menuShortcut;
+    protected $menuShortcut;
 
     /**
      * @var string
      */
-    public $reportClass;
+    protected $reportClass;
 
     /**
      * @var string
      */
-    public $chartType;
+    protected $chartType;
 
     /**
      * @var string
      */
-    public $pieColumn;
+    protected $pieColumn;
 
     /**
      * @var string
      */
-    public $pieLabelColumn;
+    protected $pieLabelColumn;
 
     /**
      * @var string
      */
-    public $xAxis;
+    protected $xAxis;
 
     /**
      * @var string|array
      */
-    public $yAxis;
+    protected $yAxis;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var bool
      */
-    public $shareGlobally;
+    protected $shareGlobally;
 
     /**
      * @var string[]
      */
-    public $sharedUserNames;
+    protected $sharedUserNames;
 
     /**
      * @var string[]
      */
-    public $sharedRoleNames;
+    protected $sharedRoleNames;
 
     /**
      * @param string $name
