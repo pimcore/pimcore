@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
+final class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

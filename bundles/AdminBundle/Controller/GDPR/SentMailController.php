@@ -26,8 +26,6 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/sent-mail")
  *
- * @package GDPRDataExtractorBundle\Controller
- *
  * @internal
  */
 final class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface

@@ -20,7 +20,7 @@ use Pimcore\Config;
 /**
  * @internal
  */
-class ReportsControllerBase extends AdminController
+abstract class ReportsControllerBase extends AdminController
 {
     /**
      * @return \Pimcore\Config\Config

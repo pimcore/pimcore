@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @internal
  */
-class PrintpageControllerBase extends DocumentControllerBase
+abstract class PrintpageControllerBase extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

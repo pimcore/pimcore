@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class PageController extends DocumentControllerBase
+final class PageController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

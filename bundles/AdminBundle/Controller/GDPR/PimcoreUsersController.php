@@ -26,8 +26,6 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/pimcore-users")
  *
- * @package GDPRDataExtractorBundle\Controller
- *
  * @internal
  */
 final class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface

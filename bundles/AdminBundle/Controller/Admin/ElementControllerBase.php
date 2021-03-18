@@ -35,7 +35,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-class ElementControllerBase extends AdminController
+abstract class ElementControllerBase extends AdminController
 {
     /**
      * @param ElementInterface $element
