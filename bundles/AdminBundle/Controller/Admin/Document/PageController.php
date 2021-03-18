@@ -420,8 +420,7 @@ class PageController extends DocumentControllerBase
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
         EditableRenderer $editableRenderer
-    )
-    {
+    ) {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
 
@@ -436,7 +435,7 @@ class PageController extends DocumentControllerBase
 
         $areaBlockConfig = json_decode($request->get('areablockConfig'), true);
         /** @var Document\Editable\Areablock $areablock */
-        $areablock = $editableRenderer->getEditable($document, 'areablock', $request->get('realName'), $areaBlockConfig,true);
+        $areablock = $editableRenderer->getEditable($document, 'areablock', $request->get('realName'), $areaBlockConfig, true);
         $areablock->setRealName($request->get('realName'));
         $areablock->setEditmode(true);
         $areaBrickData = json_decode($request->get('areablockData'), true);
