@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 
@@ -39,11 +40,6 @@ class Block extends Model\Document\Editable implements BlockInterface
      * @var int
      */
     protected $current = 0;
-
-    /**
-     * @var string[]
-     */
-    protected $suffixes = [];
 
     /**
      * @see EditableInterface::getType
@@ -133,6 +129,39 @@ class Block extends Model\Document\Editable implements BlockInterface
         while ($this->loop()) {
             yield $this->getCurrentIndex();
         }
+
+        if($this->getEditmode()) {
+
+            // yeah, I know the following is f******* crazy :D
+            $this->current = 0;
+            $indicesBackup = $this->indices;
+            $this->indices[0] = 1000000;
+            $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
+            $this->blockConstruct();
+            $blockStartHtml = $this->blockStart(true, true);
+            ob_start();
+
+            $editableDefCollector = $this->getEditableDefinitionCollector();
+            $editableDefCollector->stashPush();
+
+            yield $this->getCurrentIndex() + 1;
+
+            $blockEndHtml = $this->blockEnd(true);
+            $this->blockDestruct();
+            $this->getBlockState()->popBlock();
+
+            $templateEditableDefinitions = $editableDefCollector->getDefinitions();
+            $editableDefCollector->stashPull();
+
+            $this->config['template'] =  [
+                'html' => $blockStartHtml . ob_get_clean() . $blockEndHtml,
+                'editables' => $templateEditableDefinitions,
+            ];
+
+            $editableDefCollector->add($this);
+
+            $this->indices = $indicesBackup;
+        }
     }
 
     /**
@@ -198,12 +227,6 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function start()
     {
-        if ($this->getEditmode()) {
-            // this is actually to add the block to the EditmodeEditableDefinitionCollector
-            // because for the block editables __toString() is never called
-            $this->render();
-        }
-
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
@@ -250,8 +273,9 @@ class Block extends Model\Document\Editable implements BlockInterface
      * Is called evertime a new iteration starts (new entry of the block while looping)
      *
      * @param bool $showControls
+     * @param bool $return
      */
-    public function blockStart($showControls = true)
+    public function blockStart($showControls = true, $return = false)
     {
         $attr = $this->getBlockAttributes();
 
@@ -260,42 +284,63 @@ class Block extends Model\Document\Editable implements BlockInterface
         ];
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
-        // outer element
-        $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
+        $html = '<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>';
 
         if ($showControls) {
-            $this->blockControls();
+            $html .= $this->blockControls(true);
         }
+
+        if($return) {
+            return $html;
+        }
+
+        $this->outputEditmode($html);
     }
 
     /**
      * Custom position of button controls between blockStart -> blockEnd
+     *
+     * @param bool $return
      */
-    public function blockControls()
+    public function blockControls($return = false)
     {
         $attr = $this->getBlockAttributes();
 
-        $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
-
-        $this->outputEditmode('<div class="pimcore_block_amount" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_down" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
-
-        $this->outputEditmode('</div>'); // .pimcore_block_buttons
+        $html = <<<EOT
+<div class="pimcore_block_buttons" $attr>
+    <div class="pimcore_block_amount" $attr></div>
+    <div class="pimcore_block_plus" $attr></div>
+    <div class="pimcore_block_minus" $attr></div>
+    <div class="pimcore_block_up" $attr></div>
+    <div class="pimcore_block_down" $attr></div>
+    <div class="pimcore_block_clear" $attr></div>
+</div>
+EOT;
 
         $this->current++;
+
+        if($return) {
+            return $html;
+        }
+
+        $this->outputEditmode($html);
     }
 
     /**
      * Is called evertime a new iteration ends (new entry of the block while looping)
+     *
+     * @param bool $return
      */
-    public function blockEnd()
+    public function blockEnd($return = false)
     {
         // close outer element
-        $this->outputEditmode('</div>');
+        $html = '</div>';
+
+        if($return) {
+            return $html;
+        }
+
+        $this->outputEditmode($html);
     }
 
     /**
@@ -341,7 +386,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function getCurrentIndex()
     {
-        return $this->indices[$this->getCurrent()] ?? null;
+        return $this->indices[$this->getCurrent()] ?? 0;
     }
 
     /**
@@ -350,14 +395,6 @@ class Block extends Model\Document\Editable implements BlockInterface
     public function getIndices()
     {
         return $this->indices;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getSuffixes()
-    {
-        return $this->suffixes;
     }
 
     /**
