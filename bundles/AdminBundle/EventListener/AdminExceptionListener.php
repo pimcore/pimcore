@@ -81,7 +81,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $data['type'] = 'ValidationException';
                 $code = 422;
 
-                $message = "";
+                $message = '';
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
                 $data['message'] = $message;
             }

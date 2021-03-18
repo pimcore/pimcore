@@ -769,7 +769,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'objectbrick',
                     'containerKey' => $container->getType(),
-                    'fieldname' => $container->getFieldname()
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -778,7 +778,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'fieldcollection',
                     'containerKey' => $container->getType(),
-                    'fieldname' => $container->getFieldname()
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Concrete) {
