@@ -136,7 +136,7 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $data = Serialize::unserialize($data);
 
                 if ($data instanceof OwnerAwareFieldInterface) {
-                    $data->setOwner($this->_owner, $this->_fieldname);
+                    $data->setOwner($this->_owner, '_owner');
                 }
 
                 $this->plain = $data;
