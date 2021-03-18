@@ -200,6 +200,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     {
         if ($this->getEditmode()) {
             // this is actually to add the block to the EditmodeEditableDefinitionCollector
+            // because for the block editables __toString() is never called
             $this->render();
         }
 
