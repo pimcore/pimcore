@@ -168,7 +168,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $value1 = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
         $this->assertNull($value1);
 
-
         Cache::enable();
     }
 }
