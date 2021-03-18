@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @internal
  */
-class RegisterConfiguredServicesPass implements CompilerPassInterface
+final class RegisterConfiguredServicesPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
