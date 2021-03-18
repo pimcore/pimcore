@@ -104,7 +104,8 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $data = $this->plain;
                 //clear owner to avoid recursion
                 if ($data instanceof OwnerAwareFieldInterface) {
-                    $data->setOwner(null, '');
+                    $data->_setOwner(null);
+                    $data->_setOwnerFieldname('');
                 }
                 $data = Serialize::serialize($data);
 
@@ -136,7 +137,8 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $data = Serialize::unserialize($data);
 
                 if ($data instanceof OwnerAwareFieldInterface) {
-                    $data->setOwner($this->_owner, '_owner');
+                    $data->_setOwner($this->_owner);
+                    $data->_setOwnerFieldname('_owner');
                 }
 
                 $this->plain = $data;
