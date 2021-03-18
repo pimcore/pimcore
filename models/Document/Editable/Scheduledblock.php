@@ -176,6 +176,12 @@ class Scheduledblock extends Block implements BlockInterface
      */
     public function start()
     {
+        if ($this->getEditmode()) {
+            // this is actually to add the block to the EditmodeEditableDefinitionCollector
+            // because for the block editables __toString() is never called
+            $this->render();
+        }
+
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
