@@ -653,7 +653,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return is_null($data);
     }
-    
+
     /**
      * @return array
      */
