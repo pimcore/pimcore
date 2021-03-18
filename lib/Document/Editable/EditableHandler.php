@@ -342,13 +342,17 @@ class EditableHandler implements LoggerAwareInterface
     {
         if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_BUNDLE) {
             $bundle = $this->bundleLocator->getBundle($brick);
+            $bundleName = $bundle->getName();
+            if (str_ends_with($bundleName, 'Bundle')) {
+                $bundleName = substr($bundleName, 0, -6);
+            }
 
             $templateReference = '';
 
             foreach (['areas', 'Areas'] as $folderName) {
                 $templateReference = sprintf(
-                    '%s:%s/%s:%s.%s',
-                    $bundle->getName(),
+                    '@%s/%s/%s/%s.%s',
+                    $bundleName,
                     $folderName,
                     $brick->getId(),
                     $type,
