@@ -843,6 +843,8 @@ class DefaultMysql implements ProductListInterface
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -854,6 +856,9 @@ class DefaultMysql implements ProductListInterface
         return array_keys($vars);
     }
 
+    /**
+     * @internal
+     */
     public function __wakeup()
     {
         if (empty($this->resource)) {

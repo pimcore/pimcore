@@ -144,6 +144,8 @@ class SessionCart extends AbstractCart implements CartInterface
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -163,6 +165,8 @@ class SessionCart extends AbstractCart implements CartInterface
 
     /**
      * modified flag needs to be set
+     *
+     * @internal
      */
     public function __wakeup()
     {
