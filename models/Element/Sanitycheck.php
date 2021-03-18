@@ -27,12 +27,12 @@ class Sanitycheck extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @return int

@@ -29,12 +29,12 @@ class Definition extends Model\AbstractModel
     /**
      * @var string
      */
-    public $key;
+    protected $key;
 
     /**
      * @var string
      */
-    public $category;
+    protected $category;
 
     /**
      * @param array $data

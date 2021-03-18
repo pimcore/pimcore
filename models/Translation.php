@@ -36,22 +36,22 @@ class Translation extends AbstractModel
     /**
      * @var string
      */
-    public $key;
+    protected $key;
 
     /**
      * @var string[]
      */
-    public $translations;
+    protected $translations;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var string

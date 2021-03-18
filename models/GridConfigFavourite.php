@@ -25,32 +25,32 @@ class GridConfigFavourite extends AbstractModel
     /**
      * @var int
      */
-    public $ownerId;
+    protected $ownerId;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var int
      */
-    public $objectId;
+    protected $objectId;
 
     /**
      * @var int
      */
-    public $gridConfigId;
+    protected $gridConfigId;
 
     /**
      * @var string
      */
-    public $searchType;
+    protected $searchType;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @param int $ownerId

@@ -30,77 +30,77 @@ class User extends User\UserRole
     /**
      * @var string
      */
-    public $type = 'user';
+    protected $type = 'user';
 
     /**
      * @var string
      */
-    public $password;
+    protected $password;
 
     /**
      * @var string
      */
-    public $firstname;
+    protected $firstname;
 
     /**
      * @var string
      */
-    public $lastname;
+    protected $lastname;
 
     /**
      * @var string
      */
-    public $email;
+    protected $email;
 
     /**
      * @var string
      */
-    public $language = 'en';
+    protected $language = 'en';
 
     /**
      * @var bool
      */
-    public $admin = false;
+    protected $admin = false;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var array
      */
-    public $roles = [];
+    protected $roles = [];
 
     /**
      * @var bool
      */
-    public $welcomescreen = false;
+    protected $welcomescreen = false;
 
     /**
      * @var bool
      */
-    public $closeWarning = true;
+    protected $closeWarning = true;
 
     /**
      * @var bool
      */
-    public $memorizeTabs = true;
+    protected $memorizeTabs = true;
 
     /**
      * @var bool
      */
-    public $allowDirtyClose = false;
+    protected $allowDirtyClose = false;
 
     /**
      * @var string|null
      */
-    public $contentLanguages;
+    protected $contentLanguages;
 
     /**
      * @var string|null
      */
-    public $activePerspective;
+    protected $activePerspective;
 
     /**
      * @var null|array
@@ -120,17 +120,17 @@ class User extends User\UserRole
     /**
      * @var int
      */
-    public $lastLogin;
+    protected $lastLogin;
 
     /**
      * @var string
      */
-    public $keyBindings;
+    protected $keyBindings;
 
     /**
      * @var array
      */
-    public $twoFactorAuthentication;
+    protected $twoFactorAuthentication;
 
     /**
      * @return string

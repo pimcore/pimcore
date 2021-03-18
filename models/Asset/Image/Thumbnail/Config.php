@@ -47,87 +47,87 @@ class Config extends Model\AbstractModel
      *
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * @var array
      */
-    public $medias = [];
+    protected $medias = [];
 
     /**
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var string
      */
-    public $group = '';
+    protected $group = '';
 
     /**
      * @var string
      */
-    public $format = 'SOURCE';
+    protected $format = 'SOURCE';
 
     /**
      * @var int
      */
-    public $quality = 85;
+    protected $quality = 85;
 
     /**
      * @var float
      */
-    public $highResolution;
+    protected $highResolution;
 
     /**
      * @var bool
      */
-    public $preserveColor = false;
+    protected $preserveColor = false;
 
     /**
      * @var bool
      */
-    public $preserveMetaData = false;
+    protected $preserveMetaData = false;
 
     /**
      * @var bool
      */
-    public $rasterizeSVG = false;
+    protected $rasterizeSVG = false;
 
     /**
      * @var bool
      */
-    public $downloadable = false;
+    protected $downloadable = false;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var string
      */
-    public $filenameSuffix;
+    protected $filenameSuffix;
 
     /**
      * @var bool
      */
-    public $forcePictureTag = false;
+    protected $forcePictureTag = false;
 
     /**
      * @var bool
      */
-    public $preserveAnimation = false;
+    protected $preserveAnimation = false;
 
     /**
      * @param string|array|self $config

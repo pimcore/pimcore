@@ -29,47 +29,47 @@ class UserRole extends AbstractUser
     /**
      * @var array
      */
-    public $permissions = [];
+    protected $permissions = [];
 
     /**
      * @var Asset[]
      */
-    public $workspacesAsset = [];
+    protected $workspacesAsset = [];
 
     /**
      * @var DataObject[]
      */
-    public $workspacesObject = [];
+    protected $workspacesObject = [];
 
     /**
      * @var Document[]
      */
-    public $workspacesDocument = [];
+    protected $workspacesDocument = [];
 
     /**
      * @var array
      */
-    public $classes = [];
+    protected $classes = [];
 
     /**
      * @var array
      */
-    public $docTypes = [];
+    protected $docTypes = [];
 
     /**
      * @var array
      */
-    public $perspectives = [];
+    protected $perspectives = [];
 
     /**
      * @var array
      */
-    public $websiteTranslationLanguagesView = [];
+    protected $websiteTranslationLanguagesView = [];
 
     /**
      * @var array
      */
-    public $websiteTranslationLanguagesEdit = [];
+    protected $websiteTranslationLanguagesEdit = [];
 
     public function update()
     {

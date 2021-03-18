@@ -21,7 +21,7 @@ trait IconTrait
     /**
      * @var string|null
      */
-    public $icon;
+    protected $icon;
 
     /**
      * @return string

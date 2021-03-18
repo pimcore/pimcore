@@ -30,47 +30,47 @@ class Unit extends Model\AbstractModel
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $abbreviation;
+    protected $abbreviation;
 
     /**
      * @var string
      */
-    public $group;
+    protected $group;
 
     /**
      * @var string
      */
-    public $longname;
+    protected $longname;
 
     /**
      * @var string
      */
-    public $baseunit;
+    protected $baseunit;
 
     /**
      * @var string
      */
-    public $reference;
+    protected $reference;
 
     /**
      * @var float
      */
-    public $factor;
+    protected $factor;
 
     /**
      * @var float
      */
-    public $conversionOffset;
+    protected $conversionOffset;
 
     /**
      * @var string
      */
-    public $converter;
+    protected $converter;
 
     /**
      * @param string $abbreviation

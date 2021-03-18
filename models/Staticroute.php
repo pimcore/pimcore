@@ -31,62 +31,62 @@ class Staticroute extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $pattern;
+    protected $pattern;
 
     /**
      * @var string
      */
-    public $reverse;
+    protected $reverse;
 
     /**
      * @var string
      */
-    public $controller;
+    protected $controller;
 
     /**
      * @var string
      */
-    public $variables;
+    protected $variables;
 
     /**
      * @var string
      */
-    public $defaults;
+    protected $defaults;
 
     /**
      * @var array
      */
-    public $siteId;
+    protected $siteId;
 
     /**
      * @var array
      */
-    public $methods;
+    protected $methods;
 
     /**
      * @var int
      */
-    public $priority = 1;
+    protected $priority = 1;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * Associative array filled on match() that holds matched path values
@@ -94,7 +94,7 @@ class Staticroute extends AbstractModel
      *
      * @var array
      */
-    public $_values = [];
+    protected $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
