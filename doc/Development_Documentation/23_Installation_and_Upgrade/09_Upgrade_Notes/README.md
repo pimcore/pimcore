@@ -135,6 +135,7 @@
 - [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
 - `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.
 - Removed deprecated Twig extension `pimcore_action()`.
+- Removed method `getFlag()` from `Pimcore\Config`.
 
 ## 6.9.0
 - [Documents] `Editable::factory()` is deprecated and will be removed in Pimcore 10, use `EditableLoader` service instead. 
