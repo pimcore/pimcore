@@ -1086,6 +1086,8 @@ class Config implements \ArrayAccess
 
     /**
      * @return mixed
+     *
+     * @deprecated since v6.9 and will be removed in Pimcore 10.
      */
     public static function getFlag($key)
     {
