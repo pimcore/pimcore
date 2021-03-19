@@ -33,10 +33,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-/**
- * @internal
- */
-class FullPageCacheListener
+final class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
 
