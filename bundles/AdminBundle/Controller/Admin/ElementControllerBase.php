@@ -32,7 +32,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ElementControllerBase extends AdminController
+/**
+ * @internal
+ */
+abstract class ElementControllerBase extends AdminController
 {
     /**
      * @param ElementInterface $element

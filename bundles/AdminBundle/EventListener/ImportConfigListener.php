@@ -21,7 +21,10 @@ use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\UserRoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ImportConfigListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class ImportConfigListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

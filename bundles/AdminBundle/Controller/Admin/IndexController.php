@@ -41,7 +41,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class IndexController extends AdminController implements KernelResponseEventInterface
+/**
+ * @internal
+ */
+final class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
      * @var EventDispatcherInterface

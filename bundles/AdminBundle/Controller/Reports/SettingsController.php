@@ -22,8 +22,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/settings")
+ *
+ * @internal
  */
-class SettingsController extends ReportsControllerBase
+final class SettingsController extends ReportsControllerBase
 {
     /**
      * @Route("/get", name="pimcore_admin_reports_settings_get", methods={"GET"})

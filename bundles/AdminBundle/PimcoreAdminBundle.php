@@ -24,7 +24,10 @@ use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class PimcoreAdminBundle extends Bundle
+/**
+ * @internal
+ */
+final class PimcoreAdminBundle extends Bundle
 {
     /**
      * {@inheritdoc}

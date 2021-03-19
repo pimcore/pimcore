@@ -16,6 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\EventListener\Traits;
 
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
+/**
+ * @internal
+ */
 trait ControllerTypeTrait
 {
     /**

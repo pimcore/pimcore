@@ -39,8 +39,10 @@ use Symfony\Component\Workflow\Workflow;
 
 /**
  * @Route("/workflow")
+ *
+ * @internal
  */
-class WorkflowController extends AdminController implements KernelControllerEventInterface
+final class WorkflowController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var Document|Asset|ConcreteObject $element

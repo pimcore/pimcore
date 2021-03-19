@@ -43,8 +43,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/asset-helper")
+ *
+ * @internal
  */
-class AssetHelperController extends AdminController
+final class AssetHelperController extends AdminController
 {
     /**
      * @param int $userId

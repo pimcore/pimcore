@@ -37,8 +37,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * success handler.
  *
  * TODO: investigate why the token is empty and change to LogoutHandler
+ *
+ * @internal
  */
-class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAwareInterface
+final class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

@@ -23,7 +23,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RecyclebinController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class RecyclebinController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/recyclebin/list", name="pimcore_admin_recyclebin_list", methods={"POST"})

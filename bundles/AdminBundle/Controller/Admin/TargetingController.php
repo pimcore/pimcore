@@ -29,8 +29,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/targeting")
+ *
+ * @internal
  */
-class TargetingController extends AdminController implements KernelControllerEventInterface
+final class TargetingController extends AdminController implements KernelControllerEventInterface
 {
     /* RULES */
 

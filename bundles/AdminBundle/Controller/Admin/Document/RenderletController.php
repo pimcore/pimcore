@@ -30,7 +30,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RenderletController extends AdminController
+/**
+ * @internal
+ */
+final class RenderletController extends AdminController
 {
     /**
      * Handles editmode preview for renderlets

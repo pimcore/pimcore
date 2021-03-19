@@ -22,7 +22,10 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\PreparationRecorderInterfa
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\TwoFactorProviderRegistry;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
-class TwoFactorListener
+/**
+ * @internal
+ */
+final class TwoFactorListener
 {
     use LoggerAwareTrait;
 

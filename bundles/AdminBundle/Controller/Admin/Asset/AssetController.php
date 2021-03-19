@@ -49,8 +49,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/asset")
+ *
+ * @internal
  */
-class AssetController extends ElementControllerBase implements KernelControllerEventInterface
+final class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;

@@ -27,8 +27,10 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
  * serializer.
  *
  * @see \Symfony\Component\Serializer\Serializer
+ *
+ * @internal
  */
-class SerializerPass implements CompilerPassInterface
+final class SerializerPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 

@@ -18,7 +18,10 @@ use Pimcore\Tool\Serialize;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class ReferenceLoopNormalizer implements NormalizerInterface
+/**
+ * @internal
+ */
+final class ReferenceLoopNormalizer implements NormalizerInterface
 {
     /**
      * {@inheritdoc}

@@ -42,8 +42,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/document")
+ *
+ * @internal
  */
-class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
+final class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
 
