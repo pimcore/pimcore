@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
-use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 
@@ -130,7 +129,7 @@ class Block extends Model\Document\Editable implements BlockInterface
             yield $this->getCurrentIndex();
         }
 
-        if($this->getEditmode()) {
+        if ($this->getEditmode()) {
 
             // yeah, I know the following is f******* crazy :D
             $this->current = 0;
@@ -153,7 +152,7 @@ class Block extends Model\Document\Editable implements BlockInterface
             $templateEditableDefinitions = $editableDefCollector->getDefinitions();
             $editableDefCollector->stashPull();
 
-            $this->config['template'] =  [
+            $this->config['template'] = [
                 'html' => $blockStartHtml . ob_get_clean() . $blockEndHtml,
                 'editables' => $templateEditableDefinitions,
             ];
@@ -290,7 +289,7 @@ class Block extends Model\Document\Editable implements BlockInterface
             $html .= $this->blockControls(true);
         }
 
-        if($return) {
+        if ($return) {
             return $html;
         }
 
@@ -319,7 +318,7 @@ EOT;
 
         $this->current++;
 
-        if($return) {
+        if ($return) {
             return $html;
         }
 
@@ -336,7 +335,7 @@ EOT;
         // close outer element
         $html = '</div>';
 
-        if($return) {
+        if ($return) {
             return $html;
         }
 
