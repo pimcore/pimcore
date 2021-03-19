@@ -1085,23 +1085,6 @@ class Config implements \ArrayAccess
     }
 
     /**
-     * @return mixed
-     *
-     * @deprecated since v6.9 and will be removed in Pimcore 10.
-     */
-    public static function getFlag($key)
-    {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
-        if (isset($config['flags'])) {
-            if (isset($config['flags'][$key])) {
-                return $config['flags'][$key];
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @internal
      *
      * @param string $file
