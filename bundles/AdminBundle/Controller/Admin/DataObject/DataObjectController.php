@@ -1255,7 +1255,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $object->setOmitMandatoryCheck(true);
         }
 
-        if (($request->get('task') == 'publish' && $object->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $object->isAllowed('unpublish'))) {
+        if (($request->get('task') == 'publish') || ($request->get('task') == 'unpublish')) {
             if ($data) {
                 if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
                     return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
