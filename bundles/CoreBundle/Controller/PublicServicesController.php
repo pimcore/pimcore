@@ -29,7 +29,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\EventListener\SessionListener;
 
-class PublicServicesController extends Controller
+/**
+ * @internal
+ */
+final class PublicServicesController extends Controller
 {
     /**
      * @param Request $request

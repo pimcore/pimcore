@@ -32,7 +32,10 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class GoogleTagManagerListener
+/**
+ * @internal
+ */
+final class GoogleTagManagerListener
 {
     const BLOCK_HEAD_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
     const BLOCK_HEAD_AFTER_SCRIPT_TAG = 'afterScriptTag';

@@ -21,6 +21,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Contracts\Service\ResetInterface;
 
+/**
+ * @internal
+ */
 class PimcoreDataCollector extends DataCollector implements ResetInterface
 {
     /**

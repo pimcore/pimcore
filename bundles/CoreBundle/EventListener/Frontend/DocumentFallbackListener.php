@@ -33,8 +33,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  *  - if request is a sub-request, try to read document from master request
  *  - if all fails, try to find the nearest document by path
+ *
+ * @internal
  */
-class DocumentFallbackListener implements EventSubscriberInterface
+final class DocumentFallbackListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

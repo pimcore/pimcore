@@ -34,9 +34,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Runs before dynamic routing kicks in and resolves site + handles redirects
  *
- * TODO as this also handles the admin domain, a name without "Frontend" would be more suitable
+ * @internal
  */
-class FrontendRoutingListener implements EventSubscriberInterface
+final class RoutingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

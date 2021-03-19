@@ -20,6 +20,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Symfony\Component\Console\Input\InputOption;
 
+/**
+ * @internal
+ */
 class CustomLayoutCommand extends AbstractStructureImportCommand
 {
     protected function configure()

@@ -29,7 +29,10 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Workflow;
 use Symfony\Component\Workflow\Exception\LogicException;
 
-class WorkflowPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class WorkflowPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

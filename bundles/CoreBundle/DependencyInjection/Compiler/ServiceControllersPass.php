@@ -28,8 +28,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *  - are tagged with the "controller.service_arguments" DI tag
  *  - extend Symfony\Bundle\FrameworkBundle\Controller\Controller
  *  - extend Symfony\Bundle\FrameworkBundle\Controller\AbstractController
+ *
+ * @internal
  */
-class ServiceControllersPass implements CompilerPassInterface
+final class ServiceControllersPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

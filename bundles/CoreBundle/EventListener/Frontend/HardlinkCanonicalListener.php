@@ -30,8 +30,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Sets canonical headers for hardlink documents
+ *
+ * @internal
  */
-class HardlinkCanonicalListener implements EventSubscriberInterface
+final class HardlinkCanonicalListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

@@ -35,10 +35,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Handles element setup logic from request. Basically this does what the init() method
- * on the ZF frontend controller did.
+ * Handles element setup logic from request.
+ *
+ * @internal
  */
-class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
+final class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
