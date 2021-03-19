@@ -24,8 +24,10 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Adds tagged navigation renderers to navigation helper
+ *
+ * @internal
  */
-class NavigationRendererPass implements CompilerPassInterface
+final class NavigationRendererPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

@@ -33,7 +33,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class PimcoreCoreBundle extends Bundle
+/**
+ * @internal
+ */
+final class PimcoreCoreBundle extends Bundle
 {
     public function getContainerExtension()
     {

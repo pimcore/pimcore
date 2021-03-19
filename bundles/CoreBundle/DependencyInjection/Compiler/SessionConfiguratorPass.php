@@ -20,7 +20,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class SessionConfiguratorPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class SessionConfiguratorPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

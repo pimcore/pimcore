@@ -24,6 +24,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @internal
+ */
 class CacheClearCommand extends AbstractCommand
 {
     protected static $defaultName = 'pimcore:cache:clear';

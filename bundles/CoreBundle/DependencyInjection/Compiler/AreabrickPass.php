@@ -29,7 +29,10 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Finder\Finder;
 
-class AreabrickPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class AreabrickPass implements CompilerPassInterface
 {
     /**
      * @var Inflector

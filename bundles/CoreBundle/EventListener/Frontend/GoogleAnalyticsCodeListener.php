@@ -26,7 +26,10 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
-class GoogleAnalyticsCodeListener
+/**
+ * @internal
+ */
+final class GoogleAnalyticsCodeListener
 {
     use EnabledTrait;
     use ResponseInjectionTrait;

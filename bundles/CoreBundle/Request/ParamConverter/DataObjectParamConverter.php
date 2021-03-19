@@ -21,6 +21,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInte
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @internal
+ */
 class DataObjectParamConverter implements ParamConverterInterface
 {
     /**

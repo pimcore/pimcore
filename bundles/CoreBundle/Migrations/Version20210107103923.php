@@ -9,7 +9,7 @@ use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\DataObject;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * @internal
  */
 final class Version20210107103923 extends AbstractMigration
 {

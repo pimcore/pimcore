@@ -21,7 +21,10 @@ use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class CacheFallbackPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class CacheFallbackPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

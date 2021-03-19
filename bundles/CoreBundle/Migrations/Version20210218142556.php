@@ -7,6 +7,9 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
+/**
+ * @internal
+ */
 final class Version20210218142556 extends AbstractMigration
 {
     /**

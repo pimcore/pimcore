@@ -21,7 +21,10 @@ use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class SearchBackendListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class SearchBackendListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}
