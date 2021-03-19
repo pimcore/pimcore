@@ -30,6 +30,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
+/**
+ * @internal
+ */
 abstract class DocumentControllerBase extends AdminController implements KernelControllerEventInterface
 {
     use ApplySchedulerDataTrait;

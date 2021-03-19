@@ -35,8 +35,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/class")
+ *
+ * @internal
  */
-class ClassController extends AdminController implements KernelControllerEventInterface
+final class ClassController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-document-types", name="pimcore_admin_dataobject_class_getdocumenttypes", methods={"GET"})

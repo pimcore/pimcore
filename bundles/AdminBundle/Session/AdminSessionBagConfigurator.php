@@ -21,6 +21,10 @@ use Pimcore\Session\Attribute\LockableAttributeBag;
 use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @internal
+ *
+ */
 class AdminSessionBagConfigurator implements SessionConfiguratorInterface
 {
     /**

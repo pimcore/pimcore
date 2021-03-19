@@ -25,8 +25,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/tags")
+ *
+ * @internal
  */
-class TagsController extends AdminController
+final class TagsController extends AdminController
 {
     /**
      * @Route("/add", name="pimcore_admin_tags_add", methods={"POST"})

@@ -26,7 +26,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareInterface
+/**
+ * @internal
+ */
+final class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;

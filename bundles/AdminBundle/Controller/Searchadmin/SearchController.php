@@ -32,8 +32,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/search")
+ *
+ * @internal
  */
-class SearchController extends AdminController
+final class SearchController extends AdminController
 {
     /**
      * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})

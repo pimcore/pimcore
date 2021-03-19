@@ -23,6 +23,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Frontend;
 
+/**
+ * @internal
+ */
 trait DocumentTreeConfigTrait
 {
     use AdminStyleTrait;

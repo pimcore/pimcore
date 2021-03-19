@@ -28,7 +28,10 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LogController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class LogController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @param ControllerEvent $event

@@ -35,7 +35,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var PimcoreBundleManager
