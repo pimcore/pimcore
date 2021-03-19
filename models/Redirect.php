@@ -564,5 +564,4 @@ class Redirect extends AbstractModel
     {
         return self::$statusCodes;
     }
-
 }

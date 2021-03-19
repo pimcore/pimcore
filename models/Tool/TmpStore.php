@@ -275,5 +275,4 @@ class TmpStore extends Model\AbstractModel
 
         return $this->getDao()->add($this->getId(), $this->getData(), $this->getTag(), $lifetime);
     }
-
 }

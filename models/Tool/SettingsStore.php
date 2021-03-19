@@ -207,5 +207,4 @@ class SettingsStore extends Model\AbstractModel
         }
         $this->data = $data;
     }
-
 }
