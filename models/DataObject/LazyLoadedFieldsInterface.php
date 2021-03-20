@@ -28,6 +28,11 @@ interface LazyLoadedFieldsInterface
 
     /**
      * @param string $key
+     */
+    public function unmarkLazyKeyAsLoaded(string $key);
+
+    /**
+     * @param string $key
      *
      * @return bool
      */
