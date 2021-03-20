@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Pimcore\Model\DataObject\LazyLoadedFieldsInterface;
+
 trait LazyLoadedRelationTrait
 {
     /**
@@ -54,5 +56,16 @@ trait LazyLoadedRelationTrait
         $isset = isset($this->loadedLazyKeys[$key]);
 
         return $isset;
+    }
+
+    /**
+     * @param string $name
+     * @param string $language
+     * 
+     * @return string
+     */
+    public function buildLazyKey(string $name, string $language) : string
+    {
+        return $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
     }
 }

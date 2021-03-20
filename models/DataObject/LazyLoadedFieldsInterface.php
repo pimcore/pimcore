@@ -44,4 +44,12 @@ interface LazyLoadedFieldsInterface
      * @return bool
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool;
+
+    /**
+     * @param string $name
+     * @param string $language
+     * 
+     * @return string
+     */
+    public function buildLazyKey(string $name, string $language) : string;
 }
