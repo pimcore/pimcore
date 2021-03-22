@@ -28,7 +28,6 @@ class LongRunningHelper
         'Config_system',
         'pimcore_admin_user',
         'Config_website',
-        'pimcore_editmode',
         'pimcore_error_document',
         'pimcore_site',
         'Pimcore_Db',
