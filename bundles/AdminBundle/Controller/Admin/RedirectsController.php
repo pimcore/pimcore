@@ -90,7 +90,7 @@ final class RedirectsController extends AdminController
                     }
                 }
 
-                return $this->adminJson(['data' => $redirect, 'success' => true]);
+                return $this->adminJson(['data' => $redirect->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -119,7 +119,7 @@ final class RedirectsController extends AdminController
                     }
                 }
 
-                return $this->adminJson(['data' => $redirect, 'success' => true]);
+                return $this->adminJson(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of routes
@@ -164,7 +164,7 @@ final class RedirectsController extends AdminController
                     }
                 }
 
-                $redirects[] = $redirect;
+                $redirects[] = $redirect->getObjectVars();
             }
 
             return $this->adminJson(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);

@@ -146,8 +146,9 @@ final class UserController extends AdminController implements KernelControllerEv
                             $workspaces = $rObject->$getter();
                             $clonedWorkspaces = [];
                             if (is_array($workspaces)) {
+                                /** @var User\Workspace\AbstractWorkspace $workspace */
                                 foreach ($workspaces as $workspace) {
-                                    $vars = get_object_vars($workspace);
+                                    $vars = $workspace->getObjectVars();
                                     if ($key == 'object') {
                                         $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\DataObject';
                                     } else {
@@ -155,7 +156,7 @@ final class UserController extends AdminController implements KernelControllerEv
                                     }
                                     $newWorkspace = new $workspaceClass();
                                     foreach ($vars as $varKey => $varValue) {
-                                        $newWorkspace->$varKey = $varValue;
+                                        $newWorkspace->setObjectVar($varKey, $varValue);
                                     }
                                     $newWorkspace->setUserId($user->getId());
                                     $clonedWorkspaces[] = $newWorkspace;
@@ -435,6 +436,13 @@ final class UserController extends AdminController implements KernelControllerEv
         $availableUserPermissionsList = new User\Permission\Definition\Listing();
         $availableUserPermissions = $availableUserPermissionsList->load();
 
+        $availableUserPermissionsData = [];
+        if (is_array($availableUserPermissions)) {
+            foreach ($availableUserPermissions as $availableUserPermission) {
+                $availableUserPermissionsData[] = $availableUserPermission->getObjectVars();
+            }
+        }
+
         // get available roles
         $list = new User\Role\Listing();
         $list->setCondition('`type` = ?', ['role']);
@@ -463,7 +471,7 @@ final class UserController extends AdminController implements KernelControllerEv
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),
-            'availablePermissions' => $availableUserPermissions,
+            'availablePermissions' => $availableUserPermissionsData,
             'availablePerspectives' => $availablePerspectives,
             'validLanguages' => Tool::getValidLanguages(),
             'objectDependencies' => [
