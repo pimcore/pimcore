@@ -77,8 +77,9 @@ public function paymentAction(Request $request)
 
         <h4>{{ 'checkout.use-recurring-payment'|trans }}</h4>
 
-        {% for paymentMethod in paymentMethods if sourceOrders[paymentMethod] is defined %}
-            {% set sourceOrder = sourceOrders[paymentMethod] %}
+        {% for paymentMethod in paymentMethods %}
+            {% if sourceOrders[paymentMethod] is defined %}
+                {% set sourceOrder = sourceOrders[paymentMethod] %}
                 {% set paymentProvider = sourceOrder.paymentProvider.paymentProviderQpay %}
                 {% if paymentProvider %}
                     {% currentPaymentMethod = paymentProvider.Auth_paymentType %}
@@ -93,6 +94,7 @@ public function paymentAction(Request $request)
                         {% endif %}
                     </p>
                 {% endif %}
+            {% endif %}
         {% endfor %} 
         
         <hr>
