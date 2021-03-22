@@ -431,17 +431,6 @@ class Requirements
         ]);
 
         try {
-            $sqipAvailable = \Pimcore\Tool\Console::getExecutable('sqip');
-        } catch (\Exception $e) {
-            $sqipAvailable = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'SQIP - SVG Placeholder',
-            'state' => $sqipAvailable ? Check::STATE_OK : Check::STATE_WARNING,
-        ]);
-
-        try {
             $facedetectAvailable = \Pimcore\Tool\Console::getExecutable('facedetect');
         } catch (\Exception $e) {
             $facedetectAvailable = false;

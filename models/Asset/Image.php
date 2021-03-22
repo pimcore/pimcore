@@ -188,41 +188,9 @@ class Image extends Model\Asset
     public function generateLowQualityPreview($generator = null)
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
-        $sqipBin = null;
 
         if (!$config['enabled']) {
             return false;
-        }
-
-        if (!$generator) {
-            $generator = $config['generator'];
-        }
-
-        if (!$generator) {
-            $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
-            if ($sqipBin) {
-                $generator = 'sqip';
-            }
-        }
-
-        if ($generator == 'sqip') {
-            // SQIP is preferred, produced smaller files & mostly better quality
-            // primitive isn't able to process PJPEG so we have to generate a PNG
-            $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
-            $sqipConfig->setFormat('png');
-            $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
-            $svgPath = $this->getLowQualityPreviewFileSystemPath();
-            $process = new Process(Console::addLowProcessPriority([$sqipBin, '-o', $svgPath, $pngPath]));
-            $process->run();
-            unlink($pngPath);
-
-            if (file_exists($svgPath)) {
-                $svgData = file_get_contents($svgPath);
-                $svgData = str_replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"', $svgData);
-                File::put($svgPath, $svgData);
-
-                return $svgPath;
-            }
         }
 
         // fallback
