@@ -19,6 +19,8 @@ namespace Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\GridConfigFavourite\Dao getDao()
+ *
+ * @internal
  */
 class GridConfigFavourite extends AbstractModel
 {

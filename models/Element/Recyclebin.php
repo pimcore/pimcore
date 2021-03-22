@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Recyclebin\Dao getDao()
+ *
+ * @internal
  */
 class Recyclebin extends Model\AbstractModel
 {

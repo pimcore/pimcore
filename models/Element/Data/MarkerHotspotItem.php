@@ -19,6 +19,9 @@ namespace Pimcore\Model\Element\Data;
 
 use Pimcore\Model;
 
+/**
+ * @internal
+ */
 class MarkerHotspotItem implements \ArrayAccess
 {
     /**

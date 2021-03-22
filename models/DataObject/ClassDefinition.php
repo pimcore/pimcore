@@ -293,6 +293,8 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
+     *
+     * @internal
      */
     public static function cleanupForExport(&$data)
     {
@@ -389,6 +391,8 @@ class ClassDefinition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
@@ -599,6 +603,8 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @return string
+     *
+     * @internal
      */
     protected function getInfoDocBlock()
     {
@@ -875,6 +881,9 @@ class ClassDefinition extends Model\AbstractModel
         return $enrichedFieldDefinitions;
     }
 
+    /**
+     * @internal
+     */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {

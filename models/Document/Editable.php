@@ -103,6 +103,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @return string|void
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function admin()
     {
@@ -142,6 +144,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Builds config passed to editmode frontend as JSON config
      *
      * @return array
+     *
+     * @internal
      */
     public function getEditmodeDefinition(): array
     {
@@ -165,6 +169,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Builds data used for editmode
      *
      * @return mixed
+     *
+     * @internal
      */
     protected function getEditmodeData()
     {
@@ -182,6 +188,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Builds attributes used on the editmode HTML element
      *
      * @return array
+     *
+     * @internal
      */
     protected function getEditmodeElementAttributes(): array
     {
@@ -199,6 +207,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $attributes;
     }
 
+    /**
+     * @return array
+     *
+     * @internal
+     */
     protected function getEditmodeBlockStateAttributes(): array
     {
         $blockState = $this->getBlockState();
@@ -221,6 +234,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Builds classes used on the editmode HTML element
      *
      * @return array
+     *
+     * @internal
      */
     protected function getEditmodeElementClasses(): array
     {

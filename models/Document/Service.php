@@ -298,6 +298,8 @@ class Service extends Model\Element\Service
      * @param Document $document
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridDocumentData($document)
     {
@@ -600,6 +602,8 @@ class Service extends Model\Element\Service
      * @return bool
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public static function generatePagePreview($id, $request = null, $hostUrl = null)
     {
