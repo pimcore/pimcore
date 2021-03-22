@@ -1160,18 +1160,26 @@ class Service extends Model\AbstractModel
         $result = [];
 
         if (is_array($versions)) {
-            $versions = json_decode(json_encode($versions), true);
-            foreach ($versions as $version) {
-                $name = null;
-                $id = null;
-                if (isset($version['user'])) {
-                    $name = $version['user']['name'];
-                    $id = $version['user']['id'];
+            foreach ($versions as $versionObj) {
+                $version = [
+                    'id' => $versionObj->getId(),
+                    'cid' => $versionObj->getCid(),
+                    'ctype' => $versionObj->getCtype(),
+                    'note' => $versionObj->getNote(),
+                    'date' => $versionObj->getDate(),
+                    'public' => $versionObj->getPublic(),
+                    'versionCount' => $versionObj->getVersionCount(),
+                ];
+
+                $version['user'] = ['name' => '', 'id' => ''];
+                if ($versionObj->getUser()) {
+                    $version['user'] = [
+                        'name' => $versionObj->getUser()->getName(),
+                        'id' => $versionObj->getUser()->getId(),
+                    ];
                 }
-                unset($version['user']);
-                $version['user']['name'] = $name;
-                $version['user']['id'] = $id;
-                $versionKey = $version['date'] . '-' . $version['versionCount'];
+
+                $versionKey = $versionObj->getDate() . '-' . $versionObj->getVersionCount();
                 if (!isset($indexMap[$versionKey])) {
                     $indexMap[$versionKey] = 0;
                 }
