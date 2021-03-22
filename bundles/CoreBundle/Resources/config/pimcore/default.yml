@@ -238,24 +238,6 @@ pimcore:
         translations:
             path: "@PimcoreCoreBundle/Resources/translations"
 
-    # Pimcore migration sets
-    # Bundles can define their own migration sets - the sets defined here act as global sets
-    # available to the whole application
-    migrations:
-        sets:
-            # this is the default migration set which will be used if the
-            # migration commands do not specify --set or --bundle
-            app:
-                name: Migrations
-                namespace: App\Migrations
-                directory: "%kernel.project_dir%/Migrations"
-
-            # this is the core migration set used for Composer post-package-update event
-            pimcore_core:
-                name: Pimcore Core Migrations
-                namespace: Pimcore\Bundle\CoreBundle\Migrations
-                directory: "%kernel.project_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
-
     sitemaps:
         generators:
             pimcore_documents:
