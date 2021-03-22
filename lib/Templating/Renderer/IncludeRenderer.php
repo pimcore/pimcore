@@ -116,14 +116,6 @@ class IncludeRenderer
             }
         }
 
-        // TODO remove dependency on registry setting
-        $editmodeBackup = false;
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_editmode')) {
-            $editmodeBackup = \Pimcore\Cache\Runtime::get('pimcore_editmode');
-        }
-
-        \Pimcore\Cache\Runtime::set('pimcore_editmode', false);
-
         $params = array_merge($params, ['document' => $include]);
         $content = '';
 
@@ -134,8 +126,6 @@ class IncludeRenderer
                 $content = $this->modifyEditmodeContent($include, $content);
             }
         }
-
-        \Pimcore\Cache\Runtime::set('pimcore_editmode', $editmodeBackup);
 
         // write contents to the cache, if output-cache is enabled & not in editmode
         if ($cacheConfig && !$editmode && !DeviceDetector::getInstance()->wasUsed()) {
