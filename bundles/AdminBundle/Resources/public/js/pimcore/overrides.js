@@ -895,72 +895,6 @@ Ext.define('pimcore.toolbar.Paging', {
     }
 });
 
-
-/**
- * Already fixed in 6.0.1
- * Inspired from https://www.sencha.com/forum/showthread.php?302760
- */
-Ext.define('EXTJS-16385.event.publisher.Dom', {
-    override: 'Ext.event.publisher.Dom',
-
-    isEventBlocked: function(e) {
-        var me = this,
-            type = e.type,
-            self = Ext.event.publisher.Dom,
-            now = Ext.now();
-
-        if (Ext.isGecko && e.type === 'click' && e.button === 2) {
-            return true;
-        }
-    }
-});
-
-
-
-/**
- * Addresses FF 52 issues on touch devices (desktop + touch)
- * https://www.sencha.com/forum/showthread.php?336762-Examples-don-t-work-in-Firefox-52-touchscreen&p=1174857&viewfull=1#post1174857
- */
-Ext.define('EXTJS_23846.Element', {
-    override: 'Ext.dom.Element'
-}, function(Element) {
-    var supports = Ext.supports,
-        proto = Element.prototype,
-        eventMap = proto.eventMap,
-        additiveEvents = proto.additiveEvents;
-
-    if (Ext.os.is.Desktop && supports.TouchEvents && !supports.PointerEvents) {
-        eventMap.touchstart = 'mousedown';
-        eventMap.touchmove = 'mousemove';
-        eventMap.touchend = 'mouseup';
-        eventMap.touchcancel = 'mouseup';
-
-        additiveEvents.mousedown = 'mousedown';
-        additiveEvents.mousemove = 'mousemove';
-        additiveEvents.mouseup = 'mouseup';
-        additiveEvents.touchstart = 'touchstart';
-        additiveEvents.touchmove = 'touchmove';
-        additiveEvents.touchend = 'touchend';
-        additiveEvents.touchcancel = 'touchcancel';
-
-        additiveEvents.pointerdown = 'mousedown';
-        additiveEvents.pointermove = 'mousemove';
-        additiveEvents.pointerup = 'mouseup';
-        additiveEvents.pointercancel = 'mouseup';
-    }
-});
-
-Ext.define('EXTJS_23846.Gesture', {
-    override: 'Ext.event.publisher.Gesture'
-}, function(Gesture) {
-    var me = Gesture.instance;
-
-    if (Ext.supports.TouchEvents && !Ext.isWebKit && Ext.os.is.Desktop) {
-        me.handledDomEvents.push('mousedown', 'mousemove', 'mouseup');
-        me.registerEvents();
-    }
-});
-
 /**
  * Fixes ID validation to include more characters as we need the colon for nested editable names
  *
@@ -978,16 +912,6 @@ Ext.define('EXTJS-17231.ext.dom.Element.validIdRe', {
         return (this.observableId = this.callParent().replace(/([.:])/g, "\\$1"));
     }
 });
-
-// use only native scroll bar, the touch-scroller causes issues on hybrid touch devices when using with a mouse
-// this ist fixed in ExtJS 6.2.0 since there's no TouchScroller anymore, see:
-// http://docs.sencha.com/extjs/6.2.0/guides/whats_new/extjs_upgrade_guide.html
-//TODO EXTJS7 not needed anymore
-// Ext.define('Ext.scroll.TouchScroller', {
-//     extend: 'Ext.scroll.DomScroller',
-//     alias: 'scroller.touch'
-// });
-// Ext.supports.touchScroll = 0;
 
 /**
  * Fieldtype date is not able to save the correct value (before 1951) #1329
@@ -1186,88 +1110,5 @@ Ext.define('Pimcore.view.BoundListKeyNav', {
             priority: 1001,
             scope: me
         });
-    }
-});
-
-
-/**
- * EXTJS-17945
- * Ext.menu.Item changes the hash to # when clicking on Windows 10 Touch Screens
- * https://www.sencha.com/forum/showthread.php?309916
- */
-Ext.define(null, {
-    override: 'Ext.menu.Menu',
-
-    onBoxReady: function () {
-        var me = this,
-            iconSeparatorCls = me._iconSeparatorCls,
-            keyNav = me.focusableKeyNav;
-
-        // Keyboard handling can be disabled, e.g. by the DatePicker menu
-        // or the Date filter menu constructed by the Grid
-        if (keyNav) {
-            keyNav.map.processEventScope = me;
-            keyNav.map.processEvent = function (e) {
-                // ESC may be from input fields, and FocusableContainers ignore keys from
-                // input fields. We do not want to ignore ESC. ESC hide menus.
-                if (e.keyCode === e.ESC) {
-                    e.target = this.el.dom;
-                }
-
-                return e;
-            };
-
-            // Handle ESC key
-            keyNav.map.addBinding([{
-                key: Ext.event.Event.ESC,
-                handler: me.onEscapeKey,
-                scope: me
-            },
-                // Handle character shortcuts
-                {
-                    key: /[\w]/,
-                    handler: me.onShortcutKey,
-                    scope: me,
-                    shift: false,
-                    ctrl: false,
-                    alt: false
-                }
-            ]);
-        } else {
-            // Even when FocusableContainer key event processing is disabled,
-            // we still need to handle the Escape key!
-            me.escapeKeyNav = new Ext.util.KeyNav(me.el, {
-                eventName: 'keydown',
-                scope: me,
-                esc: me.onEscapeKey
-            });
-        }
-
-        me.callSuper(arguments);
-
-        // TODO: Move this to a subTemplate When we support them in the future
-        if (me.showSeparator) {
-            me.iconSepEl = me.body.insertFirst({
-                role: 'presentation',
-                cls: iconSeparatorCls + ' ' + iconSeparatorCls + '-' + me.ui,
-                html: ' '
-            });
-        }
-
-        // Modern IE browsers have click events translated to PointerEvents, and b/c of this the
-        // event isn't being canceled like it needs to be. So, we need to add an extra listener.
-        // For devices that have touch support, the default click event may be a gesture that
-        // runs asynchronously, so by the time we try and prevent it, it's already happened
-
-        // we use Ext.supports.TouchEvents here, because we're overriding Ext.supports.Touch in edit/startup.js (Editmode)
-        if (Ext.supports.TouchEvents || Ext.supports.MSPointerEvents || Ext.supports.PointerEvents) {
-            me.el.on({
-                scope: me,
-                click: me.preventClick,
-                translate: false
-            });
-        }
-
-        me.mouseMonitor = me.el.monitorMouseLeave(100, me.onMouseLeave, me);
     }
 });
