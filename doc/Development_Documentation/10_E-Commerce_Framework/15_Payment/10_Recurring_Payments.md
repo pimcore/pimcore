@@ -45,6 +45,7 @@ public function paymentAction(Request $request)
         }
     }
 
+    $templateParams = [];
     $paymentMethods = ["SEPA-DD", "CCARD"]; // supported payment methods
 
     if ($user) {
@@ -56,59 +57,46 @@ public function paymentAction(Request $request)
 
             $sourceOrders[$paymentMethod] = $sourceOrder;
         }
-        $this->view->sourceOrders = $sourceOrders;
+        
+        $templateParams['sourceOrders'] = $sourceOrders;
     }
 
-    $this->view->paymentMethods = $paymentMethods;
+    $templateParams['paymentMethods'] = $paymentMethods;
 
-    // payment.html.php rendered
+    return $this->render('checkout/payment.html.twig', $templateParams);
 }
 ```
 
 #### payment.html.php
 
-```php
+```twig
 ?>
-<form method="post" action="<?= $this->pimcoreUrl(array('action' => 'confirm'), 'checkout', true) ?>">
+<form method="post" action="{{ pimcore_url({action: 'confirm'}, 'checkout', true) }}">
 
-    <?php if (!empty($this->sourceOrders)): ?>
+    {% if sourceOrders is not empty %}
 
-        <h4><?= $this->t("checkout.use-recurring-payment"); ?></h4>
+        <h4>{{ 'checkout.use-recurring-payment'|trans }}</h4>
 
-        <?php
-        foreach ($this->paymentMethods as $paymentMethod) :
-            /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $sourceOrder */
-            $sourceOrder = $this->sourceOrders[$paymentMethod];
-            $sourceOrderId = $sourceOrder ? $sourceOrder->getId() : "";
-
-            if (!$sourceOrder) {
-                continue;
-            }
-
-            if ($paymentProvider = $paymentProviderBrick->getPaymentProviderQpay()) :
-                $currentPaymentMethod = $paymentProvider->getAuth_paymentType();
-                ?>
-                <p>
-                    <input name="recurring-payment" value="<?= $sourceOrderId ?>" type="radio">
-                    <strong><?= $currentPaymentMethod ?></strong>
-
-                    <?php
-                    switch ($currentPaymentMethod) {
-                        case "SEPA-DD":
-                            echo $paymentProvider->getAuth_bankAccountOwner() . " " . $paymentProvider->getAuth_bankAccountIBAN();
-                            break;
-                        case "CCARD":
-                            echo $paymentProvider->getAuth_maskedPan() . " " . $paymentProvider->getAuth_expiry();
-                            break;
-                    }
-                    ?>
-                </p>
-                <?
-            endif;
-        endforeach;
-        ?>
+        {% for paymentMethod in paymentMethods if sourceOrders[paymentMethod] is defined %}
+            {% set sourceOrder = sourceOrders[paymentMethod] %}
+                {% set paymentProvider = sourceOrder.paymentProvider.paymentProviderQpay %}
+                {% if paymentProvider %}
+                    {% currentPaymentMethod = paymentProvider.Auth_paymentType %}
+                     <p>
+                        <input name="recurring-payment" value="{{ sourceOrder.id }}" type="radio">
+                        <strong>{{ currentPaymentMethod }}</strong>
+                        
+                        {% if currentPaymentMethod is same as('SEPA-DD') %}
+                            {{ paymentProvider.Auth_bankAccountOwner }} {{ paymentProvider.Auth_bankAccountIBAN }}
+                        {% elseif currentPaymentMethod is same as('CCARD') %} 
+                            {{ paymentProvider.Auth_maskedPan }} {{ paymentProvider.Auth_expiry }}
+                        {% endif %}
+                    </p>
+                {% endif %}
+        {% endfor %} 
+        
         <hr>
-    <?php endif; ?>
+    {% endif %}
 
 </form>
 ```
