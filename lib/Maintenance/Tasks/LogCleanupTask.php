@@ -17,6 +17,9 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Tool\TmpStore;
 
+/**
+ * @internal
+ */
 final class LogCleanupTask implements TaskInterface
 {
     /**

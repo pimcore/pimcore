@@ -19,7 +19,10 @@ use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
 
-class Requirements
+/**
+ * @internal
+ */
+final class Requirements
 {
     /**
      * @return Check[]

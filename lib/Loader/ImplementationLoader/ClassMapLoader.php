@@ -19,6 +19,8 @@ namespace Pimcore\Loader\ImplementationLoader;
 
 /**
  * Loads implementations from a fixed name => className map
+ *
+ * @internal
  */
 class ClassMapLoader extends AbstractClassNameLoader
 {

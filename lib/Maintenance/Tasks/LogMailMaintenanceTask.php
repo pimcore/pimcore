@@ -19,6 +19,9 @@ use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 
+/**
+ * @internal
+ */
 final class LogMailMaintenanceTask implements TaskInterface
 {
     /**

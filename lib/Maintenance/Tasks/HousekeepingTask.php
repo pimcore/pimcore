@@ -17,6 +17,9 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 
+/**
+ * @internal
+ */
 final class HousekeepingTask implements TaskInterface
 {
     /**

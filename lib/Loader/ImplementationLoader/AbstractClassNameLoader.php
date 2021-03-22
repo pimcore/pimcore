@@ -19,6 +19,9 @@ namespace Pimcore\Loader\ImplementationLoader;
 
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 
+/**
+ * @internal
+ */
 abstract class AbstractClassNameLoader implements LoaderInterface, ClassNameLoaderInterface
 {
     /**

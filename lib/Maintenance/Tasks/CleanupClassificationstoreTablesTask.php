@@ -19,6 +19,9 @@ use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class CleanupClassificationstoreTablesTask implements TaskInterface
 {
     /**

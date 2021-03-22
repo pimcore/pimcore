@@ -18,6 +18,9 @@ use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 
+/**
+ * @internal
+ */
 final class Executor implements ExecutorInterface
 {
     /**

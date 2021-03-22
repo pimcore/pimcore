@@ -114,6 +114,8 @@ class Pimcore
      * switches pimcore into the admin mode - there you can access also unpublished elements, ....
      *
      * @static
+     *
+     * @internal
      */
     public static function setAdminMode()
     {
@@ -124,6 +126,8 @@ class Pimcore
      * switches back to the non admin mode, where unpublished elements are invisible
      *
      * @static
+     *
+     * @internal
      */
     public static function unsetAdminMode()
     {
@@ -211,6 +215,8 @@ class Pimcore
 
     /**
      * @return bool
+     *
+     * @internal
      */
     public static function hasContainer()
     {
@@ -226,6 +232,8 @@ class Pimcore
 
     /**
      * @return \Composer\Autoload\ClassLoader
+     *
+     * @internal
      */
     public static function getAutoloader(): \Composer\Autoload\ClassLoader
     {
@@ -234,6 +242,8 @@ class Pimcore
 
     /**
      * @param \Composer\Autoload\ClassLoader $autoloader
+     *
+     * @internal
      */
     public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader)
     {

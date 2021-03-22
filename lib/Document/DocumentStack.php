@@ -19,6 +19,9 @@ namespace Pimcore\Document;
 
 use Pimcore\Model\Document;
 
+/**
+ * @internal
+ */
 class DocumentStack
 {
     /**

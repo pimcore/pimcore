@@ -21,7 +21,10 @@ namespace Pimcore\Helper;
 
 use Pimcore\Cache;
 
-class RobotsTxt
+/**
+ * @internal
+ */
+final class RobotsTxt
 {
     /**
      * @var string

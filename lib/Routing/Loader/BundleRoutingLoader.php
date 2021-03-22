@@ -18,6 +18,9 @@ use Pimcore\Config\BundleConfigLocator;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\RouteCollection;
 
+/**
+ * @internal
+ */
 class BundleRoutingLoader extends Loader
 {
     /**

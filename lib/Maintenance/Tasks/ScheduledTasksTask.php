@@ -23,6 +23,9 @@ use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class ScheduledTasksTask implements TaskInterface
 {
     /**

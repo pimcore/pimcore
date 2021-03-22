@@ -19,6 +19,9 @@ use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class ImageOptimizeTask implements TaskInterface
 {
     /**
