@@ -77,9 +77,8 @@ public function paymentAction(Request $request)
 
         <h4>{{ 'checkout.use-recurring-payment'|trans }}</h4>
 
-        {% for paymentMethod in paymentMethods %}
+        {% for paymentMethod in paymentMethods if sourceOrders[paymentMethod] is defined %}
             {% set sourceOrder = sourceOrders[paymentMethod] %}
-            {% if sourceOrder %}
                 {% set paymentProvider = sourceOrder.paymentProvider.paymentProviderQpay %}
                 {% if paymentProvider %}
                     {% currentPaymentMethod = paymentProvider.Auth_paymentType %}
@@ -87,14 +86,13 @@ public function paymentAction(Request $request)
                         <input name="recurring-payment" value="{{ sourceOrder.id }}" type="radio">
                         <strong>{{ currentPaymentMethod }}</strong>
                         
-                        {% if currentPaymentMethod === 'SEPA-DD' %}
+                        {% if currentPaymentMethod is same as('SEPA-DD') %}
                             {{ paymentProvider.Auth_bankAccountOwner }} {{ paymentProvider.Auth_bankAccountIBAN }}
-                        {% elseif currentPaymentMethod === 'CCARD' %} 
+                        {% elseif currentPaymentMethod is same as('CCARD') %} 
                             {{ paymentProvider.Auth_maskedPan }} {{ paymentProvider.Auth_expiry }}
                         {% endif %}
                     </p>
                 {% endif %}
-            {% endif %}
         {% endfor %} 
         
         <hr>
