@@ -35,18 +35,6 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
         this.element = Ext.get(this.id);
         this.element.dom.setAttribute("contenteditable", true);
 
-        // set min height for IE, as he isn't able to update :after css selector
-        this.element.update("|"); // dummy content to get appropriate height
-        if(this.element.getHeight()) {
-            this.element.applyStyles({
-                "min-height": this.element.getHeight() + "px"
-            });
-        } else {
-            this.element.applyStyles({
-                "min-height": this.element.getStyle("font-size")
-            });
-        }
-
         this.element.update(this.data);
 
         this.checkValue();

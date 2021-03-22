@@ -98,16 +98,6 @@ Ext.onReady(function () {
     // causes styling issues, we don't need this anyway
     body.removeCls("x-body");
 
-    /* Drag an Drop from Tree panel */
-    // IE HACK because the body is not 100% at height
-    try {
-        //TODO EXT5
-        Ext.getBody().applyStyles("min-height:" +
-            parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px");
-    } catch (e) {
-        console.log(e);
-    }
-
     try {
         // init cross frame drag & drop handler
         dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
