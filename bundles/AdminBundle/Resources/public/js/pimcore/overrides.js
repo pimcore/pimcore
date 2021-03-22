@@ -189,19 +189,14 @@ Ext.define('Ext.overrides.grid.View', {
                             Ext.fly(newItemDom).addCls(selectedItemCls);
                         }
 
-                        if (Ext.isIE9m && oldItemDom.mergeAttributes) {
-                            oldItemDom.mergeAttributes(newItemDom, true);
-                        } else {
-                            newAttrs = newItemDom.attributes;
-                            attLen = newAttrs.length;
-                            for (attrIndex = 0; attrIndex < attLen; attrIndex++) {
-                                attName = newAttrs[attrIndex].name;
-                                if (attName !== 'id') {
-                                    oldItemDom.setAttribute(attName, newAttrs[attrIndex].value);
-                                }
+                        newAttrs = newItemDom.attributes;
+                        attLen = newAttrs.length;
+                        for (attrIndex = 0; attrIndex < attLen; attrIndex++) {
+                            attName = newAttrs[attrIndex].name;
+                            if (attName !== 'id') {
+                                oldItemDom.setAttribute(attName, newAttrs[attrIndex].value);
                             }
                         }
-
 
                         if (columns.length && (oldDataRow = me.getRow(oldItemDom))) {
                             me.updateColumns(oldDataRow, Ext.fly(newItemDom).down(me.rowSelector, true), columnsToUpdate);
