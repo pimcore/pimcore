@@ -234,7 +234,7 @@
     padding-bottom: 1px;
 }
 
-.x-mask.x-focus {
+.x-body .x-component.x-mask.x-focus {
     border:0;
 }
 
@@ -412,6 +412,11 @@ body > .x-mask {
     -webkit-box-shadow: none !important;
 }
 
+.pimcore_main_toolbar .x-btn.x-btn-focus.x-btn-default-toolbar-medium,
+.pimcore_main_toolbar .x-btn.x-btn-focus.x-btn-default-toolbar-small {
+    background-color: #484B4E;
+}
+
 .x-menu-default {
     border:0;
 }
@@ -489,6 +494,10 @@ body > .x-mask {
 
 .x-splitter-vertical.x-border-item {
     border-left: 0;
+}
+
+.x-box-scroller {
+    font-weight: 900;
 }
 
 .x-box-scroller-disabled {

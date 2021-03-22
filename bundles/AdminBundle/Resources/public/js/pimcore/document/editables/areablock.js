@@ -1117,7 +1117,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 cls: "pimcore_areablock_toolbar",
                 closable: false,
                 x: -1000,
-                y: 6,
+                y: 1,
                 items: buttons
             });
 
