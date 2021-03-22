@@ -461,7 +461,7 @@ final class EmailController extends AdminController
                 $address->setValues($data);
                 $address->save();
 
-                return $this->adminJson(['data' => $address, 'success' => true]);
+                return $this->adminJson(['data' => $address->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 unset($data['id']);
 
@@ -469,7 +469,7 @@ final class EmailController extends AdminController
                 $address->setValues($data);
                 $address->save();
 
-                return $this->adminJson(['data' => $address, 'success' => true]);
+                return $this->adminJson(['data' => $address->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of routes
@@ -492,10 +492,16 @@ final class EmailController extends AdminController
             }
 
             $data = $list->load();
+            $jsonData = [];
+            if (is_array($data)) {
+                foreach ($data as $entry) {
+                    $jsonData[] = $entry->getObjectVars();
+                }
+            }
 
             return $this->adminJson([
                 'success' => true,
-                'data' => $data,
+                'data' => $jsonData,
                 'total' => $list->getTotalCount(),
             ]);
         }

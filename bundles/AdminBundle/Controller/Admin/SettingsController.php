@@ -173,7 +173,7 @@ final class SettingsController extends AdminController
                 $metadata->save();
                 $metadata->expand();
 
-                return $this->adminJson(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -190,7 +190,7 @@ final class SettingsController extends AdminController
 
                 $metadata->save();
 
-                return $this->adminJson(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of types
@@ -216,7 +216,7 @@ final class SettingsController extends AdminController
             if (is_array($list->getDefinitions())) {
                 foreach ($list->getDefinitions() as $metadata) {
                     $metadata->expand();
-                    $properties[] = $metadata;
+                    $properties[] = $metadata->getObjectVars();
                 }
             }
 
@@ -241,7 +241,7 @@ final class SettingsController extends AdminController
         $result = [];
         foreach ($list as $item) {
             $item->expand();
-            $result[] = $item;
+            $result[] = $item->getObjectVars();
         }
 
         return $this->adminJson(['data' => $result, 'success' => true]);
@@ -278,7 +278,7 @@ final class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -289,7 +289,7 @@ final class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of types
@@ -319,7 +319,7 @@ final class SettingsController extends AdminController
             $properties = [];
             if (is_array($list->getProperties())) {
                 foreach ($list->getProperties() as $property) {
-                    $properties[] = $property;
+                    $properties[] = $property->getObjectVars();
                 }
             }
 
@@ -1300,7 +1300,7 @@ final class SettingsController extends AdminController
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe);
+        return $this->adminJson($pipe->getObjectVars());
     }
 
     /**
@@ -1482,7 +1482,7 @@ final class SettingsController extends AdminController
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe);
+        return $this->adminJson($pipe->getObjectVars());
     }
 
     /**

@@ -80,7 +80,7 @@ final class QuantityValueController extends AdminController
 
         $units = [];
         foreach ($list->getUnits() as $u) {
-            $units[] = get_object_vars($u);
+            $units[] = $u->getObjectVars();
         }
 
         return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
@@ -119,7 +119,7 @@ final class QuantityValueController extends AdminController
                     $unit->setValues($data);
                     $unit->save();
 
-                    return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
+                    return $this->adminJson(['data' => $unit->getObjectVars(), 'success' => true]);
                 } else {
                     throw new \Exception('Unit with id ' . $data['id'] . ' not found.');
                 }
@@ -138,7 +138,7 @@ final class QuantityValueController extends AdminController
                 $unit->setValues($data);
                 $unit->save();
 
-                return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
+                return $this->adminJson(['data' => $unit->getObjectVars(), 'success' => true]);
             }
         }
 
