@@ -128,8 +128,9 @@ final class RecyclebinController extends AdminController implements KernelContro
             $items = $list->load();
             $data = [];
             if (is_array($items)) {
+                /** @var Recyclebin\Item $item */
                 foreach ($items as $item) {
-                    $data[] = $items->getObjectVars();
+                    $data[] = $item->getObjectVars();
                 }
             }
 
