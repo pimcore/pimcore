@@ -112,11 +112,18 @@ class Renderlet extends Model\Document\Editable
         $container = \Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
 
-        if (empty($this->config['controller'])) {
-            if (is_null($this->config)) {
+        if (!is_array($this->config)) {
                 $this->config = [];
             }
+
+        if (empty($this->config['controller']) && !empty($this->config['template'])) {
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
+        }
+
+        if (empty($this->config['controller'])) {
+            // this can be the case e.g. in \Pimcore\Model\Search\Backend\Data::setDataFromElement() where
+            // this method is called without the config, so it would just render the default controller with the default template
+            return '';
         }
 
         if (method_exists($this->o, 'isPublished')) {

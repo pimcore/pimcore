@@ -63,7 +63,7 @@ class EditableRenderer implements LoggerAwareInterface
     /**
      * @param PageSnippet $document
      * @param string $type
-     * @param string $inputName
+     * @param string $name
      * @param array $config
      * @param bool|null $editmode
      *
@@ -71,12 +71,13 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function getEditable(PageSnippet $document, string $type, string $inputName, array $config = [], bool $editmode = null): Editable\EditableInterface
+    public function getEditable(PageSnippet $document, string $type, string $name, array $config = [], bool $editmode = null): Editable\EditableInterface
     {
         $type = strtolower($type);
 
-        $name = Editable::buildEditableName($type, $inputName, $document);
-        $realName = Editable::buildEditableRealName($inputName, $document);
+        $originalName = $name;
+        $name = Editable::buildEditableName($type, $originalName, $document);
+        $realName = Editable::buildEditableRealName($originalName, $document);
 
         if (null === $editmode) {
             $editmode = $this->editmodeResolver->isEditmode();
@@ -112,7 +113,7 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @param PageSnippet $document
      * @param string $type
-     * @param string $inputName
+     * @param string $name
      * @param array $options
      * @param bool|null $editmode
      *
@@ -120,8 +121,8 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function render(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
+    public function render(PageSnippet $document, string $type, string $name, array $options = [], bool $editmode = null)
     {
-        return $this->getEditable($document, $type, $inputName, $options, $editmode);
+        return $this->getEditable($document, $type, $name, $options, $editmode);
     }
 }
