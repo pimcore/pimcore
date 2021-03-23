@@ -102,7 +102,7 @@ class WebsiteSetting extends AbstractModel
                 $setting = new self();
                 $setting->getDao()->getById((int)$id);
                 \Pimcore\Cache\Runtime::set($cacheKey, $setting);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 return null;
             }
         }
