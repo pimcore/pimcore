@@ -328,6 +328,12 @@ final class DataObjectHelperController extends AdminController
                 $gridConfig = $savedGridConfig->getConfig();
                 $gridConfig = json_decode($gridConfig, true);
                 $gridConfigName = $savedGridConfig->getName();
+                $owner = $savedGridConfig->getOwnerId();
+                $ownerObject = User::getById($owner);
+                if($ownerObject instanceof User) {
+                    $owner = $ownerObject->getName();
+                }
+                $modificationDate = $savedGridConfig->getModificationDate();
                 $gridConfigDescription = $savedGridConfig->getDescription();
                 $sharedGlobally = $savedGridConfig->isShareGlobally();
             }
@@ -512,6 +518,8 @@ final class DataObjectHelperController extends AdminController
         $settings['gridConfigId'] = (int)$gridConfigId;
         $settings['gridConfigName'] = $gridConfigName ?? null;
         $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['owner'] = $owner ?? null;
+        $settings['modificationDate'] = $modificationDate ?? null;
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
