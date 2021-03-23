@@ -552,7 +552,6 @@ class Installer
         }
 
         $writer->writeSystemConfig();
-        $writer->writeDebugModeConfig();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)

@@ -15,14 +15,10 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Runtime;
-use Pimcore\Config\EnvironmentConfig;
-use Pimcore\Config\EnvironmentConfigInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\User\UserRole;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\Yaml\Yaml;
 
 class Config implements \ArrayAccess
@@ -36,11 +32,6 @@ class Config implements \ArrayAccess
      * @var string
      */
     protected static $environment = null;
-
-    /**
-     * @var EnvironmentConfigInterface
-     */
-    private static $environmentConfig;
 
     /**
      * @var array|null
@@ -1021,77 +1012,11 @@ class Config implements \ArrayAccess
     }
 
     /**
-     * @param bool $reset
-     * @param string|null $default
-     *
      * @return string
      */
-    public static function getEnvironment(bool $reset = false, string $default = null)
+    public static function getEnvironment(): string
     {
-        if (null === static::$environment || $reset) {
-            $environment = false;
-
-            if (php_sapi_name() === 'cli') {
-                $input = new ArgvInput();
-                $environment = $input->getParameterOption(['--env', '-e'], null, true);
-            }
-
-            // check env vars - fall back to default (prod)
-            if (!$environment) {
-                foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $envVarName) {
-                    $environment = self::resolveEnvVarValue($envVarName);
-                    if ($environment) {
-                        break;
-                    }
-                }
-            }
-
-            if (!$environment) {
-                if (null !== $default) {
-                    $environment = $default;
-                } else {
-                    $environment = static::getEnvironmentConfig()->getDefaultEnvironment();
-                }
-            }
-
-            static::$environment = $environment;
-        }
-
-        return static::$environment;
-    }
-
-    /**
-     * @internal
-     *
-     * @param string $environment
-     */
-    public static function setEnvironment($environment)
-    {
-        static::$environment = $environment;
-    }
-
-    /**
-     * @internal
-     *
-     * @return EnvironmentConfigInterface
-     */
-    public static function getEnvironmentConfig(): EnvironmentConfigInterface
-    {
-        if (null === static::$environmentConfig) {
-            static::$environmentConfig = new EnvironmentConfig();
-        }
-
-        return static::$environmentConfig;
-    }
-
-    /**
-     * @internal
-     *
-     * @param EnvironmentConfigInterface $environmentConfig
-     */
-    public static function setEnvironmentConfig(EnvironmentConfigInterface $environmentConfig)
-    {
-        self::$environmentConfig = $environmentConfig;
+        return $_SERVER['APP_ENV'];
     }
 
     /**
@@ -1126,86 +1051,5 @@ class Config implements \ArrayAccess
         }
 
         throw new \Exception($file . ' is invalid');
-    }
-
-    /**
-     * @internal
-     *
-     * @param string $varName
-     * @param mixed $default
-     *
-     * @return string|null
-     */
-    public static function resolveEnvVarValue(string $varName, $default = null): ?string
-    {
-        $value = $_SERVER[$varName] ?? $_ENV[$varName] ?? $_SERVER['REDIRECT_' . $varName]
-            ?? $_ENV['REDIRECT_' . $varName] ?? $default;
-
-        return $value;
-    }
-
-    /**
-     * @internal
-     */
-    public static function initDebugDevMode()
-    {
-        if (defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
-            $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
-        } else {
-            // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the
-            // path from the environment variables (if customized) or we use the default structure
-            $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
-            $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
-        }
-
-        $debug = false;
-        $devMode = false;
-
-        $debugModeFile = $configDir . '/debug-mode.php';
-        if (file_exists($debugModeFile)) {
-            $confTemp = include $debugModeFile;
-            if (is_array($confTemp)) {
-                $conf = $confTemp;
-
-                // init debug mode
-                if (isset($conf['active'])) {
-                    $debug = $conf['active'];
-                    // enable debug mode only for a comma-separated list of IP addresses/ranges
-                    if ($debug && $conf['ip']) {
-                        $debug = false;
-                        $clientIp = Tool::getClientIp();
-                        if (null !== $clientIp) {
-                            $debugIpAddresses = explode_and_trim(',', $conf['ip']);
-                            if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
-                                $debug = true;
-                            }
-                        }
-                    }
-                }
-
-                // init dev mode
-                if ($debug && isset($conf['devmode'])) {
-                    $devMode = $conf['devmode'];
-                }
-            }
-        }
-
-        if (\Pimcore::getDebugMode() === null) {
-            \Pimcore::setDebugMode($debug);
-
-            /**
-             * @deprecated
-             */
-            define('PIMCORE_DEBUG', $debug);
-        }
-
-        if (\Pimcore::getDevMode() === null) {
-            \Pimcore::setDevMode($devMode);
-
-            /**
-             * @deprecated
-             */
-            define('PIMCORE_DEVMODE', $devMode);
-        }
     }
 }

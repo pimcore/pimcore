@@ -75,8 +75,6 @@ class Pimcore extends Module\Symfony
 
     public function _initialize(): void
     {
-        Config::setEnvironment($this->config['environment']);
-
         // don't initialize the kernel multiple times if running multiple suites
         // TODO can this lead to side-effects?
         if (null !== $kernel = \Pimcore::getKernel()) {
