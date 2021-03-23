@@ -24,6 +24,8 @@ use Pimcore\Tool;
 
 /**
  * Iterates an array of namespace prefixes and tries to load classes by namespace.
+ *
+ * @internal
  */
 class PrefixLoader extends AbstractClassNameLoader
 {

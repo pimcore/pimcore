@@ -24,6 +24,9 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class SanitizeElementsTask implements TaskInterface
 {
     /**

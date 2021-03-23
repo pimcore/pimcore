@@ -188,6 +188,8 @@ class Service extends Model\Element\Service
      * @param array $params
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridAssetData($asset, $fields = null, $requestedLanguage = null, $params = [])
     {
@@ -256,6 +258,8 @@ class Service extends Model\Element\Service
      * @param bool $onlyMethod
      *
      * @return string|null
+     *
+     * @internal
      */
     public static function getPreviewThumbnail($asset, $params = [], $onlyMethod = false)
     {
@@ -393,6 +397,8 @@ class Service extends Model\Element\Service
      * @param array $metadata
      *
      * @return array
+     *
+     * @internal
      */
     public static function expandMetadataForEditmode($metadata)
     {

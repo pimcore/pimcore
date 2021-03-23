@@ -21,6 +21,9 @@ use DeepCopy\Matcher\Matcher;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @internal
+ */
 class PimcoreClassDefinitionMatcher implements Matcher
 {
     /** @var string $matchType */

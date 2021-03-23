@@ -14,6 +14,9 @@
 
 namespace Pimcore\Maintenance;
 
+/**
+ * @internal
+ */
 interface ExecutorInterface
 {
     /**

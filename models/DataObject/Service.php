@@ -277,6 +277,8 @@ class Service extends Model\Element\Service
      * @param string $field
      *
      * @return bool
+     *
+     * @internal
      */
     public static function isHelperGridColumnConfig($field)
     {
@@ -292,6 +294,8 @@ class Service extends Model\Element\Service
      * @param array $params
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridObjectData($object, $fields = null, $requestedLanguage = null, $params = [])
     {
@@ -478,6 +482,8 @@ class Service extends Model\Element\Service
      * @param string $key
      *
      * @return string[]|null
+     *
+     * @internal
      */
     public static function expandGridColumnForExport($helperDefinitions, $key)
     {
@@ -495,6 +501,8 @@ class Service extends Model\Element\Service
      * @param array $context
      *
      * @return mixed|null|ConfigElementInterface|ConfigElementInterface[]
+     *
+     * @internal
      */
     public static function getConfigForHelperDefinition($helperDefinitions, $key, $context = [])
     {
@@ -1141,6 +1149,8 @@ class Service extends Model\Element\Service
      * @param int $objectId
      *
      * @return array|null
+     *
+     * @internal
      */
     public static function getCustomGridFieldDefinitions($classId, $objectId)
     {
@@ -1321,6 +1331,8 @@ class Service extends Model\Element\Service
      * @param int $objectId
      *
      * @return array layout
+     *
+     * @internal
      */
     public static function getCustomLayoutDefinitionForGridColumnConfig(ClassDefinition $class, $objectId)
     {
@@ -1405,6 +1417,8 @@ class Service extends Model\Element\Service
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
      * @param Concrete|null $object
      * @param array $context additional contextual data
+     *
+     * @internal
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
@@ -1446,6 +1460,8 @@ class Service extends Model\Element\Service
      * @param Model\DataObject\ClassDefinition\Data $layout
      * @param array $allowedView
      * @param array $allowedEdit
+     *
+     * @internal
      */
     public static function enrichLayoutPermissions(&$layout, $allowedView, $allowedEdit)
     {
@@ -1505,6 +1521,8 @@ class Service extends Model\Element\Service
      * @param Model\DataObject\Data\CalculatedValue $data
      *
      * @return string|null
+     *
+     * @internal
      */
     public static function getCalculatedFieldValueForEditMode($object, $params, $data)
     {
@@ -1700,6 +1718,8 @@ class Service extends Model\Element\Service
      * @param array $context
      *
      * @return array
+     *
+     * @internal
      */
     public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
     {
@@ -1762,6 +1782,8 @@ class Service extends Model\Element\Service
      * @param array $context
      *
      * @return array
+     *
+     * @internal
      */
     public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
     {
@@ -1834,6 +1856,8 @@ class Service extends Model\Element\Service
      * @param array $helperDefinitions
      *
      * @return mixed
+     *
+     * @internal
      */
     protected static function getCsvFieldData($fallbackLanguage, $field, $object, $requestedLanguage, $helperDefinitions)
     {

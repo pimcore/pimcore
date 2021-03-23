@@ -58,6 +58,8 @@ class Db
      * @static
      *
      * @return LoggerInterface
+     *
+     * @internal
      */
     public static function getLogger()
     {

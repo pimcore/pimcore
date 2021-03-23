@@ -23,6 +23,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class VersionsCleanupTask implements TaskInterface
 {
     /**

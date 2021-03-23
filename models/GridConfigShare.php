@@ -19,6 +19,8 @@ namespace Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\GridConfigShare\Dao getDao()
+ *
+ * @internal
  */
 class GridConfigShare extends AbstractModel
 {

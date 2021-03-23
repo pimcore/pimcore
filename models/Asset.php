@@ -603,6 +603,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @throws \Exception
+     *
+     * @internal
      */
     public function correctPath()
     {

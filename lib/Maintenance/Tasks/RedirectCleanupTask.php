@@ -17,6 +17,9 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Redirect;
 
+/**
+ * @internal
+ */
 final class RedirectCleanupTask implements TaskInterface
 {
     /**

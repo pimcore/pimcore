@@ -19,6 +19,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+/**
+ * @internal
+ */
 class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 {
     /**

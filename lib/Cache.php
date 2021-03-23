@@ -44,6 +44,8 @@ class Cache
 
     /**
      * Initialize the cache. This acts mainly as integration point with legacy caches.
+     *
+     * @internal
      */
     public static function init()
     {

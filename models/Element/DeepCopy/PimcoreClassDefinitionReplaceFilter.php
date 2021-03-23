@@ -21,6 +21,9 @@ use DeepCopy\Filter\Filter;
 use DeepCopy\Reflection\ReflectionHelper;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @internal
+ */
 class PimcoreClassDefinitionReplaceFilter implements Filter
 {
     /**

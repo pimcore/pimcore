@@ -204,6 +204,8 @@ class Mail extends Email
      * Initializes the mailer with the settings form Settings -> System -> Email Settings
      *
      * @param string $type
+     *
+     * @internal
      */
     public function init($type = 'email')
     {

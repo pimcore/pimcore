@@ -35,14 +35,11 @@ class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
-                        OwnerAwareFieldInterface
+    OwnerAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
-
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\Element\Traits\DirtyIndicatorTrait;
-
     use Model\Element\ElementDumpStateTrait;
 
     const STRICT_DISABLED = 0;
@@ -384,6 +381,8 @@ class Localizedfield extends Model\AbstractModel implements
      * @param ClassDefinition\Data $fieldDefinition
      * @param string $name
      * @param string $language
+     *
+     * @internal
      */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {

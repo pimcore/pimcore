@@ -19,6 +19,8 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 /**
  * Creates needed pimcore directories when warming up the cache
+ *
+ * @internal
  */
 class MkdirCacheWarmer implements CacheWarmerInterface
 {

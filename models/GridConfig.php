@@ -21,6 +21,8 @@ use Pimcore\Db;
 
 /**
  * @method \Pimcore\Model\GridConfig\Dao getDao()
+ *
+ * @internal
  */
 class GridConfig extends AbstractModel
 {

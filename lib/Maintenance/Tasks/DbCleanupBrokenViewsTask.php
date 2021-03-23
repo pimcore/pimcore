@@ -18,6 +18,9 @@ use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class DbCleanupBrokenViewsTask implements TaskInterface
 {
     /**
