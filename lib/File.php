@@ -39,10 +39,13 @@ class File
     public static function getFileExtension($name)
     {
         $name = strtolower($name);
-        $parts = explode('.', $name);
 
-        if (count($parts) > 1) {
-            return $parts[count($parts) - 1];
+        $pos = strrpos($name, '.');
+        if($pos) {
+            $extension = substr($name, $pos+1);
+            if ($extension && strpos($extension, '/') === false) {
+                return $extension;
+            }
         }
 
         return '';
