@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 10.0.0
+- `\Pimcore\Helper\RobotsTxt` has been removed
 - `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead. 
 - [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
 - [Data Objects] Removed CSV import feature. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead.
