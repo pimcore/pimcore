@@ -15,6 +15,7 @@
 namespace Pimcore\Model\WebsiteSetting;
 
 use Pimcore\Model;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
@@ -26,7 +27,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int|null $id
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getById($id = null)
     {
@@ -40,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Model\Exception\NotFoundException('Website Setting with id: ' . $this->model->getId() . ' does not exist');
+            throw new NotFoundException('Website Setting with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 
@@ -49,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param int|null $siteId
      * @param string|null $language
      *
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function getByName($name = null, $siteId = null, $language = null)
     {
@@ -61,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Model\Exception\NotFoundException('Website Setting with name: ' . $this->model->getName() . ' does not exist');
+            throw new NotFoundException('Website Setting with name: ' . $this->model->getName() . ' does not exist');
         }
     }
 
