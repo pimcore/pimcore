@@ -44,10 +44,6 @@ final class EditmodeEditableDefinitionCollector
             return;
         }
 
-        if (isset($this->editableDefinitions[$editable->getName()])) {
-            throw new \Exception(sprintf('Duplicate editable name `%s`', $editable->getName()));
-        }
-
         $this->editableDefinitions[$editable->getName()] = $editable->getEditmodeDefinition();
     }
 
