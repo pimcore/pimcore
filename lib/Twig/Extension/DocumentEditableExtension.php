@@ -74,15 +74,15 @@ class DocumentEditableExtension extends AbstractExtension
 
     /**
      * @param array $context
+     * @param string $type
      * @param string $name
-     * @param string $inputName
      * @param array $options
      *
      * @return \Pimcore\Model\Document\Editable|string
      *
      * @throws \Exception
      */
-    public function renderEditable($context, $name, $inputName, array $options = [])
+    public function renderEditable(array $context, string $type, string $name, array $options = [])
     {
         $document = $context['document'];
         $editmode = $context['editmode'];
@@ -90,7 +90,7 @@ class DocumentEditableExtension extends AbstractExtension
             return '';
         }
 
-        return $this->editableRenderer->render($document, $name, $inputName, $options, $editmode);
+        return $this->editableRenderer->render($document, $type, $name, $options, $editmode);
     }
 
     /**

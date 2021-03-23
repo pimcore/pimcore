@@ -22,7 +22,10 @@ use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ElementTagsListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class ElementTagsListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

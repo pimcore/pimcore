@@ -232,7 +232,7 @@ final class ClassController extends AdminController implements KernelControllerE
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
 
-        return $this->adminJson(['success' => true, 'data' => $customLayout]);
+        return $this->adminJson(['success' => true, 'data' => $customLayout->getObjectVars()]);
     }
 
     /**
@@ -635,16 +635,13 @@ final class ClassController extends AdminController implements KernelControllerE
             $customLayout = DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $name = $customLayout->getName();
-                unset($customLayout->id);
-                unset($customLayout->classId);
-                unset($customLayout->name);
-                unset($customLayout->creationDate);
-                unset($customLayout->modificationDate);
-                unset($customLayout->userOwner);
-                unset($customLayout->userModification);
-                unset($customLayout->fieldDefinitions);
+                $customLayoutData = [
+                    'description' => $customLayout->getDescription(),
+                    'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
+                    'default' => $customLayout->getDefault() ?? 0,
+                ];
 
-                $json = json_encode($customLayout, JSON_PRETTY_PRINT);
+                $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);
 
                 $response = new Response($json);
                 $response->headers->set('Content-type', 'application/json');

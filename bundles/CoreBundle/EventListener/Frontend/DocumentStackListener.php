@@ -24,7 +24,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInterface
+/**
+ * @internal
+ */
+final class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

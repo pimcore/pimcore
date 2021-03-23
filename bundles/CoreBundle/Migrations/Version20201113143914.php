@@ -5,7 +5,10 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-class Version20201113143914 extends AbstractMigration
+/**
+ * @internal
+ */
+final class Version20201113143914 extends AbstractMigration
 {
     private $tables = ['documents_email', 'documents_newsletter', 'documents_page',
         'documents_snippet', 'documents_printpage', ];

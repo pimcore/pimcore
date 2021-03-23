@@ -1,0 +1,19 @@
+doctrine_migrations:
+    connection: default
+    migrations_paths:
+        'Pimcore\Bundle\CoreBundle\Migrations': '@PimcoreCoreBundle/Migrations'
+    storage:
+        table_storage:
+            table_name: 'migration_versions'
+            version_column_name: 'version'
+            version_column_length: 1024
+            executed_at_column_name: 'executed_at'
+            execution_time_column_name: 'execution_time'
+    all_or_nothing: false
+    check_database_platform: false
+    factories:
+        'Doctrine\Migrations\MigrationsRepository': 'Pimcore\Migrations\FilteredMigrationsRepository'
+        'Doctrine\Migrations\Metadata\Storage\MetadataStorage': 'Pimcore\Migrations\FilteredTableMetadataStorage'
+
+
+

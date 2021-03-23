@@ -26,8 +26,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Handles block state for sub requests (saves parent state and restores it after request completes)
+ *
+ * @internal
  */
-class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
+final class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;

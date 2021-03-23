@@ -25,7 +25,10 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class Configuration implements ConfigurationInterface
+/**
+ * @internal
+ */
+final class Configuration implements ConfigurationInterface
 {
     /**
      * @var PlaceholderProcessor
@@ -52,7 +55,6 @@ class Configuration implements ConfigurationInterface
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
-        $rootNode->ignoreExtraKeys();
 
         $rootNode
             ->children()
@@ -412,11 +414,6 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('low_quality_image_preview')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('generator')
-                                    ->defaultNull()
-                                    ->end()
-                                ->end()
                             ->end()
                             ->arrayNode('focal_point_detection')
                                 ->addDefaultsIfNotSet()

@@ -24,7 +24,10 @@ use Pimcore\Event\Model\ElementEventInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class UUIDListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class UUIDListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

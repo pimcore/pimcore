@@ -33,6 +33,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Modifies responses for editmode
+ *
+ * @internal
  */
 class EditmodeListener implements EventSubscriberInterface
 {

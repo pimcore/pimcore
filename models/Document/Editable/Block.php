@@ -257,7 +257,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
-        $this->getBlockState()->pushIndex($this->indices[$this->current]);
+        $this->getBlockState()->pushIndex($this->indices[$this->current] ?? 0);
     }
 
     /**
@@ -279,7 +279,7 @@ class Block extends Model\Document\Editable implements BlockInterface
         $attr = $this->getBlockAttributes();
 
         $outerAttributes = [
-            'key' => $this->indices[$this->current],
+            'key' => $this->indices[$this->current] ?? null,
         ];
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 

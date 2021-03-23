@@ -39,7 +39,10 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
+/**
+ * @internal
+ */
+final class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     /**
      * @return string

@@ -126,8 +126,15 @@ final class RecyclebinController extends AdminController implements KernelContro
             }
 
             $items = $list->load();
+            $data = [];
+            if (is_array($items)) {
+                /** @var Recyclebin\Item $item */
+                foreach ($items as $item) {
+                    $data[] = $item->getObjectVars();
+                }
+            }
 
-            return $this->adminJson(['data' => $items, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $data, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 

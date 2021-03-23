@@ -725,6 +725,21 @@ CREATE TABLE `versions` (
   KEY `binaryFileHash` (`binaryFileHash`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `website_settings`;
+CREATE TABLE `website_settings` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(190) NOT NULL DEFAULT '',
+    `type` ENUM('text','document','asset','object','bool') DEFAULT NULL,
+    `data` TEXT,
+    `language` VARCHAR(15) NOT NULL DEFAULT '',
+    `siteId` INT(11) UNSIGNED DEFAULT NULL,
+    `creationDate` INT(11) UNSIGNED DEFAULT '0',
+    `modificationDate` INT(11) UNSIGNED DEFAULT '0',
+    PRIMARY KEY (`id`),
+    INDEX `name` (`name`),
+    INDEX `siteId` (`siteId`)
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `classificationstore_relations`;
 DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
 

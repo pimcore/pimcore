@@ -21,7 +21,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class GoogleSearchConsoleVerificationListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class GoogleSearchConsoleVerificationListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

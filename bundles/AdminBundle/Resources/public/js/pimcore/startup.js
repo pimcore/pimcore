@@ -950,8 +950,7 @@ Ext.onReady(function () {
             navigationModel: 'quicksearch.boundlist',
             listeners: {
                 "highlightitem": function (view, node, opts) {
-                    // we use getAttribute() here instead of dataset -> IE11 has some strange issues with that in this case
-                    var record = quicksearchStore.getAt(node.getAttribute('data-recordIndex'));
+                    var record = quicksearchStore.getAt(node.dataset.recordIndex);
                     var previewHtml = record.get('preview');
                     if(!previewHtml) {
                         previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';

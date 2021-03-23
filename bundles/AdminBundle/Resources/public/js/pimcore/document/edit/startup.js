@@ -63,11 +63,6 @@ if (pimcore_document_id) {
     window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
 }
 
-// we need to disable touch support here, otherwise drag & drop of new & existing areablock doesn't work on hybrid devices
-// see also https://github.com/pimcore/pimcore/issues/1542
-// this should be removed in later ExtJS version ( > 6.0) as this should be hopefully fixed by then
-Ext.supports.Touch = false;
-
 // overwrite default z-index of windows, this ensures that CKEditor is above ExtJS Windows
 Ext.WindowManager.zseed = 10020;
 
@@ -97,16 +92,6 @@ Ext.onReady(function () {
 
     // causes styling issues, we don't need this anyway
     body.removeCls("x-body");
-
-    /* Drag an Drop from Tree panel */
-    // IE HACK because the body is not 100% at height
-    try {
-        //TODO EXT5
-        Ext.getBody().applyStyles("min-height:" +
-            parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px");
-    } catch (e) {
-        console.log(e);
-    }
 
     try {
         // init cross frame drag & drop handler

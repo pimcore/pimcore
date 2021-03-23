@@ -76,7 +76,8 @@ trait QueryBuilderHelperTrait
         }
 
         if ($condition) {
-            $queryBuilder->where($condition);
+            $queryBuilder->where($condition)
+                ->setParameters($this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         }
     }
 

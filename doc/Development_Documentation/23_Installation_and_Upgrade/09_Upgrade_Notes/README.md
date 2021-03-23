@@ -1,6 +1,8 @@
 # Upgrade Notes
 
 ## 10.0.0
+- `\Pimcore\Helper\RobotsTxt` has been removed
+- `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead. 
 - [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
 - [Data Objects] Removed CSV import feature. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead.
 - [DataObjects] marked `Pimcore\DataObject\GridColumnConfig\Operator` operator classes as final and internal
@@ -138,6 +140,7 @@
 - Removed method `getFlag()` from `Pimcore\Config`.
 
 ## 6.9.0
+- `\Pimcore\Helper\RobotsTxt` has been deprecated and will be removed in Pimcore 10
 - [Documents] `Editable::factory()` is deprecated and will be removed in Pimcore 10, use `EditableLoader` service instead. 
 - [Data Objects] CSV import feature will be removed in Pimcore 10. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead
 - [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` will go away in Pimcore 10. Use `GeoCoordinates` instead which changes the signature of `__construct` parameters

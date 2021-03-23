@@ -25,8 +25,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Adds Meta Data entries of document to HeadMeta view helper
+ *
+ * @internal
  */
-class DocumentMetaDataListener implements EventSubscriberInterface
+final class DocumentMetaDataListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

@@ -386,7 +386,7 @@ class Installer
         // resolve environment with default=dev here as we set debug mode to true and want to
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
-        $environment = Config::getEnvironment(true, 'dev');
+        $environment = Config::getEnvironment();
         $kernel = new \App\Kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
@@ -552,7 +552,6 @@ class Installer
         }
 
         $writer->writeSystemConfig();
-        $writer->writeDebugModeConfig();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)

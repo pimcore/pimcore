@@ -29,8 +29,10 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * The debug.stopwatch service is always defined, so we can't just add it to services if defined. This
  * only adds the stopwatch to services if the debug flag is set.
+ *
+ * @internal
  */
-class DebugStopwatchPass implements CompilerPassInterface
+final class DebugStopwatchPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
