@@ -14,7 +14,7 @@ on:
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
-    PIMCORE_ENVIRONMENT: test
+    APP_ENV: test
     PIMCORE_TEST: 1
 
 jobs:

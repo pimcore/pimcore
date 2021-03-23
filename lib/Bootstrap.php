@@ -17,7 +17,6 @@ namespace Pimcore;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,19 +44,6 @@ class Bootstrap
         }
 
         self::setProjectRoot();
-
-        // determines if we're in Pimcore\Console mode
-        $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
-        if ($pimcoreConsole) {
-            $input = new ArgvInput();
-            if (!defined('PIMCORE_DEBUG') && $input->hasParameterOption(['--no-debug', ''])) {
-                /**
-                 * @deprecated
-                 */
-                define('PIMCORE_DEBUG', false);
-                \Pimcore::setDebugMode(false);
-            }
-        }
 
         self::bootstrap();
 
@@ -94,6 +80,7 @@ class Bootstrap
         @ini_set('display_startup_errors', 'On');
 
         // Pimcore\Console handles maintenance mode through the AbstractCommand
+        $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
         if (!$pimcoreConsole) {
             // skip if maintenance mode is on and the flag is not set
             if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
@@ -130,7 +117,6 @@ class Bootstrap
             throw new \Exception('Unable to locate autoloader! Pimcore project root not found or invalid, please set/check env variable PIMCORE_PROJECT_ROOT.');
         }
 
-        Config::initDebugDevMode();
         self::defineConstants();
 
         /** @var \Composer\Autoload\ClassLoader $loader */
@@ -161,37 +147,7 @@ class Bootstrap
 
     protected static function prepareEnvVariables()
     {
-        // load .env file if available
-        $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
-        $dotEnvLocalPhpFile = PIMCORE_PROJECT_ROOT .'/.env.local.php';
-
-        if (file_exists($dotEnvLocalPhpFile) && is_array($env = include $dotEnvLocalPhpFile)) {
-            foreach ($env as $k => $v) {
-                $_ENV[$k] = $_ENV[$k] ?? (isset($_SERVER[$k]) && 0 !== strpos($k, 'HTTP_') ? $_SERVER[$k] : $v);
-            }
-        } elseif (file_exists($dotEnvFile)) {
-            // load all the .env files
-            $dotEnv = new Dotenv();
-            // Symfony => 4.2 style
-            $envVarName = 'APP_ENV';
-            foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $varName) {
-                if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
-                    $envVarName = $varName;
-                    break;
-                }
-
-                if (isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
-                    $envVarName = 'REDIRECT_' . $varName;
-                    break;
-                }
-            }
-
-            $defaultEnvironment = Config::getEnvironmentConfig()->getDefaultEnvironment();
-            $dotEnv->loadEnv($dotEnvFile, $envVarName, $defaultEnvironment);
-        }
-
-        $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['APP_ENV'] = Config::getEnvironment();
-        $_SERVER += $_ENV;
+        (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
     }
 
     public static function defineConstants()
@@ -210,9 +166,7 @@ class Bootstrap
                 return constant($name);
             }
 
-            // load env var with fallback to REDIRECT_ prefixed env var
-            $value = $_SERVER[$name] ?? $_SERVER['REDIRECT_' . $name] ?? $default;
-
+            $value = $_SERVER[$name] ?? $default;
             if ($define) {
                 define($name, $value);
             }
@@ -261,16 +215,6 @@ class Bootstrap
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
-
-        $kernelDebug = $resolveConstant('PIMCORE_KERNEL_DEBUG', null, false);
-        if ($kernelDebug === 'true') {
-            $kernelDebug = true;
-        } elseif ($kernelDebug === 'false') {
-            $kernelDebug = false;
-        } else {
-            $kernelDebug = null;
-        }
-        define('PIMCORE_KERNEL_DEBUG', $kernelDebug);
     }
 
     public static function autoload()
@@ -304,18 +248,10 @@ class Bootstrap
     public static function kernel()
     {
         $environment = Config::getEnvironment();
-        $debug = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
 
-        if (isset($_SERVER['APP_DEBUG'])) {
-            $_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = (int)$_SERVER['APP_DEBUG'] || filter_var($_SERVER['APP_DEBUG'],
-                FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
-        }
-        $envDebug = PIMCORE_KERNEL_DEBUG ?? $_SERVER['APP_DEBUG'] ?? null;
-        if (null !== $envDebug) {
-            $debug = $envDebug;
-        }
-
+        $debug = (bool) $_SERVER['APP_DEBUG'];
         if ($debug) {
+            umask(0000);
             Debug::enable();
             @ini_set('display_errors', 'On');
         }

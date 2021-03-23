@@ -25,16 +25,6 @@ class Pimcore
     public static $adminMode;
 
     /**
-     * @var bool|null
-     */
-    protected static $debugMode;
-
-    /**
-     * @var bool|null
-     */
-    protected static $devMode;
-
-    /**
      * @var bool
      */
     private static $inShutdown = false;
@@ -59,27 +49,7 @@ class Pimcore
      */
     public static function inDebugMode(): bool
     {
-        return (bool) self::$debugMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @return bool|null
-     */
-    public static function getDebugMode(): ?bool
-    {
-        return self::$debugMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @param bool $debugMode
-     */
-    public static function setDebugMode(bool $debugMode): void
-    {
-        self::$debugMode = $debugMode;
+        return (bool) self::getKernel()->isDebug();
     }
 
     /**
@@ -87,27 +57,7 @@ class Pimcore
      */
     public static function inDevMode(): bool
     {
-        return (bool) self::$devMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @return bool|null
-     */
-    public static function getDevMode(): ?bool
-    {
-        return self::$devMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @param bool $devMode
-     */
-    public static function setDevMode(bool $devMode): void
-    {
-        self::$devMode = $devMode;
+        return (bool) ($_SERVER['PIMCORE_DEV_MODE'] ?? false);
     }
 
     /**
