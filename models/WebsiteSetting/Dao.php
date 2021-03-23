@@ -40,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Website Setting with id: ' . $this->model->getId() . ' does not exist');
+            throw new Model\Exception\NotFoundException('Website Setting with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 
@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Website Setting with name: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException('Website Setting with name: ' . $this->model->getName() . ' does not exist');
         }
     }
 
@@ -80,9 +80,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->clearDependentCache();
     }
 
-    /**
-     * @throws \Exception
-     */
     public function update()
     {
         $ts = time();
@@ -102,11 +99,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->clearDependentCache();
     }
 
-    /**
-     * Create a new record for the object in database
-     *
-     * @return bool
-     */
     public function create()
     {
         $ts = time();
