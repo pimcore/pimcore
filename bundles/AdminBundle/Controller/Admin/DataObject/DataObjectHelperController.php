@@ -186,7 +186,7 @@ final class DataObjectHelperController extends AdminController
         }
         $success = false;
         if ($gridConfig) {
-            if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+            if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                 throw new \Exception("don't mess with someone elses grid config");
             }
 
@@ -315,13 +315,13 @@ final class DataObjectHelperController extends AdminController
                         $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     }
                     $userIds = implode(',', $userIds);
-                    $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
+                    $shared = ($savedGridConfig->getOwnerId() != $userId && !$this->getAdminUser()->isAdmin() && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
 
 //                    $shared = $savedGridConfig->isShareGlobally() ||GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
                 } catch (\Exception $e) {
                 }
 
-                if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+                if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                     throw new \Exception('you are neither the onwner of this config nor it is shared with you');
                 }
                 $gridConfigId = $savedGridConfig->getId();
@@ -905,7 +905,7 @@ final class DataObjectHelperController extends AdminController
                     } catch (\Exception $e) {
                     }
                 }
-                if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+                if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                     throw new \Exception("don't mess around with somebody elses configuration");
                 }
 
@@ -940,7 +940,7 @@ final class DataObjectHelperController extends AdminController
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
-                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getAdminUser()->getId());
+                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin());
 
                 return $this->adminJson(['success' => true,
                         'settings' => $settings,
@@ -970,7 +970,7 @@ final class DataObjectHelperController extends AdminController
             return;
         }
 
-        if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+        if ($gridConfig->getOwnerId() != $user->getId() && !$user->isAdmin()) {
             throw new \Exception("don't mess with someone elses grid config");
         }
         $combinedShares = [];
