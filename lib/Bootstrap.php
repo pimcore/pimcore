@@ -17,7 +17,6 @@ namespace Pimcore;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
@@ -148,7 +147,10 @@ class Bootstrap
 
     protected static function prepareEnvVariables()
     {
-        (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+        $envFile = PIMCORE_PROJECT_ROOT .'/.env';
+        if(file_exists($envFile)) {
+            (new Dotenv())->bootEnv($envFile);
+        }
     }
 
     public static function defineConstants()
