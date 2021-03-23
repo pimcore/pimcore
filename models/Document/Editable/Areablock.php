@@ -664,7 +664,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function getCurrentIndex()
     {
-        return $this->indices[$this->getCurrent()]['key'];
+        return $this->indices[$this->getCurrent()]['key'] ?? null;
     }
 
     /**
