@@ -112,6 +112,22 @@ Ext.onReady(function () {
 
     if (typeof Ext == "object" && typeof pimcore == "object") {
 
+        // check for duplicate editables
+        var editableHtmlEls = {};
+        var foundDuplicate = false;
+        document.querySelectorAll('.pimcore_editable').forEach(editableEl => {
+            if(editableHtmlEls[editableEl.id]) {
+                pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + editableEl.dataset.name, "error");
+                foundDuplicate = true;
+            }
+            editableHtmlEls[editableEl.id] = true;
+        });
+
+        if(foundDuplicate) {
+            return;
+        }
+
+        // initialize editables
         editableDefinitions.forEach(editableDef => {
             editableManager.addByDefinition(editableDef);
         });
