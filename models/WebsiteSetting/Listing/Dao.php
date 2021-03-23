@@ -21,26 +21,19 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\WebsiteSetting\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Listing\Dao\AbstractDao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('website-settings');
-    }
-
     /**
-     * Loads a list of static routes for the specified parameters, returns an array of Staticroute elements
-     *
      * @return \Pimcore\Model\WebsiteSetting[]
      */
     public function load()
     {
-        $settingsData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $sql = 'SELECT id FROM website_settings' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
+        $settingsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
 
         $settings = [];
         foreach ($settingsData as $settingData) {
-            $settings[] = Model\WebsiteSetting::getById($settingData['id']);
+            $settings[] = Model\WebsiteSetting::getById($settingData);
         }
 
         $this->model->setSettings($settings);
@@ -53,9 +46,6 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
-
-        return $amount;
+        return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM website_settings ' . $this->getCondition(), $this->model->getConditionVariables());
     }
 }
