@@ -285,6 +285,10 @@ class Bootstrap
         } else {
             $kernelDebug = null;
         }
+
+        /**
+         * @deprecated Will be removed in Pimcore 10
+         */
         define('PIMCORE_KERNEL_DEBUG', $kernelDebug);
     }
 

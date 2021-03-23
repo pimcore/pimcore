@@ -179,6 +179,10 @@ class ConfigWriter
         }
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 10
+     * @param string $ip
+     */
     public function writeDebugModeConfig($ip = '')
     {
         File::putPhpFile(PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php', to_php_data_file_format([
