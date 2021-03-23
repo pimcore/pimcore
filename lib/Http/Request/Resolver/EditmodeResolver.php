@@ -15,7 +15,6 @@
 namespace Pimcore\Http\Request\Resolver;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Pimcore\Cache\Runtime;
 use Pimcore\Http\RequestHelper;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
