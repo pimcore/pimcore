@@ -1,6 +1,9 @@
 # Upgrade Notes
 
 ## 6.9.0
+- Classes `Pimcore\Config\EnvironmentConfigInterface` and `\Pimcore\Config\EnvironmentConfig` have been deprecated and will be removed in Pimcore 10.
+- Constants `PIMCORE_DEBUG` `PIMCORE_DEVMODE` `PIMCORE_ENVIRONMENT` and `PIMCORE_KERNEL_DEBUG` have been deprecated and will be removed in Pimcore 10.
+  
 - `\Pimcore\Helper\RobotsTxt` has been deprecated and will be removed in Pimcore 10
 - [Documents] `Editable::factory()` is deprecated and will be removed in Pimcore 10, use `EditableLoader` service instead. 
 - [Data Objects] CSV import feature will be removed in Pimcore 10. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead
@@ -59,6 +62,20 @@
 - Image thumbnails: Using getHtml() on Image Thumbnails will return `<picture>` tag instead of `<img>` tag in Pimcore 10. Please use `getImageTag()` method instead. Also, passing `$removeAttribute` param to `getHtml()` has been deprecated and will throw Exception in Pimcore 10.
 - Deprecated `Pimcore\Tool\Mime`, use `Symfony\Component\Mime\MimeTypes` instead.  
 - `Pimcore\Config::getFlag()` method has been deprecated and will be removed in Pimcore 10.
+
+The following methods have been all deprecated and will be removed in Pimcore 10: 
+```php
+\Pimcore\Config::resolveEnvVarValue()
+Pimcore::getDevMode()
+Pimcore::setDevMode()
+Pimcore::setDebugMode()
+\Pimcore::getDebugMode()
+\Pimcore\Config::initDebugDevMode()
+\Pimcore\Config::setEnvironmentConfig()
+\Pimcore\Config::setEnvironment()
+\Pimcore\Config::getEnvironmentConfig()
+\Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter::writeDebugModeConfig()
+```
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 

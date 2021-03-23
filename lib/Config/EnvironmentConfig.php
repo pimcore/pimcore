@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
+/**
+ * @deprecated Will be removed in Pimcore 10
+ */
 class EnvironmentConfig implements EnvironmentConfigInterface
 {
     /**
