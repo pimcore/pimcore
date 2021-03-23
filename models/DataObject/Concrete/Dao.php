@@ -43,10 +43,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
     }
 
+
     /**
      * Get the data for the object from database for the given id
      *
      * @param int $id
+     *
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
@@ -58,7 +61,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {
-            throw new \Exception('Object with the ID ' . $id . " doesn't exists");
+            throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
         }
     }
 
