@@ -20,6 +20,9 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 
+/**
+ * @internal
+ */
 class ChangePublishedStateSubscriber implements EventSubscriberInterface
 {
     const NO_CHANGE = 'no_change';

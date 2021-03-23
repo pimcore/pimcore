@@ -21,6 +21,8 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 
 /**
  * Core implementation loader delegating to a list of registered loaders
+ *
+ * @internal
  */
 class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
 {

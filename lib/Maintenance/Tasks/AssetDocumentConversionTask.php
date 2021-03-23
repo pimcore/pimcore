@@ -20,6 +20,9 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class AssetDocumentConversionTask implements TaskInterface
 {
     /**

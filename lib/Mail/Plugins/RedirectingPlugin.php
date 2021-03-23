@@ -18,7 +18,10 @@ use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 
-class RedirectingPlugin
+/**
+ * @internal
+ */
+final class RedirectingPlugin
 {
     /**
      * The recipient who will receive all messages.

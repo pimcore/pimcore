@@ -21,6 +21,9 @@ use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
+/**
+ * @internal
+ */
 class MarshalMatcher extends TypeMatcher
 {
     /** @var string|null */

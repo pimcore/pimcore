@@ -25,6 +25,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class NotificationSubscriber implements EventSubscriberInterface
 {
     const MAIL_TYPE_TEMPLATE = 'template';

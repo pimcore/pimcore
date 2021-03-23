@@ -18,6 +18,9 @@ use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class VersionsCompressTask implements TaskInterface
 {
     /**

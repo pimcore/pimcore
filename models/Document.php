@@ -495,6 +495,8 @@ class Document extends Element\AbstractElement
      * Validate the document path.
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function correctPath()
     {

@@ -20,6 +20,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
+/**
+ * @internal
+ */
 final class LowQualityImagePreviewTask implements TaskInterface
 {
     /**

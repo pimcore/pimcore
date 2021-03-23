@@ -19,7 +19,10 @@ use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 
-class Dashboard
+/**
+ * @internal
+ */
+final class Dashboard
 {
     /**
      * @var User

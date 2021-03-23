@@ -115,6 +115,8 @@ class Composer
 
     /**
      * @param string $rootPath
+     *
+     * @internal
      */
     public static function parametersYmlCheck($rootPath)
     {
@@ -149,6 +151,8 @@ class Composer
 
     /**
      * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
+     *
+     * @internal
      */
     protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true)
     {
@@ -177,6 +181,9 @@ class Composer
         return $process;
     }
 
+    /**
+     * @internal
+     */
     protected static function getPhp($includeArgs = true)
     {
         $phpFinder = new PhpExecutableFinder();
@@ -187,6 +194,11 @@ class Composer
         return $phpPath;
     }
 
+    /**
+     * @return array
+     *
+     * @internal
+     */
     protected static function getPhpArguments()
     {
         $ini = null;

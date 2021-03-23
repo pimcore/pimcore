@@ -15,6 +15,9 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Marking;
 
+/**
+ * @internal
+ */
 class StateMachineGraphvizDumper extends GraphvizDumper
 {
     /**

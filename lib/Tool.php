@@ -48,6 +48,8 @@ class Tool
      * Sets the current request to operate on
      *
      * @param Request|null $request
+     *
+     * @internal
      */
     public static function setCurrentRequest(Request $request = null)
     {

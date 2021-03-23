@@ -24,8 +24,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles writing/merging report config and emitting an event on config save.
+ *
+ * @internal
  */
-class ReportConfigWriter
+final class ReportConfigWriter
 {
     /**
      * @var EventDispatcherInterface

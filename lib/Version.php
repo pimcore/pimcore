@@ -16,7 +16,10 @@ namespace Pimcore;
 
 use PackageVersions\Versions;
 
-class Version
+/**
+ * @internal
+ */
+final class Version
 {
     const PART_NUMBER = 0;
     const PART_HASH = 1;

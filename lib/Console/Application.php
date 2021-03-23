@@ -31,6 +31,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * The console application
+ *
+ * @internal
  */
 class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {

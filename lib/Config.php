@@ -545,6 +545,8 @@ class Config implements \ArrayAccess
      * @static
      *
      * @return \Pimcore\Config\Config
+     *
+     * @internal
      */
     public static function getRobotsConfig()
     {
@@ -577,6 +579,8 @@ class Config implements \ArrayAccess
      * @static
      *
      * @param \Pimcore\Config\Config $config
+     *
+     * @internal
      */
     public static function setRobotsConfig(\Pimcore\Config\Config $config)
     {
