@@ -263,26 +263,6 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public $locale;
  
     /**
-     * @return array
-     */
-    public function getData()
-    {
-        if ($this->data === null) {
-            $this->load();
-        }
- 
-        return $this->data;
-    }
- 
-    /**
-     * @param array $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
- 
-    /**
      * get total count.
      *
      * @return mixed
@@ -489,7 +469,7 @@ class Dao extends Listing\Dao\AbstractDao
     {
         try {
             $query = $this->getQueryBuilder();
-            $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
+            $objectIds = $this->db->fetchCol((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
             $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
  
             return array_map('intval', $objectIds);
@@ -507,9 +487,13 @@ class Dao extends Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM '.$this->getTableName().$this->getCondition().$this->getOffsetLimit(), $this->model->getConditionVariables());
- 
-        return $amount;
+        if ($this->model->isLoaded()) {
+            return count($this->model->getData());
+        } else {
+            $idList = $this->loadIdList();
+
+            return count($idList);
+        }
     }
  
     /**
@@ -521,9 +505,12 @@ class Dao extends Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM '.$this->getTableName().$this->getCondition(), $this->model->getConditionVariables());
- 
-        return $amount;
+        $queryBuilder = $this->getQueryBuilder();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
+        
+        $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        
+        return (int) $totalCount;
     }
 }
 ```
