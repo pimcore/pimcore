@@ -147,10 +147,7 @@ class Bootstrap
 
     protected static function prepareEnvVariables()
     {
-        $envFile = PIMCORE_PROJECT_ROOT .'/.env';
-        if(file_exists($envFile)) {
-            (new Dotenv())->bootEnv($envFile);
-        }
+        (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
     }
 
     public static function defineConstants()
