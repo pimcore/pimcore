@@ -45,6 +45,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
+use Pimcore\Model\Tool\SettingsStore;
 
 /**
  * @Route("/settings")
@@ -1560,10 +1561,9 @@ final class SettingsController extends AdminController
             $values = [];
         }
 
-        File::putPhpFile(
-            Config::locateConfigFile('robots.php'),
-            to_php_data_file_format($values)
-        );
+        foreach($values as $siteId => $robotsContent) {
+            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
+        }
 
         return $this->adminJson([
             'success' => true,

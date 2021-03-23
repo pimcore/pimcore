@@ -18,6 +18,7 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\User\UserRole;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -560,8 +561,17 @@ class Config implements \ArrayAccess
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_robots');
         } else {
             try {
-                $file = self::locateConfigFile('robots.php');
-                $config = static::getConfigInstance($file);
+                $settingsStoreScope = 'robots.txt';
+                $configData = [];
+                $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
+                foreach($robotsSettingsIds as $id) {
+                    $robots = SettingsStore::get($id, $settingsStoreScope);
+                    $siteId = \preg_replace('/^robots\.txt\-/', '', $robots->getId());
+                    $configData[$siteId] = $robots->getData();
+                }
+
+                $config = new \Pimcore\Config\Config($configData);
+
             } catch (\Exception $e) {
                 $config = new \Pimcore\Config\Config([]);
             }
