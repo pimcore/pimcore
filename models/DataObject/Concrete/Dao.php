@@ -50,19 +50,15 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getById($id)
     {
-        try {
-            $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
-                LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
-                    WHERE o_id = ?", $id);
+        $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
+            LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
+                WHERE o_id = ?", $id);
 
-            if (!empty($data['o_id'])) {
-                $this->assignVariablesToModel($data);
-                $this->getData();
-            } else {
-                throw new \Exception('Object with the ID ' . $id . " doesn't exists");
-            }
-        } catch (\Exception $e) {
-            Logger::warning($e);
+        if (!empty($data['o_id'])) {
+            $this->assignVariablesToModel($data);
+            $this->getData();
+        } else {
+            throw new \Exception('Object with the ID ' . $id . " doesn't exists");
         }
     }
 
