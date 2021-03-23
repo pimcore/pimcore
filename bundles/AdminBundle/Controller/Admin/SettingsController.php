@@ -390,16 +390,6 @@ final class SettingsController extends AdminController
             $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
         }
 
-        // inject debug mode
-        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-        $debugMode = [];
-        if (file_exists($debugModeFile)) {
-            $debugMode = include $debugModeFile;
-        }
-        $valueArray['general']['debug'] = $debugMode['active'] ?? false;
-        $valueArray['general']['debug_ip'] = $debugMode['ip'] ?? '';
-        $valueArray['general']['devmode'] = $debugMode['devmode'] ?? false;
-
         $response = [
             'values' => $valueArray,
             'config' => [
@@ -573,13 +563,6 @@ final class SettingsController extends AdminController
         $settingsYml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yml');
         File::put($configFile, $settingsYml);
-
-        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-        File::putPhpFile($debugModeFile, to_php_data_file_format([
-            'active' => $values['general.debug'],
-            'ip' => $values['general.debug_ip'],
-            'devmode' => $values['general.devmode'],
-        ]));
 
         // clear all caches
         $this->forward(self::class . '::clearCacheAction', [

@@ -316,7 +316,7 @@ abstract class Kernel extends SymfonyKernel
         ], 60);
 
         // load development bundles only in matching environments
-        if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
+        if ($this->isDebug() && in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
                 new WebProfilerBundle(),

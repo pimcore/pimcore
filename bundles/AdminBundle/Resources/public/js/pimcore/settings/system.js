@@ -90,10 +90,6 @@ pimcore.settings.system = Class.create({
                 pimcore.globalmanager.remove("settings_system");
             }.bind(this));
 
-            // debug
-            if (this.data.values.general.debug) {
-                this.data.values.general.debug = true;
-            }
 
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
@@ -364,43 +360,6 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 600},
                         items: [
                             {
-                                fieldLabel: "DEBUG",
-                                xtype: "checkbox",
-                                name: "general.debug",
-                                id: "system_settings_general_debug",
-                                checked: this.getValue("general.debug"),
-                                listeners: {
-                                    change: function (el, checked) {
-                                        // set the current client ip to the debug ip field
-                                        var ipField = Ext.getCmp("system_settings_general_debug_ip");
-                                        if (checked && empty(ipField.getValue())) {
-                                            ipField.setValue(this.data.config.client_ip);
-                                        }
-                                    }.bind(this)
-                                }
-                            },
-                            {
-                                fieldLabel: t("only_for_ip"),
-                                xtype: "textfield",
-                                id: "system_settings_general_debug_ip",
-                                name: "general.debug_ip",
-                                width: 600,
-                                value: this.getValue("general.debug_ip")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("debug_description")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("debug_override_warning"),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-                            {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
@@ -470,14 +429,6 @@ pimcore.settings.system = Class.create({
                                 xtype: "checkbox",
                                 name: "general.debug_admin_translations",
                                 checked: this.getValue("general.debug_admin_translations")
-                            },
-                            {
-                                fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">'
-                                + t('do_not_use_in_production') + '</span>)',
-                                xtype: "checkbox",
-                                name: "general.devmode",
-                                id: "system_settings_general_devmode",
-                                checked: this.getValue("general.devmode")
                             },
                             {
                                 xtype: "displayfield",

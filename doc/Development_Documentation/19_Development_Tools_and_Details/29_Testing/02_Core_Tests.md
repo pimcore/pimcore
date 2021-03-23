@@ -32,7 +32,7 @@ Don't forget to check logfiles (especially `test.log` and `php.log`) when proble
 
 This will run all tests.
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore
 ```
 
 #### Only run a specific suite
@@ -40,7 +40,7 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 Only runs the `Model` tests. For a list of suites see the list below.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Model
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Model
 ```
 
 #### Only run a specific test group
@@ -49,7 +49,7 @@ This can be a subset of a suite. You also have the option to provide a comma-sep
 For an overview of available groups see the table below. 
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Rest -g dataTypeIn    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Rest -g dataTypeIn    
 ```
 
 ##### Redis Cache tests
@@ -58,7 +58,7 @@ For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. Set to a value that
 other Redis DBs on your system.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore Cache    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore Cache    
 ```
 
 

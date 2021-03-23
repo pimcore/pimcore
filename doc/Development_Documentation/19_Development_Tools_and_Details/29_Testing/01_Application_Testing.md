@@ -331,7 +331,7 @@ use Pimcore\Tests\Util\Autoloader;
 define('PIMCORE_PROJECT_ROOT', realpath(__DIR__ . '/..'));
 
 // set the used pimcore/symfony environment
-putenv('PIMCORE_ENVIRONMENT=test');
+putenv('APP_ENV=test');
 
 
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';

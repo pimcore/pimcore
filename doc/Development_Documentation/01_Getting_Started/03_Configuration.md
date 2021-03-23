@@ -95,7 +95,7 @@ This gives you the possibility to reconfigure environment settings before they a
 your needs. Examples:
 
 * Defining the [Trusted Proxies](http://symfony.com/doc/3.4/deployment/proxies.html) configuration on the `Request` object
-* Influencing the default [environment handling](../21_Deployment/03_Multi_Environment.md)
+* Influencing the default [environment handling](../21_Deployment/03_Configuration_Environments.md)
 
 ```php
 <?php
