@@ -21,6 +21,9 @@ namespace Pimcore\Helper;
 
 use Pimcore\Cache;
 
+/**
+ * @deprecated Will be removed in Pimcore 10
+ */
 class RobotsTxt
 {
     /**
