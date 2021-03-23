@@ -114,18 +114,14 @@ Ext.onReady(function () {
 
         // check for duplicate editables
         var editableHtmlEls = {};
-        var foundDuplicate = false;
         document.querySelectorAll('.pimcore_editable').forEach(editableEl => {
             if(editableHtmlEls[editableEl.id]) {
-                pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + editableEl.dataset.name, "error");
-                foundDuplicate = true;
+                let message = "Duplicate editable name: " + editableEl.dataset.name;
+                pimcore.helpers.showNotification("ERROR", message, "error");
+                throw message;
             }
             editableHtmlEls[editableEl.id] = true;
         });
-
-        if(foundDuplicate) {
-            return;
-        }
 
         // initialize editables
         editableDefinitions.forEach(editableDef => {
