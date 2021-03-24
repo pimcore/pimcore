@@ -59,7 +59,7 @@ Settings for default output filters shipped with Pimcore.
 
 
 ## Web Service API
-Settings fpr Pimcore web service API. 
+Settings for Pimcore web service API. 
 
 
 ## HTTP Connectivity (direct, proxy, ...)
