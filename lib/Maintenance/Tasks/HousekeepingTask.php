@@ -14,7 +14,6 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 
 /**

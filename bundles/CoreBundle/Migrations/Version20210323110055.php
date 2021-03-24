@@ -14,26 +14,26 @@ use Pimcore\Model\Tool\SettingsStore;
  */
 final class Version20210323110055 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $file = Config::locateConfigFile('robots.php');
         $config = Config::getConfigInstance($file);
         $config = $config->toArray();
 
-        foreach($config as $siteId => $robotsContent) {
+        foreach ($config as $siteId => $robotsContent) {
             SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
         }
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $robotsSettingsIds = SettingsStore::getIdsByScope('robots.txt');
-        foreach($robotsSettingsIds as $id) {
+        foreach ($robotsSettingsIds as $id) {
             SettingsStore::delete($id, 'robots.txt');
         }
     }
