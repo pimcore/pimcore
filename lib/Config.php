@@ -557,14 +557,13 @@ class Config implements \ArrayAccess
                 $settingsStoreScope = 'robots.txt';
                 $configData = [];
                 $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
-                foreach($robotsSettingsIds as $id) {
+                foreach ($robotsSettingsIds as $id) {
                     $robots = SettingsStore::get($id, $settingsStoreScope);
                     $siteId = \preg_replace('/^robots\.txt\-/', '', $robots->getId());
                     $configData[$siteId] = $robots->getData();
                 }
 
                 $config = new \Pimcore\Config\Config($configData);
-
             } catch (\Exception $e) {
                 $config = new \Pimcore\Config\Config([]);
             }

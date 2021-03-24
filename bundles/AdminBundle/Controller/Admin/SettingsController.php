@@ -31,6 +31,7 @@ use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -45,7 +46,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
-use Pimcore\Model\Tool\SettingsStore;
 
 /**
  * @Route("/settings")
@@ -1544,7 +1544,7 @@ final class SettingsController extends AdminController
             $values = [];
         }
 
-        foreach($values as $siteId => $robotsContent) {
+        foreach ($values as $siteId => $robotsContent) {
             SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
         }
 
@@ -1619,21 +1619,21 @@ final class SettingsController extends AdminController
         } else {
             $list = new WebsiteSetting\Listing();
 
-                $list->setLimit($request->get('limit'));
-                $list->setOffset($request->get('start'));
+            $list->setLimit($request->get('limit'));
+            $list->setOffset($request->get('start'));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-                if ($sortingSettings['orderKey']) {
-                    $list->setOrderKey($sortingSettings['orderKey']);
-                    $list->setOrder($sortingSettings['order']);
-                } else {
-                    $list->setOrderKey('name');
-                    $list->setOrder('asc');
-                }
+            if ($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
+            } else {
+                $list->setOrderKey('name');
+                $list->setOrder('asc');
+            }
 
             if ($request->get('filter')) {
-                    $list->setCondition('`name` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
-                    }
+                $list->setCondition('`name` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            }
 
             $totalCount = $list->getTotalCount();
             $list = $list->load();

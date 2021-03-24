@@ -8,19 +8,18 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Config;
 use Pimcore\Db\PhpArrayFileTable;
-use Pimcore\Model\WebsiteSetting;
 
 /**
  * @internal
  */
 final class Version20210323082921 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $db = \Pimcore\Db::get();
         $db->query('DROP TABLE IF EXISTS `website_settings`;');
@@ -39,8 +38,8 @@ final class Version20210323082921 extends AbstractMigration
 ) DEFAULT CHARSET=utf8mb4;");
 
         // move data from PHP file to database
-        $file = Config::locateConfigFile( 'website-settings.php');
-        if(is_file($file)) {
+        $file = Config::locateConfigFile('website-settings.php');
+        if (is_file($file)) {
             $data = PhpArrayFileTable::get($file)->fetchAll();
 
             foreach ($data as $row) {
@@ -51,7 +50,7 @@ final class Version20210323082921 extends AbstractMigration
         }
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE IF EXISTS `website_settings`;');
     }

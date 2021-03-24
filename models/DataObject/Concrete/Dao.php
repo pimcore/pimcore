@@ -43,7 +43,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
     }
 
-
     /**
      * Get the data for the object from database for the given id
      *
