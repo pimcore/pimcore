@@ -1308,7 +1308,7 @@ pimcore.document.tree = Class.create({
                         url: Routing.generate('pimcore_admin_document_document_updatesite'),
                         method: 'PUT',
                         params: data,
-                        success: function (response) {
+                        success: function (tree, record, response) {
                             var site = Ext.decode(response.responseText);
                             record.data.site = site;
                             tree.getStore().load({
