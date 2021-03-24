@@ -807,7 +807,7 @@ final class DocumentController extends ElementControllerBase implements KernelCo
         $site->save();
 
         $site->setRootDocument(null); // do not send the document to the frontend
-        return $this->adminJson($site);
+        return $this->adminJson($site->getObjectVars());
     }
 
     /**
