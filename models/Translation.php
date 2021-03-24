@@ -59,6 +59,27 @@ class Translation extends AbstractModel
     protected $domain = self::DOMAIN_DEFAULT;
 
     /**
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type): void
+    {
+        $this->type = $type;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function IsAValidLanguage(string $domain, string $locale): bool

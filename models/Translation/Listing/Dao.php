@@ -85,6 +85,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                     $translations[$t['key']] = new Model\Translation();
                     $translations[$t['key']]->setDomain($this->model->getDomain());
                     $translations[$t['key']]->setKey($t['key']);
+                    $translations[$t['key']]->setType($t['type']);
                 }
 
                 $translations[$t['key']]->addTranslation($t['language'], $t['text']);

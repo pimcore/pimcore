@@ -41,7 +41,27 @@ Ext.define('pimcore.settings.translationEditor', {
         var innerTitle = this.config.__innerTitle;
         var editorType = this.config.__editorType;
 
-        if (editorType == "plain") {
+        if (editorType == "custom") {
+            this.textarea = new Ext.form.TextArea({
+                width: '100%',
+                height: '100%',
+                value: value,
+                grow: true
+            });
+
+            this.component = new Ext.Panel({
+                title: innerTitle,
+                items: [this.textarea],
+                bbar: [
+                    {
+                        xtype: "displayfield",
+                        value: t('symfony_translation_link')
+                    }
+                ],
+                autoScroll: true,
+                layout: 'fit'
+            });
+        } else if (editorType == "plain" ) {
             this.textarea = new Ext.form.TextArea({
                 width: '100%',
                 height: '100%',
@@ -55,8 +75,6 @@ Ext.define('pimcore.settings.translationEditor', {
                 autoScroll: true,
                 layout: 'fit'
             });
-
-
         } else {
             this.editableDivId = "translationeditor_" + uniqid();
 
@@ -123,7 +141,7 @@ Ext.define('pimcore.settings.translationEditor', {
                     text: t("save"),
                     iconCls: 'pimcore_icon_save',
                     handler: function () {
-                        if (editorType == "plain") {
+                        if (editorType == "plain" || editorType == "custom") {
                             newValue = this.textarea.getValue();
                         } else {
                             var newValue = this.oldValue;
@@ -268,6 +286,129 @@ Ext.define('pimcore.settings.translationEditor', {
         } catch (e) {
             console.log(e);
         }
+    },
+
+    getOptionsEditor: function (id, value) {
+        var datax = {};
+        if (empty(value)) {
+            datax.options = [{
+                key: "",
+                value: ""
+            }];
+            datax.var = '';
+        } else {
+            datax.options = [];
+            values = value.match(/{(.*?),\s(.*?),\s([^,]*)}$/);
+            datax.var = (Ext.isArray(values) && !empty(values[1])) ? values[1] : '';
+            datax.type = (Ext.isArray(values) && !empty(values[2])) ? values[2] : '';
+            var options = (Ext.isArray(values) && !empty(values[3])) ? values[3] : '';
+
+            if(options) {
+                let optionsArr = options.match(/(\S+\s{\/?[\S][^}]*})/g);
+                for (let opt in optionsArr) {
+                    opt = optionsArr[opt].split(/(?<=^\S+)\s/);
+                    datax.options.push({key: opt[0], value: opt[1].match(/[^{\}]+(?=})/)});
+                }
+            }
+        }
+
+        var valueStore = new Ext.data.Store({
+            fields: ["key", {name: "value", allowBlank: false}],
+            proxy: {
+                type: 'memory'
+            },
+            data: datax.options
+        });
+
+        this.optionText = new Ext.form.TextField({
+            name: 'option_variable',
+            value: datax.var,
+            fieldLabel: t("option_variable"),
+        });
+
+        var valueGrid = Ext.create('Ext.grid.Panel', {
+            itemId: id,
+            tbar: [this.optionText, "->",{
+                xtype: "button",
+                text: t("add_option"),
+                iconCls: "pimcore_icon_add",
+                handler: function () {
+                    var u = {
+                        key: "",
+                        value: ""
+                    };
+
+                    var idx;
+                    var selections = this.selectionModel.getSelected();
+                    if (!selections || selections.getCount() == 0) {
+                        idx = 1;
+                    } else {
+                        var selectedRow = selections.getAt(0);
+                        if (selectedRow) {
+                            idx = valueStore.indexOf(selectedRow) + 1;
+                        } else {
+                            idx = valueStore.getCount();
+                        }
+                    }
+
+                    valueStore.insert(idx, u);
+                    this.selectionModel.select(idx);
+                }.bind(this)
+            }],
+            style: "margin-top: 10px",
+            store: valueStore,
+            selModel: Ext.create('Ext.selection.RowModel', {}),
+            clicksToEdit: 1,
+            columnLines: true,
+            columns: [
+                {
+                    text: t("option"),
+                    sortable: true,
+                    dataIndex: 'key',
+                    editor: new Ext.form.TextField({}),
+                    flex: 40
+                },
+                {
+                    text: t("value"), sortable: true, dataIndex: 'value', editor: { xtype : 'textfield', allowBlank : false },
+                    flex: 60
+                },
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('remove'),
+                    width: 40,
+                    items: [
+                        {
+                            tooltip: t('remove'),
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                            handler: function (grid, rowIndex) {
+                                grid.getStore().removeAt(rowIndex);
+                            }.bind(this)
+                        }
+                    ]
+                }
+            ],
+            autoHeight: true,
+            plugins: [
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1,
+                    listeners: {
+                        validateedit: function(editor, e) {
+                            // disallow duplicate values
+                            for(var i=0; i < valueStore.data.length; i++) {
+                                var existingRecord = valueStore.getAt(i);
+                                if(i != e.rowIdx && existingRecord.get('value') === e.value) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                    }
+                })]
+        });
+
+        this.selectionModel = valueGrid.getSelectionModel();
+
+        return valueGrid;
     },
 
     onNodeDrop: function (target, dd, e, data) {
