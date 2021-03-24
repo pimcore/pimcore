@@ -17,14 +17,11 @@
 
 namespace Pimcore\Model\Asset\MetaData;
 
-use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
-    use TemporaryFileHelperTrait;
-
     /**
      * @param bool $force
      * @param bool $useExifTool
@@ -68,10 +65,8 @@ trait EmbeddedMetaDataTrait
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
 
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getTemporaryFile();
         }
-
-        $filePath = $this->getLocalFile($filePath);
 
         if ($exiftool && $useExifTool) {
             $process = new Process([$exiftool, '-j', $filePath]);
@@ -128,7 +123,7 @@ trait EmbeddedMetaDataTrait
     public function getEXIFData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
@@ -150,7 +145,7 @@ trait EmbeddedMetaDataTrait
     public function getXMPData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
@@ -247,7 +242,7 @@ trait EmbeddedMetaDataTrait
     public function getIPTCData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];

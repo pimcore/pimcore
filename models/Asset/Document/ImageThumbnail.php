@@ -88,7 +88,7 @@ class ImageThumbnail
             try {
                 if (!$deferred) {
                     $converter = \Pimcore\Document::getInstance();
-                    $converter->load($this->asset->getFileSystemPath());
+                    $converter->load($this->asset);
                     $path = PIMCORE_TEMPORARY_DIRECTORY . '/document-image-cache/document_' . $this->asset->getId() . '__thumbnail_' .  $this->page . '.png';
                     if (!is_dir(dirname($path))) {
                         \Pimcore\File::mkdir(dirname($path));

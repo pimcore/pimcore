@@ -146,7 +146,7 @@ class Image extends Model\Asset
         if ($facedetectBin) {
             $faceCoordinates = [];
             $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
-            $image = $this->getLocalFile($thumbnail->getFileSystemPath());
+            $image = $thumbnail->getFileSystemPath();
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
@@ -386,14 +386,6 @@ EOT;
     }
 
     /**
-     * @return string
-     */
-    public function getRelativeFileSystemPath()
-    {
-        return str_replace(PIMCORE_WEB_ROOT, '', $this->getFileSystemPath());
-    }
-
-    /**
      * @param string|null $path
      * @param bool $force
      *
@@ -416,7 +408,7 @@ EOT;
         }
 
         if (!$path) {
-            $path = $this->getFileSystemPath();
+            $path = $this->getLocalFile();
         }
 
         $dimensions = null;

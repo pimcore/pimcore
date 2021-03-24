@@ -216,7 +216,7 @@ class Service extends Model\Element\Service
                     if ($fieldDef[0] === 'preview') {
                         $data[$field] = self::getPreviewThumbnail($asset, ['treepreview' => true, 'width' => 108, 'height' => 70, 'frame' => true]);
                     } elseif ($fieldDef[0] === 'size') {
-                        $size = @filesize($asset->getFileSystemPath());
+                        $size = $asset->getFileSize();
                         $data[$field] = formatBytes($size);
                     }
                 } else {

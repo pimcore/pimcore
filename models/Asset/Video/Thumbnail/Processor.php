@@ -61,6 +61,11 @@ class Processor
     protected $status;
 
     /**
+     * @var null|string
+     */
+    protected $deleteSourceAfterFinished;
+
+    /**
      * @param Model\Asset\Video $asset
      * @param Config $config
      * @param array $onlyFormats
@@ -75,11 +80,14 @@ class Processor
             throw new \Exception('No ffmpeg executable found, please configure the correct path in the system settings');
         }
 
+        $sourceFile = $asset->getTemporaryFile(true);
+
         $instance = new self();
         $formats = empty($onlyFormats) ? ['mp4'] : $onlyFormats;
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
+        $instance->setDeleteSourceAfterFinished($sourceFile);
 
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting('thumbnails');
@@ -125,7 +133,7 @@ class Processor
             }
 
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($asset->getFileSystemPath(), ['asset' => $asset]);
+            $converter->load($sourceFile, ['asset' => $asset]);
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
@@ -245,7 +253,27 @@ class Processor
             $asset->save();
         }
 
+        if($instance->getDeleteSourceAfterFinished()) {
+            @unlink($instance->getDeleteSourceAfterFinished());
+        }
+
         TmpStore::delete($instance->getJobStoreId());
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDeleteSourceAfterFinished(): ?string
+    {
+        return $this->deleteSourceAfterFinished;
+    }
+
+    /**
+     * @param string|null $deleteSourceAfterFinished
+     */
+    public function setDeleteSourceAfterFinished(?string $deleteSourceAfterFinished): void
+    {
+        $this->deleteSourceAfterFinished = $deleteSourceAfterFinished;
     }
 
     public function convert()

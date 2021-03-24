@@ -104,7 +104,7 @@ class Processor
         }
 
         if (!$fileSystemPath && $asset instanceof Asset) {
-            $fileSystemPath = $asset->getFileSystemPath();
+            $fileSystemPath = $asset->getLocalFile();
         }
 
         $fileExt = File::getFileExtension(basename($fileSystemPath));

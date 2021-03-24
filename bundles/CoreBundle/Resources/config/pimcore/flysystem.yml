@@ -7,4 +7,8 @@ flysystem:
         pimcore.asset-cache.storage:
             adapter: 'local'
             options:
-                directory: '%kernel.project_dir%/public/var/assets'
+                directory: '%kernel.project_dir%/var/asset-cache'
+        pimcore.version.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/versions'

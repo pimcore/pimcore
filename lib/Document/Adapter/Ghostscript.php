@@ -17,17 +17,13 @@ namespace Pimcore\Document\Adapter;
 use Pimcore\Document\Adapter;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class Ghostscript extends Adapter
 {
-    /**
-     * @var string
-     */
-    protected $path;
-
     /**
      * @var string|null
      */
@@ -88,63 +84,47 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param string $path
-     *
-     * @return $this
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function load($path)
+    public function load(Asset\Document $asset)
     {
-        $path = $this->preparePath($path);
-
         // avoid timeouts
         $maxExecTime = (int) ini_get('max_execution_time');
         if ($maxExecTime > 1 && $maxExecTime < 250) {
             set_time_limit(250);
         }
 
-        if (!$this->isFileTypeSupported($path)) {
-            $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
+        if (!$this->isFileTypeSupported($asset->getFilename())) {
+            $message = "Couldn't load document " . $asset->getFullPath() . ' only PDF documents are currently supported';
             Logger::error($message);
             throw new \Exception($message);
         }
 
-        $this->path = $path;
+        $this->asset = $asset;
 
         return $this;
     }
 
     /**
-     * @param string|null $path
-     *
-     * @return null|string
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
-    public function getPdf($path = null)
+    public function getPdf(?Asset\Document $asset = null)
     {
-        if ($path) {
-            $path = $this->preparePath($path);
+        if (!$asset && $this->asset) {
+            $asset = $this->asset;
         }
 
-        if (!$path && $this->path) {
-            $path = $this->path;
+        if (preg_match("/\.?pdf$/i", $asset->getFilename())) { // only PDF's are supported
+            return $asset->getLocalFile();
         }
 
-        if (preg_match("/\.?pdf$/i", $path)) { // only PDF's are supported
-            return $path;
-        }
-
-        $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
+        $message = "Couldn't load document " . $asset->getFullPath() . ' only PDF documents are currently supported';
         Logger::error($message);
         throw new \Exception($message);
     }
 
     /**
-     * @return int
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
     public function getPageCount()
     {
@@ -154,7 +134,7 @@ class Ghostscript extends Adapter
         $pages = trim($process->getOutput());
 
         if (! is_numeric($pages)) {
-            throw new \Exception('Unable to get page-count of ' . $this->path);
+            throw new \Exception('Unable to get page-count of ' . $this->asset->getFullPath());
         }
 
         return (int) $pages;
@@ -171,10 +151,10 @@ class Ghostscript extends Adapter
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            $command .= " --permit-file-read='" . $this->path . "'";
+            $command .= " --permit-file-read='" . $this->getPdf() . "'";
         }
 
-        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
+        $command .= " -c '(" . $this->getPdf() . ") (r) file runpdfbegin pdfpagecount = quit'";
 
         Console::addLowProcessPriority($command);
 
@@ -200,30 +180,16 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param string $path
-     * @param int $page
-     * @param int $resolution
-     *
-     * @return $this|bool
+     * { @inheritdoc }
      */
-    public function saveImage($path, $page = 1, $resolution = 200)
+    public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200)
     {
         try {
-            $realTargetPath = null;
-            if (!stream_is_local($path)) {
-                $realTargetPath = $path;
-                $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
-            }
-
-            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r', $resolution, '-o', $path, $this->path];
+            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r', $resolution, '-o', $imageTargetPath, $this->asset->getLocalFile()];
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
             $process->run();
-
-            if ($realTargetPath) {
-                File::rename($path, $realTargetPath);
-            }
 
             return $this;
         } catch (\Exception $e) {
@@ -234,15 +200,17 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param int|null $page
-     * @param string|null $path
-     *
-     * @return bool|string
+     * { @inheritdoc }
      */
-    public function getText($page = null, $path = null)
+    public function getText(?int $page = null, ?Asset\Document $asset = null)
     {
         try {
-            $path = $path ? $this->preparePath($path) : $this->path;
+            if (!$asset && $this->asset) {
+                $asset = $this->asset;
+            }
+
+            $path = $asset->getLocalFile();
+
             $cmd = [self::getPdftotextCli()];
             $text = null;
 

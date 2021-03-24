@@ -202,29 +202,6 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @param string $type
-     *
-     * @return null|string
-     *
-     * @throws \Exception
-     */
-    public function getChecksum($type = 'md5')
-    {
-        $file = $this->getFileSystemPath();
-        if (is_file($file)) {
-            if ($type == 'md5') {
-                return md5_file($file);
-            } elseif ($type == 'sha1') {
-                return sha1_file($file);
-            } else {
-                throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @return string
      */
     public function getMimeType()

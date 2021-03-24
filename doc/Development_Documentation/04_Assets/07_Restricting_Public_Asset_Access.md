@@ -144,7 +144,12 @@ class MyAssetController extends FrontendController
         $pathInfo = $request->getPathInfo();
         $asset = Asset::getByPath($pathInfo);
         if ($asset){
-            return new BinaryFileResponse($asset->getFileSystemPath());
+            $stream = $asset->getStream();
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+            ]);
         } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
 
             $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . urldecode($pathInfo);

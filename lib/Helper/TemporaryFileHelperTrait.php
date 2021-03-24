@@ -18,7 +18,7 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    protected function getLocalFile($stream): string
+    protected function getLocalFileFromStream($stream): string
     {
         if (!stream_is_local($stream)) {
             $stream = $this->getTemporaryFileFromStream($stream);
@@ -34,12 +34,12 @@ trait TemporaryFileHelperTrait
 
     /**
      * @param resource|string $stream
-     *
+     * @param bool $keep whether to delete this file on shutdown or not
      * @return string
      *
      * @throws \Exception
      */
-    protected function getTemporaryFileFromStream($stream): string
+    protected function getTemporaryFileFromStream($stream, bool $keep = false): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');
@@ -64,9 +64,11 @@ trait TemporaryFileHelperTrait
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 
-        register_shutdown_function(static function () use ($tmpFilePath) {
-            @unlink($tmpFilePath);
-        });
+        if(!$keep) {
+            register_shutdown_function(static function () use ($tmpFilePath) {
+                @unlink($tmpFilePath);
+            });
+        }
 
         return $tmpFilePath;
     }

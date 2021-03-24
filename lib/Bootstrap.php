@@ -199,7 +199,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_PROJECT_ROOT . '/config/pimcore');
         $resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
         $resolveConstant('PIMCORE_ASSET_DIRECTORY', PIMCORE_PUBLIC_VAR . '/assets');
-        $resolveConstant('PIMCORE_VERSION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/versions');
         $resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/log');
         $resolveConstant('PIMCORE_LOG_FILEOBJECT_DIRECTORY', PIMCORE_PRIVATE_VAR . '/application-logger');
         $resolveConstant('PIMCORE_TEMPORARY_DIRECTORY', PIMCORE_PUBLIC_VAR . '/tmp');

@@ -214,7 +214,7 @@ class Video extends Model\Asset
     {
         if (\Pimcore\Video::isAvailable()) {
             if (!$filePath) {
-                $filePath = $this->getFileSystemPath();
+                $filePath = $this->getLocalFile();
             }
 
             $converter = \Pimcore\Video::getInstance();
@@ -235,7 +235,7 @@ class Video extends Model\Asset
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getFileSystemPath(), ['asset' => $this]);
+            $converter->load($this->getLocalFile(), ['asset' => $this]);
 
             return $converter->getDimensions();
         }
@@ -331,9 +331,7 @@ class Video extends Model\Asset
                 throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
             }
 
-            if (($file_pointer = fopen($this->getFileSystemPath(), 'rb')) === false) {
-                throw new \RuntimeException('Could not open file for reading');
-            }
+            $file_pointer = $this->getStream();
 
             $tag = '<rdf:SphericalVideo';
             $tagLength = strlen($tag);

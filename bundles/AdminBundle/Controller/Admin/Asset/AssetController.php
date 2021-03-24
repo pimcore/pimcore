@@ -27,7 +27,6 @@ use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\File;
-use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -58,7 +57,6 @@ final class AssetController extends ElementControllerBase implements KernelContr
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
-    use TemporaryFileHelperTrait;
 
     /**
      * @var Asset\Service
@@ -1204,7 +1202,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             }
 
             $thumbnail = $image->getThumbnail($thumbnailConfig);
-            $thumbnailFile = $this->getLocalFile($thumbnail->getFileSystemPath());
+            $thumbnailFile = $thumbnail->getFileSystemPath();
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
@@ -1241,7 +1239,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function getAssetAction(Request $request)
     {
@@ -1255,9 +1253,13 @@ final class AssetController extends ElementControllerBase implements KernelContr
             throw $this->createAccessDeniedException('not allowed to view asset');
         }
 
-        $response = new BinaryFileResponse($image->getFileSystemPath());
-        $response->headers->set('Content-type', $image->getMimetype());
-        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $stream = $image->getStream();
+        $response = new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => $image->getMimetype(),
+            'Access-Control-Allow-Origin' => '*',
+        ]);
         $this->addThumbnailCacheHeaders($response);
 
         return $response;
@@ -1502,7 +1504,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function getPreviewDocumentAction(Request $request)
     {
@@ -1513,10 +1515,18 @@ final class AssetController extends ElementControllerBase implements KernelContr
         }
 
         if ($asset->isAllowed('view')) {
-            $pdfFsPath = $this->getDocumentPreviewPdf($asset);
-            if ($pdfFsPath) {
-                $response = new BinaryFileResponse($pdfFsPath);
-                $response->headers->set('Content-Type', 'application/pdf');
+            $stream = $this->getDocumentPreviewPdf($asset);
+            if ($stream) {
+                if(is_resource($stream)) {
+                    $response = new StreamedResponse(function () use ($stream) {
+                        fpassthru($stream);
+                    }, 200, [
+                        'Content-Type' => 'application/pdf',
+                    ]);
+                } else {
+                    $response = new BinaryFileResponse($stream);
+                    $response->headers->set('Content-Type', 'application/pdf');
+                }
 
                 return $response;
             } else {
@@ -1530,20 +1540,20 @@ final class AssetController extends ElementControllerBase implements KernelContr
     /**
      * @param Asset\Document $asset
      *
-     * @return string|null
+     * @return resource|null|string
      */
     protected function getDocumentPreviewPdf(Asset\Document $asset)
     {
         $pdfFsPath = null;
 
         if ($asset->getMimetype() == 'application/pdf') {
-            $pdfFsPath = $asset->getFileSystemPath();
+            $pdfFsPath = $asset->getStream();
         }
 
         if (!$pdfFsPath && $asset->getPageCount() && \Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
             try {
                 $document = \Pimcore\Document::getInstance();
-                $pdfFsPath = $document->getPdf($asset->getFileSystemPath());
+                $pdfFsPath = $document->getPdf($asset);
             } catch (\Exception $e) {
                 // nothing to do
             }
@@ -2069,11 +2079,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
                     if ($a->isAllowed('view')) {
                         if (!$a instanceof Asset\Folder) {
                             // add the file with the relative path to the parent directory
-                            if (stream_is_local($a->getFileSystemPath())) {
-                                $zip->addFile($a->getFileSystemPath(), preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()));
-                            } else {
-                                $zip->addFromString(preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()), file_get_contents($a->getFileSystemPath()));
-                            }
+                            $zip->addFile($a->getLocalFile(), preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()));
                         }
                     }
                 }

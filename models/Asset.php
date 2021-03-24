@@ -459,16 +459,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Get full path to the asset on the filesystem
-     *
-     * @return string
-     */
-    public function getFileSystemPath()
-    {
-        return PIMCORE_ASSET_DIRECTORY . $this->getRealFullPath();
-    }
-
-    /**
      * @return $this
      *
      * @throws \Exception
@@ -1282,9 +1272,9 @@ class Asset extends Element\AbstractElement
         }
 
         if (!$this->stream && $this->getType() !== 'folder') {
-            if (file_exists($this->getFileSystemPath())) {
-                $this->stream = fopen($this->getFileSystemPath(), 'rb', false, File::getContext());
-            } else {
+            try {
+                $this->stream = Storage::get('asset')->readStream($this->getFullPath());
+            } catch (\Exception $e) {
                 $this->stream = tmpfile();
             }
         }
@@ -1311,7 +1301,7 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tempFile = $this->getLocalFile($this->stream);
+                $tempFile = $this->getTemporaryFile();
                 $dest = fopen($tempFile, 'w+', false, File::getContext());
                 $this->stream = $dest;
             }
@@ -1328,29 +1318,6 @@ class Asset extends Element\AbstractElement
             @fclose($this->stream);
             $this->stream = null;
         }
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return null|string
-     *
-     * @throws \Exception
-     */
-    public function getChecksum($type = 'md5')
-    {
-        if (!in_array($type, hash_algos())) {
-            throw new \Exception(sprintf('Hashing algorithm `%s` is not supported', $type));
-        }
-
-        $file = $this->getFileSystemPath();
-        if (is_file($file)) {
-            return hash_file($type, $file);
-        } elseif (\is_resource($this->getStream())) {
-            return hash($type, $this->getData());
-        }
-
-        return null;
     }
 
     /**
@@ -1499,16 +1466,24 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * returns the path to a temp file
-     *
+     * @internal
+     * @param bool $keep whether to delete this file on shutdown or not
      * @return string
+     * @throws \Exception
      */
-    public function getTemporaryFile()
+    public function getTemporaryFile(bool $keep = false)
     {
-        $destinationPath = $this->getTemporaryFileFromStream($this->getStream());
-        @chmod($destinationPath, File::getDefaultMode());
+        return $this->getTemporaryFileFromStream($this->getStream(), $keep);
+    }
 
-        return $destinationPath;
+    /**
+     * @internal
+     * @return string
+     * @throws \Exception
+     */
+    public function getLocalFile()
+    {
+        return $this->getLocalFileFromStream($this->getStream());
     }
 
     /**
@@ -1837,9 +1812,10 @@ class Asset extends Element\AbstractElement
      */
     public function getFileSize($formatted = false, $precision = 2)
     {
-        $bytes = 0;
-        if (is_file($this->getFileSystemPath())) {
-            $bytes = filesize($this->getFileSystemPath());
+        try {
+            $bytes = Storage::get('asset')->fileSize($this->getFullPath());
+        } catch (\Exception $e) {
+            $bytes = 0;
         }
 
         if ($formatted) {

@@ -68,10 +68,6 @@ class Document extends Model\Asset
     public function processPageCount($path = null)
     {
         $pageCount = null;
-        if (!$path) {
-            $path = $this->getFileSystemPath();
-        }
-
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
 
@@ -80,7 +76,7 @@ class Document extends Model\Asset
 
         try {
             $converter = \Pimcore\Document::getInstance();
-            $converter->load($path);
+            $converter->load($this);
 
             // read from blob here, because in $this->update() (see above) $this->getFileSystemPath() contains the old data
             $pageCount = $converter->getPageCount();
@@ -137,7 +133,7 @@ class Document extends Model\Asset
                 $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
                 if (!$text = Cache::load($cacheKey)) {
                     $document = \Pimcore\Document::getInstance();
-                    $text = $document->getText($page, $this->getFileSystemPath());
+                    $text = $document->getText($page, $this);
                     Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
                 }
 
