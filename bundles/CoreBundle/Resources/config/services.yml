@@ -221,3 +221,8 @@ services:
     Knp\Component\Pager\PaginatorInterface:
         class: Knp\Component\Pager\Paginator
         public: true
+
+    Pimcore\Tool\Storage:
+        public: true
+        arguments:
+            $locator: !tagged_locator { tag: flysystem.storage }

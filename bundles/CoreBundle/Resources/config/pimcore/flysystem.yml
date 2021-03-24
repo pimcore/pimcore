@@ -1,0 +1,10 @@
+flysystem:
+    storages:
+        pimcore.asset.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/public/var/assets'
+        pimcore.asset-cache.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/public/var/assets'

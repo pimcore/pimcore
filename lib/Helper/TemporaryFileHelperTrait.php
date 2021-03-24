@@ -18,7 +18,7 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    private function getLocalFile($stream): string
+    protected function getLocalFile($stream): string
     {
         if (!stream_is_local($stream)) {
             $stream = $this->getTemporaryFileFromStream($stream);
@@ -39,7 +39,7 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    private function getTemporaryFileFromStream($stream): string
+    protected function getTemporaryFileFromStream($stream): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');

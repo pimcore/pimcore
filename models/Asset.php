@@ -32,6 +32,7 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
+use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Mime\MimeTypes;
 
@@ -520,16 +521,10 @@ class Asset extends Element\AbstractElement
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
-                        if (is_file($oldFullPath) || is_dir($oldFullPath)) {
-                            if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
-                                $error = error_get_last();
-                                throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
-                            }
-                            $differentOldPath = $oldPath;
-                            $this->getDao()->updateWorkspaces();
-                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-                        }
+                        Storage::get('asset')->move($oldPath, $this->getRealFullPath());
+                        $differentOldPath = $oldPath;
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                     }
 
                     // lastly create a new version if necessary
@@ -667,71 +662,44 @@ class Asset extends Element\AbstractElement
      */
     protected function update($params = [])
     {
+        $storage = Storage::get('asset');
         $this->updateModificationInfos();
 
-        // create foldertree
         // use current file name in order to prevent problems when filename has changed
         // (otherwise binary data would be overwritten with old binary data with rename() in save method)
-        $destinationPathRelative = $this->getDao()->getCurrentFullPath();
-        if (!$destinationPathRelative) {
+        $path = $this->getDao()->getCurrentFullPath();
+        if (!$path) {
             // this is happen during a restore from the recycle bin
-            $destinationPathRelative = $this->getRealFullPath();
-        }
-        $destinationPath = PIMCORE_ASSET_DIRECTORY . $destinationPathRelative;
-
-        $dirPath = dirname($destinationPath);
-        if (!is_dir($dirPath)) {
-            if (!File::mkdir($dirPath)) {
-                throw new \Exception('Unable to create directory: ' . $dirPath . ' for asset :' . $this->getId());
-            }
+            $path = $this->getRealFullPath();
         }
 
         $typeChanged = false;
 
-        // fix for missing parent folders
-        // check if folder of new destination is already created and if not do so
-        $newPath = dirname($this->getFileSystemPath());
-        if (!is_dir($newPath)) {
-            if (!File::mkdir($newPath)) {
-                throw new \Exception('Unable to create directory: ' . $newPath . ' for asset :' . $this->getId());
-            }
-        }
-
         if ($this->getType() != 'folder') {
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
-                $streamMeta = stream_get_meta_data($src);
-                if ($destinationPath != $streamMeta['uri']) {
-                    if (file_exists($destinationPath)) {
+                $sourceUri = stream_get_meta_data($src)['uri'];
+                try {
+                    $targetUri = stream_get_meta_data($storage->readStream($path));
+                } catch (\Exception $e) {
+                    $targetUri = null;
+                }
+
+                if ($targetUri !== $sourceUri) {
+                    if($storage->fileExists($path)) {
                         // We don't open a stream on existing files, because they could be possibly used by versions
                         // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
                         // versioning information persists. Using the stream on the existing file would overwrite the
                         // contents of the inode and therefore leads to wrong version data
-                        unlink($destinationPath);
+                        $storage->delete($path);
                     }
 
-                    $dest = fopen($destinationPath, 'wb', false, File::getContext());
-                    if ($dest) {
-                        stream_copy_to_stream($src, $dest);
-                        if (!fclose($dest)) {
-                            throw new \Exception('Unable to close file handle ' . $destinationPath . ' for asset ' . $this->getId());
-                        }
-                    } else {
-                        throw new \Exception('Unable to open file: ' . $destinationPath . ' for asset ' . $this->getId());
-                    }
+                    $storage->writeStream($path, $src);
                 }
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 
-                @chmod($destinationPath, File::getDefaultMode());
-
-                // check file exists
-                if (!file_exists($destinationPath)) {
-                    throw new \Exception("couldn't create new asset, file " . $destinationPath . " doesn't exist");
-                }
-
-                // set mime type
-                $mimeType = MimeTypes::getDefault()->guessMimeType($destinationPath);
+                $mimeType = $storage->mimeType($path);
                 $this->setMimetype($mimeType);
 
                 // set type
@@ -748,13 +716,8 @@ class Asset extends Element\AbstractElement
                 }
             }
 
-            // scheduled tasks are saved in $this->saveVersion();
         } else {
-            if (!is_dir($destinationPath) && !is_dir($this->getFileSystemPath())) {
-                if (!File::mkdir($this->getFileSystemPath())) {
-                    throw new \Exception('Unable to create directory: ' . $this->getFileSystemPath() . ' for asset :' . $this->getId());
-                }
-            }
+            $storage->createDirectory($path);
         }
 
         if (!$this->getType()) {
@@ -1013,16 +976,11 @@ class Asset extends Element\AbstractElement
      */
     protected function deletePhysicalFile()
     {
-        $fsPath = $this->getFileSystemPath();
-
+        $storage = Storage::get('asset');
         if ($this->getType() != 'folder') {
-            if (is_file($fsPath) && is_writable($fsPath)) {
-                unlink($fsPath);
-            }
+            $storage->delete($this->getRealFullPath());
         } else {
-            if (is_dir($fsPath) && is_writable($fsPath)) {
-                recursiveDelete($fsPath, true);
-            }
+            $storage->deleteDirectory($this->getRealFullPath());
         }
     }
 

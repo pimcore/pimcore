@@ -41,6 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Process\Process;
@@ -423,14 +424,12 @@ final class AssetController extends ElementControllerBase implements KernelContr
             // this is for uploading folders with Drag&Drop
             // param "dir" contains the relative path of the file
             $parent = Asset::getById($request->get('parentId'));
-            $newPath = $parent->getRealFullPath() . '/' . trim($request->get('dir'), '/ ');
-
-            // check if the path is outside of the asset directory
-            $newRealPath = PIMCORE_ASSET_DIRECTORY . $newPath;
-            $newRealPath = resolvePath($newRealPath);
-            if (strpos($newRealPath, PIMCORE_ASSET_DIRECTORY) !== 0) {
+            $dir = $request->get('dir');
+            if(strpos($dir, '..') !== false) {
                 throw new \Exception('not allowed');
             }
+
+            $newPath = $parent->getRealFullPath() . '/' . trim($dir, '/ ');
 
             $maxRetries = 5;
             $newParent = null;
@@ -1094,7 +1093,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function downloadAction(Request $request)
     {
@@ -1108,11 +1107,14 @@ final class AssetController extends ElementControllerBase implements KernelContr
             throw $this->createAccessDeniedException('not allowed to view asset');
         }
 
-        $response = new BinaryFileResponse($asset->getFileSystemPath());
-        $response->headers->set('Content-Type', $asset->getMimetype());
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $asset->getFilename());
-
-        return $response;
+        $stream = $asset->getStream();
+        return new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => $asset->getMimetype(),
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $asset->getFilename()),
+            'Content-Length' => fstat($stream)['size'],
+        ]);
     }
 
     /**

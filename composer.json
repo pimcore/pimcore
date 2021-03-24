@@ -96,7 +96,8 @@
     "webmozarts/console-parallelization": "^1.2.0",
     "onnov/detect-encoding": "^2.0",
     "knplabs/knp-paginator-bundle": "^5.4.2",
-    "masterminds/html5" : "^2.7"
+    "masterminds/html5" : "^2.7",
+    "league/flysystem-bundle" : "^2.0"
   },
   "conflict": {
     "symfony/monolog-bundle": "3.6.0",
