@@ -188,7 +188,6 @@ class Bootstrap
         if ($testMode) {
             // override and initialize directories
             $resolveConstant('PIMCORE_CLASS_DIRECTORY', PIMCORE_PATH . '/tests/_output/var/classes');
-            $resolveConstant('PIMCORE_ASSET_DIRECTORY', PIMCORE_WEB_ROOT . '/var/tests/assets');
 
             if (!defined('PIMCORE_TEST')) {
                 define('PIMCORE_TEST', true);
