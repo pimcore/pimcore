@@ -138,6 +138,7 @@
 - `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.
 - Removed deprecated Twig extension `pimcore_action()`.
 - Removed method `getFlag()` from `Pimcore\Config`.
+- Removed `Pimcore\Report` class.
 
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
