@@ -1084,7 +1084,7 @@ pimcore.settings.system = Class.create({
             }
         }
 
-        if (value) {
+        if (value !== null) {
             Ext.getCmp("system_settings_" + elementType + "_versions_" + mappingOpposite[type]).disable();
             Ext.getCmp("system_settings_" + elementType + "_versions_" + mappingOpposite[type]).setValue("");
         } else {
