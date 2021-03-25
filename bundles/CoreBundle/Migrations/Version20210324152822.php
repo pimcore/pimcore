@@ -30,7 +30,7 @@ final class Version20210324152822 extends AbstractMigration
                 }
             }
         } catch (\Exception $e) {
-            $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
+            $this->write('An error occurred while performing migrations: ' . $e->getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ final class Version20210324152822 extends AbstractMigration
                 }
             }
         } catch (\Exception $e) {
-            $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
+            $this->write('An error occurred while performing migrations: ' . $e->getMessage());
         }
     }
 }
