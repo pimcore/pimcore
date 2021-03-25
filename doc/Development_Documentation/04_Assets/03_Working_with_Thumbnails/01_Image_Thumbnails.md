@@ -20,7 +20,7 @@ Click on *+* to add a new transformation, so that it look like that for example:
 ![Thumbnails](../../img/thumbnails1.png)
 
 **Important**: The transformations are performed in the order from the top to the bottom. This is for example important 
-in the configuration above. If the you first round the corners this would be performed on the original image, 
+in the configuration above. If you first round the corners this would be performed on the original image, 
 and then the image will get resized, so the rounded corners are also resized which is not intended. 
 
 To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return 
