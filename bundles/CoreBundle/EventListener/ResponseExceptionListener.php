@@ -30,7 +30,10 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ResponseExceptionListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class ResponseExceptionListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
@@ -69,7 +72,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

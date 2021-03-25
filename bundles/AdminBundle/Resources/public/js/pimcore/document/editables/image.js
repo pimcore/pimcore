@@ -406,11 +406,6 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         if (width > 1 && height > 1) {
 
-            if(Ext.isIE && width==28 && height==30){
-                //IE missing image placeholder
-                return;
-            }
-
             var dimensionError = false;
             if(typeof this.config.minWidth != "undefined") {
                 if(width < this.config.minWidth) {

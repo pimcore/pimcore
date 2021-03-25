@@ -113,7 +113,7 @@ class ImageThumbnail
                 }
 
                 // fallback
-                if (!$timeOffset) {
+                if (!$timeOffset && $this->asset instanceof Model\Asset\Video) {
                     $timeOffset = ceil($this->asset->getDuration() / 3);
                 }
 
@@ -192,10 +192,18 @@ class ImageThumbnail
      * @param string|array|Image\Thumbnail\Config $selector
      *
      * @return Image\Thumbnail\Config|null
+     *
+     * @throws Model\Exception\NotFoundException
      */
     protected function createConfig($selector)
     {
-        return Image\Thumbnail\Config::getByAutoDetect($selector);
+        $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $thumbnailConfig === null) {
+            throw new Model\Exception\NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
+        return $thumbnailConfig;
     }
 
     /**

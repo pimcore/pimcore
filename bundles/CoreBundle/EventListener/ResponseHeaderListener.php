@@ -22,7 +22,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ResponseHeaderListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class ResponseHeaderListener implements EventSubscriberInterface
 {
     /**
      * @var ResponseHeaderResolver
@@ -38,7 +41,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

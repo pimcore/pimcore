@@ -33,15 +33,18 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class IndexController extends AdminController implements KernelResponseEventInterface
+/**
+ * @internal
+ */
+final class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -381,7 +384,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
                 if ($rootNode) {
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ?? null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node
@@ -398,7 +401,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelResponseEvent(ResponseEvent $event)
     {

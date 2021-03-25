@@ -46,7 +46,7 @@ class RouteReference implements RouteReferenceInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRoute()
     {
@@ -54,7 +54,7 @@ class RouteReference implements RouteReferenceInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParameters()
     {
@@ -62,7 +62,7 @@ class RouteReference implements RouteReferenceInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getType()
     {

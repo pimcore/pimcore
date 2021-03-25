@@ -31,6 +31,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * The console application
+ *
+ * @internal
  */
 class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {
@@ -62,10 +64,6 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $this->setDispatcher($dispatcher);
 
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
-            if ($event->getInput()->getOption('no-debug')) {
-                \Pimcore::setDebugMode(false);
-            }
-
             if ($event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';

@@ -22,7 +22,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class Pimcore extends Module\Symfony
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
@@ -75,8 +75,6 @@ class Pimcore extends Module\Symfony
 
     public function _initialize(): void
     {
-        Config::setEnvironment($this->config['environment']);
-
         // don't initialize the kernel multiple times if running multiple suites
         // TODO can this lead to side-effects?
         if (null !== $kernel = \Pimcore::getKernel()) {
@@ -278,7 +276,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _before(TestInterface $test): void
     {
@@ -295,8 +293,8 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
-        DataObject\AbstractObject::setHideUnpublished(false);
-        DataObject\AbstractObject::setGetInheritedValues(false);
+        DataObject::setHideUnpublished(false);
+        DataObject::setGetInheritedValues(false);
         DataObject\Localizedfield::setGetFallbackValues(false);
     }
 
@@ -307,8 +305,8 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
-        DataObject\AbstractObject::setHideUnpublished(true);
-        DataObject\AbstractObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+        DataObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
     }
 

@@ -48,6 +48,8 @@ class Tool
      * Sets the current request to operate on
      *
      * @param Request|null $request
+     *
+     * @internal
      */
     public static function setCurrentRequest(Request $request = null)
     {
@@ -527,6 +529,16 @@ class Tool
                 if (isset($tmp['name'])) {
                     $tmp['showroot'] = !empty($tmp['showroot']);
 
+                    if (!is_array($tmp['classes'] ?? [])) {
+                        $flipArray = [];
+                        $tempClasses = explode(',', $tmp['classes']);
+
+                        foreach ($tempClasses as $tempClass) {
+                            $flipArray[$tempClass] = null;
+                        }
+                        $tmp['classes'] = $flipArray;
+                    }
+
                     if (!empty($tmp['hidden'])) {
                         continue;
                     }
@@ -542,16 +554,14 @@ class Tool
     /**
      * @param array|string|null $recipients
      * @param string|null $subject
-     * @param string|null $charset
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public static function getMail($recipients = null, $subject = null, $charset = null)
+    public static function getMail($recipients = null, $subject = null)
     {
         $mail = new Mail();
-        $mail->setCharset($charset);
 
         if ($recipients) {
             if (is_string($recipients)) {

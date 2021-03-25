@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Config\Config;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 
 abstract class AbstractConfig implements ConfigInterface
 {
@@ -64,7 +64,7 @@ abstract class AbstractConfig implements ConfigInterface
     protected $tenantWorker;
 
     /**
-     * @var Config
+     * @var array|null
      */
     protected $filterTypeConfig;
 
@@ -175,7 +175,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {
@@ -202,7 +202,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTenantWorker()
     {
@@ -334,7 +334,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getObjectById($objectId, $onlyMainObject = false)
     {
-        return AbstractObject::getById($objectId);
+        return DataObject::getById($objectId);
     }
 
     /**

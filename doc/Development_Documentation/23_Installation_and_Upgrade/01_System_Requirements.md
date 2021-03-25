@@ -64,8 +64,6 @@ All permissions on database level, specifically:
 #### System Variables
 ```
 [mysqld]
-innodb_file_format = Barracuda
-innodb_large_prefix = 1
 innodb_file_per_table = 1
 
 [mariadb]
@@ -106,7 +104,6 @@ On Debian based systems, you can use the following command to install all requir
 - advpng
 - cjpeg ([MozJPEG](https://github.com/mozilla/mozjpeg))
 - exiftool
-- SQIP - SVG Placeholder
 - [facedetect](https://github.com/wavexx/facedetect) 
 - [Graphviz](https://www.graphviz.org/)
 
@@ -121,8 +118,3 @@ Pimcore supports always the latest 2 versions of all 4 major desktop browsers at
 - Apple Safari
 
 *Note:* Microsoft Internet Explorer 11 won`t be supported from Pimcore 6.0.0 or higher. More details **[here](https://github.com/pimcore/pimcore/issues/2989)**.
-
-Click [here](http://browserl.ist/?q=last+2+Chrome+versions%2C+last+2+Firefox+versions%2C+last+2+Edge+versions%2C+last+1+IE+versions%2C+last+2+Safari+versions) 
-to check out the latest 2 versions at the current moment of all supported browsers. 
-Please keep in mind that this doesn't necessarily means that they are supported by the latest available Pimcore release, 
-the crucial factor are the versions available at the time of the release.

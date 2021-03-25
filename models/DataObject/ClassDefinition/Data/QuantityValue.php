@@ -24,7 +24,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
-class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -81,7 +81,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $queryColumnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
@@ -91,7 +91,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
@@ -231,7 +231,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
-        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
                 $this->getName() . '__value' => $data->getValue(),
                 $this->getName() . '__unit' => $data->getUnitId(),
@@ -296,7 +296,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
                 'value' => $data->getValue(),
                 'unit' => $data->getUnitId(),
@@ -330,7 +330,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (strlen($data['value']) > 0 || $data['unit']) {
-            if (is_numeric($data['unit'])) {
+            if ($data['unit']) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return new Model\DataObject\Data\QuantityValue($data['value'], null);
                 }
@@ -353,7 +353,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = '';
             if ($data->getUnitId()) {
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
@@ -392,12 +392,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             if ((!empty($value) && !is_numeric($data->getValue()))) {
                 throw new Model\Element\ValidationException('Invalid dimension unit data ' . $this->getName());
             }
-
-            if (!empty($data->getUnitId())) {
-                if (!is_numeric($data->getUnitId())) {
-                    throw new Model\Element\ValidationException('Unit id has to be empty or numeric ' . $data->getUnitId());
-                }
-            }
         }
     }
 
@@ -414,7 +408,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return (string) $data;
         }
 
@@ -467,7 +461,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data instanceof  \Pimcore\Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof  Model\DataObject\Data\AbstractQuantityValue) {
             $unit = $data->getUnit();
             $unitAbbreviation = '';
 
@@ -494,7 +488,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\QuantityValue) {
+        if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
                 'value' => $value->getValue(),
                 'value2' => $value->getUnitId(),
@@ -612,6 +606,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public static function __set_state($data)
     {
         $obj = parent::__set_state($data);
+
         $obj->configureOptions();
 
         return $obj;
@@ -670,11 +665,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return true;
         }
 
-        if (!$oldValue instanceof Model\DataObject\Data\QuantityValue) {
+        if (!$oldValue instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return false;
         }
 
-        if (!$newValue instanceof Model\DataObject\Data\QuantityValue) {
+        if (!$newValue instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return false;
         }
 

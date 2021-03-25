@@ -25,7 +25,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     protected $locked = false;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function lock()
     {
@@ -33,7 +33,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function unlock()
     {
@@ -41,7 +41,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isLocked()
     {
@@ -49,7 +49,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function set($name, $value)
     {
@@ -59,7 +59,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function replace(array $attributes)
     {
@@ -69,7 +69,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function remove($name)
     {
@@ -79,7 +79,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function clear()
     {

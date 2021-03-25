@@ -67,7 +67,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public $allowMultipleAssignments;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
     {
@@ -99,7 +99,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadData($data, $object = null, $params = [])
     {
@@ -577,7 +577,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function save($object, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
                 if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
@@ -647,7 +647,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $sql .= ' AND ' . $db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+                if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
                         $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $context['containerType']);
                     }
@@ -750,7 +750,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $deleteCondition['ownername'] = $context['fieldname'];
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+                if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if (!empty($context['containerType'])) {
                         $deleteCondition['ownertype'] = $context['containerType'];
                     }
@@ -987,7 +987,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
@@ -1038,7 +1038,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDiffDataForEditMode($data, $object = null, $params = [])
     {

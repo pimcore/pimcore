@@ -23,7 +23,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
 
-class CsrfProtectionListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class CsrfProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
@@ -46,7 +49,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

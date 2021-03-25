@@ -18,6 +18,9 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
+/**
+ * @internal
+ */
 class FieldCollectionCommand extends AbstractStructureImportCommand
 {
     /**

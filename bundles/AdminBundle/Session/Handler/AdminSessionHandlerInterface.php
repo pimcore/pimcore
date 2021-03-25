@@ -23,6 +23,9 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @internal
+ */
 interface AdminSessionHandlerInterface
 {
     /**

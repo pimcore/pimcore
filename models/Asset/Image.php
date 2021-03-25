@@ -21,7 +21,9 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool\Console;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Process\Process;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -144,11 +146,13 @@ class Image extends Model\Asset
         if ($facedetectBin) {
             $faceCoordinates = [];
             $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
-            $image = $thumbnail->getFileSystemPath();
+            $image = $this->getLocalFile($thumbnail->getFileSystemPath());
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
-            $result = \Pimcore\Tool\Console::exec($facedetectBin . ' ' . escapeshellarg($image));
+            $process = new Process(Console::addLowProcessPriority([$facedetectBin, $image]));
+            $process->run();
+            $result = $process->getOutput();
             if (strpos($result, "\n")) {
                 $faces = explode("\n", trim($result));
 
@@ -184,40 +188,9 @@ class Image extends Model\Asset
     public function generateLowQualityPreview($generator = null)
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
-        $sqipBin = null;
 
         if (!$config['enabled']) {
             return false;
-        }
-
-        if (!$generator) {
-            $generator = $config['generator'];
-        }
-
-        if (!$generator) {
-            $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
-            if ($sqipBin) {
-                $generator = 'sqip';
-            }
-        }
-
-        if ($generator == 'sqip') {
-            // SQIP is preferred, produced smaller files & mostly better quality
-            // primitive isn't able to process PJPEG so we have to generate a PNG
-            $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
-            $sqipConfig->setFormat('png');
-            $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
-            $svgPath = $this->getLowQualityPreviewFileSystemPath();
-            \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . escapeshellarg($svgPath) . ' '. escapeshellarg($pngPath));
-            unlink($pngPath);
-
-            if (file_exists($svgPath)) {
-                $svgData = file_get_contents($svgPath);
-                $svgData = str_replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"', $svgData);
-                File::put($svgPath, $svgData);
-
-                return $svgPath;
-            }
         }
 
         // fallback
@@ -311,7 +284,7 @@ EOT;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function delete(bool $isNested = false)
     {

@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -215,6 +215,22 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         parent::checkValidity($data, $omitMandatoryCheck);
+
+        if ($data instanceof Model\DataObject\Data\RgbaColor) {
+            $this->checkColorComponent($data->getR());
+            $this->checkColorComponent($data->getG());
+            $this->checkColorComponent($data->getB());
+            $this->checkColorComponent($data->getA());
+        }
+    }
+
+    public function checkColorComponent($color)
+    {
+        if (!is_null($color)) {
+            if (!($color >= 0 && $color <= 255)) {
+                throw new Model\Element\ValidationException('Color component out of range');
+            }
+        }
     }
 
     /**

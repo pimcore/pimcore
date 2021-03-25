@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @internal
+ */
 class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerInterface
 {
     use LoggerAwareTrait;
@@ -46,7 +49,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSessionId()
     {
@@ -61,7 +64,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSessionName()
     {
@@ -69,7 +72,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function useSession(callable $callable)
     {
@@ -85,7 +88,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin')
     {
@@ -100,7 +103,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getReadOnlyAttributeBag(string $name = 'pimcore_admin'): AttributeBagInterface
     {
@@ -120,7 +123,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function invalidate(int $lifetime = null): bool
     {
@@ -128,7 +131,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function regenerateId(): bool
     {
@@ -138,7 +141,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadAttributeBag(string $name, SessionInterface $session = null): SessionBagInterface
     {
@@ -157,7 +160,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
     {
@@ -183,7 +186,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false): string
     {
@@ -209,7 +212,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadSession(): SessionInterface
     {
@@ -232,7 +235,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function writeClose()
     {

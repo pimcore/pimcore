@@ -54,7 +54,7 @@ class HelpersExtension extends AbstractExtension
             new TwigFunction('pimcore_video_is_available', [Video::class, 'isAvailable']),
             new TwigFunction('pimcore_document_is_available', [Document::class, 'isAvailable']),
             new TwigFunction('pimcore_file_exists', function ($file) {
-                return file_exists($file);
+                return is_file($file);
             }),
             new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
             new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
@@ -72,7 +72,7 @@ class HelpersExtension extends AbstractExtension
     {
         return [
             new TwigTest('instanceof', function ($object, $class) {
-                return is_object($object) && $object instanceof $class;
+                return $object instanceof $class;
             }),
         ];
     }

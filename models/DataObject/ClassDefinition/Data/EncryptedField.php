@@ -29,7 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
 
@@ -562,7 +562,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -579,7 +579,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     public function isEqual($oldValue, $newValue): bool
     {
         $fd = $this->getDelegateDatatypeDefinition();
-        if ($fd instanceof Model\DataObject\ClassDefinition\Data) {
+        if ($fd instanceof EqualComparisonInterface) {
             $oldValue = $oldValue instanceof Model\DataObject\Data\EncryptedField ? $oldValue->getPlain() : null;
             $newValue = $newValue instanceof Model\DataObject\Data\EncryptedField ? $newValue->getPlain() : null;
 
@@ -591,21 +591,21 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return $this->delegate ? $this->delegate->getParameterTypeDeclaration() : null;
+        return null;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return $this->delegate ? $this->delegate->getReturnTypeDeclaration() : null;
+        return null;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocInputType() : null;
+        return $this->delegate ? $this->delegate->getPhpdocInputType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
+        return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 }

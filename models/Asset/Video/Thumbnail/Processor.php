@@ -38,27 +38,27 @@ class Processor
     /**
      * @var \Pimcore\Video\Adapter[]
      */
-    public $queue = [];
+    protected $queue = [];
 
     /**
      * @var string
      */
-    public $processId;
+    protected $processId;
 
     /**
      * @var int
      */
-    public $assetId;
+    protected $assetId;
 
     /**
      * @var Config
      */
-    public $config;
+    protected $config;
 
     /**
      * @var int
      */
-    public $status;
+    protected $status;
 
     /**
      * @param Model\Asset\Video $asset

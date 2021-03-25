@@ -22,6 +22,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -166,87 +167,12 @@ class Thumbnail
         return $path;
     }
 
-    protected function getImageTag(array $options = [])
-    {
-        /** @var Image $image */
-        $image = $this->getAsset();
-        $attributes = $options['imgAttributes'] ?? [];
-        $callback = $options['imgCallback'] ?? null;
-
-        if (isset($options['previewDataUri'])) {
-            $attributes['src'] = $options['previewDataUri'];
-        } else {
-            $path = $this->getPath(true);
-            $attributes['src'] = $this->addCacheBuster($path, $options, $image);
-        }
-
-        if ($this->getWidth()) {
-            $attributes['width'] = $this->getWidth();
-        }
-
-        if ($this->getHeight()) {
-            $attributes['height'] = $this->getHeight();
-        }
-
-        $altText = $attributes['alt'] ?? '';
-        $titleText = $attributes['title'] ?? '';
-
-        if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
-            if ($image->getMetadata('title')) {
-                $titleText = $image->getMetadata('title');
-            }
-        }
-
-        if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
-            if ($image->getMetadata('alt')) {
-                $altText = $image->getMetadata('alt');
-            } elseif (isset($options['defaultalt'])) {
-                $altText = $options['defaultalt'];
-            } else {
-                $altText = $titleText;
-            }
-        }
-
-        // get copyright from asset
-        if ($image->getMetadata('copyright') && (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright'])) {
-            if (!empty($altText)) {
-                $altText .= ' | ';
-            }
-            if (!empty($titleText)) {
-                $titleText .= ' | ';
-            }
-            $altText .= ('© ' . $image->getMetadata('copyright'));
-            $titleText .= ('© ' . $image->getMetadata('copyright'));
-        }
-
-        $attributes['alt'] = $altText;
-        if (!empty($titleText)) {
-            $attributes['title'] = $titleText;
-        }
-
-        $attributes['loading'] = 'lazy';
-
-        if ($callback) {
-            $attributes = $callback($attributes);
-        }
-
-        $htmlImgTag = '';
-        if (!empty($attributes)) {
-            $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
-        }
-
-        return $htmlImgTag;
-    }
-
     /**
-     * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
-     * Attributes can be added as a parameter. Attributes containing illegal characters are ignored.
-     * Width and Height attribute can be overridden. SRC-attribute not.
-     * Values of attributes are escaped.
+     * Get generated HTML for displaying the thumbnail image in a HTML document.
      *
-     * @param array $options Custom configurations and HTML attributes.
+     * @param array $options Custom configuration
      *
-     * @return string IMG-element with at least the attributes src, width, height, alt.
+     * @return string
      */
     public function getHtml($options = [])
     {
@@ -362,6 +288,88 @@ class Thumbnail
     }
 
     /**
+     * @param array $options
+     * @param array $removeAttributes
+     *
+     * @return string
+     */
+    public function getImageTag(array $options = [], array $removeAttributes = []): string
+    {
+        /** @var Image $image */
+        $image = $this->getAsset();
+        $attributes = $options['imgAttributes'] ?? [];
+        $callback = $options['imgCallback'] ?? null;
+
+        if (isset($options['previewDataUri'])) {
+            $attributes['src'] = $options['previewDataUri'];
+        } else {
+            $path = $this->getPath(true);
+            $attributes['src'] = $this->addCacheBuster($path, $options, $image);
+        }
+
+        if ($this->getWidth()) {
+            $attributes['width'] = $this->getWidth();
+        }
+
+        if ($this->getHeight()) {
+            $attributes['height'] = $this->getHeight();
+        }
+
+        $altText = $attributes['alt'] ?? '';
+        $titleText = $attributes['title'] ?? '';
+
+        if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
+            if ($image->getMetadata('title')) {
+                $titleText = $image->getMetadata('title');
+            }
+        }
+
+        if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
+            if ($image->getMetadata('alt')) {
+                $altText = $image->getMetadata('alt');
+            } elseif (isset($options['defaultalt'])) {
+                $altText = $options['defaultalt'];
+            } else {
+                $altText = $titleText;
+            }
+        }
+
+        // get copyright from asset
+        if ($image->getMetadata('copyright') && (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright'])) {
+            if (!empty($altText)) {
+                $altText .= ' | ';
+            }
+            if (!empty($titleText)) {
+                $titleText .= ' | ';
+            }
+            $altText .= ('© ' . $image->getMetadata('copyright'));
+            $titleText .= ('© ' . $image->getMetadata('copyright'));
+        }
+
+        $attributes['alt'] = $altText;
+        if (!empty($titleText)) {
+            $attributes['title'] = $titleText;
+        }
+
+        $attributes['loading'] = 'lazy';
+
+        foreach ($removeAttributes as $attribute) {
+            unset($attributes[$attribute]);
+        }
+
+        if ($callback) {
+            $attributes = $callback($attributes);
+        }
+
+        $htmlImgTag = '';
+        if (!empty($attributes)) {
+            $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
+        }
+
+        return $htmlImgTag;
+    }
+
+    /**
      * @param string $name
      * @param int $highRes
      *
@@ -379,7 +387,9 @@ class Thumbnail
             $thumbConfigRes->selectMedia($name);
             $thumbConfigRes->setHighResolution($highRes);
             $thumbConfigRes->setMedias([]);
-            $thumb = $this->getAsset()->getThumbnail($thumbConfigRes);
+            /** @var Image $asset */
+            $asset = $this->getAsset();
+            $thumb = $asset->getThumbnail($thumbConfigRes);
 
             return $thumb;
         } else {
@@ -393,9 +403,17 @@ class Thumbnail
      * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
      * @return Thumbnail\Config
+     *
+     * @throws NotFoundException
      */
     protected function createConfig($selector)
     {
-        return Thumbnail\Config::getByAutoDetect($selector);
+        $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $thumbnailConfig === null) {
+            throw new NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
+        return $thumbnailConfig;
     }
 }

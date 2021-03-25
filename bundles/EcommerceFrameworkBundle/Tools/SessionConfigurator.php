@@ -39,7 +39,7 @@ class SessionConfigurator implements SessionConfiguratorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function configure(SessionInterface $session)
     {

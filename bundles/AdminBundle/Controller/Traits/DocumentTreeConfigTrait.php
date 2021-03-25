@@ -23,6 +23,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Frontend;
 
+/**
+ * @internal
+ */
 trait DocumentTreeConfigTrait
 {
     use AdminStyleTrait;
@@ -77,7 +80,7 @@ trait DocumentTreeConfigTrait
 
             // test for a site
             if ($site = Site::getByRootId($childDocument->getId())) {
-                unset($site->rootDocument);
+                $site->setRootDocument(null);
                 $tmpDocument['site'] = $site;
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {

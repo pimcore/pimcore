@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 include __DIR__ . "/../vendor/autoload.php";
 
 define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
-define('PIMCORE_ENVIRONMENT', 'test');
+define('APP_ENV', 'test');
 
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();

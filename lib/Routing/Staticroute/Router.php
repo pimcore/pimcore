@@ -70,7 +70,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setContext(RequestContext $context)
     {
@@ -78,7 +78,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getContext()
     {
@@ -96,7 +96,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports($name)
     {
@@ -104,7 +104,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteCollection()
     {
@@ -112,7 +112,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteDebugMessage($name, array $parameters = [])
     {
@@ -120,7 +120,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
@@ -174,11 +174,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         }
 
         if ($name && $route = Staticroute::getByName($name, $siteId)) {
-            $reset = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
             $encode = isset($parameters['encode']) ? (bool)$parameters['encode'] : true;
             unset($parameters['encode']);
             // assemble the route / url in Staticroute::assemble()
-            $url = $route->assemble($parameters, $reset, $encode);
+            $url = $route->assemble($parameters, $encode);
             $port = '';
             $scheme = $this->context->getScheme();
 
@@ -209,7 +208,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function matchRequest(Request $request)
     {
@@ -217,7 +216,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match($pathinfo)
     {

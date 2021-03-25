@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
@@ -179,7 +178,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
-                    $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+                    $lazyKey = $data->buildLazyKey($fd->getName(), $language);
                     if (!$data->isLazyKeyLoaded($lazyKey) && $fd instanceof CustomResourcePersistingInterface) {
                         $params['language'] = $language;
                         $params['object'] = $object;
@@ -593,6 +592,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'objectbrick',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -601,6 +601,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'fieldcollection',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Concrete) {
@@ -964,8 +965,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             if ($data->getObject()->getClass()->getAllowInherit()) {
                                 //try again with parent data when inheritance is activated
                                 try {
-                                    $getInheritedValues = AbstractObject::doGetInheritedValues();
-                                    AbstractObject::setGetInheritedValues(true);
+                                    $getInheritedValues = DataObject::doGetInheritedValues();
+                                    DataObject::setGetInheritedValues(true);
 
                                     $value = null;
                                     $context = $data->getContext();
@@ -982,7 +983,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     }
 
                                     $fd->checkValidity($value, $omitMandatoryCheck);
-                                    AbstractObject::setGetInheritedValues($getInheritedValues);
+                                    DataObject::setGetInheritedValues($getInheritedValues);
                                 } catch (\Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
@@ -1162,10 +1163,17 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
-        unset($vars['permissionView']);
-        unset($vars['permissionEdit']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport',
+            'permissionView',
+            'permissionEdit',
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }

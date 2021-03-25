@@ -24,7 +24,7 @@ class TaxCalculationTest extends EcommerceTestCase
     private $calculationService;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {

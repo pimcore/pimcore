@@ -20,7 +20,10 @@ namespace Pimcore\Bundle\InstallBundle\SystemConfig;
 use Pimcore\File;
 use Symfony\Component\Yaml\Yaml;
 
-class ConfigWriter
+/**
+ * @internal
+ */
+final class ConfigWriter
 {
     /**
      * @var array
@@ -93,30 +96,6 @@ class ConfigWriter
                 'login_screen_custom_image' => '',
             ],
         ],
-        'swiftmailer' => [
-            'mailers' => [
-                'pimcore_mailer' => [
-                    'transport' => 'sendmail',
-                    'delivery_addresses' => [],
-                    'host' => '',
-                    'username' => '',
-                    'password' => '',
-                    'port' => '',
-                    'encryption' => null,
-                    'auth_mode' => null,
-                ],
-                'newsletter_mailer' => [
-                    'transport' => 'sendmail',
-                    'delivery_addresses' => [],
-                    'host' => '',
-                    'username' => '',
-                    'password' => '',
-                    'port' => '',
-                    'encryption' => null,
-                    'auth_mode' => null,
-                ],
-            ],
-        ],
     ];
 
     public function __construct(array $defaultConfig = null)
@@ -177,14 +156,5 @@ class ConfigWriter
             $configFile = PIMCORE_PROJECT_ROOT .'/config/local/database.yaml';
             File::put($configFile, $content);
         }
-    }
-
-    public function writeDebugModeConfig($ip = '')
-    {
-        File::putPhpFile(PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php', to_php_data_file_format([
-            'active' => true,
-            'ip' => '',
-            'devmode' => false,
-        ]));
     }
 }

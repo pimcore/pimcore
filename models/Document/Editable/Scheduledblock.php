@@ -176,13 +176,16 @@ class Scheduledblock extends Block implements BlockInterface
      */
     public function start()
     {
-        $options = $this->getEditmodeConfig();
-        $this->outputEditmodeConfig($options);
+        if ($this->getEditmode()) {
+            // this is actually to add the block to the EditmodeEditableDefinitionCollector
+            // because for the block editables __toString() is never called
+            $this->render();
+        }
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
@@ -205,9 +208,9 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * Is called everytime a new iteration starts (new entry of the block while looping)
+     * { @inheritdoc }
      */
-    public function blockStart($showControls = true)
+    public function blockStart($showControls = true, $return = false)
     {
         $attributes = [
             'data-name' => $this->getName(),

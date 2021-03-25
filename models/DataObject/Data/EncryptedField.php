@@ -101,7 +101,13 @@ class EncryptedField implements OwnerAwareFieldInterface
             try {
                 $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
                 $key = Key::loadFromAsciiSafeString($key);
-                $data = Serialize::serialize($this->plain);
+                $data = $this->plain;
+                //clear owner to avoid recursion
+                if ($data instanceof OwnerAwareFieldInterface) {
+                    $data->_setOwner(null);
+                    $data->_setOwnerFieldname('');
+                }
+                $data = Serialize::serialize($data);
 
                 $data = Crypto::encrypt($data, $key, true);
                 $this->encrypted = $data;
@@ -110,7 +116,7 @@ class EncryptedField implements OwnerAwareFieldInterface
                 throw new \Exception('could not load key');
             }
 
-            return ['encrypted'];
+            return ['encrypted', '_owner'];
         }
 
         return [];
@@ -129,6 +135,12 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $data = Crypto::decrypt($this->encrypted, $key, true);
 
                 $data = Serialize::unserialize($data);
+
+                if ($data instanceof OwnerAwareFieldInterface) {
+                    $data->_setOwner($this->_owner);
+                    $data->_setOwnerFieldname('_owner');
+                }
+
                 $this->plain = $data;
             } catch (\Exception $e) {
                 Logger::error($e);

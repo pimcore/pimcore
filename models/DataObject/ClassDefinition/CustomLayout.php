@@ -34,52 +34,52 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var Layout|null
      */
-    public $layoutDefinitions;
+    protected $layoutDefinitions;
 
     /**
      * @var int
      */
-    public $default;
+    protected $default;
 
     /**
      * @param string $id
@@ -266,8 +266,17 @@ class CustomLayout extends Model\AbstractModel
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {

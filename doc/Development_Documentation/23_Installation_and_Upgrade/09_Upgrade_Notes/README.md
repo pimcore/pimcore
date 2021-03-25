@@ -1,6 +1,12 @@
 # Upgrade Notes
 
 ## 10.0.0
+- `\Pimcore\Helper\RobotsTxt` has been removed
+- `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead. 
+- [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
+- [Data Objects] Removed CSV import feature. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead.
+- [DataObjects] marked `Pimcore\DataObject\GridColumnConfig\Operator` operator classes as final and internal
+- [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` has been replaced with `GeoCoordinates`. Changed the signature of `__construct`.
 - Added `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::getFilterValues()` with the same signature as `getFilterFrontend()`. To upgrade, rename `getFilterFrontend()` to `getFilterValues()` and remove the rendering stuff to just return the data array.
 
     Before:
@@ -23,8 +29,132 @@
         ];
     }
     ```
+- Added Validation for Geo datatypes
+    - for Geopolyline and Geopolygon invalid data doesn't get serialized 1:1 anymore
+    - for Geobounds and Geopoint invalid data doesn't get dropped silently anymore
+- Calling `$imageAsset->getThumbnail('non-existing-thumbnail-definition)` with a non-existing thumbnail definition will now throw an exception. Same goes for video assets and video image thumbnails.
+- Removed grid column operator `ObjectBrickGetter` since it is obsolete
+- Grid operator `AnyGetter` available only for admin users from now on
+- [Ecommerce] Added `getAttributeConfig` method to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface` interface
+- [Ecommerce] Added `getClientConfig` method to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`   
+- [Ecommerce] Added abstract method `setSuccessorOrder` to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder`
+- [Ecommerce] Indexing doesn't catch any exceptions that occur during preprocessing of attributes in BatchProcessing workers (e.g. elasticsearch). 
+  You can change that behavior with event listeners.
+- [Ecommerce] Added abstract method `setCartHash` to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder`  
+- [Ecommerce] Added `getFieldNameMapped` to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`
+- [Ecommerce] Added `getReverseMappedFieldName` to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface`
+- [Ecommerce] Changed tenant config type hint to `FindologicConfigInterface` in `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic::__construct`
+- [Ecommerce] Changed price fields `totalNetPrice` and `totalPrice` of `OnlineShopOrderItem` to decimal.
+- [Ecommerce] Removed deprecated configuration options `enabled`, `pricing_manager_id` and `pricing_manager_options` for pricing_manager. 
+  Use tenant specific options.  
+- [Ecommerce] Removed deprecated functions `get/setCurrentTenant` and `get/setCurrentSubTenant` 
+  of `EnvironmentInterface`
+- [Ecommerce] Removed deprecated service alias for `Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment`
+- [Ecommerce] Removed deprecated functions `getGeneralSearchColumns`, `createOrUpdateTable`, `getIndexColumns` and `getIndexColumnsByFilterGroup` 
+  of `IndexService`  
+- [Ecommerce] Removed deprecated function `getPaginatorAdapter` from 
+  `ProductList\MySql`, `ProductList\DefaultFindologic`, `ProductList\ElasticSearch\AbstractElasticSearch`, `Token\Listing` and `AbstractOrderList`
+- [Ecommerce] Removed deprecated functions `getCalculatedPrice` and `getCalculatedPriceInfo` from `AbstractSetProduct`
+- [Ecommerce] Removed deprecated protected function `getAvailableFilterValues` from `Order\Listing`  
+- [Ecommerce] Activated `generateTypeDeclarations` for all generated data object classes and field collections. For migration 
+  activate `generateTypeDeclarations` to all Ecommerce Framework data object classes and update your source code accordingly.
+- [Ecommerce] Made methods abstract instead of throwing `UnsupportedException` where easily possible for model classes (`AbstractProduct`, `AbstractSetProduct`, `AbstractOfferToolProduct`, `AbstractOfferItem`, `AbstractOffer`). 
+- [Ecommerce] Added type declarations to Ecommerce Framework product interfaces (`ProductInterface`, `IndexableInterface`, `CheckoutableInterface`).
+- [Ecommerce] Removed Elasticsearch 5 and 6 support 
+- [Ecommerce] `getItemAmount` and `getItemCount` of `Carts` now require string parameter (instead of boolean). Use one of 
+`CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS`. 
+- [Ecommerce] Removed legacy CheckoutManager architecture, migrate your project to V7 if not already
+  - `CancelPaymentOrRecreateOrderStrategy` is now default strategy for handling active payments 
+  - Removed method `isCartReadOnly` from cart and `cart_readonly_mode` configuration option as readonly mode 
+    does not exist anymore.
+  - Removed deprecated method `initPayment` from `PaymentInterface`
+- [Ecommerce] Removed deprecated `ecommerce:indexservice:process-queue` command, 
+  use `ecommerce:indexservice:process-preparation-queue` or `ecommerce:indexservice:process-update-queue` instead
+- [Ecommerce] Removed deprecated `mapping` option in index attributes configuration (never worked properly anyway) 
+- [Ecommerce] Removed deprecated `IndexUpdater` tool
+- [Ecommerce] Removed legacy BatchProcessing worker mode, product centric batch processing is now standard
+  - Removed abstract class `AbstractBatchProcessingWorker`, use `ProductCentricBatchProcessing` instead
+  - Removed methods from interface `BatchProcessingWorkerInterface` and its implementations:
+     - `BatchProcessingWorkerInterface::processPreparationQueue`
+     - `BatchProcessingWorkerInterface::processUpdateIndexQueue`
+  - Added methods to interface `BatchProcessingWorkerInterface`
+    - `BatchProcessingWorkerInterface::prepareDataForIndex`
+    - `BatchProcessingWorkerInterface::resetPreparationQueue`
+    - `BatchProcessingWorkerInterface::resetIndexingQueue`
+  - Removed constants 
+     - `ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY` 
+     - `ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC`
+  - Removed configuration node `worker_mode` in `index_service` configuration  
+- [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is 
+  implemented in `AbstractConfig` this should not have any consequences.
+- [Web2Print] 
+   - Removed `PdfReactor8`, use `PdfReactor` instead.
+   - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib
+     should be backwards compatible to older versions.       
+- [Email & Newsletter] Swiftmailer has been replaced with Symfony Mailer. `\Pimcore\Mail` class now extends from `Symfony\Component\Mime\Email` and new mailer service `Pimcore\Mail\Mailer` has been introduced, which decorates `Symfony\Component\Mailer\Mailer`, for sending mails.
+
+    Email method and transport setting has been removed from System settings. Cleanup Swiftmailer config and setup mailer transports "main" & "newsletter" in config.yaml:
+    ```yaml
+    framework:
+        mailer:
+            transports:
+                main: smtp://user:pass@smtp.example.com:port
+                pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+    ```
+    please see [Symfony Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for more information.
+    
+    API changes:
+    
+    Before:
+    ```php
+        $mail = new \Pimcore\Mail($subject = null, $body = null, $contentType = null, $charset = null);
+        $mail->setBodyText("This is just plain text");
+        $mail->setBodyHtml("<b>some</b> rich text: {{ myParam }}");
+        ...
+    ```
+    After:
+    ```php
+        $mail= new \Pimcore\Mail($headers = null, $body = null, $contentType = null);
+        $mail->setTextBody("This is just plain text");
+        $mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
+        ...
+    ```
+
+    Before:
+    ```php
+      $mail->setFrom($emailAddress, $name);
+      $mail->setTo($emailAddress, $name);
+      ...
+    ```
+      
+    After:
+    ```php
+      $mail->from(new \Symfony\Component\Mime\Address($emailAddress, $name));
+      $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
+      ...
+    ```
+- [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
+- [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
+- `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.
+- Removed deprecated Twig extension `pimcore_action()`.
+- Removed method `getFlag()` from `Pimcore\Config`.
 
 ## 6.9.0
+- `\Pimcore\Helper\RobotsTxt` has been deprecated and will be removed in Pimcore 10
+- [Documents] `Editable::factory()` is deprecated and will be removed in Pimcore 10, use `EditableLoader` service instead. 
+- [Data Objects] CSV import feature will be removed in Pimcore 10. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead
+- [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` will go away in Pimcore 10. Use `GeoCoordinates` instead which changes the signature of `__construct` parameters
+- [Ecommerce] `getClientConfig` method will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [ECommerce] `setSuccessorOrder` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
+- [Ecommerce] `getFieldNameMapped` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [Ecommerce] `getReverseMappedFieldName` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [Ecommerce] Tenant config type hint will be changed to `FindologicConfigInterface` in `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic::__construct` in Pimcore 10
+- Calling static methods on `Pimcore\Model\DataObject\AbstractObject` is deprecated, use `Pimcore\Model\DataObject` instead.
+- [Ecommerce] Abstract method `setCartHash` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
+- Abstract method `load` will be added to `Pimcore\Model\Listing\Dao\AbstractDao` in Pimcore 10
+- [Elastic Search] `getClientConfig` will be added to the `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config` interface in Pimcore 10
+- `PageSnippet::$elements` property visibility changed from `protected` to `private` 
+- `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private` 
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
 - Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore 10. 
@@ -45,6 +175,33 @@
 - Config option `pimcore.translations.case_insensitive` has been deprecated and will be removed in Pimcore 10. 
 - `PageSnippet::$elements` property visibility changed from `protected` to `private`
 - `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private`
+- `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been deprecated and will be removed in Pimcore 10. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
+- Calling `getQuery()` on listing classes (to fetch Zend Compatibility Query Builder) has been deprecated and will be removed in Pimcore 10. Use `getQueryBuilder()` which returns Doctrine Query builder instead.
+- Using onCreateQuery callback to modify listing queries has been deprecated. Use onCreateQueryBuilder() instead. e.g.
+```php
+    /** @var \Pimcore\Model\DataObject\News\Listing $list */
+    $list = new Pimcore\Model\DataObject\News\Listing();
+
+    $list->onCreateQueryBuilder(
+        function (\Doctrine\DBAL\Query\QueryBuilder $select) use ($list) {
+            // modify listing $select->join(....);
+        }
+    );
+```
+- Using Zend\Paginator for listing classes has been deprecated and will be removed in Pimcore 10. Use Knp\Component\Pager\Paginator instead.
+- [Ecommerce] Elasticsearch 5 and 6 support is deprecated, use newer versions of elasticsearch.
+- [Ecommerce] Calling `getItemAmount` and `getItemCount` of `Carts` with boolean parameter is deprecated. Use one of 
+  `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS` 
+  instead. 
+- `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` class has been deprecated and will be removed in Pimcore 10.
+- `Pimcore\Tool\Console`: Methods `getSystemEnvironment()`, `exec()`, `execInBackground()` and `runPhpScriptInBackground()` have been deprecated, use `Symfony\Component\Process\Process` instead where possible. For long running background tasks (which should run even when parent process has exited), switch to a queue implementation.
+- Image thumbnails: Using getHtml() on Image Thumbnails will return `<picture>` tag instead of `<img>` tag in Pimcore 10. Please use `getImageTag()` method instead. Also, passing `$removeAttribute` param to `getHtml()` has been deprecated and will throw Exception in Pimcore 10.
+- Deprecated `Pimcore\Tool\Mime`, use `Symfony\Component\Mime\MimeTypes` instead.  
+- `Pimcore\Config::getFlag()` method has been deprecated and will be removed in Pimcore 10.
+
+- [Analytics] Matomo(Piwik) integration has been deprecated in Core and Ecommerce bundle, and will be removed in Pimcore 10.
+- [Targeting and Personalization] VisitedPageBefore condition has been deprecated, as it is based on deprecated Piwik integration and will be removed in Pimcore 10.
+- [AdminBundle] Marked classes @internal and controllers declared as final - please see all changes here: https://github.com/pimcore/pimcore/pull/8453/files
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
@@ -198,7 +355,7 @@ pimcore:
       full_page_cache:
           ...
     ```
-    in system.yml to avoid conflicts between output and data cache [#5369](https://github.com/pimcore/pimcore/issues/5369). If you are using custom config files then you have to migrate them manually. Also new config `pimcore:fullpage` is disabled by default, so you have to enable fullpage cache again in system settings.
+    in system.yml to avoid conflicts between output and data cache [#5369](https://github.com/pimcore/pimcore/issues/5369). If you are using custom config files then you have to migrate them manually. Also new config `pimcore:full_page_cache` is disabled by default, so you have to enable fullpage cache again in system settings.
 - Properties `$children`, `$hasChildren`, `$siblings`, `$hasSiblings` in `Pimcore\Model\Document` & `$o_children`, `$o_hasChildren`, `$o_siblings`, `$o_hasSiblings` in `Pimcore\Model\AbstractObject` uses array to cache result.
 
 ## 6.3.0

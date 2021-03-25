@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -199,7 +199,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
     {
@@ -218,7 +218,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadData($data, $object = null, $params = [])
     {
@@ -502,7 +502,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
+        if (DataObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }
@@ -660,13 +660,13 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return true;
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Element\AbstractElement::class;
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Element\AbstractElement::class;

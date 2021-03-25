@@ -20,7 +20,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\Element\AbstractElement;
 
-class PropertyGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class PropertyGetter extends AbstractOperator
 {
     /** @var string */
     private $propertyName;

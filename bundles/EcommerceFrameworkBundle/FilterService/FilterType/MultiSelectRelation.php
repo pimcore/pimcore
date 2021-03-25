@@ -16,8 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Logger;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation;
 use Pimcore\Model\DataObject\Folder;
 
@@ -46,7 +47,7 @@ class MultiSelectRelation extends AbstractFilterType
 
         foreach ($values as $v) {
             if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
-                $objects[$v['value']] = AbstractObject::getById($v['value']);
+                $objects[$v['value']] = DataObject::getById($v['value']);
             }
         }
         Logger::info('done.');
@@ -118,9 +119,10 @@ class MultiSelectRelation extends AbstractFilterType
 
         if (!empty($value)) {
             $quotedValues = [];
+            $db = Db::get();
             foreach ($value as $v) {
                 if (!empty($v)) {
-                    $quotedValues[] = $productList->quote($v);
+                    $quotedValues[] = $db->quote($v);
                 }
             }
             if (!empty($quotedValues)) {

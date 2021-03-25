@@ -23,8 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/folder")
+ *
+ * @internal
  */
-class FolderController extends DocumentControllerBase
+final class FolderController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

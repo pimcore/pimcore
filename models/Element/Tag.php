@@ -29,32 +29,32 @@ class Tag extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * @var string
      */
-    public $idPath;
+    protected $idPath;
 
     /**
      * @var Tag[]
      */
-    public $children;
+    protected $children;
 
     /**
      * @var Tag|null
      */
-    public $parent;
+    protected $parent;
 
     /**
      * @static

@@ -23,8 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/hardlink")
+ *
+ * @internal
  */
-class HardlinkController extends DocumentControllerBase
+final class HardlinkController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

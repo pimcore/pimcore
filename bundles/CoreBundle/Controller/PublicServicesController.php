@@ -29,7 +29,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\EventListener\SessionListener;
 
-class PublicServicesController extends Controller
+/**
+ * @internal
+ */
+final class PublicServicesController extends Controller
 {
     /**
      * @param Request $request
@@ -39,6 +42,7 @@ class PublicServicesController extends Controller
      */
     public function thumbnailAction(Request $request, SessionListener $sessionListener)
     {
+        $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $assetId = $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
@@ -126,7 +130,7 @@ class PublicServicesController extends Controller
                 if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
                     $actualFileExtension = File::getFileExtension($thumbnailFile);
 
-                    if ($actualFileExtension !== $requestedFileExtension) {
+                    if ($actualFileExtension !== $requestedFileExtension && $thumbnailFile != $errorImage) {
                         // create a copy/symlink to the file with the original file extension
                         // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                         // is set to auto-optimized format so the resulting thumbnail can be jpeg
@@ -148,14 +152,7 @@ class PublicServicesController extends Controller
                         'Content-Type' => $imageThumbnail->getMimeType(),
                     ];
 
-                    // in certain cases where an event listener starts a session (e.g. when there's a firewall
-                    // configured for the entire site /*) the session event listener shouldn't modify the
-                    // cache control headers of this response
-                    if (defined('Symfony\Component\HttpKernel\EventListener\AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER')) {
-                        // this method of bypassing the session listener was introduced in Symfony 4, so we need
-                        // to check for the constant first
-                        $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
-                    }
+                    $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
                     return new BinaryFileResponse($thumbnailFile, 200, $headers);
                 }

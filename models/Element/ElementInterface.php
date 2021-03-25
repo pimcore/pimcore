@@ -208,6 +208,11 @@ interface ElementInterface extends ModelInterface
     public function getParentId();
 
     /**
+     * @return ElementInterface|null
+     */
+    public function getParent();
+
+    /**
      * @return string
      */
     public function getCacheTag();

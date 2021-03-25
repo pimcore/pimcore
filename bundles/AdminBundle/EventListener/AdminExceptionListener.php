@@ -28,12 +28,15 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class AdminExceptionListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class AdminExceptionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
     {
@@ -79,7 +82,9 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $data['type'] = 'ValidationException';
                 $code = 422;
 
+                $message = '';
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
+                $data['message'] = $message;
             }
 
             $response = new JsonResponse($data, $code, $headers);

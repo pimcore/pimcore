@@ -30,7 +30,6 @@ use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,11 +38,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/document")
+ *
+ * @internal
  */
-class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
+final class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
 
@@ -170,8 +172,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
 
             if ($filter) {
-                $db = Db::get();
-
                 $condition = '(' . $condition . ')' . ' AND CAST(documents.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
@@ -345,7 +345,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $properties = $translationsBaseDocument->getProperties();
                 $properties = array_merge($properties, $document->getProperties());
                 $document->setProperties($properties);
-                $document->setProperty('language', 'text', $request->get('language'));
+                $document->setProperty('language', 'text', $request->get('language'), false, true);
                 $document->save();
 
                 $service = new Document\Service();
@@ -807,7 +807,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $site->save();
 
         $site->setRootDocument(null); // do not send the document to the frontend
-        return $this->adminJson($site);
+        return $this->adminJson($site->getObjectVars());
     }
 
     /**

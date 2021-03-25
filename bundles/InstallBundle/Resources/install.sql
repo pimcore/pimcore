@@ -55,6 +55,8 @@ CREATE TABLE `assets_metadata` (
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
+
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
 	`id` VARCHAR(50) NOT NULL,
@@ -544,6 +546,16 @@ CREATE TABLE `tmp_store` (
   KEY `expiryDate` (`expiryDate`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `settings_store`;
+CREATE TABLE `settings_store` (
+  `id` varchar(190) NOT NULL DEFAULT '',
+  `scope` varchar(190) NOT NULL DEFAULT '',
+  `data` longtext,
+  `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
+  PRIMARY KEY (`id`, `scope`),
+  KEY `scope` (`scope`)
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
@@ -555,8 +567,8 @@ CREATE TABLE `translations_admin` (
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `translations_website`;
-CREATE TABLE `translations_website` (
+DROP TABLE IF EXISTS `translations_messages`;
+CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
@@ -711,6 +723,21 @@ CREATE TABLE `versions` (
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`)
+) DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `website_settings`;
+CREATE TABLE `website_settings` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(190) NOT NULL DEFAULT '',
+    `type` ENUM('text','document','asset','object','bool') DEFAULT NULL,
+    `data` TEXT,
+    `language` VARCHAR(15) NOT NULL DEFAULT '',
+    `siteId` INT(11) UNSIGNED DEFAULT NULL,
+    `creationDate` INT(11) UNSIGNED DEFAULT '0',
+    `modificationDate` INT(11) UNSIGNED DEFAULT '0',
+    PRIMARY KEY (`id`),
+    INDEX `name` (`name`),
+    INDEX `siteId` (`siteId`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;

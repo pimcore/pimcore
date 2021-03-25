@@ -163,7 +163,7 @@ class DefaultMockup implements ProductInterface
     {
         Logger::notice("Getting original object {$this->id}.");
 
-        return \Pimcore\Model\DataObject\AbstractObject::getById($this->id);
+        return \Pimcore\Model\DataObject::getById($this->id);
     }
 
     /**
@@ -172,7 +172,7 @@ class DefaultMockup implements ProductInterface
      *
      * @return string
      */
-    public function getOSName()
+    public function getOSName(): ?string
     {
         return $this->__call('getOSName', []);
     }
@@ -183,7 +183,7 @@ class DefaultMockup implements ProductInterface
      *
      * @return string
      */
-    public function getOSProductNumber()
+    public function getOSProductNumber(): ?string
     {
         return $this->__call('getOSProductNumber', []);
     }

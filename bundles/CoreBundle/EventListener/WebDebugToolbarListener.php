@@ -25,8 +25,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Disables the web debug toolbar for frontend requests by admins (iframes inside admin interface)
+ *
+ * @internal
  */
-class WebDebugToolbarListener implements EventSubscriberInterface
+final class WebDebugToolbarListener implements EventSubscriberInterface
 {
     /**
      * @var RequestHelper
@@ -73,7 +75,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

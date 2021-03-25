@@ -18,7 +18,7 @@ $list->load();
 ```
 
 All filtered attributes need to be in the *Product Index*. The Product List implements all iterator and paginator 
-interfaces and can be used in foreach loops and in combination with `Zend\Paginator`. 
+interfaces and can be used in foreach loops and in combination with `Knp\Paginator`. 
 
 > For logging standard Symfony logging is used. E-Commerce Framework Product Indices log into special channels like
 > `pimcore_ecommerce_indexupdater`, `pimcore_ecommerce_sql`, `pimcore_ecommerce_es`

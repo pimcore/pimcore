@@ -26,8 +26,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/classificationstore")
+ *
+ * @internal
  */
-class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
+final class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * Delete collection with the group-relations

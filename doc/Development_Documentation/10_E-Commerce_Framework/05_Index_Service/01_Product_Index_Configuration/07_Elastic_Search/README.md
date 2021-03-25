@@ -1,6 +1,6 @@
 # Special Aspects for Elasticsearch
-Basically elasticsearch worker works as described in the [optimized architecture](../README.md). 
-Currently elasticsearch 5, 6 and 7 are supported. 
+Basically Elasticsearch worker works as described in the [optimized architecture](../README.md). 
+Currently, Elasticsearch 7 is supported. 
 
 ## Installation
 To work properly Pimcore requires the Elasticsearch bindings, install them with: `composer require elasticsearch/elasticsearch`.

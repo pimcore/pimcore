@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Pimcore\Process\PartsBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -66,21 +65,28 @@ class AssetsInstaller
      *
      * @return Process
      */
-    public function buildProcess(array $options = []): Process
+    protected function buildProcess(array $options = []): Process
     {
         $arguments = [
             Console::getPhpCli(),
             PIMCORE_PROJECT_ROOT . '/bin/console',
             'assets:install',
-            PIMCORE_WEB_ROOT,
         ];
 
-        $options = $this->resolveOptions($options);
+        $preparedOptions = [];
+        foreach ($this->resolveOptions($options) as $optionKey => $optionValue) {
+            if ($optionValue === false || $optionValue === null) {
+                continue;
+            }
 
-        $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts = $partsBuilder->getParts();
+            $preparedOptions[] = '--' . $optionKey . (($optionValue === true) ? '' : '=' . $optionValue);
+        }
 
-        $process = new Process($parts);
+        $arguments = array_merge($arguments, $preparedOptions);
+
+        $arguments[] = PIMCORE_WEB_ROOT;
+
+        $process = new Process($arguments);
         $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
 
         return $process;

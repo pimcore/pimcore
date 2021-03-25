@@ -92,7 +92,7 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
                     if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
@@ -267,7 +267,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function appendData($existingData, $additionalData)
     {
@@ -298,7 +298,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeData($existingData, $removeData)
     {
@@ -463,7 +463,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -471,7 +471,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {

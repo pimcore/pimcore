@@ -152,7 +152,7 @@ pimcore.document.tree = Class.create({
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
             }],
-            root: rootNodeConfig,
+            // root: rootNodeConfig,
             store: store,
             listeners: this.getTreeNodeListeners()
         });
@@ -973,8 +973,11 @@ pimcore.document.tree = Class.create({
             printPage: {}
         };
 
-        document_types.sort([{property: 'priority', direction: 'DESC'},
-            {property: 'translatedName', direction: 'ASC'}]);
+        document_types.sort([
+            {property: 'priority', direction: 'DESC'},
+            {property: 'translatedGroup', direction: 'ASC'},
+            {property: 'translatedName', direction: 'ASC'}
+        ]);
 
         document_types.each(function (documentMenu, typeRecord) {
             var text = Ext.util.Format.htmlEncode(typeRecord.get("translatedName"));
@@ -1027,7 +1030,7 @@ pimcore.document.tree = Class.create({
             if(typeRecord.get("group")) {
                 if(!groups[menuOption][typeRecord.get("group")]) {
                     groups[menuOption][typeRecord.get("group")] = {
-                        text: Ext.util.Format.htmlEncode(typeRecord.get("group")),
+                        text: Ext.util.Format.htmlEncode(typeRecord.get("translatedGroup")),
                         iconCls: "pimcore_icon_folder",
                         hideOnClick: false,
                         menu: {
@@ -1305,7 +1308,7 @@ pimcore.document.tree = Class.create({
                         url: Routing.generate('pimcore_admin_document_document_updatesite'),
                         method: 'PUT',
                         params: data,
-                        success: function (response) {
+                        success: function (tree, record, response) {
                             var site = Ext.decode(response.responseText);
                             record.data.site = site;
                             tree.getStore().load({

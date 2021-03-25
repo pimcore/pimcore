@@ -3,7 +3,7 @@
     use // comments here as they would break the generated code. Use /* */ comments if needed or refactor the "minifying"
     to use a decent JS processor such as uglify or webpack.
 #}
-{%- spaceless -%}
+{%- apply spaceless -%}
 <script>
     {%- pimcoreassetcompress -%}
     (function (window, document, undefined) {
@@ -326,4 +326,4 @@
     }(window, document));
     {%- endpimcoreassetcompress -%}
 </script>
-{%- endspaceless -%}
+{%- endapply -%}

@@ -21,7 +21,7 @@ use Pimcore\Translation\AttributeSet\Attribute;
 class DocumentImporter extends AbstractElementImporter
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
     {

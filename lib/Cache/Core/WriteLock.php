@@ -66,7 +66,7 @@ class WriteLock implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function enable()
     {
@@ -74,7 +74,7 @@ class WriteLock implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function disable()
     {
@@ -82,7 +82,7 @@ class WriteLock implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isEnabled()
     {

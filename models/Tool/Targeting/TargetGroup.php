@@ -27,27 +27,27 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var int
      */
-    public $threshold = 1;
+    protected $threshold = 1;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @param int $id

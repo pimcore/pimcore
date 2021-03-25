@@ -22,7 +22,11 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+/**
+ *
+ * @internal
+ */
+final class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-data-providers", name="pimcore_admin_gdpr_admin_getdataproviders", methods={"GET"})
@@ -41,7 +45,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

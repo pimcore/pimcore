@@ -36,10 +36,10 @@ $myObject->getDescription();
 $city = DataObject\City::getByZip(5020,1);
 
 // you can also get an object by id where you don't know the type
-$object = DataObject\AbstractObject::getById(235);
+$object = DataObject::getById(235);
 
 // or obtain an object by path
-$object = DataObject\AbstractObject::getByPath("/path/to/the/object");
+$object = DataObject::getByPath("/path/to/the/object");
 
 
 //updating and saving objects
@@ -314,10 +314,10 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 <?php
 
 // revert to the default API behaviour, and setUnpublished can be used as usually
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(true);
+\Pimcore\Model\DataObject::setHideUnpublished(true);
 
 // force to return all objects including unpublished ones, even if setUnpublished is set to false
-\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(false);
+\Pimcore\Model\DataObject::setHideUnpublished(false);
 ```
 
 ### Filter Objects by attributes from Field Collections
@@ -356,23 +356,25 @@ The object listing of this example only delivers objects of the type Collectiont
 
 <a name="zendPaginatorListing">&nbsp;</a>
 
-### Working with Zend\Paginator
+### Working with Knp\Component\Pager\Paginator
 
 ##### Action 
 ```php
-public function testAction( Request $request )
+public function testAction( Request $request, \Knp\Component\Pager\PaginatorInterface $paginator)
 {
     $list = new DataObject\Simple\Listing();
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
-    $paginator = new \Zend\Paginator\Paginator($list);
-    $paginator->setCurrentPageNumber( $request->get('page') );
-    $paginator->setItemCountPerPage(10);
+    $paginator = $paginator->paginate(
+        $list,
+        $request->get('page', 1),
+        10
+    );
 
     return $this->render('Test/Test.html.twig', [
         'paginator' => $paginator,
-        'paginationVariables' => $paginator->getPages('Sliding')
+        'paginationVariables' => $paginator->getPaginationData()
     ]);
 }
 ```
@@ -429,7 +431,7 @@ public function testAction( Request $request )
 ### Access and modify internal object list query
 
 It is possible to access and modify the internal query from every object listing. The internal query is based 
-on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
+on `\Doctrine\DBAL\Query\QueryBuilder`.
 ```php
 
 <?php
@@ -439,9 +441,9 @@ on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(
-    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list) {
-        $select->join(
+$list->onCreateQueryBuilder(
+    function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) use ($list) {
+        $queryBuilder->join(
         ['rating' => 'plugin_rating_ratings'],
         'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
         ''
@@ -452,7 +454,7 @@ $list->onCreateQuery(
 
 ### Debugging the Object List Query
 
-You can access and print the internal query which is based on `\Pimcore\Db\ZendCompatibility\QueryBuilder` to debug your conditions like this:
+You can access and print the internal query which is based on `\Doctrine\DBAL\Query\QueryBuilder` to debug your conditions like this:
 
 ```php
 <?php
@@ -461,10 +463,10 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 /** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
 $list = new Pimcore\Model\DataObject\News\Listing();
  
-// set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
+// set onCreateQueryBuilder callback
+$list->onCreateQueryBuilder(function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) {
     // echo query
-    echo $query;
+    echo $queryBuilder;
 });
 ```
 

@@ -15,6 +15,7 @@
 namespace Pimcore\Video\Adapter;
 
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
@@ -23,6 +24,8 @@ use Symfony\Component\Process\Process;
 
 class Ffmpeg extends Adapter
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @var string
      */
@@ -79,11 +82,7 @@ class Ffmpeg extends Adapter
      */
     public function load($file, $options = [])
     {
-        if (!stream_is_local($file) && isset($options['asset'])) {
-            $tmpFile = $options['asset']->getTemporaryFile();
-            $file = $tmpFile;
-            $this->tmpFiles[] = $tmpFile;
-        }
+        $file = $this->getLocalFile($file);
 
         $this->file = $file;
         $this->setProcessId(uniqid());
@@ -122,7 +121,9 @@ class Ffmpeg extends Adapter
             } elseif ($this->getFormat() == 'webm') {
                 // check for vp9 support
                 $webmCodec = 'libvpx';
-                $codecs = Console::exec(self::getFfmpegCli() . ' -codecs');
+                $process = new Process([self::getFfmpegCli(), '-codecs']);
+                $process->run();
+                $codecs = $process->getOutput();
                 if (stripos($codecs, 'vp9')) {
                     //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
                 }
@@ -163,7 +164,10 @@ class Ffmpeg extends Adapter
             $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
             array_unshift($command, 'ffmpeg', '-i', realpath($this->file));
 
-            $process = new Process($command);
+            Logger::debug('Executing FFMPEG Command: ' . $command);
+
+            Console::addLowProcessPriority($command);
+            $process = Process::fromShellCommandline($command);
             //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
             $process->setTimeout(null);
             $process->start();
@@ -210,8 +214,14 @@ class Ffmpeg extends Adapter
             $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ffmpeg-tmp-' . uniqid() . '.' . File::getFileExtension($file);
         }
 
-        $cmd = self::getFfmpegCli() . ' -ss ' . $timeOffset . ' -i ' . escapeshellarg(realpath($this->file)) . ' -vcodec png -vframes 1 -vf scale=iw*sar:ih ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $file));
-        Console::exec($cmd, null, 60);
+        $cmd = [
+            self::getFfmpegCli(),
+            '-ss', $timeOffset, '-i', realpath($this->file),
+            '-vcodec', 'png', '-vframes', 1, '-vf', 'scale=iw*sar:ih',
+            str_replace('/', DIRECTORY_SEPARATOR, $file), ];
+        Console::addLowProcessPriority($cmd);
+        $process = new Process($cmd);
+        $process->run();
 
         if ($realTargetPath) {
             File::rename($file, $realTargetPath);
@@ -227,8 +237,16 @@ class Ffmpeg extends Adapter
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
-        $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file));
-        Console::exec($cmd, $tmpFile, 60);
+        $cmd = [self::getFfmpegCli(), '-i', realpath($this->file)];
+        Console::addLowProcessPriority($cmd);
+        $process = new Process($cmd);
+        $process->start();
+
+        $tmpHandle = fopen($tmpFile, 'a');
+        $process->wait(function ($type, $buffer) use ($tmpHandle) {
+            fwrite($tmpHandle, $buffer);
+        });
+        fclose($tmpHandle);
 
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);

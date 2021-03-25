@@ -19,7 +19,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RegisterMaintenanceTaskPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class RegisterMaintenanceTaskPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

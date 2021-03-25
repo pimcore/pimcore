@@ -18,9 +18,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool\Serialize;
 
-class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
+class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -58,6 +59,44 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     public function getDataForResource($data, $object = null, $params = [])
     {
         return Serialize::serialize($data);
+    }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     *
+     * @throws \Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        $isEmpty = true;
+
+        if ($data) {
+            $valid = true;
+
+            if (!is_array($data)) {
+                $valid = false;
+            } else {
+                foreach ($data as $point) {
+                    if (!$point instanceof DataObject\Data\GeoCoordinates) {
+                        $valid = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!$valid) {
+                throw new ValidationException('Expected an array of Geopoint');
+            }
+
+            $isEmpty = false;
+        }
+
+        if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
+            throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
+        }
     }
 
     /**
@@ -123,14 +162,14 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geopoint[]|null
+     * @return DataObject\Data\GeoCoordinates[]|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (is_array($data)) {
             $points = [];
             foreach ($data as $point) {
-                $points[] = new DataObject\Data\Geopoint($point['longitude'], $point['latitude']);
+                $points[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
             }
 
             return $points;
@@ -142,7 +181,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\Geopoint[]|null $data
+     * @param DataObject\Data\GeoCoordinates[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -195,7 +234,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         if (is_array($rows)) {
             foreach ($rows as $row) {
                 $coords = explode(';', $row);
-                $points[] = new  DataObject\Data\Geopoint($coords[1], $coords[0]);
+                $points[] = new  DataObject\Data\GeoCoordinates($coords[0], $coords[1]);
             }
         }
 
@@ -259,7 +298,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var DataObject\Data\Geopoint $point */
+                /** @var DataObject\Data\GeoCoordinates $point */
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),
@@ -279,7 +318,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return mixed|null
      */
     public function unmarshal($value, $object = null, $params = [])
     {
@@ -288,10 +327,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $result[] = new DataObject\Data\Geopoint($point[1], $point[0]);
+                    $result[] = new DataObject\Data\GeoCoordinates($point[0], $point[1]);
                 }
             }
-            $result = Serialize::serialize($result);
 
             return $result;
         }
@@ -301,8 +339,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
     /**
      *
-     * @param DataObject\Data\Geopoint[]|null $oldValue
-     * @param DataObject\Data\Geopoint[]|null $newValue
+     * @param DataObject\Data\GeoCoordinates[]|null $oldValue
+     * @param DataObject\Data\GeoCoordinates[]|null $newValue
      *
      * @return bool
      */

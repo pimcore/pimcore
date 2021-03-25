@@ -29,8 +29,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/portal")
+ *
+ * @internal
  */
-class PortalController extends AdminController implements KernelControllerEventInterface
+final class PortalController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var \Pimcore\Helper\Dashboard

@@ -107,9 +107,15 @@ pimcore.document.versions = Class.create({
                             var versionCount = cellValues.get('versionCount');
                             var index = cellValues.get('index');
 
-                            if (this.document.data.published && index === 0 && d == this.document.data.versionDate && versionCount == this.document.data.versionCount) {
-                                metaData.tdCls = "pimcore_icon_publish";
+                            if (index === 0 && d == this.document.data.versionDate && versionCount == this.document.data.versionCount) {
+                                if(this.document.data.published) {
+                                    metaData.tdCls = "pimcore_icon_publish";
+                                } else {
+                                    metaData.tdCls = "pimcore_icon_sql";
+                                    metaData.tdAttr = 'data-qtip="' + t('version_currently_saved_in_database') + '"';
+                                }
                             }
+
                             return "";
                         }.bind(this),
                         editable: false

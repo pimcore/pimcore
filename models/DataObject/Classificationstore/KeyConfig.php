@@ -40,56 +40,56 @@ class KeyConfig extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Store ID
      *
      * @var int
      */
-    public $storeId = 1;
+    protected $storeId = 1;
 
     /** The key
      * @var string
      */
-    public $name;
+    protected $name;
 
     /** Pseudo column for title
      * @var string|null
      */
-    public $title;
+    protected $title;
 
     /**
      * The key description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * The key type ("text", "number", etc...)
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var string
      */
-    public $definition;
+    protected $definition;
 
     /** @var bool */
-    public $enabled;
+    protected $enabled;
 
     /**
      * @param int $id

@@ -30,12 +30,12 @@ class Folder extends Model\User\AbstractUser
     /**
      * @var array
      */
-    public $children = [];
+    protected $children = [];
 
     /**
      * @var bool
      */
-    public $hasChilds;
+    protected $hasChilds;
 
     /**
      * @param bool $state

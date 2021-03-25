@@ -158,7 +158,7 @@ class GD extends Adapter
      * @param int $width
      * @param int $height
      *
-     * @return resource
+     * @return resource|\GdImage|false
      */
     protected function createImage($width, $height)
     {
@@ -442,7 +442,7 @@ class GD extends Adapter
     protected static $supportedFormatsCache = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supportsFormat(string $format, bool $force = false)
     {

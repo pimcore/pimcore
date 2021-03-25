@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Loader\ImplementationLoader;
 
+/**
+ * @internal
+ */
 interface ClassNameLoaderInterface
 {
     public function supportsClassName(string $name): bool;

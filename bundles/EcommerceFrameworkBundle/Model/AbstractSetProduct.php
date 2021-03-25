@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 /**
  * Abstract base class for pimcore objects who should be used as set products in the online shop framework
  */
-class AbstractSetProduct extends AbstractProduct
+abstract class AbstractSetProduct extends AbstractProduct
 {
     /**
      * returns mandatory products for a set product
@@ -32,10 +32,7 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @return AbstractSetProductEntry[]
      */
-    public function getMandatoryProductEntries()
-    {
-        throw new UnsupportedException('getMandatoryProductEntries is not supported for ' . get_class($this));
-    }
+    abstract public function getMandatoryProductEntries(): ?array;
 
     /**
      * returns optional products for a set product
@@ -44,10 +41,7 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @return AbstractSetProductEntry[]
      */
-    public function getOptionalProductEntries()
-    {
-        throw new UnsupportedException('getOptionalProductEntries is not supported for ' . get_class($this));
-    }
+    abstract public function getOptionalProductEntries(): ?array;
 
     /**
      * checks if product is bookable
@@ -59,7 +53,7 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @return bool
      */
-    public function getOSIsBookable($quantityScale = 1, $products = null)
+    public function getOSIsBookable($quantityScale = 1, $products = null): bool
     {
         if ($this->isActive()) {
             if (empty($products)) {
@@ -84,40 +78,6 @@ class AbstractSetProduct extends AbstractProduct
     }
 
     /**
-     * Delivers price of set product with given products
-     *
-     * @throws UnsupportedException
-     *
-     * @param AbstractSetProductEntry[] $products
-     * @param int $quantityScale
-     *
-     * @return PriceInterface
-     *
-     * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
-     */
-    public function getCalculatedPrice($products, $quantityScale = 1)
-    {
-        return $this->getOSPrice($quantityScale, $products);
-    }
-
-    /**
-     * Delivers priceInfo of setproduct with given products
-     *
-     * @throws UnsupportedException
-     *
-     * @param AbstractSetProductEntry[] $products
-     * @param int $quantityScale
-     *
-     * @return PriceInfoInterface
-     *
-     * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
-     */
-    public function getCalculatedPriceInfo($products, $quantityScale = 1)
-    {
-        return $this->getOSPriceInfo($quantityScale, $products);
-    }
-
-    /**
      * Delivers min price for given products or with default mandatory products of set product
      *
      * @throws UnsupportedException
@@ -127,7 +87,7 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @return PriceInterface
      */
-    public function getOSPrice($quantityScale = null, $products = null)
+    public function getOSPrice($quantityScale = null, $products = null): ?PriceInterface
     {
         if ($this->getOSPriceInfo($quantityScale, $products)) {
             return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
@@ -146,7 +106,7 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @return PriceInfoInterface|AbstractPriceInfo
      */
-    public function getOSPriceInfo($quantityScale = null, $products = null)
+    public function getOSPriceInfo($quantityScale = null, $products = null): ?PriceInfoInterface
     {
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
@@ -161,8 +121,12 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @return AvailabilityInterface
      */
-    public function getOSAvailabilityInfo($quantity = 1, $products = null)
+    public function getOSAvailabilityInfo($quantity = null, $products = null): ?AvailabilityInterface
     {
+        if ($quantity === null) {
+            $quantity = 1;
+        }
+
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
         }

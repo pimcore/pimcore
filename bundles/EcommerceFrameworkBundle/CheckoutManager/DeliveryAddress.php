@@ -25,7 +25,7 @@ class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
     const PRIVATE_NAMESPACE = 'delivery_address';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -33,7 +33,7 @@ class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function commit($data)
     {
@@ -43,7 +43,7 @@ class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getData()
     {

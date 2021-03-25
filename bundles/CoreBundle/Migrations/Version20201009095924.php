@@ -5,7 +5,10 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-class Version20201009095924 extends AbstractMigration
+/**
+ * @internal
+ */
+final class Version20201009095924 extends AbstractMigration
 {
     /**
      * @param Schema $schema

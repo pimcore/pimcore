@@ -324,10 +324,8 @@ class Document extends Element\AbstractElement
     {
         $document = new static();
         $document->setParentId($parentId);
-
-        foreach ($data as $key => $value) {
-            $document->setValue($key, $value);
-        }
+        self::checkCreateData($data);
+        $document->setValues($data);
 
         if ($save) {
             $document->save();
@@ -497,6 +495,8 @@ class Document extends Element\AbstractElement
      * Validate the document path.
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function correctPath()
     {
@@ -880,6 +880,7 @@ class Document extends Element\AbstractElement
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
             if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
+                    $hardlinkPath = '';
                     $hardlink = $masterDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
 
@@ -888,6 +889,10 @@ class Document extends Element\AbstractElement
 
                         $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
                             $hardlinkPath, $this->getRealFullPath());
+                    }
+
+                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
+                        $link = null;
                     }
                 }
             }
@@ -913,7 +918,7 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if (!$link && !empty($config['domain'])) {
+                if (!$link && !empty($config['domain']) && !($this instanceof WrapperInterface)) {
                     $link = $scheme . $config['domain'] . $this->getRealFullPath();
                 }
             }
@@ -1302,7 +1307,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setProperties(array $properties)
     {

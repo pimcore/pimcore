@@ -21,7 +21,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\WebsiteSetting[] load()
  * @method int getTotalCount()
  */
-class Listing extends Model\Listing\JsonListing
+class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null

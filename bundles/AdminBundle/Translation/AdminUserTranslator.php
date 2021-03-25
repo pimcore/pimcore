@@ -21,6 +21,9 @@ use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
 {
     /**
@@ -52,7 +55,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
     {
@@ -63,7 +66,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setLocale($locale)
     {
@@ -73,7 +76,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getLocale()
     {

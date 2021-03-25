@@ -5,7 +5,6 @@ namespace Pimcore\Tests\Model\Element;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Property;
@@ -83,7 +82,7 @@ class DependenciesTest extends ModelTestCase
         $this->saveElementDependencies($source, $targets);
 
         //Reload source object
-        $source = AbstractObject::getById($source->getId(), true);
+        $source = DataObject::getById($source->getId(), true);
 
         //get dependencies
         $dependencies = $source->getDependencies();

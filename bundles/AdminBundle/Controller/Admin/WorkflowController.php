@@ -24,12 +24,14 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool\Console;
 use Pimcore\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\StatusInfo;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Workflow\Registry;
@@ -37,8 +39,10 @@ use Symfony\Component\Workflow\Workflow;
 
 /**
  * @Route("/workflow")
+ *
+ * @internal
  */
-class WorkflowController extends AdminController implements KernelControllerEventInterface
+final class WorkflowController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var Document|Asset|ConcreteObject $element
@@ -278,6 +282,66 @@ class WorkflowController extends AdminController implements KernelControllerEven
     }
 
     /**
+     * Get custom HTML for the workflow transition submit modal, depending whether it is configured or not.
+     *
+     * @Route("/modal-custom-html", name="pimcore_admin_workflow_modal_custom_html", methods={"POST"})
+     *
+     * @param Request $request
+     * @param Registry $workflowRegistry
+     * @param Manager $manager
+     *
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function getModalCustomHtml(Request $request, Registry $workflowRegistry, Manager $manager)
+    {
+        $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
+
+        if ($request->get('isGlobalAction') == 'true') {
+            $globalAction = $manager->getGlobalAction($workflow->getName(), $request->get('transition'));
+            if ($globalAction) {
+                return $this->customHtmlResponse($globalAction->getCustomHtmlService());
+            }
+        } elseif ($workflow->can($this->element, $request->get('transition'))) {
+            $enabledTransitions = $workflow->getEnabledTransitions($this->element);
+            $transition = null;
+            foreach ($enabledTransitions as $_transition) {
+                if ($_transition->getName() === $request->get('transition')) {
+                    $transition = $_transition;
+                }
+            }
+
+            if ($transition instanceof Transition) {
+                return $this->customHtmlResponse($transition->getCustomHtmlService());
+            }
+        }
+
+        $data = [
+            'success' => false,
+            'message' => 'error validating the action on this element, element cannot peform this action',
+        ];
+
+        return new JsonResponse($data);
+    }
+
+    private function customHtmlResponse(CustomHtmlServiceInterface $customHtmlService = null): JsonResponse
+    {
+        $data = [
+            'success' => true,
+            'customHtml' => [],
+        ];
+
+        if ($customHtmlService) {
+            foreach (['top', 'center', 'bottom'] as $position) {
+                $data['customHtml'][$position] = $customHtmlService->renderHtmlForRequestedPosition($this->element, $position);
+            }
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
      * @param Workflow $workflow
      *
      * @return string
@@ -299,15 +363,18 @@ class WorkflowController extends AdminController implements KernelControllerEven
             throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['dot']));
         }
 
-        $cmd = sprintf('%s %s/bin/console pimcore:workflow:dump %s %s | %s -Tsvg',
-            $php,
-            PIMCORE_PROJECT_ROOT,
-            $workflow->getName(),
-            implode(' ', array_keys($marking->getPlaces())),
-            $dot
-        );
+        $cmd = $php . ' ' . PIMCORE_PROJECT_ROOT . '/bin/console pimcore:workflow:dump ${WNAME} ${WPLACES} | ${DOT} -Tsvg';
+        $params = [
+            'WNAME' => $workflow->getName(),
+            'WPLACES' => implode(' ', array_keys($marking->getPlaces())),
+            'DOT' => $dot,
+        ];
 
-        return Console::exec($cmd);
+        Console::addLowProcessPriority($cmd);
+        $process = Process::fromShellCommandline($cmd);
+        $process->run(null, $params);
+
+        return $process->getOutput();
     }
 
     /**

@@ -230,7 +230,7 @@ class Service extends Model\Element\Service
         }
 
         if ($language) {
-            $new->setProperty('language', 'text', $language, false);
+            $new->setProperty('language', 'text', $language, false, true);
         }
 
         $new->save();
@@ -298,6 +298,8 @@ class Service extends Model\Element\Service
      * @param Document $document
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridDocumentData($document)
     {
@@ -600,6 +602,8 @@ class Service extends Model\Element\Service
      * @return bool
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public static function generatePagePreview($id, $request = null, $hostUrl = null)
     {

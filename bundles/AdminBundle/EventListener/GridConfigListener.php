@@ -24,10 +24,13 @@ use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\UserRoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class GridConfigListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class GridConfigListener implements EventSubscriberInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

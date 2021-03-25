@@ -20,12 +20,14 @@ namespace Pimcore\Config;
 use Pimcore\Event\Admin\Report\SettingsEvent;
 use Pimcore\Event\Admin\ReportEvents;
 use Pimcore\File;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles writing/merging report config and emitting an event on config save.
+ *
+ * @internal
  */
-class ReportConfigWriter
+final class ReportConfigWriter
 {
     /**
      * @var EventDispatcherInterface

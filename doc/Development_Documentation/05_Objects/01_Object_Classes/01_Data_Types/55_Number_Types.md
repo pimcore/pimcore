@@ -53,7 +53,7 @@ The following code snippet shows how to set a value.
 ```php
 use Pimcore\Model\DataObject;
 
-$parent = DataObject\AbstractObject::getByPath("/");
+$parent = DataObject::getByPath("/");
 
 $object = new DataObject\Test();
 $unit = DataObject\QuantityValue\Unit::getByAbbreviation("km");

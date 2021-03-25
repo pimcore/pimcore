@@ -59,6 +59,8 @@ class Service
     public static function generateClassDefinitionJson($class)
     {
         $class = clone $class;
+        self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+
         self::setDoRemoveDynamicOptions(true);
         $data = json_decode(json_encode($class));
         self::setDoRemoveDynamicOptions(false);
@@ -69,6 +71,36 @@ class Service
         unset($data->fieldDefinitions);
 
         return json_encode($data, JSON_PRETTY_PRINT);
+    }
+
+    public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
+    {
+        if (method_exists($layout, 'resolveBlockedVars')) {
+            $blockedVars = $layout->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($layout->{$blockedVar})) {
+                    unset($layout->{$blockedVar});
+                }
+            }
+
+            if (isset($layout->blockedVarsForExport)) {
+                unset($layout->blockedVarsForExport);
+            }
+        }
+
+        if (method_exists($layout, 'getChildren')) {
+            $children = $layout->getChildren();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    if ($child instanceof DataObject\ClassDefinition\Data\Select) {
+                        if ($child->getOptionsProviderClass()) {
+                            $child->options = null;
+                        }
+                    }
+                    self::removeDynamicOptionsFromLayoutDefinition($child);
+                }
+            }
+        }
     }
 
     /**
@@ -172,8 +204,8 @@ class Service
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
-        if (is_array($objectBrick->classDefinitions)) {
-            foreach ($objectBrick->classDefinitions as &$cd) {
+        if (is_array($objectBrick->getClassDefinitions())) {
+            foreach ($objectBrick->getClassDefinitions() as &$cd) {
                 // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
                 // get the class by id in order to be able to correctly set the classname for the generated json
                 if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
@@ -284,6 +316,12 @@ class Service
                         }
                     }
                 } else {
+                    //for BC reasons
+                    $blockedVars = [];
+                    if (method_exists($item, 'resolveBlockedVars')) {
+                        $blockedVars = $item->resolveBlockedVars();
+                    }
+                    self::removeDynamicOptionsFromArray($array, $blockedVars);
                     $item->setValues($array);
 
                     if ($item instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -299,6 +337,19 @@ class Service
         }
 
         return false;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $blockedVars
+     */
+    public static function removeDynamicOptionsFromArray(&$data, $blockedVars)
+    {
+        foreach ($blockedVars as $blockedVar) {
+            if (isset($data[$blockedVar])) {
+                unset($data[$blockedVar]);
+            }
+        }
     }
 
     /**

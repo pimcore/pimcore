@@ -20,8 +20,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Adds configuration for gdpr data provider
+ *
+ * @internal
  */
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('pimcore_admin');
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->buildGdprDataExtractorNode());
@@ -102,7 +105,7 @@ class Configuration implements ConfigurationInterface
                     ->info('Configure which classes should be considered, array key is class name')
                     ->prototype('array')
                         ->info('
-    MY_CLASS_NAME: 
+    MY_CLASS_NAME:
 		include: true
 		allowDelete: false
 		includedRelations:

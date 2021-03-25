@@ -73,7 +73,7 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "displayfield",
@@ -84,7 +84,7 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
-                value: this.datax.height || 180
+                value: datax.height || 180
             },
             {
                 xtype: "displayfield",

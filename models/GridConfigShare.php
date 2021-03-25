@@ -19,18 +19,20 @@ namespace Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\GridConfigShare\Dao getDao()
+ *
+ * @internal
  */
 class GridConfigShare extends AbstractModel
 {
     /**
      * @var int
      */
-    public $gridConfigId;
+    protected $gridConfigId;
 
     /**
      * @var int
      */
-    public $sharedWithUserId;
+    protected $sharedWithUserId;
 
     /**
      * @param int $gridConfigId

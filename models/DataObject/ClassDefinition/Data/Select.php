@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 
-class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, \JsonSerializable
+class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -491,7 +491,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             if ($params['purpose'] == 'editmode') {
                 $result = $data;
             } else {
-                $result = ['value' => $data ? $data : null, 'options' => $this->getOptions()];
+                $result = ['value' => $data ?? null, 'options' => $this->getOptions()];
             }
 
             return $result;

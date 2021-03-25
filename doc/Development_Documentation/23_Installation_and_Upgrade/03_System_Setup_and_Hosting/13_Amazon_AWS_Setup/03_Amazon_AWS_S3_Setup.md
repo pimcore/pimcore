@@ -42,12 +42,20 @@ $s3Client = new S3Client([
     ],
 ]);
 
+// Set right ACL
+$s3Options = [
+    's3' => [
+        'ACL' => 'private',
+        'seekable' => true
+    ],
+];
+
+$default = stream_context_set_default($s3Options);
+
 $s3Client->registerStreamWrapper();
 
 // set default file context
-\Pimcore\File::setContext(stream_context_create([
-    's3' => ['seekable' => true]
-]));
+\Pimcore\File::setContext(stream_context_create($s3Options));
 
 ```
 

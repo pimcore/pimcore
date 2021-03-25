@@ -49,7 +49,7 @@ In the frontend (template) you can use the following code to the the html for th
 
 ```php
 <?php
-$object = AbstractObject::getById(234);
+$object = DataObject::getById(234);
 ?>
 
 <ul>

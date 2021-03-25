@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
-use Pimcore\DependencyInjection\ConfigMerger;
 use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -40,7 +39,10 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
+/**
+ * @internal
+ */
+final class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     /**
      * @return string
@@ -81,8 +83,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
-
-        $container->setParameter('pimcore.mime.extensions', $config['mime']['extensions']);
 
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
@@ -251,7 +251,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
         $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
         if (!$container->hasParameter('pimcore.geoip.db_file')) {
-            $container->setParameter('pimcore.geoip.db_file', null);
+            $container->setParameter('pimcore.geoip.db_file', '');
         }
 
         $loader->load('targeting.yml');
@@ -411,57 +411,17 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     }
 
     /**
-     * The security component disallows definition of firewalls and access_control entries from different files to enforce
-     * security. However this limits our possibilities how to provide a security config for the admin area while making
-     * the security component usable for applications built on Pimcore. This merges multiple security configs together
-     * to create one single security config array which is passed to the security component.
+     * Allows us to prepend/modify configurations of different extensions
      *
-     * @see OroPlatformExtension in Oro Platform/CRM which does the same and provides the array merge method used below.
-     *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function prepend(ContainerBuilder $container)
     {
-        // @TODO: to be removed in Pimcore 10 -> move security config to skeleton & demo package
-        $securityConfigs = $container->getExtensionConfig('security');
+        /*$securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {
-            $configMerger = new ConfigMerger();
-
-            $securityConfig = [];
-            foreach ($securityConfigs as $sec) {
-                if (!is_array($sec)) {
-                    continue;
-                }
-
-                $securityConfig = $configMerger->merge($securityConfig, $sec);
-            }
-
-            $securityConfigs = [$securityConfig];
-
             $this->setExtensionConfig($container, 'security', $securityConfigs);
-        }
-    }
-
-    /**
-     * TODO check if we can decorate ContainerBuilder and handle the flattening in getExtensionConfig instead of overwriting
-     * the property via reflection
-     *
-     * @param ContainerBuilder $container
-     * @param string $name
-     * @param array $config
-     */
-    private function setExtensionConfig(ContainerBuilder $container, $name, array $config = [])
-    {
-        $reflector = new \ReflectionClass($container);
-        $property = $reflector->getProperty('extensionConfigs');
-        $property->setAccessible(true);
-
-        $extensionConfigs = $property->getValue($container);
-        $extensionConfigs[$name] = $config;
-
-        $property->setValue($container, $extensionConfigs);
-        $property->setAccessible(false);
+        }*/
     }
 
     /**

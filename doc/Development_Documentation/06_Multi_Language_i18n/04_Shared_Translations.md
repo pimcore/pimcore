@@ -7,7 +7,7 @@ The main benefit is that you have only one single translator for all your transl
 
 It automatically uses the locale specified on a document or from a fallback mechanism. 
 
-For more information, please also check out [Symfony's Translations Component](http://symfony.com/doc/3.4/translation.html). 
+For more information, please also check out [Symfony's Translations Component](http://symfony.com/doc/current/translation.html). 
 
 ![Shared Translations](../img/localization-translations.png)
 
@@ -34,6 +34,8 @@ You can also use variable interpolation in localized messages.
     <a href="/about">{{ 'about'|trans({'{{siteName}}': siteName}) }}</a>
 </div>
 ```
+
+Parameters in translations can be wrapped in double curly braces (`{{` and `}}`) but you are free to use other placeholder wrappers as well, e.g. `%parameter%` like in the [Symfony docs](https://symfony.com/doc/current/translation.html#translatable-objects) also works.
 
 #### Example in a Controller
  

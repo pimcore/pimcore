@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
-use Pimcore\Model\Translation\Admin;
+use Pimcore\Model\Translation;
 use Pimcore\Model\User\Permission;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -170,7 +170,6 @@ class Installer extends AbstractInstaller
     {
         $this->installFieldCollections();
         $this->installClasses();
-        $this->installObjectBricks();
         $this->installTables();
         $this->installTranslations();
         $this->installPermissions();
@@ -309,38 +308,6 @@ class Installer extends AbstractInstaller
         }
     }
 
-    private function installObjectBricks()
-    {
-        $bricks = $this->findInstallFiles(
-            $this->installSourcesPath . '/objectbrick_sources',
-            '/^objectbrick_(.*)_export\.json$/'
-        );
-
-        foreach ($bricks as $key => $path) {
-            if ($brick = Objectbrick\Definition::getByKey($key)) {
-                $this->output->write(sprintf(
-                    '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
-                    $key
-                ));
-
-                continue;
-            } else {
-                $brick = new Objectbrick\Definition();
-                $brick->setKey($key);
-            }
-
-            $data = file_get_contents($path);
-            $success = Service::importObjectBrickFromJson($brick, $data);
-
-            if (!$success) {
-                throw new InstallationException(sprintf(
-                    'Failed to create object brick "%s"',
-                    $key
-                ));
-            }
-        }
-    }
-
     private function installPermissions()
     {
         foreach ($this->permissionsToInstall as $permission) {
@@ -409,7 +376,7 @@ class Installer extends AbstractInstaller
 
     private function installTranslations()
     {
-        Admin::importTranslationsFromFile($this->installSourcesPath . '/admin-translations/init.csv');
+        Translation::importTranslationsFromFile($this->installSourcesPath . '/admin-translations/init.csv', Translation::DOMAIN_ADMIN);
     }
 
     /**

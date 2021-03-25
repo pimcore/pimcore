@@ -22,7 +22,7 @@ use Pimcore\Loader\ImplementationLoader\PrefixLoader as BasePrefixLoader;
 class PrefixLoader extends BasePrefixLoader
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function normalizeName(string $name): string
     {

@@ -35,7 +35,7 @@ class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionH
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
     {

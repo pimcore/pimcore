@@ -183,7 +183,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -607,6 +607,8 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * Validates if there is a missing value for required editable
+     *
+     * @internal
      */
     protected function checkMissingRequiredEditable()
     {

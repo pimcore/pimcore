@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Traits;
 
+/**
+ * @internal
+ */
 trait EnabledTrait
 {
     /**

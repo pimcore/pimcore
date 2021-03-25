@@ -26,6 +26,8 @@ use Symfony\Component\HttpFoundation\Response;
  * to this stack.
  *
  * The ResponseStackListener takes care of sending back the response set on this stack.
+ *
+ * @internal
  */
 class ResponseStack
 {

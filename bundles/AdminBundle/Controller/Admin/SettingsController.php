@@ -31,6 +31,7 @@ use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -42,13 +43,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * @Route("/settings")
+ *
+ * @internal
  */
-class SettingsController extends AdminController
+final class SettingsController extends AdminController
 {
     /**
      * @Route("/display-custom-logo", name="pimcore_settings_display_custom_logo", methods={"GET"})
@@ -72,7 +76,7 @@ class SettingsController extends AdminController
             $customLogoFile = $customLogoPath . $format;
             if (file_exists($customLogoFile)) {
                 try {
-                    $mime = Tool\Mime::detect($customLogoFile);
+                    $mime = MimeTypes::getDefault()->guessMimeType($customLogoFile);
                     $logo = $customLogoFile;
                     break;
                 } catch (\Exception $e) {
@@ -170,7 +174,7 @@ class SettingsController extends AdminController
                 $metadata->save();
                 $metadata->expand();
 
-                return $this->adminJson(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -187,7 +191,7 @@ class SettingsController extends AdminController
 
                 $metadata->save();
 
-                return $this->adminJson(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of types
@@ -213,7 +217,7 @@ class SettingsController extends AdminController
             if (is_array($list->getDefinitions())) {
                 foreach ($list->getDefinitions() as $metadata) {
                     $metadata->expand();
-                    $properties[] = $metadata;
+                    $properties[] = $metadata->getObjectVars();
                 }
             }
 
@@ -238,7 +242,7 @@ class SettingsController extends AdminController
         $result = [];
         foreach ($list as $item) {
             $item->expand();
-            $result[] = $item;
+            $result[] = $item->getObjectVars();
         }
 
         return $this->adminJson(['data' => $result, 'success' => true]);
@@ -275,7 +279,7 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -286,7 +290,7 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of types
@@ -316,7 +320,7 @@ class SettingsController extends AdminController
             $properties = [];
             if (is_array($list->getProperties())) {
                 foreach ($list->getProperties() as $property) {
-                    $properties[] = $property;
+                    $properties[] = $property->getObjectVars();
                 }
             }
 
@@ -385,16 +389,6 @@ class SettingsController extends AdminController
         foreach (['email', 'newsletter'] as $type) {
             $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
         }
-
-        // inject debug mode
-        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-        $debugMode = [];
-        if (file_exists($debugModeFile)) {
-            $debugMode = include $debugModeFile;
-        }
-        $valueArray['general']['debug'] = $debugMode['active'] ?? false;
-        $valueArray['general']['debug_ip'] = $debugMode['ip'] ?? '';
-        $valueArray['general']['devmode'] = $debugMode['devmode'] ?? false;
 
         $response = [
             'values' => $valueArray,
@@ -543,40 +537,22 @@ class SettingsController extends AdminController
                 ],
         ];
 
-        // email & newsletter (swiftmailer settings)
+        // email & newsletter sender/return and debug email defaults
         foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
             $settings['pimcore'][$type] = [
                 'sender' => [
                     'name' => $values[$type . '.sender.name'],
-                    'email' => $values[$type . '.sender.email'], ],
+                    'email' => $values[$type . '.sender.email'],
+                ],
                 'return' => [
                     'name' => $values[$type . '.return.name'],
-                    'email' => $values[$type . '.return.email'], ],
-                'method' => $values[$type . '.method'],
+                    'email' => $values[$type . '.return.email'],
+                ],
             ];
 
-            $settings['swiftmailer']['mailers'][$group] = [
-                'transport' => $values[$type . '.method'],
-                'host' => $values[$type . '.smtp.host'],
-                'username' => $values[$type . '.smtp.auth.username'],
-                'port' => $values[$type . '.smtp.port'],
-                'encryption' => $values[$type . '.smtp.ssl'] ? $values[$type . '.smtp.ssl'] : null,
-                'auth_mode' => $values[$type . '.smtp.auth.method'] ? $values[$type . '.smtp.auth.method'] : null,
-            ];
-
-            $smtpPassword = $values[$type . '.smtp.auth.password'];
-            if ($smtpPassword !== '#####SUPER-SECRET-VALUE-PLACEHOLDER######') {
-                if (!empty($smtpPassword)) {
-                    $settings['swiftmailer']['mailers'][$group]['password'] = $smtpPassword;
-                } else {
-                    $settings['swiftmailer']['mailers'][$group]['password'] = null;
-                }
-            }
             if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
-                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [$values['email.debug.emailAddresses']];
                 $settings['pimcore'][$type]['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
             } else {
-                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [];
                 $settings['pimcore'][$type]['debug']['email_addresses'] = null;
             }
         }
@@ -587,13 +563,6 @@ class SettingsController extends AdminController
         $settingsYml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yml');
         File::put($configFile, $settingsYml);
-
-        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-        File::putPhpFile($debugModeFile, to_php_data_file_format([
-            'active' => $values['general.debug'],
-            'ip' => $values['general.debug_ip'],
-            'devmode' => $values['general.devmode'],
-        ]));
 
         // clear all caches
         $this->forward(self::class . '::clearCacheAction', [
@@ -1315,7 +1284,7 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe);
+        return $this->adminJson($pipe->getObjectVars());
     }
 
     /**
@@ -1497,7 +1466,7 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe);
+        return $this->adminJson($pipe->getObjectVars());
     }
 
     /**
@@ -1582,10 +1551,9 @@ class SettingsController extends AdminController
             $values = [];
         }
 
-        File::putPhpFile(
-            Config::locateConfigFile('robots.php'),
-            to_php_data_file_format($values)
-        );
+        foreach ($values as $siteId => $robotsContent) {
+            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
+        }
 
         return $this->adminJson([
             'success' => true,
@@ -1656,51 +1624,26 @@ class SettingsController extends AdminController
                 return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
             }
         } else {
-            // get list of routes
-
             $list = new WebsiteSetting\Listing();
 
-            $limit = $request->get('limit');
-            $start = $request->get('start');
+            $list->setLimit($request->get('limit'));
+            $list->setOffset($request->get('start'));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-
-            if ($request->get('filter')) {
-                $filter = $request->get('filter');
-                $list->setFilter(function ($row) use ($filter) {
-                    foreach ($row as $value) {
-                        if (strpos($value, $filter) !== false) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
+            if ($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
+            } else {
+                $list->setOrderKey('name');
+                $list->setOrder('asc');
             }
 
-            $list->setOrder(static function ($a, $b) use ($sortingSettings) {
-                if (!$sortingSettings) {
-                    return 0;
-                }
-                $orderKey = $sortingSettings['orderKey'];
-                $aValue = $a[$orderKey] ?? null;
-                $bValue = $b[$orderKey] ?? null;
-                if ($aValue == $bValue) {
-                    return 0;
-                }
-
-                $result = $aValue < $bValue ? -1 : 1;
-                if ($sortingSettings['order'] === 'DESC') {
-                    $result = -1 * $result;
-                }
-
-                return $result;
-            });
+            if ($request->get('filter')) {
+                $list->setCondition('`name` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            }
 
             $totalCount = $list->getTotalCount();
             $list = $list->load();
-
-            $list = array_slice($list, $start, $limit);
 
             $settings = [];
             foreach ($list as $item) {
@@ -1818,7 +1761,7 @@ class SettingsController extends AdminController
 
         if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
             $params['adapterConfig'] = '-O landscape';
-        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             $params['adapterConfig'] = [
                 'javaScriptMode' => 0,
                 'addLinks' => true,

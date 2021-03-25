@@ -36,22 +36,18 @@ class TagsGetter implements GetterInterface
         }
 
         $tags = Tag::getTagsForElement($type, $element->getId());
-        $result = [];
 
         if (!$config['includeParentTags']) {
-            foreach ($tags as $tag) {
-                $result[] = $tag->getName();
-            }
-
-            return $result;
+            return $tags;
         }
 
+        $result = [];
         foreach ($tags as $tag) {
-            $result[] = $tag->getName();
+            $result[] = $tag;
 
             $parent = $tag->getParent();
             while ($parent instanceof Tag) {
-                $result[] = $parent->getName();
+                $result[] = $parent;
                 $parent = $parent->getParent();
             }
         }

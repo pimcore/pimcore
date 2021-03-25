@@ -19,7 +19,10 @@ use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
 
-class Requirements
+/**
+ * @internal
+ */
+final class Requirements
 {
     /**
      * @return Check[]
@@ -428,17 +431,6 @@ class Requirements
         $checks[] = new Check([
             'name' => 'pdftotext - (part of poppler-utils)',
             'state' => $pdftotextBin ? Check::STATE_OK : Check::STATE_WARNING,
-        ]);
-
-        try {
-            $sqipAvailable = \Pimcore\Tool\Console::getExecutable('sqip');
-        } catch (\Exception $e) {
-            $sqipAvailable = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'SQIP - SVG Placeholder',
-            'state' => $sqipAvailable ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
         try {

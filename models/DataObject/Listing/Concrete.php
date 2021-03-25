@@ -48,7 +48,7 @@ abstract class Concrete extends Model\DataObject\Listing
      *
      * @var bool
      */
-    public $ignoreLocalizedFields = false;
+    protected $ignoreLocalizedFields = false;
 
     /**
      * @throws \Exception

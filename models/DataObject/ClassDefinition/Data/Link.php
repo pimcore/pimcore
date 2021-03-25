@@ -23,11 +23,12 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\Traits\ObjectVarTrait;
 
     /**
      * Static type of this element
@@ -213,9 +214,23 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
+    /** {@inheritdoc} */
+    public function marshal($value, $object = null, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Link) {
+            return $value->getObjectVars();
+        }
+    }
+
     /** @inheritDoc */
     public function unmarshal($data, $object = null, $params = [])
     {
+        if (is_array($data)) {
+            $link = new DataObject\Data\Link();
+            $link->setValues($data);
+            $data = $link;
+        }
+
         if ($data instanceof DataObject\Data\Link) {
             $target = Element\Service::getElementById($data->getInternalType(), $data->getInternal());
             if (!$target) {

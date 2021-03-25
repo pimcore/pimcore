@@ -62,7 +62,7 @@ abstract class AbstractBlockItem
      */
     public function getEditable(string $name)
     {
-        $id = Document\Editable::buildChildElementTagName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
+        $id = Document\Editable::buildChildEditableName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
         $editable = $this->document->getEditable($id);
 
         if ($editable) {

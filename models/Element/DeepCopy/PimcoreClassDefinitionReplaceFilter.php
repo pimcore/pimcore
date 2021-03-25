@@ -21,6 +21,9 @@ use DeepCopy\Filter\Filter;
 use DeepCopy\Reflection\ReflectionHelper;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @internal
+ */
 class PimcoreClassDefinitionReplaceFilter implements Filter
 {
     /**
@@ -56,6 +59,3 @@ class PimcoreClassDefinitionReplaceFilter implements Filter
         $reflectionProperty->setValue($object, $value);
     }
 }
-
-//TODO: remove in Pimcore 10
-class_alias(PimcoreClassDefinitionReplaceFilter::class, 'Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter');

@@ -21,6 +21,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * @internal
+ */
 class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
 {
     protected function configure()
@@ -32,7 +35,7 @@ class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

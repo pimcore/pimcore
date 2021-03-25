@@ -37,7 +37,7 @@ Specific configurations and optimizations for your web server are available here
 
 Pimcore requires write access to the following directories (relative to your project root): `/var`, `/web/var` ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
 
-If you're running the installation using a [custom environment name](../21_Deployment/03_Multi_Environment.md), ensure you already have the right config files in place, e.g. `app/config/config_[env_name].yml`. 
+If you're running the installation using a [custom environment name](../21_Deployment/03_Configuration_Environments.md), ensure you already have the right config files in place, e.g. `app/config/config_[env_name].yml`. 
 
 ## 3. Create Database
 

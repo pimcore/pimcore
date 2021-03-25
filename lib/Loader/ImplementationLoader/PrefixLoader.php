@@ -24,6 +24,8 @@ use Pimcore\Tool;
 
 /**
  * Iterates an array of namespace prefixes and tries to load classes by namespace.
+ *
+ * @internal
  */
 class PrefixLoader extends AbstractClassNameLoader
 {
@@ -52,7 +54,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     private function setPrefixes(array $prefixes)
     {
@@ -73,7 +75,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(string $name): bool
     {
@@ -81,7 +83,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getClassName(string $name)
     {

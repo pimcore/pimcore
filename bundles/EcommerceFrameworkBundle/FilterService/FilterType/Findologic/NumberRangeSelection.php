@@ -106,8 +106,13 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         } elseif ($rawValue == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } else {
-            $value['from'] = $filterDefinition->getPreSelectFrom();
-            $value['to'] = $filterDefinition->getPreSelectTo();
+            $value = ['from' => null, 'to' => null];
+            if (method_exists($filterDefinition, 'getPreSelectFrom')) {
+                $value['from'] = $filterDefinition->getPreSelectFrom();
+            }
+            if (method_exists($filterDefinition, 'getPreSelectTo')) {
+                $value['to'] = $filterDefinition->getPreSelectTo();
+            }
         }
 
         $currentFilter[$field] = $value;

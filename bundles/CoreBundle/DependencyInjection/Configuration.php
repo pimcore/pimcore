@@ -25,7 +25,10 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class Configuration implements ConfigurationInterface
+/**
+ * @internal
+ */
+final class Configuration implements ConfigurationInterface
 {
     /**
      * @var PlaceholderProcessor
@@ -49,9 +52,9 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
-        $rootNode->ignoreExtraKeys();
 
         $rootNode
             ->children()
@@ -162,7 +165,6 @@ class Configuration implements ConfigurationInterface
         $this->addCustomReportsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
-        $this->addMimeNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -412,11 +414,6 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('low_quality_image_preview')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('generator')
-                                    ->defaultNull()
-                                    ->end()
-                                ->end()
                             ->end()
                             ->arrayNode('focal_point_detection')
                                 ->addDefaultsIfNotSet()
@@ -943,7 +940,7 @@ class Configuration implements ConfigurationInterface
     {
         $node = $parent->children()->arrayNode($name);
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
+        /** @var ArrayNodeDefinition $prototype */
         $prototype = $node->prototype('array');
         $prototype
             ->beforeNormalization()
@@ -1166,23 +1163,6 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    private function addMimeNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('mime')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('extensions')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()
@@ -1496,6 +1476,19 @@ class Configuration implements ConfigurationInterface
                                                                 ->end()
                                                                 ->info('Add additional field to the transition detail window.')
                                                             ->end()
+                                                            ->arrayNode('customHtml')
+                                                                ->children()
+                                                                    ->enumNode('position')
+                                                                        ->values(['top', 'center', 'bottom'])
+                                                                        ->defaultValue('top')
+                                                                        ->info('Set position of custom HTML inside modal (top, center, bottom).')
+                                                                    ->end()
+                                                                    ->scalarNode('service')
+                                                                        ->cannotBeEmpty()
+                                                                        ->info('Define a custom service for rendering custom HTML within the note modal.')
+                                                                    ->end()
+                                                                ->end()
+                                                            ->end()
                                                         ->end()
                                                     ->end()
                                                     ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
@@ -1632,9 +1625,23 @@ class Configuration implements ConfigurationInterface
                                                                      ->prototype('variable')->end()
                                                                 ->end()
                                                             ->end()
-
                                                         ->end()
                                                     ->end()
+
+                                                    ->arrayNode('customHtml')
+                                                        ->children()
+                                                            ->enumNode('position')
+                                                                ->values(['top', 'center', 'bottom'])
+                                                                ->defaultValue('top')
+                                                                ->info('Set position of custom HTML inside modal (top, center, bottom).')
+                                                            ->end()
+                                                            ->scalarNode('service')
+                                                                ->cannotBeEmpty()
+                                                                ->info('Define a custom service for rendering custom HTML within the note modal.')
+                                                            ->end()
+                                                        ->end()
+                                                    ->end()
+
                                                 ->end()
                                                 ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()

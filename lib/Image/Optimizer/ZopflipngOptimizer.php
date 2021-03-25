@@ -40,9 +40,9 @@ final class ZopflipngOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
-    protected function getCommand(string $executable, string $input, string $output): string
+    protected function getCommandArray(string $executable, string $input, string $output): array
     {
-        return $executable.' '.escapeshellarg($input).' '.$output;
+        return [$executable, $input, $output];
     }
 
     /**

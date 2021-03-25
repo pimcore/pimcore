@@ -19,8 +19,12 @@ use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Contracts\Service\ResetInterface;
 
-class PimcoreDataCollector extends DataCollector
+/**
+ * @internal
+ */
+class PimcoreDataCollector extends DataCollector implements ResetInterface
 {
     /**
      * @var PimcoreContextResolver

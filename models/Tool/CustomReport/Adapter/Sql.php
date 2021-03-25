@@ -36,6 +36,16 @@ class Sql extends AbstractAdapter
     {
         $db = Db::get();
 
+        if ($fields === null) {
+            $columns = $this->fullConfig->getColumnConfiguration();
+            $fields = [];
+            foreach ($columns as $column) {
+                if ($column['export']) {
+                    $fields[] = $column['name'];
+                }
+            }
+        }
+
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
         $data = [];
         $total = 0;
@@ -184,6 +194,7 @@ class Sql extends AbstractAdapter
 
                     switch ($operator) {
                         case 'like':
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
                             break;
                         case 'lt':
@@ -201,9 +212,11 @@ class Sql extends AbstractAdapter
                                     break;
                                 }
                             }
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
                             break;
                         case '=':
+                            $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
                             break;
                     }
@@ -241,7 +254,7 @@ class Sql extends AbstractAdapter
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
         $db = Db::get();
-        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, $field);
+        $baseQuery = $this->getBaseQuery($filters, [$field], true, $drillDownFilters, (empty($filters) ? $field : null));
         $data = [];
         if ($baseQuery) {
             $sql = $baseQuery['data'] . ' GROUP BY ' . $db->quoteIdentifier($field);

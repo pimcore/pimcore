@@ -21,6 +21,9 @@ use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
+/**
+ * @internal
+ */
 class MarshalMatcher extends TypeMatcher
 {
     /** @var string|null */
@@ -60,6 +63,3 @@ class MarshalMatcher extends TypeMatcher
         return false;
     }
 }
-
-//TODO: remove in Pimcore 10
-class_alias(MarshalMatcher::class, 'Pimcore\Model\Version\MarshalMatcher');

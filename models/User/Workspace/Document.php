@@ -22,12 +22,12 @@ class Document extends AbstractWorkspace
     /**
      * @var bool
      */
-    public $save = false;
+    protected $save = false;
 
     /**
      * @var bool
      */
-    public $unpublish = false;
+    protected $unpublish = false;
 
     /**
      * @param bool $save

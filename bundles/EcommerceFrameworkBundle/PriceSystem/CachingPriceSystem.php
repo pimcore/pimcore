@@ -23,12 +23,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 abstract class CachingPriceSystem extends AbstractPriceSystem implements CachingPriceSystemInterface
 {
     /**
-     * @var PriceInfoInterface[] $priceInfos
+     * @var PriceInfoInterface[][] $priceInfos
      */
     protected $priceInfos = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPriceInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null): PriceInfoInterface
     {
@@ -48,7 +48,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadPriceInfos($productEntries, $options)
     {
@@ -56,7 +56,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clearPriceInfos($productEntries, $options)
     {
@@ -64,7 +64,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
     {

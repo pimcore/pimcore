@@ -42,7 +42,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function needsSessionDoubleAuthenticationCheck()
     {
@@ -50,7 +50,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function needsStorageDoubleAuthenticationCheck()
     {
@@ -108,7 +108,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []): AccessDeniedHttpException
     {
         // $headers parameter not supported by Symfony 3.4
-        return new AccessDeniedHttpException($message, $previous, $code);
+        return new AccessDeniedHttpException($message, $previous, $code, $headers);
     }
 
     /**

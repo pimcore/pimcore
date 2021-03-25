@@ -19,6 +19,9 @@ namespace Pimcore\Bundle\AdminBundle\Security\Authentication\Token;
 
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 
+/**
+ * @internal
+ */
 class PreAuthenticatedAdminToken extends PreAuthenticatedToken
 {
 }

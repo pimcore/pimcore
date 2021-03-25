@@ -52,7 +52,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $tenantName;
 
     /**
-     * @var ElasticSearch
+     * @var ElasticSearchConfigInterface
      */
     protected $tenantConfig;
 
@@ -209,11 +209,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $this;
     }
 
-    /**
-     * Returns all products valid for this search
-     *
-     * @return IndexableInterface[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -1402,16 +1398,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
      *
@@ -1428,30 +1414,14 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function next()
     {
         $this->getProducts();
         $var = next($this->products);
-
-        return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function rewind()
     {
         $this->getProducts();

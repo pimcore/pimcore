@@ -30,13 +30,13 @@ use Pimcore\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool\Authentication;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ToolbarListener implements EventSubscriberInterface
 {

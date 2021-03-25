@@ -39,7 +39,7 @@ abstract class AbstractTracker implements TrackerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function generateCode(SiteId $siteId = null)
     {
@@ -60,7 +60,7 @@ abstract class AbstractTracker implements TrackerInterface
     abstract protected function buildCode(SiteId $siteId);
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null)
     {

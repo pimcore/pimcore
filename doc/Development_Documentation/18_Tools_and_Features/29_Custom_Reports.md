@@ -25,24 +25,17 @@ It is easily possible to implement custom source adapters for special use cases.
 - JavaScript Class: This class defines the user interface in the configuration of the custom report. It has to be located in 
 the namespace `pimcore.report.custom.definition`, named like the adapter (e.g. `pimcore.report.custom.definition.mySource`)
  and implement the methods `initialize`, `getElement` and `getValues`. As sample see [analytics](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/Resources/public/js/pimcore/report/custom/definitions/analytics.js)
-- PHP Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing 
-the options, columns and data. It has to be located in the namespace `Pimcore\Model\Tool\CustomReport\Adapter`, named like
-the adapter (e.g. `MySource`) and extend the abstract class `Pimcore\Model\Tool\CustomReport\Adapter\AbstractAdapter`. As sample see
- [analytics adapter](https://github.com/pimcore/pimcore/blob/master/models/Tool/CustomReport/Adapter/Analytics.php). 
-
-- PHP Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing
-the options, columns and data. It needs to implement the interface `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface`. As sample see
- [Sql](https://github.com/pimcore/pimcore/blob/master/models/Tool/CustomReport/Adapter/Sql.php).
-- Register your Adapter Factory as Service. If you are using a very simple Adapter Source, you can use the DefaultCustomReportAdapterFactory
-  ```yml
-  app.custom_report.adapter.factory.custom:
-      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
-      arguments:
-        - 'App\CustomReport\Adapter\Custom'
-  ```
-- If you are using a more complex Adapter, you can create your own Factory by implementing the interface `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface`
+- PHP Adapter Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing the options, columns and data. It has to extend the abstract class `Pimcore\Model\Tool\CustomReport\Adapter\AbstractAdapter` (or implement `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface`). As examples see [Analytics adapter](https://github.com/pimcore/pimcore/blob/master/models/Tool/CustomReport/Adapter/Analytics.php) and [Sql adapter](https://github.com/pimcore/pimcore/blob/master/models/Tool/CustomReport/Adapter/Sql.php).
+- Register your Adapter Factory as Service
+   - If you are using a simple adapter class without dependency injection parameters, you can use the `DefaultCustomReportAdapterFactory` providing the adapter class' FQN as single argument
+      ```yml
+      app.custom_report.adapter.factory.custom:
+          class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
+          arguments:
+              - 'App\CustomReport\Adapter\Custom'
+      ```
+    - If you are using a more complex adapter, you can create your own factory by implementing the interface `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface`
 - Add your Adapter Factory to the configuration:
-
 ```yml
 pimcore:
     custom_report:
