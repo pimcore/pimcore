@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
 class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -614,7 +615,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if (is_array($value)) {
             $link = new DataObject\Data\Link();
             $link->setValues($value);
-            $data = $link;
+            $value = $link;
         }
 
         if ($value instanceof DataObject\Data\Link) {

@@ -12,6 +12,7 @@ use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\User;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -49,7 +50,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\BooleanSelect();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -59,7 +60,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\Checkbox();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -69,7 +70,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\Consent();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -79,7 +80,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = "de";
         $fd = new DataObject\ClassDefinition\Data\Country();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -89,7 +90,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = ["de","en"];
         $fd = new DataObject\ClassDefinition\Data\Countrymultiselect();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -99,7 +100,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = time();
         $fd = new DataObject\ClassDefinition\Data\Date();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -109,7 +110,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = time();
         $fd = new DataObject\ClassDefinition\Data\Datetime();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -119,7 +120,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = uniqid();
         $fd = new DataObject\ClassDefinition\Data\Email();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -134,7 +135,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = new DataObject\Data\ExternalImage("http://someurl.com");
         $fd = new DataObject\ClassDefinition\Data\Email();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -144,7 +145,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = "john" . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Firstname();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -154,7 +155,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = "male";
         $fd = new DataObject\ClassDefinition\Data\Gender();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -164,7 +165,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = new DataObject\Data\Geobounds(new DataObject\Data\GeoCoordinates(123, -120), new DataObject\Data\GeoCoordinates(456, +130));
         $fd = new DataObject\ClassDefinition\Data\Geobounds();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
         $denormalizedValue = $fd->denormalize($normalizedValue);
@@ -175,7 +176,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = new DataObject\Data\GeoCoordinates(123, 56);
         $fd = new DataObject\ClassDefinition\Data\Geopoint();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
         $denormalizedValue = $fd->denormalize($normalizedValue);
@@ -190,7 +191,7 @@ class NormalizerTest extends ModelTestCase
             new DataObject\Data\GeoCoordinates(56, 130)
         ];
         $fd = new DataObject\ClassDefinition\Data\Geopolygon();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
 
@@ -220,7 +221,7 @@ class NormalizerTest extends ModelTestCase
         ]);
 
         $fd = new DataObject\ClassDefinition\Data\Hotspotimage();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -232,7 +233,7 @@ class NormalizerTest extends ModelTestCase
         $originalValue = TestHelper::createImageAsset();
 
         $fd = new DataObject\ClassDefinition\Data\Image();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -267,7 +268,7 @@ class NormalizerTest extends ModelTestCase
         $originalValue = new DataObject\Data\ImageGallery($originalValue);
 
         $fd = new DataObject\ClassDefinition\Data\ImageGallery();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -279,7 +280,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = uniqid();
         $fd = new DataObject\ClassDefinition\Data\Input();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
@@ -294,7 +295,7 @@ class NormalizerTest extends ModelTestCase
         }
         $originalValue = new DataObject\Data\InputQuantityValue("123", $unit);
         $fd = new DataObject\ClassDefinition\Data\InputQuantityValue();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -316,7 +317,7 @@ class NormalizerTest extends ModelTestCase
         $originalValue->setTarget("_blank");
         $originalValue->setTitle("sometitle");
         $fd = new DataObject\ClassDefinition\Data\Link();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -335,7 +336,7 @@ class NormalizerTest extends ModelTestCase
 
         $originalValue = $object->getLocalizedfields();
 
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue, ['object' => $object]);
         /** @var DataObject\Localizedfield $denormalizedValue */
         $denormalizedValue = $fd->denormalize($normalizedValue, ['object' => $object]);
@@ -354,7 +355,7 @@ class NormalizerTest extends ModelTestCase
 
 
         $fd = new DataObject\ClassDefinition\Data\ManyToManyObjectRelation();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -377,7 +378,7 @@ class NormalizerTest extends ModelTestCase
 
 
         $fd = new DataObject\ClassDefinition\Data\ManyToManyRelation();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -397,7 +398,7 @@ class NormalizerTest extends ModelTestCase
         $originalValue = TestHelper::createEmptyObject();
 
         $fd = new DataObject\ClassDefinition\Data\ManyToOneRelation();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -410,7 +411,7 @@ class NormalizerTest extends ModelTestCase
 
         $originalValue = ["A", "B", "C"];
         $fd = new DataObject\ClassDefinition\Data\Multiselect();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($originalValue, $normalizedValue);
@@ -424,7 +425,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\NewsletterActive();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -434,7 +435,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\NewsletterConfirmed();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -444,7 +445,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = 123.1;
         $fd = new DataObject\ClassDefinition\Data\Numeric();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -454,7 +455,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = "mysecret";
         $fd = new DataObject\ClassDefinition\Data\Password();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -468,7 +469,7 @@ class NormalizerTest extends ModelTestCase
         }
         $originalValue = new DataObject\Data\QuantityValue(123.4, $unit);
         $fd = new DataObject\ClassDefinition\Data\QuantityValue();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -484,7 +485,7 @@ class NormalizerTest extends ModelTestCase
 
         $originalValue = new DataObject\Data\RgbaColor(1,2,3, 12);
         $fd = new DataObject\ClassDefinition\Data\RgbaColor();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -499,7 +500,7 @@ class NormalizerTest extends ModelTestCase
 
         $originalValue = "Z";
         $fd = new DataObject\ClassDefinition\Data\Select();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($originalValue, $normalizedValue);
@@ -513,7 +514,7 @@ class NormalizerTest extends ModelTestCase
 
         $originalValue = 77;
         $fd = new DataObject\ClassDefinition\Data\Slider();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($originalValue, $normalizedValue);
@@ -531,7 +532,7 @@ class NormalizerTest extends ModelTestCase
 
         $fd = new DataObject\ClassDefinition\Data\StructuredTable();
 
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -549,7 +550,7 @@ class NormalizerTest extends ModelTestCase
 
         $fd = new DataObject\ClassDefinition\Data\Table();
 
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
@@ -563,7 +564,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = uniqid() . "\n" . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Input();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
@@ -574,7 +575,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = "01:23";
         $fd = new DataObject\ClassDefinition\Data\Time();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
@@ -588,7 +589,7 @@ class NormalizerTest extends ModelTestCase
             new DataObject\Data\UrlSlug("/ebf", 2)
         ];
         $fd = new DataObject\ClassDefinition\Data\UrlSlug();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
         $this->assertNotEquals($originalValue, $normalizedValue);
@@ -601,7 +602,7 @@ class NormalizerTest extends ModelTestCase
         $user = User::getByName("admin");
         $originalValue = $user->getId();
         $fd = new DataObject\ClassDefinition\Data\User();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($originalValue, $normalizedValue);
@@ -624,7 +625,7 @@ class NormalizerTest extends ModelTestCase
         $originalValue->setDescription('description');
 
         $fd = new DataObject\ClassDefinition\Data\Video();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
         $this->assertNotEquals($originalValue, $normalizedValue);
@@ -636,7 +637,7 @@ class NormalizerTest extends ModelTestCase
     {
         $originalValue = uniqid() . "<br>" . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Wysiwyg();
-        $this->assertTrue($fd instanceof DataObject\ClassDefinition\Data\NormalizerInterface, 'expected NormalizerInterface');
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
