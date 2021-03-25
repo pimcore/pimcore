@@ -179,6 +179,8 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
      * @param mixed $value
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
