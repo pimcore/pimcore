@@ -58,10 +58,6 @@ Settings for Pimcore [output cache](../19_Development_Tools_and_Details/09_Cache
 Settings for default output filters shipped with Pimcore. 
 
 
-## Web Service API
-Settings fpr Pimcore web service API. 
-
-
 ## HTTP Connectivity (direct, proxy, ...)
 Settings for outbound HTTP connectivity of Pimcore - needed e.g. for Pimcore Updates or custom code using HTTP-Clients. 
  
