@@ -25,7 +25,11 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-class MarshallerLocatorPass implements CompilerPassInterface
+
+/**
+ * @internal
+ */
+final class MarshallerLocatorPass implements CompilerPassInterface
 {
     /**
      * @param ContainerBuilder $container
@@ -49,22 +53,6 @@ class MarshallerLocatorPass implements CompilerPassInterface
             'pimcore.dataobject.fielddefinition.marshaller'
         );
     }
-
-//    /**
-//     * @param ContainerBuilder $container
-//     */
-//    protected function processAssetTypes(ContainerBuilder $container)
-//    {
-//        $graphQLServiceDefinition = $container->getDefinition(Service::class);
-//
-//        $this->createLocatorForTaggedServices(
-//            $container,
-//            $graphQLServiceDefinition,
-//            'graphql asset',
-//            'pimcore.datahub.graphql.assettype_factory',
-//            '$assetTypeGeneratorFactories'
-//        );
-//    }
 
     /**
      * @param ContainerBuilder $container
@@ -143,12 +131,6 @@ class MarshallerLocatorPass implements CompilerPassInterface
                 $format = $tagEntry['format'];
                 $typename = $tagEntry['dataType'];
 
-//                $idx = strpos($tagEntry['id'], $needle);
-//                if ($idx === 0) {
-//                    $typename = substr($tagEntry['id'], $lengthOfNeedle);
-//                    $mapping[$format] = $mapping[$format] ?? [];
-//                    $mapping[$format][$typename] = 1;
-//                }
                 $mapping[$format][$typename] = $id;
             }
         }
