@@ -24,7 +24,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
-class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -761,4 +761,26 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
         return $unitId;
     }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\QuantityValue) {
+            return [
+                "value" => $value->getValue(),
+                "unitId" => $value->getUnitId()
+            ];
+        }
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new Model\DataObject\Data\QuantityValue($value["value"], $value["unitId"]);
+        }
+        return null;
+    }
+
+
 }

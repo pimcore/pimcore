@@ -212,4 +212,13 @@ class InputQuantityValue extends QuantityValue
     {
         return new InputQuantityValueDataObject($value, $unitId);
     }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new Model\DataObject\Data\InputQuantityValue($value["value"], $value["unitId"]);
+        }
+        return null;
+    }
 }

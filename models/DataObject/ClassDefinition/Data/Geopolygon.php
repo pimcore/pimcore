@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Tool\Serialize;
 
-class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
+class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -390,4 +390,36 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
         return true;
     }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $points = [];
+            $fd = new Geopoint();
+            foreach ($value as $p) {
+                $points[] = $fd->normalize($p);
+            }
+
+            return $points;
+
+        }
+        return null;
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $point) {
+                $result[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
+            }
+            return $result;
+        }
+        return null;
+
+    }
+
+
 }

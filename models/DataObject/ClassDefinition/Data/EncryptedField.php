@@ -404,7 +404,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
     }
 
-    /** Encode value for packing it into a single column.
+    /**
+     * TODO switch to normalize as as soon as marshal gets kicked out. now it is to early because the delegate has
+     * to implement normalize as well
+     *
+     * Encode value for packing it into a single column.
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
@@ -432,6 +436,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /** See marshal
+     * TODO switch to denormalize as as soon as marshal gets kicked out. now it is to early because the delegate has
+     * to implement denormalize as well
+     *
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
      * @param mixed $params

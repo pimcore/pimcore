@@ -21,11 +21,13 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
+class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+
+    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
@@ -664,4 +666,5 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         return $this->isEqualArray($oldValue, $newValue);
     }
+
 }

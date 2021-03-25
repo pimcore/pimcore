@@ -22,8 +22,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
+class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implements NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -796,5 +797,17 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         }
 
         return true;
+    }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        return $this->marshal($value);
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        return $this->unmarshal($value);
     }
 }

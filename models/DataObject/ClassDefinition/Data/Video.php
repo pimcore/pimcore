@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -725,4 +725,15 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return true;
     }
+
+    public function normalize($value, $params = [])
+    {
+        return $this->marshal($value);
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        return $this->unmarshal($value);
+    }
+
 }

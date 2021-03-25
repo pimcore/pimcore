@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -671,5 +671,17 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return true;
+    }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        return $this->marshal($value);
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        return $this->unmarshal($value);
     }
 }

@@ -19,8 +19,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
+class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface,
+    EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -317,6 +319,26 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
             ];
         }
     }
+
+    /** @inheritDoc */
+    public function normalize($data, $params = [])
+    {
+        if ($data instanceof DataObject\Data\Geopoint) {
+            $normalizer = new ObjectNormalizer();
+            return $normalizer->normalize($data);
+        }
+        return null;
+    }
+
+    /** @inheritDoc */
+    public function denormalize($data, $params = [])
+    {
+        if (is_array($data)) {
+            return new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
+        }
+        return null;
+    }
+
 
     /** See marshal
      * @param mixed $value

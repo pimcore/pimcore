@@ -24,7 +24,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -601,4 +601,30 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return $this->isEqualArray($oldValue, $newValue);
     }
+
+    public function normalize($value, $params = [])
+    {
+        return $this->marshal($value);
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $link = new DataObject\Data\Link();
+            $link->setValues($value);
+            $data = $link;
+        }
+
+        if ($data instanceof DataObject\Data\Link) {
+            $target = Element\Service::getElementById($data->getInternalType(), $data->getInternal());
+            if (!$target) {
+                $data->setInternal(0);
+                $data->setInternalType(null);
+            }
+            return $data;
+        }
+        return null;
+    }
+
+
 }

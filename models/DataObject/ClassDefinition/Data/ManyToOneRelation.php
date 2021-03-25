@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -694,6 +694,19 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             ];
         }
     }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        return $this->marshal($value);
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        return $this->unmarshal($value);
+    }
+
 
     /** See marshal
      * @param mixed $value

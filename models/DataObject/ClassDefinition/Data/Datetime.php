@@ -21,10 +21,11 @@ use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;

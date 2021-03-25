@@ -1,0 +1,41 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  Pimcore\DataObject\MarshallerService:
+      arguments:
+        - '@service_container'
+
+  pimcore.dataobject.fielddefinition.marshaller_block_geopoint:
+    class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Geopoint
+    tags:
+        - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopoint, format: block, dataType: geopoint }
+
+  pimcore.dataobject.fielddefinition.marshaller_block_geobounds:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Geobounds
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geobounds, format: block, dataType: geobounds }
+
+  pimcore.dataobject.fielddefinition.marshaller_block_geopolygon:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Geopolygon
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolygon, format: block, dataType: geopolygon }
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolyline, format: block, dataType: geopolyline }
+
+  pimcore.dataobject.fielddefinition.marshaller_block_localizedfields:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Localizedfields
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_localizedfields, format: block, dataType: localizedfields }
+
+  pimcore.dataobject.fielddefinition.marshaller_block_rgbaColor:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\RgbaColor
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_rgbaColor, format: block, dataType: rgbaColor }
+
+  pimcore.dataobject.fielddefinition.marshaller_block_structuredTable:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\StructuredTable
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_structuredTable, format: block, dataType: structuredTable }

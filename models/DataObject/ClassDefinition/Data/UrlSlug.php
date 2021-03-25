@@ -23,7 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Redirect;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
 
@@ -838,4 +838,37 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         return false;
     }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            /** @var Model\DataObject\Data\UrlSlug $slug */
+            foreach ($value as $slug) {
+                $result[] = [
+                    "slug" => $slug->getSlug(),
+                    "siteId" => $slug->getSiteId()
+                ];
+            }
+            return $result;
+        }
+        return null;
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $slugData) {
+                $slug = new Model\DataObject\Data\UrlSlug($slugData['slug'], $slugData['siteId']);
+                $result[] = $slug;
+            }
+            return $result;
+        }
+        return null;
+    }
+
+
 }
