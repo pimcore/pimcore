@@ -49,7 +49,7 @@ final class MarshallerService
 
     /**
      * @param string $format
-     * @param string $typeName
+     * @param string $name
      * @return \Pimcore\DataObject\MarshallerInterface
      */
     public function buildFieldefinitionMarshaller($format, $name)

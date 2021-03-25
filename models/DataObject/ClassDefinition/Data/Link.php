@@ -602,11 +602,13 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->isEqualArray($oldValue, $newValue);
     }
 
+    /** @inheritDoc */
     public function normalize($value, $params = [])
     {
         return $this->marshal($value);
     }
 
+    /** @inheritDoc */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
