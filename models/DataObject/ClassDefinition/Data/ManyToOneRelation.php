@@ -685,6 +685,12 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function marshal($value, $object = null, $params = [])
     {
+        return $this->normalize($value, $params);
+    }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
         if ($value) {
             $type = Element\Service::getType($value);
             $id = $value->getId();
@@ -694,18 +700,19 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 'id' => $id,
             ];
         }
-    }
-
-    /** @inheritDoc */
-    public function normalize($value, $params = [])
-    {
-        return $this->marshal($value);
+        return null;
     }
 
     /** @inheritDoc */
     public function denormalize($value, $params = [])
     {
-        return $this->unmarshal($value);
+        if (is_array($value)) {
+            $type = $value['type'];
+            $id = $value['id'];
+
+            return Element\Service::getElementById($type, $id);
+        }
+        return null;
     }
 
 
@@ -718,12 +725,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $type = $value['type'];
-            $id = $value['id'];
-
-            return Element\Service::getElementById($type, $id);
-        }
+        return $this->denormalize($value, $params);
     }
 
     /**

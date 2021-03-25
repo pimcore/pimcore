@@ -895,6 +895,12 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public function marshal($value, $object = null, $params = [])
     {
+        return $this->normalize($value, $params);
+    }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
         if (is_array($value)) {
             $result = [];
             foreach ($value as $element) {
@@ -913,25 +919,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** @inheritDoc */
-    public function normalize($value, $params = [])
-    {
-        return $this->marshal($value);
-    }
-
-    /** @inheritDoc */
     public function denormalize($value, $params = [])
-    {
-        return $this->unmarshal($value);
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -946,6 +934,19 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return $result;
         }
+        return null;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        return $this->denormalize($value, $params);
     }
 
     /**

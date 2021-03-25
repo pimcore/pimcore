@@ -587,22 +587,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof Model\DataObject\Data\ImageGallery) {
-            $list = [];
-            $items = $value->getItems();
-            $def = new Hotspotimage();
-            if ($items) {
-                foreach ($items as $item) {
-                    if ($item instanceof DataObject\Data\Hotspotimage) {
-                        $list[] = $def->marshal($item, $object, $params);
-                    }
-                }
-            }
-
-            return $list;
-        }
-
-        return null;
+        return $this->normalize($value, $params);
     }
 
     /** See marshal
@@ -614,17 +599,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $items = [];
-            $def = new Hotspotimage();
-            foreach ($value as $rawValue) {
-                $items[] = $def->unmarshal($rawValue, $object, $params);
-            }
+        return $this->denormalize($value, $params);
 
-            return new DataObject\Data\ImageGallery($items);
-        }
-
-        return null;
     }
 
     /**
@@ -677,12 +653,37 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /** @inheritDoc */
     public function normalize($value, $params = [])
     {
-        return $this->marshal($value);
+        if ($value instanceof Model\DataObject\Data\ImageGallery) {
+            $list = [];
+            $items = $value->getItems();
+            $def = new Hotspotimage();
+            if ($items) {
+                foreach ($items as $item) {
+                    if ($item instanceof DataObject\Data\Hotspotimage) {
+                        $list[] = $def->marshal($item, $object, $params);
+                    }
+                }
+            }
+
+            return $list;
+        }
+
+        return null;
     }
 
     /** @inheritDoc */
     public function denormalize($value, $params = [])
     {
-        return $this->unmarshal($value);
+        if (is_array($value)) {
+            $items = [];
+            $def = new Hotspotimage();
+            foreach ($value as $rawValue) {
+                $items[] = $def->unmarshal($rawValue, $object, $params);
+            }
+
+            return new DataObject\Data\ImageGallery($items);
+        }
+
+        return null;
     }
 }

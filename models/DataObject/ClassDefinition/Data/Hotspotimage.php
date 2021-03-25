@@ -712,26 +712,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof DataObject\Data\Hotspotimage) {
-            $result = [];
-            $result['hotspots'] = $value->getHotspots();
-            $result['marker'] = $value->getMarker();
-            $result['crop'] = $value->getCrop();
+        return $this->normalize($value, $params);
 
-            $image = $value->getImage();
-            if ($image) {
-                $type = Element\Service::getType($image);
-                $id = $image->getId();
-                $result['image'] = [
-                    'type' => $type,
-                    'id' => $id,
-                ];
-            }
-
-            return $result;
-        }
-
-        return null;
     }
 
     /** See marshal
@@ -743,20 +725,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $image = new DataObject\Data\Hotspotimage();
-            $image->setHotspots($value['hotspots']);
-            $image->setMarker($value['marker']);
-            $image->setCrop($value['crop']);
-            if ($value['image']) {
-                $type = $value['image']['type'];
-                $id = $value['image']['id'];
-                $asset = Element\Service::getElementById($type, $id);
-                $image->setImage($asset);
-            }
+        return $this->denormalize($value, $params);
 
-            return $image;
-        }
     }
 
     /**
@@ -803,12 +773,44 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
     /** @inheritDoc */
     public function normalize($value, $params = [])
     {
-        return $this->marshal($value);
+        if ($value instanceof DataObject\Data\Hotspotimage) {
+            $result = [];
+            $result['hotspots'] = $value->getHotspots();
+            $result['marker'] = $value->getMarker();
+            $result['crop'] = $value->getCrop();
+
+            $image = $value->getImage();
+            if ($image) {
+                $type = Element\Service::getType($image);
+                $id = $image->getId();
+                $result['image'] = [
+                    'type' => $type,
+                    'id' => $id,
+                ];
+            }
+
+            return $result;
+        }
+
+        return null;
     }
 
     /** @inheritDoc */
     public function denormalize($value, $params = [])
     {
-        return $this->unmarshal($value);
+        if (is_array($value)) {
+            $image = new DataObject\Data\Hotspotimage();
+            $image->setHotspots($value['hotspots']);
+            $image->setMarker($value['marker']);
+            $image->setCrop($value['crop']);
+            if ($value['image']) {
+                $type = $value['image']['type'];
+                $id = $value['image']['id'];
+                $asset = Element\Service::getElementById($type, $id);
+                $image->setImage($asset);
+            }
+
+            return $image;
+        }
     }
 }
