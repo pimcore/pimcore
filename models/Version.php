@@ -397,6 +397,14 @@ class Version extends AbstractModel
         return $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $id;
     }
 
+    /**
+     * @return resource
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public function getFileStream() {
+        return Storage::get('version')->readStream($this->getStoragePath());
+    }
+
     private function getBinaryStoragePath(): string
     {
         return $this->getStoragePath($this->getBinaryFileId()) . '.bin';
