@@ -24,6 +24,7 @@ class Geopolygon implements MarshallerInterface
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
+
         if (is_array($value)) {
             $resultItems = [];
             foreach ($value as $p) {
@@ -43,6 +44,7 @@ class Geopolygon implements MarshallerInterface
         if ($value["value"] ?? null) {
             $value = json_decode($value["value"], true);
             $result = [];
+
             if (is_array($value)) {
                 foreach ($value as $point) {
                     $result[] = [
