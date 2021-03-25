@@ -761,7 +761,7 @@ final class ElementController extends AdminController
             $list->load();
 
             foreach ($list->getProperties() as $type) {
-                $properties[] = $type;
+                $properties[] = $type->getObjectVars();
             }
         }
 
