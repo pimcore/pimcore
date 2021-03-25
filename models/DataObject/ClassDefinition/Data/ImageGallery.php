@@ -660,7 +660,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             if ($items) {
                 foreach ($items as $item) {
                     if ($item instanceof DataObject\Data\Hotspotimage) {
-                        $list[] = $def->marshal($item, $object, $params);
+                        $list[] = $def->normalize($item, $params);
                     }
                 }
             }
@@ -678,7 +678,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             $items = [];
             $def = new Hotspotimage();
             foreach ($value as $rawValue) {
-                $items[] = $def->unmarshal($rawValue, $object, $params);
+                $items[] = $def->denormalize($rawValue, $params);
             }
 
             return new DataObject\Data\ImageGallery($items);

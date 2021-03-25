@@ -187,7 +187,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
             return $result;
         }
-        return $null;
+        return null;
     }
 
     /** See marshal
