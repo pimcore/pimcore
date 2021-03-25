@@ -52,7 +52,7 @@ abstract class Adapter
     abstract public function load(Asset\Document $asset);
 
     /**
-     * @param $imageTargetPath
+     * @param string $imageTargetPath
      * @param int $page
      * @param int $resolution
      * @return mixed
