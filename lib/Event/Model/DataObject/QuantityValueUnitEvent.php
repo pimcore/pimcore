@@ -27,7 +27,7 @@ class QuantityValueUnitEvent extends Event
     /**
      * QuantityValueUnitEvent constructor.
      *
-     * @param Unit $keyConfig
+     * @param Unit $unit
      */
     public function __construct(Unit $unit)
     {
