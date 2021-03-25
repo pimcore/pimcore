@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## 6.9.0
-- [Data Objects] Data types: `marshal`/`unmarshal` is deprecated an will be removed in Pimcore 10. Use `normalize`/`denormalize` instead.
+- [Data Objects] Data types: `marshal`/`unmarshal` is deprecated and will be removed in Pimcore 10. Use `normalize`/`denormalize` instead.
   For custom data types implement the `NormalizerInterface`
 - Classes `Pimcore\Config\EnvironmentConfigInterface` and `\Pimcore\Config\EnvironmentConfig` have been deprecated and will be removed in Pimcore 10.
 - Constants `PIMCORE_DEBUG` `PIMCORE_DEVMODE` `PIMCORE_ENVIRONMENT` and `PIMCORE_KERNEL_DEBUG` have been deprecated and will be removed in Pimcore 10.
