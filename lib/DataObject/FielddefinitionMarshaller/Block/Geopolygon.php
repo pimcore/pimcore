@@ -18,7 +18,6 @@
 namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
 
 use Pimcore\DataObject\MarshallerInterface;
-use Pimcore\Model\DataObject\Data\GeoCoordinates;
 
 class Geopolygon implements MarshallerInterface
 {
@@ -46,7 +45,10 @@ class Geopolygon implements MarshallerInterface
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $result[] = new GeoCoordinates($point[0], $point[1]);
+                    $result[] = [
+                        "latitude" => $point[0],
+                        "longitude" => $point[1]
+                    ];
                 }
             }
             return $result;
