@@ -172,10 +172,6 @@ class Ffmpeg extends Adapter
         }
 
         $realTargetPath = null;
-        if (!stream_is_local($file)) {
-            $realTargetPath = $file;
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ffmpeg-tmp-' . uniqid() . '.' . File::getFileExtension($file);
-        }
 
         $cmd = [
             self::getFfmpegCli(),
@@ -185,10 +181,6 @@ class Ffmpeg extends Adapter
         Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->run();
-
-        if ($realTargetPath) {
-            File::rename($file, $realTargetPath);
-        }
     }
 
     /**

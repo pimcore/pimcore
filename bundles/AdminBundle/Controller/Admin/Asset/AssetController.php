@@ -792,7 +792,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             return $this->generateUrl('pimcore_admin_asset_getvideothumbnail', $params);
         }
 
-        if ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
+        if ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable() && $asset->getPageCount()) {
             return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
@@ -1202,7 +1202,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             }
 
             $thumbnail = $image->getThumbnail($thumbnailConfig);
-            $thumbnailFile = $thumbnail->getFileSystemPath();
+            $thumbnailFile = $thumbnail->getLocalFile();
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
@@ -1210,8 +1210,9 @@ final class AssetController extends ElementControllerBase implements KernelContr
                 $process->run();
             }
         }
+
         if ($thumbnail) {
-            $thumbnailFile = $thumbnailFile ?: $thumbnail->getFileSystemPath();
+            $thumbnailFile = $thumbnailFile ?: $thumbnail->getLocalFile();
 
             $downloadFilename = preg_replace(
                 '/\.' . preg_quote(File::getFileExtension($image->getFilename())) . '$/i',
@@ -1270,7 +1271,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse|JsonResponse
+     * @return StreamedResponse|JsonResponse
      */
     public function getImageThumbnailAction(Request $request)
     {
@@ -1334,11 +1335,13 @@ final class AssetController extends ElementControllerBase implements KernelContr
                 'height' => $thumbnail->getHeight(), ]);
         }
 
-        $thumbnailFile = $thumbnail->getFileSystemPath();
-
-        $response = new BinaryFileResponse($thumbnailFile);
-        $response->headers->set('Content-Type', $thumbnail->getMimeType());
-        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $stream = $thumbnail->getStream();
+        $response = new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => $thumbnail->getMimeType(),
+            'Access-Control-Allow-Origin', '*',
+        ]);
 
         $this->addThumbnailCacheHeaders($response);
 
@@ -1350,7 +1353,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return BinaryFileResponse|StreamedResponse
      */
     public function getFolderThumbnailAction(Request $request)
     {
@@ -1363,9 +1366,16 @@ final class AssetController extends ElementControllerBase implements KernelContr
                     throw $this->createAccessDeniedException('not allowed to view thumbnail');
                 }
 
-                $thumbnailFile = $folder->getPreviewImage((bool)$request->get('hdpi'));
-                $response = new BinaryFileResponse($thumbnailFile);
-                $response->headers->set('Content-type', 'image/' . File::getFileExtension($thumbnailFile));
+                $stream = $folder->getPreviewImage((bool)$request->get('hdpi'));
+                if(!$stream) {
+                    $response = new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/blank.png');
+                } else {
+                    $response = new StreamedResponse(function () use ($stream) {
+                        fpassthru($stream);
+                    }, 200, [
+                        'Content-Type' => 'image/jpg',
+                    ]);
+                }
 
                 $this->addThumbnailCacheHeaders($response);
 
@@ -1381,7 +1391,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function getVideoThumbnailAction(Request $request)
     {
@@ -1430,10 +1440,13 @@ final class AssetController extends ElementControllerBase implements KernelContr
         }
 
         $thumb = $video->getImageThumbnail($thumbnail, $time, $image);
-        $thumbnailFile = $thumb->getFileSystemPath();
 
-        $response = new BinaryFileResponse($thumbnailFile);
-        $response->headers->set('Content-type', 'image/' . File::getFileExtension($thumbnailFile));
+        $stream = $thumb->getStream();
+        $response = new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => 'image/' . $thumb->getFileExtension(),
+        ]);
 
         $this->addThumbnailCacheHeaders($response);
 
@@ -1445,7 +1458,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function getDocumentThumbnailAction(Request $request)
     {
@@ -1476,9 +1489,14 @@ final class AssetController extends ElementControllerBase implements KernelContr
         }
 
         $thumb = $document->getImageThumbnail($thumbnail, $page);
-        $thumbnailFile = $thumb->getFileSystemPath();
 
-        $response = new BinaryFileResponse($thumbnailFile);
+        $stream = $thumb->getStream();
+        $response = new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => 'image/' . $thumb->getFileExtension(),
+        ]);
+
         $this->addThumbnailCacheHeaders($response);
 
         return $response;

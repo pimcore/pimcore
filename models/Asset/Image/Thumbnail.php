@@ -54,20 +54,27 @@ class Thumbnail
      */
     public function getPath($deferredAllowed = true)
     {
-        $fsPath = $this->getFileSystemPath($deferredAllowed);
+        $pathReference = null;
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // we still generate the raster image, to get the final size of the thumbnail
                 // we use getRealFullPath() here, to avoid double encoding (getFullPath() returns already encoded path)
-                $fsPath = $this->asset->getRealFullPath();
+                $pathReference = [
+                    'src' => $this->asset->getRealFullPath(),
+                    'type' => 'asset',
+                ];
             }
         }
 
-        $path = $this->convertToWebPath($fsPath);
+        if(!$pathReference) {
+            $pathReference = $this->getPathReference($deferredAllowed);
+        }
+
+        $path = $this->convertToWebPath($pathReference);
 
         if ($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
             $event = new GenericEvent($this, [
-                'filesystemPath' => $fsPath,
+                'pathReference' => $pathReference,
                 'frontendPath' => $path,
             ]);
             \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
@@ -108,30 +115,37 @@ class Thumbnail
     }
 
     /**
+     * @internal
      * @param bool $deferredAllowed
      */
     public function generate($deferredAllowed = true)
     {
-        $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $deferred = false;
         $generated = false;
 
-        if (!$this->asset) {
-            $this->filesystemPath = $errorImage;
-        } elseif (!$this->filesystemPath) {
+        if ($this->asset && empty($this->pathReference)) {
             // if no correct thumbnail config is given use the original image as thumbnail
             if (!$this->config) {
-                $this->filesystemPath = $this->asset->getRealFullPath();
+                $this->pathReference = [
+                    'type' => 'asset',
+                    'src' => $this->asset->getRealFullPath(),
+                ];
             } else {
                 try {
                     $deferred = $deferredAllowed && $this->deferred;
-                    $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
+                    $this->pathReference = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, $generated);
                 } catch (\Exception $e) {
-                    $this->filesystemPath = $errorImage;
                     Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
                     Logger::error($e);
                 }
             }
+        }
+
+        if(empty($this->pathReference)) {
+            $this->pathReference = [
+                'type' => 'error',
+                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg'
+            ];
         }
 
         if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
@@ -198,7 +212,7 @@ class Thumbnail
 
         if ($isAutoFormat) {
             // ensure the default image is not WebP
-            $this->filesystemPath = null;
+            $this->pathReference = [];
         }
 
         $pictureCallback = $options['pictureCallback'] ?? null;

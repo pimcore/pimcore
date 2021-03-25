@@ -1473,7 +1473,7 @@ class Asset extends Element\AbstractElement
      */
     public function getTemporaryFile(bool $keep = false)
     {
-        return $this->getTemporaryFileFromStream($this->getStream(), $keep);
+        return self::getTemporaryFileFromStream($this->getStream(), $keep);
     }
 
     /**
@@ -1483,7 +1483,7 @@ class Asset extends Element\AbstractElement
      */
     public function getLocalFile()
     {
-        return $this->getLocalFileFromStream($this->getStream());
+        return self::getLocalFileFromStream($this->getStream());
     }
 
     /**

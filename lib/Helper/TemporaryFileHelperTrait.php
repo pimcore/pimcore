@@ -18,10 +18,10 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    protected function getLocalFileFromStream($stream): string
+    protected static function getLocalFileFromStream($stream): string
     {
         if (!stream_is_local($stream)) {
-            $stream = $this->getTemporaryFileFromStream($stream);
+            $stream = self::getTemporaryFileFromStream($stream);
         }
 
         if (is_resource($stream)) {
@@ -39,7 +39,7 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    protected function getTemporaryFileFromStream($stream, bool $keep = false): string
+    protected static function getTemporaryFileFromStream($stream, bool $keep = false): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');
@@ -50,11 +50,7 @@ trait TemporaryFileHelperTrait
             $fileExtension = File::getFileExtension($streamMeta['uri']);
         }
 
-        $tmpFilePath = sprintf('%s/temp-file-%s.%s',
-            PIMCORE_SYSTEM_TEMP_DIRECTORY,
-            uniqid() . '-' .  bin2hex(random_bytes(15)),
-            $fileExtension
-        );
+        $tmpFilePath = File::getLocalTempFilePath($fileExtension);
 
         $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
         if (!$dest) {
