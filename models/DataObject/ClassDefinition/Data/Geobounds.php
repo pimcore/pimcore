@@ -359,6 +359,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
                 'southWest' => ["latitude" => $value->getSouthWest()->getLatitude(), "longitude" =>  $value->getSouthWest()->getLongitude()],
             ];
         } elseif (is_array($value)) {
+            //TODO kick this as soon as classification store is implemented
             return [
                 'northEast' => ["latitude" => $value[$this->getName() . '__NElatitude'], "longitude" => $value[$this->getName() . '__NElongitude']],
                 'southWest' => ["latitude" => $value[$this->getName() . '__SWlatitude'], "longitude" => $value[$this->getName() . '__SWlongitude']],
