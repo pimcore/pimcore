@@ -615,13 +615,13 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $data = $link;
         }
 
-        if ($data instanceof DataObject\Data\Link) {
-            $target = Element\Service::getElementById($data->getInternalType(), $data->getInternal());
+        if ($value instanceof DataObject\Data\Link) {
+            $target = Element\Service::getElementById($value->getInternalType(), $value->getInternal());
             if (!$target) {
-                $data->setInternal(0);
-                $data->setInternalType(null);
+                $value->setInternal(0);
+                $value->setInternalType(null);
             }
-            return $data;
+            return $value;
         }
         return null;
     }

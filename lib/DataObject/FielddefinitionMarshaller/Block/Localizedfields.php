@@ -25,6 +25,7 @@ class Localizedfields implements MarshallerInterface
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
+        $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
         $fieldDefinition =$params['fieldDefinition'];
         $childDefs = $fieldDefinition->getFieldDefinitions();
@@ -42,7 +43,7 @@ class Localizedfields implements MarshallerInterface
                     if ($marshallerService->supportsFielddefinition('block', $childDef->getFieldtype())) {
                         $marshaller = $marshallerService->buildFieldefinitionMarshaller('block', $childDef->getFieldtype());
                         // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
-                        $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'block']);
+                        $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $childDef, 'format' => 'block']);
                     } else {
                         $encodedData = $normalizedData;
                     }
@@ -58,6 +59,7 @@ class Localizedfields implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
+        $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
         $fieldDefinition =$params['fieldDefinition'];
         $childDefs = $fieldDefinition->getFieldDefinitions();
@@ -75,7 +77,7 @@ class Localizedfields implements MarshallerInterface
                     if ($marshallerService->supportsFielddefinition('block', $childDef->getFieldtype())) {
                         $marshaller = $marshallerService->buildFieldefinitionMarshaller('block', $childDef->getFieldtype());
                         // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
-                        $decodedData = $marshaller->unmarshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'block']);
+                        $decodedData = $marshaller->unmarshal($normalizedData, ['object' => $object, 'fieldDefinition' => $childDef, 'format' => 'block']);
                     } else {
                         $decodedData = $normalizedData;
                     }

@@ -34,22 +34,22 @@ final class MarshallerService
 
     /**
      * MarshallerService constructor.
-     * @param $container
+     * @param ContainerInterface $container
      */
     public function __construct($container) {
         $this->container = $container;
     }
 
     /**
-     * @param $supportedFieldDefinitionMarshallers
+     * @param array $supportedFieldDefinitionMarshallers
      */
     public function setSupportedFieldDefinitionMarshallers($supportedFieldDefinitionMarshallers) {
         $this->supportedFieldDefinitionMarshallers = $supportedFieldDefinitionMarshallers;
     }
 
     /**
-     * @param $format
-     * @param $typeName
+     * @param string $format
+     * @param string $typeName
      * @return \Pimcore\DataObject\MarshallerInterface
      */
     public function buildFieldefinitionMarshaller($format, $name)
