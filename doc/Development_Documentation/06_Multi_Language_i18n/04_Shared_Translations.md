@@ -76,10 +76,10 @@ e.g.
     {{ 'cars_sold'|trans({'sold_count': 0}) }}
     {# output: No car sold yet. #}
    
-    {{ 'cars_sold'|trans({'sold_number': 1}) }}
+    {{ 'cars_sold'|trans({'sold_count': 1}) }}
     {# output: Only one car sold. #}
    
-    {{ 'cars_sold'|trans({'sold_number': 100}) }}
+    {{ 'cars_sold'|trans({'sold_count': 100}) }}
     {# output: Total of 100 cars sold! #}
 ```
 
