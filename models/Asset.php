@@ -18,6 +18,7 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use League\Flysystem\StorageAttributes;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -1273,7 +1274,7 @@ class Asset extends Element\AbstractElement
 
         if (!$this->stream && $this->getType() !== 'folder') {
             try {
-                $this->stream = Storage::get('asset')->readStream($this->getFullPath());
+                $this->stream = Storage::get('asset')->readStream($this->getRealFullPath());
             } catch (\Exception $e) {
                 $this->stream = tmpfile();
             }
@@ -1813,7 +1814,7 @@ class Asset extends Element\AbstractElement
     public function getFileSize($formatted = false, $precision = 2)
     {
         try {
-            $bytes = Storage::get('asset')->fileSize($this->getFullPath());
+            $bytes = Storage::get('asset')->fileSize($this->getRealFullPath());
         } catch (\Exception $e) {
             $bytes = 0;
         }
@@ -1850,28 +1851,6 @@ class Asset extends Element\AbstractElement
         }
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImageThumbnailSavePath()
-    {
-        $path = PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails' . $this->getRealPath();
-        $path = rtrim($path, '/');
-
-        return $path;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVideoThumbnailSavePath()
-    {
-        $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails' . $this->getRealPath();
-        $path = rtrim($path, '/');
-
-        return $path;
     }
 
     public function __sleep()
@@ -2002,5 +1981,41 @@ class Asset extends Element\AbstractElement
         $this->siblings = null;
         $this->scheduledTasks = null;
         $this->closeStream();
+    }
+
+    /**
+     * @param bool $force
+     */
+    public function clearThumbnails($force = false)
+    {
+        if ($this->getDataChanged() || $force) {
+            foreach(['thumbnail', 'asset_cache'] as $storageName) {
+                $storage = Storage::get($storageName);
+                $contents = $storage->listContents($this->getRealPath());
+
+                /** @var StorageAttributes $item */
+                foreach ($contents as $item) {
+                    if (preg_match('@/(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
+                        if ($item->isDir()) {
+                            $storage->deleteDirectory($item->path());
+                        } elseif ($item->isFile()) {
+                            $storage->delete($item->path());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $name
+     */
+    public function clearThumbnail($name)
+    {
+        try {
+            Storage::get('thumbnail')->deleteDirectory($this->getRealPath() . 'image-thumb__' . $this->getId() . '__' . $name);
+        } catch (\Exception $e) {
+            // noting to do
+        }
     }
 }

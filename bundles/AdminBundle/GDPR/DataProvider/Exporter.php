@@ -41,7 +41,7 @@ class Exporter
     {
         $webAsset = [];
         $webAsset['id'] = $theAsset->getId();
-        $webAsset['fullpath'] = $theAsset->getFullPath();
+        $webAsset['fullpath'] = $theAsset->getRealFullPath();
         $properties = $theAsset->getProperties();
         $finalProperties = [];
 

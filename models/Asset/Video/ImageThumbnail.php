@@ -117,7 +117,7 @@ class ImageThumbnail
                 }
 
                 $storage = Storage::get('asset_cache');
-                $cacheFilePath = sprintf('%s/image-thumb__%s__-video_thumbnail_time_%s.png',
+                $cacheFilePath = sprintf('%s/image-thumb__%s__video_original_image/time_%s.png',
                     rtrim($this->asset->getRealPath(), '/'),
                     $this->asset->getId(),
                     $timeOffset

@@ -18,6 +18,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
+use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\Process;
 
@@ -76,7 +77,7 @@ class LibreOffice extends Ghostscript
         }
 
         if (!$this->isFileTypeSupported($asset->getFilename())) {
-            $message = "Couldn't load document " . $asset->getFullPath() . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
+            $message = "Couldn't load document " . $asset->getRealFullPath() . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
             Logger::error($message);
             throw new \Exception($message);
         }
@@ -99,27 +100,26 @@ class LibreOffice extends Ghostscript
      */
     public function getPdf(?Asset\Document $asset = null)
     {
-        $pdfPath = null;
         if (!$asset && $this->asset) {
             $asset = $this->asset;
         }
 
         try {
             // if the document is already an PDF, delegate the call directly to parent::getPdf() (Ghostscript)
-            $pdfPath = parent::getPdf($asset);
-
-            return $pdfPath;
+            $stream = parent::getPdf($asset);
+            return $stream;
         } catch (\Exception $e) {
             // nothing to do, delegate to libreoffice
         }
 
-        $pdfFile = PIMCORE_TEMPORARY_DIRECTORY . sprintf('/document-pdf-cache/document_%s_%s__libreoffice.pdf', $asset->getId(), $asset->getModificationDate());
-        if (!is_dir(dirname($pdfFile))) {
-            File::mkdir(dirname($pdfFile));
-        }
+        $storagePath = sprintf('%s/pdf-thumb__%s__libreoffice-document.png',
+            rtrim($asset->getRealPath(), '/'),
+            $asset->getId(),
+        );
+        $storage = Storage::get('asset_cache');
 
         $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('soffice');
-        if (!file_exists($pdfFile)) {
+        if (!$storage->fileExists($storagePath)) {
 
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
@@ -136,8 +136,8 @@ class LibreOffice extends Ghostscript
             $process->setTimeout(240);
             $process->start();
 
-            $tmpFile = PIMCORE_LOG_DIRECTORY . '/libreoffice-pdf-convert.log';
-            $tmpHandle = fopen($tmpFile, 'a');
+            $logFile = PIMCORE_LOG_DIRECTORY . '/libreoffice-pdf-convert.log';
+            $tmpHandle = fopen($logFile, 'a');
             $process->wait(function ($type, $buffer) use ($tmpHandle) {
                 fwrite($tmpHandle, $buffer);
             });
@@ -150,18 +150,17 @@ class LibreOffice extends Ghostscript
 
             $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($asset->getFilename()) . '$/', '.pdf', $asset->getFilename());
             if (file_exists($tmpName)) {
-                File::rename($tmpName, $pdfFile);
-                $pdfPath = $pdfFile;
+                $storage->write($storagePath, file_get_contents($tmpName));
+                unlink($tmpName);
+                unlink($logFile);
             } else {
-                $message = "Couldn't convert document to PDF: " . $asset->getFullPath() . " with the command: '" . $process->getCommandLine() . "'";
+                $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "'";
                 Logger::error($message);
                 throw new \Exception($message);
             }
-        } else {
-            $pdfPath = $pdfFile;
         }
 
-        return $pdfPath;
+        return $storage->readStream($storagePath);
     }
 
     /**
@@ -195,7 +194,7 @@ class LibreOffice extends Ghostscript
 
                 return $text;
             } else {
-                $message = "Couldn't convert document to Text: " . $asset->getFullPath() . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
+                $message = "Couldn't convert document to Text: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
                 Logger::error($message);
 
                 return parent::getText(null, $asset);

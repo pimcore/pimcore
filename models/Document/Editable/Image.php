@@ -167,7 +167,7 @@ class Image extends Model\Document\Editable
 
             return [
                 'id' => $this->id,
-                'path' => $image->getFullPath(),
+                'path' => $image->getRealFullPath(),
                 'alt' => $this->alt,
                 'cropPercent' => $this->cropPercent,
                 'cropWidth' => $this->cropWidth,

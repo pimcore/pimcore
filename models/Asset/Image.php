@@ -92,12 +92,14 @@ class Image extends Model\Asset
 
     protected function postPersistData()
     {
-        if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
-            $this->detectFaces();
-        }
+        if($this->getDataChanged()) {
+            if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
+                $this->detectFaces();
+            }
 
-        if (!isset($this->customSettings['disableFocalPointDetection'])) {
-            $this->detectFocalPoint();
+            if (!isset($this->customSettings['disableFocalPointDetection'])) {
+                $this->detectFocalPoint();
+            }
         }
     }
 
@@ -277,34 +279,6 @@ EOT;
     {
         parent::delete($isNested);
         $this->clearThumbnails(true);
-    }
-
-    /**
-     * @param bool $force
-     */
-    public function clearThumbnails($force = false)
-    {
-        if (($this->getDataChanged() || $force) && is_dir($this->getImageThumbnailSavePath())) {
-            $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
-            $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0;
-            });
-            /** @var \SplFileInfo $fileInfo */
-            foreach ($filterIterator as $fileInfo) {
-                recursiveDelete($fileInfo->getPathname());
-            }
-        }
-    }
-
-    /**
-     * @param string $name
-     */
-    public function clearThumbnail($name)
-    {
-        $dir = $this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__' . $name;
-        if (is_dir($dir)) {
-            recursiveDelete($dir);
-        }
     }
 
     /**

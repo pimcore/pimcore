@@ -77,7 +77,11 @@ trait ImageThumbnailTrait
      */
     public function getStream() {
         $pathReference = $this->getPathReference();
-        return Storage::get($pathReference['type'])->readStream($pathReference['src']);
+        try {
+            return Storage::get($pathReference['type'])->readStream($pathReference['src']);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function getPathReference(bool $deferredAllowed = false): array

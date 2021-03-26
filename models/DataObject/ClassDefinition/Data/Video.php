@@ -212,10 +212,10 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data) {
             $data = clone $data;
             if ($data->getData() instanceof Asset) {
-                $data->setData($data->getData()->getFullpath());
+                $data->setData($data->getData()->getRealFullPath());
             }
             if ($data->getPoster() instanceof Asset) {
-                $data->setPoster($data->getPoster()->getFullpath());
+                $data->setPoster($data->getPoster()->getRealFullPath());
             }
             $data = object2array($data->getObjectVars());
         }

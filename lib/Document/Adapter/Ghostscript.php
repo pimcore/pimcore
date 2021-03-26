@@ -16,6 +16,7 @@ namespace Pimcore\Document\Adapter;
 
 use Pimcore\Document\Adapter;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
@@ -24,6 +25,8 @@ use Symfony\Component\Process\Process;
 
 class Ghostscript extends Adapter
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @var string|null
      */
@@ -95,7 +98,7 @@ class Ghostscript extends Adapter
         }
 
         if (!$this->isFileTypeSupported($asset->getFilename())) {
-            $message = "Couldn't load document " . $asset->getFullPath() . ' only PDF documents are currently supported';
+            $message = "Couldn't load document " . $asset->getRealFullPath() . ' only PDF documents are currently supported';
             Logger::error($message);
             throw new \Exception($message);
         }
@@ -115,10 +118,10 @@ class Ghostscript extends Adapter
         }
 
         if (preg_match("/\.?pdf$/i", $asset->getFilename())) { // only PDF's are supported
-            return $asset->getLocalFile();
+            return $asset->getStream();
         }
 
-        $message = "Couldn't load document " . $asset->getFullPath() . ' only PDF documents are currently supported';
+        $message = "Couldn't load document " . $asset->getRealFullPath() . ' only PDF documents are currently supported';
         Logger::error($message);
         throw new \Exception($message);
     }
@@ -134,7 +137,7 @@ class Ghostscript extends Adapter
         $pages = trim($process->getOutput());
 
         if (! is_numeric($pages)) {
-            throw new \Exception('Unable to get page-count of ' . $this->asset->getFullPath());
+            throw new \Exception('Unable to get page-count of ' . $this->asset->getRealFullPath());
         }
 
         return (int) $pages;
@@ -148,13 +151,14 @@ class Ghostscript extends Adapter
     protected function buildPageCountCommand()
     {
         $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
+        $localFile = self::getLocalFileFromStream($this->getPdf());
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            $command .= " --permit-file-read='" . $this->getPdf() . "'";
+            $command .= " --permit-file-read='" . $localFile . "'";
         }
 
-        $command .= " -c '(" . $this->getPdf() . ") (r) file runpdfbegin pdfpagecount = quit'";
+        $command .= " -c '(" . $localFile . ") (r) file runpdfbegin pdfpagecount = quit'";
 
         Console::addLowProcessPriority($command);
 
@@ -185,7 +189,8 @@ class Ghostscript extends Adapter
     public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200)
     {
         try {
-            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o', $imageTargetPath, $this->getPdf()];
+            $localFile = self::getLocalFileFromStream($this->getPdf());
+            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o', $imageTargetPath, $localFile];
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);

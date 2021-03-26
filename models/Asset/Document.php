@@ -147,25 +147,4 @@ class Document extends Model\Asset
 
         return null;
     }
-
-    /**
-     * @param bool $force
-     */
-    public function clearThumbnails($force = false)
-    {
-        if ($this->_dataChanged || $force) {
-            // video thumbnails and image previews
-            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . '/document-image-cache/document_' . $this->getId() . '__*');
-            if (is_array($files)) {
-                foreach ($files as $file) {
-                    unlink($file);
-                }
-            }
-
-            $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
-            foreach ($files as $file) {
-                recursiveDelete($file);
-            }
-        }
-    }
 }

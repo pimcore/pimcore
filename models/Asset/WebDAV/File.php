@@ -158,7 +158,7 @@ class File extends DAV\File
      */
     public function getETag()
     {
-        return '"' . md5($this->asset->getFullPath() . $this->asset->getModificationDate()) . '"';
+        return '"' . md5($this->asset->getRealFullPath() . $this->asset->getModificationDate()) . '"';
     }
 
     /**

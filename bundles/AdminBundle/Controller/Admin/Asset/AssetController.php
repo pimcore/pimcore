@@ -1458,7 +1458,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return StreamedResponse
+     * @return StreamedResponse|BinaryFileResponse
      */
     public function getDocumentThumbnailAction(Request $request)
     {
@@ -1491,11 +1491,15 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $thumb = $document->getImageThumbnail($thumbnail, $page);
 
         $stream = $thumb->getStream();
-        $response = new StreamedResponse(function () use ($stream) {
-            fpassthru($stream);
-        }, 200, [
-            'Content-Type' => 'image/' . $thumb->getFileExtension(),
-        ]);
+        if($stream) {
+            $response = new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => 'image/' . $thumb->getFileExtension(),
+            ]);
+        } else {
+            $response = new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/filetype-not-supported.svg');
+        }
 
         $this->addThumbnailCacheHeaders($response);
 
@@ -1535,18 +1539,11 @@ final class AssetController extends ElementControllerBase implements KernelContr
         if ($asset->isAllowed('view')) {
             $stream = $this->getDocumentPreviewPdf($asset);
             if ($stream) {
-                if(is_resource($stream)) {
-                    $response = new StreamedResponse(function () use ($stream) {
-                        fpassthru($stream);
-                    }, 200, [
-                        'Content-Type' => 'application/pdf',
-                    ]);
-                } else {
-                    $response = new BinaryFileResponse($stream);
-                    $response->headers->set('Content-Type', 'application/pdf');
-                }
-
-                return $response;
+                return new StreamedResponse(function () use ($stream) {
+                    fpassthru($stream);
+                }, 200, [
+                    'Content-Type' => 'application/pdf',
+                ]);
             } else {
                 throw $this->createNotFoundException('Unable to get preview for asset ' . $asset->getId());
             }
@@ -1558,26 +1555,26 @@ final class AssetController extends ElementControllerBase implements KernelContr
     /**
      * @param Asset\Document $asset
      *
-     * @return resource|null|string
+     * @return resource|null
      */
     protected function getDocumentPreviewPdf(Asset\Document $asset)
     {
-        $pdfFsPath = null;
+        $stream = null;
 
         if ($asset->getMimetype() == 'application/pdf') {
-            $pdfFsPath = $asset->getStream();
+            $stream = $asset->getStream();
         }
 
-        if (!$pdfFsPath && $asset->getPageCount() && \Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
+        if (!$stream && $asset->getPageCount() && \Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
             try {
                 $document = \Pimcore\Document::getInstance();
-                $pdfFsPath = $document->getPdf($asset);
+                $stream = $document->getPdf($asset);
             } catch (\Exception $e) {
                 // nothing to do
             }
         }
 
-        return $pdfFsPath;
+        return $stream;
     }
 
     /**
@@ -1631,7 +1628,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function serveVideoPreviewAction(Request $request)
     {
@@ -1647,13 +1644,16 @@ final class AssetController extends ElementControllerBase implements KernelContr
 
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
-        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@^' . preg_quote($asset->getPath(), '@') . '@', '', urldecode($thumbnail['formats']['mp4']));
+        $storagePath = $asset->getRealPath() . '/' . preg_replace('@^' . preg_quote($asset->getPath(), '@') . '@', '', urldecode($thumbnail['formats']['mp4']));
 
-        if (file_exists($fsFile)) {
-            $response = new BinaryFileResponse($fsFile);
-            $response->headers->set('Content-Type', 'video/mp4');
-
-            return $response;
+        $storage = Tool\Storage::get('thumbnail');
+        if ($storage->fileExists($storagePath)) {
+            $stream = $storage->readStream($storagePath);
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => 'video/mp4',
+            ]);
         } else {
             throw $this->createNotFoundException('Video thumbnail not found');
         }

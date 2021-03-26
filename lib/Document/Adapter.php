@@ -61,7 +61,7 @@ abstract class Adapter
 
     /**
      * @param Asset\Document|null $asset
-     * @return mixed
+     * @return resource
      */
     abstract public function getPdf(?Asset\Document $asset = null);
 
