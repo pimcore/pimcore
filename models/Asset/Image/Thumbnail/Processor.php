@@ -408,11 +408,6 @@ class Processor
                 Logger::debug('Thumbnail ' . $storagePath . ' already generated, waiting on lock for ' . (microtime(true) - $startTime) . ' seconds');
             }
             $lock->release();
-
-            return [
-                'src' => $storagePath,
-                'type' => 'thumbnail',
-            ];
         }
 
         // quick bugfix / workaround, it seems that imagemagick / image optimizers creates sometimes empty PNG chunks (total size 33 bytes)
@@ -420,11 +415,16 @@ class Processor
         // if the file is corrupted the file will be created on the fly when requested by the browser (because it's deleted here)
         if ($storage->fileExists($storagePath) && $storage->fileSize($storagePath) < 50) {
             $storage->delete($storagePath);
+
+            return [
+                'src' => $storagePath,
+                'type' => 'deferred',
+            ];
         }
 
         return [
             'src' => $storagePath,
-            'type' => 'deferred',
+            'type' => 'thumbnail',
         ];
     }
 

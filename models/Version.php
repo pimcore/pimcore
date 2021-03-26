@@ -229,7 +229,7 @@ class Version extends AbstractModel
         $storage->write($this->getStoragePath(), $dataString);
 
         // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
-        if ($isAssetFile) {
+        if ($isAssetFile && !$storage->fileExists($this->getBinaryStoragePath())) {
             $linked = false;
 
             // we always try to create a hardlink onto the original file, the asset ensures that not the actual
