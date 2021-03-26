@@ -18,7 +18,7 @@
 namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
 
 use Pimcore\Marshaller\MarshallerInterface;
-use Pimcore\DataObject\MarshallerService;
+use Pimcore\Element\MarshallerService;
 
 class Localizedfields implements MarshallerInterface
 {

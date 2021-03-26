@@ -5,7 +5,7 @@ services:
     autoconfigure: true
     public: true
 
-  Pimcore\DataObject\MarshallerService:
+  Pimcore\Element\MarshallerService:
       arguments:
         - '@service_container'
 

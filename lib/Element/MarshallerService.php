@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject;
+namespace Pimcore\Element;
 
 use Pimcore\Marshaller\MarshallerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

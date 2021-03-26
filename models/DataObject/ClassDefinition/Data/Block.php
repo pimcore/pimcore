@@ -16,7 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\DataObject\MarshallerService;
+use Pimcore\Element\MarshallerService;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
