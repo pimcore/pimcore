@@ -29,9 +29,9 @@ interface OptimizerInterface
     public function optimizeImage(string $input, string $output): string;
 
     /**
-     * @param string $input
+     * @param string $mimeType
      *
      * @return bool
      */
-    public function supports(string $input): bool;
+    public function supports(string $mimeType): bool;
 }

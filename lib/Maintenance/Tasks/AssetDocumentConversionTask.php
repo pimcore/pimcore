@@ -47,7 +47,6 @@ final class AssetDocumentConversionTask implements TaskInterface
     {
         $ids = TmpStore::getIdsByTag('asset-document-conversion');
 
-        // id = path of image relative to PIMCORE_TEMPORARY_DIRECTORY
         foreach ($ids as $id) {
             $item = TmpStore::get($id);
             $asset = Asset::getById($item->getData());

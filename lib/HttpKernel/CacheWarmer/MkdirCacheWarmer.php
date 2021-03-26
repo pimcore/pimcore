@@ -51,9 +51,6 @@ class MkdirCacheWarmer implements CacheWarmerInterface
     public function warmUp($cacheDir)
     {
         $directories = [
-            // web/var
-            PIMCORE_TEMPORARY_DIRECTORY,
-
             // var
             PIMCORE_CLASS_DIRECTORY,
             PIMCORE_CONFIGURATION_DIRECTORY,
