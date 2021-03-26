@@ -132,9 +132,8 @@ class AssetTest extends ModelTestCase
         $this->assertEquals(1536, $thumbnail->getHeight());
 
         // clean the thumbnails
-        $pathReference = $thumbnail->getPathReference(false);
         try {
-            $stream = Storage::get($pathReference['type'])->readStream($pathReference['src']);
+            $stream = $thumbnail->getStream();
         } catch (\Exception $e) {
             $stream = null;
         }
@@ -142,13 +141,14 @@ class AssetTest extends ModelTestCase
         $this->assertTrue(is_resource($stream));
 
         $this->testAsset->clearThumbnails(true);
+
         try {
-            $stream = Storage::get($pathReference['type'])->readStream($pathReference['src']);
+            $stream1 = $thumbnail->getStream();
         } catch (\Exception $e) {
-            $stream = null;
+            $stream1 = null;
         }
 
-        $this->assertFalse(is_resource($stream));
+        $this->assertFalse(is_resource($stream1));
     }
 
     public function reloadAsset()
