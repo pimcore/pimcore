@@ -326,8 +326,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $dataNE = json_decode($value['value']);
             $dataSW = json_decode($value['value2']);
 
-            $ne = new DataObject\Data\Geopoint($dataNE[1], $dataNE[0]);
-            $sw = new DataObject\Data\Geopoint($dataSW[1], $dataSW[0]);
+            $ne = new DataObject\Data\GeoCoordinates($dataNE[0], $dataNE[1]);
+            $sw = new DataObject\Data\GeoCoordinates($dataSW[0], $dataSW[1]);
 
             return new DataObject\Data\Geobounds($ne, $sw);
         }
