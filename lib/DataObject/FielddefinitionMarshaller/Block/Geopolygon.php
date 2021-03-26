@@ -17,7 +17,7 @@
 
 namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
 
-use Pimcore\DataObject\MarshallerInterface;
+use Pimcore\Marshaller\MarshallerInterface;
 
 class Geopolygon implements MarshallerInterface
 {

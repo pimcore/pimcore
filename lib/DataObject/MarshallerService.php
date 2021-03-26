@@ -17,9 +17,7 @@
 
 namespace Pimcore\DataObject;
 
-use Pimcore\Bundle\DataHubBundle\GraphQL\DataObjectQueryFieldConfigGeneratorInterface;
-use Pimcore\DataObject\FielddefinitionMarshaller\MarshallerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Pimcore\Marshaller\MarshallerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class MarshallerService
@@ -50,7 +48,7 @@ final class MarshallerService
     /**
      * @param string $format
      * @param string $name
-     * @return \Pimcore\DataObject\MarshallerInterface
+     * @return MarshallerInterface
      */
     public function buildFieldefinitionMarshaller($format, $name)
     {

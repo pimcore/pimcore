@@ -495,7 +495,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
-            return new Consent($value["consent"], $value["noteId"]);
+            return new DataObject\Data\Consent($value["consent"], $value["noteId"]);
         }
         return null;
     }
