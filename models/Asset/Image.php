@@ -232,12 +232,11 @@ EOT;
      */
     public function getLowQualityPreviewPath()
     {
-        $fsPath = $this->getLowQualityPreviewFileSystemPath();
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-        $path = urlencode_ignore_slash($path);
+        $storagePath = $this->getLowQualityPreviewStoragePath();
+        $path = urlencode_ignore_slash($storagePath);
 
         $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
+            'storagePath' => $storagePath,
             'frontendPath' => $path,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
