@@ -1094,6 +1094,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function unmarshal($value, $object = null, $params = [])
     {
+        $params = $params ?? [];
+        $params["object"] = $object;
         return $this->denormalize($value, $params);
 
     }

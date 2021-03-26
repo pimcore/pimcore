@@ -27,7 +27,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
@@ -479,4 +478,27 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
         return $oldValue === $newValue;
     }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Consent) {
+            return [
+                "consent" => $value->getConsent(),
+                "noteId" => $value->getNoteId()
+            ];
+        }
+        return null;
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new Consent($value["consent"], $value["noteId"]);
+        }
+        return null;
+    }
+
+
 }

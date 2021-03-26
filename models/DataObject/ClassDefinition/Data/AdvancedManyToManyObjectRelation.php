@@ -1064,8 +1064,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function marshal($value, $object = null, $params = [])
     {
-        $params = $params ?? null;
-        $params['object'] = $object;
         return $this->normalize($value, $params);
     }
 

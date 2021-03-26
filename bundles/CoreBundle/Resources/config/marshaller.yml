@@ -9,6 +9,21 @@ services:
       arguments:
         - '@service_container'
 
+  pimcore.dataobject.fielddefinition.marshaller_block_consent:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Consent
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, format: block, dataType: consent }
+
+  pimcore.dataobject.fielddefinition.marshaller_block_date:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Date
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_date, format: block, dataType: date }
+
+  pimcore.dataobject.fielddefinition.marshaller_block_externalImage:
+      class: Pimcore\DataObject\FielddefinitionMarshaller\Block\ExternalImage
+      tags:
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_externalImage, format: block, dataType: externalImage }
+
   pimcore.dataobject.fielddefinition.marshaller_block_geopoint:
     class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Geopoint
     tags:

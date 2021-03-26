@@ -26,7 +26,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
@@ -371,4 +370,27 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
         return $oldValue == $newValue;
     }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\ExternalImage) {
+            return [
+                "url" => $value->getUrl()
+            ];
+
+        }
+        return null;
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new DataObject\Data\ExternalImage($value['url']);
+        }
+        return null;
+    }
+
+
 }

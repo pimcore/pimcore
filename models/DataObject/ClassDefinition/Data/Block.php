@@ -159,7 +159,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $elementData = $fd->filterMultipleAssignments($elementData, $object, $params);
                         }
                     }
-                    // $encodedDataBC = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
+                    $encodedDataBC = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
 
                     if ($fd instanceof NormalizerInterface) {
                         $normalizedData = $fd->normalize($elementData, [

@@ -27,7 +27,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 {
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-    use DataObject\Traits\SimpleNormalizerTrait;
 
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -504,4 +503,23 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return $oldValue === $newValue;
     }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Carbon) {
+            return $value->getTimestamp();
+        }
+        return null;
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if ($value !== null) {
+            return $this->getDateFromTimestamp($value);
+        }
+        return null;
+    }
+
 }

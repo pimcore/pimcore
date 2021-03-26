@@ -365,14 +365,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /** @inheritDoc */
     public function normalize($value, $params = [])
     {
-        if (is_array($value)) {
-            $rgb = $value['value'];
-            $a = $value['value2'];
-            list($r, $g, $b) = sscanf($rgb, '%02x%02x%02x');
-            $a = hexdec($a);
-            $value = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
-        }
-
         if ($value instanceof Model\DataObject\Data\RgbaColor) {
             return [
                 'r' => $value->getR(),
