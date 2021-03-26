@@ -65,8 +65,7 @@ You would just use the `getData()` method instead of rendering the entire HTML o
                 ["Availability", "Out of stock"]
             ]
         }
-    })
-    }}
+    })}}
 {% else %}
     {% set data = pimcore_table("productProperties").getData() %}
     
@@ -101,4 +100,3 @@ array(4) {
   }
 }
 ```
-
