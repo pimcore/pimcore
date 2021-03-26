@@ -98,7 +98,7 @@ Now you have to create the template file at: `website/views/scripts/content/my-g
 		{% for asset in assets %}
 			{% if asset is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
 				<div class="gallery-row">
-                    <img src="{{ asset.getThumbnail('myThumbnailName') }}" >
+                    {{ asset.getThumbnail('myThumbnailName').getHTML()|raw }}
 				</div>
 			{% endif %}
 		{% endfor %}
