@@ -26,7 +26,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
@@ -499,5 +498,23 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
 
         return $oldValue === $newValue;
+    }
+
+    /** @inheritDoc */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Carbon) {
+            return $value->getTimestamp();
+        }
+        return null;
+    }
+
+    /** @inheritDoc */
+    public function denormalize($value, $params = [])
+    {
+        if ($value !== null) {
+            return $this->getDateFromTimestamp($value);
+        }
+        return null;
     }
 }

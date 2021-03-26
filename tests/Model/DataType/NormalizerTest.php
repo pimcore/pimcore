@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Carbon\Carbon;
 use Pimcore\Cache;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
@@ -68,10 +69,11 @@ class NormalizerTest extends ModelTestCase
 
     public function testConsent()
     {
-        $originalValue = true;
+        $originalValue = new DataObject\Data\Consent(true);
         $fd = new DataObject\ClassDefinition\Data\Consent();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
+        $this->assertTrue(is_array($normalizedValue));
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
     }
@@ -98,20 +100,26 @@ class NormalizerTest extends ModelTestCase
 
     public function testDate()
     {
-        $originalValue = time();
+        $ts = time();
+        $originalValue = new Carbon();
+        $originalValue->setTimestamp($ts);
         $fd = new DataObject\ClassDefinition\Data\Date();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
+        $this->assertEquals($ts, $normalizedValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
     public function testDatetime()
     {
-        $originalValue = time();
+        $ts = time();
+        $originalValue = new Carbon();
+        $originalValue->setTimestamp($ts);
         $fd = new DataObject\ClassDefinition\Data\Datetime();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
+        $this->assertEquals($ts, $normalizedValue);
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
     }
@@ -319,6 +327,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Link();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
+        $this->assertTrue(is_array($normalizedValue));
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
     }

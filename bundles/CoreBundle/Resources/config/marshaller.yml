@@ -18,6 +18,7 @@ services:
       class: Pimcore\DataObject\FielddefinitionMarshaller\Block\Date
       tags:
           - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_date, format: block, dataType: date }
+          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_datetime, format: block, dataType: datetime }
 
   pimcore.dataobject.fielddefinition.marshaller_block_externalImage:
       class: Pimcore\DataObject\FielddefinitionMarshaller\Block\ExternalImage
