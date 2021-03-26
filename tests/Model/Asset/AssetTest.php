@@ -142,7 +142,7 @@ class AssetTest extends ModelTestCase
 
         $this->testAsset->clearThumbnails(true);
 
-        codecept_debug(print_r(Storage::get('thumbnail')->listContents()));
+        codecept_debug(print_r(Storage::get('thumbnail')->listContents(), true));
 
         try {
             $stream1 = $thumbnail->getStream();
