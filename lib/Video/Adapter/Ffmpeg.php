@@ -137,15 +137,27 @@ class Ffmpeg extends Adapter
             } elseif ($this->getFormat() == 'mpd') {
                 $medias = $this->getMedias();
                 $mediaKeys = array_keys($medias);
-                $arguments = str_repeat(' -map 0', count($mediaKeys)) .' -c:a libfdk_aac -vcodec libx264 ';
+                $command = [];
+
+                foreach ($mediaKeys as $mediaKey) {
+                    array_push($command, '-map', 'v:0');
+                }
+
+                array_push($command, '-c:a', 'libfdk_aac');
+                array_push($command, '-vcodec', 'libx264');
+
                 for ($i = 0; $i < count($mediaKeys); $i++) {
                     $bitrate = $mediaKeys[$i];
 
                     array_push($command, '-b:v:' . $i, $bitrate);
                     array_push($command, '-c:v:' . $i, 'libx264');
+                    array_push($command, '-c:v:' . $i, 'libx264');
 
                     if ($medias[$bitrate]['converter'] instanceof self) {
-                        $command = array_merge($command, $medias[$bitrate]['converter']->arguments);
+                        foreach ($medias[$bitrate]['converter']->arguments as $aKey => $argument) {
+                            $argument = ($aKey % 2 == 0 ? $argument . ':' . $i : $argument);
+                            array_push($command, $argument);
+                        }
                     }
                 }
 
@@ -164,10 +176,11 @@ class Ffmpeg extends Adapter
             $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
             array_unshift($command, 'ffmpeg', '-i', realpath($this->file));
 
-            Logger::debug('Executing FFMPEG Command: ' . $command);
-
             Console::addLowProcessPriority($command);
-            $process = Process::fromShellCommandline($command);
+            $process = new Process($command);
+
+            Logger::debug('Executing FFMPEG Command: ' . $process->getCommandLine());
+
             //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
             $process->setTimeout(null);
             $process->start();
@@ -415,7 +428,7 @@ class Ffmpeg extends Adapter
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
-        $this->addArgument('-vf', 'scale='.$width.':trunc(ow/a/2)*2');
+        $this->addArgument('-filter:v', 'scale='.$width.':trunc(ow/a/2)*2');
     }
 
     /**
@@ -425,6 +438,6 @@ class Ffmpeg extends Adapter
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;
-        $this->addArgument('-vf', 'scale=trunc(oh/(ih/iw)/2)*2:'.$height);
+        $this->addArgument('-filter:v', 'scale=trunc(oh/(ih/iw)/2)*2:'.$height);
     }
 }

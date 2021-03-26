@@ -99,7 +99,8 @@ class Processor
                 // check if the files are there
                 $formatsToConvert = [];
                 foreach ($formats as $f) {
-                    if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]['formats'][$f])) {
+                    $format = $customSetting[$config->getName()]['formats'][$f] ?? null;
+                    if (!is_file($asset->getVideoThumbnailSavePath() . $format)) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
@@ -237,7 +238,7 @@ class Processor
                 @chmod($converter->getStorageFile(), File::getDefaultMode());
 
                 if ($converter->getFormat() === 'mpd') {
-                    $streamFilesPath = str_replace('.mpd', '-stream*.m4s', $converter->getDestinationFile());
+                    $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
                     $streams = glob($streamFilesPath);
                     $parentPath = dirname($converter->getStorageFile());
 
