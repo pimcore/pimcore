@@ -58,7 +58,6 @@ class MkdirCacheWarmer implements CacheWarmerInterface
             PIMCORE_LOG_DIRECTORY,
             PIMCORE_LOG_FILEOBJECT_DIRECTORY,
             PIMCORE_LOG_MAIL_PERMANENT,
-            PIMCORE_RECYCLEBIN_DIRECTORY,
             PIMCORE_SYSTEM_TEMP_DIRECTORY,
         ];
 

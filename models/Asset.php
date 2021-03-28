@@ -280,8 +280,8 @@ class Asset extends Element\AbstractElement
 
         if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
             $asset = new Asset();
-            $asset->getDao()->getById($id);
             try {
+                $asset->getDao()->getById($id);
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
                 /** @var Asset $asset */
