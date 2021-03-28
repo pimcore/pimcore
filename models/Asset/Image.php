@@ -237,6 +237,9 @@ EOT;
         $storagePath = $this->getLowQualityPreviewStoragePath();
         $path = urlencode_ignore_slash($storagePath);
 
+        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        $path = $prefix . $path;
+
         $event = new GenericEvent($this, [
             'storagePath' => $storagePath,
             'frontendPath' => $path,

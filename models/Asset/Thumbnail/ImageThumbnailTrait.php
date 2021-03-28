@@ -265,11 +265,17 @@ trait ImageThumbnailTrait
 
         if($type === 'data-uri') {
             return $src;
+        } elseif($type === 'deferred') {
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
+            $path = $prefix . urlencode_ignore_slash($src);
+        } elseif($type === 'thumbnail') {
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $path = $prefix . urlencode_ignore_slash($src);
+        } else {
+            $path = urlencode_ignore_slash($src);
         }
 
-        $path = $src;
-
-        return urlencode_ignore_slash($path);
+        return $path;
     }
 
     /**

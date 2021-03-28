@@ -181,6 +181,7 @@ class Processor
         $filename .= '.' . $fileExtension;
 
         $storagePath = $thumbDir . '/' . $filename;
+        $storage = Storage::get('thumbnail');
 
         // deferred means that the image will be generated on-the-fly (when requested by the browser)
         // the configuration is saved for later use in
@@ -195,7 +196,7 @@ class Processor
 
             return [
                 'src' => $storagePath,
-                'type' => 'deferred',
+                'type' => $storage->fileExists($storagePath) ? 'thumbnail': 'deferred',
             ];
         }
 
@@ -203,8 +204,6 @@ class Processor
         if (!file_exists($fileSystemPath)) {
             throw new \Exception(sprintf('Source file %s does not exist!', $fileSystemPath));
         }
-
-        $storage = Storage::get('thumbnail');
 
         // check for existing and still valid thumbnail
         if ($storage->fileExists($storagePath) && $storage->lastModified($storagePath) >= $asset->getModificationDate()) {

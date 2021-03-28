@@ -181,6 +181,51 @@ class Thumbnail
         return $path;
     }
 
+    private function getSourceTagHtml(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
+    {
+        $srcSetValues = [];
+        $sourceTagAttributes = [];
+        $thumb = null;
+
+        foreach ([1, 2] as $highRes) {
+            $thumbConfigRes = clone $thumbConfig;
+            $thumbConfigRes->selectMedia($mediaQuery);
+            $thumbConfigRes->setHighResolution($highRes);
+            $thumb = $image->getThumbnail($thumbConfigRes, true);
+
+            $descriptor = $highRes . 'x';
+            $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
+
+            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                break;
+            }
+        }
+
+        if ($thumb) {
+            $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+            if ($mediaQuery) {
+                $sourceTagAttributes['media'] = $mediaQuery;
+                $thumb->reset();
+            }
+
+            if (isset($options['previewDataUri'])) {
+                $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                unset($sourceTagAttributes['srcset']);
+            }
+
+            $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+            $sourceCallback = $options['sourceCallback'] ?? null;
+            if ($sourceCallback) {
+                $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
+            }
+
+            return '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+        }
+
+        return '';
+    }
+
     /**
      * Get generated HTML for displaying the thumbnail image in a HTML document.
      *
@@ -196,7 +241,6 @@ class Thumbnail
 
         $pictureTagAttributes = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
-        $previewDataUri = null;
         if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
             $previewDataUri = $image->getLowQualityPreviewDataUri();
             if (!$previewDataUri) {
@@ -230,60 +274,20 @@ class Thumbnail
             array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
             foreach ($mediaConfigs as $mediaQuery => $config) {
-                $srcSetValues = [];
-                $sourceTagAttributes = [];
-                $thumb = null;
-
-                foreach ([1, 2] as $highRes) {
-                    $thumbConfigRes = clone $thumbConfig;
-                    $thumbConfigRes->selectMedia($mediaQuery);
-                    $thumbConfigRes->setHighResolution($highRes);
-                    $thumb = $image->getThumbnail($thumbConfigRes, true);
-
-                    $descriptor = $highRes . 'x';
-                    $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
-
-                    if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
-                        break;
-                    }
+                $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
+                if (!empty($sourceHtml)) {
 
                     if ($isAutoFormat) {
-                        $thumbConfigWebP = clone $thumbConfigRes;
+                        $thumbConfigWebP = clone $thumbConfig;
                         $thumbConfigWebP->setFormat('webp');
-                        $image->getThumbnail($thumbConfigWebP, true)->getPath();
-                    }
-                }
 
-                if ($thumb) {
-                    $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-                    if ($mediaQuery) {
-                        $sourceTagAttributes['media'] = $mediaQuery;
-                        $thumb->reset();
-                    }
-
-                    if ($previewDataUri) {
-                        $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                        unset($sourceTagAttributes['srcset']);
-                    }
-
-                    $sourceTagAttributes['type'] = $thumb->getMimeType();
-
-                    $sourceCallback = $options['sourceCallback'] ?? null;
-                    if ($sourceCallback) {
-                        $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
-                    }
-
-                    if (!empty($sourceTagAttributes)) {
-                        $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
-                        if ($isAutoFormat) {
-                            $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
-                            if ($sourceHtmlWebP != $sourceHtml) {
-                                $html .= "\t" . $sourceHtmlWebP . "\n";
-                            }
+                        $sourceWebP = $this->getSourceTagHtml($thumbConfigWebP, $mediaQuery, $image, $options);
+                        if (!empty($sourceWebP)) {
+                            $html .= "\t" . $sourceWebP . "\n";
                         }
-
-                        $html .= "\t" . $sourceHtml . "\n";
                     }
+
+                    $html .= "\t" . $sourceHtml . "\n";
                 }
             }
         }

@@ -135,6 +135,9 @@ class Video extends Model\Asset
                         $fullPath = rtrim($this->getRealPath(), '/') . $path;
                         $path = urlencode_ignore_slash($fullPath);
 
+                        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+                        $path = $prefix . $path;
+
                         $event = new GenericEvent($this, [
                             'filesystemPath' => $fullPath,
                             'frontendPath' => $path,
