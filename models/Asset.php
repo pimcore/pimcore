@@ -1995,7 +1995,7 @@ class Asset extends Element\AbstractElement
 
                 /** @var StorageAttributes $item */
                 foreach ($contents as $item) {
-                    if (preg_match('@/(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
+                    if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
                         if ($item->isDir()) {
                             $storage->deleteDirectory($item->path());
                         } elseif ($item->isFile()) {
