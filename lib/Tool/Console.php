@@ -77,7 +77,7 @@ class Console
             self::$customSetupMethod();
         }
         
-        // CHECK for ENV variables
+        // Check for env variables
         if ($value = getenv('PIMCORE_EXECUTABLE_' . strtoupper($name))) {
             return $value;
         }
