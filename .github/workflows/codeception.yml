@@ -92,6 +92,7 @@ jobs:
                   mysql -e "SELECT VERSION();"
                   php -i
                   ./bin/console pimcore:system:requirements:check
+                  ./bin/console debug:config flysystem
 
             - name: "Run Codeception"
               run: "vendor/bin/codecept run -c . -vvv --json"
