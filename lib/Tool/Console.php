@@ -76,6 +76,11 @@ class Console
         if (method_exists(__CLASS__, $customSetupMethod)) {
             self::$customSetupMethod();
         }
+        
+        // CHECK for ENV variables
+        if ($value = getenv('PIMCORE_EXECUTABLE_' . strtoupper($name))) {
+            return $value;
+        }
 
         // use DI to provide the ability to customize / overwrite paths
         if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
