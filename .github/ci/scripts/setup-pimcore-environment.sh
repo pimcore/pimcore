@@ -12,7 +12,7 @@ cp -r .github/ci/files/public public
 cp .github/ci/files/extensions.template.php var/config/extensions.php
 cp .github/ci/files/.env ./
 
-if [ -z "$PIMCORE_STORAGE"]; then
+if [ $PIMCORE_STORAGE = "minio" ]; then
     mkdir -p config/local/
     cp .github/ci/files/minio-flysystem.yml config/local/
     composer require -n --no-update aws/aws-sdk-php
