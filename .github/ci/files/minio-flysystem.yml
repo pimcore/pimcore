@@ -2,7 +2,7 @@ services:
     minio_client:
         class: 'Aws\S3\S3Client'
         arguments:
-            -  endpoint: 'http://127.0.0.1:9000'
+            -  endpoint: 'http://127.0.0.1:9001'
                accessKeyId: '%env(MINIO_ACCESS_KEY)%'
                accessKeySecret: '%env(MINIO_SECRET_KEY)%'
 
