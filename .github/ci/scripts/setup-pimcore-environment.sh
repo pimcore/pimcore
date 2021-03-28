@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -eu -o xtrace
 
 mkdir -p var/config
 
@@ -15,7 +15,7 @@ cp .github/ci/files/.env ./
 if [ $PIMCORE_STORAGE = "minio" ]; then
     mkdir -p config/local/
     cp .github/ci/files/minio-flysystem.yml config/local/
-    composer require -n --no-update aws/aws-sdk-php
+    composer require -n --no-update league/flysystem-aws-s3-v3
 fi
 
 # temp. until elasticsearch/elasticsearch 7.11 is released

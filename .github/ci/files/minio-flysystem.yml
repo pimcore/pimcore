@@ -9,37 +9,37 @@ services:
 flysystem:
     storages:
         pimcore.asset.storage:
-            adapter: 'local'
+            adapter: 'aws'
             visibility: public
             options:
                 client: 'minio_client'
                 bucket: 'asset'
         pimcore.asset_cache.storage:
-            adapter: 'local'
+            adapter: 'aws'
             visibility: public
             options:
                 client: 'minio_client'
                 bucket: 'asset_cache'
         pimcore.thumbnail.storage:
-            adapter: 'local'
+            adapter: 'aws'
             visibility: public
             options:
                 client: 'minio_client'
                 bucket: 'thumbnail'
         pimcore.version.storage:
-            adapter: 'local'
+            adapter: 'aws'
             visibility: public
             options:
                 client: 'minio_client'
                 bucket: 'version'
         pimcore.recycle_bin.storage:
-            adapter: 'local'
+            adapter: 'aws'
             visibility: public
             options:
                 client: 'minio_client'
                 bucket: 'recycle_bin'
         pimcore.admin.storage:
-            adapter: 'local'
+            adapter: 'aws'
             visibility: public
             options:
                 client: 'minio_client'
