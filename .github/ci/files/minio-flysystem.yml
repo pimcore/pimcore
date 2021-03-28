@@ -19,7 +19,7 @@ flysystem:
             visibility: public
             options:
                 client: 'minio_client'
-                bucket: 'asset_cache'
+                bucket: 'assetcache'
         pimcore.thumbnail.storage:
             adapter: 'aws'
             visibility: public
@@ -37,7 +37,7 @@ flysystem:
             visibility: public
             options:
                 client: 'minio_client'
-                bucket: 'recycle_bin'
+                bucket: 'recyclebin'
         pimcore.admin.storage:
             adapter: 'aws'
             visibility: public
