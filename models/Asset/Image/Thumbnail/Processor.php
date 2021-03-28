@@ -398,9 +398,8 @@ class Processor
                 $generated = true;
 
                 if ($optimizeContent) {
-                    $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $storagePath);
-                    $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
-                    TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
+                    $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($storagePath);
+                    TmpStore::add($tmpStoreKey, $storagePath, 'image-optimize-queue');
                 }
 
                 Logger::debug('Thumbnail ' . $storagePath . ' generated in ' . (microtime(true) - $startTime) . ' seconds');
