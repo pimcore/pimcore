@@ -180,7 +180,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_PATH', realpath(__DIR__ . '/..'));
         $resolveConstant('PIMCORE_WEB_ROOT', PIMCORE_PROJECT_ROOT . '/public');
         $resolveConstant('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
-        $resolveConstant('PIMCORE_PUBLIC_VAR', PIMCORE_WEB_ROOT . '/var');
 
         // special directories for tests
         // test mode can bei either controlled by a constant or an env variable
