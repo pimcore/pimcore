@@ -12,6 +12,11 @@ cp -r .github/ci/files/public public
 cp .github/ci/files/extensions.template.php var/config/extensions.php
 cp .github/ci/files/.env ./
 
+if [ $PIMCORE_STORAGE = "minio" ]; then
+    cp .github/ci/files/minio-flysystem.yml config/local/
+    composer require -n --no-update aws/aws-sdk-php
+fi
+
 # temp. until elasticsearch/elasticsearch 7.11 is released
 composer config minimum-stability "dev"
 composer config prefer-stable true
