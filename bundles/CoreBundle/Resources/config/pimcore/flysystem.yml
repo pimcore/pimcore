@@ -37,3 +37,8 @@ flysystem:
             visibility: private
             options:
                 directory: '%kernel.project_dir%/var/recyclebin'
+        pimcore.admin.storage:
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/admin'

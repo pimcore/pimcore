@@ -58,7 +58,7 @@ class RecyclebinTest extends ModelTestCase
 
         //recycle asserts
         $recycledItems = new Item\Listing();
-        $this->assetTrue($storage->fileExists($recycledItems->current()->getStoreageFile()));
+        $this->assertTrue($storage->fileExists($recycledItems->current()->getStoreageFile()));
 
         $recycledStorage = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
         $this->assertEquals($objectId, $recycledStorage->getId(), 'Recycled Object not found.');
