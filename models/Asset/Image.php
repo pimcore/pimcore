@@ -273,15 +273,6 @@ EOT;
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function delete(bool $isNested = false)
-    {
-        parent::delete($isNested);
-        $this->clearThumbnails(true);
-    }
-
-    /**
      * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
      *
      * @param string|array|Image\Thumbnail\Config $config

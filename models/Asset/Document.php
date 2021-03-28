@@ -54,15 +54,6 @@ class Document extends Model\Asset
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function delete(bool $isNested = false)
-    {
-        parent::delete($isNested);
-        $this->clearThumbnails(true);
-    }
-
-    /**
      * @param string|null $path
      */
     public function processPageCount($path = null)

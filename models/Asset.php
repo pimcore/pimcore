@@ -1034,6 +1034,8 @@ class Asset extends Element\AbstractElement
                     $this->deletePhysicalFile();
                 }
             }
+
+            $this->clearThumbnails(true);
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new AssetEvent($this);

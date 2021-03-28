@@ -77,15 +77,6 @@ class Video extends Model\Asset
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function delete(bool $isNested = false)
-    {
-        parent::delete($isNested);
-        $this->clearThumbnails(true);
-    }
-
-    /**
      * @param bool $force
      */
     public function clearThumbnails($force = false)
