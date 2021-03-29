@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -896,18 +897,19 @@ final class UserController extends AdminController implements KernelControllerEv
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function getImageAction(Request $request)
     {
         /** @var User $userObj */
         $userObj = User::getById($this->getUserId($request));
-        $thumb = $userObj->getImage();
+        $stream = $userObj->getImage();
 
-        $response = new BinaryFileResponse($thumb);
-        $response->headers->set('Content-Type', 'image/png');
-
-        return $response;
+        return new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => 'image/png',
+        ]);
     }
 
     /**

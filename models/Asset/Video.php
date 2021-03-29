@@ -77,44 +77,14 @@ class Video extends Model\Asset
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function delete(bool $isNested = false)
-    {
-        parent::delete($isNested);
-        $this->clearThumbnails(true);
-    }
-
-    /**
      * @param bool $force
      */
     public function clearThumbnails($force = false)
     {
-        if ($this->_dataChanged || $force) {
+        if ($this->getDataChanged() || $force) {
             // clear the thumbnail custom settings
             $this->setCustomSetting('thumbnails', null);
-
-            if (is_dir($this->getImageThumbnailSavePath())) {
-                $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
-                $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                    return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0 || strpos($fileInfo->getFilename(), 'video-image-cache__' . $this->getId() . '__thumbnail_') === 0;
-                });
-                /** @var \SplFileInfo $fileInfo */
-                foreach ($filterIterator as $fileInfo) {
-                    recursiveDelete($fileInfo->getPathname());
-                }
-            }
-
-            if (is_dir($this->getVideoThumbnailSavePath())) {
-                $directoryIterator = new \DirectoryIterator($this->getVideoThumbnailSavePath());
-                $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                    return strpos($fileInfo->getFilename(), 'video-thumb__' . $this->getId()) === 0;
-                });
-                /** @var \SplFileInfo $fileInfo */
-                foreach ($filterIterator as $fileInfo) {
-                    recursiveDelete($fileInfo->getPathname());
-                }
-            }
+            parent::clearThumbnails($force);
         }
     }
 
@@ -162,9 +132,11 @@ class Video extends Model\Asset
                 $customSetting = $this->getCustomSetting('thumbnails');
                 if (is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
                     foreach ($customSetting[$thumbnail->getName()]['formats'] as &$path) {
-                        $fullPath = $this->getVideoThumbnailSavePath() . $path;
-                        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails', '', $fullPath);
-                        $path = urlencode_ignore_slash($path);
+                        $fullPath = rtrim($this->getRealPath(), '/') . $path;
+                        $path = urlencode_ignore_slash($fullPath);
+
+                        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+                        $path = $prefix . $path;
 
                         $event = new GenericEvent($this, [
                             'filesystemPath' => $fullPath,
@@ -214,7 +186,7 @@ class Video extends Model\Asset
     {
         if (\Pimcore\Video::isAvailable()) {
             if (!$filePath) {
-                $filePath = $this->getFileSystemPath();
+                $filePath = $this->getLocalFile();
             }
 
             $converter = \Pimcore\Video::getInstance();
@@ -235,7 +207,7 @@ class Video extends Model\Asset
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getFileSystemPath(), ['asset' => $this]);
+            $converter->load($this->getLocalFile(), ['asset' => $this]);
 
             return $converter->getDimensions();
         }
@@ -331,9 +303,7 @@ class Video extends Model\Asset
                 throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
             }
 
-            if (($file_pointer = fopen($this->getFileSystemPath(), 'rb')) === false) {
-                throw new \RuntimeException('Could not open file for reading');
-            }
+            $file_pointer = $this->getStream();
 
             $tag = '<rdf:SphericalVideo';
             $tagLength = strlen($tag);

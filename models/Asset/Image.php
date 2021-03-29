@@ -22,6 +22,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Console;
+use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Process\Process;
 
@@ -80,13 +81,7 @@ class Image extends Model\Asset
         // now directly create "system" thumbnails (eg. for the tree, ...)
         if ($this->getDataChanged()) {
             try {
-                $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
-
-                // set the modification time of the thumbnail to the same time from the asset
-                // so that the thumbnail check doesn't fail in Asset\Image\Thumbnail\Processor::process();
-                // we need the @ in front of touch because of some stream wrapper (eg. s3) which don't support touch()
-                @touch($path, $this->getModificationDate());
-
+                $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->generate(false);
                 $this->generateLowQualityPreview();
             } catch (\Exception $e) {
                 Logger::error('Problem while creating system-thumbnails for image ' . $this->getRealFullPath());
@@ -97,12 +92,14 @@ class Image extends Model\Asset
 
     protected function postPersistData()
     {
-        if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
-            $this->detectFaces();
-        }
+        if($this->getDataChanged()) {
+            if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
+                $this->detectFaces();
+            }
 
-        if (!isset($this->customSettings['disableFocalPointDetection'])) {
-            $this->detectFocalPoint();
+            if (!isset($this->customSettings['disableFocalPointDetection'])) {
+                $this->detectFocalPoint();
+            }
         }
     }
 
@@ -146,7 +143,7 @@ class Image extends Model\Asset
         if ($facedetectBin) {
             $faceCoordinates = [];
             $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
-            $image = $this->getLocalFile($thumbnail->getFileSystemPath());
+            $image = $thumbnail->getLocalFile();
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
@@ -196,13 +193,7 @@ class Image extends Model\Asset
         // fallback
         if (class_exists('Imagick')) {
             // Imagick fallback
-            $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
-
-            if (!stream_is_local($path)) {
-                // imagick is only able to deal with local files
-                // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-                $path = $this->getTemporaryFile();
-            }
+            $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getLocalFile();
 
             $imagick = new \Imagick($path);
             $imagick->setImageFormat('jpg');
@@ -212,7 +203,7 @@ class Image extends Model\Asset
 
             // we can't use getImageBlob() here, because of a bug in combination with jpeg:extent
             // http://www.imagemagick.org/discourse-server/viewtopic.php?f=3&t=24366
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-optimize-' . uniqid() . '.jpg';
+            $tmpFile = File::getLocalTempFilePath('jpg');
             $imagick->writeImage($tmpFile);
             $imageBase64 = base64_encode(file_get_contents($tmpFile));
             $imagick->destroy();
@@ -230,10 +221,9 @@ class Image extends Model\Asset
     <image filter="url(#blur)" x="0" y="0" height="100%" width="100%" xlink:href="data:image/jpg;base64,$imageBase64" />
 </svg>
 EOT;
-
-            File::put($this->getLowQualityPreviewFileSystemPath(), $svg);
-
-            return $this->getLowQualityPreviewFileSystemPath();
+            $storagePath = $this->getLowQualityPreviewStoragePath();
+            Storage::get('thumbnail')->write($storagePath, $svg);
+            return $storagePath;
         }
 
         return false;
@@ -244,12 +234,14 @@ EOT;
      */
     public function getLowQualityPreviewPath()
     {
-        $fsPath = $this->getLowQualityPreviewFileSystemPath();
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-        $path = urlencode_ignore_slash($path);
+        $storagePath = $this->getLowQualityPreviewStoragePath();
+        $path = urlencode_ignore_slash($storagePath);
+
+        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
+            'storagePath' => $storagePath,
             'frontendPath' => $path,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
@@ -261,12 +253,12 @@ EOT;
     /**
      * @return string
      */
-    public function getLowQualityPreviewFileSystemPath()
+    private function getLowQualityPreviewStoragePath()
     {
-        $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath(true);
-        $svgPath = preg_replace("/\.p?jpe?g$/", '-low-quality-preview.svg', $path);
-
-        return $svgPath;
+        return sprintf('%s/image-thumb__%s__-low-quality-preview.svg',
+            rtrim($this->getRealPath(), '/'),
+            $this->getId()
+        );
     }
 
     /**
@@ -274,50 +266,13 @@ EOT;
      */
     public function getLowQualityPreviewDataUri(): ?string
     {
-        $file = $this->getLowQualityPreviewFileSystemPath();
-        $dataUri = null;
-        if (file_exists($file)) {
-            $dataUri = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($file));
+        try {
+            $dataUri = 'data:image/svg+xml;base64,' . base64_encode(Storage::get('thumbnail')->read($this->getLowQualityPreviewStoragePath()));
+        } catch (\Exception $e) {
+            $dataUri = null;
         }
 
         return $dataUri;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete(bool $isNested = false)
-    {
-        parent::delete($isNested);
-        $this->clearThumbnails(true);
-    }
-
-    /**
-     * @param bool $force
-     */
-    public function clearThumbnails($force = false)
-    {
-        if (($this->getDataChanged() || $force) && is_dir($this->getImageThumbnailSavePath())) {
-            $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
-            $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0;
-            });
-            /** @var \SplFileInfo $fileInfo */
-            foreach ($filterIterator as $fileInfo) {
-                recursiveDelete($fileInfo->getPathname());
-            }
-        }
-    }
-
-    /**
-     * @param string $name
-     */
-    public function clearThumbnail($name)
-    {
-        $dir = $this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__' . $name;
-        if (is_dir($dir)) {
-            recursiveDelete($dir);
-        }
     }
 
     /**
@@ -386,14 +341,6 @@ EOT;
     }
 
     /**
-     * @return string
-     */
-    public function getRelativeFileSystemPath()
-    {
-        return str_replace(PIMCORE_WEB_ROOT, '', $this->getFileSystemPath());
-    }
-
-    /**
      * @param string|null $path
      * @param bool $force
      *
@@ -416,7 +363,7 @@ EOT;
         }
 
         if (!$path) {
-            $path = $this->getFileSystemPath();
+            $path = $this->getLocalFile();
         }
 
         $dimensions = null;

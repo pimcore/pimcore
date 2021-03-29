@@ -17,12 +17,16 @@
 
 namespace Pimcore\Model\Asset\Thumbnail;
 
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
 
 trait ImageThumbnailTrait
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * @var Asset
      */
@@ -34,9 +38,9 @@ trait ImageThumbnailTrait
     protected $config;
 
     /**
-     * @var string|null
+     * @var array
      */
-    protected $filesystemPath;
+    protected $pathReference = [];
 
     /**
      * @var int|null
@@ -69,22 +73,29 @@ trait ImageThumbnailTrait
     protected $deferred = true;
 
     /**
-     * @param bool $deferredAllowed
-     *
-     * @return string
+     * @return null|resource
      */
-    public function getFileSystemPath($deferredAllowed = false)
+    public function getStream() {
+        $pathReference = $this->getPathReference();
+        try {
+            return Storage::get($pathReference['type'])->readStream($pathReference['src']);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getPathReference(bool $deferredAllowed = false): array
     {
-        if (!$this->filesystemPath) {
+        if(empty($this->pathReference)) {
             $this->generate($deferredAllowed);
         }
 
-        return $this->filesystemPath;
+        return $this->pathReference;
     }
 
     public function reset()
     {
-        $this->filesystemPath = null;
+        $this->pathReference = [];
         $this->width = null;
         $this->height = null;
         $this->realHeight = null;
@@ -157,12 +168,19 @@ trait ImageThumbnailTrait
             if (empty($dimensions)) {
                 // unable to calculate dimensions -> use fallback
                 // generate the thumbnail and get dimensions from the thumbnail file
-                $info = @getimagesize($this->getFileSystemPath());
-                if ($info) {
-                    $dimensions = [
-                        'width' => $info[0],
-                        'height' => $info[1],
-                    ];
+                $pathReference = $this->getPathReference();
+                if(in_array($pathReference['type'], ['thumbnail', 'asset'])) {
+                    try {
+                        $info = @getimagesize($this->getLocalFile());
+                        if ($info) {
+                            $dimensions = [
+                                'width' => $info[0],
+                                'height' => $info[1],
+                            ];
+                        }
+                    } catch (\Exception $e) {
+                        // noting to do
+                    }
                 }
             }
 
@@ -202,37 +220,14 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @param string $type
-     *
-     * @return null|string
-     *
-     * @throws \Exception
-     */
-    public function getChecksum($type = 'md5')
-    {
-        $file = $this->getFileSystemPath();
-        if (is_file($file)) {
-            if ($type == 'md5') {
-                return md5_file($file);
-            } elseif ($type == 'sha1') {
-                return sha1_file($file);
-            } else {
-                throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @return string
      */
     public function getMimeType()
     {
         if (!$this->mimetype) {
-            $filesystemPath = $this->getFileSystemPath(true);
-            if (strpos($filesystemPath, 'data:image/') === 0) {
-                $this->mimetype = substr($filesystemPath, 5, strpos($filesystemPath, ';') - 5);
+            $pathReference = $this->getPathReference(true);
+            if ($pathReference['type'] === 'data-uri') {
+                $this->mimetype = substr($pathReference['src'], 5, strpos($pathReference['src'], ';') - 5);
             } else {
                 $fileExt = $this->getFileExtension();
                 $mimeTypes = MimeTypes::getDefault()->getMimeTypes($fileExt);
@@ -258,24 +253,38 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @param string $filesystemPath
+     * @internal
+     * @param array $pathReference
      *
      * @return string
      */
-    protected function convertToWebPath(string $filesystemPath): string
+    protected function convertToWebPath(array $pathReference): string
     {
-        if (strpos($filesystemPath, 'data:image/') === 0) {
-            // do not convert base64 encoded images
-            return $filesystemPath;
+        $type = $pathReference['type'];
+        $src = $pathReference['src'];
+
+        if($type === 'data-uri') {
+            return $src;
+        } elseif($type === 'deferred') {
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
+            $path = $prefix . urlencode_ignore_slash($src);
+        } elseif($type === 'thumbnail') {
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+            $path = $prefix . urlencode_ignore_slash($src);
+        } else {
+            $path = urlencode_ignore_slash($src);
         }
 
-        $path = preg_replace([
-            '@^' . preg_quote(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '@') . '@',
-            '@^' . preg_quote(PIMCORE_WEB_ROOT, '@') . '@',
-        ], '', $filesystemPath);
-
-        $path = urlencode_ignore_slash($path);
-
         return $path;
+    }
+
+    /**
+     * @internal
+     * @return string
+     * @throws \Exception
+     */
+    public function getLocalFile()
+    {
+        return self::getLocalFileFromStream($this->getStream());
     }
 }

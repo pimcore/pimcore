@@ -809,14 +809,11 @@ final class SettingsController extends AdminController
         $this->checkPermission('clear_temp_files');
 
         // public files
-        recursiveDelete(PIMCORE_TEMPORARY_DIRECTORY, false);
+        Tool\Storage::get('thumbnail')->deleteDirectory('/');
+        Tool\Storage::get('asset_cache')->deleteDirectory('/');
 
         // system files
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
-
-        // recreate .dummy files # PIMCORE-2629
-        File::put(PIMCORE_TEMPORARY_DIRECTORY . '/.dummy', '');
-        File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/.dummy', '');
 
         $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 

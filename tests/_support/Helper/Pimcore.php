@@ -118,7 +118,6 @@ class Pimcore extends Module\Symfony
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
-            PIMCORE_ASSET_DIRECTORY,
         ];
 
         $filesystem = new Filesystem();

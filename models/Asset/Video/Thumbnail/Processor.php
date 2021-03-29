@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Console;
+use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
 class Processor
@@ -61,6 +62,11 @@ class Processor
     protected $status;
 
     /**
+     * @var null|string
+     */
+    protected $deleteSourceAfterFinished;
+
+    /**
      * @param Model\Asset\Video $asset
      * @param Config $config
      * @param array $onlyFormats
@@ -75,11 +81,15 @@ class Processor
             throw new \Exception('No ffmpeg executable found, please configure the correct path in the system settings');
         }
 
+        $storage = Storage::get('thumbnail');
+        $sourceFile = $asset->getTemporaryFile(true);
+
         $instance = new self();
         $formats = empty($onlyFormats) ? ['mp4'] : $onlyFormats;
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
+        $instance->setDeleteSourceAfterFinished($sourceFile);
 
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting('thumbnails');
@@ -93,7 +103,7 @@ class Processor
                 // check if the files are there
                 $formatsToConvert = [];
                 foreach ($formats as $f) {
-                    if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]['formats'][$f])) {
+                    if (!$storage->fileExists($asset->getRealPath() . $customSetting[$config->getName()]['formats'][$f])) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
@@ -111,26 +121,18 @@ class Processor
         }
 
         foreach ($formats as $format) {
-            $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
+            $thumbDir = $asset->getRealPath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
-            $fsPath = $thumbDir . '/' . $filename;
-            $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename;
-
-            if (!is_dir(dirname($fsPath))) {
-                File::mkdir(dirname($fsPath));
-            }
-
-            if (is_file($fsPath)) {
-                @unlink($fsPath);
-            }
+            $storagePath = $thumbDir . '/' . $filename;
+            $tmpPath = File::getLocalTempFilePath($format);
 
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($asset->getFileSystemPath(), ['asset' => $asset]);
+            $converter->load($sourceFile, ['asset' => $asset]);
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
             $converter->setDestinationFile($tmpPath);
-            $converter->setStorageFile($fsPath);
+            $converter->setStorageFile($storagePath);
 
             $transformations = $config->getItems();
             if (is_array($transformations) && count($transformations) > 0) {
@@ -207,14 +209,13 @@ class Processor
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
 
-                File::mkdir(dirname($converter->getStorageFile()));
-                File::rename($converter->getDestinationFile(), $converter->getStorageFile());
-
-                // set proper permissions
-                @chmod($converter->getStorageFile(), File::getDefaultMode());
+                $source = fopen($converter->getDestinationFile(), 'rb');
+                Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
+                fclose($source);
+                unlink($converter->getDestinationFile());
 
                 if ($success) {
-                    $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
+                    $formats[$converter->getFormat()] = str_replace($asset->getRealPath(), '', $converter->getStorageFile());
                 } else {
                     $conversionStatus = 'error';
                 }
@@ -245,7 +246,27 @@ class Processor
             $asset->save();
         }
 
+        if($instance->getDeleteSourceAfterFinished()) {
+            @unlink($instance->getDeleteSourceAfterFinished());
+        }
+
         TmpStore::delete($instance->getJobStoreId());
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDeleteSourceAfterFinished(): ?string
+    {
+        return $this->deleteSourceAfterFinished;
+    }
+
+    /**
+     * @param string|null $deleteSourceAfterFinished
+     */
+    public function setDeleteSourceAfterFinished(?string $deleteSourceAfterFinished): void
+    {
+        $this->deleteSourceAfterFinished = $deleteSourceAfterFinished;
     }
 
     public function convert()

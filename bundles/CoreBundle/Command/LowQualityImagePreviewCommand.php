@@ -96,7 +96,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             $images = $list->load();
             foreach ($images as $image) {
                 $progressBar->advance();
-                if ($force || !file_exists($image->getLowQualityPreviewFileSystemPath())) {
+                if ($force || !$image->getLowQualityPreviewDataUri()) {
                     try {
                         $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
                         $image->generateLowQualityPreview($generator);
