@@ -479,7 +479,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $oldValue === $newValue;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Data\Consent) {
@@ -491,7 +493,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

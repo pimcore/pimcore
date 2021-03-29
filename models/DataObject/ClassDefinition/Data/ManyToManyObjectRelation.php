@@ -171,7 +171,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -828,7 +830,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $objects;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {

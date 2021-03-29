@@ -770,7 +770,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
         return true;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Data\Hotspotimage) {
@@ -795,7 +797,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

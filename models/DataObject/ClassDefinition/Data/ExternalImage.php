@@ -371,7 +371,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $oldValue == $newValue;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Data\ExternalImage) {
@@ -383,7 +385,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

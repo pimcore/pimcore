@@ -500,7 +500,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $oldValue === $newValue;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Carbon) {
@@ -509,7 +511,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if ($value !== null) {

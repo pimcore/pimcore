@@ -220,14 +220,18 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function marshal($value, $object = null, $params = [])
     {
         return $this->normalize($value, $params);
 
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function unmarshal($data, $object = null, $params = [])
     {
         if (is_array($data)) {
@@ -602,7 +606,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Data\Link) {
@@ -611,7 +617,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

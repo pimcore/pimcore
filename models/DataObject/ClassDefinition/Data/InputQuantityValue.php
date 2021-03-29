@@ -213,7 +213,9 @@ class InputQuantityValue extends QuantityValue
         return new InputQuantityValueDataObject($value, $unitId);
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

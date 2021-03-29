@@ -34,7 +34,9 @@ class Localizedfields implements MarshallerInterface
         $this->marshallerService = $marshallerService;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function marshal($value, $params = [])
     {
         $object = $params['object'] ?? null;
@@ -65,7 +67,9 @@ class Localizedfields implements MarshallerInterface
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function unmarshal($value, $params = [])
     {
         $object = $params['object'] ?? null;

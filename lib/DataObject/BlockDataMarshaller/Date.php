@@ -22,7 +22,9 @@ use Pimcore\Marshaller\MarshallerInterface;
 
 class Date implements MarshallerInterface
 {
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function marshal($value, $params = [])
     {
         if ($value !== null) {
@@ -34,7 +36,9 @@ class Date implements MarshallerInterface
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function unmarshal($value, $params = [])
     {
         if ($value instanceof Carbon) {

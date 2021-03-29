@@ -898,7 +898,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->normalize($value, $params);
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -918,7 +920,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

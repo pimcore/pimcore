@@ -823,13 +823,17 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $result;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
@@ -840,7 +844,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return false;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -857,7 +863,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

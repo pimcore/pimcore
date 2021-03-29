@@ -21,7 +21,9 @@ use Pimcore\Marshaller\MarshallerInterface;
 
 class ExternalImage implements MarshallerInterface
 {
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
@@ -31,7 +33,9 @@ class ExternalImage implements MarshallerInterface
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function unmarshal($value, $params = [])
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\ExternalImage) {

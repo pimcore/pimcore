@@ -688,7 +688,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->normalize($value, $params);
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value) {
@@ -703,7 +705,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -750,13 +754,17 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return true;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\Pimcore\Model\Element\AbstractElement';
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\Pimcore\Model\Element\AbstractElement';

@@ -320,7 +320,9 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         }
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($data, $params = [])
     {
         if ($data instanceof DataObject\Data\Geopoint) {
@@ -332,7 +334,9 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($data, $params = [])
     {
         if (is_array($data)) {

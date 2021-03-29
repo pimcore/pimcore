@@ -350,7 +350,9 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         return $value;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Data\Geobounds) {
@@ -368,7 +370,9 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

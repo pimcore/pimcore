@@ -392,7 +392,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return true;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -408,7 +410,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

@@ -650,7 +650,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return true;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Model\DataObject\Data\ImageGallery) {
@@ -671,7 +673,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

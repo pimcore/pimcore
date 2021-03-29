@@ -21,7 +21,9 @@ use Pimcore\Marshaller\MarshallerInterface;
 
 class RgbaColor implements MarshallerInterface
 {
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
@@ -37,7 +39,9 @@ class RgbaColor implements MarshallerInterface
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function unmarshal($value, $params = [])
     {
         if (is_array($value)) {

@@ -21,7 +21,9 @@ use Pimcore\Marshaller\MarshallerInterface;
 
 class Geobounds implements MarshallerInterface
 {
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
@@ -34,7 +36,9 @@ class Geobounds implements MarshallerInterface
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function unmarshal($value, $params = [])
     {
         if (is_array($value)) {

@@ -504,7 +504,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $oldValue === $newValue;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Carbon) {
@@ -513,7 +515,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if ($value !== null) {

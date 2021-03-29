@@ -362,7 +362,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Model\DataObject\Data\RgbaColor) {
@@ -376,7 +378,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

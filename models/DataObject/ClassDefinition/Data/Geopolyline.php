@@ -393,7 +393,9 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         return true;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -409,7 +411,9 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         return null;
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
