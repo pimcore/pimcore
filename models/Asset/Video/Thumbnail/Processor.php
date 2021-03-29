@@ -245,7 +245,11 @@ class Processor
 
                     foreach ($streams as $steam) {
                         $storagePath = $parentPath . '/' . basename($steam);
-                        File::rename($steam, $storagePath);
+                        $source = fopen($steam, 'rb');
+                        Storage::get('thumbnail')->writeStream($storagePath, $source);
+                        fclose($source);
+                        unlink($steam);
+
                         // set proper permissions
                         @chmod($storagePath, File::getDefaultMode());
                     }
