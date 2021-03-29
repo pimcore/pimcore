@@ -1,14 +1,14 @@
 services:
 
-  _defaults:
-    autowire: true
-    autoconfigure: true
-    public: true
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
 
     pimcore.dataobject.blockdatamarshaller.consent:
         class: Pimcore\DataObject\BlockDataMarshaller\Consent
         tags:
-            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, key: 'block_consent', format: block, dataType: consent }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, key: 'block_consent' }
 
     pimcore.dataobject.blockdatamarshaller.date:
         class: Pimcore\DataObject\BlockDataMarshaller\Date
@@ -53,6 +53,6 @@ services:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_structuredTable, key: 'block_structuredTable' }
 
 
-  Pimcore\Element\MarshallerService:
-      arguments:
-          - '@service_container'
+    Pimcore\Element\MarshallerService:
+        arguments:
+            - '@service_container'
