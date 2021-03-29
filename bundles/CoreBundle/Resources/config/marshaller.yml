@@ -5,8 +5,7 @@ services:
         autoconfigure: true
         public: true
 
-    pimcore.dataobject.blockdatamarshaller.consent:
-        class: Pimcore\DataObject\BlockDataMarshaller\Consent
+    Pimcore\DataObject\BlockDataMarshaller\Consent:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, key: 'block_consent' }
 
