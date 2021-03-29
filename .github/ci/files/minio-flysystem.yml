@@ -3,8 +3,6 @@ services:
         class: 'Aws\S3\S3Client'
         arguments:
             -  endpoint: 'http://127.0.0.1:9000'
-               #accessKeyId: '%env(MINIO_ACCESS_KEY)%'
-               #accessKeySecret: '%env(MINIO_SECRET_KEY)%'
                use_path_style_endpoint: true
                region: 'default'
                version: 'latest'

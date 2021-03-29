@@ -509,10 +509,11 @@ class Asset extends Element\AbstractElement
 
                     $this->update($params);
 
+                    $storage = Storage::get('asset');
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        Storage::get('asset')->move($oldPath, $this->getRealFullPath());
+                    if ($oldPath && $oldPath != $this->getRealFullPath() && $storage->fileExists($oldPath)) {
+                        $storage->move($oldPath, $this->getRealFullPath());
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
                         $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
