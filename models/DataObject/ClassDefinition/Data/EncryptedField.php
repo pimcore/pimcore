@@ -438,6 +438,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /** See marshal
+     * TODO switch to denormalize as as soon as marshal gets kicked out. now it is to early because the delegate has
+     * to implement denormalize as well
      *
      * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
      *
