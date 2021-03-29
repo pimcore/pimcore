@@ -15,17 +15,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
+use Carbon\Carbon;
 use Pimcore\Marshaller\MarshallerInterface;
 
-class ExternalImage implements MarshallerInterface
+class Date implements MarshallerInterface
 {
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
-        if (is_array($value)) {
-            return new \Pimcore\Model\DataObject\Data\ExternalImage($value["url"]);
+        if ($value !== null) {
+            $result = new Carbon();
+            $result->setTimestamp($value);
+            return $result;
         }
 
         return null;
@@ -34,10 +37,8 @@ class ExternalImage implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
-        if ($value instanceof \Pimcore\Model\DataObject\Data\ExternalImage) {
-            return [
-                'url' => $value->getUrl()
-            ];
+        if ($value instanceof Carbon) {
+            return $value->getTimestamp();
         }
         return null;
     }

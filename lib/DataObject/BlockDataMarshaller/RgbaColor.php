@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 

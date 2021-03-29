@@ -15,20 +15,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 
-class Geopoint implements MarshallerInterface
+class Consent implements MarshallerInterface
 {
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
-            return [
-                'value' => $value['latitude'],
-                'value2' => $value['longitude'],
-            ];
+            return new \Pimcore\Model\DataObject\Data\Consent($value["consent"], $value["noteId"]);
         }
 
         return null;
@@ -37,10 +34,10 @@ class Geopoint implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
-        if (is_array($value)) {
+        if ($value instanceof \Pimcore\Model\DataObject\Data\Consent) {
             return [
-                'latitude' => $value['value'],
-                'longitude' => $value['value2']
+                'consent' => $value->getConsent(),
+                'noteId' => $value->getNoteId()
             ];
         }
         return null;

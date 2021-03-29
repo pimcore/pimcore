@@ -15,17 +15,24 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 
-class Consent implements MarshallerInterface
+class Geopolygon implements MarshallerInterface
 {
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
+
         if (is_array($value)) {
-            return new \Pimcore\Model\DataObject\Data\Consent($value["consent"], $value["noteId"]);
+            $resultItems = [];
+            foreach ($value as $p) {
+                $resultItems[] = [$p['latitude'], $p['longitude']];
+            }
+
+            $result = ["value" => json_encode($resultItems)];
+            return $result;
         }
 
         return null;
@@ -34,11 +41,19 @@ class Consent implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
-        if ($value instanceof \Pimcore\Model\DataObject\Data\Consent) {
-            return [
-                'consent' => $value->getConsent(),
-                'noteId' => $value->getNoteId()
-            ];
+        if ($value["value"] ?? null) {
+            $value = json_decode($value["value"], true);
+            $result = [];
+
+            if (is_array($value)) {
+                foreach ($value as $point) {
+                    $result[] = [
+                        "latitude" => $point[0],
+                        "longitude" => $point[1]
+                    ];
+                }
+            }
+            return $result;
         }
         return null;
     }

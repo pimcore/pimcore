@@ -15,19 +15,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 
-class StructuredTable implements MarshallerInterface
+class Geobounds implements MarshallerInterface
 {
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
-            $table = new \Pimcore\Model\DataObject\Data\StructuredTable();
-            $table->setData($value);
-            return $table;
+            return [
+                'value' => json_encode(["latitude" => $value["northEast"]["latitude"], "longitude" => $value["northEast"]["longitude"]]),
+                'value2' => json_encode(["latitude" => $value["southWest"]["latitude"], "longitude" =>  $value["southWest"]["longitude"]])
+            ];
         }
 
         return null;
@@ -36,8 +37,13 @@ class StructuredTable implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
-        if ($value instanceof \Pimcore\Model\DataObject\Data\StructuredTable) {
-            return $value->getData();
+        if (is_array($value)) {
+            $northEast = json_decode($value['value'], true);
+            $southWest = json_decode($value['value2'], true);
+            return [
+                "northEast" => $northEast,
+                "southWest" => $southWest
+            ];
         }
         return null;
     }

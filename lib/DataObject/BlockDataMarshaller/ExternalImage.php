@@ -15,20 +15,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 
-class Geobounds implements MarshallerInterface
+class ExternalImage implements MarshallerInterface
 {
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
-            return [
-                'value' => json_encode(["latitude" => $value["northEast"]["latitude"], "longitude" => $value["northEast"]["longitude"]]),
-                'value2' => json_encode(["latitude" => $value["southWest"]["latitude"], "longitude" =>  $value["southWest"]["longitude"]])
-            ];
+            return new \Pimcore\Model\DataObject\Data\ExternalImage($value["url"]);
         }
 
         return null;
@@ -37,12 +34,9 @@ class Geobounds implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
-        if (is_array($value)) {
-            $northEast = json_decode($value['value'], true);
-            $southWest = json_decode($value['value2'], true);
+        if ($value instanceof \Pimcore\Model\DataObject\Data\ExternalImage) {
             return [
-                "northEast" => $northEast,
-                "southWest" => $southWest
+                'url' => $value->getUrl()
             ];
         }
         return null;

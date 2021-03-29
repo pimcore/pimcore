@@ -15,24 +15,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 
-class Geopolygon implements MarshallerInterface
+class Geopoint implements MarshallerInterface
 {
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
-
         if (is_array($value)) {
-            $resultItems = [];
-            foreach ($value as $p) {
-                $resultItems[] = [$p['latitude'], $p['longitude']];
-            }
-
-            $result = ["value" => json_encode($resultItems)];
-            return $result;
+            return [
+                'value' => $value['latitude'],
+                'value2' => $value['longitude'],
+            ];
         }
 
         return null;
@@ -41,19 +37,11 @@ class Geopolygon implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
-        if ($value["value"] ?? null) {
-            $value = json_decode($value["value"], true);
-            $result = [];
-
-            if (is_array($value)) {
-                foreach ($value as $point) {
-                    $result[] = [
-                        "latitude" => $point[0],
-                        "longitude" => $point[1]
-                    ];
-                }
-            }
-            return $result;
+        if (is_array($value)) {
+            return [
+                'latitude' => $value['value'],
+                'longitude' => $value['value2']
+            ];
         }
         return null;
     }

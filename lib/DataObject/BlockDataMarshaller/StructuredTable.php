@@ -15,20 +15,19 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
+namespace Pimcore\DataObject\BlockDataMarshaller;
 
-use Carbon\Carbon;
 use Pimcore\Marshaller\MarshallerInterface;
 
-class Date implements MarshallerInterface
+class StructuredTable implements MarshallerInterface
 {
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
-        if ($value !== null) {
-            $result = new Carbon();
-            $result->setTimestamp($value);
-            return $result;
+        if (is_array($value)) {
+            $table = new \Pimcore\Model\DataObject\Data\StructuredTable();
+            $table->setData($value);
+            return $table;
         }
 
         return null;
@@ -37,8 +36,8 @@ class Date implements MarshallerInterface
     /** @inheritDoc */
     public function unmarshal($value, $params = [])
     {
-        if ($value instanceof Carbon) {
-            return $value->getTimestamp();
+        if ($value instanceof \Pimcore\Model\DataObject\Data\StructuredTable) {
+            return $value->getData();
         }
         return null;
     }
