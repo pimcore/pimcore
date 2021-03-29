@@ -113,9 +113,6 @@ final class MarshallerLocatorPass implements CompilerPassInterface
 
         $mapping = [];
 
-        $needle = 'pimcore.dataobject.fielddefinition.marshaller_';
-        $lengthOfNeedle = strlen($needle);
-
         foreach ($resolvers as $id => $tagEntries) {
             foreach ($tagEntries as $tagEntry) {
                 if (!isset($tagEntry['id'])) {
