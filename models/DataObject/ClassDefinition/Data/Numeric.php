@@ -18,11 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+    use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {

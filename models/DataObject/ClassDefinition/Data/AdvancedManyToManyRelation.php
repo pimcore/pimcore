@@ -1029,6 +1029,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function marshal($value, $object = null, $params = [])
     {
+        return $this->normalize($value, $params);
+    }
+
+    public function normalize($value, $params = [])
+    {
         if (is_array($value)) {
             $result = [];
             /** @var DataObject\Data\ElementMetadata $elementMetadata */
@@ -1052,6 +1057,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         return null;
+
     }
 
     /** See marshal
@@ -1068,6 +1074,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         if (is_array($value)) {
             $result = [];
+            $object = $params['object'] ?? null;
             foreach ($value as $elementMetadata) {
                 $elementData = $elementMetadata['element'];
 
@@ -1088,6 +1095,22 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             return $result;
         }
+    }
+
+
+    /** See marshal
+     * @param mixed $value
+     * @param DataObject\Concrete|null $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        $params = $params ?? [];
+        $params["object"] = $object;
+        return $this->denormalize($value, $params);
+
     }
 
     /**

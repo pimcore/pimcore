@@ -22,8 +22,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -886,9 +887,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -896,6 +894,14 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
+    {
+        return $this->normalize($value, $params);
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -924,7 +930,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @return mixed
      */
-    public function unmarshal($value, $object = null, $params = [])
+    public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -939,6 +945,19 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return $result;
         }
+        return null;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        return $this->denormalize($value, $params);
     }
 
     /**

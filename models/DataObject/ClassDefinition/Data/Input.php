@@ -18,8 +18,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Input extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Input extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
@@ -27,6 +29,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element

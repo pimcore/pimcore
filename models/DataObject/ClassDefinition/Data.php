@@ -1735,4 +1735,5 @@ abstract class Data
     {
         return $listing->addFilterByField($this->getName(), $operator, $data);
     }
+
 }

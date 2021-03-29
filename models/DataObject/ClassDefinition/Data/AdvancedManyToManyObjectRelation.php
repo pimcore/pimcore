@@ -1067,6 +1067,41 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function marshal($value, $object = null, $params = [])
     {
+        return $this->normalize($value, $params);
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $object = $params['object'] ?? null;
+            $result = [];
+            foreach ($value as $elementMetadata) {
+                $elementData = $elementMetadata['element'];
+
+                $type = $elementData['type'];
+                $id = $elementData['id'];
+                $target = Element\Service::getElementById($type, $id);
+                if ($target) {
+                    $columns = $elementMetadata['columns'];
+                    $fieldname = $elementMetadata['fieldname'];
+                    $data = $elementMetadata['data'];
+
+                    $item = new DataObject\Data\ObjectMetadata($fieldname, $columns, $target);
+                    $item->setOwner($object, $this->getName());
+                    $item->setData($data);
+                    $result[] = $item;
+                }
+            }
+
+            return $result;
+        }
+
+        return null;
+
+    }
+
+    public function normalize($value, $params = [])
+    {
         if (is_array($value)) {
             $result = [];
             /** @var DataObject\Data\ObjectMetadata $elementMetadata */
@@ -1091,6 +1126,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return null;
     }
 
+
     /** See marshal
      *
      * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
@@ -1103,30 +1139,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $result = [];
-            foreach ($value as $elementMetadata) {
-                $elementData = $elementMetadata['element'];
-
-                $type = $elementData['type'];
-                $id = $elementData['id'];
-                $target = Element\Service::getElementById($type, $id);
-                if ($target) {
-                    $columns = $elementMetadata['columns'];
-                    $fieldname = $elementMetadata['fieldname'];
-                    $data = $elementMetadata['data'];
-
-                    $item = new DataObject\Data\ObjectMetadata($fieldname, $columns, $target);
-                    $item->setOwner($object, $this->getName());
-                    $item->setData($data);
-                    $result[] = $item;
-                }
-            }
-
-            return $result;
-        }
-
-        return null;
+        $params = $params ?? null;
+        $params['object'] = $object;
+        return $this->denormalize($value, $params);
     }
 
     /**

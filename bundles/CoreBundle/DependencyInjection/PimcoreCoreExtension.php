@@ -127,6 +127,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('image_optimizers.yml');
         $loader->load('maintenance.yml');
         $loader->load('commands.yml');
+        $loader->load('marshaller.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
