@@ -5,6 +5,7 @@ namespace Pimcore\Tests\Model\Asset;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tool\Storage;
 
 /**
  * Class AssetTest
@@ -102,9 +103,10 @@ class AssetTest extends ModelTestCase
         $this->assertEquals(192, $thumbnail->getHeight());
 
         // check if the thumbnail file is there
-        $fsPathThumbnail = $thumbnail->getFileSystemPath(false);
-        $this->assertTrue(file_exists($fsPathThumbnail));
-        $thumbnailContent = file_get_contents($fsPathThumbnail);
+        $pathReference = $thumbnail->getPathReference(false);
+        $stream = Storage::get($pathReference['type'])->readStream($pathReference['src']);
+        $this->assertTrue(is_resource($stream));
+        $thumbnailContent = stream_get_contents($stream);
         $fileSizeThumbnail = strlen($thumbnailContent);
 
         $path = TestHelper::resolveFilePath('assets/images/image1.jpg');
@@ -113,7 +115,7 @@ class AssetTest extends ModelTestCase
 
         $this->assertTrue($fileSizeThumbnail < $fileSize);
 
-        $thumbnailimageSizeInfo = getimagesize($fsPathThumbnail);
+        $thumbnailimageSizeInfo = getimagesize($thumbnail->getLocalFile());
         $this->assertEquals(256, $thumbnailimageSizeInfo[0]);
         $this->assertEquals(192, $thumbnailimageSizeInfo[1]);
 
@@ -130,11 +132,23 @@ class AssetTest extends ModelTestCase
         $this->assertEquals(1536, $thumbnail->getHeight());
 
         // clean the thumbnails
-        $fsPathThumbnail = $thumbnail->getFileSystemPath(false);
-        $this->assertTrue(file_exists($fsPathThumbnail));
+        try {
+            $stream = $thumbnail->getStream();
+        } catch (\Exception $e) {
+            $stream = null;
+        }
+
+        $this->assertTrue(is_resource($stream));
 
         $this->testAsset->clearThumbnails(true);
-        $this->assertFalse(file_exists($fsPathThumbnail));
+
+        try {
+            $stream1 = $thumbnail->getStream();
+        } catch (\Exception $e) {
+            $stream1 = null;
+        }
+
+        $this->assertFalse(is_resource($stream1));
     }
 
     public function reloadAsset()

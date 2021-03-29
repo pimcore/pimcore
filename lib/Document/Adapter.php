@@ -14,28 +14,22 @@
 
 namespace Pimcore\Document;
 
-use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Model\Asset;
 
+/**
+ * @internal
+ */
 abstract class Adapter
 {
-    use TemporaryFileHelperTrait;
+    /**
+     * @var null|Asset\Document
+     */
+    protected $asset;
 
     /**
      * @var array
      */
     protected $tmpFiles = [];
-
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    protected function preparePath($path)
-    {
-        $path = $this->getLocalFile($path);
-
-        return $path;
-    }
 
     protected function removeTmpFiles()
     {
@@ -54,18 +48,25 @@ abstract class Adapter
         $this->removeTmpFiles();
     }
 
-    abstract public function load($path);
-
-    abstract public function saveImage($path, $page = 1, $resolution = 200);
+    /**
+     * @param Asset\Document $asset
+     * @return self
+     */
+    abstract public function load(Asset\Document $asset);
 
     /**
-     * @param string|null $path
-     *
-     * @return null|string
-     *
-     * @throws \Exception
+     * @param string $imageTargetPath
+     * @param int $page
+     * @param int $resolution
+     * @return mixed
      */
-    abstract public function getPdf($path = null);
+    abstract public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200);
+
+    /**
+     * @param Asset\Document|null $asset
+     * @return resource
+     */
+    abstract public function getPdf(?Asset\Document $asset = null);
 
     /**
      * @param string $fileType
@@ -82,10 +83,9 @@ abstract class Adapter
     abstract public function getPageCount();
 
     /**
-     * @param int|null $page
-     * @param string|null $path
-     *
-     * @return bool|string
+     * @param null|int $page
+     * @param Asset\Document|null $asset
+     * @return mixed
      */
-    abstract public function getText($page, $path);
+    abstract public function getText(?int $page = null, ?Asset\Document $asset = null);
 }

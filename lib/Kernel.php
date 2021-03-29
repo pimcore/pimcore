@@ -17,6 +17,7 @@ namespace Pimcore;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
+use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\Runtime;
@@ -307,6 +308,7 @@ abstract class Kernel extends SymfonyKernel
             new PrestaSitemapBundle(),
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
+            new FlysystemBundle(),
         ], 100);
 
         // pimcore bundles

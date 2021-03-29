@@ -17,14 +17,11 @@ namespace Pimcore\Image\Adapter;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\File;
-use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 
 class Imagick extends Adapter
 {
-    use TemporaryFileHelperTrait;
-
     /**
      * @var string
      */
@@ -59,8 +56,6 @@ class Imagick extends Adapter
             // eg. when using this function to obtain dimensions from an image
             $this->setPreserveColor($options['preserveColor']);
         }
-
-        $imagePath = $this->getLocalFile($imagePath);
 
         if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
             // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes

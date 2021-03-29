@@ -18,10 +18,10 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    private function getLocalFile($stream): string
+    protected static function getLocalFileFromStream($stream): string
     {
         if (!stream_is_local($stream)) {
-            $stream = $this->getTemporaryFileFromStream($stream);
+            $stream = self::getTemporaryFileFromStream($stream);
         }
 
         if (is_resource($stream)) {
@@ -34,12 +34,12 @@ trait TemporaryFileHelperTrait
 
     /**
      * @param resource|string $stream
-     *
+     * @param bool $keep whether to delete this file on shutdown or not
      * @return string
      *
      * @throws \Exception
      */
-    private function getTemporaryFileFromStream($stream): string
+    protected static function getTemporaryFileFromStream($stream, bool $keep = false): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');
@@ -50,11 +50,7 @@ trait TemporaryFileHelperTrait
             $fileExtension = File::getFileExtension($streamMeta['uri']);
         }
 
-        $tmpFilePath = sprintf('%s/temp-file-%s.%s',
-            PIMCORE_SYSTEM_TEMP_DIRECTORY,
-            uniqid() . '-' .  bin2hex(random_bytes(15)),
-            $fileExtension
-        );
+        $tmpFilePath = File::getLocalTempFilePath($fileExtension);
 
         $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
         if (!$dest) {
@@ -64,9 +60,11 @@ trait TemporaryFileHelperTrait
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 
-        register_shutdown_function(static function () use ($tmpFilePath) {
-            @unlink($tmpFilePath);
-        });
+        if(!$keep) {
+            register_shutdown_function(static function () use ($tmpFilePath) {
+                @unlink($tmpFilePath);
+            });
+        }
 
         return $tmpFilePath;
     }

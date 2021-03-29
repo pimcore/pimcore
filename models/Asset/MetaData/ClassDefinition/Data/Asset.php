@@ -146,7 +146,7 @@ class Asset extends Data
         }
 
         if ($data instanceof \Pimcore\Model\Asset) {
-            return $data->getFullPath();
+            return $data->getRealFullPath();
         }
 
         return $data;

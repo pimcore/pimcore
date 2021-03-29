@@ -101,7 +101,7 @@ server {
     
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$uri /app.php;
+        try_files /var/tmp/thumbnails$uri /app.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";

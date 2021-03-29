@@ -46,7 +46,6 @@ final class HousekeepingTask implements TaskInterface
      */
     public function execute()
     {
-        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_TEMPORARY_DIRECTORY, $this->tmpFileTime);
         foreach (['dev'] as $environment) {
             $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
 

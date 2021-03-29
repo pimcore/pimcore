@@ -66,12 +66,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: versioncleanup }
 
-    Pimcore\Maintenance\Tasks\VersionsCompressTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: versioncompress }
-
     Pimcore\Maintenance\Tasks\VersionsCleanupStackTraceDbTask:
         arguments:
             - '@logger'
