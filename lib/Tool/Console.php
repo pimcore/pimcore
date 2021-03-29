@@ -61,7 +61,7 @@ class Console
      * @param string $name
      * @param bool $throwException
      *
-     * @return bool|mixed|string
+     * @return bool|string
      *
      * @throws \Exception
      */
@@ -76,20 +76,22 @@ class Console
         if (method_exists(__CLASS__, $customSetupMethod)) {
             self::$customSetupMethod();
         }
-        
-        // Check for env variables
-        if ($value = getenv('PIMCORE_EXECUTABLE_' . strtoupper($name))) {
-            return $value;
-        }
 
         // use DI to provide the ability to customize / overwrite paths
         if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
             $value = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
-            if (!$value && $throwException) {
-                throw new \Exception("'$name' executable was disabled manually in parameters.yml");
+
+            if ($value === false) {
+                if ($throwException) {
+                    throw new \Exception("'$name' executable was disabled manually in parameters.yml");
+                }
+
+                return false;
             }
 
-            return $value;
+            if ($value) {
+                return $value;
+            }
         }
 
         $systemConfig = Config::getSystemConfiguration('general');
