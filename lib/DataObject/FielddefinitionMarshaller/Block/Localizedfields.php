@@ -19,9 +19,21 @@ namespace Pimcore\DataObject\FielddefinitionMarshaller\Block;
 
 use Pimcore\Marshaller\MarshallerInterface;
 use Pimcore\Element\MarshallerService;
+use Psr\Container\ContainerInterface;
 
 class Localizedfields implements MarshallerInterface
 {
+    /** @var MarshallerService  */
+    protected $marshallerService;
+
+    /**
+     * Localizedfields constructor.
+     * @param MarshallerService $marshallerService
+     */
+    public function __construct(MarshallerService $marshallerService) {
+        $this->marshallerService = $marshallerService;
+    }
+
     /** @inheritDoc */
     public function marshal($value, $params = [])
     {
@@ -37,11 +49,8 @@ class Localizedfields implements MarshallerInterface
                 foreach ($items as $key => $normalizedData) {
                     $childDef = $childDefs[$key];
 
-                    /** @var MarshallerService $marshallerService */
-                    $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
-
-                    if ($marshallerService->supportsFielddefinition('block', $childDef->getFieldtype())) {
-                        $marshaller = $marshallerService->buildFieldefinitionMarshaller('block', $childDef->getFieldtype());
+                    if ($this->marshallerService->supportsFielddefinition('block', $childDef->getFieldtype())) {
+                        $marshaller = $this->marshallerService->buildFieldefinitionMarshaller('block', $childDef->getFieldtype());
                         // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
                         $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $childDef, 'format' => 'block']);
                     } else {
@@ -71,11 +80,8 @@ class Localizedfields implements MarshallerInterface
                 foreach ($items as $key => $normalizedData) {
                     $childDef = $childDefs[$key];
 
-                    /** @var MarshallerService $marshallerService */
-                    $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
-
-                    if ($marshallerService->supportsFielddefinition('block', $childDef->getFieldtype())) {
-                        $marshaller = $marshallerService->buildFieldefinitionMarshaller('block', $childDef->getFieldtype());
+                    if ($this->marshallerService->supportsFielddefinition('block', $childDef->getFieldtype())) {
+                        $marshaller = $this->marshallerService->buildFieldefinitionMarshaller('block', $childDef->getFieldtype());
                         // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
                         $decodedData = $marshaller->unmarshal($normalizedData, ['object' => $object, 'fieldDefinition' => $childDef, 'format' => 'block']);
                     } else {
