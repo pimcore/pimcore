@@ -14,6 +14,7 @@
 
 namespace Pimcore\HttpKernel\CacheWarmer;
 
+use Doctrine\DBAL\Driver\DriverException;
 use Pimcore\Bootstrap;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -43,7 +44,12 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
         $this->modelClasses($classes);
 
         if (\Pimcore::isInstalled()) {
-            $this->dataObjectClasses($classes);
+            try {
+                $this->dataObjectClasses($classes);
+            }
+            catch (DriverException $exception) {
+                //Ignore. Database might not be setup yet
+            }
         }
 
         return $classes;
