@@ -458,6 +458,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * Get full path to the asset on the filesystem
      *
      * @return string
@@ -1368,6 +1369,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * @param string $type
      *
      * @return null|string
@@ -1916,6 +1918,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * @return string
      */
     public function getImageThumbnailSavePath()
@@ -1927,6 +1930,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * @return string
      */
     public function getVideoThumbnailSavePath()
