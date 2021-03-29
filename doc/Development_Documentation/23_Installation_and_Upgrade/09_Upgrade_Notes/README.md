@@ -1,9 +1,11 @@
 # Upgrade Notes
 
 ## 6.9.0
+- Constants `PIMCORE_ASSET_DIRECTORY`, `PIMCORE_VERSION_DIRECTORY`, `PIMCORE_TEMPORARY_DIRECTORY`, `PIMCORE_PUBLIC_VAR`, `PIMCORE_RECYCLEBIN_DIRECTORY`, `PIMCORE_USERIMAGE_DIRECTORY`  have been deprecated and will be removed in Pimcore 10.
 - Classes `Pimcore\Config\EnvironmentConfigInterface` and `\Pimcore\Config\EnvironmentConfig` have been deprecated and will be removed in Pimcore 10.
 - Constants `PIMCORE_DEBUG` `PIMCORE_DEVMODE` `PIMCORE_ENVIRONMENT` and `PIMCORE_KERNEL_DEBUG` have been deprecated and will be removed in Pimcore 10.
   
+- `\Pimcore\Maintenance\Tasks\VersionsCompressTask` has been deprecated and will be removed in Pimcore 10
 - `\Pimcore\Helper\RobotsTxt` has been deprecated and will be removed in Pimcore 10
 - [Documents] `Editable::factory()` is deprecated and will be removed in Pimcore 10, use `EditableLoader` service instead. 
 - [Data Objects] CSV import feature will be removed in Pimcore 10. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead
@@ -75,6 +77,17 @@ Pimcore::setDebugMode()
 \Pimcore\Config::setEnvironment()
 \Pimcore\Config::getEnvironmentConfig()
 \Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter::writeDebugModeConfig()
+\Pimcore\File::getDefaultMode()
+\Pimcore\Model\Asset::getFileSystemPath()
+\Pimcore\Model\Asset::getChecksum()
+\Pimcore\Model\Asset\Image::getRelativeFileSystemPath()
+\Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait::getChecksum()
+\Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait::getFileSystemPath()
+\Pimcore\Model\Version::getBinaryFilePath()
+\Pimcore\Model\Version::getLegacyFilePath()
+\Pimcore\Model\Version::getFilePath()
+\Pimcore\Model\Asset::getImageThumbnailSavePath()
+\Pimcore\Model\Asset::getVideoThumbnailSavePath()
 ```
 
 #### Migrating legacy module/controller/action configurations to new controller references
