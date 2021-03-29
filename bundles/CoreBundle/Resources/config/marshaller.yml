@@ -5,54 +5,54 @@ services:
     autoconfigure: true
     public: true
 
-  pimcore.dataobject.blockdatamarshaller.consent:
-      class: Pimcore\DataObject\BlockDataMarshaller\Consent
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, key: 'block_consent', format: block, dataType: consent }
+    pimcore.dataobject.blockdatamarshaller.consent:
+        class: Pimcore\DataObject\BlockDataMarshaller\Consent
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, key: 'block_consent', format: block, dataType: consent }
 
-  pimcore.dataobject.blockdatamarshaller.date:
-      class: Pimcore\DataObject\BlockDataMarshaller\Date
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_date, key: 'block_date' }
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_datetime, key: 'block_datetime' }
+    pimcore.dataobject.blockdatamarshaller.date:
+        class: Pimcore\DataObject\BlockDataMarshaller\Date
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_date, key: 'block_date' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_datetime, key: 'block_datetime' }
 
-  pimcore.dataobject.blockdatamarshaller.externalImage:
-      class: Pimcore\DataObject\BlockDataMarshaller\ExternalImage
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_externalImage,key: 'block_externalImage' }
+    pimcore.dataobject.blockdatamarshaller.externalImage:
+        class: Pimcore\DataObject\BlockDataMarshaller\ExternalImage
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_externalImage,key: 'block_externalImage' }
 
-  pimcore.dataobject.blockdatamarshaller.geopoint:
-    class: Pimcore\DataObject\BlockDataMarshaller\Geopoint
-    tags:
-        - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopoint, key: 'block_geopoint' }
+    pimcore.dataobject.blockdatamarshaller.geopoint:
+        class: Pimcore\DataObject\BlockDataMarshaller\Geopoint
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopoint, key: 'block_geopoint' }
 
-  pimcore.dataobject.blockdatamarshaller.geobounds:
-      class: Pimcore\DataObject\BlockDataMarshaller\Geobounds
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geobounds, key: 'block_geobounds' }
+    pimcore.dataobject.blockdatamarshaller.geobounds:
+        class: Pimcore\DataObject\BlockDataMarshaller\Geobounds
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geobounds, key: 'block_geobounds' }
 
-  pimcore.dataobject.blockdatamarshaller.geopolygon:
-      class: Pimcore\DataObject\BlockDataMarshaller\Geopolygon
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolygon, key: 'block_geopolygon' }
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolyline, key: 'block_geopolyline' }
+    pimcore.dataobject.blockdatamarshaller.geopolygon:
+        class: Pimcore\DataObject\BlockDataMarshaller\Geopolygon
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolygon, key: 'block_geopolygon' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_geopolyline, key: 'block_geopolyline' }
 
-  pimcore.dataobject.blockdatamarshaller.localizedfields:
-      class: Pimcore\DataObject\BlockDataMarshaller\Localizedfields
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_localizedfields, key: 'block_localizedfields' }
+    pimcore.dataobject.blockdatamarshaller.localizedfields:
+        class: Pimcore\DataObject\BlockDataMarshaller\Localizedfields
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_localizedfields, key: 'block_localizedfields' }
 
-  pimcore.dataobject.blockdatamarshaller.rgbaColor:
-      class: Pimcore\DataObject\BlockDataMarshaller\RgbaColor
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_rgbaColor, key: 'block_rgbaColor' }
+    pimcore.dataobject.blockdatamarshaller.rgbaColor:
+        class: Pimcore\DataObject\BlockDataMarshaller\RgbaColor
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_rgbaColor, key: 'block_rgbaColor' }
 
-  pimcore.dataobject.blockdatamarshaller.structuredTable:
-      class: Pimcore\DataObject\BlockDataMarshaller\StructuredTable
-      tags:
-          - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_structuredTable, key: 'block_structuredTable' }
+    pimcore.dataobject.blockdatamarshaller.structuredTable:
+        class: Pimcore\DataObject\BlockDataMarshaller\StructuredTable
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_structuredTable, key: 'block_structuredTable' }
 
 
   Pimcore\Element\MarshallerService:
-      arguments: ['@service_container', !tagged_locator { tag: 'pimcore.dataobject.fielddefinition.marshaller', index_by: 'key' }]
-
+      arguments:
+          - '@service_container'
