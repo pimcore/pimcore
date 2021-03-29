@@ -7,6 +7,7 @@ use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tool\Storage;
 
 /**
  * Class RecyclebinTest
@@ -53,11 +54,13 @@ class RecyclebinTest extends ModelTestCase
 
         $object->delete();
 
+        $storage = Storage::get('recycle_bin');
+
         //recycle asserts
         $recycledItems = new Item\Listing();
-        $this->assertFileExists($recycledItems->current()->getStoreageFile());
+        $this->assertTrue($storage->fileExists($recycledItems->current()->getStoreageFile()));
 
-        $recycledStorage = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
+        $recycledStorage = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
         $this->assertEquals($objectId, $recycledStorage->getId(), 'Recycled Object not found.');
 
         //restore asserts
@@ -94,8 +97,9 @@ class RecyclebinTest extends ModelTestCase
 
         $this->assertEquals(2, $recycledItems->current()->getAmount(), 'Expected 2 recycled item');
 
+        $storage = Storage::get('recycle_bin');
         //recycle bin item storage file
-        $recycledContent = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
+        $recycledContent = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
 
         $this->assertEquals($parentId, $recycledContent->getId(), 'Expected recycled parent object ID');
         $this->assertCount(1, $recycledContent->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true), 'Expected recycled child object');

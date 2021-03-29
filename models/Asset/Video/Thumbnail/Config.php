@@ -445,9 +445,4 @@ class Config extends Model\AbstractModel
     {
         $this->group = $group;
     }
-
-    public function clearTempFiles()
-    {
-        $this->doClearTempFiles(PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails', $this->getName());
-    }
 }

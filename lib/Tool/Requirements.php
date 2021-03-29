@@ -32,7 +32,7 @@ final class Requirements
         $checks = [];
 
         // filesystem checks
-        foreach ([PIMCORE_PUBLIC_VAR, PIMCORE_PRIVATE_VAR] as $varDir) {
+        foreach ([PIMCORE_PRIVATE_VAR] as $varDir) {
             $varWritable = true;
 
             try {

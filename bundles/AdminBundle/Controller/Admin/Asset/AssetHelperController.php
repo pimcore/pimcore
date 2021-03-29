@@ -754,7 +754,7 @@ final class AssetHelperController extends AdminController
                     }
 
                     if ($data instanceof Element\ElementInterface) {
-                        $data = $data->getFullPath();
+                        $data = $data->getRealFullPath();
                     }
                     $dataRows[] = $data;
                 }

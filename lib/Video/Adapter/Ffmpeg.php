@@ -15,17 +15,17 @@
 namespace Pimcore\Video\Adapter;
 
 use Pimcore\File;
-use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class Ffmpeg extends Adapter
 {
-    use TemporaryFileHelperTrait;
-
     /**
      * @var string
      */
@@ -82,8 +82,6 @@ class Ffmpeg extends Adapter
      */
     public function load($file, $options = [])
     {
-        $file = $this->getLocalFile($file);
-
         $this->file = $file;
         $this->setProcessId(uniqid());
 
@@ -222,10 +220,6 @@ class Ffmpeg extends Adapter
         }
 
         $realTargetPath = null;
-        if (!stream_is_local($file)) {
-            $realTargetPath = $file;
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ffmpeg-tmp-' . uniqid() . '.' . File::getFileExtension($file);
-        }
 
         $cmd = [
             self::getFfmpegCli(),
@@ -235,10 +229,6 @@ class Ffmpeg extends Adapter
         Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->run();
-
-        if ($realTargetPath) {
-            File::rename($file, $realTargetPath);
-        }
     }
 
     /**

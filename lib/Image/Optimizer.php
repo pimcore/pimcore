@@ -15,7 +15,9 @@
 namespace Pimcore\Image;
 
 use Pimcore\Exception\ImageOptimizationFailedException;
+use Pimcore\File;
 use Pimcore\Image\Optimizer\OptimizerInterface;
+use Pimcore\Tool\Storage;
 
 class Optimizer implements ImageOptimizerInterface
 {
@@ -29,20 +31,16 @@ class Optimizer implements ImageOptimizerInterface
      */
     public function optimizeImage($path)
     {
+        $extension = File::getFileExtension($path);
+        $storage = Storage::get('thumbnail');
         $optimizedImages = [];
-        $workingPath = $path;
-
-        if (!stream_is_local($path)) {
-            $workingPath = $this->createOutputImage();
-            copy($path, $workingPath);
-        }
-
-        $extension = pathinfo($workingPath, PATHINFO_EXTENSION);
+        $workingPath = File::getLocalTempFilePath($extension);
+        file_put_contents($workingPath, $storage->read($path));
 
         foreach ($this->optimizers as $optimizer) {
-            if ($optimizer->supports($path)) {
+            if ($optimizer->supports($storage->mimeType($path))) {
                 try {
-                    $optimizedFile = $optimizer->optimizeImage($workingPath, $this->createOutputImage($extension));
+                    $optimizedFile = $optimizer->optimizeImage($workingPath, File::getLocalTempFilePath($extension));
 
                     $optimizedImages[] = [
                         'filesize' => filesize($optimizedFile),
@@ -65,7 +63,7 @@ class Optimizer implements ImageOptimizerInterface
 
         // first entry is the smallest -> use this one
         if (count($optimizedImages)) {
-            copy($optimizedImages[0]['path'], $path);
+            $storage->write($path, file_get_contents($optimizedImages[0]['path']));
         }
 
         // cleanup
@@ -89,20 +87,5 @@ class Optimizer implements ImageOptimizerInterface
         }
 
         $this->optimizers[] = $optimizer;
-    }
-
-    /**
-     * @param string|null $type
-     *
-     * @return string
-     */
-    private function createOutputImage($type = null): string
-    {
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.uniqid('optimize', true);
-        if ($type) {
-            $file .= '.'.$type;
-        }
-
-        return $file;
     }
 }

@@ -14,6 +14,9 @@
 
 namespace Pimcore\Video;
 
+/**
+ * @internal
+ */
 abstract class Adapter
 {
     /**

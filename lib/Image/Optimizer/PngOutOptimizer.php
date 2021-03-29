@@ -48,8 +48,8 @@ final class PngOutOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
-    public function supports(string $input): bool
+    public function supports(string $mimeType): bool
     {
-        return $this->mimeTypeGuesser->guessMimeType($input) === 'image/png';
+        return $mimeType === 'image/png';
     }
 }

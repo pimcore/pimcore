@@ -475,8 +475,8 @@ final class SearchController extends AdminController
                     'type' => $hit->getId()->getType(),
                     'subtype' => $element->getType(),
                     'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
-                    'fullpath' => htmlspecialchars($element->getFullPath()),
-                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getFullPath())),
+                    'fullpath' => htmlspecialchars($element->getRealFullPath()),
+                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
                     'iconCls' => 'pimcore_icon_asset_default',
                 ];
 

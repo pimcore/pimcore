@@ -60,8 +60,7 @@ The following file is an example of how you can overwrite some paths:
 // to use this file you have to rename it to constants.php
 // you can use this file to overwrite the constants defined in lib/Bootstrap.php
 
-define("PIMCORE_ASSET_DIRECTORY", "/custom/path/to/assets");
-define("PIMCORE_TEMPORARY_DIRECTORY", "/my/tmp/path");
+define("PIMCORE_CLASS_DIRECTORY", "/my/tmp/path");
 
 ```
 

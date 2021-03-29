@@ -39,7 +39,7 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
             }
 
             throw new ImageOptimizationFailedException(sprintf('Could not create optimized image with command "%s"',
-                $command));
+                $process->getCommandLine()));
         }
 
         throw new ImageOptimizationFailedException('Could not find executable');
