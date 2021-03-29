@@ -23,7 +23,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore: true,
+        classificationstore: false,
         block: false,
         encryptedField: false
     },
