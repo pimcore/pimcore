@@ -39,6 +39,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -158,7 +159,7 @@ final class LoginController extends AdminController implements BruteforceProtect
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -192,7 +193,7 @@ final class LoginController extends AdminController implements BruteforceProtect
 
                 try {
                     $event = new LostPasswordEvent($user, $loginUrl);
-                    $this->get('event_dispatcher')->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
+                    $eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
 
                     // only send mail if it wasn't prevented in event
                     if ($event->getSendMail()) {

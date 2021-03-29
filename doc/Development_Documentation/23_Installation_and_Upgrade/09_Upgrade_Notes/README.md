@@ -138,6 +138,7 @@
 - `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.
 - Removed deprecated Twig extension `pimcore_action()`.
 - Removed method `getFlag()` from `Pimcore\Config`.
+- Removed `Pimcore\Report` class.
 - [Versioning] Default behavior has been changed to following:
     - Empty values for `steps` & `days` => unlimited versions.
     - Value 0 for `steps` or `days` => no version will be saved at all & existing will be cleaned up.

@@ -1348,7 +1348,7 @@ final class DocumentController extends ElementControllerBase implements KernelCo
         $translations = is_null($translations) ? $service->getTranslations($document) : $translations;
 
         foreach ($languages as $language) {
-            if ($languageDocument = $translations[$language]) {
+            if ($languageDocument = $translations[$language] ?? false) {
                 $languageDocument = Document::getById($languageDocument);
                 $config[$language] = [
                     'text' => $languageDocument->getKey(),
