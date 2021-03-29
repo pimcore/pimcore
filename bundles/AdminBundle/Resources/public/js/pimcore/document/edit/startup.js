@@ -115,7 +115,7 @@ Ext.onReady(function () {
         // check for duplicate editables
         var editableHtmlEls = {};
         document.querySelectorAll('.pimcore_editable').forEach(editableEl => {
-            if(editableHtmlEls[editableEl.id]) {
+            if(editableHtmlEls[editableEl.id] && editableEl.dataset.name) {
                 let message = "Duplicate editable name: " + editableEl.dataset.name;
                 pimcore.helpers.showNotification("ERROR", message, "error");
                 throw message;

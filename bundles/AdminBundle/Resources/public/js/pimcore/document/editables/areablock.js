@@ -718,10 +718,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
     addBlockAfter : function (element, type, forceReload) {
         var index = this.getElementIndex(element) + 1;
 
-        if(!this.elements.length) {
-            index = 0;
-        }
-
         this.addBlockAt(type, index, forceReload);
     },
 
@@ -732,6 +728,9 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
     addBlockAt: function (type, index, forceReload) {
         var limits = this.config["limits"] || {};
+        if (!this.elements.length) {
+            index = 0;
+        }
 
         if(typeof this.config["limit"] != "undefined" && this.elements.length >= this.config.limit) {
             Ext.MessageBox.alert(t("error"), t("limit_reached"));
