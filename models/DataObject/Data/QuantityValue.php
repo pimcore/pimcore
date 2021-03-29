@@ -18,11 +18,13 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class QuantityValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+    use ObjectVarTrait;
 
     /**
      * @var float

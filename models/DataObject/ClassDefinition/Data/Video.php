@@ -20,9 +20,10 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -611,40 +612,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof DataObject\Data\Video) {
-            $result = [];
-            $result['type'] = $value->getType();
-            if ($value->getTitle()) {
-                $result['title'] = $value->getTitle();
-            }
-
-            if ($value->getDescription()) {
-                $result['description'] = $value->getDescription();
-            }
-
-            $poster = $value->getPoster();
-            if ($poster) {
-                $result['poster'] = [
-                    'type' => Model\Element\Service::getType($poster),
-                    'id' => $poster->getId(),
-                ];
-            }
-
-            $data = $value->getData();
-
-            if ($data && $value->getType() == 'asset') {
-                $result['data'] = [
-                    'type' => Model\Element\Service::getType($data),
-                    'id' => $data->getId(),
-                ];
-            } else {
-                $result['data'] = $data;
-            }
-
-            return $result;
-        }
-
-        return null;
+        return $this->normalize($value, $params);
     }
 
     /** See marshal
@@ -656,26 +624,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $video = new DataObject\Data\Video();
-            $video->setType($value['type']);
-            $video->setTitle($value['title']);
-            $video->setDescription($value['description']);
-
-            if ($value['poster']) {
-                $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
-            }
-
-            if ($value['data']) {
-                if (is_array($value['data'])) {
-                    $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
-                } else {
-                    $video->setData($value['data']);
-                }
-            }
-
-            return $video;
-        }
+        return $this->denormalize($value, $params);
     }
 
     /**
@@ -725,4 +674,68 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return true;
     }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Video) {
+            $result = [];
+            $result['type'] = $value->getType();
+            if ($value->getTitle()) {
+                $result['title'] = $value->getTitle();
+            }
+
+            if ($value->getDescription()) {
+                $result['description'] = $value->getDescription();
+            }
+
+            $poster = $value->getPoster();
+            if ($poster) {
+                $result['poster'] = [
+                    'type' => Model\Element\Service::getType($poster),
+                    'id' => $poster->getId(),
+                ];
+            }
+
+            $data = $value->getData();
+
+            if ($data && $value->getType() == 'asset') {
+                $result['data'] = [
+                    'type' => Model\Element\Service::getType($data),
+                    'id' => $data->getId(),
+                ];
+            } else {
+                $result['data'] = $data;
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $video = new DataObject\Data\Video();
+            $video->setType($value['type']);
+            $video->setTitle($value['title']);
+            $video->setDescription($value['description']);
+
+            if ($value['poster']) {
+                $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
+            }
+
+            if ($value['data']) {
+                if (is_array($value['data'])) {
+                    $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
+                } else {
+                    $video->setData($value['data']);
+                }
+            }
+
+            return $video;
+        }
+        return null;
+    }
+
 }

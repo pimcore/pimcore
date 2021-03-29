@@ -19,9 +19,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
+class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface,
+    NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -389,5 +391,39 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         }
 
         return true;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $points = [];
+            $fd = new Geopoint();
+            foreach ($value as $p) {
+                $points[] = $fd->normalize($p);
+            }
+
+            return $points;
+
+        }
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $point) {
+                $result[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
+            }
+            return $result;
+        }
+        return null;
+
     }
 }

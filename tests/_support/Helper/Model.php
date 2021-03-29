@@ -964,6 +964,12 @@ class Model extends AbstractDefinitionHelper
         return $cm->setupObjectbrick($name, $filename);
     }
 
+    public function setupUnitDefinitions() {
+        DataObject\QuantityValue\Unit::create(["abbreviation" => "mm"])->save();
+        DataObject\QuantityValue\Unit::create(["abbreviation" => "cm"])->save();
+        DataObject\QuantityValue\Unit::create(["abbreviation" => "m"])->save();
+    }
+
     /**
      * Initialize widely used class definitions
      */
@@ -971,6 +977,7 @@ class Model extends AbstractDefinitionHelper
     {
         $cm = $this->getClassManager();
 
+        $this->setupUnitDefinitions();
         $this->setupFieldcollection_Unittestfieldcollection();
 
         $this->setupPimcoreClass_Unittest();
