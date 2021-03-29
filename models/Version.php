@@ -425,6 +425,7 @@ class Version extends AbstractModel
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * Returns the path on the file system
      *
      * @param int|null $id
@@ -447,6 +448,7 @@ class Version extends AbstractModel
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * @return string
      */
     public function getBinaryFilePath()
@@ -461,6 +463,7 @@ class Version extends AbstractModel
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
      * @return string
      */
     public function getLegacyFilePath()
