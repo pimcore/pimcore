@@ -20,6 +20,9 @@ use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class Ffmpeg extends Adapter
 {
     /**

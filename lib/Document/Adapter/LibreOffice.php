@@ -22,6 +22,9 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class LibreOffice extends Ghostscript
 {
     /**

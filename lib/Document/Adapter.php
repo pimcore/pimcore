@@ -16,6 +16,9 @@ namespace Pimcore\Document;
 
 use Pimcore\Model\Asset;
 
+/**
+ * @internal
+ */
 abstract class Adapter
 {
     /**

@@ -23,6 +23,9 @@ use Pimcore\Tool\Console;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class Ghostscript extends Adapter
 {
     use TemporaryFileHelperTrait;
