@@ -230,12 +230,12 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             this.reloadDocument();
         } else {
             let template = this.config['template']['html'];
-
             for (let p = 0; p < amount; p++) {
                 nextKey++;
                 let blockHtml = template.replaceAll(':1000000.', ':' + nextKey + '.');
                 blockHtml = blockHtml.replaceAll('_1000000_', '_' + nextKey + '_');
                 blockHtml = blockHtml.replaceAll('="1000000"', '="' + nextKey + '"');
+                blockHtml = blockHtml.replaceAll(', 1000000"', ', ' + nextKey + '"');
 
                 if(!this.elements.length) {
                     Ext.get(this.id).setHtml(blockHtml);
@@ -244,7 +244,7 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
                 }
 
                 this.config['template']['editables'].forEach(editableDef => {
-                    let editable = Object.assign({}, editableDef);
+                    let editable = Ext.clone(editableDef);
                     editable['id'] = editable['id'].replace('_1000000_', '_' + nextKey + '_');
                     editable['name'] = editable['name'].replace(':1000000.', ':' + nextKey + '.');
                     editableManager.addByDefinition(editable);
@@ -263,11 +263,6 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
         this.elements.splice(index, 1);
         Ext.get(element).remove();
-
-        // there is no existing block element anymore
-        if (this.elements.length < 1) {
-            this.createInitalControls();
-        }
 
         if(this.config['reload'] === true) {
             this.reloadDocument();

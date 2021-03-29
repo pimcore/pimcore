@@ -746,11 +746,6 @@ body > .x-mask {
     border-color: #3c3f41;
 }
 
-.x-btn-default-small {
-    background-color: #3c3f41 !important;
-    border-color: #000 !important;
-}
-
 .x-window-default {
     border-color: #3c3f41;
 }
@@ -758,7 +753,6 @@ body > .x-mask {
 .x-keyboard-mode .x-tab-focus.x-tab-default {
     outline: none;
 }
-
 
 .x-keyboard-mode .x-panel-header-title-light.x-title-focus {
     outline: none;
