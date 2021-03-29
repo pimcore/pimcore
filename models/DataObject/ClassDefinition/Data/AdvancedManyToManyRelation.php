@@ -1060,17 +1060,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     }
 
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
+    public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -1099,6 +1089,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
 
     /** See marshal
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete|null $object
      * @param mixed $params
