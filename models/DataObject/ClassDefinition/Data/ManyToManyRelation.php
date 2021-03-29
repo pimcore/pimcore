@@ -925,8 +925,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /** See marshal
      *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
