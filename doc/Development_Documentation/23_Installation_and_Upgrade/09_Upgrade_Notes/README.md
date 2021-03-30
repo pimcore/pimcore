@@ -4,7 +4,7 @@
 - `\Pimcore\Helper\RobotsTxt` has been removed
 - `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead. 
 - [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
-- [Data Objects] Removed CSV import feature. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead.
+- [Data Objects] Removed CSV import feature. Use https://github.com/pimcore/data-importer or https://github.com/w-vision/DataDefinitions instead.
 - [DataObjects] marked `Pimcore\DataObject\GridColumnConfig\Operator` operator classes as final and internal
 - [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` has been replaced with `GeoCoordinates`. Changed the signature of `__construct`.
 - Added `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::getFilterValues()` with the same signature as `getFilterFrontend()`. To upgrade, rename `getFilterFrontend()` to `getFilterValues()` and remove the rendering stuff to just return the data array.
