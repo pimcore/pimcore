@@ -834,7 +834,7 @@ class QueryBuilder
      * @param int $fetchMode OPTIONAL
      * @param  mixed  $bind An array of data to bind to the placeholders.
      *
-     * @return \Doctrine\DBAL\Driver\Statement
+     * @return ResultStatement
      */
     public function query($fetchMode = null, $bind = [])
     {
@@ -857,7 +857,7 @@ class QueryBuilder
      *
      * Uses {@see Connection::executeQuery}
      *
-     * @return ResultStatement|int
+     * @return ResultStatement
      */
     public function execute()
     {
