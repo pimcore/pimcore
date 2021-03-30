@@ -15,13 +15,32 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\BlockDataMarshaller;
+namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
 use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
+use Pimcore\Tool\Serialize;
 
-class RgbaColor implements MarshallerInterface
+class Table implements MarshallerInterface
 {
+    /** { @inheritDoc } */
+    public function marshal($value, $params = [])
+    {
+        if (!is_null($value)) {
+            return ['value' => Serialize::serialize($value)];
+        }
+        return null;
 
-    use RgbaColorTrait;
+    }
+
+    /** { @inheritDoc } */
+    public function unmarshal($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = Serialize::unserialize($value['value']);
+            return $result;
+        }
+        return null;
+
+    }
 }

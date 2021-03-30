@@ -15,13 +15,31 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\BlockDataMarshaller;
+namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
 use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
 
-class RgbaColor implements MarshallerInterface
+class Multiselect implements MarshallerInterface
 {
+    /** { @inheritDoc } */
+    public function marshal($value, $params = [])
+    {
+        if (is_array($value)) {
+            return ["value" => implode(',', $value)];
+        }
 
-    use RgbaColorTrait;
+        return null;
+
+    }
+
+    /** { @inheritDoc } */
+    public function unmarshal($value, $params = [])
+    {
+        if (is_array($value) && strlen($value['value']) > 0) {
+            return explode(',', $value['value']);
+        }
+        return null;
+
+    }
 }
