@@ -134,7 +134,7 @@ final class NotificationController extends AdminController
     {
         $this->checkPermission('notifications');
 
-        $filter = ['recipient = ?' => (int) $this->getAdminUser()->getId()];
+        $filter = ['recipient' => (int) $this->getAdminUser()->getId()];
         $parser = new NotificationServiceFilterParser($request);
 
         foreach ($parser->parse() as $key => $val) {
