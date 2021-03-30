@@ -246,7 +246,7 @@ class Processor
             $asset->save();
         }
 
-        if($instance->getDeleteSourceAfterFinished()) {
+        if ($instance->getDeleteSourceAfterFinished()) {
             @unlink($instance->getDeleteSourceAfterFinished());
         }
 

@@ -421,7 +421,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             // param "dir" contains the relative path of the file
             $parent = Asset::getById($request->get('parentId'));
             $dir = $request->get('dir');
-            if(strpos($dir, '..') !== false) {
+            if (strpos($dir, '..') !== false) {
                 throw new \Exception('not allowed');
             }
 
@@ -1104,6 +1104,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         }
 
         $stream = $asset->getStream();
+
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1364,7 +1365,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
                 }
 
                 $stream = $folder->getPreviewImage((bool)$request->get('hdpi'));
-                if(!$stream) {
+                if (!$stream) {
                     $response = new BinaryFileResponse(PIMCORE_PATH . '/bundles/AdminBundle/Resources/public/img/blank.png');
                 } else {
                     $response = new StreamedResponse(function () use ($stream) {
@@ -1488,7 +1489,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $thumb = $document->getImageThumbnail($thumbnail, $page);
 
         $stream = $thumb->getStream();
-        if($stream) {
+        if ($stream) {
             $response = new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
             }, 200, [
@@ -1646,6 +1647,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $storage = Tool\Storage::get('thumbnail');
         if ($storage->fileExists($storagePath)) {
             $stream = $storage->readStream($storagePath);
+
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
             }, 200, [

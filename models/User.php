@@ -527,11 +527,11 @@ class User extends User\UserRole
         $originalFileStoragePath = $this->getOriginalImageStoragePath();
         $thumbFileStoragePath = $this->getThumbnailImageStoragePath();
 
-        if($storage->fileExists($originalFileStoragePath)) {
+        if ($storage->fileExists($originalFileStoragePath)) {
             $storage->delete($originalFileStoragePath);
         }
 
-        if($storage->fileExists($thumbFileStoragePath)) {
+        if ($storage->fileExists($thumbFileStoragePath)) {
             $storage->delete($thumbFileStoragePath);
         }
 

@@ -35,6 +35,7 @@ trait TemporaryFileHelperTrait
     /**
      * @param resource|string $stream
      * @param bool $keep whether to delete this file on shutdown or not
+     *
      * @return string
      *
      * @throws \Exception
@@ -60,7 +61,7 @@ trait TemporaryFileHelperTrait
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 
-        if(!$keep) {
+        if (!$keep) {
             register_shutdown_function(static function () use ($tmpFilePath) {
                 @unlink($tmpFilePath);
             });

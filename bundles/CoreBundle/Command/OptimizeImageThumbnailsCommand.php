@@ -20,7 +20,6 @@ use Pimcore\Image\ImageOptimizerInterface;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
 
 /**
  * @internal
@@ -60,8 +59,7 @@ class OptimizeImageThumbnailsCommand extends AbstractCommand
 
         /** @var StorageAttributes $item */
         foreach ($storage->listContents('/', true) as $item) {
-
-            if($item->isFile()) {
+            if ($item->isFile()) {
                 $originalFilesize = $storage->fileSize($item->path());
 
                 $this->optimizer->optimizeImage($item->path());

@@ -20,7 +20,6 @@ namespace Pimcore\Model\Element\Recyclebin;
 use DeepCopy\TypeMatcher\TypeMatcher;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Cache;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -37,6 +36,7 @@ use Pimcore\Tool\Storage;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Element\Recyclebin\Item\Dao getDao()
  */
 class Item extends Model\AbstractModel
@@ -238,7 +238,7 @@ class Item extends Model\AbstractModel
         });
 
         /** @var StorageAttributes $item */
-        foreach($files as $item) {
+        foreach ($files as $item) {
             $storage->delete($item->path());
         }
 
