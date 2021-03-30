@@ -360,6 +360,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * TODO switch to normalize as as soon as marshal gets kicked out. now it is to early because the delegate has
      * to implement normalize as well
      *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * Encode value for packing it into a single column.
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
@@ -390,6 +392,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /** See marshal
      * TODO switch to denormalize as as soon as marshal gets kicked out. now it is to early because the delegate has
      * to implement denormalize as well
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
      *
      * @param mixed $value
      * @param Model\DataObject\Concrete $object

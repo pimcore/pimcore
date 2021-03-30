@@ -805,6 +805,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -838,8 +841,12 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return null;
     }
 
-    /**
-     * { @inheritdoc }
+    /** See marshal
+     *
+     * @param mixed $value
+     * @param mixed $params
+     *
+     * @return mixed
      */
     public function denormalize($value, $params = [])
     {
@@ -859,12 +866,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return null;
     }
 
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
+    /**
+     * { @inheritdoc }
      */
     public function unmarshal($value, $object = null, $params = [])
     {
