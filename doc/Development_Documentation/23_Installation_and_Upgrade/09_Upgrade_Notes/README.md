@@ -1,6 +1,8 @@
 # Upgrade Notes
 
 ## 6.9.0
+- [Data Objects] Data types: `marshal`/`unmarshal` is deprecated and will be removed in Pimcore 10. Use `normalize`/`denormalize` instead.
+  For custom data types implement the `NormalizerInterface`
 - Constants `PIMCORE_ASSET_DIRECTORY`, `PIMCORE_VERSION_DIRECTORY`, `PIMCORE_TEMPORARY_DIRECTORY`, `PIMCORE_PUBLIC_VAR`, `PIMCORE_RECYCLEBIN_DIRECTORY`, `PIMCORE_USERIMAGE_DIRECTORY`  have been deprecated and will be removed in Pimcore 10.
 - Classes `Pimcore\Config\EnvironmentConfigInterface` and `\Pimcore\Config\EnvironmentConfig` have been deprecated and will be removed in Pimcore 10.
 - Constants `PIMCORE_DEBUG` `PIMCORE_DEVMODE` `PIMCORE_ENVIRONMENT` and `PIMCORE_KERNEL_DEBUG` have been deprecated and will be removed in Pimcore 10.
