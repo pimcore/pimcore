@@ -126,7 +126,11 @@ class ClassesRebuildCommand extends AbstractCommand
                 $output->writeln(sprintf('%s saved', $brickDefinition->getKey()));
             }
 
-            $brickDefinition->save(false);
+            try {
+                $brickDefinition->save(false);
+            } catch (\Exception $e) {
+                $output->write((string)$e);
+            }
         }
 
         if ($output->isVerbose()) {

@@ -453,6 +453,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $containerDefinition[$cl['classname']][$cl['fieldname']][] = $this->key;
 
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
+                if (!$class) {
+                    throw new \Exception('Could not load class ' . $cl['classname']);
+                }
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
                 if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
