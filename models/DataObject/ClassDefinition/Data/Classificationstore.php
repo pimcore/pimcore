@@ -142,13 +142,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        $fieldData = [];
-        $metaData = [];
 
         if (!$data instanceof DataObject\Classificationstore) {
             return [];
         }
 
+        $fieldData = [];
+        $metaData = [];
         $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
 
         // replace the real data with the data for the editmode
