@@ -242,6 +242,16 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        while ($this->loop()) {
+            yield $this->getCurrentIndex();
+        }
+    }
+
+    /**
      * @return Block\Item[]
      */
     public function getElements()
@@ -257,6 +267,17 @@ class Scheduledblock extends Block implements BlockInterface
         }
 
         return $list;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function setConfig($config)
+    {
+        $config['reload'] = true;
+        parent::setConfig($config);
+
+        return $this;
     }
 
     /**
