@@ -4014,9 +4014,7 @@ body > .x-mask {
 
 .x-btn.x-btn-menu-active.x-btn-default-small,
 .x-btn.x-btn-pressed.x-btn-default-small {
-    border-color: #42719a;
     background-image: none;
-    background-color: #477aa6;
 }
 
 .x-keyboard-mode .x-btn-focus.x-btn-menu-active.x-btn-default-small,
