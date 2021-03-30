@@ -16,6 +16,7 @@ namespace Pimcore\Db;
 
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 
@@ -27,7 +28,7 @@ interface ConnectionInterface extends Connection
      * @param array $types
      * @param QueryCacheProfile|null $qcp
      *
-     * @return \Doctrine\DBAL\Driver\Statement
+     * @return ResultStatement
      */
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null);
 

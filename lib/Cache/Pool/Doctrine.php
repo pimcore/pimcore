@@ -52,7 +52,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
             return;
         }
 
-        $results = $this->db->fetchAll('SELECT id, 
+        $results = $this->db->fetchAll('SELECT id,
           (CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END) as data
             FROM cache WHERE id IN (?)', [$now, $ids], [\PDO::PARAM_INT, Connection::PARAM_STR_ARRAY]);
 
@@ -200,20 +200,13 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
                 // remove item from queue to make sure it is processed only once
                 unset($this->deferred[$key]);
 
-                $insertQuery = <<<SQL
-INSERT INTO
-    cache (id, data, expire, mtime) VALUES (:id, :data, :expire, :mtime)
-    ON DUPLICATE KEY UPDATE data = VALUES(data), expire = VALUES(expire), mtime = VALUES(mtime)
-SQL;
-
-                $stmt = $this->db->executeQuery($insertQuery, [
+                $result = $this->db->insertOrUpdate('cache', [
                     'id' => $item->getKey(),
                     'data' => $this->serializeData($item->get()),
                     'expire' => $item->getExpiry(),
                     'mtime' => time(),
                 ]);
 
-                $result = $stmt->execute();
                 if (!$result) {
                     throw new CacheException(sprintf('Failed to execute insert query for item %s', $item->getKey()));
                 }

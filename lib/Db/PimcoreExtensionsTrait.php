@@ -15,6 +15,7 @@
 namespace Pimcore\Db;
 
 use Doctrine\DBAL\Cache\QueryCacheProfile;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
@@ -75,16 +76,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @see \Doctrine\DBAL\Connection::executeQuery
-     *
-     * @param string                                      $query  The SQL query to execute.
-     * @param array                                       $params The parameters to bind to the query, if any.
-     * @param array                                       $types  The types the previous parameters are in.
-     * @param \Doctrine\DBAL\Cache\QueryCacheProfile|null $qcp    The query cache profile, optional.
-     *
-     * @return \Doctrine\DBAL\Driver\Statement The executed statement.
-     *
-     * @throws \Doctrine\DBAL\DBALException
+     * { @inheritdoc }
      */
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null)
     {
