@@ -810,32 +810,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
-     */
-    public function getGetterCode($class)
-    {
-        $code = '';
-        $code .= parent::getGetterCode($class);
-
-        return $code;
-    }
-
-    /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
-     */
-    public function getSetterCode($class)
-    {
-        $code = '';
-        $code .= parent::getSetterCode($class);
-
-        return $code;
-    }
-
-    /**
      * @param int $keyId
      *
      * @return mixed
