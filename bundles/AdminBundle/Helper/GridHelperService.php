@@ -487,7 +487,6 @@ class GridHelperService
         $colMappings = [
             'key' => 'o_key',
             'filename' => 'o_key',
-            'fullpath' => ['o_path', 'o_key'],
             'id' => 'oo_id',
             'published' => 'o_published',
             'modificationDate' => 'o_modificationDate',
@@ -524,6 +523,9 @@ class GridHelperService
             if (!(substr($orderKey, 0, 1) == '~')) {
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
+                } elseif ($orderKey === 'fullpath') {
+                    $orderKey = 'CAST(CONCAT(o_path, o_key) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                    $doNotQuote = true;
                 } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\QuantityValue) {
                     $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
                     $doNotQuote = true;
