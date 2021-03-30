@@ -181,8 +181,13 @@ input.cke_dialog_ui_input_tel {
     border-left: 0;
 }
 
-.pimcore_block_buttons .x-btn-over {
+.pimcore_block_buttons .x-btn-over,
+.pimcore_block_buttons .x-btn-focus.x-btn-default-small,
+.pimcore_block_buttons .x-btn-pressed.x-btn-default-small
+{
     background-color: #ececec;
+    border-color: #e4e4e4;
+    border-left: 0;
 }
 
 .pimcore_area_buttons .x-btn {
