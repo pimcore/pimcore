@@ -37,6 +37,7 @@
 
 namespace Pimcore\Db\ZendCompatibility;
 
+use Doctrine\DBAL\Driver\ResultStatement;
 use Exception;
 use Pimcore\Db\ConnectionInterface;
 
@@ -856,7 +857,7 @@ class QueryBuilder
      *
      * Uses {@see Connection::executeQuery}
      *
-     * @return \Doctrine\DBAL\Driver\Statement|int
+     * @return ResultStatement|int
      */
     public function execute()
     {
