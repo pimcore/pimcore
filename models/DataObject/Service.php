@@ -545,12 +545,14 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        $inheritanceEnabled = AbstractObject::getGetInheritedValues();
+        AbstractObject::setGetInheritedValues(true);
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {
             $result = $result->value;
 
             if (!empty($config->renderer)) {
-                $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->renderer);
+                $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\'.ucfirst($config->renderer);
                 /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
                 $rendererImpl = new $classname();
                 if (method_exists($rendererImpl, 'getDataForGrid')) {
@@ -560,6 +562,7 @@ class Service extends Model\Element\Service
 
             return $result;
         }
+        AbstractObject::setGetInheritedValues($inheritanceEnabled);
 
         return null;
     }
