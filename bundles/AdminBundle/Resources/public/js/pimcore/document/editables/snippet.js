@@ -144,6 +144,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
     updateDimensions: function () {
         var body = this.getBody();
         var parent = body.getParent();
+        this.element.getEl().setStyle("height", "auto");
         body.setStyle("height", "auto");
         parent.setStyle("height", "auto");
         body.removeCls("pimcore_editable_snippet_empty");
