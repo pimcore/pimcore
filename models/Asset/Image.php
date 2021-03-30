@@ -92,7 +92,7 @@ class Image extends Model\Asset
 
     protected function postPersistData()
     {
-        if($this->getDataChanged()) {
+        if ($this->getDataChanged()) {
             if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
                 $this->detectFaces();
             }
@@ -223,6 +223,7 @@ class Image extends Model\Asset
 EOT;
             $storagePath = $this->getLowQualityPreviewStoragePath();
             Storage::get('thumbnail')->write($storagePath, $svg);
+
             return $storagePath;
         }
 

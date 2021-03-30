@@ -46,8 +46,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
         if (\Pimcore::isInstalled()) {
             try {
                 $this->dataObjectClasses($classes);
-            }
-            catch (\Exception $exception) {
+            } catch (\Exception $exception) {
                 if (!$exception instanceof DriverException) {
                     throw $exception;
                 }

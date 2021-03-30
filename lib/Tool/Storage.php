@@ -40,6 +40,7 @@ class Storage
     public static function get(string $name): FilesystemOperator
     {
         $storage = \Pimcore::getContainer()->get(self::class);
+
         return $storage->getStorage($name);
     }
 }

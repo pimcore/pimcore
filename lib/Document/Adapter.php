@@ -50,6 +50,7 @@ abstract class Adapter
 
     /**
      * @param Asset\Document $asset
+     *
      * @return self
      */
     abstract public function load(Asset\Document $asset);
@@ -58,12 +59,14 @@ abstract class Adapter
      * @param string $imageTargetPath
      * @param int $page
      * @param int $resolution
+     *
      * @return mixed
      */
     abstract public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200);
 
     /**
      * @param Asset\Document|null $asset
+     *
      * @return resource
      */
     abstract public function getPdf(?Asset\Document $asset = null);
@@ -85,6 +88,7 @@ abstract class Adapter
     /**
      * @param null|int $page
      * @param Asset\Document|null $asset
+     *
      * @return mixed
      */
     abstract public function getText(?int $page = null, ?Asset\Document $asset = null);

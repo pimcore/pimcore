@@ -328,11 +328,11 @@ class Version extends AbstractModel
 
         $storage = Storage::get('version');
 
-        if($storage->fileExists($this->getStoragePath())) {
+        if ($storage->fileExists($this->getStoragePath())) {
             $storage->delete($this->getStoragePath());
         }
 
-        if($storage->fileExists($this->getBinaryStoragePath()) && !$this->getDao()->isBinaryHashInUse($this->getBinaryFileHash())) {
+        if ($storage->fileExists($this->getBinaryStoragePath()) && !$this->getDao()->isBinaryHashInUse($this->getBinaryFileHash())) {
             $storage->delete($this->getBinaryStoragePath());
         }
 
@@ -396,14 +396,17 @@ class Version extends AbstractModel
         }
 
         $group = floor($this->getCid() / 10000) * 10000;
+
         return $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $id;
     }
 
     /**
      * @return resource
+     *
      * @throws \League\Flysystem\FilesystemException
      */
-    public function getFileStream() {
+    public function getFileStream()
+    {
         return Storage::get('version')->readStream($this->getStoragePath());
     }
 
@@ -414,9 +417,11 @@ class Version extends AbstractModel
 
     /**
      * @return resource
+     *
      * @throws \League\Flysystem\FilesystemException
      */
-    public function getBinaryFileStream() {
+    public function getBinaryFileStream()
+    {
         return Storage::get('version')->readStream($this->getBinaryStoragePath());
     }
 

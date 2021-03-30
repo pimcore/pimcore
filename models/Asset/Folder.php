@@ -100,8 +100,11 @@ class Folder extends Model\Asset
 
     /**
      * @internal
+     *
      * @param bool $hdpi
+     *
      * @return resource|null
+     *
      * @throws \Doctrine\DBAL\Exception
      * @throws \League\Flysystem\FilesystemException
      */
@@ -149,7 +152,6 @@ class Folder extends Model\Asset
             imagefill($collage, 0, 0, $background);
 
             foreach ($list as $asset) {
-
                 if ($asset instanceof Document && !$asset->getPageCount()) {
                     continue;
                 }
@@ -173,11 +175,12 @@ class Folder extends Model\Asset
                 }
             }
 
-            if($count) {
+            if ($count) {
                 $localFile = File::getLocalTempFilePath('jpg');
                 imagejpeg($collage, $localFile, 60);
                 $storage->write($cacheFilePath, file_get_contents($localFile));
                 unlink($localFile);
+
                 return $storage->readStream($cacheFilePath);
             }
         }

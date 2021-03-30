@@ -105,7 +105,6 @@ class ImageThumbnail
             }
 
             if (empty($this->pathReference)) {
-
                 $timeOffset = $this->timeOffset;
                 if (!$this->timeOffset && $cs) {
                     $timeOffset = $cs;
@@ -161,7 +160,7 @@ class ImageThumbnail
                 }
             }
 
-            if(empty($this->pathReference)) {
+            if (empty($this->pathReference)) {
                 $this->pathReference = [
                     'type' => 'error',
                     'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',

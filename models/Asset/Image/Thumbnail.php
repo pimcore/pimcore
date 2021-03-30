@@ -66,7 +66,7 @@ class Thumbnail
             }
         }
 
-        if(!$pathReference) {
+        if (!$pathReference) {
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
@@ -116,6 +116,7 @@ class Thumbnail
 
     /**
      * @internal
+     *
      * @param bool $deferredAllowed
      */
     public function generate($deferredAllowed = true)
@@ -141,10 +142,10 @@ class Thumbnail
             }
         }
 
-        if(empty($this->pathReference)) {
+        if (empty($this->pathReference)) {
             $this->pathReference = [
                 'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg'
+                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
             ];
         }
 
@@ -276,7 +277,6 @@ class Thumbnail
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
-
                     if ($isAutoFormat) {
                         $thumbConfigWebP = clone $thumbConfig;
                         $thumbConfigWebP->setFormat('webp');

@@ -107,7 +107,7 @@ class Processor
         if (self::containsTransformationType($config, '1x1_pixel')) {
             return [
                 'src' => 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-                'type' => 'data-uri'
+                'type' => 'data-uri',
             ];
         }
 
@@ -115,7 +115,7 @@ class Processor
             $fileSystemPath = $asset->getLocalFile();
         }
 
-        if(is_resource($fileSystemPath)) {
+        if (is_resource($fileSystemPath)) {
             $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
         }
 
@@ -196,7 +196,7 @@ class Processor
 
             return [
                 'src' => $storagePath,
-                'type' => $storage->fileExists($storagePath) ? 'thumbnail': 'deferred',
+                'type' => $storage->fileExists($storagePath) ? 'thumbnail' : 'deferred',
             ];
         }
 

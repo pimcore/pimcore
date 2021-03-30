@@ -120,7 +120,7 @@ class ImageThumbnail
                 Logger::error($e);
             }
 
-            if(empty($this->pathReference)) {
+            if (empty($this->pathReference)) {
                 $this->pathReference = [
                     'type' => 'error',
                     'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',

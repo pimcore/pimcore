@@ -678,7 +678,7 @@ class Asset extends Element\AbstractElement
                 }
 
                 if ($targetUri !== $sourceUri) {
-                    if($storage->fileExists($path)) {
+                    if ($storage->fileExists($path)) {
                         // We don't open a stream on existing files, because they could be possibly used by versions
                         // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
                         // versioning information persists. Using the stream on the existing file would overwrite the
@@ -707,7 +707,6 @@ class Asset extends Element\AbstractElement
                     throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
-
         } else {
             $storage->createDirectory($path);
         }
@@ -1474,8 +1473,11 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param bool $keep whether to delete this file on shutdown or not
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getTemporaryFile(bool $keep = false)
@@ -1485,7 +1487,9 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getLocalFile()
@@ -1995,7 +1999,7 @@ class Asset extends Element\AbstractElement
     public function clearThumbnails($force = false)
     {
         if ($this->getDataChanged() || $force) {
-            foreach(['thumbnail', 'asset_cache'] as $storageName) {
+            foreach (['thumbnail', 'asset_cache'] as $storageName) {
                 $storage = Storage::get($storageName);
                 $contents = $storage->listContents($this->getRealPath());
 

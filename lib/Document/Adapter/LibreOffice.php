@@ -110,6 +110,7 @@ class LibreOffice extends Ghostscript
         try {
             // if the document is already an PDF, delegate the call directly to parent::getPdf() (Ghostscript)
             $stream = parent::getPdf($asset);
+
             return $stream;
         } catch (\Exception $e) {
             // nothing to do, delegate to libreoffice

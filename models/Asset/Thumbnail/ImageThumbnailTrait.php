@@ -75,7 +75,8 @@ trait ImageThumbnailTrait
     /**
      * @return null|resource
      */
-    public function getStream() {
+    public function getStream()
+    {
         $pathReference = $this->getPathReference();
         try {
             return Storage::get($pathReference['type'])->readStream($pathReference['src']);
@@ -86,7 +87,7 @@ trait ImageThumbnailTrait
 
     public function getPathReference(bool $deferredAllowed = false): array
     {
-        if(empty($this->pathReference)) {
+        if (empty($this->pathReference)) {
             $this->generate($deferredAllowed);
         }
 
@@ -169,7 +170,7 @@ trait ImageThumbnailTrait
                 // unable to calculate dimensions -> use fallback
                 // generate the thumbnail and get dimensions from the thumbnail file
                 $pathReference = $this->getPathReference();
-                if(in_array($pathReference['type'], ['thumbnail', 'asset'])) {
+                if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
                     try {
                         $info = @getimagesize($this->getLocalFile());
                         if ($info) {
@@ -254,6 +255,7 @@ trait ImageThumbnailTrait
 
     /**
      * @internal
+     *
      * @param array $pathReference
      *
      * @return string
@@ -263,12 +265,12 @@ trait ImageThumbnailTrait
         $type = $pathReference['type'];
         $src = $pathReference['src'];
 
-        if($type === 'data-uri') {
+        if ($type === 'data-uri') {
             return $src;
-        } elseif($type === 'deferred') {
+        } elseif ($type === 'deferred') {
             $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail_deferred'];
             $path = $prefix . urlencode_ignore_slash($src);
-        } elseif($type === 'thumbnail') {
+        } elseif ($type === 'thumbnail') {
             $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
             $path = $prefix . urlencode_ignore_slash($src);
         } else {
@@ -280,7 +282,9 @@ trait ImageThumbnailTrait
 
     /**
      * @internal
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getLocalFile()
