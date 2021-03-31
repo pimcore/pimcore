@@ -384,6 +384,12 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('inputQuantityValue', $store->getId());
 
         $unit = Unit::getByAbbreviation("mm");
+        if (!$unit) {
+            $unit = new Unit();
+            $unit->setAbbreviation('mm');
+            $unit->save();
+        }
+
         $originalValue = new InputQuantityValue("abc", $unit->getId());
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
@@ -485,6 +491,12 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('quantityValue', $store->getId());
 
         $unit = Unit::getByAbbreviation("mm");
+        if (!$unit) {
+            $unit = new Unit();
+            $unit->setAbbreviation('mm');
+            $unit->save();
+        }
+
         $originalValue = new QuantityValue(123, $unit->getId());
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
