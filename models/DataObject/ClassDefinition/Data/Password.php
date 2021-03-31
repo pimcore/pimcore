@@ -353,23 +353,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * fills object field data values from CSV Import String
-     *
-     * @abstract
-     *
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return $this->getDataFromEditmode($importValue, $object, $params);
-    }
-
-    /**
      * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *

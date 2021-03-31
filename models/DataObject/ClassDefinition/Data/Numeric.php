@@ -510,7 +510,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -522,23 +522,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $data = $this->getDataFromObjectParam($object, $params);
 
         return (string)$data;
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|int|string
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = $this->toNumeric($importValue);
-
-        return $value;
     }
 
     /** True if change is allowed in edit mode.

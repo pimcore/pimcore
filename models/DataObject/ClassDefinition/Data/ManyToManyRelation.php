@@ -519,7 +519,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -541,44 +541,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @deprecated
-     * @abstract
-     *
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode(',', $importValue);
-
-        $value = [];
-        foreach ($values as $element) {
-            $tokens = explode(':', $element);
-            if (count($tokens) == 2) {
-                $type = $tokens[0];
-                $path = $tokens[1];
-                $value[] = Element\Service::getElementByPath($type, $path);
-            } else {
-                //fallback for old export files
-                if ($el = Asset::getByPath($element)) {
-                    $value[] = $el;
-                } elseif ($el = Document::getByPath($element)) {
-                    $value[] = $el;
-                } elseif ($el = DataObject::getByPath($element)) {
-                    $value[] = $el;
-                }
-            }
-        }
-
-        return $value;
     }
 
     /**

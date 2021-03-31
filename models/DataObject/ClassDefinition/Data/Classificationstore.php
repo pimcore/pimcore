@@ -381,7 +381,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -391,19 +391,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getForCsvExport($object, $params = [])
     {
         return 'not supported';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**

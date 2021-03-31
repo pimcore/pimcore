@@ -196,7 +196,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -219,28 +219,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $rows = explode('|', $importValue);
-        $points = [];
-        if (is_array($rows)) {
-            foreach ($rows as $row) {
-                $coords = explode(';', $row);
-                $points[] = new  DataObject\Data\GeoCoordinates($coords[0], $coords[1]);
-            }
-        }
-
-        return $points;
     }
 
     /**

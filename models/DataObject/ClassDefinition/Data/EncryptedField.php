@@ -422,7 +422,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -442,24 +442,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             $params['injectedData'] = $data;
 
             $result = $fd->getForCsvExport($object, $params);
-
-            return $result;
-        }
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $fd = $this->getDelegateDatatypeDefinition();
-        if ($fd) {
-            $result = $fd->getFromCsvImport($importValue, $object, $params);
 
             return $result;
         }

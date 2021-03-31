@@ -190,7 +190,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -205,26 +205,6 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\GeoCoordinates
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $coords = explode(',', $importValue);
-
-        $value = null;
-        if ($coords[0] && $coords[1]) {
-            $value = new DataObject\Data\GeoCoordinates($coords[0], $coords[1]);
-        }
-
-        return $value;
     }
 
     /**

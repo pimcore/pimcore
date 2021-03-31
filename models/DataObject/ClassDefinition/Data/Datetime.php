@@ -228,7 +228,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -240,24 +240,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d H:i');
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return \Carbon\Carbon|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $timestamp = strtotime($importValue);
-        if ($timestamp) {
-            return $this->getDateFromTimestamp($timestamp);
         }
 
         return null;

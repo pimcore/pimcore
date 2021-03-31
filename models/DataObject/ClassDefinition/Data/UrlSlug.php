@@ -716,6 +716,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * converts object data to a simple string value or CSV Export
      *
+     * @internal
      * @param Model\DataObject\Concrete $object
      * @param array $params
      *
@@ -734,31 +735,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         return implode(',', $result);
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $result = [];
-        if (strlen($importValue) > 0) {
-            $items = explode(',', $importValue);
-            if (is_array($items)) {
-                foreach ($items as $item) {
-                    $parts = explode(':', $item);
-                    $slug = new Model\DataObject\Data\UrlSlug($parts[0], $parts[1]);
-                    $result[] = $slug;
-                }
-            }
-        }
-
-        return $result;
     }
 
     public function supportsInheritance()

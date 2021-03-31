@@ -500,7 +500,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -515,24 +515,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if (is_array($value)) {
-            return $value;
-        }
-
-        return null;
     }
 
     /**

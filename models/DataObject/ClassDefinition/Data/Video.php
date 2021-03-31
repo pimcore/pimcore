@@ -321,7 +321,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -341,38 +341,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $video = null;
-
-        if ($importValue && strpos($importValue, '~')) {
-            list($type, $data) = explode('~', $importValue);
-            if ($type && $data) {
-                $video = new DataObject\Data\Video();
-                $video->setType($type);
-                if ($type == 'asset') {
-                    if ($asset = Asset::getById($data)) {
-                        $video->setData($asset);
-                    } else {
-                        return null;
-                    }
-                } else {
-                    $video->setData($data);
-                }
-            }
-        }
-
-        return $video;
     }
 
     /**

@@ -365,7 +365,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -375,19 +375,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getForCsvExport($object, $params = [])
     {
         return 'NOT SUPPORTED';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**

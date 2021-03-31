@@ -230,7 +230,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -245,29 +245,6 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\Geobounds
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $points = explode('|', $importValue);
-        $value = null;
-        if (is_array($points) and count($points) == 2) {
-            $northEast = explode(',', $points[0]);
-            $southWest = explode(',', $points[1]);
-            if ($northEast[0] && $northEast[1] && $southWest[0] && $southWest[1]) {
-                $value = new DataObject\Data\Geobounds(new DataObject\Data\GeoCoordinates($northEast[1], $northEast[0]), new DataObject\Data\GeoCoordinates($southWest[1], $southWest[0]));
-            }
-        }
-
-        return $value;
     }
 
     /**

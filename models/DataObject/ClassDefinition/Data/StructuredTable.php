@@ -425,7 +425,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -447,32 +447,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         }
 
         return $string;
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|DataObject\Data\StructuredTable
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $dataArray = explode('##', $importValue);
-
-        $i = 0;
-        $dataTable = [];
-        foreach ($this->getRows() as $r) {
-            foreach ($this->getCols() as $c) {
-                $dataTable[$r['key']][$c['key']] = $dataArray[$i];
-                $i++;
-            }
-        }
-
-        $value = new DataObject\Data\StructuredTable($dataTable);
-
-        return $value;
     }
 
     /**

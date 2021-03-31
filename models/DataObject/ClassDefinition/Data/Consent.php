@@ -302,7 +302,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -314,23 +314,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $data = $this->getDataFromObjectParam($object, $params);
 
         return $data ? (string)$data->getConsent() : '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @deprecated
-     * @abstract
-     *
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return DataObject\Data\Consent
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return new DataObject\Data\Consent((bool)$importValue);
     }
 
     /** True if change is allowed in edit mode.

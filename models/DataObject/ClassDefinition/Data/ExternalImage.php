@@ -241,7 +241,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -256,19 +256,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return new Model\DataObject\Data\ExternalImage($importValue);
     }
 
     /** True if change is allowed in edit mode.

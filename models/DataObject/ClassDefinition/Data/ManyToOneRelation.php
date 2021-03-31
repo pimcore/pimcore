@@ -408,7 +408,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -423,37 +423,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|Asset|Document|Element\ElementInterface
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-
-        $values = explode(':', $importValue);
-        if (count($values) == 2) {
-            $type = $values[0];
-            $path = $values[1];
-            $value = Element\Service::getElementByPath($type, $path);
-        } else {
-            //fallback for old export files
-            if ($el = Asset::getByPath($importValue)) {
-                $value = $el;
-            } elseif ($el = Document::getByPath($importValue)) {
-                $value = $el;
-            } elseif ($el = DataObject::getByPath($importValue)) {
-                $value = $el;
-            }
-        }
-
-        return $value;
     }
 
     /**
