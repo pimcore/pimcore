@@ -168,9 +168,9 @@ class Unit extends Model\AbstractModel
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectQuantityValueEvents::UNIT_PRE_UPDATE, new QuantityValueUnitEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectQuantityValueEvents::UNIT_PRE_ADD, new QuantityValueUnitEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_ADD);
         }
 
         $this->getDao()->save();
@@ -178,19 +178,19 @@ class Unit extends Model\AbstractModel
         Cache::remove(self::CACHE_KEY);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectQuantityValueEvents::UNIT_POST_UPDATE, new QuantityValueUnitEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectQuantityValueEvents::UNIT_POST_ADD, new QuantityValueUnitEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_ADD);
         }
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectQuantityValueEvents::UNIT_PRE_DELETE, new QuantityValueUnitEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_DELETE);
         $this->getDao()->delete();
         Cache\Runtime::set(self::CACHE_KEY, null);
         Cache::remove(self::CACHE_KEY);
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectQuantityValueEvents::UNIT_POST_DELETE, new QuantityValueUnitEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_DELETE);
     }
 
     /**
