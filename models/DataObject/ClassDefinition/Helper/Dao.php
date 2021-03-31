@@ -133,6 +133,7 @@ trait Dao
                     $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
                 }
             }
+            $this->resetValidTableColumnsCache($table);
         }
     }
 
