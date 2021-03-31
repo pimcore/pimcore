@@ -325,6 +325,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * fills object field data values from CSV Import String
      *
+     * @deprecated
      * @abstract
      *
      * @param string $importValue

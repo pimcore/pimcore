@@ -385,6 +385,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params

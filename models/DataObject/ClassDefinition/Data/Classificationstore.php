@@ -401,6 +401,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param array $params

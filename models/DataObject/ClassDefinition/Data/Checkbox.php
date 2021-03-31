@@ -217,6 +217,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @abstract
      *
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params

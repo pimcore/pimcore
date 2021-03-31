@@ -213,6 +213,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params

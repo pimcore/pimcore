@@ -289,6 +289,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * fills object field data values from CSV Import String
      *
+     * @deprecated
      * @param string $importValue
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param array $params

@@ -446,6 +446,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params

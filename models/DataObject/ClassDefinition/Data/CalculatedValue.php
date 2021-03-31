@@ -235,6 +235,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * fills object field data values from CSV Import String
      *
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param array $params
