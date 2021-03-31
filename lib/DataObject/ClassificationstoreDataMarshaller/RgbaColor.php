@@ -15,13 +15,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\BlockDataMarshaller;
+namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
 use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
 
+/**
+ * @internal
+ */
 class RgbaColor implements MarshallerInterface
 {
-
     use RgbaColorTrait;
 }
