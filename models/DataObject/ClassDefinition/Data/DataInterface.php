@@ -34,6 +34,7 @@ interface DataInterface
     public function getForCsvExport($object, $params = []);
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|Concrete $object
      * @param array $params

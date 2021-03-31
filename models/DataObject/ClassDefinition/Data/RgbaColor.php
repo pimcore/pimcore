@@ -419,6 +419,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
