@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model\DataObject;
 
 use Pimcore\Model\DataObject\QuantityValue\Unit;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class QuantityValueUnitEvent extends Event
 {
