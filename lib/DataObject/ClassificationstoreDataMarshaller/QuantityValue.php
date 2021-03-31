@@ -37,7 +37,7 @@ class QuantityValue implements MarshallerInterface
     /** { @inheritDoc } */
     public function unmarshal($value, $params = [])
     {
-        if (is_array($value)) {
+        if (is_array($value) && ($value["value"] !== null || $value["value2"] !== null)) {
             $result = [
                 "value" => $value["value"],
                 "unitId" => $value["value2"]
