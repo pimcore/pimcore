@@ -546,6 +546,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * fills object field data values from CSV Import String
      *
+     * @deprecated
      * @abstract
      *
      * @param string $importValue

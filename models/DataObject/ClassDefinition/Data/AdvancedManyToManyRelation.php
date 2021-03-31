@@ -532,6 +532,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params

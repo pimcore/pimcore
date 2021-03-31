@@ -448,6 +448,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params

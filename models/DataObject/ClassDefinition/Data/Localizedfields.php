@@ -377,6 +377,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param array $params

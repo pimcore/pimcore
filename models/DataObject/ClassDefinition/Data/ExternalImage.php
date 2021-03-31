@@ -258,6 +258,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
