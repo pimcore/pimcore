@@ -628,7 +628,13 @@ class GeneralTest extends AbstractClassificationStoreTest
         $userListing = new User\Listing();
         $userListing->setLimit(1);
         $userListing = $userListing->load();
-        $user = $userListing[0];
+        if (!$userListing) {
+            $user = new User();
+            $user->setName("testuser");
+            $user->save();
+        } else {
+            $user = $userListing[0];
+        }
         $originalValue = $user->getId();
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
