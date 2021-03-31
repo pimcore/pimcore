@@ -1,15 +1,20 @@
 includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
     - phpstan-baseline.neon
 
 parameters:
+    level: 3
+
+    paths:
+        - bundles
+        - lib
+        - models
 
     bootstrapFiles:
-        #- .github/ci/files/phpstan-bootstrap.php # optional when running in project scope
-    reportUnmatchedIgnoredErrors: false
+        - phpstan-bootstrap.php
 
     symfony:
-        container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
-        #container_xml_path: ../../../var/cache/dev/App_KernelDevDebugContainer.xml # optional when running in project scope
+        container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
 
     excludes_analyse:
         - '**/PreAuthenticatedAdminSessionFactory.php'
@@ -22,14 +27,9 @@ parameters:
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
 
     ignoreErrors:
-        - '/Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\FilterMultiSelectFromMultiSelect/'
         # - '/(snappy|lz4)_(un)?compress/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
         - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
-        - '/Matcher::__construct\(\).*TypeMatcher/'
-        -
-            message: '/ALPHACHANNEL_REMOVE/'
-            path: '**/Imagick.php'
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         - '~^Unsafe usage of new static\(\)~'
 
