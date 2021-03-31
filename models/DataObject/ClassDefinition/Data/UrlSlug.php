@@ -737,6 +737,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params

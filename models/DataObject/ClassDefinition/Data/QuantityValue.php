@@ -419,6 +419,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * fills object field data values from CSV Import String
      *
+     * @deprecated
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param array $params

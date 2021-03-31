@@ -121,6 +121,7 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param array $params

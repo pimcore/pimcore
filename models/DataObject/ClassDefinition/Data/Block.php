@@ -465,6 +465,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params

@@ -366,6 +366,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * fills object field data values from CSV Import String
      *
+     * @deprecated
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param array $params
