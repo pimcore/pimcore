@@ -774,6 +774,8 @@
   "error_empty_file_upload": "File is empty!",
   "edit_as_html": "Edit as HTML",
   "edit_as_plain_text": "Edit as plain text",
+  "edit_as_custom_text": "Edit as custom text",
+  "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
   "type_column": "Type column",
   "keep": "keep",
   "download_selected_as_zip": "Download selected items as ZIP",

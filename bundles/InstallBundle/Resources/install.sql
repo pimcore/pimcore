@@ -550,6 +550,7 @@ CREATE TABLE `tmp_store` (
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
+  `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
@@ -561,6 +562,7 @@ CREATE TABLE `translations_admin` (
 DROP TABLE IF EXISTS `translations_messages`;
 CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
+  `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
