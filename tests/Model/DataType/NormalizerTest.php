@@ -41,7 +41,7 @@ class NormalizerTest extends ModelTestCase
         return true;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         TestHelper::cleanUp();
         parent::tearDown();
