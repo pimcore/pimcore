@@ -21,6 +21,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsPar
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LegacyTemplatePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LockStoragePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MarshallerLocatorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
@@ -94,5 +95,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new ProfilerAliasPass());
         $container->addCompilerPass(new LegacyTemplatePass());
         $container->addCompilerPass(new LockStoragePass());
+        $container->addCompilerPass(new MarshallerLocatorPass());
     }
 }
