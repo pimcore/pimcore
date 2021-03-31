@@ -17,9 +17,11 @@
 
 namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
-use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
 
+/**
+ * @internal
+ */
 class Multiselect implements MarshallerInterface
 {
     /** { @inheritDoc } */

@@ -17,10 +17,12 @@
 
 namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
-use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
 use Pimcore\Tool\Serialize;
 
+/**
+ * @internal
+ */
 class Table implements MarshallerInterface
 {
     /** { @inheritDoc } */
@@ -37,8 +39,7 @@ class Table implements MarshallerInterface
     public function unmarshal($value, $params = [])
     {
         if (is_array($value)) {
-            $result = Serialize::unserialize($value['value']);
-            return $result;
+            return Serialize::unserialize($value['value']);
         }
         return null;
 

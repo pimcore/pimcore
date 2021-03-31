@@ -17,18 +17,21 @@
 
 namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
-use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
-use Pimcore\Tool\Serialize;
 
+/**
+ * @internal
+ */
 class QuantityValue implements MarshallerInterface
 {
     /** { @inheritDoc } */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
-            return ['value' => $value['value'],
-                'value2' => $value['unitId']];
+            return [
+                'value' => $value['value'],
+                'value2' => $value['unitId']
+            ];
         }
         return null;
 
@@ -38,12 +41,11 @@ class QuantityValue implements MarshallerInterface
     public function unmarshal($value, $params = [])
     {
         if (is_array($value) && ($value["value"] !== null || $value["value2"] !== null)) {
-            $result = [
+            return [
                 "value" => $value["value"],
                 "unitId" => $value["value2"]
 
             ];
-            return $result;
         }
         return null;
 
