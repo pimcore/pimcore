@@ -155,7 +155,8 @@ abstract class PageSnippet extends Model\Document
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
             $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
-            if (!empty($documentsConfig['versions']['steps'])
+            if ((is_null($documentsConfig['versions']['days']) && is_null($documentsConfig['versions']['steps']))
+                || (!empty($documentsConfig['versions']['steps']))
                 || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);

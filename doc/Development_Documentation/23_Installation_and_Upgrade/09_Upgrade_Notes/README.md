@@ -139,6 +139,11 @@
 - Removed deprecated Twig extension `pimcore_action()`.
 - Removed method `getFlag()` from `Pimcore\Config`.
 - Removed `Pimcore\Report` class.
+- [Versioning] Default behavior has been changed to following:
+    - Empty values for `steps` & `days` => unlimited versions.
+    - Value 0 for `steps` or `days` => no version will be saved at all & existing will be cleaned up.
+    
+  please update your system settings as per the requirements.
 
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
