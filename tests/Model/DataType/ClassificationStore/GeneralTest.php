@@ -11,6 +11,7 @@ use Pimcore\Model\DataObject\Data\InputQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\DataObject\Data\RgbaColor;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\User;
 use Pimcore\Tests\Util\TestHelper;
 
 class GeneralTest extends AbstractClassificationStoreTest
@@ -624,7 +625,11 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('user', $store->getId());
 
-        $originalValue = 1;
+        $userListing = new User\Listing();
+        $userListing->setLimit(1);
+        $userListing = $userListing->load();
+        $user = $userListing[0];
+        $originalValue = $user->getId();
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
