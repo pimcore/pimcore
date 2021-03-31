@@ -188,7 +188,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Converts object data to a simple string value or CSV Export
-     *
+     * @internal
      * @param DataObject\Concrete $object
      * @param array $params
      *
@@ -199,23 +199,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         $data = $this->getDataFromObjectParam($object, $params);
 
         return (string)$data;
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @abstract
-     *
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return (bool)$importValue;
     }
 
     /** True if change is allowed in edit mode.

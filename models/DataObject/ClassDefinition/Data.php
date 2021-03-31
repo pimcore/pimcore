@@ -175,7 +175,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
@@ -185,19 +185,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function getForCsvExport($object, $params = [])
     {
         return $this->getDataFromObjectParam($object, $params);
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return $importValue;
     }
 
     /**

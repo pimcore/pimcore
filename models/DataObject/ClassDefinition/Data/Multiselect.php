@@ -334,7 +334,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -349,19 +349,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return explode(',', $importValue);
     }
 
     /**

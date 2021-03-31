@@ -258,7 +258,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -273,24 +273,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null|\Carbon\Carbon
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $timestamp = strtotime($importValue);
-        if ($timestamp) {
-            return $this->getDateFromTimestamp($timestamp);
-        }
-
-        return null;
     }
 
     /**

@@ -406,7 +406,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -429,38 +429,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode(',', $importValue);
-
-        $value = [];
-        foreach ($values as $element) {
-            if ($el = DataObject::getByPath($element)) {
-                /** @var DataObject\Data\ObjectMetadata $metaObject */
-                $metaObject = \Pimcore::getContainer()->get('pimcore.model.factory')
-                    ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
-                        'fieldname' => $this->getName(),
-                        'columns' => $this->getColumnKeys(),
-                        'object' => $el,
-                    ]);
-                $metaObject->_setOwner($object);
-                $metaObject->_setOwnerFieldname($this->getName());
-
-                $value[] = $metaObject;
-            }
-        }
-
-        return $value;
     }
 
     /**
