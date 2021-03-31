@@ -22,8 +22,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Redirect;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
 
@@ -764,13 +765,17 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return false;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * { @inheritdoc }
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * { @inheritdoc }
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
@@ -785,4 +790,41 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            /** @var Model\DataObject\Data\UrlSlug $slug */
+            foreach ($value as $slug) {
+                $result[] = [
+                    "slug" => $slug->getSlug(),
+                    "siteId" => $slug->getSiteId()
+                ];
+            }
+            return $result;
+        }
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $slugData) {
+                $slug = new Model\DataObject\Data\UrlSlug($slugData['slug'], $slugData['siteId']);
+                $result[] = $slug;
+            }
+            return $result;
+        }
+        return null;
+    }
+
+
 }

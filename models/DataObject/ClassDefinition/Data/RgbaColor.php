@@ -18,9 +18,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -286,6 +287,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
@@ -313,6 +317,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /** See marshal
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
@@ -333,6 +340,39 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
         return null;
     }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\RgbaColor) {
+            return [
+                'r' => $value->getR(),
+                'g' => $value->getG(),
+                'b' => $value->getB(),
+                'a' => $value->getA()
+            ];
+        }
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $color = new Model\DataObject\Data\RgbaColor();
+            $color->setR($value['r']);
+            $color->setG($value['g']);
+            $color->setB($value['b']);
+            $color->setA($value['a']);
+            return $color;
+        }
+        return null;
+    }
+
 
     /**
      * converts object data to a simple string value or CSV Export

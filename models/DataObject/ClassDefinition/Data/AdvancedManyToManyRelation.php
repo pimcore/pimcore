@@ -919,6 +919,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -926,6 +929,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
+    {
+        return $this->normalize($value, $params);
+    }
+
+    public function normalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -950,19 +958,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         return null;
+
     }
 
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
+    public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
+            $object = $params['object'] ?? null;
             foreach ($value as $elementMetadata) {
                 $elementData = $elementMetadata['element'];
 
@@ -984,6 +987,25 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             return $result;
         }
+    }
+
+
+    /** See marshal
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
+     * @param mixed $value
+     * @param DataObject\Concrete|null $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        $params = $params ?? [];
+        $params["object"] = $object;
+        return $this->denormalize($value, $params);
+
     }
 
     /**

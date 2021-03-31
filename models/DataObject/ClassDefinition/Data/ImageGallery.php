@@ -21,9 +21,10 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -521,6 +522,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -529,25 +533,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof Model\DataObject\Data\ImageGallery) {
-            $list = [];
-            $items = $value->getItems();
-            $def = new Hotspotimage();
-            if ($items) {
-                foreach ($items as $item) {
-                    if ($item instanceof DataObject\Data\Hotspotimage) {
-                        $list[] = $def->marshal($item, $object, $params);
-                    }
-                }
-            }
-
-            return $list;
-        }
-
-        return null;
+        return $this->normalize($value, $params);
     }
 
     /** See marshal
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete|null $object
      * @param mixed $params
@@ -556,17 +548,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $items = [];
-            $def = new Hotspotimage();
-            foreach ($value as $rawValue) {
-                $items[] = $def->unmarshal($rawValue, $object, $params);
-            }
+        return $this->denormalize($value, $params);
 
-            return new DataObject\Data\ImageGallery($items);
-        }
-
-        return null;
     }
 
     /**
@@ -634,5 +617,46 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\ImageGallery::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\ImageGallery) {
+            $list = [];
+            $items = $value->getItems();
+            $def = new Hotspotimage();
+            if ($items) {
+                foreach ($items as $item) {
+                    if ($item instanceof DataObject\Data\Hotspotimage) {
+                        $list[] = $def->normalize($item, $params);
+                    }
+                }
+            }
+
+            return $list;
+        }
+
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $items = [];
+            $def = new Hotspotimage();
+            foreach ($value as $rawValue) {
+                $items[] = $def->denormalize($rawValue, $params);
+            }
+
+            return new DataObject\Data\ImageGallery($items);
+        }
+
+        return null;
     }
 }

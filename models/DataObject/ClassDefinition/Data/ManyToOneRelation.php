@@ -23,8 +23,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -602,6 +603,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -609,6 +613,14 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
+    {
+        return $this->normalize($value, $params);
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
     {
         if ($value) {
             $type = Element\Service::getType($value);
@@ -619,9 +631,28 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 'id' => $id,
             ];
         }
+        return null;
     }
 
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $type = $value['type'];
+            $id = $value['id'];
+
+            return Element\Service::getElementById($type, $id);
+        }
+        return null;
+    }
+
+
     /** See marshal
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -630,12 +661,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $type = $value['type'];
-            $id = $value['id'];
-
-            return Element\Service::getElementById($type, $id);
-        }
+        return $this->denormalize($value, $params);
     }
 
     /**
@@ -660,13 +686,17 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return true;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * { @inheritdoc }
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Element\AbstractElement::class;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * { @inheritdoc }
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Element\AbstractElement::class;

@@ -21,9 +21,11 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use ImageTrait;
@@ -606,6 +608,9 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -614,29 +619,14 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof DataObject\Data\Hotspotimage) {
-            $result = [];
-            $result['hotspots'] = $value->getHotspots();
-            $result['marker'] = $value->getMarker();
-            $result['crop'] = $value->getCrop();
+        return $this->normalize($value, $params);
 
-            $image = $value->getImage();
-            if ($image) {
-                $type = Element\Service::getType($image);
-                $id = $image->getId();
-                $result['image'] = [
-                    'type' => $type,
-                    'id' => $id,
-                ];
-            }
-
-            return $result;
-        }
-
-        return null;
     }
 
     /** See marshal
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -645,20 +635,8 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $image = new DataObject\Data\Hotspotimage();
-            $image->setHotspots($value['hotspots']);
-            $image->setMarker($value['marker']);
-            $image->setCrop($value['crop']);
-            if ($value['image']) {
-                $type = $value['image']['type'];
-                $id = $value['image']['id'];
-                $asset = Element\Service::getElementById($type, $id);
-                $image->setImage($asset);
-            }
+        return $this->denormalize($value, $params);
 
-            return $image;
-        }
     }
 
     /**
@@ -720,5 +698,53 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Hotspotimage) {
+            $result = [];
+            $result['hotspots'] = $value->getHotspots();
+            $result['marker'] = $value->getMarker();
+            $result['crop'] = $value->getCrop();
+
+            $image = $value->getImage();
+            if ($image) {
+                $type = Element\Service::getType($image);
+                $id = $image->getId();
+                $result['image'] = [
+                    'type' => $type,
+                    'id' => $id,
+                ];
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $image = new DataObject\Data\Hotspotimage();
+            $image->setHotspots($value['hotspots']);
+            $image->setMarker($value['marker']);
+            $image->setCrop($value['crop']);
+            if ($value['image']) {
+                $type = $value['image']['type'];
+                $id = $value['image']['id'];
+                $asset = Element\Service::getElementById($type, $id);
+                $image->setImage($asset);
+            }
+
+            return $image;
+        }
     }
 }

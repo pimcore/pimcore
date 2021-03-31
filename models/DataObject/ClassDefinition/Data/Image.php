@@ -20,8 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use ImageTrait;
@@ -346,6 +347,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
@@ -363,6 +367,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** See marshal
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
@@ -414,5 +421,23 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof \Pimcore\Model\Asset\Image) {
+            return [
+                'type' => 'asset',
+                'id' => $value->getId(),
+            ];
+        }
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        $id = $value['id'];
+        if (intval($id) > 0) {
+            return Asset\Image::getById($id);
+        }
     }
 }

@@ -20,8 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -679,14 +680,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return implode(' | ', $this->getPhpDocClassString(true));
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
+    /**
+     * { @inheritdoc }
      */
-    public function marshal($value, $object = null, $params = [])
+    public function normalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -705,14 +702,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return null;
     }
 
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
+    /**
+     * { @inheritdoc }
      */
-    public function unmarshal($value, $object = null, $params = [])
+    public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -727,6 +720,32 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
             return $result;
         }
+        return null;
+    }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = [])
+    {
+        return $this->normalize($value, $params);
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        return $this->denormalize($value, $params);
+
     }
 
     /**

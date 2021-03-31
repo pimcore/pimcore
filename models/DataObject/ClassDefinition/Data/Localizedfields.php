@@ -22,9 +22,10 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
+class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Layout\Traits\LabelTrait;
@@ -1266,6 +1267,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /** Encode value for packing it into a single column.
+     *
+     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -1309,6 +1313,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /** See marshal
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
      * @param mixed $value
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -1428,5 +1435,90 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function setPermissionEdit($permissionEdit): void
     {
         $this->permissionEdit = $permissionEdit;
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Localizedfield) {
+            $items = $value->getInternalData();
+            if (is_array($items)) {
+                $result = [];
+                foreach ($items as $language => $languageData) {
+                    $languageResult = [];
+                    foreach ($languageData as $elementName => $elementData) {
+                        $fd = $this->getFieldDefinition($elementName);
+                        if (!$fd) {
+                            // class definition seems to have changed
+                            Logger::warn('class definition seems to have changed, element name: '.$elementName);
+                            continue;
+                        }
+
+                        if ($fd instanceof NormalizerInterface) {
+                            $dataForResource = $fd->normalize($elementData, $params);
+                        } else {
+                            // TODO BC mode, remove it as soon as marshal is gone
+                            $blockMode = isset($params['format']) && $params['format'] == "block";
+                            $childParams = [];
+                            if ($blockMode) {
+                                $childParams = ['raw' => true, 'blockmode' => true];
+                            }
+                            $dataForResource = $fd->marshal($elementData, $params['object'], $childParams);
+                        }
+
+                        $languageResult[$elementName] = $dataForResource;
+                    }
+
+                    $result[$language] = $languageResult;
+                }
+
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $lf = new DataObject\Localizedfield();
+            $lf->setObject($params['object']);
+
+            $items = [];
+
+            foreach ($value as $language => $languageData) {
+                $languageResult = [];
+                foreach ($languageData as $elementName => $elementData) {
+                    $fd = $this->getFieldDefinition($elementName);
+                    if (!$fd) {
+                        // class definition seems to have changed
+                        Logger::warn('class definition seems to have changed, element name: '.$elementName);
+                        continue;
+                    }
+
+                    if ($fd instanceof NormalizerInterface) {
+                        $dataFromResource = $fd->denormalize($elementData, $params);
+                    } else {
+                        // TODO BC mode, remove it as soon as marshal is gone
+                        $blockMode = isset($params['format']) && $params['format'] == "block";
+                        $childParams = [];
+                        if ($blockMode) {
+                            $childParams = ['raw' => true, 'blockmode' => true];
+                        }
+                        $dataFromResource = $fd->unmarshal($elementData, $params['object'], $childParams);
+                    }
+
+                    $languageResult[$elementName] = $dataFromResource;
+                }
+
+                $items[$language] = $languageResult;
+            }
+
+            $lf->setItems($items);
+            return $lf;
+        }
+
+        return null;
+
     }
 }

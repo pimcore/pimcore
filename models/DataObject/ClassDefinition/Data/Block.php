@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Element\MarshallerService;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -23,6 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface
@@ -130,14 +132,33 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     }
                     $elementData = $blockElement->getData();
 
-                    $dataForResource = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
-                    //                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
+                    // $encodedDataBC = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
+
+                    if ($fd instanceof NormalizerInterface) {
+                        $normalizedData = $fd->normalize($elementData, [
+                            'object' => $object,
+                            'fieldDefinition' => $fd
+                        ]);
+                        $encodedData = $normalizedData;
+
+                        /** @var MarshallerService $marshallerService */
+                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                        if ($marshallerService->supportsFielddefinition('block', $fd->getFieldtype())) {
+                            $marshaller = $marshallerService->buildFieldefinitionMarshaller('block', $fd->getFieldtype());
+                            // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                            $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'block']);
+                        }
+                    } else {
+                        // BC layer
+                        $encodedData = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
+                    }
 
                     // do not serialize the block element itself
                     $resultElement[$elementName] = [
                         'name' => $blockElement->getName(),
                         'type' => $blockElement->getType(),
-                        'data' => $dataForResource,
+                        'data' => $encodedData,
                     ];
                 }
                 $result[] = $resultElement;
@@ -176,10 +197,28 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     }
 
                     // do not serialize the block element itself
-                    //                    $elementData = $blockElement->getData();
+
                     $elementData = $blockElementRaw['data'];
 
-                    $dataFromResource = $fd->unmarshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
+                    if ($fd instanceof NormalizerInterface) {
+                        /** @var MarshallerService $marshallerService */
+                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                        if ($marshallerService->supportsFielddefinition('block', $fd->getFieldtype())) {
+                            $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('block', $fd->getFieldtype());
+                            // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                            $elementData = $unmarshaller->unmarshal($elementData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'block']);
+                        }
+
+                        $dataFromResource = $fd->denormalize($elementData, [
+                            'object' => $object,
+                            'fieldDefinition' => $fd
+                        ]);
+                    } else {
+                        // BC layer
+                        $dataFromResource = $fd->unmarshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
+                    }
+
                     $blockElementRaw['data'] = $dataFromResource;
 
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);

@@ -21,9 +21,10 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -214,15 +215,18 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * { @inheritdoc }
+     */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof DataObject\Data\Link) {
-            return $value->getObjectVars();
-        }
+        return $this->normalize($value, $params);
+
     }
 
-    /** @inheritDoc */
+    /**
+     * { @inheritdoc }
+     */
     public function unmarshal($data, $object = null, $params = [])
     {
         if (is_array($data)) {
@@ -509,5 +513,29 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Link) {
+            return $value->getObjectVars();
+        }
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $link = new DataObject\Data\Link();
+            $link->setValues($value);
+            return $link;
+        }
+        return null;
     }
 }
