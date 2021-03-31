@@ -200,6 +200,19 @@ class InputQuantityValue extends QuantityValue
     /**
      * { @inheritdoc }
      */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
+            return [
+                "value" => $value->getValue(),
+                "unitId" => $value->getUnitId()
+            ];
+        }
+    }
+
+    /**
+     * { @inheritdoc }
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
