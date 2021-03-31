@@ -443,7 +443,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
@@ -459,27 +459,6 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
             $value = '1';
         } else {
             $value = '0';
-        }
-
-        return $value;
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        if ($importValue === '1') {
-            $value = true;
-        } elseif ($importValue === '0') {
-            $value = false;
-        } else {
-            $value = null;
         }
 
         return $value;

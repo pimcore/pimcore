@@ -121,27 +121,6 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null|InputQuantityValueDataObject
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode('_', $importValue);
-
-        $value = null;
-        if ($values[0] && $values[1]) {
-            $number = (float) str_replace(',', '.', $values[0]);
-            $value = $this->getNewDataObject($number, $values[1]);
-        }
-
-        return $value;
-    }
-
-    /**
      * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
      *
      * @param mixed $value

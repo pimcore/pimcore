@@ -184,7 +184,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -199,26 +199,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|Asset
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-        if ($el = Asset::getByPath($importValue)) {
-            $value = $el;
-        } else {
-            $value = null;
-        }
-
-        return $value;
     }
 
     /**

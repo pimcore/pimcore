@@ -377,7 +377,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -389,19 +389,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         $data = $this->getDataFromObjectParam($object, $params);
 
         return $this->getDataForEditmode($data, $object, $params);
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return $this->getDataFromEditmode($importValue, $object, $params);
     }
 
     /**

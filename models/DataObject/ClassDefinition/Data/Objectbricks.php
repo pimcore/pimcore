@@ -360,7 +360,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -370,19 +370,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public function getForCsvExport($object, $params = [])
     {
         return 'NOT SUPPORTED';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**

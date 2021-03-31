@@ -399,7 +399,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -414,42 +414,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Model\DataObject\Data\QuantityValue|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        if (strpos($importValue, '_') !== false) {
-            [$number, $unitId] = explode('_', $importValue);
-            $number = (float) str_replace(',', '.', $number);
-
-            return new Model\DataObject\Data\QuantityValue($number, $unitId);
-        }
-
-        if (strpos($importValue, ' ') !== false) {
-            [$number, $abbreviation] = explode(' ', $importValue);
-            $number = (float)str_replace(',', '.', $number);
-            $unit = Model\DataObject\QuantityValue\Unit::getByAbbreviation($abbreviation);
-
-            return new Model\DataObject\Data\QuantityValue($number, $unit);
-        }
-
-        if ($importValue) {
-            $number = (float)str_replace(',', '.', $importValue);
-
-            return new Model\DataObject\Data\QuantityValue($number);
-        }
-
-        return null;
     }
 
     /**

@@ -379,7 +379,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -401,28 +401,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode(',', $importValue);
-
-        $value = [];
-        foreach ($values as $element) {
-            if ($el = DataObject::getByPath($element)) {
-                $value[] = $el;
-            }
-        }
-
-        return $value;
     }
 
     /**

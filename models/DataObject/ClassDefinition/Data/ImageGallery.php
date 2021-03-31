@@ -390,7 +390,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -405,25 +405,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|DataObject\ClassDefinition\Data
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof DataObject\Data\ImageGallery) {
-            return $value;
-        } else {
-            return null;
-        }
     }
 
     /**

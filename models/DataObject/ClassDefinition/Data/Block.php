@@ -452,7 +452,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -462,19 +462,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function getForCsvExport($object, $params = [])
     {
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /** True if change is allowed in edit mode.

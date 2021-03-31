@@ -180,7 +180,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -190,21 +190,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function getForCsvExport($object, $params = [])
     {
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**

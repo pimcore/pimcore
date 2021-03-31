@@ -24,7 +24,7 @@ interface DataInterface
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param null|AbstractObject $object
      * @param array $params
@@ -32,14 +32,4 @@ interface DataInterface
      * @return string
      */
     public function getForCsvExport($object, $params = []);
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Concrete $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = []);
 }

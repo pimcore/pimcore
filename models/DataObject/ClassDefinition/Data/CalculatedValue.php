@@ -215,7 +215,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
@@ -225,22 +225,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getForCsvExport($object, $params = [])
     {
         return $this->getDataFromObjectParam($object, $params);
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        // nothing to do
-        return null;
     }
 
     /**
