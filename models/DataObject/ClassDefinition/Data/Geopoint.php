@@ -273,7 +273,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public function normalize($data, $params = [])
     {
-        if ($data instanceof DataObject\Data\Geopoint) {
+        if ($data instanceof DataObject\Data\GeoCoordinates) {
             return [
                 'latitude' => $data->getLatitude(),
                 'longitude' => $data->getLongitude()
