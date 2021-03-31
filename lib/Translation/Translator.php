@@ -170,6 +170,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
             if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ['__pimcore_dummy' => 'only_a_dummy'];
+                $dataIntl = ['__pimcore_dummy' => 'only_a_dummy'];
 
                 if ($domain == 'admin') {
                     $jsonFiles = [
@@ -214,7 +215,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                             $translationTerm = $translationKey;
                         }
 
-                        $data[$translationKey] = $translationTerm;
+                        if (empty($translation["type"]) || $translation["type"] === "simple") {
+                            $data[$translationKey] = $translationTerm;
+                        } else {
+                            $dataIntl[$translationKey] = $translationTerm;
+                        }
                     }
                 }
 
@@ -229,7 +234,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     }
                 }
 
-                $data = [$domain => $data];
+                $data = [
+                    $domain => $data,
+                    $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX => $dataIntl
+                ];
                 $catalogue = new MessageCatalogue($locale, $data);
 
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);

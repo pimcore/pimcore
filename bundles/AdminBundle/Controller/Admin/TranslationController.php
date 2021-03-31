@@ -368,7 +368,7 @@ final class TranslationController extends AdminController
 
                 foreach ($data as $key => $value) {
                     $key = preg_replace('/^_/', '', $key, 1);
-                    if ($key != 'key') {
+                    if (!in_array($key, ['key', 'type'])) {
                         $t->addTranslation($key, $value);
                     }
                 }
@@ -376,13 +376,20 @@ final class TranslationController extends AdminController
                 if ($data['key']) {
                     $t->setKey($data['key']);
                 }
+
+                if ($data['type']) {
+                    $t->setType($data['type']);
+                }
                 $t->setModificationDate(time());
                 $t->save();
 
                 $return = array_merge(
-                    ['key' => $t->getKey(),
+                    [
+                        'key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
-                        'modificationDate' => $t->getModificationDate(), ],
+                        'modificationDate' => $t->getModificationDate(),
+                        'type' => $t->getType(),
+                    ],
                     $this->prefixTranslations($t->getTranslations())
                 );
 
@@ -398,6 +405,7 @@ final class TranslationController extends AdminController
                 $t->setKey($data['key']);
                 $t->setCreationDate(time());
                 $t->setModificationDate(time());
+                $t->setType($data['type'] ?? null);
 
                 foreach (Tool::getValidLanguages() as $lang) {
                     $t->addTranslation($lang, '');
@@ -409,6 +417,7 @@ final class TranslationController extends AdminController
                         'key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
                         'modificationDate' => $t->getModificationDate(),
+                        'type' => $t->getType(),
                     ],
                     $this->prefixTranslations($t->getTranslations())
                 );
@@ -467,9 +476,12 @@ final class TranslationController extends AdminController
             foreach ($list->getTranslations() as $t) {
                 $translations[] = array_merge(
                     $this->prefixTranslations($t->getTranslations()),
-                    ['key' => $t->getKey(),
+                    [
+                        'key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
-                        'modificationDate' => $t->getModificationDate(), ]
+                        'modificationDate' => $t->getModificationDate(),
+                        'type' => $t->getType(),
+                    ]
                 );
             }
 
