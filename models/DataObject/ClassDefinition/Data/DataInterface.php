@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @deprecated not in use anymore, will be removed in Pimcore 10
+ */
 interface DataInterface
 {
     /**
