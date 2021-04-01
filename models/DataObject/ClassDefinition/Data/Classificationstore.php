@@ -142,13 +142,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        $fieldData = [];
-        $metaData = [];
 
         if (!$data instanceof DataObject\Classificationstore) {
             return [];
         }
 
+        $fieldData = [];
+        $metaData = [];
         $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
 
         // replace the real data with the data for the editmode
@@ -810,32 +810,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
-     */
-    public function getGetterCode($class)
-    {
-        $code = '';
-        $code .= parent::getGetterCode($class);
-
-        return $code;
-    }
-
-    /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
-     */
-    public function getSetterCode($class)
-    {
-        $code = '';
-        $code .= parent::getSetterCode($class);
-
-        return $code;
-    }
-
-    /**
      * @param int $keyId
      *
      * @return mixed
@@ -1219,11 +1193,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $activeGroupIds = $classificationStore->getActiveGroups();
 
         if ($activeGroupIds) {
-            foreach ($activeGroupIds as $groupId => $enabled) {
-                if ($enabled) {
-                    $activeGroups[$groupId] = $enabled;
-                }
-            }
+            $activeGroups = array_keys($activeGroupIds, true, true);
         }
 
         $class = $object->getClass();
@@ -1239,14 +1209,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $activeGroups;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param DataObject\Concrete $object
      * @param array $context additional contextual data
+     * @throws \Exception
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        $groupCollectionMapping = $this->recursiveGetActiveGroupCollectionMapping($object);
-
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
@@ -1254,38 +1225,34 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             return;
         }
 
-        $filteredGroupIds = [];
+        $filteredGroupIds = array_keys($activeGroupIds, true, true);
 
-        foreach ($activeGroupIds as $groupId => $enabled) {
-            if ($enabled) {
-                $filteredGroupIds[] = $groupId;
-            }
-        }
-
-        $condition = 'ID in (' . implode(',', $filteredGroupIds) . ')';
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
-        $groupList->setCondition($condition);
-        $groupList->setOrder(['ASC', 'ASC']);
-        $groupList = $groupList->load();
+        $groupList->setCondition('`id` in (?)', implode(',', $filteredGroupIds));
+        $groupList->setOrderKey(['id']);
+        $groupList->setOrder(['ASC']);
 
         /** @var DataObject\Classificationstore\GroupConfig $group */
-        foreach ($groupList as $group) {
+        foreach ($groupList->load() as $group) {
             $keyList = [];
 
             $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-            $relation->setCondition('groupId = ' . $relation->quote($group->getId()));
+            $relation->setCondition('`groupId` = ?', $group->getId());
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
-            $relation = $relation->load();
             /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
-            foreach ($relation as $keyGroupRelation) {
+            foreach ($relation->load() as $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
                 }
-                $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
+                $definition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
 
                 // changes here also have an effect here: "bundles/AdminBundle/Resources/public/js/pimcore/object/tags/classificationstore.js"
-                $fallbackTooltip = $definition->getName() . ' - ' . $keyGroupRelation->getDescription();
+                $fallbackTooltip = $definition->getName();
+                if (!empty($keyGroupRelation->getDescription())) {
+                    $fallbackTooltip .= ' - ' . $keyGroupRelation->getDescription();
+                }
+
                 $definition->setTooltip($definition->getTooltip() ?: $fallbackTooltip);
 
                 if (method_exists($definition, '__wakeup')) {
@@ -1322,31 +1289,24 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             ];
         }
 
-        if ($groupCollectionMapping) {
+        $groupCollectionMapping = $this->recursiveGetActiveGroupCollectionMapping($object);
+        if (!empty($groupCollectionMapping)) {
             $collectionIds = array_values($groupCollectionMapping);
 
             $relation = new DataObject\Classificationstore\CollectionGroupRelation\Listing();
-            $condition = 'colId IN (' . implode(',', $collectionIds) . ')';
-            $relation->setCondition($condition);
-            $relation = $relation->load();
+            $relation->setCondition('`colId` IN (?)', implode(',', $collectionIds));
 
             $sorting = [];
             /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
-            foreach ($relation as $item) {
+            foreach ($relation->load() as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }
 
-            usort($this->activeGroupDefinitions, function ($a, $b) use ($sorting) {
-                $s1 = $sorting[$a['id']] ? $sorting[$a['id']] : 0;
-                $s2 = $sorting[$b['id']] ? $sorting[$b['id']] : 0;
+            usort($this->activeGroupDefinitions, static function ($a, $b) use ($sorting) {
+                $s1 = $sorting[$a['id']] ?: 0;
+                $s2 = $sorting[$b['id']] ?: 0;
 
-                if ($s1 > $s2) {
-                    return 1;
-                } elseif ($s2 > $s1) {
-                    return -1;
-                } else {
-                    return 0;
-                }
+                return $s1 <=> $s2;
             });
         }
     }
