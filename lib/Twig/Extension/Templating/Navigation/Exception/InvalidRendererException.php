@@ -19,21 +19,23 @@ namespace Pimcore\Twig\Extension\Templating\Navigation\Exception;
 
 use Pimcore\Navigation\Renderer\RendererInterface;
 
-@trigger_error(
-    'Pimcore\Templating\Helper\Navigation\Exception\InvalidRendererException is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException::class . ' instead.',
-    E_USER_DEPRECATED
-);
-
-class_exists(\Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException::class);
-
-if (false) {
+class InvalidRendererException extends \LogicException
+{
     /**
-     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException
+     * @param string $name
+     * @param mixed $renderer
+     *
+     * @return InvalidRendererException
      */
-    class InvalidRendererException extends \Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException {
+    public static function create(string $name, $renderer): self
+    {
+        $type = is_object($renderer) ? get_class($renderer) : gettype($renderer);
 
+        return new static(sprintf(
+            'Renderer for name "%s" was expected to implement interface "%s", "%s" given.',
+            $name,
+            RendererInterface::class,
+            $type
+        ));
     }
 }
-
-

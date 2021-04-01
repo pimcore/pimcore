@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
-use Pimcore\Model\DataObject;
 
 /**
  * @method Localizedfield\Dao getDao()*
@@ -387,7 +386,7 @@ class Localizedfield extends Model\AbstractModel implements
      */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
-        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+        $lazyKey = $this->buildLazyKey($name, $language);
         if (!$this->isLazyKeyLoaded($lazyKey) && $fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
@@ -578,7 +577,7 @@ class Localizedfield extends Model\AbstractModel implements
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
         $isLazyLoadedField = $fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading();
-        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+        $lazyKey = $this->buildLazyKey($name, $language);
 
         if ($isLazyLoadedField) {
             if (!$this->isLazyKeyLoaded($lazyKey)) {
@@ -642,6 +641,9 @@ class Localizedfield extends Model\AbstractModel implements
             foreach ($lazyLoadedFields as $fieldName) {
                 foreach (Tool::getValidLanguages() as $language) {
                     unset($this->items[$language][$fieldName]);
+
+                    $lazyKey = $this->buildLazyKey($fieldName, $language);
+                    $this->unmarkLazyKeyAsLoaded($lazyKey);
                 }
             }
         }

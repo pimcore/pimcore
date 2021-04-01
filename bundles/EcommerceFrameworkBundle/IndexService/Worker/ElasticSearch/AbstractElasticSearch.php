@@ -25,9 +25,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
 
 /**
  * @property ElasticSearch $tenantConfig
@@ -78,9 +77,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected $indexStoreMetaData = [];
 
     /**
-     * @var LockInterface|null
+     * @var int
      */
-    protected $lock = null;
+    protected $lastLockLogTimestamp = 0;
 
     /**
      * name for routing param for ES bulk requests
@@ -90,23 +89,15 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected $routingParamName = 'routing';
 
     /**
-     * @var LockFactory|null
-     */
-    protected $lockFactory = null;
-
-    /**
-     * @param LockFactory $lockFactory
      * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      * @param EventDispatcherInterface $eventDispatcher
-     * @param string|null $workerMode
      */
-    public function __construct(LockFactory $lockFactory, ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
-        $this->lockFactory = $lockFactory;
     }
 
     /**
@@ -529,24 +520,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $this->indexStoreMetaData = [];
     }
 
-    /**
-     * @deprecated
-     *
-     * first run processUpdateIndexQueue of trait and then commit updated entries
-     *
-     * @param int $limit
-     *
-     * @return int number of entries processed
-     */
-    public function processUpdateIndexQueue($limit = 100)
-    {
-        $entriesUpdated = parent::processUpdateIndexQueue($limit);
-        Logger::info('Entries updated:' . $entriesUpdated);
-        $this->commitBatchToIndex();
-
-        return $entriesUpdated;
-    }
-
     protected function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
@@ -844,6 +817,54 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     }
 
     /**
+     * Blocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function blockIndexWrite(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Block write index '.$indexName.'.');
+            $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index.blocks.write' => true,
+                ],
+            ]);
+
+            $esClient->indices()->refresh([
+                'index' => $indexName,
+            ]);
+        }
+    }
+
+    /**
+     * Unblocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function unblockIndexWrite(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Unlock write index '.$indexName.'.');
+            $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index.blocks.write' => false,
+                ],
+            ]);
+
+            $esClient->indices()->refresh([
+                'index' => $indexName,
+            ]);
+        }
+    }
+
+    /**
      * Get the next index version, e.g. if currently 13, then 14 will be returned.
      *
      * @return int
@@ -922,7 +943,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $this->createEsIndex($nextIndexName);
             $this->putIndexMapping($nextIndexName);
 
+            $this->blockIndexWrite($currentIndexName);
             $this->performReindex($currentIndexName, $nextIndexName);
+            $this->unblockIndexWrite($currentIndexName);
 
             $this->indexVersion = $nextIndex;
 
@@ -1064,20 +1087,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     }
 
     /**
-     * @var int
-     */
-    protected $lastLockLogTimestamp = 0;
-
-    protected function getLock(): LockInterface
-    {
-        if (!$this->lock) {
-            $this->lock = $this->lockFactory->createLock(self::REINDEXING_LOCK_KEY, 60 * 10);
-        }
-
-        return $this->lock;
-    }
-
-    /**
      * Verify if the index is currently locked.
      *
      * @param bool $throwException if set to false then no exception will be thrown if index is locked
@@ -1088,7 +1097,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected function checkIndexLock(bool $throwException = true): bool
     {
-        if (!$this->getLock()->acquire()) {
+        if (TmpStore::get(self::REINDEXING_LOCK_KEY)) {
             $errorMessage = sprintf('Index is currently locked by "%s" as reindex is in progress.', self::REINDEXING_LOCK_KEY);
             if ($throwException) {
                 throw new \Exception($errorMessage);
@@ -1108,12 +1117,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     protected function activateIndexLock()
     {
-        $this->getLock()->acquire();
+        TmpStore::set(self::REINDEXING_LOCK_KEY, 1, null, 60 * 10);
     }
 
     protected function releaseIndexLock()
     {
-        $this->getLock()->release();
+        TmpStore::delete(self::REINDEXING_LOCK_KEY);
         $this->lastLockLogTimestamp = 0;
     }
 }

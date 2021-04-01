@@ -65,7 +65,7 @@ services:
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
 
-    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch6:
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch7:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
 
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic:

@@ -17,8 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Listing\Concrete;
 
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -45,50 +44,6 @@ class Dao extends Model\DataObject\Listing\Dao
      * @var int
      */
     protected $totalCount = 0;
-
-    /**
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
-
-    /**
-     * get select query
-     *
-     * @param array|string|Expression|bool $columns
-     *
-     * @return QueryBuilder
-     *
-     * @throws \Exception
-     */
-    public function getQuery($columns = '*')
-    {
-        // init
-        $select = $this->db->select();
-
-        $select->from([$this->getTableName()], $columns);
-
-        // add joins
-        $this->addJoins($select);
-
-        // add condition
-        $this->addConditions($select);
-
-        // group by
-        $this->addGroupBy($select);
-
-        // order
-        $this->addOrder($select);
-
-        // limit
-        $this->addLimit($select);
-
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        return $select;
-    }
 
     /**
      * @return int[]
@@ -209,11 +164,13 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param QueryBuilder $select
+     * @param DoctrineQueryBuilder $queryBuilder
      *
      * @return $this
+     *
+     * @throws \Exception
      */
-    protected function addJoins(QueryBuilder $select)
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
     {
         // add fielcollection's
         $fieldCollections = $this->model->getFieldCollections();
@@ -240,11 +197,7 @@ CONDITION;
                 }
 
                 // add join
-                $select->joinLeft(
-                    [$name => $table],
-                    $condition,
-                    ''
-                );
+                $queryBuilder->leftJoin($this->getTableName(), $table, $this->db->quoteIdentifier($name), $condition);
             }
         }
 
@@ -262,14 +215,11 @@ CONDITION;
                 $name = $ob;
 
                 // add join
-                $select->joinLeft(
-                    [$name => $table],
+                $queryBuilder->leftJoin($this->getTableName(), $table, $this->db->quoteIdentifier($name),
                     <<<CONDITION
 1
 AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
 CONDITION
-                    ,
-                    ''
                 );
 
                 if ($brickDefinition->getFieldDefinition('localizedfields')) {
@@ -279,27 +229,16 @@ CONDITION
                     $name = $ob . '_localized';
 
                     // add join
-                    $select->joinLeft(
-                        [$name => $localizedTable],
+                    $queryBuilder->leftJoin($this->getTableName(), $localizedTable, $this->db->quoteIdentifier($name),
                         <<<CONDITION
 1
 AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
 CONDITION
-                        ,
-                        ''
                     );
                 }
             }
         }
 
         return $this;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        $this->onCreateQueryCallback = $callback;
     }
 }

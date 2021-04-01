@@ -19,8 +19,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
+class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface,
+    VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -120,8 +122,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__NElongitude'] && $data[$this->getName() . '__NElatitude'] && $data[$this->getName() . '__SWlongitude'] && $data[$this->getName() . '__SWlatitude']) {
-            $ne = new DataObject\Data\Geopoint($data[$this->getName() . '__NElongitude'], $data[$this->getName() . '__NElatitude']);
-            $sw = new DataObject\Data\Geopoint($data[$this->getName() . '__SWlongitude'], $data[$this->getName() . '__SWlatitude']);
+            $ne = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__NElatitude'], $data[$this->getName() . '__NElongitude']);
+            $sw = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__SWlatitude'], $data[$this->getName() . '__SWlongitude']);
 
             $geobounds = new DataObject\Data\Geobounds($ne, $sw);
 
@@ -198,8 +200,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data['NElongitude'] !== null && $data['NElatitude'] !== null && $data['SWlongitude'] !== null && $data['SWlatitude'] !== null) {
-            $ne = new DataObject\Data\Geopoint($data['NElongitude'], $data['NElatitude']);
-            $sw = new DataObject\Data\Geopoint($data['SWlongitude'], $data['SWlatitude']);
+            $ne = new DataObject\Data\GeoCoordinates($data['NElatitude'], $data['NElongitude']);
+            $sw = new DataObject\Data\GeoCoordinates($data['SWlatitude'], $data['SWlongitude']);
 
             return new DataObject\Data\Geobounds($ne, $sw);
         }
@@ -228,7 +230,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -243,29 +245,6 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\Geobounds
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $points = explode('|', $importValue);
-        $value = null;
-        if (is_array($points) and count($points) == 2) {
-            $northEast = explode(',', $points[0]);
-            $southWest = explode(',', $points[1]);
-            if ($northEast[0] && $northEast[1] && $southWest[0] && $southWest[1]) {
-                $value = new DataObject\Data\Geobounds(new DataObject\Data\Geopoint($northEast[0], $northEast[1]), new DataObject\Data\Geopoint($southWest[0], $southWest[1]));
-            }
-        }
-
-        return $value;
     }
 
     /**
@@ -316,6 +295,43 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
         return $value;
     }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Geobounds) {
+            return [
+                'northEast' => ["latitude" => $value->getNorthEast()->getLatitude(), "longitude" => $value->getNorthEast()->getLongitude()],
+                'southWest' => ["latitude" => $value->getSouthWest()->getLatitude(), "longitude" =>  $value->getSouthWest()->getLongitude()],
+            ];
+        } elseif (is_array($value)) {
+            //TODO kick this as soon as classification store is implemented
+            return [
+                'northEast' => ["latitude" => $value[$this->getName() . '__NElatitude'], "longitude" => $value[$this->getName() . '__NElongitude']],
+                'southWest' => ["latitude" => $value[$this->getName() . '__SWlatitude'], "longitude" => $value[$this->getName() . '__SWlongitude']],
+            ];
+        }
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+
+            $ne = new DataObject\Data\GeoCoordinates($value['northEast']['latitude'], $value['northEast']['longitude']);
+            $sw = new DataObject\Data\GeoCoordinates($value['southWest']['latitude'], $value['southWest']['longitude']);
+
+            return new DataObject\Data\Geobounds($ne, $sw);
+
+        }
+        return null;
+    }
+
 
     /** See marshal
      *

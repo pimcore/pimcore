@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Asset\MetaData;
 
 use Pimcore\Logger;
-use Pimcore\Tool;
+use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
@@ -63,15 +63,15 @@ trait EmbeddedMetaDataTrait
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
-        $embeddedMetaData = [];
 
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getTemporaryFile();
         }
 
-        if (stream_is_local($this->getStream()) && $exiftool && $useExifTool) {
-            $path = escapeshellarg($filePath);
-            $output = Tool\Console::exec($exiftool . ' -j ' . $path);
+        if ($exiftool && $useExifTool) {
+            $process = new Process([$exiftool, '-j', $filePath]);
+            $process->run();
+            $output = $process->getOutput();
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
 
             foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
@@ -123,7 +123,7 @@ trait EmbeddedMetaDataTrait
     public function getEXIFData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
@@ -145,7 +145,7 @@ trait EmbeddedMetaDataTrait
     public function getXMPData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
@@ -242,7 +242,7 @@ trait EmbeddedMetaDataTrait
     public function getIPTCData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];

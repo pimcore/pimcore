@@ -19,9 +19,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface
+class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -169,7 +170,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         if (is_array($data)) {
             $points = [];
             foreach ($data as $point) {
-                $points[] = new DataObject\Data\Geopoint($point['longitude'], $point['latitude']);
+                $points[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
             }
 
             return $points;
@@ -195,7 +196,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -218,28 +219,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $rows = explode('|', $importValue);
-        $points = [];
-        if (is_array($rows)) {
-            foreach ($rows as $row) {
-                $coords = explode(';', $row);
-                $points[] = new  DataObject\Data\Geopoint($coords[1], $coords[0]);
-            }
-        }
-
-        return $points;
     }
 
     /**
@@ -334,7 +313,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $result[] = new DataObject\Data\Geopoint($point[1], $point[0]);
+                    $result[] = new DataObject\Data\GeoCoordinates($point[0], $point[1]);
                 }
             }
 
@@ -394,5 +373,39 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     public function getPhpdocReturnType(): ?string
     {
         return 'array|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $points = [];
+            $fd = new Geopoint();
+            foreach ($value as $p) {
+                $points[] = $fd->normalize($p);
+            }
+
+            return $points;
+
+        }
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $point) {
+                $result[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
+            }
+            return $result;
+        }
+        return null;
+
     }
 }

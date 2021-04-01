@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -15,30 +12,47 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Templating\Helper;
+/**
+ * ----------------------------------------------------------------------------------
+ * based on @author ZF1 Zend_View_Helper_InlineScript
+ * ----------------------------------------------------------------------------------
+ */
 
-@trigger_error(
-    'Pimcore\Templating\Helper\InlineScript is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Twig\Extension\Templating\InlineScript::class . ' instead.',
-    E_USER_DEPRECATED
-);
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/InlineScript.php
+/**
+ * Helper for setting and retrieving script elements for inclusion in HTML body
+ * section
+ *
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+
 namespace Pimcore\Twig\Extension\Templating;
 
 use Twig\Extension\RuntimeExtensionInterface;
 
 class InlineScript extends HeadScript implements RuntimeExtensionInterface
 {
-========
-class_exists(\Pimcore\Twig\Extension\Templating\InlineScript::class);
-
-if (false) {
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/InlineScript.php
     /**
-     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\InlineScript
+     * Registry key for placeholder
+     *
+     * @var string
      */
-    class InlineScript extends \Pimcore\Twig\Extension\Templating\InlineScript {
-
-    }
+    protected $_regKey = 'InlineScript';
 }

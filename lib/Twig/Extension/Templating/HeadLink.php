@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -15,7 +12,6 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/HeadLink.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_HeadLink
@@ -375,23 +371,154 @@ class HeadLink extends CacheBusterAware
                 'item' => $item,
             ]);
             \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_LINK);
-========
-namespace Pimcore\Templating\Helper;
 
-@trigger_error(
-    'Pimcore\Templating\Helper\HeadLink is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Twig\Extension\Templating\HeadLink::class . ' instead.',
-    E_USER_DEPRECATED
-);
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/HeadLink.php
+            $source = (string)($item->href ?? '');
+            $itemAttributes = isset($item->extras) ? $item->extras : [];
 
-class_exists(\Pimcore\Twig\Extension\Templating\HeadLink::class);
+            if (isset($item->extras) && is_array($item->extras) && isset($item->extras['webLink'])) {
+                unset($item->extras['webLink']);
+            }
 
-if (false) {
+            if (is_array($itemAttributes) && !empty($source)) {
+                $this->handleWebLink($item, $source, $itemAttributes);
+            }
+        }
+    }
+
     /**
-     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\HeadLink
+     * Create data item for stack
+     *
+     * @param  array $attributes
+     *
+     * @return \stdClass
      */
-    class HeadLink extends \Pimcore\Twig\Extension\Templating\HeadLink {
+    public function createData(array $attributes)
+    {
+        $data = (object) $attributes;
 
+        return $data;
+    }
+
+    /**
+     * Create item for stylesheet link item
+     *
+     * @param  array $args
+     *
+     * @return \stdClass|false Returns fals if stylesheet is a duplicate
+     */
+    public function createDataStylesheet(array $args)
+    {
+        $rel = 'stylesheet';
+        $type = 'text/css';
+        $media = 'screen';
+        $conditionalStylesheet = false;
+        $extras = [];
+        $href = array_shift($args);
+
+        if ($this->_isDuplicateStylesheet($href)) {
+            return false;
+        }
+
+        if (0 < count($args)) {
+            $media = array_shift($args);
+            if (is_array($media)) {
+                $media = implode(',', $media);
+            } else {
+                $media = (string) $media;
+            }
+        }
+        if (0 < count($args)) {
+            $conditionalStylesheet = array_shift($args);
+            if (!empty($conditionalStylesheet) && is_string($conditionalStylesheet)) {
+                $conditionalStylesheet = (string) $conditionalStylesheet;
+            } else {
+                $conditionalStylesheet = null;
+            }
+        }
+
+        if (0 < count($args) && is_array($args[0])) {
+            $extras = array_shift($args);
+            $extras = (array) $extras;
+        }
+
+        $attributes = compact('rel', 'type', 'href', 'media', 'conditionalStylesheet', 'extras');
+
+        return $this->createData($this->_applyExtras($attributes));
+    }
+
+    /**
+     * Is the linked stylesheet a duplicate?
+     *
+     * @param  string $uri
+     *
+     * @return bool
+     */
+    protected function _isDuplicateStylesheet($uri)
+    {
+        foreach ($this->getContainer() as $item) {
+            if (($item->rel == 'stylesheet') && ($item->href == $uri)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Create item for alternate link item
+     *
+     * @param  array $args
+     *
+     * @return \stdClass
+     */
+    public function createDataAlternate(array $args)
+    {
+        if (3 > count($args)) {
+            throw new Exception(sprintf('Alternate tags require 3 arguments; %s provided', count($args)));
+        }
+
+        $rel = 'alternate';
+        $href = array_shift($args);
+        $type = array_shift($args);
+        $title = array_shift($args);
+        $extras = [];
+
+        if (0 < count($args) && is_array($args[0])) {
+            $extras = array_shift($args);
+            $extras = (array) $extras;
+
+            if (isset($extras['media']) && is_array($extras['media'])) {
+                $extras['media'] = implode(',', $extras['media']);
+            }
+        }
+
+        $href = (string) $href;
+        $type = (string) $type;
+        $title = (string) $title;
+
+        $attributes = compact('rel', 'href', 'type', 'title', 'extras');
+
+        return $this->createData($this->_applyExtras($attributes));
+    }
+
+    /**
+     * Apply any overrides specified in the 'extras' array
+     *
+     * @param array $attributes
+     *
+     * @return array
+     */
+    protected function _applyExtras($attributes)
+    {
+        if (isset($attributes['extras'])) {
+            foreach ($attributes['extras'] as $eKey => $eVal) {
+                if (isset($attributes[$eKey])) {
+                    $attributes[$eKey] = $eVal;
+                    unset($attributes['extras'][$eKey]);
+                }
+            }
+        }
+
+        return $attributes;
     }
 }

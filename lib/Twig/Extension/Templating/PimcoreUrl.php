@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -17,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/PimcoreUrl.php
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
@@ -46,23 +42,44 @@ class PimcoreUrl implements RuntimeExtensionInterface
         $this->generator = $generator;
         $this->requestHelper = $requestHelper;
     }
-========
-@trigger_error(
-    'Pimcore\Templating\Helper\PimcoreUrl is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Twig\Extension\Templating\PimcoreUrl::class . ' instead.',
-    E_USER_DEPRECATED
-);
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/PimcoreUrl.php
 
-class_exists(\Pimcore\Twig\Extension\Templating\PimcoreUrl::class);
-
-if (false) {
     /**
-     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\PimcoreUrl
+     * @param array $urlOptions
+     * @param string|null $name
+     * @param bool $reset
+     * @param bool $encode
+     * @param bool $relative
+     *
+     * @return string
      */
-    class PimcoreUrl extends \Pimcore\Twig\Extension\Templating\PimcoreUrl {
+    public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
+    {
+        // merge all parameters from request to parameters
+        if (!$reset && $this->requestHelper->hasMasterRequest()) {
+            $urlOptions = array_replace($this->requestHelper->getMasterRequest()->query->all(), $urlOptions);
+        }
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/PimcoreUrl.php
+        return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH, $encode);
+    }
+
+    /**
+     * Generate URL with support to only pass parameters ZF1 style (defaults to current route).
+     *
+     * @param string|null $name
+     * @param array $parameters
+     * @param int $referenceType
+     * @param bool $encode
+     *
+     * @return string
+     */
+    protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $encode = true)
+    {
+        if ($encode !== true) {
+            // encoding is default anyway, so we only set it when really necessary, to minimize the risk of
+            // side-effects when using parameters for that purpose (other routers may not be aware of param `encode`
+            $parameters['encode'] = $encode;
+        }
+
         // if name is an array, treat it as parameters
         if (is_array($name)) {
             if (is_array($parameters)) {
@@ -119,7 +136,5 @@ if (false) {
         }
 
         return $route;
-========
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/PimcoreUrl.php
     }
 }

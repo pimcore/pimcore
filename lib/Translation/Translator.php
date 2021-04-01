@@ -267,17 +267,20 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         $normalizedId = $id;
-        if (isset($parameters['%count%'])) {
+
+        //translate only plural form(seperated by pipe "|") with count param
+        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
             $normalizedId = $id = $translated;
+            $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
 
-        $lookForFallback = $normalizedId == $translated;
+        $lookForFallback = empty($translated);
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
-                if ($translated != $normalizedId) {
+                if ($normalizedId != $translated && $translated) {
                     return $translated;
                 }
             } elseif (Translation::isAValidDomain($domain)) {
@@ -337,7 +340,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             }
         }
 
-        return $translated;
+        return !empty($translated) ? $translated : $id;
     }
 
     /**

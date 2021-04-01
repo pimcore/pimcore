@@ -18,9 +18,12 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 class QuantityValue extends AbstractQuantityValue
 {
+    use ObjectVarTrait;
+
     /**
      * @var float|null
      */

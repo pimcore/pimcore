@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -15,7 +12,6 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/HeadStyle.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_HeadStyle
@@ -193,23 +189,252 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
             } else {
                 $this->$action($item);
             }
-========
-namespace Pimcore\Templating\Helper;
 
-@trigger_error(
-    'Pimcore\Templating\Helper\HeadStyle is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Twig\Extension\Templating\HeadStyle::class . ' instead.',
-    E_USER_DEPRECATED
-);
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/HeadStyle.php
+            return $this;
+        }
 
-class_exists(\Pimcore\Twig\Extension\Templating\HeadStyle::class);
+        return parent::__call($method, $args);
+    }
 
-if (false) {
     /**
-     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\HeadStyle
+     * Determine if a value is a valid style tag
+     *
+     * @param mixed $value
+     *
+     * @return bool
      */
-    class HeadStyle extends \Pimcore\Twig\Extension\Templating\HeadStyle {
+    protected function _isValid($value)
+    {
+        if ((!$value instanceof \stdClass)
+            || !isset($value->content)
+            || !isset($value->attributes)) {
+            return false;
+        }
 
+        return true;
+    }
+
+    /**
+     * Override append to enforce style creation
+     *
+     * @param  mixed $value
+     *
+     * @return void
+     */
+    public function append($value)
+    {
+        if (!$this->_isValid($value)) {
+            throw new Exception('Invalid value passed to append; please use appendStyle()');
+        }
+
+        $this->getContainer()->append($value);
+    }
+
+    /**
+     * Override offsetSet to enforce style creation
+     *
+     * @param  string|int $index
+     * @param  mixed $value
+     *
+     * @return void
+     */
+    public function offsetSet($index, $value)
+    {
+        if (!$this->_isValid($value)) {
+            throw new Exception('Invalid value passed to offsetSet; please use offsetSetStyle()');
+        }
+
+        $this->getContainer()->offsetSet($index, $value);
+    }
+
+    /**
+     * Override prepend to enforce style creation
+     *
+     * @param  mixed $value
+     *
+     * @return void
+     */
+    public function prepend($value)
+    {
+        if (!$this->_isValid($value)) {
+            throw new Exception('Invalid value passed to prepend; please use prependStyle()');
+        }
+
+        $this->getContainer()->prepend($value);
+    }
+
+    /**
+     * Override set to enforce style creation
+     *
+     * @param  mixed $value
+     *
+     * @return void
+     */
+    public function set($value)
+    {
+        if (!$this->_isValid($value)) {
+            throw new Exception('Invalid value passed to set; please use setStyle()');
+        }
+
+        $this->getContainer()->set($value);
+    }
+
+    /**
+     * Start capture action
+     *
+     * @param string $type
+     * @param string|null $attrs
+     *
+     * @return void
+     */
+    public function captureStart($type = Container::APPEND, $attrs = null)
+    {
+        if ($this->_captureLock) {
+            throw new Exception('Cannot nest headStyle captures');
+        }
+
+        $this->_captureLock = true;
+        $this->_captureAttrs = $attrs;
+        $this->_captureType = $type;
+        ob_start();
+    }
+
+    /**
+     * End capture action and store
+     *
+     * @return void
+     */
+    public function captureEnd()
+    {
+        $content = ob_get_clean();
+        $attrs = $this->_captureAttrs;
+        $this->_captureAttrs = null;
+        $this->_captureLock = false;
+
+        switch ($this->_captureType) {
+            case Container::SET:
+                $this->setStyle($content, $attrs);
+                break;
+            case Container::PREPEND:
+                $this->prependStyle($content, $attrs);
+                break;
+            case Container::APPEND:
+            default:
+                $this->appendStyle($content, $attrs);
+                break;
+        }
+    }
+
+    /**
+     * Convert content and attributes into valid style tag
+     *
+     * @param  \stdClass $item Item to render
+     * @param  string $indent Indentation to use
+     *
+     * @return string
+     */
+    public function itemToString(\stdClass $item, $indent)
+    {
+        $attrString = '';
+        if (!empty($item->attributes)) {
+            foreach ($item->attributes as $key => $value) {
+                if (!in_array($key, $this->_optionalAttributes)) {
+                    continue;
+                }
+                if ('media' == $key) {
+                    if (false === strpos($value, ',')) {
+                        if (!in_array($value, $this->_mediaTypes)) {
+                            continue;
+                        }
+                    } else {
+                        $media_types = explode(',', $value);
+                        $value = '';
+                        foreach ($media_types as $type) {
+                            $type = trim($type);
+                            if (!in_array($type, $this->_mediaTypes)) {
+                                continue;
+                            }
+                            $value .= $type .',';
+                        }
+                        $value = substr($value, 0, -1);
+                    }
+                }
+                $attrString .= sprintf(' %s="%s"', $key, htmlspecialchars($value));
+            }
+        }
+
+        $escapeStart = $indent . '<!--'. PHP_EOL;
+        $escapeEnd = $indent . '-->'. PHP_EOL;
+        if (isset($item->attributes['conditional'])
+            && !empty($item->attributes['conditional'])
+            && is_string($item->attributes['conditional'])
+        ) {
+            $escapeStart = null;
+            $escapeEnd = null;
+        }
+
+        $html = '<style' . $attrString . '>' . PHP_EOL
+            . $escapeStart . $indent . $item->content . PHP_EOL . $escapeEnd
+            . '</style>';
+
+        if (null == $escapeStart && null == $escapeEnd) {
+            if (str_replace(' ', '', $item->attributes['conditional']) === '!IE') {
+                $html = '<!-->' . $html . '<!--';
+            }
+            $html = '<!--[if ' . $item->attributes['conditional'] . ']>' . $html . '<![endif]-->';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Create string representation of placeholder
+     *
+     * @param  string|int $indent
+     *
+     * @return string
+     */
+    public function toString($indent = null)
+    {
+        $indent = (null !== $indent)
+            ? $this->getWhitespace($indent)
+            : $this->getIndent();
+
+        $items = [];
+        $this->getContainer()->ksort();
+        foreach ($this as $item) {
+            if (!$this->_isValid($item)) {
+                continue;
+            }
+            $items[] = $this->itemToString($item, $indent);
+        }
+
+        $return = $indent . implode($this->getSeparator() . $indent, $items);
+        $return = preg_replace("/(\r\n?|\n)/", '$1' . $indent, $return);
+
+        return $return;
+    }
+
+    /**
+     * Create data item for use in stack
+     *
+     * @param  string $content
+     * @param  array $attributes
+     *
+     * @return \stdClass
+     */
+    public function createData($content, array $attributes)
+    {
+        if (!isset($attributes['media'])) {
+            $attributes['media'] = 'screen';
+        } elseif (is_array($attributes['media'])) {
+            $attributes['media'] = implode(',', $attributes['media']);
+        }
+
+        $data = new \stdClass();
+        $data->content = $content;
+        $data->attributes = $attributes;
+
+        return $data;
     }
 }

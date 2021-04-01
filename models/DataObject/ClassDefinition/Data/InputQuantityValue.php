@@ -121,27 +121,8 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @deprecated
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
      *
-     * @return null|InputQuantityValueDataObject
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode('_', $importValue);
-
-        $value = null;
-        if ($values[0] && $values[1]) {
-            $number = (float) str_replace(',', '.', $values[0]);
-            $value = $this->getNewDataObject($number, $values[1]);
-        }
-
-        return $value;
-    }
-
-    /**
      * @param mixed $value
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
@@ -194,5 +175,29 @@ class InputQuantityValue extends QuantityValue
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
+            return [
+                "value" => $value->getValue(),
+                "unitId" => $value->getUnitId()
+            ];
+        }
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new Model\DataObject\Data\InputQuantityValue($value["value"], $value["unitId"]);
+        }
+        return null;
     }
 }

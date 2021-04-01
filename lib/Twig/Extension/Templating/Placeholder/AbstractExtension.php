@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -15,7 +12,6 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder/AbstractExtension.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder_Container_Standalone
@@ -41,6 +37,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Twig\Extension\RuntimeExtensionInterface;
 
 /**
@@ -62,6 +59,8 @@ use Twig\Extension\RuntimeExtensionInterface;
  */
 abstract class AbstractExtension implements \IteratorAggregate, \Countable, \ArrayAccess, RuntimeExtensionInterface
 {
+    use HelperCharsetTrait;
+
     /**
      * @var ContainerService
      */
@@ -71,25 +70,27 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      * @var Container
      */
     protected $_container;
-========
-namespace Pimcore\Templating\Helper\Placeholder;
 
-@trigger_error(
-    'Pimcore\Templating\Helper\Placeholder\AbstractHelper is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension::class . ' instead.',
-    E_USER_DEPRECATED
-);
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder/AbstractHelper.php
-
-class_exists(\Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension::class);
-
-if (false) {
     /**
-     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension
+     * Registry key under which container registers itself
+     *
+     * @var string
      */
-    class AbstractHelper extends \Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension {
+    protected $_regKey;
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder/AbstractExtension.php
+    /**
+     * Flag whether to automatically escape output, must also be
+     * enforced in the child class if __toString/toString is overwritten
+     *
+     * @var bool
+     */
+    protected $_autoEscape = true;
+
+    public function __construct(ContainerService $containerService)
+    {
+        $this->containerService = $containerService;
+    }
+
     /**
      * Set whether or not auto escaping should be used
      *
@@ -325,7 +326,5 @@ if (false) {
     public function getIterator()
     {
         return $this->getContainer()->getIterator();
-========
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder/AbstractHelper.php
     }
 }

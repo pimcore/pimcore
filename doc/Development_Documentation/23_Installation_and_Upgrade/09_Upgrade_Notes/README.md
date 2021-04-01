@@ -146,6 +146,29 @@
   please update your system settings as per the requirements.
 
 ## 6.9.0
+- [Data Objects] Deprecated method `getFromCsvImport()` on all data-types
+- [Data Objects] Data types: `marshal`/`unmarshal` is deprecated and will be removed in Pimcore 10. Use `normalize`/`denormalize` instead.
+  For custom data types implement the `NormalizerInterface`
+- Constants `PIMCORE_ASSET_DIRECTORY`, `PIMCORE_VERSION_DIRECTORY`, `PIMCORE_TEMPORARY_DIRECTORY`, `PIMCORE_PUBLIC_VAR`, `PIMCORE_RECYCLEBIN_DIRECTORY`, `PIMCORE_USERIMAGE_DIRECTORY`  have been deprecated and will be removed in Pimcore 10.
+- Classes `Pimcore\Config\EnvironmentConfigInterface` and `\Pimcore\Config\EnvironmentConfig` have been deprecated and will be removed in Pimcore 10.
+- Constants `PIMCORE_DEBUG` `PIMCORE_DEVMODE` `PIMCORE_ENVIRONMENT` and `PIMCORE_KERNEL_DEBUG` have been deprecated and will be removed in Pimcore 10.
+  
+- `\Pimcore\Maintenance\Tasks\VersionsCompressTask` has been deprecated and will be removed in Pimcore 10
+- `\Pimcore\Helper\RobotsTxt` has been deprecated and will be removed in Pimcore 10
+- [Documents] `Editable::factory()` is deprecated and will be removed in Pimcore 10, use `EditableLoader` service instead. 
+- [Data Objects] CSV import feature will be removed in Pimcore 10. Use https://github.com/pimcore/data-hub or https://github.com/w-vision/DataDefinitions instead
+- [DataObjects] PHP Class `Pimcore\Model\DataObject\Data\Geopoint` will go away in Pimcore 10. Use `GeoCoordinates` instead which changes the signature of `__construct` parameters
+- [Ecommerce] `getClientConfig` method will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [ECommerce] `setSuccessorOrder` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
+- [Ecommerce] `getFieldNameMapped` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [Ecommerce] `getReverseMappedFieldName` will be added to ` Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface` in Pimcore 10
+- [Ecommerce] Tenant config type hint will be changed to `FindologicConfigInterface` in `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic::__construct` in Pimcore 10
+- Calling static methods on `Pimcore\Model\DataObject\AbstractObject` is deprecated, use `Pimcore\Model\DataObject` instead.
+- [Ecommerce] Abstract method `setCartHash` will be added to `Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` in Pimcore 10
+- Abstract method `load` will be added to `Pimcore\Model\Listing\Dao\AbstractDao` in Pimcore 10
+- [Elastic Search] `getClientConfig` will be added to the `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config` interface in Pimcore 10
+- `PageSnippet::$elements` property visibility changed from `protected` to `private` 
+- `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private` 
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
 - Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore 10. 
@@ -164,6 +187,31 @@
 - `\Pimcore\Model\Asset\Image\Thumbnail\Processor::setHasWebpSupport()` and `hasWebpSupport()` has been deprecated and will be removed in Pimcore 10.
 - `\Pimcore\Tool\Frontend::hasWebpSupport()` and all related `webp` methods have been deprecated and will be removed in Pimcore 10. 
 - Config option `pimcore.translations.case_insensitive` has been deprecated and will be removed in Pimcore 10. 
+- `PageSnippet::$elements` property visibility changed from `protected` to `private`
+- `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private`
+- `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been deprecated and will be removed in Pimcore 10. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
+- Calling `getQuery()` on listing classes (to fetch Zend Compatibility Query Builder) has been deprecated and will be removed in Pimcore 10. Use `getQueryBuilder()` which returns Doctrine Query builder instead.
+- Using onCreateQuery callback to modify listing queries has been deprecated. Use onCreateQueryBuilder() instead. e.g.
+```php
+    /** @var \Pimcore\Model\DataObject\News\Listing $list */
+    $list = new Pimcore\Model\DataObject\News\Listing();
+
+    $list->onCreateQueryBuilder(
+        function (\Doctrine\DBAL\Query\QueryBuilder $select) use ($list) {
+            // modify listing $select->join(....);
+        }
+    );
+```
+- Using Zend\Paginator for listing classes has been deprecated and will be removed in Pimcore 10. Use Knp\Component\Pager\Paginator instead.
+- [Ecommerce] Elasticsearch 5 and 6 support is deprecated, use newer versions of elasticsearch.
+- [Ecommerce] Calling `getItemAmount` and `getItemCount` of `Carts` with boolean parameter is deprecated. Use one of 
+  `CartInterface::COUNT_MAIN_ITEMS_ONLY`, `CartInterface::COUNT_MAIN_AND_SUB_ITEMS`, `CartInterface::COUNT_MAIN_OR_SUB_ITEMS` 
+  instead. 
+- `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` class has been deprecated and will be removed in Pimcore 10.
+- `Pimcore\Tool\Console`: Methods `getSystemEnvironment()`, `exec()`, `execInBackground()` and `runPhpScriptInBackground()` have been deprecated, use `Symfony\Component\Process\Process` instead where possible. For long running background tasks (which should run even when parent process has exited), switch to a queue implementation.
+- Image thumbnails: Using getHtml() on Image Thumbnails will return `<picture>` tag instead of `<img>` tag in Pimcore 10. Please use `getImageTag()` method instead. Also, passing `$removeAttribute` param to `getHtml()` has been deprecated and will throw Exception in Pimcore 10.
+- Deprecated `Pimcore\Tool\Mime`, use `Symfony\Component\Mime\MimeTypes` instead.  
+- `Pimcore\Config::getFlag()` method has been deprecated and will be removed in Pimcore 10.
 
 - [Analytics] Matomo(Piwik) integration has been deprecated in Core and Ecommerce bundle, and will be removed in Pimcore 10.
 - [Targeting and Personalization] VisitedPageBefore condition has been deprecated, as it is based on deprecated Piwik integration and will be removed in Pimcore 10.

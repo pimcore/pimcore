@@ -930,43 +930,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if (is_array($value)) {
-            $result = [];
-            /** @var DataObject\Data\ObjectMetadata $elementMetadata */
-            foreach ($value as $elementMetadata) {
-                $element = $elementMetadata->getElement();
-
-                $type = Element\Service::getType($element);
-                $id = $element->getId();
-                $result[] = [
-                    'element' => [
-                        'type' => $type,
-                        'id' => $id,
-                    ],
-                    'fieldname' => $elementMetadata->getFieldname(),
-                    'columns' => $elementMetadata->getColumns(),
-                    'data' => $elementMetadata->getData(), ];
-            }
-
-            return $result;
-        }
-
-        return null;
+        return $this->normalize($value, $params);
     }
 
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
+    public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
+            $object = $params['object'] ?? null;
             $result = [];
             foreach ($value as $elementMetadata) {
                 $elementData = $elementMetadata['element'];
@@ -991,6 +961,51 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         return null;
+
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            /** @var DataObject\Data\ObjectMetadata $elementMetadata */
+            foreach ($value as $elementMetadata) {
+                $element = $elementMetadata->getElement();
+
+                $type = Element\Service::getType($element);
+                $id = $element->getId();
+                $result[] = [
+                    'element' => [
+                        'type' => $type,
+                        'id' => $id,
+                    ],
+                    'fieldname' => $elementMetadata->getFieldname(),
+                    'columns' => $elementMetadata->getColumns(),
+                    'data' => $elementMetadata->getData(), ];
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+
+    /** See marshal
+     *
+     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
+     *
+     * @param mixed $value
+     * @param DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        $params = $params ?? null;
+        $params['object'] = $object;
+        return $this->denormalize($value, $params);
     }
 
     /**

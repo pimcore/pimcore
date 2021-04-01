@@ -15,12 +15,29 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Twig\Extension\Templating\Navigation\Exception;
+namespace Pimcore\Twig\Extension\Templating\Traits;
 
-class RendererNotFoundException extends \InvalidArgumentException
+trait HelperCharsetTrait
 {
-    public static function create(string $name): self
+    protected $charset = 'UTF-8';
+
+    /**
+     * Sets the default charset.
+     *
+     * @param string $charset The charset
+     */
+    public function setCharset(string $charset)
     {
-        return new static(sprintf('The navigation renderer "%s" was not found', $name));
+        $this->charset = $charset;
+    }
+
+    /**
+     * Gets the default charset.
+     *
+     * @return string The default charset
+     */
+    public function getCharset()
+    {
+        return $this->charset;
     }
 }

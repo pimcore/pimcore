@@ -17,10 +17,8 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
-use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\DataObject[] load()
@@ -32,7 +30,7 @@ use Pimcore\Model;
  * @method onCreateQuery(callable $callback)
  * @method onCreateQueryBuilder(?callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * @var bool
@@ -138,27 +136,6 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param string $groupBy
-     * @param bool $qoute
-     *
-     * @return $this
-     */
-    public function setGroupBy($groupBy, $qoute = true)
-    {
-        $this->setData(null);
-
-        if ($groupBy) {
-            $this->groupBy = $groupBy;
-
-            if (!$qoute) {
-                $this->groupBy = new Expression($groupBy);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      *
      * Methods for AdapterInterface
      */
@@ -186,6 +163,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
+     * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()

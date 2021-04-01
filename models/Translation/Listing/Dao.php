@@ -78,7 +78,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
             $queryBuilder->setMaxResults(null); //retrieve all results
-            $translationsData = $this->db->fetchAll((string) $queryBuilder);
+            $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
@@ -131,7 +131,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
-            $translations[] = $allTranslations[$t['key']];
+            $translations[] = $allTranslations[$t['key']] ?? '';
         }
 
         $this->model->setTranslations($translations);

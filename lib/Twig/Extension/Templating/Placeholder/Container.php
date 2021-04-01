@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -15,7 +12,6 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder/Container.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder_Container_Abstract
@@ -193,23 +189,221 @@ class Container extends \ArrayObject
     public function setPostfix($postfix)
     {
         $this->_postfix = (string) $postfix;
-========
-namespace Pimcore\Templating\Helper\Placeholder;
 
-@trigger_error(
-    'Pimcore\Templating\Helper\Placeholder\Container is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Twig\Extension\Templating\Placeholder\Container::class . ' instead.',
-    E_USER_DEPRECATED
-);
->>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder/Container.php
+        return $this;
+    }
 
-class_exists(\Pimcore\Twig\Extension\Templating\Placeholder\Container::class);
-
-if (false) {
     /**
-     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Placeholder\Container
+     * Retrieve postfix
+     *
+     * @return string
      */
-    class Container extends \Pimcore\Twig\Extension\Templating\Placeholder\Container {
+    public function getPostfix()
+    {
+        return $this->_postfix;
+    }
 
+    /**
+     * Set separator for __toString() serialization
+     *
+     * Used to implode elements in container
+     *
+     * @param  string $separator
+     *
+     * @return Container
+     */
+    public function setSeparator($separator)
+    {
+        $this->_separator = (string) $separator;
+
+        return $this;
+    }
+
+    /**
+     * Retrieve separator
+     *
+     * @return string
+     */
+    public function getSeparator()
+    {
+        return $this->_separator;
+    }
+
+    /**
+     * Set the indentation string for __toString() serialization,
+     * optionally, if a number is passed, it will be the number of spaces
+     *
+     * @param  string|int $indent
+     *
+     * @return Container
+     */
+    public function setIndent($indent)
+    {
+        $this->_indent = $this->getWhitespace($indent);
+
+        return $this;
+    }
+
+    /**
+     * Retrieve indentation
+     *
+     * @return string
+     */
+    public function getIndent()
+    {
+        return $this->_indent;
+    }
+
+    /**
+     * Retrieve whitespace representation of $indent
+     *
+     * @param  int|string $indent
+     *
+     * @return string
+     */
+    public function getWhitespace($indent)
+    {
+        if (is_int($indent)) {
+            $indent = str_repeat(' ', $indent);
+        }
+
+        return (string) $indent;
+    }
+
+    /**
+     * Start capturing content to push into placeholder
+     *
+     * @param int|string $type How to capture content into placeholder; append, prepend, or set
+     * @param null       $key
+     *
+     * @throws Exception
+     *
+     * @return void
+     */
+    public function captureStart($type = self::APPEND, $key = null)
+    {
+        if ($this->_captureLock) {
+            throw new Exception('Cannot nest placeholder captures for the same placeholder');
+        }
+
+        $this->_captureLock = true;
+        $this->_captureType = $type;
+        if ((null !== $key) && is_scalar($key)) {
+            $this->_captureKey = (string) $key;
+        }
+        ob_start();
+    }
+
+    /**
+     * End content capture
+     *
+     * @return void
+     */
+    public function captureEnd()
+    {
+        $data = ob_get_clean();
+        $key = null;
+        $this->_captureLock = false;
+        if (null !== $this->_captureKey) {
+            $key = $this->_captureKey;
+        }
+        switch ($this->_captureType) {
+            case self::SET:
+                if (null !== $key) {
+                    $this[$key] = $data;
+                } else {
+                    $this->exchangeArray([$data]);
+                }
+                break;
+            case self::PREPEND:
+                if (null !== $key) {
+                    $array = [$key => $data];
+                    $values = $this->getArrayCopy();
+                    $final = $array + $values;
+                    $this->exchangeArray($final);
+                } else {
+                    $this->prepend($data);
+                }
+                break;
+            case self::APPEND:
+            default:
+                if (null !== $key) {
+                    if (empty($this[$key])) {
+                        $this[$key] = $data;
+                    } else {
+                        $this[$key] .= $data;
+                    }
+                } else {
+                    $this[$this->nextIndex()] = $data;
+                }
+                break;
+        }
+    }
+
+    /**
+     * Get keys
+     *
+     * @return array
+     */
+    public function getKeys()
+    {
+        $array = $this->getArrayCopy();
+
+        return array_keys($array);
+    }
+
+    /**
+     * Next Index
+     *
+     * as defined by the PHP manual
+     *
+     * @return int
+     */
+    public function nextIndex()
+    {
+        $keys = $this->getKeys();
+        if (0 == count($keys)) {
+            return 0;
+        }
+
+        return $nextIndex = max($keys) + 1;
+    }
+
+    /**
+     * Render the placeholder
+     *
+     * @param int|string|null $indent
+     *
+     * @return string
+     */
+    public function toString($indent = null)
+    {
+        // Check items
+        if (0 === $this->count()) {
+            return '';
+        }
+
+        $indent = ($indent !== null)
+            ? $this->getWhitespace($indent)
+            : $this->getIndent();
+
+        $items = $this->getArrayCopy();
+        $return = $indent
+            . $this->getPrefix()
+            . implode($this->getSeparator(), $items)
+            . $this->getPostfix();
+        $return = preg_replace("/(\r\n?|\n)/", '$1' . $indent, $return);
+
+        return $return;
+    }
+
+    /**
+     * Serialize object to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toString();
     }
 }

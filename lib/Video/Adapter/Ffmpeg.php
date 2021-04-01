@@ -132,6 +132,7 @@ class Ffmpeg extends Adapter
 
             Logger::debug('Executing FFMPEG Command: ' . $cmd);
 
+            Console::addLowProcessPriority($cmd);
             $process = Process::fromShellCommandline($cmd);
             //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
             $process->setTimeout(null);
@@ -179,7 +180,8 @@ class Ffmpeg extends Adapter
             self::getFfmpegCli(),
             '-ss', $timeOffset, '-i', realpath($this->file),
             '-vcodec', 'png', '-vframes', 1, '-vf', 'scale=iw*sar:ih',
-            str_replace('/', DIRECTORY_SEPARATOR, $file)];
+            str_replace('/', DIRECTORY_SEPARATOR, $file), ];
+        Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->run();
     }
@@ -194,6 +196,7 @@ class Ffmpeg extends Adapter
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
         $cmd = [self::getFfmpegCli(), '-i', realpath($this->file)];
+        Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->start();
 

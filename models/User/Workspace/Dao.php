@@ -23,7 +23,7 @@ use Pimcore\Model\User\Workspace;
 /**
  * @internal
  *
- * @property \Pimcore\Model\User\Workspace\DataObject $model
+ * @property Workspace\Asset|Workspace\Document|Workspace\DataObject $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
