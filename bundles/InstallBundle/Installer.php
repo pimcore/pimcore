@@ -66,9 +66,9 @@ class Installer
     private $dbCredentials;
 
     /**
-     * @var PimcoreStyle
+     * @var PimcoreStyle|null
      */
-    private $commandLineOutput;
+    private ?PimcoreStyle $commandLineOutput = null;
 
     /**
      * When false, skips creating database structure during install

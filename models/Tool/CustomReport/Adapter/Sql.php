@@ -70,7 +70,7 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param \stdClass $configuration
+     * @param \stdClass|null $configuration
      *
      * @return array
      *

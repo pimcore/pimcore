@@ -117,9 +117,9 @@ class TestHelper
             $a = array_merge($a, self::createPropertiesComparisonString($properties));
 
             return implode(',', $a);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

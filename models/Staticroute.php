@@ -106,16 +106,16 @@ class Staticroute extends AbstractModel
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
      *
-     * @var Staticroute
+     * @var Staticroute|null
      */
-    protected static $_currentRoute;
+    protected static ?Staticroute $_currentRoute = null;
 
     /**
      * @static
      *
-     * @param Staticroute $route
+     * @param Staticroute|null $route
      */
-    public static function setCurrentRoute($route)
+    public static function setCurrentRoute(?Staticroute $route)
     {
         self::$_currentRoute = $route;
     }
@@ -123,9 +123,9 @@ class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @return Staticroute
+     * @return Staticroute|null
      */
-    public static function getCurrentRoute()
+    public static function getCurrentRoute(): ?Staticroute
     {
         return self::$_currentRoute;
     }
@@ -596,7 +596,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param array $methods
+     * @param array|string $methods
      *
      * @return $this
      */

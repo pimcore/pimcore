@@ -754,7 +754,8 @@ class Decimal
     {
         if (is_numeric($operand)) {
             return $operand;
-        } elseif ($operand instanceof static) {
+        }
+        if ($operand instanceof static) {
             return $operand->asNumeric();
         }
 

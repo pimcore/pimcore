@@ -32,7 +32,7 @@ interface GiftInterface extends ActionInterface
     public function setProduct(AbstractProduct $product);
 
     /**
-     * @return AbstractProduct
+     * @return AbstractProduct|null
      */
     public function getProduct();
 }

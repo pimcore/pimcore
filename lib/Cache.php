@@ -130,12 +130,8 @@ class Cache
      *
      * @return bool
      */
-    public static function clearTags($tags = [])
+    public static function clearTags(array $tags = []): bool
     {
-        if (!empty($tags) && !is_array($tags)) {
-            $tags = [$tags];
-        }
-
         return static::getHandler()->clearTags($tags);
     }
 

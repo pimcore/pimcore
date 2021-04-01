@@ -71,7 +71,7 @@ class Geobounds extends AbstractGeo implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Geobounds $data
+     * @param DataObject\Data\Geobounds|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -161,7 +161,7 @@ class Geobounds extends AbstractGeo implements
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\Geobounds $data
+     * @param DataObject\Data\Geobounds|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -217,7 +217,7 @@ class Geobounds extends AbstractGeo implements
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\Geobounds $data
+     * @param DataObject\Data\Geobounds|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *

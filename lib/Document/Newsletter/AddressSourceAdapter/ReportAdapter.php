@@ -37,12 +37,12 @@ class ReportAdapter implements AddressSourceAdapterInterface
     protected $emailAddresses;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $elementsTotal;
 
     /**
-     * @var Listing
+     * @var Listing|null
      */
     protected $list;
 

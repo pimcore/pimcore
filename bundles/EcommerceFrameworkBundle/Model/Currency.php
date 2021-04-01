@@ -80,7 +80,7 @@ class Currency
 
     /**
      * @param Decimal|float|int|string $value
-     * @param string $pattern
+     * @param string|array $pattern
      *
      * @return string
      */

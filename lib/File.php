@@ -121,7 +121,7 @@ class File
      * @param string $path
      * @param mixed $data
      *
-     * @return int
+     * @return int|false
      */
     public static function put($path, $data)
     {

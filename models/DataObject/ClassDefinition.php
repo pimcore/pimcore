@@ -34,46 +34,46 @@ class ClassDefinition extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $name;
 
     /**
      * @var string
      */
-    public $description;
+    public $description = '';
 
     /**
      * @var int
      */
-    public $creationDate;
+    public $creationDate = 0;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    public $modificationDate = 0;
 
     /**
      * @var int
      */
-    public $userOwner;
+    public $userOwner = 0;
 
     /**
      * @var int
      */
-    public $userModification;
+    public $userModification = 0;
 
     /**
      * Name of the parent class if set
      *
      * @var string
      */
-    public $parentClass;
+    public $parentClass = '';
 
     /**
      * Comma separated list of interfaces
@@ -127,7 +127,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var DataObject\ClassDefinition\Data[]
      */
-    public $fieldDefinitions = [];
+    public array $fieldDefinitions = [];
 
     /**
      * @var DataObject\ClassDefinition\Layout|null
@@ -207,12 +207,8 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getById($id, $force = false)
+    public static function getById(string $id, $force = false)
     {
-        if ($id === null) {
-            throw new \Exception('Class id is null');
-        }
-
         $cacheKey = 'class_' . $id;
 
         try {
@@ -292,16 +288,12 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
+     * @param mixed $data
      *
      * @internal
      */
     public static function cleanupForExport(&$data)
     {
-        if (is_null($data)) {
-            return;
-        }
-
         if (!is_object($data)) {
             return;
         }
@@ -592,7 +584,7 @@ class ClassDefinition extends Model\AbstractModel
             /** @var self $clone */
             $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
-            unset($clone->fieldDefinitions);
+            $clone->fieldDefinitions = [];
 
             self::cleanupForExport($clone->layoutDefinitions);
 
@@ -748,7 +740,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -756,7 +748,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -879,11 +871,9 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         $enrichedFieldDefinitions = [];
-        if (is_array($this->fieldDefinitions)) {
-            foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
-                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-                $enrichedFieldDefinitions[$key] = $fieldDefinition;
-            }
+        foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
+            $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
+            $enrichedFieldDefinitions[$key] = $fieldDefinition;
         }
 
         return $enrichedFieldDefinitions;
@@ -915,9 +905,9 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setFieldDefinitions($fieldDefinitions)
+    public function setFieldDefinitions(array $fieldDefinitions)
     {
-        $this->fieldDefinitions = is_array($fieldDefinitions) ? $fieldDefinitions : [];
+        $this->fieldDefinitions = $fieldDefinitions;
 
         return $this;
     }

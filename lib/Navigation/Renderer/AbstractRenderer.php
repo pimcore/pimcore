@@ -51,14 +51,14 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * The minimum depth a page must have to be included when rendering
      *
-     * @var int
+     * @var int|null
      */
     protected $_minDepth;
 
     /**
      * The maximum depth a page can have to be included when rendering
      *
-     * @var int
+     * @var int|null
      */
     protected $_maxDepth;
 
@@ -103,7 +103,7 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Sets the minimum depth a page must have to be included when rendering
      *
-     * @param  int $minDepth
+     * @param int|null $minDepth
      *
      * @return self  fluent interface
      */
@@ -147,7 +147,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxDepth()
     {

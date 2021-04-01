@@ -139,7 +139,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataForEditmode
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -202,7 +202,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
@@ -220,7 +220,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getVersionPreview
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *

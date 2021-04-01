@@ -45,6 +45,7 @@ class Service
                 $dateTime->setTimestamp($value);
             }
             $data['value'] = $dateTime;
+        /**
         } elseif (false) { //TODO
 
             $data['type'] = 'document';
@@ -57,6 +58,7 @@ class Service
 
             $data['type'] = 'object';
             $data['value'] = $value;
+        */
         } else {
             $data['type'] = 'text';
             $data['value'] = $value;

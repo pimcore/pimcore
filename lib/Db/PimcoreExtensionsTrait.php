@@ -535,7 +535,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param array $params
+     * @param array|scalar $params
      *
      * @return array
      */

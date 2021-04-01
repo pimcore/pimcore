@@ -28,9 +28,9 @@ use Pimcore\Logger;
 class Site extends AbstractModel
 {
     /**
-     * @var Site
+     * @var Site|null
      */
-    protected static $currentSite;
+    protected static ?Site $currentSite = null;
 
     /**
      * @var int
@@ -50,9 +50,9 @@ class Site extends AbstractModel
     protected $rootId;
 
     /**
-     * @var Document\Page
+     * @var Document\Page|null
      */
-    protected $rootDocument;
+    protected ?Document\Page $rootDocument = null;
 
     /**
      * @var string
@@ -223,9 +223,9 @@ class Site extends AbstractModel
     {
         if (null !== self::$currentSite) {
             return self::$currentSite;
-        } else {
-            throw new \Exception('This request/process is not inside a subsite');
         }
+
+        throw new \Exception('This request/process is not inside a subsite');
     }
 
     /**
@@ -233,7 +233,7 @@ class Site extends AbstractModel
      *
      * @param Site $site
      */
-    public static function setCurrentSite(Site $site)
+    public static function setCurrentSite(Site $site): void
     {
         self::$currentSite = $site;
     }
@@ -263,9 +263,9 @@ class Site extends AbstractModel
     }
 
     /**
-     * @return Document\Page
+     * @return Document\Page|null
      */
-    public function getRootDocument()
+    public function getRootDocument(): ?Document\Page
     {
         return $this->rootDocument;
     }

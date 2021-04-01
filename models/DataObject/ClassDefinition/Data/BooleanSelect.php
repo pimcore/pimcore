@@ -233,7 +233,7 @@ class BooleanSelect extends Data implements
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param bool|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
@@ -243,7 +243,8 @@ class BooleanSelect extends Data implements
     {
         if ($data === true) {
             return $this->getYesLabel();
-        } elseif ($data === false) {
+        }
+        if ($data === false) {
             return $this->getNoLabel();
         }
 
@@ -410,7 +411,7 @@ class BooleanSelect extends Data implements
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param bool|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -420,7 +421,8 @@ class BooleanSelect extends Data implements
     {
         if ($data === true) {
             return self::YES_VALUE;
-        } elseif ($data === false) {
+        }
+        if ($data === false) {
             return self::NO_VALUE;
         }
 

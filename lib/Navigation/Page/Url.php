@@ -46,23 +46,17 @@ class Url extends Page
      *
      * @var string|null
      */
-    protected $_uri = null;
+    protected ?string $_uri = null;
 
     /**
      * Sets page URI
      *
-     * @param  string $uri                page URI, must a string or null
+     * @param string|null $uri page URI, must a string or null
      *
-     * @return Url   fluent interface, returns self
-     *
-     * @throws \Exception  if $uri is invalid
+     * @return Url fluent interface, returns self
      */
-    public function setUri($uri)
+    public function setUri(?string $uri)
     {
-        if (null !== $uri && !is_string($uri)) {
-            throw new \Exception('Invalid argument: $uri must be a string or null');
-        }
-
         $this->_uri = $uri;
 
         return $this;
@@ -71,9 +65,9 @@ class Url extends Page
     /**
      * Returns URI
      *
-     * @return string
+     * @return string|null
      */
-    public function getUri()
+    public function getUri(): ?string
     {
         return $this->_uri;
     }
@@ -89,11 +83,10 @@ class Url extends Page
 
         $fragment = $this->getFragment();
         if (null !== $fragment) {
-            if ('#' == substr($uri, -1)) {
+            if ('#' === substr($uri, -1)) {
                 return $uri . $fragment;
-            } else {
-                return $uri . '#' . $fragment;
             }
+            return $uri . '#' . $fragment;
         }
 
         return $uri;
@@ -106,7 +99,7 @@ class Url extends Page
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

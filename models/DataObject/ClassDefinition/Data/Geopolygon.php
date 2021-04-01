@@ -132,7 +132,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -160,7 +160,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

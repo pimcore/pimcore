@@ -24,7 +24,7 @@ class ExternalImage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var string */
+    /** @var string|null */
     protected $url;
 
     /**
@@ -39,7 +39,7 @@ class ExternalImage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -47,7 +47,7 @@ class ExternalImage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $url
+     * @param string|null $url
      */
     public function setUrl($url)
     {

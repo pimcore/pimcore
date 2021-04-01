@@ -288,7 +288,7 @@ EOT;
      *
      * @param string|array|Image\Thumbnail\Config $config
      *
-     * @return Image\Thumbnail\Config
+     * @return Image\Thumbnail\Config|null
      */
     public function getThumbnailConfig($config)
     {

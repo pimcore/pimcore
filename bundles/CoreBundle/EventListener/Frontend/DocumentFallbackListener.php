@@ -66,7 +66,7 @@ final class DocumentFallbackListener implements EventSubscriberInterface
     protected $options;
 
     /**
-     * @var Document
+     * @var Document|null
      */
     private $fallbackDocument;
 

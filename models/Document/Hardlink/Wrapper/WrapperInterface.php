@@ -35,10 +35,10 @@ interface WrapperInterface extends ElementInterface
     /**
      * @param Document $sourceDocument
      */
-    public function setSourceDocument($sourceDocument);
+    public function setSourceDocument(Document $sourceDocument);
 
     /**
-     * @return Document
+     * @return Document|null
      */
-    public function getSourceDocument();
+    public function getSourceDocument(): ?Document;
 }

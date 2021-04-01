@@ -27,9 +27,9 @@ use Pimcore\Model;
 class Tag extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * @var string
@@ -39,7 +39,7 @@ class Tag extends Model\AbstractModel
     /**
      * @var int
      */
-    protected $parentId;
+    protected int $parentId = 0;
 
     /**
      * @var string
@@ -212,19 +212,19 @@ class Tag extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return Tag
      */
-    public function setId($id)
+    public function setId(?int $id)
     {
         $this->id = $id;
 
@@ -254,7 +254,7 @@ class Tag extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getParentId()
+    public function getParentId(): int
     {
         return $this->parentId;
     }
@@ -264,7 +264,7 @@ class Tag extends Model\AbstractModel
      *
      * @return Tag
      */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId)
     {
         $this->parentId = $parentId;
         $this->parent = null;
@@ -274,12 +274,12 @@ class Tag extends Model\AbstractModel
     }
 
     /**
-     * @return Tag
+     * @return Tag|null
      */
-    public function getParent()
+    public function getParent(): ?Tag
     {
-        if ($this->parent == null && $parentId = $this->getParentId()) {
-            $this->parent = Tag::getById($parentId);
+        if ($this->parent === null && $parentId = $this->getParentId()) {
+            $this->parent = self::getById($parentId);
         }
 
         return $this->parent;

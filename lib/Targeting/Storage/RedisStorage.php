@@ -74,7 +74,7 @@ class RedisStorage implements TargetingStorageInterface
         $key = $this->buildKey($visitorInfo, $scope);
         $result = $this->redis->hExists($key, $name);
 
-        return 1 === $result;
+        return (bool)$result;
     }
 
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)

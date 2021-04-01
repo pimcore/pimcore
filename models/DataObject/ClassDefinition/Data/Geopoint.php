@@ -67,7 +67,7 @@ class Geopoint extends AbstractGeo implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param DataObject\Data\GeoCoordinates|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -131,7 +131,7 @@ class Geopoint extends AbstractGeo implements
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Data\GeoCoordinates|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -152,7 +152,7 @@ class Geopoint extends AbstractGeo implements
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

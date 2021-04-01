@@ -24,26 +24,27 @@ use Pimcore\Model\Element\Note;
 class Consent implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+
     /**
      * @var bool
      */
-    protected $consent;
+    protected bool $consent = false;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $noteId;
+    protected ?int $noteId = null;
 
     /**
-     * @var Note
+     * @var Note|null
      */
-    protected $note;
+    protected ?Note $note = null;
 
     /**
      * Consent constructor.
      *
      * @param bool $consent
-     * @param int $noteId
+     * @param int|null $noteId
      */
     public function __construct(bool $consent = false, int $noteId = null)
     {
@@ -63,7 +64,7 @@ class Consent implements OwnerAwareFieldInterface
     /**
      * @param bool $consent
      */
-    public function setConsent(bool $consent)
+    public function setConsent(bool $consent): void
     {
         if ($consent != $this->consent) {
             $this->consent = $consent;
@@ -72,9 +73,9 @@ class Consent implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getNoteId()
+    public function getNoteId(): ?int
     {
         return $this->noteId;
     }
@@ -82,7 +83,7 @@ class Consent implements OwnerAwareFieldInterface
     /**
      * @param int $noteId
      */
-    public function setNoteId(int $noteId)
+    public function setNoteId(int $noteId): void
     {
         if ($noteId != $this->noteId) {
             $this->noteId = $noteId;
@@ -91,9 +92,9 @@ class Consent implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Note
+     * @return Note|null
      */
-    public function getNote()
+    public function getNote(): ?Note
     {
         if (empty($this->note) && !empty($this->noteId)) {
             $this->note = Note::getById($this->noteId);
@@ -105,7 +106,7 @@ class Consent implements OwnerAwareFieldInterface
     /**
      * @param Note $note
      */
-    public function setNote(Note $note)
+    public function setNote(Note $note): void
     {
         $this->note = $note;
         $this->markMeDirty();
@@ -114,13 +115,13 @@ class Consent implements OwnerAwareFieldInterface
     /**
      * @return string
      */
-    public function getSummaryString()
+    public function getSummaryString(): string
     {
         $note = $this->getNote();
         if ($note) {
             return $note->getTitle() . ': ' . date('r', $note->getDate());
-        } else {
-            return '';
         }
+
+        return '';
     }
 }

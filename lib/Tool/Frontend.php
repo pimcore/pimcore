@@ -48,7 +48,7 @@ class Frontend
     }
 
     /**
-     * @param Site $site
+     * @param Site|null $site
      * @param Document $document
      *
      * @return bool

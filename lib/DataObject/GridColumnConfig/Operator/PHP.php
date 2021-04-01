@@ -57,7 +57,6 @@ final class PHP extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var array $childValues */
             if (is_array($childValues)) {
                 foreach ($childValues as $childValue) {
                     $valueArray[] = $childValue;

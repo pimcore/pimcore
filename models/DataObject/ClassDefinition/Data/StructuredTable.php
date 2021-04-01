@@ -300,7 +300,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Data\StructuredTable|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -373,7 +373,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\StructuredTable $data
+     * @param DataObject\Data\StructuredTable|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

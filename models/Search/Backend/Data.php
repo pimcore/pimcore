@@ -34,9 +34,9 @@ class Data extends \Pimcore\Model\AbstractModel
     const MAX_WORD_OCCURENCES = 3;
 
     /**
-     * @var Data\Id
+     * @var Data\Id|null
      */
-    protected $id;
+    protected ?Data\Id $id = null;
 
     /**
      * @var string
@@ -120,19 +120,19 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @return Data\Id
+     * @return Data\Id|null
      */
-    public function getId()
+    public function getId(): ?Data\Id
     {
         return $this->id;
     }
 
     /**
-     * @param Data\Id $id
+     * @param Data\Id|null $id
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(?Data\Id $id)
     {
         $this->id = $id;
 
@@ -352,7 +352,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setDataFromElement($element)
+    public function setDataFromElement(Element\ElementInterface $element)
     {
         $this->data = null;
 
@@ -375,7 +375,7 @@ class Data extends \Pimcore\Model\AbstractModel
         if (is_array($properties)) {
             foreach ($properties as $nextProperty) {
                 $pData = (string) $nextProperty->getData();
-                if ($nextProperty->getName() == 'bool') {
+                if ($nextProperty->getName() === 'bool') {
                     $pData = $pData ? 'true' : 'false';
                 }
 
@@ -546,9 +546,9 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @param Element\ElementInterface $element
      *
-     * @return Data
+     * @return self
      */
-    public static function getForElement($element)
+    public static function getForElement(Element\ElementInterface $element): self
     {
         $data = new self();
         $data->getDao()->getForElement($element);

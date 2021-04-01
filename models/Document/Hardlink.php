@@ -33,7 +33,7 @@ class Hardlink extends Document
      *
      * @var string
      */
-    protected $type = 'hardlink';
+    protected string $type = 'hardlink';
 
     /**
      * @var int
@@ -53,7 +53,7 @@ class Hardlink extends Document
     /**
      * @return Document|null
      */
-    public function getSourceDocument()
+    public function getSourceDocument(): ?Document
     {
         if ($this->getSourceId()) {
             return Document::getById($this->getSourceId());
@@ -91,10 +91,8 @@ class Hardlink extends Document
      *
      * @return array
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
         if ($this->getSourceDocument()) {

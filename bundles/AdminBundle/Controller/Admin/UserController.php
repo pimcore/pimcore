@@ -66,7 +66,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User $user
+     * @param User|User\Folder $user
      *
      * @return array
      */
@@ -675,7 +675,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User\Role $role
+     * @param User\Role|User\Role\Folder $role
      *
      * @return array
      */
@@ -928,7 +928,6 @@ final class UserController extends AdminController implements KernelControllerEv
      */
     public function getTokenLoginLinkAction(Request $request)
     {
-        /** @var User $user */
         $user = User::getById($request->get('id'));
 
         if (!$user) {
@@ -1143,7 +1142,6 @@ final class UserController extends AdminController implements KernelControllerEv
         $message = '';
 
         if ($username = $request->get('username')) {
-            /** @var User $user */
             $user = User::getByName($username);
             if ($user instanceof User) {
                 if (!$user->isActive()) {

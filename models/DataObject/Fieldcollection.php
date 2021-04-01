@@ -168,7 +168,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function remove($index)
     {
-        if ($this->items[$index]) {
+        if (isset($this->items[$index])) {
             array_splice($this->items, $index, 1);
 
             $this->markFieldDirty('_self', true);
@@ -182,15 +182,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function get($index)
     {
-        if ($this->items[$index]) {
-            return $this->items[$index];
-        }
-
-        return null;
+        return $this->items[$index] ?? null;
     }
 
     /**
-     * @param int $index
+     * @param int|null $index
      *
      * @return Fieldcollection\Data\AbstractData|null
      */

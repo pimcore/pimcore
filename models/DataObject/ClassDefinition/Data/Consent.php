@@ -76,7 +76,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -126,7 +126,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -144,7 +144,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -244,7 +244,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
                 $noteId = $note->getId();
             }
-        } elseif ($originalNote) {
+        } else {
             $noteId = $originalNote->getId();
         }
 
@@ -278,7 +278,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *

@@ -228,7 +228,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -282,7 +282,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see Data::getDataForEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -528,7 +528,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * Override point for enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $context additional contextual data
      *
      * @return $this

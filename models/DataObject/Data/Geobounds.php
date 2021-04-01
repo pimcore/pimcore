@@ -25,12 +25,12 @@ class Geobounds implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
 
     /**
-     * @var GeoCoordinates
+     * @var GeoCoordinates|null
      */
     protected $northEast;
 
     /**
-     * @var GeoCoordinates
+     * @var GeoCoordinates|null
      */
     protected $southWest;
 
@@ -50,7 +50,7 @@ class Geobounds implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return GeoCoordinates
+     * @return GeoCoordinates|null
      */
     public function getNorthEast()
     {
@@ -71,7 +71,7 @@ class Geobounds implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return GeoCoordinates
+     * @return GeoCoordinates|null
      */
     public function getSouthWest()
     {

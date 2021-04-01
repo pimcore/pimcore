@@ -26,14 +26,14 @@ use Pimcore\File;
 class Config
 {
     /**
-     * @var PimcoreConfig\Config
+     * @var PimcoreConfig\Config|null
      */
-    private $config;
+    private ?PimcoreConfig\Config $config = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $file;
+    private ?string $file = null;
 
     /**
      * @return PimcoreConfig\Config
@@ -83,10 +83,8 @@ class Config
      */
     public function configFileExists(): bool
     {
-        if (null !== $file = $this->locateConfigFile()) {
-            return file_exists($file);
-        }
+        $file = $this->locateConfigFile();
 
-        return false;
+        return file_exists($file);
     }
 }

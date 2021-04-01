@@ -62,7 +62,7 @@ class DefinitionCache
     }
 
     /**
-     * @param KeyConfig|GroupConfig $config
+     * @param KeyConfig|GroupConfig|null $config
      */
     public static function clear($config)
     {

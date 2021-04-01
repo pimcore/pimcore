@@ -119,19 +119,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     protected $o_modificationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $o_userOwner;
+    protected ?int $o_userOwner = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $o_userModification;
+    protected ?int $o_userModification = null;
 
     /**
-     * @var array
+     * @var array|null
      */
-    protected $o_properties = null;
+    protected ?array $o_properties = null;
 
     /**
      * @var bool[]
@@ -960,7 +960,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -1142,7 +1142,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return self
+     * @return self|null
      */
     public function getParent()
     {
@@ -1154,7 +1154,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param self $o_parent
+     * @param self|null $o_parent
      *
      * @return $this
      */

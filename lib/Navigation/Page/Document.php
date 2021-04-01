@@ -19,19 +19,19 @@ use Pimcore\Model;
 class Document extends Url
 {
     /**
-     * @var string
+     * @var string|null
      */
-    protected $_accesskey;
+    protected ?string $_accesskey = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $_tabindex;
+    protected ?string $_tabindex = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $_relation;
+    protected ?string $_relation = null;
 
     /**
      * @var int
@@ -78,7 +78,7 @@ class Document extends Url
      *
      * @return $this
      */
-    public function setAccesskey($character = null)
+    public function setAccesskey(?string $character = null)
     {
         $this->_accesskey = $character;
 
@@ -86,9 +86,9 @@ class Document extends Url
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAccesskey()
+    public function getAccesskey(): ?string
     {
         return $this->_accesskey;
     }

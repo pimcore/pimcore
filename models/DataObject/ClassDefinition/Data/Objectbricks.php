@@ -95,7 +95,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Objectbrick|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -146,7 +146,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             return null;
         }
 
-        /** @var DataObject\Objectbrick\Definition $item */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
             $data = $parent->{'get' . ucfirst($this->getName())}();
@@ -226,23 +225,18 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         // Note that this is just for AbstractRelations, not for all LazyLoadingSupportInterface types.
         // It tries to optimize fetching the data needed for the editmode without loading the entire target element.
 
-        if ((!isset($params['objectFromVersion']) || !$params['objectFromVersion'])
+        if (
+            (!isset($params['objectFromVersion']) || !$params['objectFromVersion'])
             && ($fielddefinition instanceof Data\Relations\AbstractRelations)
             && $fielddefinition->getLazyLoading()
             && !$fielddefinition instanceof ManyToManyObjectRelation
             && !$fielddefinition instanceof AdvancedManyToManyRelation
-            && !$fielddefinition instanceof Block) {
-
+        ) {
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
-            if ($fielddefinition instanceof ReverseObjectRelation) {
-                $refKey = $fielddefinition->getOwnerFieldName();
-                $refId = $fielddefinition->getOwnerClassId();
-            } else {
-                $refKey = $key;
-                $refId = null;
-            }
+            $refKey = $key;
+            $refId = null;
 
-            $relations = $item->getRelationData($refKey, !$fielddefinition instanceof ReverseObjectRelation, $refId);
+            $relations = $item->getRelationData($refKey, true, $refId);
             if (empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{'get' . ucfirst($this->getName())}();
                 if (!empty($parentItem)) {
@@ -292,7 +286,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param string|array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -521,10 +515,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof DataObject\Objectbrick) {
             $items = $data->getItems();
             foreach ($items as $item) {

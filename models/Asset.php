@@ -70,7 +70,7 @@ class Asset extends Element\AbstractElement
     protected $parentId;
 
     /**
-     * @var Asset|null
+     * @var self|null
      */
     protected $parent;
 
@@ -124,16 +124,16 @@ class Asset extends Element\AbstractElement
     /**
      * ID of the owner user
      *
-     * @var int
+     * @var int|null
      */
-    protected $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * ID of the user who make the latest changes
      *
-     * @var int
+     * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification = null;
 
     /**
      * List of properties
@@ -1273,7 +1273,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return resource
+     * @return resource|null
      */
     public function getStream()
     {
@@ -1414,7 +1414,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -1551,7 +1551,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $customSettings
+     * @param mixed $customSettings
      *
      * @return $this
      */
@@ -1845,7 +1845,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return Asset
+     * @return self|null
      */
     public function getParent()
     {

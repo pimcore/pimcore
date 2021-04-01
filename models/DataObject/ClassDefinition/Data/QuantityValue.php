@@ -308,7 +308,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getDataForEditmode
      *
-     * @param float $data
+     * @param Model\DataObject\Data\AbstractQuantityValue|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *

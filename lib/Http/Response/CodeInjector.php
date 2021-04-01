@@ -121,7 +121,7 @@ class CodeInjector
     {
         $dom = new DomCrawler($html);
         $element = $dom->filter($selector)->eq(0);
-        if ($element && $node = $element->getNode(0)) {
+        if ($element->count() && $node = $element->getNode(0)) {
             if (self::REPLACE === $position) {
                 $node->textContent = $code;
             } elseif (self::POSITION_BEGINNING === $position) {

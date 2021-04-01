@@ -141,6 +141,8 @@ class BundleCollection
      * @param int $priority
      * @param array $environments
      *
+     * @throws \InvalidArgumentException
+     *
      * @return self
      */
     public function addBundle($bundle, int $priority = 0, array $environments = []): self

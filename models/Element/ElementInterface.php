@@ -100,7 +100,7 @@ interface ElementInterface extends ModelInterface
     public function setModificationDate($modificationDate);
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner();
 
@@ -127,7 +127,7 @@ interface ElementInterface extends ModelInterface
      *
      * @param int $id
      *
-     * @return ElementInterface $resource
+     * @return static|null
      */
     public static function getById($id);
 
@@ -208,7 +208,7 @@ interface ElementInterface extends ModelInterface
     public function getParentId();
 
     /**
-     * @return ElementInterface|null
+     * @return self|null
      */
     public function getParent();
 
@@ -222,7 +222,7 @@ interface ElementInterface extends ModelInterface
      *
      * @return array
      */
-    public function getCacheTags($tags = []);
+    public function getCacheTags(array $tags = []): array;
 
     /**
      * @return bool

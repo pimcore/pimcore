@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class Gift implements GiftInterface
 {
     /**
-     * @var AbstractProduct
+     * @var AbstractProduct|null
      */
     protected $product;
 
@@ -69,7 +69,7 @@ class Gift implements GiftInterface
     }
 
     /**
-     * @return AbstractProduct
+     * @return AbstractProduct|null
      */
     public function getProduct()
     {

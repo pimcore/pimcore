@@ -188,7 +188,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
         return $tags;
     }

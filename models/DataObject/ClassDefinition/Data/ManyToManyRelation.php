@@ -263,28 +263,26 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    protected function loadData($data, $object = null, $params = [])
+    protected function loadData(array $data, $object = null, $params = [])
     {
         $elements = [
             'dirty' => false,
             'data' => [],
         ];
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $element) {
-                $e = null;
-                if ($element['type'] == 'object') {
-                    $e = DataObject::getById($element['dest_id']);
-                } elseif ($element['type'] == 'asset') {
-                    $e = Asset::getById($element['dest_id']);
-                } elseif ($element['type'] == 'document') {
-                    $e = Document::getById($element['dest_id']);
-                }
+        foreach ($data as $element) {
+            $e = null;
+            if ($element['type'] === 'object') {
+                $e = DataObject::getById($element['dest_id']);
+            } elseif ($element['type'] === 'asset') {
+                $e = Asset::getById($element['dest_id']);
+            } elseif ($element['type'] === 'document') {
+                $e = Document::getById($element['dest_id']);
+            }
 
-                if ($e instanceof Element\ElementInterface) {
-                    $elements['data'][] = $e;
-                } else {
-                    $elements['dirty'] = true;
-                }
+            if ($e instanceof Element\ElementInterface) {
+                $elements['data'][] = $e;
+            } else {
+                $elements['dirty'] = true;
             }
         }
         //must return array - otherwise this means data is not loaded
@@ -294,7 +292,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -311,7 +309,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
         $d = [];
 
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
             foreach ($data as $element) {
                 if ($element instanceof Element\ElementInterface) {
                     $elementType = Element\Service::getElementType($element);
@@ -320,11 +318,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             }
 
             return ',' . implode(',', $d) . ',';
-        } elseif (is_array($data) && count($data) === 0) {
-            return '';
-        } else {
-            throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
         }
+
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -365,7 +361,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param array|null|false $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -374,7 +370,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         //if not set, return null
-        if ($data === null or $data === false) {
+        if ($data === null || $data === false) {
             return null;
         }
 
@@ -555,10 +551,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         return $tags;
     }
 

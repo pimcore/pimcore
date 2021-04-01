@@ -177,14 +177,14 @@ class Device implements DataProviderInterface
             'bot' => $dd->getBot(),
             'is_bot' => $dd->isBot(),
             'os' => $dd->getOs(),
-            'os_family' => $osFamily !== false ? $osFamily : 'Unknown',
+            'os_family' => $osFamily ?: 'Unknown',
             'client' => $dd->getClient(),
             'device' => [
                 'type' => $dd->getDeviceName(),
                 'brand' => $dd->getBrandName(),
                 'model' => $dd->getModel(),
             ],
-            'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
+            'browser_family' => $browserFamily ?: 'Unknown',
         ];
 
         return $processed;
