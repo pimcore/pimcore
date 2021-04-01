@@ -76,7 +76,7 @@ final class DataObjectHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -111,7 +111,7 @@ final class DataObjectHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig[]
+     * @return array
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
