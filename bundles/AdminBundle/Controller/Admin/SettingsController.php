@@ -1478,27 +1478,34 @@ final class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
-        $data = $this->decodeJson($request->get('configuration'));
+        $settingsData = $this->decodeJson($request->get('settings'));
+        $mediaData = $this->decodeJson($request->get('medias'));
+        $mediaOrder = $this->decodeJson($request->get('mediaOrder'));
 
-        $items = [];
-        foreach ($data as $key => $value) {
+        foreach ($settingsData as $key => $value) {
             $setter = 'set' . ucfirst($key);
             if (method_exists($pipe, $setter)) {
                 $pipe->$setter($value);
             }
-
-            if (strpos($key, 'item.') === 0) {
-                $cleanKeyParts = explode('.', $key);
-                $items[$cleanKeyParts[1]][$cleanKeyParts[2]] = $value;
-            }
         }
 
         $pipe->resetItems();
-        foreach ($items as $item) {
-            $type = $item['type'];
-            unset($item['type']);
 
-            $pipe->addItem($type, $item);
+        uksort($mediaData, function ($a, $b) use ($mediaOrder) {
+            if ($a === 'default') {
+                return -1;
+            }
+
+            return ($mediaOrder[$a] < $mediaOrder[$b]) ? -1 : 1;
+        });
+
+        foreach ($mediaData as $mediaName => $items) {
+            foreach ($items as $item) {
+                $type = $item['type'];
+                unset($item['type']);
+
+                $pipe->addItem($type, $item, $mediaName);
+            }
         }
 
         $pipe->save();

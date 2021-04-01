@@ -35,6 +35,11 @@ abstract class Adapter
     public $format;
 
     /**
+     * @var array
+     */
+    public $medias;
+
+    /**
      * @var string
      */
     public $destinationFile;
@@ -116,6 +121,22 @@ abstract class Adapter
      * @abstract
      */
     abstract public function destroy();
+
+    /**
+     * @return array|null
+     */
+    public function getMedias()
+    {
+        return $this->medias;
+    }
+
+    /**
+     * @param array|null $medias
+     */
+    public function setMedias($medias)
+    {
+        $this->medias = $medias;
+    }
 
     /**
      * @param string $format

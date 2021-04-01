@@ -16,6 +16,7 @@ namespace Pimcore\Video\Adapter;
 
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
 use Symfony\Component\Process\Process;
@@ -104,12 +105,17 @@ class Ffmpeg extends Adapter
                 @unlink($this->getDestinationFile());
             }
 
-            // get the argument string from the configurations
-            $arguments = implode(' ', $this->arguments);
+            $command = $this->arguments;
 
             // add format specific arguments
             if ($this->getFormat() == 'mp4') {
-                $arguments = '-strict experimental -f mp4 -vcodec libx264 -acodec aac -g 100 -pix_fmt yuv420p -movflags faststart ' . $arguments;
+                array_push($command, '-strict', 'experimental');
+                array_push($command, '-f', 'mp4');
+                array_push($command, '-vcodec', 'libx264');
+                array_push($command, '-acodec', 'aac');
+                array_push($command, '-g', '100');
+                array_push($command, '-pix_fmt', 'yuv420p');
+                array_push($command, '-movflags', 'faststart');
             } elseif ($this->getFormat() == 'webm') {
                 // check for vp9 support
                 $webmCodec = 'libvpx';
@@ -120,20 +126,59 @@ class Ffmpeg extends Adapter
                     //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
                 }
 
-                $arguments = '-strict experimental -f webm -vcodec ' . $webmCodec . ' -acodec libvorbis -ar 44000 -g 100 ' . $arguments;
+                array_push($command, '-strict', 'experimental');
+                array_push($command, '-f', 'webm');
+                array_push($command, '-vcodec', $webmCodec);
+                array_push($command, '-acodec', 'libvorbis');
+                array_push($command, '-ar', '44000');
+                array_push($command, '-g', '100');
+            } elseif ($this->getFormat() == 'mpd') {
+                $medias = $this->getMedias();
+                $mediaKeys = array_keys($medias);
+                $command = [];
+
+                foreach ($mediaKeys as $mediaKey) {
+                    array_push($command, '-map', 'v:0');
+                }
+
+                array_push($command, '-c:a', 'libfdk_aac');
+                array_push($command, '-vcodec', 'libx264');
+
+                for ($i = 0; $i < count($mediaKeys); $i++) {
+                    $bitrate = $mediaKeys[$i];
+
+                    array_push($command, '-b:v:' . $i, $bitrate);
+                    array_push($command, '-c:v:' . $i, 'libx264');
+                    array_push($command, '-c:v:' . $i, 'libx264');
+
+                    if ($medias[$bitrate]['converter'] instanceof self) {
+                        foreach ($medias[$bitrate]['converter']->arguments as $aKey => $argument) {
+                            $argument = ($aKey % 2 == 0 ? $argument . ':' . $i : $argument);
+                            array_push($command, $argument);
+                        }
+                    }
+                }
+
+                array_push($command, '-use_timeline', '1');
+                array_push($command, '-use_template', '1');
+                array_push($command, '-window_size', '5');
+                array_push($command, '-adaptation_sets', 'id=0,streams=v id=1,streams=a');
+                array_push($command, '-single_file', '1');
+                array_push($command, '-f', 'dash');
             } else {
                 throw new \Exception('Unsupported video output format: ' . $this->getFormat());
             }
 
             // add some global arguments
-            $arguments = '-threads 0 ' . $arguments;
+            array_push($command, '-threads', '0');
+            $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
+            array_unshift($command, 'ffmpeg', '-i', realpath($this->file));
 
-            $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file)) . ' ' . $arguments . ' ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile()));
+            Console::addLowProcessPriority($command);
+            $process = new Process($command);
 
-            Logger::debug('Executing FFMPEG Command: ' . $cmd);
+            Logger::debug('Executing FFMPEG Command: ' . $process->getCommandLine());
 
-            Console::addLowProcessPriority($cmd);
-            $process = Process::fromShellCommandline($cmd);
             //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
             $process->setTimeout(null);
             $process->start();
@@ -302,7 +347,16 @@ class Ffmpeg extends Adapter
      */
     public function addArgument($key, $value)
     {
-        $this->arguments[$key] = $value;
+        array_push($this->arguments, $key, $value);
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
     }
 
     /**
@@ -319,7 +373,7 @@ class Ffmpeg extends Adapter
         parent::setVideoBitrate($videoBitrate);
 
         if ($videoBitrate) {
-            $this->addArgument('videoBitrate', '-vb ' . $videoBitrate . 'k');
+            $this->addArgument('-vb', $videoBitrate . 'k');
         }
 
         return $this;
@@ -339,7 +393,7 @@ class Ffmpeg extends Adapter
         parent::setAudioBitrate($audioBitrate);
 
         if ($audioBitrate) {
-            $this->addArgument('audioBitrate', '-ab ' . $audioBitrate . 'k');
+            $this->addArgument('-ab', $audioBitrate . 'k');
         }
 
         return $this;
@@ -354,7 +408,7 @@ class Ffmpeg extends Adapter
         // ensure $width & $height are even (mp4 requires this)
         $width = ceil($width / 2) * 2;
         $height = ceil($height / 2) * 2;
-        $this->addArgument('resize', '-s '.$width.'x'.$height);
+        $this->addArgument('-s', $width.'x'.$height);
     }
 
     /**
@@ -364,7 +418,7 @@ class Ffmpeg extends Adapter
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
-        $this->addArgument('scaleByWidth', '-vf "scale='.$width.':trunc(ow/a/2)*2"');
+        $this->addArgument('-filter:v', 'scale='.$width.':trunc(ow/a/2)*2');
     }
 
     /**
@@ -374,6 +428,6 @@ class Ffmpeg extends Adapter
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;
-        $this->addArgument('scaleByHeight', '-vf "scale=trunc(oh/(ih/iw)/2)*2:'.$height.'"');
+        $this->addArgument('-filter:v', 'scale=trunc(oh/(ih/iw)/2)*2:'.$height);
     }
 }

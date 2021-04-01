@@ -860,6 +860,10 @@ class Video extends Model\Document\Editable
                 unset($attributes['controls']);
             }
 
+            if(isset($urls['mpd'])) {
+                $attributes['data-dashjs-player'] = null;
+            }
+
             foreach ($attributes as $key => $value) {
                 $attributesString .= ' ' . $key;
                 if (!empty($value)) {
@@ -874,7 +878,16 @@ class Video extends Model\Document\Editable
             $code .= '<video' . $attributesString . '>' . "\n";
 
             foreach ($urls as $type => $url) {
-                $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
+                if($type == 'medias') {
+                    foreach ($url as $format => $medias) {
+                        foreach ($medias as $media => $mediaUrl) {
+                            $code .= '<source type="video/' . $format . '" src="' . $mediaUrl . '" media="' . $media . '"  />' . "\n";
+                        }
+                    }
+                } else {
+                    $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
+                }
+
             }
 
             $code .= '</video>' . "\n";

@@ -131,19 +131,16 @@ class Video extends Model\Asset
                 // check for existing videos
                 $customSetting = $this->getCustomSetting('thumbnails');
                 if (is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
-                    foreach ($customSetting[$thumbnail->getName()]['formats'] as &$path) {
-                        $fullPath = rtrim($this->getRealPath(), '/') . $path;
-                        $path = urlencode_ignore_slash($fullPath);
-
-                        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
-                        $path = $prefix . $path;
-
-                        $event = new GenericEvent($this, [
-                            'filesystemPath' => $fullPath,
-                            'frontendPath' => $path,
-                        ]);
-                        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
-                        $path = $event->getArgument('frontendPath');
+                    foreach ($customSetting[$thumbnail->getName()]['formats'] as $pathKey => &$path) {
+                        if($pathKey == 'medias') {
+                            foreach ($path as &$format) {
+                                foreach ($format as &$f) {
+                                    $f = $this->enrichThumbnailPath($f);
+                                }
+                            }
+                        } else {
+                            $path = $this->enrichThumbnailPath($path);
+                        }
                     }
 
                     return $customSetting[$thumbnail->getName()];
@@ -155,6 +152,27 @@ class Video extends Model\Asset
         }
 
         return null;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
+    private function enrichThumbnailPath($path)
+    {
+        $fullPath = rtrim($this->getRealPath(), '/') . $path;
+        $path = urlencode_ignore_slash($fullPath);
+        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+        $path = $prefix . $path;
+
+        $event = new GenericEvent($this, [
+            'filesystemPath' => $fullPath,
+            'frontendPath' => $path,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
+
+        return $event->getArgument('frontendPath');
     }
 
     /**

@@ -91,6 +91,12 @@ class Processor
         $instance->setConfig($config);
         $instance->setDeleteSourceAfterFinished($sourceFile);
 
+        //create dash file(.mpd), if medias exists
+        $medias = $config->getMedias();
+        if(count($medias) > 0) {
+            $formats[] = 'mpd';
+        }
+
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting('thumbnails');
         $existingFormats = [];
@@ -103,7 +109,8 @@ class Processor
                 // check if the files are there
                 $formatsToConvert = [];
                 foreach ($formats as $f) {
-                    if (!$storage->fileExists($asset->getRealPath() . $customSetting[$config->getName()]['formats'][$f])) {
+                    $format = $customSetting[$config->getName()]['formats'][$f] ?? null;
+                    if (!$storage->fileExists($asset->getRealPath() . $format)) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
@@ -134,32 +141,20 @@ class Processor
             $converter->setDestinationFile($tmpPath);
             $converter->setStorageFile($storagePath);
 
-            $transformations = $config->getItems();
-            if (is_array($transformations) && count($transformations) > 0) {
-                foreach ($transformations as $transformation) {
-                    if (!empty($transformation)) {
-                        $arguments = [];
-                        $mapping = self::$argumentMapping[$transformation['method']];
-
-                        if (is_array($transformation['arguments'])) {
-                            foreach ($transformation['arguments'] as $key => $value) {
-                                $position = array_search($key, $mapping);
-                                if ($position !== false) {
-                                    $arguments[$position] = $value;
-                                }
-                            }
-                        }
-
-                        ksort($arguments);
-                        if (count($mapping) == count($arguments)) {
-                            call_user_func_array([$converter, $transformation['method']], $arguments);
-                        } else {
-                            $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
-                            Logger::error($message);
-                        }
-                    }
+            //add media queries for mpd file generation
+            if ($format == 'mpd') {
+                $medias = $config->getMedias();
+                foreach ($medias as $media => $transformations) {
+                    //used just to generate arguments for medias
+                    $subConverter = \Pimcore\Video::getInstance();
+                    self::applyTransformations($subConverter, $transformations);
+                    $medias[$media]['converter'] = $subConverter;
                 }
+                $converter->setMedias($medias);
             }
+
+            $transformations = $config->getItems();
+            self::applyTransformations($converter, $transformations);
 
             $instance->queue[] = $converter;
         }
@@ -177,6 +172,35 @@ class Processor
         $instance->convert();
 
         return $instance;
+    }
+
+    private static function applyTransformations($converter, $transformations)
+    {
+        if (is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    $arguments = [];
+                    $mapping = self::$argumentMapping[$transformation['method']];
+
+                    if (is_array($transformation['arguments'])) {
+                        foreach ($transformation['arguments'] as $key => $value) {
+                            $position = array_search($key, $mapping);
+                            if ($position !== false) {
+                                $arguments[$position] = $value;
+                            }
+                        }
+                    }
+
+                    ksort($arguments);
+                    if (count($mapping) == count($arguments)) {
+                        call_user_func_array([$converter, $transformation['method']], $arguments);
+                    } else {
+                        $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
+                        Logger::error($message);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -213,6 +237,23 @@ class Processor
                 Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
                 fclose($source);
                 unlink($converter->getDestinationFile());
+
+                if ($converter->getFormat() === 'mpd') {
+                    $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
+                    $streams = glob($streamFilesPath);
+                    $parentPath = dirname($converter->getStorageFile());
+
+                    foreach ($streams as $steam) {
+                        $storagePath = $parentPath . '/' . basename($steam);
+                        $source = fopen($steam, 'rb');
+                        Storage::get('thumbnail')->writeStream($storagePath, $source);
+                        fclose($source);
+                        unlink($steam);
+
+                        // set proper permissions
+                        @chmod($storagePath, File::getDefaultMode());
+                    }
+                }
 
                 if ($success) {
                     $formats[$converter->getFormat()] = str_replace($asset->getRealPath(), '', $converter->getStorageFile());
