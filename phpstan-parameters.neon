@@ -23,7 +23,6 @@ parameters:
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
 
     ignoreErrors:
-        # - '/(snappy|lz4)_(un)?compress/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
         - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
@@ -31,5 +30,5 @@ parameters:
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
-        -  Pimcore\Config\Config
-        -  Pimcore\Templating\Model\ViewModel
+        - Pimcore\Config\Config
+        - Pimcore\Templating\Model\ViewModel
