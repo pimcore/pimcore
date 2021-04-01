@@ -1113,8 +1113,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function addEncryptedTables(array $tables)
     {
-        $this->encryptedTables = array_merge($this->encryptedTables, $tables);
-        array_unique($this->encryptedTables);
+        $this->encryptedTables = array_unique(array_merge($this->encryptedTables, $tables));
     }
 
     /**
