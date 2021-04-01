@@ -9,29 +9,21 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
+ * @package    Object
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\ClassDefinition\Data;
+namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
+use Pimcore\Marshaller\MarshallerInterface;
 
 /**
- * @deprecated not in use anymore, will be removed in Pimcore 10
+ * @internal
  */
-interface DataInterface
+class RgbaColor implements MarshallerInterface
 {
-    /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param null|AbstractObject $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getForCsvExport($object, $params = []);
+    use RgbaColorTrait;
 }

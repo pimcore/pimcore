@@ -17,47 +17,11 @@
 
 namespace Pimcore\DataObject\BlockDataMarshaller;
 
+use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
 
 class RgbaColor implements MarshallerInterface
 {
-    /**
-     * { @inheritdoc }
-     */
-    public function marshal($value, $params = [])
-    {
-        if (is_array($value)) {
-            $rgb = sprintf('%02x%02x%02x', $value['r'], $value['g'], $value['b']);
-            $a = sprintf('%02x', $value['a']);
 
-            return [
-                'value' => $rgb,
-                'value2' => $a,
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * { @inheritdoc }
-     */
-    public function unmarshal($value, $params = [])
-    {
-        if (is_array($value)) {
-            $rgb = $value['value'];
-            $a = $value['value2'];
-            list($r, $g, $b) = sscanf($rgb, '%02x%02x%02x');
-            $a = hexdec($a);
-
-            return [
-                'r' => $r,
-                'g' => $g,
-                'b' => $b,
-                'a' => $a,
-            ];
-        }
-
-        return null;
-    }
+    use RgbaColorTrait;
 }
