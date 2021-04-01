@@ -407,6 +407,10 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
             }
         }
 
+        $itemRules = array_filter($itemRules, function(RuleInterface $rule) {
+            return $rule->hasProductActions();
+        });
+
         $itemRules = array_merge($this->appliedPricingRules, $itemRules);
         $uniqueItemRules = [];
         foreach ($itemRules as $rule) {
