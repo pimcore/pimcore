@@ -1118,8 +1118,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
-            /** @var DataObject\Concrete $object */
-
             $result = [];
             foreach ($value as $key => $v) {
 
