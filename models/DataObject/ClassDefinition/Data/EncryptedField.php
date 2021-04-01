@@ -425,11 +425,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             $result = $fd->marshal($value, $object, $params);
             if ($result) {
                 $params['asString'] = true;
-                if ($params['raw']) {
+                if ($params['raw'] ?? false) {
                     $result = $this->encrypt($result, $object, $params);
                 } else {
-                    $result['value'] = $this->encrypt($result['value'], $object, $params);
-                    $result['value2'] = $this->encrypt($result['value2'], $object, $params);
+                    $result['value'] = $this->encrypt($result['value'] ?? null, $object, $params);
+                    $result['value2'] = $this->encrypt($result['value2'] ?? null, $object, $params);
                 }
             }
 
@@ -454,11 +454,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd && $value) {
             $params['asString'] = true;
-            if ($params['raw']) {
+            if ($params['raw'] ?? false) {
                 $value = $this->decrypt($value, $object, $params);
             } else {
-                $value['value'] = $this->decrypt($value['value'], $object, $params);
-                $value['value2'] = $this->decrypt($value['value2'], $object, $params);
+                $value['value'] = $this->decrypt($value['value'] ?? null, $object, $params);
+                $value['value2'] = $this->decrypt($value['value2'] ?? null, $object, $params);
             }
 
             $result = $fd->unmarshal($value, $object, $params);
