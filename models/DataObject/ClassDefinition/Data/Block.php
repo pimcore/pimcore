@@ -1347,7 +1347,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         ]);
                         $resultItem[$key] = $denormalizedData;
                     } else {
-                        throw new \Exception("data type " . $fd->getFieldtype() . " does not implement normalizer interface");
+                        throw new \Exception("data type does not implement normalizer interface");
                     }
                 }
                 $result[] = $resultItem;
