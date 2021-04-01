@@ -94,8 +94,16 @@ final class DataObjectHelperController extends AdminController
         $configListing->setOrderKey('name');
         $configListing->setOrder('ASC');
         $configListing->setCondition($configCondition);
+        $configListing = $configListing->load();
 
-        return $configListing->load();
+        $configData = [];
+        if (is_array($configListing)) {
+            foreach ($configListing as $config) {
+                $configData[] = $config->getObjectVars();
+            }
+        }
+
+        return $configData;
     }
 
     /**
@@ -130,7 +138,14 @@ final class DataObjectHelperController extends AdminController
             $configListing = $configListing->load();
         }
 
-        return $configListing;
+        $configData = [];
+        if (is_array($configListing)) {
+            foreach ($configListing as $config) {
+                $configData[] = $config->getObjectVars();
+            }
+        }
+
+        return $configData;
     }
 
     /**
@@ -159,8 +174,8 @@ final class DataObjectHelperController extends AdminController
             /** @var GridConfig $config */
             foreach ($list as $config) {
                 $result[] = [
-                    'id' => $config->getId(),
-                    'name' => $config->getName(),
+                    'id' => $config["id"],
+                    'name' => $config["name"],
                 ];
             }
         }
