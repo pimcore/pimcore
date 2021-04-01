@@ -1308,7 +1308,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                     if ($fd instanceof NormalizerInterface) {
                         $normalizedData = $fd->normalize($fieldValue->getData(), [
-                            'object' => $params['object'],
+                            'object' => $params['object'] ?? null,
                             'fieldDefinition' => $fd
                         ]);
                         $resultItem[$key] = $normalizedData;
