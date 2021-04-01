@@ -42,7 +42,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'parent',
                 'p',
                 InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images in this folder (comma separated ID:s eg 543,1077)'
+                'only create thumbnails of images in this folder (comma separated IDs e.g. 543,1077)'
             )
             ->addOption(
                 'id',
