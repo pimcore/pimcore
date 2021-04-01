@@ -1527,13 +1527,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         $resultData[$groupConfig->getId()][$keyConfig->getId()][$language] = $fieldData;
                     }
                 }
-
-                $result = new DataObject\Classificationstore();
-                $result->setActiveGroups($activeGroups);
-                $result->setItems($resultData);
-                return $result;
             }
 
+            $result = new DataObject\Classificationstore();
+            $result->setActiveGroups($activeGroups);
+            $result->setItems($resultData);
             return $result;
         }
         return null;
