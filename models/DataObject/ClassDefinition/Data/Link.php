@@ -221,7 +221,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function marshal($value, $object = null, $params = [])
     {
         return $this->normalize($value, $params);
-
     }
 
     /**
@@ -504,6 +503,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if ($value instanceof DataObject\Data\Link) {
             return $value->getObjectVars();
         }
+
         return null;
     }
 
@@ -515,8 +515,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if (is_array($value)) {
             $link = new DataObject\Data\Link();
             $link->setValues($value);
+
             return $link;
         }
+
         return null;
     }
 }

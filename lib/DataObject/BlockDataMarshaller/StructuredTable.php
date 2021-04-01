@@ -27,6 +27,7 @@ class StructuredTable implements MarshallerInterface
         if (is_array($value)) {
             $table = new \Pimcore\Model\DataObject\Data\StructuredTable();
             $table->setData($value);
+
             return $table;
         }
 
@@ -39,8 +40,7 @@ class StructuredTable implements MarshallerInterface
         if ($value instanceof \Pimcore\Model\DataObject\Data\StructuredTable) {
             return $value->getData();
         }
+
         return null;
     }
-
-
 }

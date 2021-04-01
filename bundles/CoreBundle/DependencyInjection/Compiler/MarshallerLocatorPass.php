@@ -24,7 +24,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-
 /**
  * @internal
  */
@@ -44,7 +43,7 @@ final class MarshallerLocatorPass implements CompilerPassInterface
     protected function processFieldDefinitionMarshallers(ContainerBuilder $container)
     {
         $serviceDefinition = $container->getDefinition(MarshallerService::class);
-         $this->buildSupportedFielddefinitionMarshaller(
+        $this->buildSupportedFielddefinitionMarshaller(
             'query',
             $container,
             $serviceDefinition,
@@ -66,8 +65,7 @@ final class MarshallerLocatorPass implements CompilerPassInterface
         string $type,
         string $tag,
         string $argument
-    )
-    {
+    ) {
         $resolvers = $container->findTaggedServiceIds($tag);
 
         $mapping = [];
@@ -107,8 +105,7 @@ final class MarshallerLocatorPass implements CompilerPassInterface
         Definition $definition,
         string $type,
         string $tag
-    )
-    {
+    ) {
         $resolvers = $container->findTaggedServiceIds($tag);
 
         $mapping = [];
@@ -131,7 +128,4 @@ final class MarshallerLocatorPass implements CompilerPassInterface
 
         $definition->addMethodCall('setSupportedFieldDefinitionMarshallers', [($mapping)]);
     }
-
-
-
 }

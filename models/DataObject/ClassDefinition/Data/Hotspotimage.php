@@ -23,7 +23,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface
 {
@@ -602,7 +601,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public function marshal($value, $object = null, $params = [])
     {
         return $this->normalize($value, $params);
-
     }
 
     /** See marshal
@@ -618,7 +616,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public function unmarshal($value, $object = null, $params = [])
     {
         return $this->denormalize($value, $params);
-
     }
 
     /**

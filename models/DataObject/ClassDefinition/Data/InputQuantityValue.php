@@ -184,8 +184,8 @@ class InputQuantityValue extends QuantityValue
     {
         if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
             return [
-                "value" => $value->getValue(),
-                "unitId" => $value->getUnitId()
+                'value' => $value->getValue(),
+                'unitId' => $value->getUnitId(),
             ];
         }
     }
@@ -196,8 +196,9 @@ class InputQuantityValue extends QuantityValue
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
-            return new Model\DataObject\Data\InputQuantityValue($value["value"], $value["unitId"]);
+            return new Model\DataObject\Data\InputQuantityValue($value['value'], $value['unitId']);
         }
+
         return null;
     }
 }

@@ -21,8 +21,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface,
-    VarExporterInterface, NormalizerInterface
+class Geobounds extends AbstractGeo implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -303,16 +307,17 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     {
         if ($value instanceof DataObject\Data\Geobounds) {
             return [
-                'northEast' => ["latitude" => $value->getNorthEast()->getLatitude(), "longitude" => $value->getNorthEast()->getLongitude()],
-                'southWest' => ["latitude" => $value->getSouthWest()->getLatitude(), "longitude" =>  $value->getSouthWest()->getLongitude()],
+                'northEast' => ['latitude' => $value->getNorthEast()->getLatitude(), 'longitude' => $value->getNorthEast()->getLongitude()],
+                'southWest' => ['latitude' => $value->getSouthWest()->getLatitude(), 'longitude' => $value->getSouthWest()->getLongitude()],
             ];
         } elseif (is_array($value)) {
             //TODO kick this as soon as classification store is implemented
             return [
-                'northEast' => ["latitude" => $value[$this->getName() . '__NElatitude'], "longitude" => $value[$this->getName() . '__NElongitude']],
-                'southWest' => ["latitude" => $value[$this->getName() . '__SWlatitude'], "longitude" => $value[$this->getName() . '__SWlongitude']],
+                'northEast' => ['latitude' => $value[$this->getName() . '__NElatitude'], 'longitude' => $value[$this->getName() . '__NElongitude']],
+                'southWest' => ['latitude' => $value[$this->getName() . '__SWlatitude'], 'longitude' => $value[$this->getName() . '__SWlongitude']],
             ];
         }
+
         return null;
     }
 
@@ -322,16 +327,14 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
-
             $ne = new DataObject\Data\GeoCoordinates($value['northEast']['latitude'], $value['northEast']['longitude']);
             $sw = new DataObject\Data\GeoCoordinates($value['southWest']['latitude'], $value['southWest']['longitude']);
 
             return new DataObject\Data\Geobounds($ne, $sw);
-
         }
+
         return null;
     }
-
 
     /** See marshal
      *

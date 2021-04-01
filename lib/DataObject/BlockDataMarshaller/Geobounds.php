@@ -28,8 +28,8 @@ class Geobounds implements MarshallerInterface
     {
         if (is_array($value)) {
             return [
-                'value' => json_encode(["latitude" => $value["northEast"]["latitude"], "longitude" => $value["northEast"]["longitude"]]),
-                'value2' => json_encode(["latitude" => $value["southWest"]["latitude"], "longitude" =>  $value["southWest"]["longitude"]])
+                'value' => json_encode(['latitude' => $value['northEast']['latitude'], 'longitude' => $value['northEast']['longitude']]),
+                'value2' => json_encode(['latitude' => $value['southWest']['latitude'], 'longitude' => $value['southWest']['longitude']]),
             ];
         }
 
@@ -44,13 +44,13 @@ class Geobounds implements MarshallerInterface
         if (is_array($value)) {
             $northEast = json_decode($value['value'], true);
             $southWest = json_decode($value['value2'], true);
+
             return [
-                "northEast" => $northEast,
-                "southWest" => $southWest
+                'northEast' => $northEast,
+                'southWest' => $southWest,
             ];
         }
+
         return null;
     }
-
-
 }

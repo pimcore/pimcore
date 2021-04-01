@@ -27,7 +27,7 @@ class ExternalImage implements MarshallerInterface
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
-            return new \Pimcore\Model\DataObject\Data\ExternalImage($value["url"]);
+            return new \Pimcore\Model\DataObject\Data\ExternalImage($value['url']);
         }
 
         return null;
@@ -40,11 +40,10 @@ class ExternalImage implements MarshallerInterface
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\ExternalImage) {
             return [
-                'url' => $value->getUrl()
+                'url' => $value->getUrl(),
             ];
         }
+
         return null;
     }
-
-
 }

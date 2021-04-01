@@ -531,7 +531,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function unmarshal($value, $object = null, $params = [])
     {
         return $this->denormalize($value, $params);
-
     }
 
     /**

@@ -3,15 +3,10 @@
 namespace Pimcore\Tests\Model\DataType;
 
 use Carbon\Carbon;
-use Pimcore\Cache;
-use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
-use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\Unittest;
-use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\User;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -80,7 +75,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testCountry()
     {
-        $originalValue = "de";
+        $originalValue = 'de';
         $fd = new DataObject\ClassDefinition\Data\Country();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -90,7 +85,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testCountrymultiselect()
     {
-        $originalValue = ["de","en"];
+        $originalValue = ['de', 'en'];
         $fd = new DataObject\ClassDefinition\Data\Countrymultiselect();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -136,12 +131,12 @@ class NormalizerTest extends ModelTestCase
 
     public function testEncryptedField()
     {
-        $this->markTestSkipped("implement this as soon as marshal() is gone");
+        $this->markTestSkipped('implement this as soon as marshal() is gone');
     }
 
     public function testExternalImage()
     {
-        $originalValue = new DataObject\Data\ExternalImage("http://someurl.com");
+        $originalValue = new DataObject\Data\ExternalImage('http://someurl.com');
         $fd = new DataObject\ClassDefinition\Data\Email();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -151,7 +146,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testFirstname()
     {
-        $originalValue = "john" . uniqid();
+        $originalValue = 'john' . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Firstname();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -161,7 +156,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testGender()
     {
-        $originalValue = "male";
+        $originalValue = 'male';
         $fd = new DataObject\ClassDefinition\Data\Gender();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -196,7 +191,7 @@ class NormalizerTest extends ModelTestCase
         $originalValue = [
             new DataObject\Data\GeoCoordinates(123, -120),
             new DataObject\Data\GeoCoordinates(50, 70),
-            new DataObject\Data\GeoCoordinates(56, 130)
+            new DataObject\Data\GeoCoordinates(56, 130),
         ];
         $fd = new DataObject\ClassDefinition\Data\Geopolygon();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
@@ -208,24 +203,25 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testHotspotimage() {
+    public function testHotspotimage()
+    {
         $asset = TestHelper::createImageAsset();
 
         $originalValue = new Hotspotimage();
         $originalValue->setImage($asset);
         $originalValue->setCrop([
-            "cropWidth" => 60,
-            "cropHeight" => 78,
-            "cropTop" => 4.1,
-            "cropLeft" =>  4.2,
-            "cropPercent" => true
+            'cropWidth' => 60,
+            'cropHeight' => 78,
+            'cropTop' => 4.1,
+            'cropLeft' => 4.2,
+            'cropPercent' => true,
         ]);
 
         $originalValue->setMarker([
             [
-                "top" => 56,
-                "left" => 62
-            ]
+                'top' => 56,
+                'left' => 62,
+            ],
         ]);
 
         $fd = new DataObject\ClassDefinition\Data\Hotspotimage();
@@ -237,7 +233,8 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testImage() {
+    public function testImage()
+    {
         $originalValue = TestHelper::createImageAsset();
 
         $fd = new DataObject\ClassDefinition\Data\Image();
@@ -250,7 +247,8 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testImageGallery() {
+    public function testImageGallery()
+    {
         $originalValue = [];
         for ($i = 0; $i < 3; $i++) {
             $asset = TestHelper::createImageAsset();
@@ -258,18 +256,18 @@ class NormalizerTest extends ModelTestCase
             $item = new Hotspotimage();
             $item->setImage($asset);
             $item->setCrop([
-                "cropWidth" => 60 + $i,
-                "cropHeight" => 78 + $i,
-                "cropTop" => 4.1 + $i,
-                "cropLeft" => 4.2 + $i,
-                "cropPercent" => true
+                'cropWidth' => 60 + $i,
+                'cropHeight' => 78 + $i,
+                'cropTop' => 4.1 + $i,
+                'cropLeft' => 4.2 + $i,
+                'cropPercent' => true,
             ]);
 
             $item->setMarker([
                 [
-                    "top" => 56 + $i,
-                    "left" => 62 + $i
-                ]
+                    'top' => 56 + $i,
+                    'left' => 62 + $i,
+                ],
             ]);
             $originalValue[] = $item;
         }
@@ -295,13 +293,13 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testInputQuantityValue() {
-
-        $unit = DataObject\QuantityValue\Unit::getByAbbreviation("cm");
+    public function testInputQuantityValue()
+    {
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation('cm');
         if (!$unit) {
-            throw new \Exception("unknown id");
+            throw new \Exception('unknown id');
         }
-        $originalValue = new DataObject\Data\InputQuantityValue("123", $unit);
+        $originalValue = new DataObject\Data\InputQuantityValue('123', $unit);
         $fd = new DataObject\ClassDefinition\Data\InputQuantityValue();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -322,8 +320,8 @@ class NormalizerTest extends ModelTestCase
         $originalValue = new Link();
         $originalValue->setInternalType('object');
         $originalValue->setInternal($targetObject->getId());
-        $originalValue->setTarget("_blank");
-        $originalValue->setTitle("sometitle");
+        $originalValue->setTarget('_blank');
+        $originalValue->setTitle('sometitle');
         $fd = new DataObject\ClassDefinition\Data\Link();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -332,15 +330,15 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testLocalizedfields() {
-
+    public function testLocalizedfields()
+    {
         $object = TestHelper::createEmptyObject();
         $targetObject = TestHelper::createEmptyObject();
         $this->assertTrue($object instanceof Unittest);
 
         $fd = $object->getClass()->getFieldDefinition('localizedfields');
 
-        $object->setLinput("123");
+        $object->setLinput('123');
         $object->setLObjects([$targetObject]);
 
         $originalValue = $object->getLocalizedfields();
@@ -349,19 +347,18 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue, ['object' => $object]);
         /** @var DataObject\Localizedfield $denormalizedValue */
         $denormalizedValue = $fd->denormalize($normalizedValue, ['object' => $object]);
-        $this->assertEquals("123", $denormalizedValue->getLocalizedValue("linput"));
+        $this->assertEquals('123', $denormalizedValue->getLocalizedValue('linput'));
 
-        $objects = $denormalizedValue->getLocalizedValue("lobjects");
+        $objects = $denormalizedValue->getLocalizedValue('lobjects');
         $this->assertEquals($targetObject->getId(), $objects[0]->getId());
     }
 
-    public function testManyToManyObjectRelation() {
-
+    public function testManyToManyObjectRelation()
+    {
         $targetObject1 = TestHelper::createEmptyObject();
         $targetObject2 = TestHelper::createEmptyObject();
 
         $originalValue = [$targetObject1, $targetObject2];
-
 
         $fd = new DataObject\ClassDefinition\Data\ManyToManyObjectRelation();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
@@ -377,14 +374,13 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($targetObject2->getId(), $denormalizedValue[1]->getId());
     }
 
-    public function testManyToManyRelation() {
-
+    public function testManyToManyRelation()
+    {
         $targetObject1 = TestHelper::createEmptyObject();
         $targetObject2 = TestHelper::createEmptyObject();
         $targetAsset1 = TestHelper::createImageAsset();
 
         $originalValue = [$targetObject1, $targetObject2, $targetAsset1];
-
 
         $fd = new DataObject\ClassDefinition\Data\ManyToManyRelation();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
@@ -402,8 +398,8 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($targetAsset1->getId(), $denormalizedValue[2]->getId());
     }
 
-    public function testManyToOneRelation() {
-
+    public function testManyToOneRelation()
+    {
         $originalValue = TestHelper::createEmptyObject();
 
         $fd = new DataObject\ClassDefinition\Data\ManyToOneRelation();
@@ -416,9 +412,9 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue->getId(), $denormalizedValue->getId());
     }
 
-    public function testMultiselect() {
-
-        $originalValue = ["A", "B", "C"];
+    public function testMultiselect()
+    {
+        $originalValue = ['A', 'B', 'C'];
         $fd = new DataObject\ClassDefinition\Data\Multiselect();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
@@ -462,7 +458,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testPassword()
     {
-        $originalValue = "mysecret";
+        $originalValue = 'mysecret';
         $fd = new DataObject\ClassDefinition\Data\Password();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -470,11 +466,11 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testQuantityValue() {
-
-        $unit = DataObject\QuantityValue\Unit::getByAbbreviation("cm");
+    public function testQuantityValue()
+    {
+        $unit = DataObject\QuantityValue\Unit::getByAbbreviation('cm');
         if (!$unit) {
-            throw new \Exception("unknown id");
+            throw new \Exception('unknown id');
         }
         $originalValue = new DataObject\Data\QuantityValue(123.4, $unit);
         $fd = new DataObject\ClassDefinition\Data\QuantityValue();
@@ -490,9 +486,9 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue->getUnitId(), $denormalizedValue->getUnitId());
     }
 
-    public function testRgbaColor() {
-
-        $originalValue = new DataObject\Data\RgbaColor(1,2,3, 12);
+    public function testRgbaColor()
+    {
+        $originalValue = new DataObject\Data\RgbaColor(1, 2, 3, 12);
         $fd = new DataObject\ClassDefinition\Data\RgbaColor();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -505,9 +501,9 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testSelect() {
-
-        $originalValue = "Z";
+    public function testSelect()
+    {
+        $originalValue = 'Z';
         $fd = new DataObject\ClassDefinition\Data\Select();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
 
@@ -518,9 +514,8 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-
-    public function testSlider() {
-
+    public function testSlider()
+    {
         $originalValue = 77;
         $fd = new DataObject\ClassDefinition\Data\Slider();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
@@ -532,10 +527,10 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testStructuredTable() {
-
-        $data = ["row1" => ["col1" => "1", "col2" => "2"],
-            "row2" => ["col1" => "3", "col2" => "4"]];
+    public function testStructuredTable()
+    {
+        $data = ['row1' => ['col1' => '1', 'col2' => '2'],
+            'row2' => ['col1' => '3', 'col2' => '4'], ];
         $originalValue = new DataObject\Data\StructuredTable();
         $originalValue->setData($data);
 
@@ -550,11 +545,11 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testTable() {
-
+    public function testTable()
+    {
         $originalValue = [
-            ["A", "B" , "C"],
-            ["E", "F" , "G"]
+            ['A', 'B', 'C'],
+            ['E', 'F', 'G'],
             ];
 
         $fd = new DataObject\ClassDefinition\Data\Table();
@@ -582,7 +577,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testTime()
     {
-        $originalValue = "01:23";
+        $originalValue = '01:23';
         $fd = new DataObject\ClassDefinition\Data\Time();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -594,8 +589,8 @@ class NormalizerTest extends ModelTestCase
     public function testUrlSlug()
     {
         $originalValue = [
-            new DataObject\Data\UrlSlug("/abc", 1),
-            new DataObject\Data\UrlSlug("/ebf", 2)
+            new DataObject\Data\UrlSlug('/abc', 1),
+            new DataObject\Data\UrlSlug('/ebf', 2),
         ];
         $fd = new DataObject\ClassDefinition\Data\UrlSlug();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
@@ -606,9 +601,9 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testUser() {
-
-        $user = User::getByName("admin");
+    public function testUser()
+    {
+        $user = User::getByName('admin');
         $originalValue = $user->getId();
         $fd = new DataObject\ClassDefinition\Data\User();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
@@ -644,7 +639,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testWysiwyg()
     {
-        $originalValue = uniqid() . "<br>" . uniqid();
+        $originalValue = uniqid() . '<br>' . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Wysiwyg();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -653,5 +648,3 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 }
-
-

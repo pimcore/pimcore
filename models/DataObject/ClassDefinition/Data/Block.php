@@ -16,8 +16,8 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Element\MarshallerService;
 use Pimcore\Db;
+use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -137,7 +137,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if ($fd instanceof NormalizerInterface) {
                         $normalizedData = $fd->normalize($elementData, [
                             'object' => $object,
-                            'fieldDefinition' => $fd
+                            'fieldDefinition' => $fd,
                         ]);
                         $encodedData = $normalizedData;
 
@@ -212,7 +212,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                         $dataFromResource = $fd->denormalize($elementData, [
                             'object' => $object,
-                            'fieldDefinition' => $fd
+                            'fieldDefinition' => $fd,
                         ]);
                     } else {
                         // BC layer

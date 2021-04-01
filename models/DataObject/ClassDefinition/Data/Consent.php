@@ -455,10 +455,11 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         if ($value instanceof DataObject\Data\Consent) {
             return [
-                "consent" => $value->getConsent(),
-                "noteId" => $value->getNoteId()
+                'consent' => $value->getConsent(),
+                'noteId' => $value->getNoteId(),
             ];
         }
+
         return null;
     }
 
@@ -468,8 +469,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
-            return new DataObject\Data\Consent($value["consent"], $value["noteId"]);
+            return new DataObject\Data\Consent($value['consent'], $value['noteId']);
         }
+
         return null;
     }
 }

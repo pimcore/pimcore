@@ -21,8 +21,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface,
-    EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class Geopoint extends AbstractGeo implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -257,9 +261,10 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if ($data instanceof DataObject\Data\GeoCoordinates) {
             return [
                 'latitude' => $data->getLatitude(),
-                'longitude' => $data->getLongitude()
+                'longitude' => $data->getLongitude(),
             ];
         }
+
         return null;
     }
 
@@ -271,9 +276,9 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if (is_array($data)) {
             return new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
         }
+
         return null;
     }
-
 
     /** See marshal
      *

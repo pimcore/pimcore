@@ -22,10 +22,10 @@ namespace Pimcore\Normalizer;
  */
 interface NormalizerInterface
 {
-
     /**
      * @param mixed $value
      * @param array $params
+     *
      * @return mixed
      */
     public function normalize($value, $params = []);
@@ -33,6 +33,7 @@ interface NormalizerInterface
     /**
      * @param mixed $value
      * @param array $params
+     *
      * @return mixed
      */
     public function denormalize($value, $params = []);

@@ -87,7 +87,6 @@ class Dao extends Model\Dao\AbstractDao
                     $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
                 }
             }
-
         }
     }
 

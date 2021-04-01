@@ -49,5 +49,4 @@ class QuantityValueUnitEvent extends Event
     {
         $this->unit = $unit;
     }
-
 }

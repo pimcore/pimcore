@@ -717,6 +717,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * converts object data to a simple string value or CSV Export
      *
      * @internal
+     *
      * @param Model\DataObject\Concrete $object
      * @param array $params
      *
@@ -778,12 +779,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             /** @var Model\DataObject\Data\UrlSlug $slug */
             foreach ($value as $slug) {
                 $result[] = [
-                    "slug" => $slug->getSlug(),
-                    "siteId" => $slug->getSiteId()
+                    'slug' => $slug->getSlug(),
+                    'siteId' => $slug->getSiteId(),
                 ];
             }
+
             return $result;
         }
+
         return null;
     }
 
@@ -798,10 +801,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $slug = new Model\DataObject\Data\UrlSlug($slugData['slug'], $slugData['siteId']);
                 $result[] = $slug;
             }
+
             return $result;
         }
+
         return null;
     }
-
-
 }

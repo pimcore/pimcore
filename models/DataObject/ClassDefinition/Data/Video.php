@@ -617,6 +617,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
             return $video;
         }
+
         return null;
     }
 

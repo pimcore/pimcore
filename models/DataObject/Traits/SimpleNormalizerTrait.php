@@ -22,22 +22,25 @@ namespace Pimcore\Model\DataObject\Traits;
  */
 trait SimpleNormalizerTrait
 {
-
     /**
      * @param mixed $value
      * @param array $params
+     *
      * @return mixed
      */
-    public function normalize($value, $params = []) {
+    public function normalize($value, $params = [])
+    {
         return $value;
     }
 
     /**
      * @param mixed $value
      * @param array $params
+     *
      * @return mixed
      */
-    public function denormalize($value, $params = []) {
+    public function denormalize($value, $params = [])
+    {
         return $value;
     }
 }

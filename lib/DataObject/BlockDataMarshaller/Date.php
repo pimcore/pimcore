@@ -30,6 +30,7 @@ class Date implements MarshallerInterface
         if ($value !== null) {
             $result = new Carbon();
             $result->setTimestamp($value);
+
             return $result;
         }
 
@@ -44,8 +45,7 @@ class Date implements MarshallerInterface
         if ($value instanceof Carbon) {
             return $value->getTimestamp();
         }
+
         return null;
     }
-
-
 }

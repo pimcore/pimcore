@@ -464,6 +464,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         if ($value instanceof Carbon) {
             return $value->getTimestamp();
         }
+
         return null;
     }
 
@@ -475,6 +476,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         if ($value !== null) {
             return $this->getDateFromTimestamp($value);
         }
+
         return null;
     }
 }

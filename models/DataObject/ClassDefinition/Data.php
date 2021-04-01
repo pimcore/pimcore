@@ -1532,5 +1532,4 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         return $listing->addFilterByField($this->getName(), $operator, $data);
     }
-
 }

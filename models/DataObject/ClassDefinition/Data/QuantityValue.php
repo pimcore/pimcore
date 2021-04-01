@@ -691,8 +691,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         if ($value instanceof Model\DataObject\Data\QuantityValue) {
             return [
-                "value" => $value->getValue(),
-                "unitId" => $value->getUnitId()
+                'value' => $value->getValue(),
+                'unitId' => $value->getUnitId(),
             ];
         }
     }
@@ -703,8 +703,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
-            return new Model\DataObject\Data\QuantityValue($value["value"], $value["unitId"]);
+            return new Model\DataObject\Data\QuantityValue($value['value'], $value['unitId']);
         }
+
         return null;
     }
 }

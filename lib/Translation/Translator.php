@@ -215,7 +215,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                             $translationTerm = $translationKey;
                         }
 
-                        if (empty($translation["type"]) || $translation["type"] === "simple") {
+                        if (empty($translation['type']) || $translation['type'] === 'simple') {
                             $data[$translationKey] = $translationTerm;
                         } else {
                             $dataIntl[$translationKey] = $translationTerm;
@@ -236,7 +236,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
                 $data = [
                     $domain => $data,
-                    $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX => $dataIntl
+                    $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX => $dataIntl,
                 ];
                 $catalogue = new MessageCatalogue($locale, $data);
 

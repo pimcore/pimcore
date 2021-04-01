@@ -1445,7 +1445,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             $dataForResource = $fd->normalize($elementData, $params);
                         } else {
                             // TODO BC mode, remove it as soon as marshal is gone
-                            $blockMode = isset($params['format']) && $params['format'] == "block";
+                            $blockMode = isset($params['format']) && $params['format'] == 'block';
                             $childParams = [];
                             if ($blockMode) {
                                 $childParams = ['raw' => true, 'blockmode' => true];
@@ -1488,7 +1488,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         $dataFromResource = $fd->denormalize($elementData, $params);
                     } else {
                         // TODO BC mode, remove it as soon as marshal is gone
-                        $blockMode = isset($params['format']) && $params['format'] == "block";
+                        $blockMode = isset($params['format']) && $params['format'] == 'block';
                         $childParams = [];
                         if ($blockMode) {
                             $childParams = ['raw' => true, 'blockmode' => true];
@@ -1503,10 +1503,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             }
 
             $lf->setItems($items);
+
             return $lf;
         }
 
         return null;
-
     }
 }

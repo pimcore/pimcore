@@ -348,10 +348,10 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     {
         if ($value instanceof DataObject\Data\ExternalImage) {
             return [
-                "url" => $value->getUrl()
+                'url' => $value->getUrl(),
             ];
-
         }
+
         return null;
     }
 
@@ -363,6 +363,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         if (is_array($value)) {
             return new DataObject\Data\ExternalImage($value['url']);
         }
+
         return null;
     }
 }

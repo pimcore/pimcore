@@ -467,6 +467,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if ($value instanceof Carbon) {
             return $value->getTimestamp();
         }
+
         return null;
     }
 
@@ -478,6 +479,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if ($value !== null) {
             return $this->getDateFromTimestamp($value);
         }
+
         return null;
     }
 }
