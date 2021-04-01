@@ -21,9 +21,10 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -1418,5 +1419,81 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->disallowAddRemove = $disallowAddRemove;
 
         return $this;
+    }
+
+    /** { @inheritdoc } */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Classificationstore) {
+            $validLanguages = array_merge(['default'], Tool::getValidLanguages());
+            $result = [];
+            $activeGroups = $value->getActiveGroups();
+            if ($activeGroups) {
+                foreach ($activeGroups as $groupId => $active) {
+                    if (!$active) {
+                        continue;
+                    }
+
+                    $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
+                    $result[$groupConfig->getName()] = [];
+
+                    $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
+                    $relation->setCondition("groupId = " . $relation->quote($groupId));
+                    $relation = $relation->load();
+
+                    foreach ($validLanguages as $validLanguage) {
+                        foreach ($relation as $key) {
+                            $keyId = $key->getKeyId();
+
+                            $csValue = $value->getLocalizedKeyValue($groupId, $keyId, $validLanguage, true, true);
+                            $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
+                            $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                            if ($fd instanceof NormalizerInterface) {
+                                $csValue = $fd->normalize($csValue, $params);
+                            }
+                            if ($csValue !== null) {
+                                $result[$groupConfig->getName()][$validLanguage][$key->getName()] = $csValue;
+                            }
+                        }
+                    }
+                }
+            }
+            return $result;
+        }
+
+
+        return null;
+    }
+
+    /** { @inheritdoc } */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $activeGroups = [];
+            $resultData = [];
+            foreach ($value as $groupName => $groupData) {
+                $groupConfig = DataObject\Classificationstore\GroupConfig::getByName($groupName);
+                $activeGroups[$groupConfig->getId()] = true;
+                $resultData[$groupConfig->getId()] = [];
+
+                foreach ($groupData as $language => $languageData) {
+
+                    foreach ($languageData as $fieldKey => $fieldData) {
+                        $keyConfig = DataObject\Classificationstore\KeyConfig::getByName($fieldKey);
+                        $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        if ($fd instanceof NormalizerInterface) {
+                            $fieldData = $fd->denormalize($fieldData, $params);
+                        }
+                        $resultData[$groupConfig->getId()][$keyConfig->getId()][$language] = $fieldData;
+                    }
+                }
+            }
+
+            $result = new DataObject\Classificationstore();
+            $result->setActiveGroups($activeGroups);
+            $result->setItems($resultData);
+            return $result;
+        }
+        return null;
     }
 }
