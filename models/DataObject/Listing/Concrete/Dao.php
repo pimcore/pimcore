@@ -205,6 +205,7 @@ class Dao extends Model\DataObject\Listing\Dao
 
     /**
      * @deprecated
+     *
      * @param ZendCompatibilityQueryBuilder $select
      *
      * @return $this

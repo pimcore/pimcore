@@ -26,5 +26,4 @@ use Pimcore\Model;
  */
 class Dao extends Model\Translation\AbstractTranslation\Dao
 {
-
 }

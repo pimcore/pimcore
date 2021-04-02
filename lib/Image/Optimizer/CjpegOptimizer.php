@@ -37,7 +37,6 @@ final class CjpegOptimizer extends AbstractCommandOptimizer
         return 'cjpeg';
     }
 
-
     /**
      * {@inheritdoc}
      */

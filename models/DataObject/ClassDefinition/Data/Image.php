@@ -267,6 +267,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params

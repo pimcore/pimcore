@@ -32,37 +32,44 @@ final class MarshallerService
 
     /**
      * MarshallerService constructor.
+     *
      * @param ContainerInterface $container
      */
-    public function __construct($container) {
+    public function __construct($container)
+    {
         $this->container = $container;
     }
 
     /**
      * @param array $supportedFieldDefinitionMarshallers
      */
-    public function setSupportedFieldDefinitionMarshallers($supportedFieldDefinitionMarshallers) {
+    public function setSupportedFieldDefinitionMarshallers($supportedFieldDefinitionMarshallers)
+    {
         $this->supportedFieldDefinitionMarshallers = $supportedFieldDefinitionMarshallers;
     }
 
     /**
      * @param string $format
      * @param string $name
+     *
      * @return MarshallerInterface
      */
     public function buildFieldefinitionMarshaller($format, $name)
     {
-        $key = $this->supportedFieldDefinitionMarshallers[$format . "_" . $name];
+        $key = $this->supportedFieldDefinitionMarshallers[$format . '_' . $name];
         $result = $this->container->get($key);
+
         return $result;
     }
 
     /**
      * @param string $format
      * @param string $name
+     *
      * @return bool
      */
-    public function supportsFielddefinition(string $format, string $name) {
-        return isset($this->supportedFieldDefinitionMarshallers[$format . "_" . $name]);
+    public function supportsFielddefinition(string $format, string $name)
+    {
+        return isset($this->supportedFieldDefinitionMarshallers[$format . '_' . $name]);
     }
 }

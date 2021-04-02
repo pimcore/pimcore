@@ -449,6 +449,7 @@ class Version extends AbstractModel
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return string
      */
     public function getBinaryFilePath()
@@ -464,6 +465,7 @@ class Version extends AbstractModel
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return string
      */
     public function getLegacyFilePath()

@@ -122,6 +122,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
@@ -222,8 +223,9 @@ class InputQuantityValue extends QuantityValue
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
-            return new Model\DataObject\Data\InputQuantityValue($value["value"], $value["unitId"]);
+            return new Model\DataObject\Data\InputQuantityValue($value['value'], $value['unitId']);
         }
+
         return null;
     }
 }

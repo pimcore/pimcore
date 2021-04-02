@@ -153,6 +153,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()

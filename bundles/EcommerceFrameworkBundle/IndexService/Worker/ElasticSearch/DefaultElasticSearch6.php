@@ -22,6 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  *  Use this for ES Version >= 6
+ *
  * @property ElasticSearch $tenantConfig
  *
  * @deprecated since version 6.9.0 and will be removed in 10.0.0.
@@ -58,7 +59,6 @@ class DefaultElasticSearch6 extends AbstractElasticSearch
 
         return $params;
     }
-
 
     /**
      * returns product list implementation valid and configured for this worker/tenant

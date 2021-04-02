@@ -22,6 +22,7 @@ interface MarshallerInterface
     /**
      * @param mixed $value
      * @param array $params
+     *
      * @return mixed
      *
      * @throws \Exception
@@ -31,6 +32,7 @@ interface MarshallerInterface
     /**
      * @param mixed $value
      * @param array $params
+     *
      * @return mixed
      *
      * @throws  \Exception

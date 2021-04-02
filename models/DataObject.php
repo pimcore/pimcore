@@ -19,5 +19,4 @@ namespace Pimcore\Model;
 
 class DataObject extends \Pimcore\Model\DataObject\AbstractObject
 {
-
 }

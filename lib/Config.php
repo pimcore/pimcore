@@ -1077,6 +1077,7 @@ class Config implements \ArrayAccess
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @param string $environment
@@ -1088,6 +1089,7 @@ class Config implements \ArrayAccess
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @return EnvironmentConfigInterface
@@ -1103,6 +1105,7 @@ class Config implements \ArrayAccess
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @param EnvironmentConfigInterface $environmentConfig
@@ -1165,6 +1168,7 @@ class Config implements \ArrayAccess
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @param string $varName
@@ -1182,6 +1186,7 @@ class Config implements \ArrayAccess
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      */
     public static function initDebugDevMode()

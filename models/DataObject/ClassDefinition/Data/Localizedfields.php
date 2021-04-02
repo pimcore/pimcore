@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
@@ -381,6 +380,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param array $params
@@ -1339,7 +1339,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $blockedVars = [
             'fieldDefinitionsCache',
             'referencedFields',
-            'blockedVarsForExport'
+            'blockedVarsForExport',
         ];
 
         foreach ($blockedVars as $blockedVar) {
@@ -1591,7 +1591,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             $dataForResource = $fd->normalize($elementData, $params);
                         } else {
                             // TODO BC mode, remove it as soon as marshal is gone
-                            $blockMode = isset($params['format']) && $params['format'] == "block";
+                            $blockMode = isset($params['format']) && $params['format'] == 'block';
                             $childParams = [];
                             if ($blockMode) {
                                 $childParams = ['raw' => true, 'blockmode' => true];
@@ -1634,7 +1634,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         $dataFromResource = $fd->denormalize($elementData, $params);
                     } else {
                         // TODO BC mode, remove it as soon as marshal is gone
-                        $blockMode = isset($params['format']) && $params['format'] == "block";
+                        $blockMode = isset($params['format']) && $params['format'] == 'block';
                         $childParams = [];
                         if ($blockMode) {
                             $childParams = ['raw' => true, 'blockmode' => true];
@@ -1649,12 +1649,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             }
 
             $lf->setItems($items);
+
             return $lf;
         }
 
         return null;
-
     }
-
-
 }

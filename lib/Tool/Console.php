@@ -313,11 +313,13 @@ class Console
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $process = new Process($cmd);
         $commandLine = $process->getCommandLine();
+
         return self::execInBackground($commandLine, $outputFile);
     }
 
     /**
      * @deprecated Use Symfony\Component\Process\Process instead.
+     *
      * @param string $cmd
      * @param string|null $outputFile
      * @param int|null $timeout
@@ -521,15 +523,18 @@ class Console
 
     /**
      * @internal
+     *
      * @param array|string $cmd
+     *
      * @return array|string
      */
-    public static function addLowProcessPriority($cmd) {
+    public static function addLowProcessPriority($cmd)
+    {
         $nice = (string) self::getExecutable('nice');
         if ($nice) {
-            if(is_string($cmd)) {
+            if (is_string($cmd)) {
                 $cmd = $nice . ' -n 19 ' . $cmd;
-            } elseif(is_array($cmd)) {
+            } elseif (is_array($cmd)) {
                 array_unshift($cmd, $nice, '-n 19');
             }
         }

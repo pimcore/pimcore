@@ -80,7 +80,9 @@ class ControllerDataProvider
 
     /**
      * Returns all eligible bundles
+     *
      * @deprecated
+     *
      * @return BundleInterface[]
      */
     public function getBundles(): array
@@ -101,7 +103,9 @@ class ControllerDataProvider
 
     /**
      * @param string $name
+     *
      * @deprecated
+     *
      * @return BundleInterface|null
      */
     private function getBundle(string $name)
@@ -123,7 +127,9 @@ class ControllerDataProvider
      *
      * @param string|null $bundleName
      * @param string|null $defaultBundleName
+     *
      * @deprecated
+     *
      * @return array
      */
     public function getControllers(string $bundleName = null, string $defaultBundleName = null): array
@@ -193,7 +199,9 @@ class ControllerDataProvider
      *
      * @param string $controller
      * @param string|null $bundleName
+     *
      * @deprecated
+     *
      * @return array
      */
     public function getActions(string $controller, string $bundleName = null): array
@@ -214,9 +222,9 @@ class ControllerDataProvider
         return $actions;
     }
 
-
     /**
      * @return array
+     *
      * @throws \ReflectionException
      */
     public function getControllerReferences(): array
@@ -238,7 +246,7 @@ class ControllerDataProvider
         }
 
         $bundles = $this->getBundles();
-        foreach($bundles as $bundle) {
+        foreach ($bundles as $bundle) {
             $controllerDirectory = rtrim($bundle->getPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Controller';
             if (!file_exists($controllerDirectory)) {
                 continue;
@@ -443,7 +451,9 @@ class ControllerDataProvider
 
     /**
      * Deternmines if the controller should be taken into consideration in controller list
+     *
      * @deprecated
+     *
      * @param string $controller
      * @param string|null $bundle
      *
@@ -456,7 +466,9 @@ class ControllerDataProvider
 
     /**
      * Determines if bundle should be taken into consideration
+     *
      * @deprecated
+     *
      * @param BundleInterface $bundle
      *
      * @return bool
@@ -484,8 +496,10 @@ class ControllerDataProvider
 
     /**
      * @deprecated
+     *
      * @param string $className
      * @param BundleInterface $bundle
+     *
      * @return bool
      */
     protected function isInBundle(string $className, BundleInterface $bundle): bool
@@ -502,6 +516,7 @@ class ControllerDataProvider
 
     /**
      * @deprecated
+     *
      * @param string|mixed $object
      *
      * @return \ReflectionClass

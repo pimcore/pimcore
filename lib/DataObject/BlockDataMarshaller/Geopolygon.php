@@ -26,14 +26,14 @@ class Geopolygon implements MarshallerInterface
      */
     public function marshal($value, $params = [])
     {
-
         if (is_array($value)) {
             $resultItems = [];
             foreach ($value as $p) {
                 $resultItems[] = [$p['latitude'], $p['longitude']];
             }
 
-            $result = ["value" => json_encode($resultItems)];
+            $result = ['value' => json_encode($resultItems)];
+
             return $result;
         }
 
@@ -45,22 +45,22 @@ class Geopolygon implements MarshallerInterface
      */
     public function unmarshal($value, $params = [])
     {
-        if ($value["value"] ?? null) {
-            $value = json_decode($value["value"], true);
+        if ($value['value'] ?? null) {
+            $value = json_decode($value['value'], true);
             $result = [];
 
             if (is_array($value)) {
                 foreach ($value as $point) {
                     $result[] = [
-                        "latitude" => $point[0],
-                        "longitude" => $point[1]
+                        'latitude' => $point[0],
+                        'longitude' => $point[1],
                     ];
                 }
             }
+
             return $result;
         }
+
         return null;
     }
-
-
 }

@@ -22,6 +22,7 @@ class AbstractInstaller implements InstallerInterface
 {
     /**
      * @deprecated
+     *
      * @var OutputWriterInterface
      */
     protected $outputWriter;
@@ -119,7 +120,7 @@ class AbstractInstaller implements InstallerInterface
 
     public function getOutput(): OutputInterface
     {
-        if($this->getOutputWriter() instanceof OutputWriter) {
+        if ($this->getOutputWriter() instanceof OutputWriter) {
             return $this->getOutputWriter()->getOutputInstance();
         }
 

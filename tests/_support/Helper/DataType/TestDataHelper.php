@@ -831,7 +831,7 @@ class TestDataHelper extends Module
         return [
             new DataObject\Data\GeoCoordinates(-33.464671118242684, 150.54428100585938),
             new DataObject\Data\GeoCoordinates(-33.913733814316245, 150.73654174804688),
-            new DataObject\Data\GeoCoordinates(-33.9946115848146, 151.2542724609375 ),
+            new DataObject\Data\GeoCoordinates(-33.9946115848146, 151.2542724609375),
         ];
     }
 

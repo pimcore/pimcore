@@ -144,8 +144,8 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
         $name = null;
 
         $arguments = func_get_args();
-        if(count($arguments) === 2) {
-            if(is_string($arguments[0]) && $arguments[1] instanceof Editable) {
+        if (count($arguments) === 2) {
+            if (is_string($arguments[0]) && $arguments[1] instanceof Editable) {
                 $data = $arguments[1];
                 $name = $arguments[0];
 
@@ -154,7 +154,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
                 throw new \InvalidArgumentException('One or more passed arguments do not match the expected type, expected: string $name, Editable $data');
             }
         } elseif (count($arguments) === 1) {
-            if($arguments[0] instanceof Editable) {
+            if ($arguments[0] instanceof Editable) {
                 $data = $arguments[0];
                 $name = $data->getName();
             } else {

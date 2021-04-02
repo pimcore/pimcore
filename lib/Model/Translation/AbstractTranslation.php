@@ -67,7 +67,7 @@ abstract class AbstractTranslation extends Translation
         }
 
         $domain = 'messages';
-        if(static::class === Admin::class) {
+        if (static::class === Admin::class) {
             $domain = 'admin';
         }
 

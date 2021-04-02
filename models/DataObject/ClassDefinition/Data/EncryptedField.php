@@ -411,6 +411,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
      *
      * Encode value for packing it into a single column.
+     *
      * @param mixed $value
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
@@ -497,6 +498,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params

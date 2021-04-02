@@ -46,15 +46,15 @@ trait RgbaColorTrait
             $a = $value['value2'];
             list($r, $g, $b) = sscanf($rgb, '%02x%02x%02x');
             $a = hexdec($a);
+
             return [
-                "r" => $r,
-                "g" => $g,
-                "b" => $b,
-                "a" => $a
+                'r' => $r,
+                'g' => $g,
+                'b' => $b,
+                'a' => $a,
             ];
         }
+
         return null;
     }
-
-
 }

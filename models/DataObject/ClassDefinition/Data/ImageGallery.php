@@ -406,6 +406,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -607,7 +608,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function unmarshal($value, $object = null, $params = [])
     {
         return $this->denormalize($value, $params);
-
     }
 
     /**

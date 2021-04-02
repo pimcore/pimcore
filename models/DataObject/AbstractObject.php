@@ -184,7 +184,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     private static function checkIfDeprecatedStaticCall($calledClass, $method)
     {
-        if(self::class === $calledClass) {
+        if (self::class === $calledClass) {
             @trigger_error(sprintf('Calling static methods on %s is deprecated, please use %s instead.', self::class, str_replace(self::class, DataObject::class, $method)), E_USER_DEPRECATED);
         }
     }

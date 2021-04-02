@@ -419,6 +419,7 @@ EOT;
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return string
      */
     public function getRelativeFileSystemPath()

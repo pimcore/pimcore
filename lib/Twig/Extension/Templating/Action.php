@@ -16,8 +16,8 @@ namespace Pimcore\Twig\Extension\Templating;
 
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class Action implements RuntimeExtensionInterface

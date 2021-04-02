@@ -25,7 +25,6 @@ use Pimcore\Model\Tool\SettingsStore;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME = 'settings_store';
 
     /**
@@ -33,6 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param int|string|bool|float $data
      * @param string $type
      * @param string|null $scope
+     *
      * @return bool
      */
     public function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
@@ -54,6 +54,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $id
      * @param string|null $scope
+     *
      * @return mixed
      */
     public function delete(string $id, ?string $scope = null)
@@ -67,6 +68,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $id
      * @param string|null $scope
+     *
      * @return bool
      */
     public function getById(string $id, ?string $scope = null): bool
@@ -81,6 +83,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $data = $item['data'] ?? null;
             $this->model->setData($data);
+
             return true;
         }
 
@@ -89,6 +92,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $scope
+     *
      * @return array
      */
     public function getIdsByScope(string $scope): array

@@ -57,5 +57,4 @@ final class DataObjectQuantityValueEvents
      * @var string
      */
     const UNIT_POST_DELETE = 'pimcore.dataobject.quantityvalue.unit.postDelete';
-
 }

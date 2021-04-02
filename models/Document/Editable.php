@@ -127,6 +127,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @deprecated Will be removed in Pimcore, use EditableLoader instead
+     *
      * @param string $type
      * @param string $name
      * @param int $documentId
@@ -491,6 +492,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @deprecated
+     *
      * @param string $name
      * @param mixed $value
      *
@@ -889,7 +891,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @param string $type
      * @param array $parentBlockNames
      * @param int $index
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
@@ -898,6 +902,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
          * @var NamingStrategyInterface $namingStrategy
          */
         $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
+
         return $namingStrategy->buildChildElementTagName($name, $type, $parentBlockNames, $index);
     }
 

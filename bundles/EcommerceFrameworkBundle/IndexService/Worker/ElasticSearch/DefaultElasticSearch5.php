@@ -30,7 +30,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class DefaultElasticSearch5 extends AbstractElasticSearch
 {
-
     public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);

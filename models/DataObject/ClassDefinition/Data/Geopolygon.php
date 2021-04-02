@@ -192,6 +192,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -412,8 +413,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             }
 
             return $points;
-
         }
+
         return null;
     }
 
@@ -427,11 +428,10 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             foreach ($value as $point) {
                 $result[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
             }
+
             return $result;
         }
+
         return null;
-
     }
-
-
 }

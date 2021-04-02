@@ -964,10 +964,11 @@ class Model extends AbstractDefinitionHelper
         return $cm->setupObjectbrick($name, $filename);
     }
 
-    public function setupUnitDefinitions() {
-        DataObject\QuantityValue\Unit::create(["abbreviation" => "mm"])->save();
-        DataObject\QuantityValue\Unit::create(["abbreviation" => "cm"])->save();
-        DataObject\QuantityValue\Unit::create(["abbreviation" => "m"])->save();
+    public function setupUnitDefinitions()
+    {
+        DataObject\QuantityValue\Unit::create(['abbreviation' => 'mm'])->save();
+        DataObject\QuantityValue\Unit::create(['abbreviation' => 'cm'])->save();
+        DataObject\QuantityValue\Unit::create(['abbreviation' => 'm'])->save();
     }
 
     /**

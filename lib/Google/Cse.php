@@ -426,6 +426,7 @@ class Cse implements PaginateListingInterface
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @return self
      */
     public function getPaginatorAdapter()

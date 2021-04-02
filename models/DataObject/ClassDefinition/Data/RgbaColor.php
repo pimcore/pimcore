@@ -378,9 +378,10 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
                 'r' => $value->getR(),
                 'g' => $value->getG(),
                 'b' => $value->getB(),
-                'a' => $value->getA()
+                'a' => $value->getA(),
             ];
         }
+
         return null;
     }
 
@@ -395,11 +396,12 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
             $color->setG($value['g']);
             $color->setB($value['b']);
             $color->setA($value['a']);
+
             return $color;
         }
+
         return null;
     }
-
 
     /**
      * converts object data to a simple string value or CSV Export
@@ -420,6 +422,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params

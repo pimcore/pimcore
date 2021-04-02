@@ -51,7 +51,6 @@ class TemplatingHelperExtension extends AbstractExtension
      */
     public function callHelper(string $helperName, array $arguments = [])
     {
-
         @trigger_error(
             sprintf(
                 'Class "%s" is deprecated since v6.9 and will be removed in Pimcore 10. Use one of these "%s", "%s", "%s", "%s" instead.',

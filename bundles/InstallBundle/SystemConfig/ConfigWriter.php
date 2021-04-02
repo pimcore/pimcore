@@ -181,6 +181,7 @@ class ConfigWriter
 
     /**
      * @deprecated Will be removed in Pimcore 10
+     *
      * @param string $ip
      */
     public function writeDebugModeConfig($ip = '')

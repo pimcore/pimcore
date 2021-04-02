@@ -29,7 +29,7 @@ if (false) {
     /**
      * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware
      */
-    abstract class CacheBusterAware extends \Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware {
-
+    abstract class CacheBusterAware extends \Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware
+    {
     }
 }

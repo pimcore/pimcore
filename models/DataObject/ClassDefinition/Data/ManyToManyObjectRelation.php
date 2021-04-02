@@ -189,6 +189,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
             return $result;
         }
+
         return null;
     }
 
@@ -205,7 +206,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function unmarshal($value, $object = null, $params = [])
     {
         return $this->denormalize($value, $params);
-
     }
 
     /**
@@ -639,6 +639,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params

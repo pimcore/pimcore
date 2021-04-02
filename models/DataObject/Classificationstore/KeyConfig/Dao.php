@@ -109,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
                 if (is_bool($value)) {
                     $value = (int) $value;
 
-                    if(!$value && $key === "enabled") {
+                    if (!$value && $key === 'enabled') {
                         $this->db->delete(
                             Model\DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS,
                             ['keyId' => $this->model->getId()]);

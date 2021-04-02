@@ -431,6 +431,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -706,6 +707,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 'id' => $id,
             ];
         }
+
         return null;
     }
 
@@ -720,9 +722,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
             return Element\Service::getElementById($type, $id);
         }
+
         return null;
     }
-
 
     /** See marshal
      *

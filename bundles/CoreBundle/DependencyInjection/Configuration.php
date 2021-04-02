@@ -1393,6 +1393,7 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @deprecated
+     *
      * @param ArrayNodeDefinition $rootNode
      */
     private function addMimeNode(ArrayNodeDefinition $rootNode)

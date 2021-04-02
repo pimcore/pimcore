@@ -186,6 +186,7 @@ class Translation extends AbstractModel implements TranslationInterface
 
     /**
      * @param string $domain
+     *
      * @return array
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
@@ -498,5 +499,4 @@ class Translation extends AbstractModel implements TranslationInterface
 
         return $delta;
     }
-
 }

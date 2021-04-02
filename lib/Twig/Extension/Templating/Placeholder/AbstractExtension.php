@@ -37,8 +37,8 @@
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
-use Twig\Extension\RuntimeExtensionInterface;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
+use Twig\Extension\RuntimeExtensionInterface;
 
 /**
  * @method void set(mixed $value)

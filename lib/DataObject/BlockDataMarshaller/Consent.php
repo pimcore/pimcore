@@ -27,7 +27,7 @@ class Consent implements MarshallerInterface
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
-            return new \Pimcore\Model\DataObject\Data\Consent($value["consent"], $value["noteId"]);
+            return new \Pimcore\Model\DataObject\Data\Consent($value['consent'], $value['noteId']);
         }
 
         return null;
@@ -41,11 +41,10 @@ class Consent implements MarshallerInterface
         if ($value instanceof \Pimcore\Model\DataObject\Data\Consent) {
             return [
                 'consent' => $value->getConsent(),
-                'noteId' => $value->getNoteId()
+                'noteId' => $value->getNoteId(),
             ];
         }
+
         return null;
     }
-
-
 }

@@ -44,11 +44,10 @@ class Geopoint implements MarshallerInterface
         if (is_array($value)) {
             return [
                 'latitude' => $value['value'],
-                'longitude' => $value['value2']
+                'longitude' => $value['value2'],
             ];
         }
+
         return null;
     }
-
-
 }

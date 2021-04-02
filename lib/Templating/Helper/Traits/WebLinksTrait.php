@@ -29,7 +29,8 @@ if (false) {
     /**
      * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait
      */
-    trait WebLinksTrait {
+    trait WebLinksTrait
+    {
         use \Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait;
     }
 }

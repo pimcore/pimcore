@@ -447,6 +447,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -685,8 +686,10 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     {
         if ($value instanceof DataObject\Data\StructuredTable) {
             $data = $value->getData();
+
             return $data;
         }
+
         return null;
     }
 
@@ -698,9 +701,10 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         if (is_array($value)) {
             $table = new DataObject\Data\StructuredTable();
             $table->setData($value);
+
             return $table;
         }
+
         return null;
     }
-
 }

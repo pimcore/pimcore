@@ -946,6 +946,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return $result;
         }
+
         return null;
     }
 

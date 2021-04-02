@@ -30,6 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @deprecated will be removed in Pimcore 10
+ *
  * @method Application getApplication()
  */
 trait PimcoreMigrationsConfiguration

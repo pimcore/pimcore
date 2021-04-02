@@ -531,6 +531,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -1058,7 +1059,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         return null;
-
     }
 
     public function denormalize($value, $params = [])
@@ -1088,7 +1088,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
     }
 
-
     /** See marshal
      *
      * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
@@ -1102,9 +1101,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function unmarshal($value, $object = null, $params = [])
     {
         $params = $params ?? [];
-        $params["object"] = $object;
-        return $this->denormalize($value, $params);
+        $params['object'] = $object;
 
+        return $this->denormalize($value, $params);
     }
 
     /**

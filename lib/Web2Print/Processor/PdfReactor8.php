@@ -14,13 +14,6 @@
 
 namespace Pimcore\Web2Print\Processor;
 
-use Pimcore\Config;
-use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\PrintConfigEvent;
-use Pimcore\Logger;
-use Pimcore\Model\Document;
-use Pimcore\Web2Print\Processor;
-
 /**
  * @deprecated since version 6.9.0 and will be removed in 10.0.0. use PdfReactor instead.
  */

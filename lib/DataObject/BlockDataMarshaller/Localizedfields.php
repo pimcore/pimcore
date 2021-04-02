@@ -17,20 +17,21 @@
 
 namespace Pimcore\DataObject\BlockDataMarshaller;
 
-use Pimcore\Marshaller\MarshallerInterface;
 use Pimcore\Element\MarshallerService;
-use Psr\Container\ContainerInterface;
+use Pimcore\Marshaller\MarshallerInterface;
 
 class Localizedfields implements MarshallerInterface
 {
-    /** @var MarshallerService  */
+    /** @var MarshallerService */
     protected $marshallerService;
 
     /**
      * Localizedfields constructor.
+     *
      * @param MarshallerService $marshallerService
      */
-    public function __construct(MarshallerService $marshallerService) {
+    public function __construct(MarshallerService $marshallerService)
+    {
         $this->marshallerService = $marshallerService;
     }
 
@@ -41,7 +42,7 @@ class Localizedfields implements MarshallerInterface
     {
         $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
-        $fieldDefinition =$params['fieldDefinition'];
+        $fieldDefinition = $params['fieldDefinition'];
         $childDefs = $fieldDefinition->getFieldDefinitions();
         $result = [];
 
@@ -61,6 +62,7 @@ class Localizedfields implements MarshallerInterface
                     $result[$language][$key] = $encodedData;
                 }
             }
+
             return $result;
         }
 
@@ -74,7 +76,7 @@ class Localizedfields implements MarshallerInterface
     {
         $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
-        $fieldDefinition =$params['fieldDefinition'];
+        $fieldDefinition = $params['fieldDefinition'];
         $childDefs = $fieldDefinition->getFieldDefinitions();
         $result = [];
 
@@ -94,11 +96,10 @@ class Localizedfields implements MarshallerInterface
                     $result[$language][$key] = $decodedData;
                 }
             }
+
             return $result;
         }
 
         return null;
     }
-
-
 }

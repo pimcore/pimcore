@@ -265,6 +265,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -991,12 +992,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             foreach ($items as $item) {
                 $type = $item->getType();
 
-                $resultItem = ["type" => $type];
+                $resultItem = ['type' => $type];
 
                 $fcDef = DataObject\Fieldcollection\Definition::getByKey($type);
                 $fcs = $fcDef->getFieldDefinitions();
                 foreach ($fcs as $fc) {
-                    $getter = "get" . ucfirst($fc->getName());
+                    $getter = 'get' . ucfirst($fc->getName());
                     $value = $item->$getter();
 
                     if ($fc instanceof NormalizerInterface) {
@@ -1009,8 +1010,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             }
 
             return $resultItems;
-
         }
+
         return null;
     }
 
@@ -1020,7 +1021,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         if (is_array($value)) {
             $resultItems = [];
             foreach ($value as $idx => $itemData) {
-                $type = $itemData["type"];
+                $type = $itemData['type'];
                 $fcDef = DataObject\Fieldcollection\Definition::getByKey($type);
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($type);
@@ -1031,7 +1032,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collection->setFieldname($params['fieldname'] ?? null);
 
                 foreach ($itemData as $fieldKey => $fieldValue) {
-                    if ($fieldKey == "type") {
+                    if ($fieldKey == 'type') {
                         continue;
                     }
                     $fc = $fcDef->getFieldDefinition($fieldKey);
@@ -1045,11 +1046,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
             $resultCollection = new DataObject\Fieldcollection();
             $resultCollection->setItems($resultItems);
-            return $resultCollection;
 
+            return $resultCollection;
         }
+
         return null;
     }
-
-
 }

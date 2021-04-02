@@ -28,11 +28,10 @@ class Multiselect implements MarshallerInterface
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
-            return ["value" => implode(',', $value)];
+            return ['value' => implode(',', $value)];
         }
 
         return null;
-
     }
 
     /** { @inheritDoc } */
@@ -41,7 +40,7 @@ class Multiselect implements MarshallerInterface
         if (is_array($value) && strlen($value['value']) > 0) {
             return explode(',', $value['value']);
         }
-        return null;
 
+        return null;
     }
 }

@@ -17,11 +17,11 @@
 
 namespace Pimcore\Model\Translation\Listing;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Cache;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
-use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 
 /**
  * @property \Pimcore\Model\Translation\Listing $model
@@ -40,6 +40,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @deprecated
+     *
      * @var \Closure
      */
     protected $onCreateQueryCallback;
@@ -85,7 +86,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $translations = [];
 
             $queryBuilder = $this->getQueryBuilderCompatibility(['*']);
-            $queryBuilder->setMaxResults(NULL); //retrieve all results
+            $queryBuilder->setMaxResults(null); //retrieve all results
             $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
             foreach ($translationsData as $t) {

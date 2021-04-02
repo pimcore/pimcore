@@ -29,7 +29,7 @@ if (false) {
     /**
      * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Action
      */
-    class Action extends \Pimcore\Twig\Extension\Templating\Action {
-
+    class Action extends \Pimcore\Twig\Extension\Templating\Action
+    {
     }
 }

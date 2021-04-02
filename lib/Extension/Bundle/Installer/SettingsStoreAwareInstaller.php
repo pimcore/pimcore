@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Pimcore\Extension\Bundle\Installer;
-
 
 use Pimcore\Migrations\MigrationManager;
 use Pimcore\Model\Tool\SettingsStore;
@@ -10,7 +8,6 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 {
-
     /**
      * @var BundleInterface
      */
@@ -20,7 +17,6 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
      * @var MigrationManager
      */
     protected $migrationManager;
-
 
     public function __construct(BundleInterface $bundle)
     {
@@ -37,7 +33,8 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         $this->migrationManager = $migrationManager;
     }
 
-    protected function getSettingsStoreInstallationId(): string {
+    protected function getSettingsStoreInstallationId(): string
+    {
         return 'BUNDLE_INSTALLED__' . $this->bundle->getNamespace() . '\\' . $this->bundle->getName();
     }
 
@@ -50,36 +47,37 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
     {
         $className = $this->getLastMigrationVersionClassName();
 
-        if($className) {
+        if ($className) {
             preg_match('/\d+$/', $className, $matches);
+
             return end($matches);
         }
+
         return null;
     }
 
-    protected function markInstalled() {
+    protected function markInstalled()
+    {
         $migrationVersion = $this->getMigrationVersion();
-        if($migrationVersion) {
-
+        if ($migrationVersion) {
             $version = $this->migrationManager->getBundleVersion(
                 $this->bundle,
                 $migrationVersion
             );
             $this->migrationManager->markVersionAsMigrated($version, true);
-
         }
 
         SettingsStore::set($this->getSettingsStoreInstallationId(), true, 'bool', 'pimcore');
     }
 
-    protected function markUninstalled() {
+    protected function markUninstalled()
+    {
         $configuration = $this->migrationManager->getBundleConfiguration($this->bundle);
-        if($configuration) {
+        if ($configuration) {
             $configuration->clearMigratedVersions();
         }
 
         SettingsStore::set($this->getSettingsStoreInstallationId(), false, 'bool', 'pimcore');
-
     }
 
     public function install()
@@ -97,6 +95,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
     public function isInstalled()
     {
         $installSetting = SettingsStore::get($this->getSettingsStoreInstallationId(), 'pimcore');
+
         return $installSetting ? $installSetting->getData() : false;
     }
 
@@ -109,5 +108,4 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
     {
         return $this->isInstalled();
     }
-
 }

@@ -14,8 +14,6 @@
 
 namespace Pimcore\Tool;
 
-use GuzzleHttp\Psr7\MimeType;
-
 /**
  * @deprecated
  */

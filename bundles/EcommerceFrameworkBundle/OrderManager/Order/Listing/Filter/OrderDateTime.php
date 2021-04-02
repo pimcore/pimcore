@@ -63,7 +63,6 @@ class OrderDateTime implements OrderListFilterInterface
             }
         }
 
-
         return $this;
     }
 

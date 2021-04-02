@@ -172,6 +172,7 @@ interface ElementInterface extends ModelInterface
 
     /**
      * This method will be required in Pimcore 10
+     *
      * @return mixed
      */
     //public function getParent();

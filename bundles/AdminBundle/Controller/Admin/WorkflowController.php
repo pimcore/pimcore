@@ -299,7 +299,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         $params = [
             'WNAME' => $workflow->getName(),
             'WPLACES' => implode(' ', array_keys($marking->getPlaces())),
-            'DOT' => $dot
+            'DOT' => $dot,
         ];
 
         //@TODO change to Process::fromShellCommandline in Pimcore 10

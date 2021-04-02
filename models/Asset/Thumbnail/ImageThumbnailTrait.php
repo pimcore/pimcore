@@ -69,6 +69,7 @@ trait ImageThumbnailTrait
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @param bool $deferredAllowed
      *
      * @return string
@@ -203,6 +204,7 @@ trait ImageThumbnailTrait
 
     /**
      * @deprecated will be removed in Pimcore 10
+     *
      * @param string $type
      *
      * @return null|string

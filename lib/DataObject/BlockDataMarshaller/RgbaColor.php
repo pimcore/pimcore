@@ -22,6 +22,5 @@ use Pimcore\Marshaller\MarshallerInterface;
 
 class RgbaColor implements MarshallerInterface
 {
-
     use RgbaColorTrait;
 }

@@ -23,7 +23,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implements NormalizerInterface
 {
@@ -386,6 +385,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -717,7 +717,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
     public function marshal($value, $object = null, $params = [])
     {
         return $this->normalize($value, $params);
-
     }
 
     /** See marshal
@@ -733,7 +732,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image implement
     public function unmarshal($value, $object = null, $params = [])
     {
         return $this->denormalize($value, $params);
-
     }
 
     /**

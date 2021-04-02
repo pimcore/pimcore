@@ -29,7 +29,8 @@ if (false) {
     /**
      * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait
      */
-    trait TextUtilsTrait {
+    trait TextUtilsTrait
+    {
         use \Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait;
     }
 }

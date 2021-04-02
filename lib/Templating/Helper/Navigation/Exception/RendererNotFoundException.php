@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating\Helper\Navigation\Exception;
 
-
 @trigger_error(
     'Pimcore\Templating\Helper\Navigation\Exception\RendererNotFoundException is deprecated since version 6.8.0 and will be removed in Pimcore 10. '.
     ' Use '.\Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException::class.' instead.',
@@ -32,7 +31,5 @@ if (false) {
      */
     class RendererNotFoundException extends \Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException
     {
-
     }
 }
-

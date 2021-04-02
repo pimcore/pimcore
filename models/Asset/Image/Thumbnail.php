@@ -195,7 +195,7 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
-        if(!empty($removeAttributes)) {
+        if (!empty($removeAttributes)) {
             @trigger_error(sprintf('Calling %s with parameter $removeAttributes is deprecated and will be removed in Pimcore 10', __METHOD__), E_USER_DEPRECATED);
         }
 
@@ -452,6 +452,7 @@ class Thumbnail
     /**
      * @param array $options
      * @param array $removeAttributes
+     *
      * @return string
      */
     public function getImageTag(array $options = [], array $removeAttributes = []): string

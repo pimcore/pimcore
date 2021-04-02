@@ -26,12 +26,14 @@ class Pimcore
 
     /**
      * @deprecated Will be removed in Pimcore 10
+     *
      * @var bool|null
      */
     protected static $debugMode;
 
     /**
      * @deprecated Will be removed in Pimcore 10
+     *
      * @var bool|null
      */
     protected static $devMode;
@@ -66,6 +68,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @return bool|null
@@ -77,6 +80,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @param bool $debugMode
@@ -96,6 +100,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @return bool|null
@@ -107,6 +112,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @deprecated Will be removed in Pimcore 10
      *
      * @param bool $devMode

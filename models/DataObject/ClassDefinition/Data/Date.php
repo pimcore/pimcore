@@ -286,6 +286,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
@@ -513,6 +514,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if ($value instanceof Carbon) {
             return $value->getTimestamp();
         }
+
         return null;
     }
 
@@ -524,7 +526,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         if ($value !== null) {
             return $this->getDateFromTimestamp($value);
         }
+
         return null;
     }
-
 }

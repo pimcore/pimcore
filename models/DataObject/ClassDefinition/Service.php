@@ -47,8 +47,6 @@ class Service
         unset($data->userModification);
         unset($data->fieldDefinitions);
 
-
-
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 

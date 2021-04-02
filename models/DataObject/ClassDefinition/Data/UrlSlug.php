@@ -801,6 +801,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @deprecated
+     *
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
@@ -855,12 +856,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             /** @var Model\DataObject\Data\UrlSlug $slug */
             foreach ($value as $slug) {
                 $result[] = [
-                    "slug" => $slug->getSlug(),
-                    "siteId" => $slug->getSiteId()
+                    'slug' => $slug->getSlug(),
+                    'siteId' => $slug->getSiteId(),
                 ];
             }
+
             return $result;
         }
+
         return null;
     }
 
@@ -875,10 +878,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $slug = new Model\DataObject\Data\UrlSlug($slugData['slug'], $slugData['siteId']);
                 $result[] = $slug;
             }
+
             return $result;
         }
+
         return null;
     }
-
-
 }
