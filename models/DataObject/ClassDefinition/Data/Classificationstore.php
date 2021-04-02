@@ -1202,7 +1202,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $activeGroupIds = $classificationStore->getActiveGroups();
 
         if ($activeGroupIds) {
-            $activeGroups = array_keys($activeGroupIds, true, true);
+            $activeGroups = array_filter($activeGroupIds);
         }
 
         $class = $object->getClass();
