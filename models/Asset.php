@@ -858,7 +858,7 @@ class Asset extends Element\AbstractElement
         $path = $this->getPath() . $this->getFilename();
         $path = urlencode_ignore_slash($path);
 
-        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'] ?? '';
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
