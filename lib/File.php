@@ -41,8 +41,8 @@ class File
         $name = strtolower($name);
 
         $pos = strrpos($name, '.');
-        if($pos) {
-            $extension = substr($name, $pos+1);
+        if ($pos) {
+            $extension = substr($name, $pos + 1);
             if ($extension && strpos($extension, '/') === false) {
                 return $extension;
             }
