@@ -33,7 +33,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
-    use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
@@ -540,5 +539,17 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     public function getPhpdocReturnType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if($value instanceof Model\DataObject\Data\EncryptedField) {
+            return $value->getPlain();
+        }
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        return new Model\DataObject\Data\EncryptedField($this->delegate, $value);
     }
 }
