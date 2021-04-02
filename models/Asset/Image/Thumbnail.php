@@ -26,7 +26,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class Thumbnail
+final class Thumbnail
 {
     use ImageThumbnailTrait;
 

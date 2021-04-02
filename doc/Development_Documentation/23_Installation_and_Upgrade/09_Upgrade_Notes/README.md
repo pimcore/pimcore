@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 10.0.0
+- Removed methods `getForcePictureTag()` and `setForcePictureTag()` from `\Pimcore\Model\Asset\Image\Thumbnail\Config`
 - `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.
 - `\Pimcore\Model\DataObject\Service::removeObjectFromSession()` has been removed, use `removeElementFromSession()` instead.
 - `\Pimcore\Model\DataObject\Service::getObjectFromSession()` has been removed, use `getElementFromSession()` instead.

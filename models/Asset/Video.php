@@ -89,6 +89,7 @@ class Video extends Model\Asset
     }
 
     /**
+     * @internal
      * @param string|Video\Thumbnail\Config $config
      *
      * @return Video\Thumbnail\Config|null
@@ -200,7 +201,7 @@ class Video extends Model\Asset
      *
      * @throws \Exception
      */
-    protected function getDurationFromBackend(?string $filePath = null)
+    private function getDurationFromBackend(?string $filePath = null)
     {
         if (\Pimcore\Video::isAvailable()) {
             if (!$filePath) {
@@ -221,7 +222,7 @@ class Video extends Model\Asset
      *
      * @throws \Exception
      */
-    protected function getDimensionsFromBackend()
+    private function getDimensionsFromBackend()
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
@@ -307,6 +308,10 @@ class Video extends Model\Asset
         return null;
     }
 
+    /**
+     * @internal
+     * @return array
+     */
     public function getSphericalMetaData()
     {
         $data = [];
