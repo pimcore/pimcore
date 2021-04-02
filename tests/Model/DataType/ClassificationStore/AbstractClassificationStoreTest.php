@@ -8,8 +8,8 @@ use Pimcore\Tests\Test\ModelTestCase;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
+    public static $configCount = 0;
 
-    static $configCount = 0;
     /**
      * @param Classificationstore\StoreConfig $store
      */
@@ -91,7 +91,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         }
 
         $keyNames = ['date', 'datetime', 'encryptedField', 'input', 'rgbaColor', 'select', 'time', 'numeric', 'booleanSelect', 'user', 'textarea', 'wysiwyg', 'checkbox', 'slider',
-            'table', 'country', 'language', 'multiselect', 'countrymultiselect', 'languagemultiselect', 'quantityValue', 'inputQuantityValue'];
+            'table', 'country', 'language', 'multiselect', 'countrymultiselect', 'languagemultiselect', 'quantityValue', 'inputQuantityValue', ];
 
         self::$configCount = count($keyNames);
 
@@ -107,78 +107,78 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                 $keyConfig->setType($keyName);
 
                 switch ($keyName) {
-                    case 'booleanSelect' :
+                    case 'booleanSelect':
                         $definition = new ClassDefinition\Data\BooleanSelect();
                         break;
-                    case 'checkbox' :
+                    case 'checkbox':
                         $definition = new ClassDefinition\Data\Checkbox();
                         break;
-                    case 'country' :
+                    case 'country':
                         $definition = new ClassDefinition\Data\Country();
                         break;
-                    case 'countrymultiselect' :
+                    case 'countrymultiselect':
                         $definition = new ClassDefinition\Data\Countrymultiselect();
                         break;
-                    case 'date' :
+                    case 'date':
                         $definition = new ClassDefinition\Data\Date();
                         break;
-                    case 'datetime' :
+                    case 'datetime':
                         $definition = new ClassDefinition\Data\Datetime();
                         break;
-                    case 'encryptedField' :
+                    case 'encryptedField':
                         $delegate = new ClassDefinition\Data\Input();
                         $definition = new ClassDefinition\Data\EncryptedField();
                         $definition->setDelegateDatatype('input');
                         $definition->setDelegate($delegate);
                         break;
-                    case 'input' :
+                    case 'input':
                         $definition = new ClassDefinition\Data\Input();
                         break;
-                    case 'inputQuantityValue' :
+                    case 'inputQuantityValue':
                         $definition = new ClassDefinition\Data\InputQuantityValue();
                         break;
-                    case 'language' :
+                    case 'language':
                         $definition = new ClassDefinition\Data\Language();
                         break;
-                    case 'languagemultiselect' :
+                    case 'languagemultiselect':
                         $definition = new ClassDefinition\Data\Languagemultiselect();
                         break;
-                    case 'multiselect' :
+                    case 'multiselect':
                         $definition = new ClassDefinition\Data\Multiselect();
                         break;
-                    case 'numeric' :
+                    case 'numeric':
                         $definition = new ClassDefinition\Data\Numeric();
                         break;
-                    case 'rgbaColor' :
+                    case 'rgbaColor':
                         $definition = new ClassDefinition\Data\RgbaColor();
                         break;
-                    case 'select' :
+                    case 'select':
                         $definition = new ClassDefinition\Data\Select();
                         break;
-                    case 'slider' :
+                    case 'slider':
                         $definition = new ClassDefinition\Data\Slider();
                         break;
-                    case 'table' :
+                    case 'table':
                         $definition = new ClassDefinition\Data\Table();
                         break;
-                    case 'textarea' :
+                    case 'textarea':
                         $definition = new ClassDefinition\Data\Textarea();
                         break;
-                    case 'time' :
+                    case 'time':
                         $definition = new ClassDefinition\Data\Time();
                         break;
-                    case 'user' :
+                    case 'user':
                         $definition = new ClassDefinition\Data\User();
                         break;
-                    case 'quantityValue' :
+                    case 'quantityValue':
                         $definition = new ClassDefinition\Data\QuantityValue();
                         break;
-                    case 'wysiwyg' :
+                    case 'wysiwyg':
                         $definition = new ClassDefinition\Data\Wysiwyg();
                         break;
 
                     default:
-                        throw new \Exception($keyName . " not supported");
+                        throw new \Exception($keyName . ' not supported');
                 }
 
                 $definition->setName($keyName);

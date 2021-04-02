@@ -27,7 +27,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -1195,5 +1195,73 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function getPhpdocReturnType(): ?string
     {
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
+    }
+
+    /** { @inheritdoc } */
+    public function normalize($value, $params = [])
+    {
+        $result = null;
+        if ($value) {
+            $result = [];
+            $fieldDefinitions = $this->getFieldDefinitions();
+            foreach ($value as $block) {
+                $resultItem = [];
+                /**
+                 * @var  string $key
+                 * @var  DataObject\Data\BlockElement $fieldValue
+                 */
+                foreach ($block as $key => $fieldValue) {
+                    $fd = $fieldDefinitions[$key];
+
+                    if ($fd instanceof NormalizerInterface) {
+                        $normalizedData = $fd->normalize($fieldValue->getData(), [
+                            'object' => $params['object'] ?? null,
+                            'fieldDefinition' => $fd
+                        ]);
+                        $resultItem[$key] = $normalizedData;
+                    } else {
+                        throw new \Exception("data type " . $fd->getFieldtype() . " does not implement normalizer interface");
+                    }
+                }
+                $result[] = $resultItem;
+            }
+        }
+
+        return $result;
+    }
+
+    /** { @inheritdoc } */
+    public function denormalize($value, $params = [])
+    {
+
+        if (is_array($value)) {
+            $result = [];
+            $fieldDefinitions = $this->getFieldDefinitions();
+
+            foreach ($value as $idx => $blockItem) {
+                $resultItem = [];
+                /**
+                 * @var  string $key
+                 * @var  DataObject\Data\BlockElement $fieldValue
+                 */
+                foreach ($blockItem as $key => $fieldValue) {
+                    $fd = $fieldDefinitions[$key];
+
+                    if ($fd instanceof NormalizerInterface) {
+                        $denormalizedData = $fd->denormalize($fieldValue, [
+                            'object' => $params['object'],
+                            'fieldDefinition' => $fd
+                        ]);
+                        $resultItem[$key] = $denormalizedData;
+                    } else {
+                        throw new \Exception("data type does not implement normalizer interface");
+                    }
+                }
+                $result[] = $resultItem;
+            }
+            return $result;
+        }
+
+        return null;
     }
 }
