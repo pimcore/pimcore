@@ -1819,6 +1819,10 @@
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-turned_in_not-24px.svg) center center no-repeat;
 }
 
+.pimcore_material_icon_reports {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat;
+}
+
 .pimcore_material_icon_notes {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/survey.svg) center center no-repeat;
 }

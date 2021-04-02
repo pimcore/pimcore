@@ -150,7 +150,7 @@ pimcore.report.panel = Class.create({
                 border: false,
                 layout: "border",
                 items: [this.tree,this.reportContainer],
-                iconCls: "pimcore_icon_reports"
+                iconCls: "pimcore_material_icon_reports pimcore_material_icon"
             };
 
             // register an id for the standalone version
@@ -158,6 +158,7 @@ pimcore.report.panel = Class.create({
                 layoutConfig.id = "pimcore_reports";
                 layoutConfig.closable = true;
                 layoutConfig["title"] = t('reports');
+                layoutConfig["iconCls"] = 'pimcore_icon_reports';
             }
 
             this.layout = new Ext.Panel(layoutConfig);
