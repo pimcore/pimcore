@@ -76,17 +76,17 @@ class Thumbnail
         return $path;
     }
 
-    public function getFileSize(): int
+    public function getFileSize(): ?int
     {
-        return filesize($this->getFileSystemPath());
+        return filesize($this->getFileSystemPath()) ?: null;
     }
 
     /**
-     * @return false|resource
+     * @return null|resource
      */
     public function getStream()
     {
-        return fopen($this->getFileSystemPath(), 'rb');
+        return fopen($this->getFileSystemPath(), 'rb') ?: null;
     }
 
     /**
