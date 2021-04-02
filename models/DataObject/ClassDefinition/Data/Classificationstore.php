@@ -142,7 +142,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-
         if (!$data instanceof DataObject\Classificationstore) {
             return [];
         }
@@ -1214,6 +1213,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @param DataObject\Concrete $object
      * @param array $context additional contextual data
+     *
      * @throws \Exception
      */
     public function enrichLayoutDefinition($object, $context = [])

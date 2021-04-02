@@ -61,10 +61,10 @@ trait LazyLoadedRelationTrait
     /**
      * @param string $name
      * @param string $language
-     * 
+     *
      * @return string
      */
-    public function buildLazyKey(string $name, string $language) : string
+    public function buildLazyKey(string $name, string $language): string
     {
         return $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
     }

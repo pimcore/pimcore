@@ -142,6 +142,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
     /**
      * @return \Pimcore\Model\DataObject\Csstore
+     *
      * @throws \Exception
      */
     protected function createCsObject()
@@ -152,6 +153,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o->setPublished(1);
         $o->save();
         Cache::clearAll();
+
         return $o;
     }
 
@@ -185,7 +187,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('input', $store->getId());
 
-        $originalValue = "123";
+        $originalValue = '123';
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
@@ -343,7 +345,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('encryptedField', $store->getId());
 
         $delegate = new Input();
-        $originalValue = new EncryptedField($delegate, "abc");
+        $originalValue = new EncryptedField($delegate, 'abc');
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
@@ -363,7 +365,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('input', $store->getId());
 
-        $originalValue = "abc";
+        $originalValue = 'abc';
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
@@ -383,14 +385,14 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('inputQuantityValue', $store->getId());
 
-        $unit = Unit::getByAbbreviation("mm");
+        $unit = Unit::getByAbbreviation('mm');
         if (!$unit) {
             $unit = new Unit();
             $unit->setAbbreviation('mm');
             $unit->save();
         }
 
-        $originalValue = new InputQuantityValue("abc", $unit->getId());
+        $originalValue = new InputQuantityValue('abc', $unit->getId());
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
@@ -490,7 +492,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('quantityValue', $store->getId());
 
-        $unit = Unit::getByAbbreviation("mm");
+        $unit = Unit::getByAbbreviation('mm');
         if (!$unit) {
             $unit = new Unit();
             $unit->setAbbreviation('mm');
@@ -617,7 +619,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('time', $store->getId());
 
-        $originalValue = "12:30";
+        $originalValue = '12:30';
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
@@ -642,7 +644,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $userListing = $userListing->load();
         if (!$userListing) {
             $user = new User();
-            $user->setName("testuser");
+            $user->setName('testuser');
             $user->save();
         } else {
             $user = $userListing[0];
@@ -667,7 +669,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('wysiwyg', $store->getId());
 
-        $originalValue = "line1<br>line2";
+        $originalValue = 'line1<br>line2';
         /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
