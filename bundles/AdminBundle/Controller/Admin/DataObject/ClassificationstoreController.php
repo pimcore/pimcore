@@ -796,9 +796,15 @@ final class ClassificationstoreController extends AdminController implements Ker
 
         $allParams = array_merge($request->request->all(), $request->query->all());
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+        $relationIds = $request->get('relationIds');
+
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
             $orderKey = $sortingSettings['orderKey'];
             $order = $sortingSettings['order'];
+        }
+
+        if ($relationIds) {
+            $relationIds = json_decode($relationIds, true);
         }
 
         if ($request->get('overrideSort') == 'true') {
@@ -808,7 +814,10 @@ final class ClassificationstoreController extends AdminController implements Ker
 
         if ($request->get('limit')) {
             $limit = $request->get('limit');
+        } elseif (is_array($relationIds)) {
+            $limit = count($relationIds);
         }
+
         if ($request->get('start')) {
             $start = $request->get('start');
         }
@@ -818,6 +827,7 @@ final class ClassificationstoreController extends AdminController implements Ker
         if ($limit > 0) {
             $list->setLimit($limit);
         }
+
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
@@ -828,10 +838,7 @@ final class ClassificationstoreController extends AdminController implements Ker
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
-            $count = 0;
-
             foreach ($filters as $f) {
-                $count++;
                 $fieldname = $mapping[$f->field];
                 $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -842,15 +849,15 @@ final class ClassificationstoreController extends AdminController implements Ker
             $conditionParts[] = ' groupId = ' . $list->quote($groupId);
         }
 
-        $relationIds = $request->get('relationIds');
         if ($relationIds) {
-            $relationIds = json_decode($relationIds, true);
             $relationParts = [];
+
             foreach ($relationIds as $relationId) {
                 $keyId = $relationId['keyId'];
                 $groupId = $relationId['groupId'];
                 $relationParts[] = '(keyId = ' . $list->quote($keyId) . ' AND groupId = ' . $list->quote($groupId) . ')';
             }
+
             $conditionParts[] = '(' . implode(' OR ', $relationParts) . ')';
         }
 
@@ -859,10 +866,9 @@ final class ClassificationstoreController extends AdminController implements Ker
         $list->setCondition($condition);
 
         $listItems = $list->load();
-
         $rootElement = [];
-
         $data = [];
+
         foreach ($listItems as $config) {
             $type = $config->getType();
             $definition = json_decode($config->getDefinition());
@@ -876,11 +882,12 @@ final class ClassificationstoreController extends AdminController implements Ker
                 'id' => $config->getGroupId() . '-' . $config->getKeyId(),
                 'sorter' => (int) $config->getSorter(),
                 'layout' => $definition,
-                'mandatory' => $config->isMandatory(),
+                'mandatory' => $config->isMandatory()
             ];
 
             $data[] = $item;
         }
+
         $rootElement['data'] = $data;
         $rootElement['success'] = true;
         $rootElement['total'] = $list->getTotalCount();
