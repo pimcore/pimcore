@@ -2036,19 +2036,19 @@ class Asset extends Element\AbstractElement
         $newParent = dirname($this->getRealFullPath());
         $storage = Storage::get('thumbnail');
 
-        $contents = $storage->listContents($oldParent);
-        /** @var StorageAttributes $item */
-        foreach ($contents as $item) {
-            if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
-                $replacePath = $newParent .'/' . basename($item->path());
-                if (!$storage->fileExists($replacePath)) {
-                    $storage->move($item->path(), $replacePath);
+        try {
+            $contents = $storage->listContents($oldParent);
+            /** @var StorageAttributes $item */
+            foreach ($contents as $item) {
+                if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
+                    $replacePath = ltrim($newParent, '/') .'/' . basename($item->path());
+                    if (!$storage->fileExists($replacePath)) {
+                        $storage->move($item->path(), $replacePath);
+                    }
                 }
             }
-        }
 
-        //required in case if there is only renaming on parent
-        try {
+            //required in case if there is only renaming on parent
             $storage->move($oldPath, $this->getRealFullPath());
         } catch ( UnableToMoveFile $e) {
             // noting to do
