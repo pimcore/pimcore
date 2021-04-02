@@ -93,13 +93,12 @@ class Dao extends Model\Dao\AbstractDao
                         'type' => $keyConfig->getType(),
                     ];
 
-
                     $encodedData = [];
 
                     if ($fd instanceof NormalizerInterface) {
                         $normalizedData = $fd->normalize($value, [
                             'object' => $object,
-                            'fieldDefinition' => $fd
+                            'fieldDefinition' => $fd,
                         ]);
 
                         /** @var MarshallerService $marshallerService */
@@ -228,7 +227,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 $value = $fd->denormalize($value, [
                     'object' => $object,
-                    'fieldDefinition' => $fd
+                    'fieldDefinition' => $fd,
                 ]);
             } else {
                 $value = $fd->unmarshal($value, $object);

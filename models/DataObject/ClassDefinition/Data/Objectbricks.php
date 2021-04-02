@@ -990,14 +990,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                     if ($fd instanceof NormalizerInterface) {
                         $result[$type][$fd->getName()] = $fd->normalize($value, $params);
                     } else {
-                        throw new \Exception($fd->getName() . " does not implement NormalizerInterface");
+                        throw new \Exception($fd->getName() . ' does not implement NormalizerInterface');
                     }
                 }
-
-
             }
+
             return $result;
         }
+
         return null;
     }
 
@@ -1006,14 +1006,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         if (is_array($value)) {
             $result = [];
             foreach ($value as $key => $v) {
-
                 $brickDef = Objectbrick\Definition::getByKey($key);
                 $fds = $brickDef->getFieldDefinitions();
 
                 $result[$key] = [];
 
                 foreach ($v as $fieldKey => $fieldValue) {
-
                     $fd = $fds[$fieldKey];
                     if ($fd instanceof NormalizerInterface) {
                         $fieldValue = $fd->denormalize($fieldValue, $params);
@@ -1021,8 +1019,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                     $result[$key][$fieldKey] = $fieldValue;
                 }
             }
+
             return $result;
         }
+
         return null;
     }
 }

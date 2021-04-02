@@ -289,7 +289,6 @@ class Config extends Model\AbstractModel
         return $this->medias;
     }
 
-
     /**
      * @return bool
      */

@@ -28,25 +28,25 @@ class BooleanSelect implements MarshallerInterface
     public function marshal($value, $params = [])
     {
         if ($value === true) {
-            return ["value" => \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE];
+            return ['value' => \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE];
         } elseif ($value === false) {
-            return ["value" => \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::NO_VALUE];
+            return ['value' => \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::NO_VALUE];
         }
-        return null;
 
+        return null;
     }
 
     /** { @inheritDoc } */
     public function unmarshal($value, $params = [])
     {
         if (is_array($value)) {
-            if ($value["value"] == \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE) {
+            if ($value['value'] == \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE) {
                 return true;
-            } else if ($value["value"] == \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::NO_VALUE) {
+            } elseif ($value['value'] == \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::NO_VALUE) {
                 return false;
             }
         }
-        return null;
 
+        return null;
     }
 }

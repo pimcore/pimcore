@@ -93,7 +93,7 @@ class Processor
 
         //create dash file(.mpd), if medias exists
         $medias = $config->getMedias();
-        if(count($medias) > 0) {
+        if (count($medias) > 0) {
             $formats[] = 'mpd';
         }
 

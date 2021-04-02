@@ -1216,11 +1216,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if ($fd instanceof NormalizerInterface) {
                         $normalizedData = $fd->normalize($fieldValue->getData(), [
                             'object' => $params['object'] ?? null,
-                            'fieldDefinition' => $fd
+                            'fieldDefinition' => $fd,
                         ]);
                         $resultItem[$key] = $normalizedData;
                     } else {
-                        throw new \Exception("data type " . $fd->getFieldtype() . " does not implement normalizer interface");
+                        throw new \Exception('data type ' . $fd->getFieldtype() . ' does not implement normalizer interface');
                     }
                 }
                 $result[] = $resultItem;
@@ -1233,7 +1233,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /** { @inheritdoc } */
     public function denormalize($value, $params = [])
     {
-
         if (is_array($value)) {
             $result = [];
             $fieldDefinitions = $this->getFieldDefinitions();
@@ -1250,15 +1249,16 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if ($fd instanceof NormalizerInterface) {
                         $denormalizedData = $fd->denormalize($fieldValue, [
                             'object' => $params['object'],
-                            'fieldDefinition' => $fd
+                            'fieldDefinition' => $fd,
                         ]);
                         $resultItem[$key] = $denormalizedData;
                     } else {
-                        throw new \Exception("data type does not implement normalizer interface");
+                        throw new \Exception('data type does not implement normalizer interface');
                     }
                 }
                 $result[] = $resultItem;
             }
+
             return $result;
         }
 

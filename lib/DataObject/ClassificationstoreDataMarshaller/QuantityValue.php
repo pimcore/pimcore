@@ -30,24 +30,24 @@ class QuantityValue implements MarshallerInterface
         if (is_array($value)) {
             return [
                 'value' => $value['value'],
-                'value2' => $value['unitId']
+                'value2' => $value['unitId'],
             ];
         }
-        return null;
 
+        return null;
     }
 
     /** { @inheritDoc } */
     public function unmarshal($value, $params = [])
     {
-        if (is_array($value) && ($value["value"] !== null || $value["value2"] !== null)) {
+        if (is_array($value) && ($value['value'] !== null || $value['value2'] !== null)) {
             return [
-                "value" => $value["value"],
-                "unitId" => $value["value2"]
+                'value' => $value['value'],
+                'unitId' => $value['value2'],
 
             ];
         }
-        return null;
 
+        return null;
     }
 }

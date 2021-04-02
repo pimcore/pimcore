@@ -31,8 +31,8 @@ class Table implements MarshallerInterface
         if (!is_null($value)) {
             return ['value' => Serialize::serialize($value)];
         }
-        return null;
 
+        return null;
     }
 
     /** { @inheritDoc } */
@@ -41,7 +41,7 @@ class Table implements MarshallerInterface
         if (is_array($value)) {
             return Serialize::unserialize($value['value']);
         }
-        return null;
 
+        return null;
     }
 }

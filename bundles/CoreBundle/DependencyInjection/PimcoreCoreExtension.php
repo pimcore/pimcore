@@ -73,7 +73,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
-        if(!$container->hasParameter('pimcore.encryption.secret')) {
+        if (!$container->hasParameter('pimcore.encryption.secret')) {
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
 
