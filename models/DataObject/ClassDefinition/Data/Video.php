@@ -479,36 +479,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $data;
     }
 
-    /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        return $this->normalize($value, $params);
-    }
-
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        return $this->denormalize($value, $params);
-    }
-
     /**
      * @param DataObject\Data\Video|null $oldValue
      * @param DataObject\Data\Video|null $newValue

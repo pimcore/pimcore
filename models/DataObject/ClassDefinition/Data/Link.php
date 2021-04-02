@@ -216,36 +216,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * { @inheritdoc }
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        return $this->normalize($value, $params);
-    }
-
-    /**
-     * { @inheritdoc }
-     */
-    public function unmarshal($data, $object = null, $params = [])
-    {
-        if (is_array($data)) {
-            $link = new DataObject\Data\Link();
-            $link->setValues($data);
-            $data = $link;
-        }
-
-        if ($data instanceof DataObject\Data\Link) {
-            $target = Element\Service::getElementById($data->getInternalType(), $data->getInternal());
-            if (!$target) {
-                $data->setInternal(0);
-                $data->setInternalType(null);
-            }
-        }
-
-        return parent::unmarshal($data, $object, $params);
-    }
-
-    /**
      * Checks if data is valid for current data field
      *
      * @param mixed $data

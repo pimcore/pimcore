@@ -111,18 +111,6 @@ class Dao extends Model\Dao\AbstractDao
                         } else {
                             $encodedData['value'] = $normalizedData;
                         }
-                    } else {
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Password) {
-                            $value = $fd->getDataForResource($value, null, []);
-                            $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
-                        } elseif ($fd instanceof DataObject\ClassDefinition\Data\EncryptedField) {
-                            $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
-                            $delegate = $fd->getDelegate();
-                            $value = new DataObject\Data\EncryptedField($delegate, $value);
-                        } elseif ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
-                            $value = $fd->getDataForResource($value, $this->model->getObject());
-                        }
-                        $encodedData = $fd->marshal($value, $object);
                     }
 
                     $data['value'] = $encodedData['value'] ?? null;
@@ -229,11 +217,6 @@ class Dao extends Model\Dao\AbstractDao
                     'object' => $object,
                     'fieldDefinition' => $fd,
                 ]);
-            } else {
-                $value = $fd->unmarshal($value, $object);
-                if ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
-                    $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
-                }
             }
 
             $language = $item['language'];

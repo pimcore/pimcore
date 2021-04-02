@@ -265,64 +265,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return implode(' ', $line);
     }
 
-    /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value) {
-            $value = Serialize::unserialize($value);
-            $result = [];
-            if (is_array($value)) {
-                /** @var DataObject\Data\GeoCoordinates $point */
-                foreach ($value as $point) {
-                    $result[] = [
-                            $point->getLatitude(),
-                            $point->getLongitude(),
-                        ];
-                }
-            }
-
-            return [
-                'value' => json_encode($result),
-            ];
-        }
-    }
-
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (isset($value['value'])) {
-            $value = json_decode($value['value']);
-            $result = [];
-            if (is_array($value)) {
-                foreach ($value as $point) {
-                    $result[] = new DataObject\Data\GeoCoordinates($point[0], $point[1]);
-                }
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
     /**
      *
      * @param DataObject\Data\GeoCoordinates[]|null $oldValue

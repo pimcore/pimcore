@@ -149,9 +149,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
                             $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'block']);
                         }
-                    } else {
-                        // BC layer
-                        $encodedData = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
                     }
 
                     // do not serialize the block element itself
@@ -214,9 +211,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             'object' => $object,
                             'fieldDefinition' => $fd,
                         ]);
-                    } else {
-                        // BC layer
-                        $dataFromResource = $fd->unmarshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
                     }
 
                     $blockElementRaw['data'] = $dataFromResource;

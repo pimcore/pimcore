@@ -767,21 +767,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return implode(' | ', $this->getPhpDocClassString(true));
     }
 
-    /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        return $this->normalize($value, $params);
-    }
-
     /**
      * { @inheritdoc }
      */
@@ -828,14 +813,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         return null;
-    }
-
-    /**
-     * { @inheritdoc }
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        return $this->denormalize($value, $params);
     }
 
     /**

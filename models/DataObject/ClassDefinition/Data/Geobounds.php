@@ -273,33 +273,6 @@ class Geobounds extends AbstractGeo implements
         return true;
     }
 
-    /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof DataObject\Data\Geobounds) {
-            return [
-                'value' => json_encode([$value->getNorthEast()->getLatitude(), $value->getNorthEast()->getLongitude()]),
-                'value2' => json_encode([$value->getSouthWest()->getLatitude(), $value->getSouthWest()->getLongitude()]),
-            ];
-        } elseif (is_array($value)) {
-            return [
-                'value' => json_encode([$value[$this->getName() . '__NElatitude'], $value[$this->getName() . '__NElongitude']]),
-                'value2' => json_encode([$value[$this->getName() . '__SWlatitude'], $value[$this->getName() . '__SWlongitude']]),
-            ];
-        }
-
-        return $value;
-    }
-
     /**
      * { @inheritdoc }
      */
@@ -334,31 +307,6 @@ class Geobounds extends AbstractGeo implements
         }
 
         return null;
-    }
-
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if ($value && $value['value'] && $value['value2']) {
-            $dataNE = json_decode($value['value']);
-            $dataSW = json_decode($value['value2']);
-
-            $ne = new DataObject\Data\GeoCoordinates($dataNE[0], $dataNE[1]);
-            $sw = new DataObject\Data\GeoCoordinates($dataSW[0], $dataSW[1]);
-
-            return new DataObject\Data\Geobounds($ne, $sw);
-        }
-
-        return $value;
     }
 
     /**

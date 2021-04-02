@@ -1254,96 +1254,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->provideSplitView = $provideSplitView;
     }
 
-    /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof DataObject\Localizedfield) {
-            $items = $value->getInternalData();
-            if (is_array($items)) {
-                $result = [];
-                foreach ($items as $language => $languageData) {
-                    $languageResult = [];
-                    foreach ($languageData as $elementName => $elementData) {
-                        $fd = $this->getFieldDefinition($elementName);
-                        if (!$fd) {
-                            // class definition seems to have changed
-                            Logger::warn('class definition seems to have changed, element name: '.$elementName);
-                            continue;
-                        }
-
-                        $childParams = ['raw' => true];
-                        if ($params['blockmode'] ?? false) {
-                            $childParams['blockmode'] = true;
-                        }
-
-                        $dataForResource = $fd->marshal($elementData, $object, $childParams);
-
-                        $languageResult[$elementName] = $dataForResource;
-                    }
-
-                    $result[$language] = $languageResult;
-                }
-
-                return $result;
-            }
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        $lf = new DataObject\Localizedfield();
-        $lf->setObject($object);
-        if (is_array($value)) {
-            $items = [];
-            foreach ($value as $language => $languageData) {
-                $languageResult = [];
-                foreach ($languageData as $elementName => $elementData) {
-                    $fd = $this->getFieldDefinition($elementName);
-                    if (!$fd) {
-                        // class definition seems to have changed
-                        Logger::warn('class definition seems to have changed, element name: '.$elementName);
-                        continue;
-                    }
-
-                    $childParams = ['raw' => true];
-                    if ($params['blockmode'] ?? false) {
-                        $childParams['blockmode'] = true;
-                    }
-                    $dataFromResource = $fd->unmarshal($elementData, $object, $childParams);
-
-                    $languageResult[$elementName] = $dataFromResource;
-                }
-
-                $items[$language] = $languageResult;
-            }
-
-            $lf->setItems($items);
-        }
-
-        return $lf;
-    }
-
     /**
      * @return bool
      */
@@ -1443,17 +1353,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
                         if ($fd instanceof NormalizerInterface) {
                             $dataForResource = $fd->normalize($elementData, $params);
-                        } else {
-                            // TODO BC mode, remove it as soon as marshal is gone
-                            $blockMode = isset($params['format']) && $params['format'] == 'block';
-                            $childParams = [];
-                            if ($blockMode) {
-                                $childParams = ['raw' => true, 'blockmode' => true];
-                            }
-                            $dataForResource = $fd->marshal($elementData, $params['object'], $childParams);
+                            $languageResult[$elementName] = $dataForResource;
                         }
-
-                        $languageResult[$elementName] = $dataForResource;
                     }
 
                     $result[$language] = $languageResult;
@@ -1486,17 +1387,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
                     if ($fd instanceof NormalizerInterface) {
                         $dataFromResource = $fd->denormalize($elementData, $params);
-                    } else {
-                        // TODO BC mode, remove it as soon as marshal is gone
-                        $blockMode = isset($params['format']) && $params['format'] == 'block';
-                        $childParams = [];
-                        if ($blockMode) {
-                            $childParams = ['raw' => true, 'blockmode' => true];
-                        }
-                        $dataFromResource = $fd->unmarshal($elementData, $params['object'], $childParams);
+                        $languageResult[$elementName] = $dataFromResource;
                     }
-
-                    $languageResult[$elementName] = $dataFromResource;
                 }
 
                 $items[$language] = $languageResult;
