@@ -186,10 +186,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             }
                         },
 
-                        onStartDrag: this.createDropZones.bind(this),
-                        afterDragDrop: this.removeDropZones.bind(this),
-                        afterInvalidDrop: this.removeDropZones.bind(this),
-
+                        onStartDrag: this.startDragDrop.bind(this),
+                        afterDragDrop: this.endDragDrop.bind(this),
+                        afterInvalidDrop: this.endDragDrop.bind(this),
+                        beforeDragOut: function (target) {
+                            return target ? true : false;
+                        },
                         getRepairXY: function() {
                             return this.dragData.repairXY;
                         }
@@ -292,6 +294,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 }
             }
         }
+
+        this.updateDropZones();
     },
 
     render: function () {
@@ -513,10 +517,26 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         }
     },
 
-    createDropZones: function () {
+    startDragDrop: function () {
+        Ext.getBody().addCls('pimcore_drag_drop_active');
+        Ext.get(this.id).addCls('pimcore_editable_areablock_dropzones_active');
+    },
+
+    endDragDrop: function () {
+        Ext.getBody().removeCls('pimcore_drag_drop_active');
+        Ext.get(this.id).removeCls('pimcore_editable_areablock_dropzones_active');
+    },
+
+    updateDropZones: function () {
 
         if(this.inherited) {
             return;
+        }
+
+        var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
+        for(var i=0; i<dropZones.length; i++) {
+            dropZones[i].dropZone.unreg();
+            Ext.get(dropZones[i]).remove();
         }
 
         if(this.elements.length > 0) {
@@ -580,14 +600,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 }
             }.bind(this)
         });
-    },
-
-    removeDropZones: function () {
-        var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
-        for(var i=0; i<dropZones.length; i++) {
-            dropZones[i].dropZone.unreg();
-            Ext.get(dropZones[i]).remove();
-        }
     },
 
     createInitalControls: function () {
@@ -825,29 +837,18 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         toIndex = intval(toIndex);
 
         var currentIndex = this.getElementIndex(block);
-        var tmpElements = [];
-
-        for (var i = 0; i < this.elements.length; i++) {
-            if (this.elements[i] && this.elements[i] != block) {
-                tmpElements.push(this.elements[i]);
-            }
-        }
-
         if(currentIndex < toIndex) {
             toIndex--;
         }
 
-        tmpElements.splice(toIndex,0,block);
-
-        var elementAfter = tmpElements[toIndex+1];
-        if(elementAfter) {
-            Ext.get(block).insertBefore(elementAfter);
+        if(this.elements[toIndex]) {
+            Ext.get(block).insertBefore(this.elements[toIndex]);
         } else {
             // to the last position
             Ext.get(block).insertAfter(this.elements[this.elements.length-1]);
         }
 
-        this.elements = tmpElements;
+        this.refresh();
 
         if(this.config.reload) {
             this.reloadDocument();
@@ -1076,14 +1077,14 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             var areablocks = pimcore.document.editables[this.toolbarGlobalVar].areablocks;
                             for(var i=0; i<areablocks.length; i++) {
                                 if(in_array(brick.type, areablocks[i].allowedTypes)) {
-                                    areablocks[i].createDropZones();
+                                    areablocks[i].startDragDrop();
                                 }
                             }
                         }.bind(this),
                         afterDragDrop: function () {
                             var areablocks = pimcore.document.editables[this.toolbarGlobalVar].areablocks;
                             for(var i=0; i<areablocks.length; i++) {
-                                areablocks[i].removeDropZones();
+                                areablocks[i].endDragDrop();
                             }
                         }.bind(this),
                         beforeDragOut: function (target) {
@@ -1092,7 +1093,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                         afterInvalidDrop: function () {
                             var areablocks = pimcore.document.editables[this.toolbarGlobalVar].areablocks;
                             for(var i=0; i<areablocks.length; i++) {
-                                areablocks[i].removeDropZones();
+                                areablocks[i].endDragDrop();
                             }
                         }.bind(this),
 
