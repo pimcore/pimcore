@@ -25,6 +25,9 @@ use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
+/**
+ * @internal
+ */
 class Processor
 {
     /**

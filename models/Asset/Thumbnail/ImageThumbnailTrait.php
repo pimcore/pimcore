@@ -94,6 +94,9 @@ trait ImageThumbnailTrait
         return $this->pathReference;
     }
 
+    /**
+     * @internal
+     */
     public function reset()
     {
         $this->pathReference = [];
