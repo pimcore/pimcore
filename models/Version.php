@@ -361,6 +361,7 @@ class Version extends AbstractModel
         }
 
         if ($this->getSerialized()) {
+            // this makes it possible to restore data object versions from older Pimcore versions
             class_alias(GeoCoordinates::class, 'Pimcore\Model\DataObject\Data\Geopoint');
 
             $data = Serialize::unserialize($data);
