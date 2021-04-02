@@ -26,10 +26,6 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
             config.listeners.select = this.reloadDocument;
         }
 
-        if(typeof config["defaultValue"] !== "undefined" && data === null) {
-            data = config["defaultValue"];
-        }
-
         config.name = id + "_editable";
         config.triggerAction = 'all';
         config.editable = false;
