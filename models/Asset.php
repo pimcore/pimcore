@@ -1546,7 +1546,7 @@ class Asset extends Element\AbstractElement
      */
     public function getTemporaryFile()
     {
-        $destinationPath = $this->getTemporaryFileFromStream($this->getStream());
+        $destinationPath = self::getTemporaryFileFromStream($this->getStream());
         @chmod($destinationPath, File::getDefaultMode());
 
         return $destinationPath;
