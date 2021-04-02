@@ -155,6 +155,8 @@
     - Value 0 for `steps` or `days` => no version will be saved at all & existing will be cleaned up.
     
   please update your system settings as per the requirements.
+- Removed deprecated `marshal()` and `unmarshal()` methods from object data-types.
+
 
 ## 6.9.0
 - [Data Objects] Deprecated `\Pimcore\Model\DataObject\ClassDefinition\Data\DataInterface` as it isn't used anymore. Will be removed in Pimcore 10.

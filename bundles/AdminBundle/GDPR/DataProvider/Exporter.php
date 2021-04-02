@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Normalizer\NormalizerInterface;
 
 /**
  * Class Exporter
@@ -79,9 +80,10 @@ class Exporter
                 foreach ($fDefs as $fd) {
                     $getter = 'get' . ucfirst($fd->getName());
                     $value = $brickValue->$getter();
-                    $marshalledValue = $fd->marshal($value, $object, ['blockmode' => true]);
-
-                    $resultContainer[$brickType][$fd->getName()] = $marshalledValue;
+                    if($fd instanceof NormalizerInterface) {
+                        $marshalledValue = $fd->normalize($value);
+                        $resultContainer[$brickType][$fd->getName()] = $marshalledValue;
+                    }
                 }
             }
         }
@@ -112,9 +114,11 @@ class Exporter
             foreach ($fDefs as $fd) {
                 $getter = 'get' . ucfirst($fd->getName());
                 $value = $item->$getter();
-                $marshalledValue = $fd->marshal($value, $object, ['blockmode' => true]);
 
-                $itemValues[$fd->getName()] = $marshalledValue;
+                if($fd instanceof NormalizerInterface) {
+                    $marshalledValue = $fd->normalize($value);
+                    $itemValues[$fd->getName()] = $marshalledValue;
+                }
             }
 
             $resultContainer[] = [
@@ -147,8 +151,10 @@ class Exporter
             } elseif ($fd instanceof Data\Objectbricks) {
                 self::doExportBrick($object, $result, $value, $fd);
             } else {
-                $marshalledValue = $fd->marshal($value, $object, ['blockmode' => true]);
-                $result[$fd->getName()] = $marshalledValue;
+                if($fd instanceof NormalizerInterface) {
+                    $marshalledValue = $fd->normalize($value);
+                    $result[$fd->getName()] = $marshalledValue;
+                }
             }
         }
     }

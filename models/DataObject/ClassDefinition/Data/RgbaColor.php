@@ -286,61 +286,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return null;
     }
 
-    /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof Model\DataObject\Data\RgbaColor) {
-            $rgb = sprintf('%02x%02x%02x', $value->getR(), $value->getG(), $value->getB());
-            $a = sprintf('%02x', $value->getA());
-
-            return [
-                'value' => $rgb,
-                'value2' => $a,
-            ];
-        } elseif (is_array($value)) {
-            return [
-                'value' => $value[$this->getName() . '__rgb'],
-                'value2' => $value[$this->getName() . '__a'],
-            ];
-        }
-
-        return $value;
-    }
-
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return Model\DataObject\Data\RgbaColor|null
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if ($value) {
-            $rgb = $value['value'];
-            $a = $value['value2'];
-            list($r, $g, $b) = sscanf($rgb, '%02x%02x%02x');
-            $a = hexdec($a);
-            $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
-
-            return $color;
-        }
-
-        return null;
-    }
-
     /**
      * { @inheritdoc }
      */

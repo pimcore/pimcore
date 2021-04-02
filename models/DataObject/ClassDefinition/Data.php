@@ -1419,48 +1419,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
     }
 
-    /** Encode value for packing it into a single column.
-     *
-     * @deprecated marshal is deprecated and will be removed in Pimcore 10. Use normalize instead.
-     *
-     * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if (isset($params['raw']) && $params['raw']) {
-            return $value;
-        } else {
-            return ['value' => $value];
-        }
-    }
-
-    /** See marshal
-     *
-     * @deprecated unmarshal is deprecated and will be removed in Pimcore 10. Use denormalize instead.
-     *
-     * @param mixed $data
-     * @param Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($data, $object = null, $params = [])
-    {
-        if (isset($params['raw']) && $params['raw']) {
-            return $data;
-        } else {
-            if (is_array($data)) {
-                return $data['value'];
-            }
-        }
-
-        return null;
-    }
-
     /**
      * @param array|null $existingData
      * @param array $additionalData
