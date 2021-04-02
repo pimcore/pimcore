@@ -84,6 +84,33 @@ class Thumbnail
         return $path;
     }
 
+    public function getFileSize(): ?int
+    {
+        $pathReference = $this->getPathReference(false);
+        if($pathReference['type'] === 'asset') {
+            return $this->asset->getFileSize();
+        } elseif(isset($pathReference['storagePath'])) {
+            return Tool\Storage::get('thumbnail')->fileSize($pathReference['storagePath']);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|resource
+     */
+    public function getStream()
+    {
+        $pathReference = $this->getPathReference(false);
+        if($pathReference['type'] === 'asset') {
+            return $this->asset->getStream();
+        } elseif(isset($pathReference['storagePath'])) {
+            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
+        }
+
+        return null;
+    }
+
     /**
      * @param string $eventName
      *
