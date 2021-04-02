@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -512,11 +513,15 @@ class Asset extends Element\AbstractElement
                     $storage = Storage::get('asset');
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath() && $storage->fileExists($oldPath)) {
-                        $storage->move($oldPath, $this->getRealFullPath());
-                        $differentOldPath = $oldPath;
-                        $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        try {
+                            $storage->move($oldPath, $this->getRealFullPath());
+                            $differentOldPath = $oldPath;
+                            $this->getDao()->updateWorkspaces();
+                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                        } catch (UnableToMoveFile $e) {
+                            //nothing to do
+                        }
                     }
 
                     // lastly create a new version if necessary
