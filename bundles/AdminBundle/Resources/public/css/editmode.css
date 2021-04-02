@@ -285,15 +285,21 @@ input.cke_dialog_ui_input_tel {
 }
 
 
+.pimcore_editable_areablock_dropzones_active.pimcore_editable_areablock > .pimcore_area_dropzone {
+    visibility: visible;
+}
+
 .pimcore_area_dropzone {
     height: 20px;
-    background: #a3bae9;
-    border:2px dashed #fff;
+    background: #fff;
+    border:2px dashed #000;
     clear:both;
+    visibility: hidden;
+    margin: 5px 0;
 }
 
 .pimcore_area_dropzone_hover {
-    background: #6ec563;
+    background: #dedede;
 }
 
 .pimcore_wysiwyg_mask {
@@ -583,6 +589,16 @@ input.cke_dialog_ui_input_tel {
     outline: 2px dashed #BABABA;
     outline-offset: 5px;
 }
+
+.pimcore_drag_drop_active .pimcore_editable_input:hover,
+.pimcore_drag_drop_active .pimcore_wysiwyg:hover,
+.pimcore_drag_drop_active .pimcore_editable_textarea:hover,
+.pimcore_drag_drop_active .pimcore_editable_snippet:hover,
+.pimcore_drag_drop_active .pimcore_editable_renderlet:hover,
+.pimcore_drag_drop_active .pimcore_editable_inc:hover {
+    outline:0 auto;
+}
+
 
 .pimcore_areablock_dialogBox .pimcore_editable_input,
 .pimcore_areablock_dialogBox .pimcore_editable_wysiwyg,
