@@ -197,6 +197,7 @@ class Processor
             return [
                 'src' => $storagePath,
                 'type' => $storage->fileExists($storagePath) ? 'thumbnail' : 'deferred',
+                'storagePath' => $storagePath,
             ];
         }
 
@@ -210,6 +211,7 @@ class Processor
             return [
                 'src' => $storagePath,
                 'type' => 'thumbnail',
+                'storagePath' => $storagePath,
             ];
         }
 
@@ -423,6 +425,7 @@ class Processor
         return [
             'src' => $storagePath,
             'type' => 'thumbnail',
+            'storagePath' => $storagePath,
         ];
     }
 
