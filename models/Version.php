@@ -360,6 +360,8 @@ class Version extends AbstractModel
         }
 
         if ($this->getSerialized()) {
+            class_alias(GeoCoordinates::class, 'Pimcore\Model\DataObject\Data\Geopoint');
+            
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
             Runtime::clear();
