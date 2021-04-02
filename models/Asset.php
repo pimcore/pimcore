@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -517,6 +518,8 @@ class Asset extends Element\AbstractElement
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
                         $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+
+                        $this->relocateThumbnails($oldPath);
                     }
 
                     // lastly create a new version if necessary
@@ -2015,6 +2018,36 @@ class Asset extends Element\AbstractElement
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param string $oldPath
+     *
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public function relocateThumbnails(string $oldPath)
+    {
+        $oldParent = dirname($oldPath);
+        $newParent = dirname($this->getRealFullPath());
+        $storage = Storage::get('thumbnail');
+
+        $contents = $storage->listContents($oldParent);
+        /** @var StorageAttributes $item */
+        foreach ($contents as $item) {
+            if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
+                $replacePath = $newParent .'/' . basename($item->path());
+                if (!$storage->fileExists($replacePath)) {
+                    $storage->move($item->path(), $replacePath);
+                }
+            }
+        }
+
+        //required in case if there is only renaming on parent
+        try {
+            $storage->move($oldPath, $this->getRealFullPath());
+        } catch ( UnableToMoveFile $e) {
+            // noting to do
         }
     }
 
