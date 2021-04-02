@@ -47,18 +47,6 @@ abstract class AbstractBlockItem
      * @param string $name
      *
      * @return Document\Editable|null
-     *
-     * @deprecated and will be removed in Pimcore 10. Use getEditable() instead.
-     */
-    public function getElement(string $name)
-    {
-        return $this->getEditable($name);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return Document\Editable|null
      */
     public function getEditable(string $name)
     {

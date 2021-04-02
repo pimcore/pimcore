@@ -731,24 +731,6 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @deprecated
-     *
-     * @param string $colorspace
-     */
-    public function setColorspace($colorspace)
-    {
-        // no functionality, just for compatibility reasons
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getColorspace()
-    {
-        // no functionality, just for compatibility reasons
-    }
-
-    /**
      * @return int
      */
     public function getModificationDate()

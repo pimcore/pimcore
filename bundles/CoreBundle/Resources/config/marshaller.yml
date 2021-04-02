@@ -5,6 +5,7 @@ services:
         autoconfigure: true
         public: true
 
+    # block
     Pimcore\DataObject\BlockDataMarshaller\Consent:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_consent, key: 'block_consent' }
@@ -51,7 +52,38 @@ services:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_structuredTable, key: 'block_structuredTable' }
 
+    # classification store
 
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\BooleanSelect:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\BooleanSelect
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_booleanSelect, key: 'classificationstore_booleanSelect' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Multiselect:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Multiselect
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_multiselect, key: 'classificationstore_multiselect' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_countrymultiselect, key: 'classificationstore_countrymultiselect' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_languagesmultiselect, key: 'classificationstore_languagemultiselect' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\RgbaColor:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\RgbaColor
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_rgbaColor, key: 'classificationstore_rgbaColor' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Table:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Table
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_table, key: 'classificationstore_table' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\QuantityValue:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\QuantityValue
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_quantityValue, key: 'classificationstore_quantityValue' }
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_inputQuantityValue, key: 'classificationstore_inputQuantityValue' }
+
+
+    # service
     Pimcore\Element\MarshallerService:
         arguments:
             - '@service_container'

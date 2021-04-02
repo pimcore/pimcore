@@ -92,7 +92,7 @@ pimcore.element.tag.tree = Class.create({
                 treePlugins = {
                     ptype: 'treeviewdragdrop',
                     ddGroup: "tags",
-                    appendOnly: true
+                    appendOnly: false
                 };
             }
 

@@ -1,7 +1,18 @@
 # Upgrade Notes
 
 ## 10.0.0
+- `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.
+- `\Pimcore\Model\DataObject\Service::removeObjectFromSession()` has been removed, use `removeElementFromSession()` instead.
+- `\Pimcore\Model\DataObject\Service::getObjectFromSession()` has been removed, use `getElementFromSession()` instead.
+- `\Pimcore\Model\Asset\Image\Thumbnail\Config::setColorspace()` has been removed
+- `\Pimcore\Model\Asset\Image\Thumbnail\Config::getColorspace()` has been removed
+- `\Pimcore\Model\DataObject\ClassDefinition\Data\DataInterface` has been removed
+- `\Pimcore\Model\Asset\Listing::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
+- `\Pimcore\Model\Document\Listing::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
+- `\Pimcore\Model\DataObject\Listing::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
+- `\Pimcore\Google\Cse::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
 - `\Pimcore\Helper\RobotsTxt` has been removed
+- `\Pimcore\Model\User::getUsername()` has been removed, use `User::getName()` instead. 
 - `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead. 
 - [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
 - [Data Objects] Removed CSV import feature. Use https://github.com/pimcore/data-importer or https://github.com/w-vision/DataDefinitions instead.
@@ -146,6 +157,7 @@
   please update your system settings as per the requirements.
 
 ## 6.9.0
+- [Data Objects] Deprecated `\Pimcore\Model\DataObject\ClassDefinition\Data\DataInterface` as it isn't used anymore. Will be removed in Pimcore 10.
 - [Data Objects] Deprecated method `getFromCsvImport()` on all data-types
 - [Data Objects] Data types: `marshal`/`unmarshal` is deprecated and will be removed in Pimcore 10. Use `normalize`/`denormalize` instead.
   For custom data types implement the `NormalizerInterface`

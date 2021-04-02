@@ -132,7 +132,7 @@ class Video extends Model\Asset
                 $customSetting = $this->getCustomSetting('thumbnails');
                 if (is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
                     foreach ($customSetting[$thumbnail->getName()]['formats'] as $pathKey => &$path) {
-                        if($pathKey == 'medias') {
+                        if ($pathKey == 'medias') {
                             foreach ($path as &$format) {
                                 foreach ($format as &$f) {
                                     $f = $this->enrichThumbnailPath($f);

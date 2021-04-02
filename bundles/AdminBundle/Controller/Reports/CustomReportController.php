@@ -416,6 +416,8 @@ final class CustomReportController extends ReportsControllerBase
         if (!($exportFile = $request->get('exportFile'))) {
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
+        } else {
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$exportFile;
         }
 
         $fp = fopen($exportFile, 'a');

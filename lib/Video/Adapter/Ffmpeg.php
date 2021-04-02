@@ -16,7 +16,6 @@ namespace Pimcore\Video\Adapter;
 
 use Pimcore\File;
 use Pimcore\Logger;
-use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
 use Symfony\Component\Process\Process;
