@@ -80,7 +80,7 @@ class Exporter
                 foreach ($fDefs as $fd) {
                     $getter = 'get' . ucfirst($fd->getName());
                     $value = $brickValue->$getter();
-                    if($fd instanceof NormalizerInterface) {
+                    if ($fd instanceof NormalizerInterface) {
                         $marshalledValue = $fd->normalize($value);
                         $resultContainer[$brickType][$fd->getName()] = $marshalledValue;
                     }
@@ -115,7 +115,7 @@ class Exporter
                 $getter = 'get' . ucfirst($fd->getName());
                 $value = $item->$getter();
 
-                if($fd instanceof NormalizerInterface) {
+                if ($fd instanceof NormalizerInterface) {
                     $marshalledValue = $fd->normalize($value);
                     $itemValues[$fd->getName()] = $marshalledValue;
                 }
@@ -151,7 +151,7 @@ class Exporter
             } elseif ($fd instanceof Data\Objectbricks) {
                 self::doExportBrick($object, $result, $value, $fd);
             } else {
-                if($fd instanceof NormalizerInterface) {
+                if ($fd instanceof NormalizerInterface) {
                     $marshalledValue = $fd->normalize($value);
                     $result[$fd->getName()] = $marshalledValue;
                 }

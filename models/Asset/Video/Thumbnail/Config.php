@@ -121,6 +121,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return Config
      */
     public static function getPreviewConfig()
@@ -155,6 +156,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $name
      * @param array $parameters
      * @param string $media
@@ -181,6 +183,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
@@ -381,6 +384,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return array
      */
     public function getEstimatedDimensions()

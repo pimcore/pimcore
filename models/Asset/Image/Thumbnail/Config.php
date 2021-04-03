@@ -126,6 +126,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string|array|self $config
      *
      * @return self|null
@@ -229,6 +230,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param bool $hdpi
      *
      * @return Config
@@ -275,6 +277,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $name
      * @param array $parameters
      * @param string $media
@@ -301,6 +304,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
@@ -552,8 +556,11 @@ final class Config extends Model\AbstractModel
 
     /**
      * This is mainly here for backward compatibility
+     *
      * @internal
+     *
      * @param array $config
+     *
      * @return self
      */
     public static function getByLegacyConfig($config)
@@ -636,6 +643,7 @@ final class Config extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param Model\Asset\Image $asset
      *
      * @return array

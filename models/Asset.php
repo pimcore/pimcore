@@ -2050,7 +2050,7 @@ class Asset extends Element\AbstractElement
 
             //required in case if there is only renaming on parent
             $storage->move($oldPath, $this->getRealFullPath());
-        } catch ( UnableToMoveFile $e) {
+        } catch (UnableToMoveFile $e) {
             // noting to do
         }
     }

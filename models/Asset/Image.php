@@ -180,6 +180,7 @@ class Image extends Model\Asset
 
     /**
      * @internal
+     *
      * @param null|string $generator
      *
      * @return bool|string
@@ -282,7 +283,9 @@ EOT;
 
     /**
      * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
+     *
      * @internal
+     *
      * @param string|array|Image\Thumbnail\Config $config
      *
      * @return Image\Thumbnail\Config
@@ -309,6 +312,7 @@ EOT;
 
     /**
      * @internal
+     *
      * @throws \Exception
      *
      * @return null|\Pimcore\Image\Adapter

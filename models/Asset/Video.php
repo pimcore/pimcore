@@ -90,6 +90,7 @@ class Video extends Model\Asset
 
     /**
      * @internal
+     *
      * @param string|Video\Thumbnail\Config $config
      *
      * @return Video\Thumbnail\Config|null
@@ -310,6 +311,7 @@ class Video extends Model\Asset
 
     /**
      * @internal
+     *
      * @return array
      */
     public function getSphericalMetaData()

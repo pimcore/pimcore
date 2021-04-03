@@ -340,6 +340,7 @@ class Service extends Model\Element\Service
      * )
      *
      * @internal
+     *
      * @param Asset $asset
      * @param array $rewriteConfig
      *

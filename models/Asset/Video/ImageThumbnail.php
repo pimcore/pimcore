@@ -79,6 +79,7 @@ final class ImageThumbnail
 
     /**
      * @internal
+     *
      * @param bool $deferredAllowed
      *
      * @throws \Exception
