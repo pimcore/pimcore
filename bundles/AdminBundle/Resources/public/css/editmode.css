@@ -502,6 +502,9 @@ input.cke_dialog_ui_input_tel {
     justify-content: left;
 }
 
+.pimcore_areablock_toolbar .x-btn-wrap-default-small.x-btn-arrow-right:after {
+    content: '\f0da';
+}
 
 .pimcore_editable_video {
     position: relative;
