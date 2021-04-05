@@ -930,7 +930,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,
                             menu: [],
-                            menuAlign: 'tl-tr'
+                            menuAlign: 'tl-tr',
+                            listeners: {
+                                mouseover: function (el) {
+                                    el.showMenu();
+                                }
+                            }
                         });
                     }
 
@@ -1007,6 +1012,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 if(!toolbar.getEl().isAncestor(event.target)) {
                     window.editWindow.areaToolbarTrigger.toggle(false);
                     toolbar.setLocalX(-1000);
+
+                    Ext.menu.Manager.hideAll();
                 }
             });
         } else {
@@ -1037,6 +1044,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             xtype: "button",
             textAlign: "left",
             icon: brick.icon,
+            cls: 'pimcore_cursor_move',
             text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
                 : brick.name,
             width: areaBlockToolbarSettings.buttonWidth,
@@ -1046,7 +1054,13 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             listeners: {
                 "afterrender": function (brick, v) {
 
-                    v.getEl().down('a', true).removeAttribute('href');
+                    let menuLink = v.getEl().down('a', true);
+                    if(menuLink) {
+                        // the menu item has a <a> tag, with href=#, which causes dnd to not work properly
+                        // and also shows the link target next to the mouse pointer while dragging
+                        // -> removing the href attribute fixes the issue
+                        menuLink.removeAttribute('href');
+                    }
 
                     v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                         getDragData: function(e) {
