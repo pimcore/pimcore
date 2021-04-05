@@ -810,11 +810,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
     },
 
     removeBlock: function (element) {
-
-        var index = this.getElementIndex(element);
-
-        this.elements.splice(index, 1);
-
         let container = Ext.get(element);
         let editablesContainer = container.query('[data-block-names]');
         editablesContainer.forEach(editableDiv => {
@@ -823,10 +818,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
         container.remove();
 
-        // there is no existing block element anymore
-        if (this.elements.length < 1) {
-            this.createInitalControls();
-        }
+        this.refresh();
     },
 
     moveBlockTo: function (block, toIndex) {
