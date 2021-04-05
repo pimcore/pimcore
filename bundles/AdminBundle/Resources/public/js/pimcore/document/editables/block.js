@@ -190,6 +190,8 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
     addBlock : function (element, amountbox) {
 
+        Ext.get(this.id).removeCls("pimcore_block_buttons");
+
         var index = this.getElementIndex(element) + 1;
         var amount = 1;
 
