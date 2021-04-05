@@ -916,6 +916,7 @@
   "detect_image_features": "Detect Image Features",
   "remove_image_features": "Remove Image Features",
   "available_sites": "Available Sites",
+  "no_action_available": "No action available",
   "fallback": "Fallback",
   "add_site": "Add Site",
   "domain_label_width": "Domain label width",

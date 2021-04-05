@@ -105,7 +105,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus_up",
                         arrowVisible: false,
-                        menuAlign: "tr",
                         menu: this.getTypeMenu(this, this.elements[i], "before")
                     });
                     plusUpButton.render(plusUpDiv);
@@ -115,7 +114,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus_down",
                         arrowVisible: false,
-                        menuAlign: "tr",
                         menu: this.getTypeMenu(this, this.elements[i], "after")
                     });
                     plusButton.render(plusDiv);
@@ -501,10 +499,13 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             }));
         }
 
-        if(menu.items && menu.items.getCount()) {
-            menu.showAt(e.getXY());
+        if(!menu.items || !menu.items.getCount()) {
+            menu.add(new Ext.menu.Item({
+                text: t('no_action_available')
+            }));
         }
 
+        menu.showAt(e.getXY());
         e.stopEvent();
     },
 
@@ -632,15 +633,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         // options button
         var optionsButton = new Ext.Button({
             cls: "pimcore_block_button_options",
-            iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
+            iconCls: "pimcore_icon_white_copy",
             listeners: {
                 click: this.optionsClickhandler.bind(this, false)
             }
         });
         optionsButton.render(optionsEl);
-
-        // at the moment we don't need a class
-        Ext.get(this.id).addCls("");
     },
 
     getTypeMenu: function (scope, element, insertPosition) {
@@ -654,7 +652,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 if(groups[g].length > 0) {
                     groupMenu = {
                         text: groups[g],
-                        iconCls: "pimcore_icon_area",
                         hideOnClick: false,
                         menu: []
                     };
@@ -930,11 +927,15 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             xtype: "button",
                             text: groups[g],
                             textAlign: "left",
-                            iconCls: "pimcore_icon_area",
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,
                             menu: [],
-                            menuAlign: 'tl-tr'
+                            menuAlign: 'tl-tr',
+                            listeners: {
+                                mouseover: function (el) {
+                                    el.showMenu();
+                                }
+                            }
                         });
                     }
 
@@ -1041,6 +1042,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             xtype: "button",
             textAlign: "left",
             icon: brick.icon,
+            cls: 'pimcore_cursor_move',
             text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
                 : brick.name,
             width: areaBlockToolbarSettings.buttonWidth,
@@ -1049,6 +1051,14 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             },
             listeners: {
                 "afterrender": function (brick, v) {
+
+                    let menuLink = v.getEl().down('a', true);
+                    if(menuLink) {
+                        // the menu item has a <a> tag, with href=#, which causes dnd to not work properly
+                        // and also shows the link target next to the mouse pointer while dragging
+                        // -> removing the href attribute fixes the issue
+                        menuLink.removeAttribute('href');
+                    }
 
                     v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                         getDragData: function(e) {
@@ -1086,6 +1096,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             for(var i=0; i<areablocks.length; i++) {
                                 areablocks[i].endDragDrop();
                             }
+
+                            Ext.menu.Manager.hideAll();
                         }.bind(this),
                         beforeDragOut: function (target) {
                             return target ? true : false;

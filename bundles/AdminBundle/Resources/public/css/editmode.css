@@ -488,7 +488,6 @@ input.cke_dialog_ui_input_tel {
     padding-bottom: 3px;
     background: #000;
     border-bottom: 1px solid #ccc;
-    cursor: move;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small:last-child {
@@ -502,6 +501,9 @@ input.cke_dialog_ui_input_tel {
     justify-content: left;
 }
 
+.pimcore_areablock_toolbar .x-btn-wrap-default-small.x-btn-arrow-right:after {
+    content: '\f0da';
+}
 
 .pimcore_editable_video {
     position: relative;
@@ -669,4 +671,15 @@ input.cke_dialog_ui_input_tel {
 
 .x-form-trigger-default {
     font: 16px/30px 'Font Awesome 5 Free Editmode';
+}
+
+.x-dd-drag-ghost {
+    /* do not show drag ghost in editmode, as isn't necessary at all at often has a bad styling */
+    display: none;
+}
+
+.pimcore_cursor_move,
+.pimcore_cursor_move .x-menu-item-text
+{
+    cursor: move;
 }
