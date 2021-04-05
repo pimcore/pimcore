@@ -1012,8 +1012,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 if(!toolbar.getEl().isAncestor(event.target)) {
                     window.editWindow.areaToolbarTrigger.toggle(false);
                     toolbar.setLocalX(-1000);
-
-                    Ext.menu.Manager.hideAll();
                 }
             });
         } else {
@@ -1098,6 +1096,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                             for(var i=0; i<areablocks.length; i++) {
                                 areablocks[i].endDragDrop();
                             }
+
+                            Ext.menu.Manager.hideAll();
                         }.bind(this),
                         beforeDragOut: function (target) {
                             return target ? true : false;
