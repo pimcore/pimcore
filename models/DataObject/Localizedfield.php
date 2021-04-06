@@ -34,7 +34,7 @@ class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
-                        OwnerAwareFieldInterface
+    OwnerAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
 
@@ -577,7 +577,7 @@ class Localizedfield extends Model\AbstractModel implements
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
         $isLazyLoadedField = ($fieldDefinition instanceof LazyLoadingSupportInterface || method_exists($fieldDefinition, 'getLazyLoading'))
-                                    && $fieldDefinition->getLazyLoading();
+            && $fieldDefinition->getLazyLoading();
         $lazyKey = $this->buildLazyKey($name, $language);
 
         if ($isLazyLoadedField) {
@@ -763,7 +763,7 @@ class Localizedfield extends Model\AbstractModel implements
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
         foreach ($fields as $field) {
             if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                                            && $field->getLazyLoading()) {
+                && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
