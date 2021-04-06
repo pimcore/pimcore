@@ -48,7 +48,7 @@
 - Removed service `pimcore.implementation_loader.document.tag`. Use `Pimcore\Model\Document\Editable\Loader\EditableLoader` instead.
 - Removed Pimcore Bundles generator and command `pimcore:generate:bundle`.
 - `Pimcore\Controller\Controller` abstract class now extends `Symfony\Bundle\FrameworkBundle\Controller\AbstractController` instead of `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
-- `Pimcore\Translation\Translator::transChoice()` method has been removed. Use `trans()` method with `%count%` parameter.
+- `Pimcore\Translation\Translator::transChoice()` & `Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator::transChoice()` methods have been removed. Use `trans()` method with `%count%` parameter.
 - Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from System.yml.
 - Removed `pimcore.workflows.initial_place` config. Use `pimcore.workflows.initial_markings` instead.
 - `WebDebugToolbarListenerPass` has been removed and `WebDebugToolbarListener` has been marked as final & internal.
@@ -82,6 +82,22 @@
 - [Data Objects] ManyToMany Relation Types: throws exception if multiple assignments passed without enabling Multiple assignments on class definition.
 - [Data Object] Table Data-Type always return an array.
 - [Data Object] `Model::getById()` & `Model::getByPath()` do not catch exceptions anymore.
+- Added methods `getArgument($key)`, `setArgument($key, $value)`, `getArguments()`, `setArguments(array $args = [])`, `hasArgument($key)` to `Pimcore\Model\Element\ElementInterface\ElementEventInterface`.
+- [Ecommerce] Changed name of interfaces from I* to *Interface .e.g. `Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable` => `Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface`
+- Removed `cache/tag-interop`dependency.
+- [Cache] `Pimcore\Cache` is directly based on Symfony/Cache. If you have custom cache pool configured under `pimcore.cache.pools` then change it to Symfony Config `framework.cache.pools`. [Read more](https://pimcore.com/docs/pimcore/master/Development_Documentation/Development_Tools_and_Details/Cache/index.html#page_Configuring-the-cache)
+- Methods `checkCsrfToken()`, `getCsrfToken()`, `regenerateCsrfToken()` methdos have been removed from `Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener`. Use `Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler` instead.
+- Bumped `phpunit/phpunit` & `codeception/phpunit-wrapper` to "^9"
+- Replaced `html2text/html2text` with `soundasleep/html2text`. Removed methods from `Pimcore\Mail`: `determineHtml2TextIsInstalled()`, `setHtml2TextOptions($options = [])`, `getHtml2TextBinaryEnabled()`, `enableHtml2textBinary()`, `getHtml2textInstalled()`.
+- Replaced `doctrine/common` with `doctrine/persistence`.
+- [Asset] Image thumbnails: Using getHtml() will return `<picture>` tag instead of `<img>` tag.
+- [Ecommerce] Marked `AbstractOrder` & `AbstractOrderItem` classes as abstract. 
+    Changes on `AbstractOrder` class:
+    - Added: `getCartHash()`, `getComment()`, `setComment()`
+    - Removed: `getDeliveryEMail()`, `setDeliveryEMail()`, `getCartModificationTimestamp()`
+- [Data Objects] Data-Types: Removed getPhpdocType() BC layer
+- [Ecommerce][FilterService] Added method `getFilterValues()` to `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType`
+- [Data Objects] OwnerAwareFieldInterface: added methods `_setOwner($owner)`, `_setOwnerFieldname(?string $fieldname)`, `_setOwnerLanguage(?string $language)`, `_getOwner()`, `_getOwnerFieldname()`, _getOwnerLanguage() and removed method `setOwner($owner, string $fieldname, $language = null)`.
 
 
 - `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.
