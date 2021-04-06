@@ -14,6 +14,17 @@
 ### Changes
 - Bumped `symfony/symfony` to "^5.2.0". Pimcore X will only support Symfony 5.
 - ExtJS bumped to version 7.
+- Bumped:
+    - `guzzlehttp/guzzle` to "^7.2"
+    - `sensio/framework-extra-bundle` to "^6.1"
+    - `twig/twig` to "^3.0"
+    - `egulias/email-validator` to "^3.0.0"
+    - `onnov/detect-encoding` to "^2.0"
+    - `mjaschen/phpgeo` to "^3.0"
+    - `matomo/device-detector` to "^4.0"
+    - `ext-imagick` to "^3.2.0" (suggest)
+    - `lcobucci/jwt` to "^4.0"
+
 - `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` has been removed. For custom data types, implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
 - `Pimcore\Model\Document\Editable`(former. `Tags`) properties visibility changed from `protected` to `private`. 
 - [Templating]
@@ -104,7 +115,6 @@
 - Replaced `scheb/two-factor-bundle` with `scheb/2fa-bundle`, `scheb/2fa-google-authenticator` & `scheb/2fa-qr-code`.
 - Removed Laminas Packages.
 - Removed Zend Compatibility Query Builder.
-- Bumped `guzzlehttp/guzzle` to "^7.2"
 - [Ecommerce] Payment Providers: Removed `WirecardSeamless`, `Qpay`, `Paypal` integration and moved to a separate bundle:
     - `Datatrans` => https://github.com/pimcore/payment-provider-datatrans
     - `Heidelpay` => https://github.com/pimcore/payment-provider-unzer
@@ -115,6 +125,24 @@
     - `PayPalSmartPaymentButton` => https://github.com/pimcore/payment-provider-paypal-smart-payment-button
     - `PayU` => https://github.com/pimcore/payment-provider-payu
 
+- [Core] Security configurations not merged anymore from custom bundles.
+- `twig/extensions` dependency has been removed.
+- Removed legacy transliterator (changes related to `\Pimcore\Tool\Transliteration::_transliterationProcess`).
+- Config: Invalid pimcore configurations will result in compile error:
+    ```yaml
+      pimcore:
+         xyz:
+            xyz:
+    ```
+- [Data Objects] Removed `getFromCsvImport()` method from data-types.    
+- Replaced `Ramsey/Uuid` with `Symfony/Uuid`.
+- Matomo Integration has been removed.
+- `Pimcore\Tool\Console::exec()` method has been removed. Use Symfony\Component\Process\Process instead.
+- `Pimcore\Twig\Extension\Templating\Navigation::buildNavigation()` method has been removed.
+- `Pimcore\Tool\Mime` class has been removed. Use `Symfony\Component\Mime\MimeTypes` instead.
+- [Documents] Areabricks: location changed from `Areas` to `areas` with BC layer.
+- [Documents] Areablocks: Adding a brick to areablocks will not trigger reload by default anymore and should be configured per Brick.
+- SQIP support has been removed.
 - `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.
 - `\Pimcore\Model\DataObject\Service::removeObjectFromSession()` has been removed, use `removeElementFromSession()` instead.
 - `\Pimcore\Model\DataObject\Service::getObjectFromSession()` has been removed, use `getElementFromSession()` instead.
