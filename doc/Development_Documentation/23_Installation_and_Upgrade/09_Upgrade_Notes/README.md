@@ -100,6 +100,20 @@
 - [Data Objects] OwnerAwareFieldInterface: added methods `_setOwner($owner)`, `_setOwnerFieldname(?string $fieldname)`, `_setOwnerLanguage(?string $language)`, `_getOwner()`, `_getOwnerFieldname()`, _getOwnerLanguage() and removed method `setOwner($owner, string $fieldname, $language = null)`.
 - [Translations] Remove `pimcore.translations.case_insensitive` support.
 - [Core] Folder structure updated to support Symfony Flex. Changes as per [Symfony Docs](https://symfony.com/doc/current/setup/flex.html)
+- [Translations] `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been removed. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
+- Replaced `scheb/two-factor-bundle` with `scheb/2fa-bundle`, `scheb/2fa-google-authenticator` & `scheb/2fa-qr-code`.
+- Removed Laminas Packages.
+- Removed Zend Compatibility Query Builder.
+- Bumped `guzzlehttp/guzzle` to "^7.2"
+- [Ecommerce] Payment Providers: Removed `WirecardSeamless`, `Qpay`, `Paypal` integration and moved to a separate bundle:
+    - `Datatrans` => https://github.com/pimcore/payment-provider-datatrans
+    - `Heidelpay` => https://github.com/pimcore/payment-provider-unzer
+    - `Hobex` => https://github.com/pimcore/payment-provider-hobex
+    - `Klarna` => https://github.com/pimcore/payment-provider-klarna
+    - `Mpay24Seamless` => https://github.com/pimcore/payment-provider-mpay24-seamless
+    - `OGone` => https://github.com/pimcore/payment-provider-ogone
+    - `PayPalSmartPaymentButton` => https://github.com/pimcore/payment-provider-paypal-smart-payment-button
+    - `PayU` => https://github.com/pimcore/payment-provider-payu
 
 - `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.
 - `\Pimcore\Model\DataObject\Service::removeObjectFromSession()` has been removed, use `removeElementFromSession()` instead.
