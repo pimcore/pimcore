@@ -355,7 +355,7 @@ EOT;
 
         $this->config = $config;
 
-        if(($this->config['manual'] ?? false) === true) {
+        if (($this->config['manual'] ?? false) === true) {
             $this->config['reload'] = true;
         }
 
