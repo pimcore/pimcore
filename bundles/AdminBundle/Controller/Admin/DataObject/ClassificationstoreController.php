@@ -788,6 +788,11 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $limit = 15;
         $orderKey = 'name';
         $order = 'ASC';
+        $relationIds = $request->get('relationIds');
+
+        if ($relationIds) {
+            $relationIds = json_decode($relationIds, true);
+        }
 
         if ($request->get('dir')) {
             $order = $request->get('dir');
@@ -795,6 +800,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $allParams = array_merge($request->request->all(), $request->query->all());
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
             $orderKey = $sortingSettings['orderKey'];
             $order = $sortingSettings['order'];
@@ -807,7 +813,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         if ($request->get('limit')) {
             $limit = $request->get('limit');
+        } elseif (is_array($relationIds)) {
+            $limit = count($relationIds);
         }
+
         if ($request->get('start')) {
             $start = $request->get('start');
         }
@@ -817,6 +826,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         if ($limit > 0) {
             $list->setLimit($limit);
         }
+
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
@@ -827,10 +837,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
-            $count = 0;
-
             foreach ($filters as $f) {
-                $count++;
                 $fieldname = $mapping[$f->field];
                 $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -841,15 +848,15 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $conditionParts[] = ' groupId = ' . $list->quote($groupId);
         }
 
-        $relationIds = $request->get('relationIds');
         if ($relationIds) {
-            $relationIds = json_decode($relationIds, true);
             $relationParts = [];
+
             foreach ($relationIds as $relationId) {
                 $keyId = $relationId['keyId'];
                 $groupId = $relationId['groupId'];
                 $relationParts[] = '(keyId = ' . $list->quote($keyId) . ' AND groupId = ' . $list->quote($groupId) . ')';
             }
+
             $conditionParts[] = '(' . implode(' OR ', $relationParts) . ')';
         }
 
