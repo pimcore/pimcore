@@ -315,7 +315,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param Element\ElementInterface $element
      *
@@ -338,6 +338,8 @@ class Service extends Model\Element\Service
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
+     * @internal
      *
      * @param Asset $asset
      * @param array $rewriteConfig

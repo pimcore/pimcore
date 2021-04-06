@@ -20,6 +20,9 @@ namespace Pimcore\Model\Asset\Thumbnail;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Tool\Storage;
 
+/**
+ * @internal
+ */
 trait ClearTempFilesTrait
 {
     public function clearTempFiles()

@@ -646,16 +646,19 @@ final class ClassificationstoreController extends AdminController implements Ker
     /**
      * @Route("/list-stores", name="pimcore_admin_dataobject_classificationstore_liststores", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function listStoresAction(Request $request)
+    public function listStoresAction()
     {
-        $list = new Classificationstore\StoreConfig\Listing();
-        $list = $list->load();
+        $storeConfigs = [];
+        $storeConfigListing = new Classificationstore\StoreConfig\Listing();
+        $storeConfigListing->load();
 
-        return $this->adminJson($list);
+        foreach ($storeConfigListing as $storeConfig) {
+            $storeConfigs[] = $storeConfig->getObjectVars();
+        }
+
+        return $this->adminJson($storeConfigs);
     }
 
     /**

@@ -324,7 +324,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
             $value = [$value];
         }
 
-        $this->getQueryBuilder()->where($condition, $value);
+        $this->getQueryBuilder()->where($condition)->setParameters($value);
 
         return $this;
     }

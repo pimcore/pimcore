@@ -215,7 +215,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $blockElementRaw['data'] = $dataFromResource;
                     }
 
-
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
 
                     if ($blockElementRaw['type'] == 'localizedfields') {

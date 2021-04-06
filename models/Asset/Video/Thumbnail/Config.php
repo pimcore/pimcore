@@ -24,7 +24,7 @@ use Pimcore\Model;
  * @method void save()
  * @method void delete()
  */
-class Config extends Model\AbstractModel
+final class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
@@ -120,6 +120,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return Config
      */
     public static function getPreviewConfig()
@@ -153,6 +155,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      * @param array $parameters
      * @param string $media
@@ -178,6 +182,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
@@ -227,6 +233,9 @@ class Config extends Model\AbstractModel
         return false;
     }
 
+    /**
+     * @internal
+     */
     public function resetItems()
     {
         $this->items = [];
@@ -374,6 +383,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return array
      */
     public function getEstimatedDimensions()

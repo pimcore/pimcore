@@ -1093,6 +1093,10 @@ class Service extends Model\Element\Service
      */
     private static function synchronizeCustomLayoutFieldWithMaster($masterDefinition, &$layout)
     {
+        if (is_null($layout)) {
+            return true;
+        }
+
         if ($layout instanceof ClassDefinition\Data) {
             $fieldname = $layout->name;
             if (!$masterDefinition[$fieldname]) {

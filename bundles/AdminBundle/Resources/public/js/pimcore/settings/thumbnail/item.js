@@ -143,11 +143,6 @@ pimcore.settings.thumbnail.item = Class.create({
                         style: "margin-bottom: 20px"
                     }, {
                         xtype: "checkbox",
-                        name: "forcePictureTag",
-                        boxLabel: t("force_picture_html_tag"),
-                        checked: this.data.forcePictureTag
-                    }, {
-                        xtype: "checkbox",
                         name: "preserveColor",
                         boxLabel: t("preserve_color") + " (Imagick, ORIGINAL)",
                         checked: this.data.preserveColor

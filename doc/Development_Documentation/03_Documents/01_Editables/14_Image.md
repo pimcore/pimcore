@@ -36,7 +36,6 @@ The biggest advantages of using that instead of (for example) the relation edita
 | `cacheBuster`                  | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
 
 Additionally you can also pass [any valid attribute for `Thumbnail::getHtml()`](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
-as well as every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
 
 ## Methods
 

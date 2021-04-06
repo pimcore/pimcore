@@ -174,8 +174,8 @@ final class DataObjectHelperController extends AdminController
             /** @var GridConfig $config */
             foreach ($list as $config) {
                 $result[] = [
-                    'id' => $config["id"],
-                    'name' => $config["name"],
+                    'id' => $config['id'],
+                    'name' => $config['name'],
                 ];
             }
         }

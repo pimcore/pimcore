@@ -543,7 +543,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     public function normalize($value, $params = [])
     {
-        if($value instanceof Model\DataObject\Data\EncryptedField) {
+        if ($value instanceof Model\DataObject\Data\EncryptedField) {
             return $value->getPlain();
         }
     }

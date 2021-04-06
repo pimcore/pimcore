@@ -35,6 +35,8 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             this.createInitalControls();
         }
         else {
+            Ext.get(this.id).removeCls("pimcore_block_buttons");
+
             for (var i = 0; i < this.elements.length; i++) {
 
                 if(this.elements[i].key) {

@@ -26,7 +26,7 @@ use Pimcore\Tool\Serialize;
  * @method void save(bool $forceClearTempFiles = false)
  * @method void delete(bool $forceClearTempFiles = false)
  */
-class Config extends Model\AbstractModel
+final class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
@@ -122,14 +122,11 @@ class Config extends Model\AbstractModel
     /**
      * @var bool
      */
-    protected $forcePictureTag = false;
-
-    /**
-     * @var bool
-     */
     protected $preserveAnimation = false;
 
     /**
+     * @internal
+     *
      * @param string|array|self $config
      *
      * @return self|null
@@ -232,6 +229,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param bool $hdpi
      *
      * @return Config
@@ -277,6 +276,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      * @param array $parameters
      * @param string $media
@@ -302,6 +303,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
@@ -326,6 +329,9 @@ class Config extends Model\AbstractModel
         return true;
     }
 
+    /**
+     * @internal
+     */
     public function resetItems()
     {
         $this->items = [];
@@ -517,7 +523,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param array $config
      *
@@ -549,10 +555,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * This is just for compatibility, this method will be removed with the next major release
+     * This is mainly here for backward compatibility
      *
-     * @deprecated
-     * @static
+     * @internal
      *
      * @param array $config
      *
@@ -637,6 +642,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param Model\Asset\Image $asset
      *
      * @return array
@@ -839,22 +846,6 @@ class Config extends Model\AbstractModel
     public function setGroup(string $group): void
     {
         $this->group = $group;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getForcePictureTag(): bool
-    {
-        return $this->forcePictureTag;
-    }
-
-    /**
-     * @param bool $forcePictureTag
-     */
-    public function setForcePictureTag(bool $forcePictureTag): void
-    {
-        $this->forcePictureTag = $forcePictureTag;
     }
 
     /**

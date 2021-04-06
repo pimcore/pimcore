@@ -23,6 +23,9 @@ use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Sabre\DAV;
 
+/**
+ * @internal
+ */
 class File extends DAV\File
 {
     /**

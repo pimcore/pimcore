@@ -93,6 +93,11 @@ class EditableRenderer implements LoggerAwareInterface
             $editable = $this->editableLoader->build($type);
             $editable->setName($name);
             $document->setEditable($editable);
+
+            //set default value on initial build
+            if (isset($config['defaultValue'])) {
+                $editable->setDataFromResource($config['defaultValue']);
+            }
         }
 
         $editable->setDocument($document);
