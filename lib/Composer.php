@@ -131,7 +131,7 @@ class Composer
         if (strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
             $parameters = preg_replace_callback('/ThisTokenIsNotSoSecretChangeIt/', function ($match) {
                 // generate a unique token for each occurrence
-                return base64_encode(random_bytes(24));
+                return base64_encode(random_bytes(32));
             }, $parameters);
             file_put_contents($parametersYml, $parameters);
         }
