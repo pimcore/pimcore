@@ -335,13 +335,17 @@ class Video extends Model\Asset
             $buffer = false;
 
             // find open tag
+            $overlapString = '';
             while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
                 if (strlen($chunk) <= $tagLength) {
                     break;
                 }
+
+                $chunk = $overlapString . $chunk;
+
                 if (($position = strpos($chunk, $tag)) === false) {
                     // if open tag not found, back up just in case the open tag is on the split.
-                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
+                    $overlapString = substr($chunk, $tagLength * -1);
                 } else {
                     $buffer = substr($chunk, $position);
                 }
