@@ -1,6 +1,52 @@
 # Upgrade Notes
 
 ## 10.0.0
+- `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` has been removed. For custom data types, implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
+- `Pimcore\Model\Document\Editable`(former. `Tags`) properties visibility changed from `protected` to `private`. 
+- [Templating]
+    - PHP templating engine (including templating helpers & vars) has been removed to support Symfony 5. Use Twig or Php Templating Engine Bundle(enterprise) Instead.
+    - Removed ViewModel.
+    - Removed Auto view rendering.
+    - Removed Placeholder support. Use Twig Parameters instead.
+
+- `Pimcore\Model\Tool\Tracking\Event` has been removed.
+- `Pimcore\Tool\Archive` has been removed.
+- Removed QR Codes.
+- Remove Linfo Integration.
+- [Ecommerce][IndexService] Removed FactFinder integration.
+- Removed `Pimcore\Model\Tool\Lock`.
+- Removed HybridAuth integration.
+- Removed `Pimcore\Model\Document\Tag\*` classes. Use `Pimcore\Model\Document\Editable\*` classes instead. 
+- Removed `pimcore_tag_` css classes, use `pimcore_editable_` css instead.
+- Removed REST Webservice API.
+- Removed Legacy [Service aliases](https://github.com/pimcore/pimcore/pull/7281/files).
+- [Document] Removed support for edit.php on Area-Bricks. Use new feature: Editable Dialog Box instead.
+- [Glossary] Removed support for `Acronym`. Use `Abbr` instead.
+- [Element] Added `setProperties()` and `setProperty()` methods to `Pimcore\Model\Element\ElementInterface`.
+- [Document] Removed Editable Naming Strategy Support.
+- Removed Cookie Policy Info Bar Integration.
+- Removed `\Pimcore\Browser` class. Use `\Browser` instead.
+- Method signature `PageSnippet::setEditable(string $name, Editable $data)` has been changed to `PageSnippet::setEditable(Editable $editable)`.
+- Removed Tag & Snippet Management.
+- Removed `Pimcore\Controller\EventedControllerInterface`. Use `Pimcore\Controller\KernelControllerEventInterface` and `Pimcore\Controller\KernelResponseEventInterface` instead.
+- Doctrine dependencies bumped to latest major version:
+    - "doctrine/common": "^3.0.0"
+    - "doctrine/inflector": "^2.0.0"
+- Removed service `pimcore.implementation_loader.document.tag`. Use `Pimcore\Model\Document\Editable\Loader\EditableLoader` instead.
+- Removed Pimcore Bundles generator and command `pimcore:generate:bundle`.
+- `Pimcore\Controller\Controller` abstract class now extends `Symfony\Bundle\FrameworkBundle\Controller\AbstractController` instead of `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
+- `Pimcore\Translation\Translator::transChoice()` method has been removed. Use `trans()` method with `%count%` parameter.
+- Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from System.yml.
+- Removed `pimcore.workflows.initial_place` config. Use `pimcore.workflows.initial_markings` instead.
+- `WebDebugToolbarListenerPass` has been removed and `WebDebugToolbarListener` has been marked as final & internal.
+- Bumped Database server minimum requirements:
+    - MariaDB >= 10.2
+    - MySQL >= 5.7
+    - AWS Aurora (supported versions see MySQL)
+    - Percona Server (supported versions see MySQL)
+- Bumped sabre/dav to ^4.1.1
+
+
 - `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.
 - `\Pimcore\Model\DataObject\Service::removeObjectFromSession()` has been removed, use `removeElementFromSession()` instead.
 - `\Pimcore\Model\DataObject\Service::getObjectFromSession()` has been removed, use `getElementFromSession()` instead.
@@ -267,7 +313,7 @@ If you have custom editables or wysiwyg global config then please change namespa
 - [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 10.
 - Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
 - `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in Pimcore 10
-- Calling `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` is deprecated since version 6.7.0 and will be removed in version 7 . Implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
+- Calling `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` is deprecated since version 6.7.0 and will be removed in version 10 . Implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
 - Following properties and methods are deprecated to unify document editables and will be removed in Pimcore 10. [#6900](https://github.com/pimcore/pimcore/pull/6900):
     - `PageSnippet::$elements`. Use `PageSnippet::$editables` instead.
     - `PageSnippet::$inheritedElements`. Use `PageSnippet::$inheritedEditables` instead.
