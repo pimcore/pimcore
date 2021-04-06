@@ -1,10 +1,23 @@
 # Upgrade Notes
 
 ## 10.0.0
+
+### System Requirements
+     - PHP >= 8.0
+     - Apache >= 2.4
+
+### Database
+    - MariaDB >= 10.2
+    - MySQL >= 5.7
+    - AWS Aurora (supported versions see MySQL)
+    - Percona Server (supported versions see MySQL)
+### Changes
+- Bumped `symfony/symfony` to "^5.2.0". Pimcore X will only support Symfony 5.
+
 - `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` has been removed. For custom data types, implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
 - `Pimcore\Model\Document\Editable`(former. `Tags`) properties visibility changed from `protected` to `private`. 
 - [Templating]
-    - PHP templating engine (including templating helpers & vars) has been removed to support Symfony 5. Use Twig or Php Templating Engine Bundle(enterprise) Instead.
+    - PHP templating engine (including templating helpers & vars) has been removed to support Symfony 5. Use Twig or Php Templating Engine Bundle(enterprise) instead.
     - Removed ViewModel.
     - Removed Auto view rendering.
     - Removed Placeholder support. Use Twig Parameters instead.
@@ -39,12 +52,36 @@
 - Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from System.yml.
 - Removed `pimcore.workflows.initial_place` config. Use `pimcore.workflows.initial_markings` instead.
 - `WebDebugToolbarListenerPass` has been removed and `WebDebugToolbarListener` has been marked as final & internal.
-- Bumped Database server minimum requirements:
-    - MariaDB >= 10.2
-    - MySQL >= 5.7
-    - AWS Aurora (supported versions see MySQL)
-    - Percona Server (supported versions see MySQL)
-- Bumped sabre/dav to ^4.1.1
+- Bumped `sabre/dav` to ^4.1.1
+- Removed `Pimcore\Model\Element\Reference\Placeholder` class.
+- Removed `pimcore.routing.defaults`. Use `pimcore.documents.default_controller` instead. 
+- Removed `\Pimcore\Tool::getRoutingDefaults()`, `PageSnippet::$module|$action|get/setAction()|get/setModule()`, `DocType::$module|$action|get/setAction()|get/setModule()`, `Staticroute::$module|$action|get/setAction()|get/setModule()`. 
+- Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
+- Removed `\Pimcore\Controller\Config\ConfigNormalizer`. 
+- Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.
+- [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction` 
+- Bumped `codeception/codeception` to "^4.1.12".
+- Pimcore Bundle Migrations: Extending the functionality of `DoctrineMigrationsBundle` is not any longer possible the way we did it in the past. Therefore we're switching to standard Doctrine migrations, this means also that migration sets are not supported anymore and that the available migrations have to be configured manually or by using flex.
+    ```yaml
+      doctrine_migrations:
+          migrations_paths:
+              'Pimcore\Bundle\DataHubBundle\Migrations': '@PimcoreDataHubBundle/Migrations'
+              'CustomerManagementFrameworkBundle\Migrations': '@PimcoreCustomerManagementFrameworkBundle/Migrations'
+    ```
+  However, we've extended the doctrine commands to accept an optional `--prefix` option, which let's you filter configured migration classes. This is in a way an adequate replacement for the `-s` (sets) option.
+  
+  `./bin/console doctrine:migrations:list --prefix=Pimcore\\Bundle\\CoreBundle`
+
+- [Ecommerce] Added `setItems($items)` method `CartInterface`, `getRule()` to `ModificatedPriceInterface` & `getId()` method to `ProductInterface`.
+- [Data Objects] Relation Data-Types: throws exception if object without an ID was assigned. e.g.
+    ```php
+    $newObject = new MyDataObject(); 
+    $existingObject->setMyRelations([$newObject]);
+    $existingObject->save(); //validation error
+    ```
+- [Data Objects] ManyToMany Relation Types: throws exception if multiple assignments passed without enabling Multiple assignments on class definition.
+- [Data Object] Table Data-Type always return an array.
+- [Data Object] `Model::getById()` & `Model::getByPath()` do not catch exceptions anymore.
 
 
 - `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.

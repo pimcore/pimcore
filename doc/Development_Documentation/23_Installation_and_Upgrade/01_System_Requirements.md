@@ -3,13 +3,13 @@
 For production we highly recommend a *nix based system. 
 
 ### Webserver 
-- Apache >= 2.2
+- Apache >= 2.4
   - mod_rewrite
   - .htaccess support (`AllowOverride All`)
 - Nginx
 
 
-### PHP >= 7.3
+### PHP >= 8.0
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
