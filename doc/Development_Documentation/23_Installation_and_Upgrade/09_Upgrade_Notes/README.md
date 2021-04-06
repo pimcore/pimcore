@@ -13,7 +13,7 @@
     - Percona Server (supported versions see MySQL)
 ### Changes
 - Bumped `symfony/symfony` to "^5.2.0". Pimcore X will only support Symfony 5.
-
+- ExtJS bumped to version 7.
 - `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` has been removed. For custom data types, implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
 - `Pimcore\Model\Document\Editable`(former. `Tags`) properties visibility changed from `protected` to `private`. 
 - [Templating]
@@ -98,7 +98,8 @@
 - [Data Objects] Data-Types: Removed getPhpdocType() BC layer
 - [Ecommerce][FilterService] Added method `getFilterValues()` to `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType`
 - [Data Objects] OwnerAwareFieldInterface: added methods `_setOwner($owner)`, `_setOwnerFieldname(?string $fieldname)`, `_setOwnerLanguage(?string $language)`, `_getOwner()`, `_getOwnerFieldname()`, _getOwnerLanguage() and removed method `setOwner($owner, string $fieldname, $language = null)`.
-
+- [Translations] Remove `pimcore.translations.case_insensitive` support.
+- [Core] Folder structure updated to support Symfony Flex. Changes as per [Symfony Docs](https://symfony.com/doc/current/setup/flex.html)
 
 - `\Pimcore\Model\Document\Editable\Block\AbstractBlockItem::getElement()` has been removed, use `getEditable()` instead.
 - `\Pimcore\Model\DataObject\Service::removeObjectFromSession()` has been removed, use `removeElementFromSession()` instead.
