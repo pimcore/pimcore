@@ -159,26 +159,20 @@ class EncryptedField implements MarshallerInterface
     {
         if ($data) {
             $object = $params['object'] ?? null;
+            $fd = $params['fieldDefinition'];
+            $delegateFd = $fd->getDelegate();
 
             try {
                 $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
                 try {
                     $key = Key::loadFromAsciiSafeString($key);
                 } catch (\Exception $e) {
-                    if (!self::isStrictMode()) {
-                        Logger::error('failed to load key');
-
-                        return null;
-                    }
                     throw new \Exception('could not load key');
                 }
 
                 if (!(isset($params['skipDecryption']) && $params['skipDecryption'])) {
                     $data = Crypto::decrypt($data, $key);
                 }
-
-                $fd = $params['fieldDefinition'];
-                $delegateFd = $fd->getDelegate();
 
                 if (method_exists($delegateFd, 'unmarshalAfterDecryption')) {
                     $data = $delegateFd->unmarshalAfterDecryption($data, $object, $params);
@@ -187,9 +181,7 @@ class EncryptedField implements MarshallerInterface
                 return $data;
             } catch (\Exception $e) {
                 Logger::error($e);
-                if (self::isStrictMode()) {
-                    throw new \Exception('encrypted field ' . $this->getName() . ' cannot be decoded');
-                }
+                throw new \Exception('encrypted field ' . $delegateFd->getName() . ' cannot be decoded');
             }
         }
 
