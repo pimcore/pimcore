@@ -49,7 +49,7 @@ abstract class Dao extends Model\Translation\Listing\Dao implements Dao\DaoInter
                 $closure($select);
             }
 
-            $translationsData = $this->db->fetchAll($select);
+            $translationsData = $this->db->fetchAll((string)$select);
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {

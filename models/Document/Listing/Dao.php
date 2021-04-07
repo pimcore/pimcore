@@ -47,7 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $documents = [];
         $select = $this->getQueryBuilderCompatibility(['id', 'type']);
 
-        $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentsData = $this->db->fetchAll((string)$select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($documentsData as $documentData) {
             if ($documentData['type']) {
