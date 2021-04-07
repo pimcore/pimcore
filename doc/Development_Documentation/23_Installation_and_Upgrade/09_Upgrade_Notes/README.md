@@ -46,6 +46,7 @@
 - [Document] Removed support for edit.php on Area-Bricks. Use new feature: Editable Dialog Box instead.
 - [Glossary] Removed support for `Acronym`. Use `Abbr` instead.
 - [Element] Added `setProperties()` and `setProperty()` methods to `Pimcore\Model\Element\ElementInterface`.
+- [Element] `setProperty()` method param `$inheritable` defaults to false. Adding a new property will create a non-inheritable property for documents.
 - [Document] Removed Editable Naming Strategy Support.
 - Removed Cookie Policy Info Bar Integration.
 - Removed `\Pimcore\Browser` class. Use `\Browser` instead.
