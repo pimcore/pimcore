@@ -59,6 +59,11 @@ services:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_booleanSelect, key: 'classificationstore_booleanSelect' }
 
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\EncryptedField:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_encryptedField, key: 'classificationstore_encryptedField' }
+
     Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Multiselect:
         class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Multiselect
         tags:
