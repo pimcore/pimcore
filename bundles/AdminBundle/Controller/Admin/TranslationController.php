@@ -537,10 +537,10 @@ final class TranslationController extends AdminController
                         }
                         $alreadyJoined[$fieldname] = 1;
 
-                        $select->addSelect('text AS ' . $fieldname);
+                        $select->addSelect($fieldname . '.text AS ' . $fieldname);
                         $select->leftJoin(
                             $tableName,
-                            $fieldname,
+                            $tableName,
                             $fieldname,
                             '('
                             . $fieldname . '.key = ' . $tableName . '.key'
