@@ -147,7 +147,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             return;
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
+        if(!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId())){
+            return;
+        }
 
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
@@ -176,9 +178,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     }
                     $this->model->setValue($key, $value->getDataFromResource($multidata));
                 } else {
-                    $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model,
-                            ['owner' => $this->model,
-                                'fieldname' => $key, ]));
+                    $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model, [
+                        'owner' => $this->model,
+                        'fieldname' => $key,
+                    ]));
                 }
             }
         }
