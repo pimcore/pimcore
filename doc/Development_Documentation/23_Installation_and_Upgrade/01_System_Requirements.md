@@ -37,7 +37,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 
 ### Database Server
-- MariaDB >= 10.2.2
+- MariaDB >= 10.3
 - MySQL >= 8.0
 - Percona Server (supported versions see MySQL)
 

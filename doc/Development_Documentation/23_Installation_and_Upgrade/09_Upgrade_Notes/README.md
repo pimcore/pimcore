@@ -7,7 +7,7 @@
      - Apache >= 2.4
 
 ### Database
-    - MariaDB >= 10.2.2
+    - MariaDB >= 10.3
     - MySQL >= 8.0
     - Percona Server (supported versions see MySQL)
 ### Changes
