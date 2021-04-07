@@ -728,9 +728,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             if ($items) {
                 foreach ($items as $in) {
                     $item = [];
-                    $item['id'] = $in[0];
-                    $item['path'] = $in[1];
-                    $item['type'] = $in[2];
+                    $item['id'] = $in['id'];
+                    $item['path'] = $in['fullpath'];
+                    $item['type'] = $in['type'];
 
                     $unique = $this->buildUniqueKeyForDiffEditor($item);
 

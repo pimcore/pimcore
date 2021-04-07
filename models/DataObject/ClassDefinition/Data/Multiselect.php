@@ -442,7 +442,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
             $html = '<ul>';
 
             foreach ($this->options as $option) {
-                if ($map[$option['value']]) {
+                if ($map[$option['value']] ?? false) {
                     $value = $option['key'];
                     $html .= '<li>' . $value . '</li>';
                 }
