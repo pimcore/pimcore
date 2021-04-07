@@ -7,9 +7,8 @@
      - Apache >= 2.4
 
 ### Database
-    - MariaDB >= 10.2
-    - MySQL >= 5.7
-    - AWS Aurora (supported versions see MySQL)
+    - MariaDB >= 10.2.2
+    - MySQL >= 8.0
     - Percona Server (supported versions see MySQL)
 ### Changes
 - Bumped `symfony/symfony` to "^5.2.0". Pimcore X will only support Symfony 5.
