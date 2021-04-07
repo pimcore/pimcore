@@ -139,7 +139,7 @@ abstract class AbstractOrderList implements OrderListInterface
             if ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
                 $this->list = new \ArrayIterator($conn->fetchAll($this->getQuery()));
             } else {
-                $this->list = new \ArrayIterator($conn->fetchAll($this->getQueryBuilder(), $this->getQueryBuilder()->getParameters(), $this->getQueryBuilder()->getParameterTypes()));
+                $this->list = new \ArrayIterator($conn->fetchAll((string)$this->getQueryBuilder(), $this->getQueryBuilder()->getParameters(), $this->getQueryBuilder()->getParameterTypes()));
             }
             $this->rowCount = (int)$conn->fetchCol('SELECT FOUND_ROWS() as "cnt"')[0];
         }

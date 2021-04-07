@@ -540,7 +540,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
             $conn = \Pimcore\Db::getConnection();
             $conn->query('SET SESSION group_concat_max_len = 1000000');
-            $this->availableFilterValues = $conn->fetchRow($queryBuilder);
+            $this->availableFilterValues = $conn->fetchRow((string)$queryBuilder);
         }
 
         return explode('|', $this->availableFilterValues['available_' . $field]);
