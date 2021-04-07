@@ -1192,7 +1192,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function setProperties(array $properties)
+    public function setProperties(?array $properties)
     {
         $this->o_properties = $properties;
 
