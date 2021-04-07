@@ -147,7 +147,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             return;
         }
 
-        if(!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId())){
+        if (!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId())) {
             return;
         }
 
