@@ -622,22 +622,24 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
                 if (!isset($processedClasses[$cl['classname']])) {
-                    $class = DataObject\ClassDefinition::getByName($cl['classname']);
-                    $this->getDao()->delete($class);
                     $processedClasses[$cl['classname']] = true;
+                    $class = DataObject\ClassDefinition::getByName($cl['classname']);
+                    if ($class instanceof DataObject\ClassDefinition) {
+                        $this->getDao()->delete($class);
 
-                    foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                            $allowedTypes = $fieldDef->getAllowedTypes();
-                            $idx = array_search($this->getKey(), $allowedTypes);
-                            if ($idx !== false) {
-                                array_splice($allowedTypes, $idx, 1);
+                        foreach ($class->getFieldDefinitions() as $fieldDef) {
+                            if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                                $allowedTypes = $fieldDef->getAllowedTypes();
+                                $idx = array_search($this->getKey(), $allowedTypes);
+                                if ($idx !== false) {
+                                    array_splice($allowedTypes, $idx, 1);
+                                }
+                                $fieldDef->setAllowedTypes($allowedTypes);
                             }
-                            $fieldDef->setAllowedTypes($allowedTypes);
                         }
-                    }
 
-                    $class->save();
+                        $class->save();
+                    }
                 }
             }
         }
