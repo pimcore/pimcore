@@ -21,7 +21,7 @@
     - `onnov/detect-encoding` to "^2.0"
     - `mjaschen/phpgeo` to "^3.0"
     - `matomo/device-detector` to "^4.0"
-    - `ext-imagick` to "^3.2.0" (suggest)
+    - `ext-imagick` to "^3.4.0" (suggest)
     - `lcobucci/jwt` to "^4.0"
 
 - `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` has been removed. For custom data types, implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
