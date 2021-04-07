@@ -61,7 +61,7 @@ class AdminExceptionListener implements EventSubscriberInterface
             list($code, $headers, $message) = $this->getResponseData($ex);
 
             $data = [
-                'success' => false
+                'success' => false,
             ];
 
             if (!\Pimcore::inDebugMode()) {
