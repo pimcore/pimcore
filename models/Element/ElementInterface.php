@@ -144,11 +144,11 @@ interface ElementInterface extends ModelInterface
     public function getProperties();
 
     /**
-     * @param Property[] $properties
+     * @param Property[]|null $properties
      *
      * @return $this
      */
-    public function setProperties(array $properties);
+    public function setProperties(?array $properties);
 
     /**
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
