@@ -68,11 +68,6 @@ final class AdminExceptionListener implements EventSubscriberInterface
                 }
             }
 
-            $data = [
-                'success' => false,
-                'message' => $message,
-            ];
-
             if (\Pimcore::inDebugMode()) {
                 $data['trace'] = $ex->getTrace();
                 $data['traceString'] = 'in ' . $ex->getFile() . ':' . $ex->getLine() . "\n" . $ex->getTraceAsString();
@@ -82,10 +77,13 @@ final class AdminExceptionListener implements EventSubscriberInterface
                 $data['type'] = 'ValidationException';
                 $code = 422;
 
-                $message = '';
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
-                $data['message'] = $message;
             }
+
+            $data = [
+                'success' => false,
+                'message' => $message,
+            ];
 
             $response = new JsonResponse($data, $code, $headers);
             $event->setResponse($response);
