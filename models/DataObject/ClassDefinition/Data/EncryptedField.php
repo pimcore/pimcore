@@ -541,15 +541,26 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
+    /** { @inheritdoc } */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Model\DataObject\Data\EncryptedField) {
-            return $value->getPlain();
+            $plainValue = $value->getPlain();
+            if ($this->delegate instanceof NormalizerInterface) {
+                $plainValue = $this->delegate->normalize($plainValue, $params);
+            }
+            return $plainValue;
         }
     }
 
+    /** { @inheritdoc } */
     public function denormalize($value, $params = [])
     {
-        return new Model\DataObject\Data\EncryptedField($this->delegate, $value);
+        if ($this->delegate instanceof NormalizerInterface) {
+            $value = $this->delegate->denormalize($value, $params);
+        }
+        $value = new Model\DataObject\Data\EncryptedField($this->delegate, $value);
+
+        return $value;
     }
 }
