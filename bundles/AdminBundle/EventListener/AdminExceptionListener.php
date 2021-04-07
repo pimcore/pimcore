@@ -60,6 +60,10 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             list($code, $headers, $message) = $this->getResponseData($ex);
 
+            $data = [
+                'success' => false
+            ];
+
             if (!\Pimcore::inDebugMode()) {
                 // DBAL exceptions do include SQL statements, we don't want to expose them
                 if ($ex instanceof DBALException) {
@@ -79,10 +83,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
             }
 
-            $data = [
-                'success' => false,
-                'message' => $message,
-            ];
+            $data['message'] = $message;
 
             $response = new JsonResponse($data, $code, $headers);
             $event->setResponse($response);
