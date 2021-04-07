@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject;
 
+use DeepCopy\Filter\SetNullFilter;
+use DeepCopy\Matcher\PropertyNameMatcher;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
@@ -1261,6 +1263,7 @@ class Service extends Model\Element\Service
     public static function cloneDefinition($definition)
     {
         $deepCopy = new \DeepCopy\DeepCopy();
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('fieldDefinitionsCache'));
         $theCopy = $deepCopy->copy($definition);
 
         return $theCopy;
