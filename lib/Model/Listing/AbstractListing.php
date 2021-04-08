@@ -170,7 +170,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if (intval($offset) > 0) {
+        if (intval($offset) >= 0) {
             $this->offset = intval($offset);
         }
 
