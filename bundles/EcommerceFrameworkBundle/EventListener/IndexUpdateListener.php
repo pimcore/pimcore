@@ -20,10 +20,7 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * @internal
- */
-final class IndexUpdateListener implements EventSubscriberInterface
+class IndexUpdateListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
