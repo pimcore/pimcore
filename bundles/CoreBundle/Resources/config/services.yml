@@ -202,16 +202,11 @@ services:
         arguments:
             - '@database_connection'
 
-    Symfony\Component\Lock\Store\RetryTillSaveStore:
-        arguments:
-            - '@Symfony\Component\Lock\PersistingStoreInterface'
-            - 1000
-
     Symfony\Component\Lock\LockFactory:
         public: true
         class: Symfony\Component\Lock\LockFactory
         arguments:
-            - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
+            - '@Symfony\Component\Lock\PersistingStoreInterface'
 
 
     Pimcore\Model\Paginator\EventSubscriber\PaginateListingSubscriber: ~
