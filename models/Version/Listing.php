@@ -51,6 +51,7 @@ class Listing extends Model\Listing\AbstractListing
         return $this;
     }
 
+    /**
      * @return Model\Version[]
      */
     public function getVersions()
