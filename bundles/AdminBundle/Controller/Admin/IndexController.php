@@ -250,7 +250,7 @@ final class IndexController extends AdminController implements KernelResponseEve
             'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             'draft_saving_interval_document' => $this->getParameter('pimcore.admin.draft_saving_interval_document'),
-            'draft_saving_interval_object' => $this->getParameter('pimcore.admin.draft_saving_interval_object')
+            'draft_saving_interval_object' => $this->getParameter('pimcore.admin.draft_saving_interval_object'),
           
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
