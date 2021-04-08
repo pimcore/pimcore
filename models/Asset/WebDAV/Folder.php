@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -51,15 +52,33 @@ class Folder extends DAV\Collection
         $children = [];
 
         if ($this->asset->hasChildren()) {
-            foreach ($this->asset->getChildren() as $child) {
-                if ($child->isAllowed('view')) {
-                    try {
-                        if ($child = $this->getChild($child)) {
-                            $children[] = $child;
-                        }
-                    } catch (\Exception $e) {
-                        Logger::warning($e);
+            $db = Db::get();
+            $childsList = new Asset\Listing();
+
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+            if ($user->isAdmin()) {
+                $condition = 'parentId =  '.$db->quote($this->asset->getId());
+            } else {
+                $userIds = $user->getRoles();
+                $userIds[] = $user->getId();
+
+                $condition = 'parentId = '.$db->quote($this->asset->getId()).' AND
+                (
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
+                    or
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
+                )';
+            }
+
+            $childsList->setCondition($condition);
+
+            foreach ($childsList as $child) {
+                try {
+                    if ($child = $this->getChild($child)) {
+                        $children[] = $child;
                     }
+                } catch (\Exception $e) {
+                    Logger::warning($e);
                 }
             }
         }
@@ -68,7 +87,7 @@ class Folder extends DAV\Collection
     }
 
     /**
-     * @param string $name
+     * @param Asset|string $name
      *
      * @return DAV\INode|void
      *
@@ -76,13 +95,14 @@ class Folder extends DAV\Collection
      */
     public function getChild($name)
     {
-        $nameParts = explode('/', $name);
-        $name = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
         $asset = null;
 
         if (is_string($name)) {
+            $nameParts = explode('/', $name);
+            $name = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
+
             $parentPath = $this->asset->getRealFullPath();
-            if ($parentPath == '/') {
+            if ($parentPath === '/') {
                 $parentPath = '';
             }
 
@@ -94,11 +114,10 @@ class Folder extends DAV\Collection
         }
 
         if ($asset instanceof Asset) {
-            if ($asset->getType() == 'folder') {
+            if ($asset instanceof Asset\Folder) {
                 return new Asset\WebDAV\Folder($asset);
-            } else {
-                return new Asset\WebDAV\File($asset);
             }
+            return new Asset\WebDAV\File($asset);
         }
         throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
