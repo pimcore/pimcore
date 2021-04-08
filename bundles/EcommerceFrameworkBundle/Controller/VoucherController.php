@@ -30,8 +30,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class VoucherController
  *
  * @Route("/voucher")
+ *
+ * @internal
  */
-class VoucherController extends FrontendController implements KernelControllerEventInterface
+final class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

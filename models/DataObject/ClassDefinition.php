@@ -301,6 +301,10 @@ class ClassDefinition extends Model\AbstractModel
         if (is_null($data)) {
             return;
         }
+        
+        if (!is_object($data)) {
+            return;
+        }
 
         if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
             $blockedVars = $data->resolveBlockedVars();

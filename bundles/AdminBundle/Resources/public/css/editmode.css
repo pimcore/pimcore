@@ -366,6 +366,7 @@ input.cke_dialog_ui_input_tel {
 	border: 1px solid #d0d0d0 !important;
     background:url(/bundles/pimcoreadmin/img/flat-color-icons/film_reel.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
+    min-height: 80px;
 }
 
 .pimcore_editable_embed {

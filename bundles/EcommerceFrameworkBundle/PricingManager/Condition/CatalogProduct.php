@@ -124,6 +124,8 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
      * Don't cache the entire product object
      *
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {

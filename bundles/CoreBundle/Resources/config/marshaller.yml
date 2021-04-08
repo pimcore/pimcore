@@ -16,6 +16,11 @@ services:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_date, key: 'block_date' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_datetime, key: 'block_datetime' }
 
+    Pimcore\DataObject\FielddefinitionMarshaller\BlockDataMarshaller\EncryptedField:
+        class: Pimcore\DataObject\BlockDataMarshaller\EncryptedField
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_encryptedField, key: 'block_encryptedField' }
+
     Pimcore\DataObject\BlockDataMarshaller\ExternalImage:
         class: Pimcore\DataObject\BlockDataMarshaller\ExternalImage
         tags:
@@ -58,6 +63,11 @@ services:
         class: Pimcore\DataObject\ClassificationstoreDataMarshaller\BooleanSelect
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_booleanSelect, key: 'classificationstore_booleanSelect' }
+
+    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\EncryptedField:
+        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField
+        tags:
+            - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_encryptedField, key: 'classificationstore_encryptedField' }
 
     Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Multiselect:
         class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Multiselect

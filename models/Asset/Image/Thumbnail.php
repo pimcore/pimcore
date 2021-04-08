@@ -20,6 +20,7 @@ namespace Pimcore\Model\Asset\Image;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Model\Exception\NotFoundException;
@@ -49,10 +50,11 @@ final class Thumbnail
 
     /**
      * @param bool $deferredAllowed
+     * @param bool $cacheBuster
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true)
+    public function getPath($deferredAllowed = true, $cacheBuster = false)
     {
         $pathReference = null;
         if ($this->getConfig()) {
@@ -71,6 +73,10 @@ final class Thumbnail
         }
 
         $path = $this->convertToWebPath($pathReference);
+
+        if($cacheBuster) {
+            $path= $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());
+        }
 
         if ($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
             $event = new GenericEvent($this, [
@@ -196,14 +202,14 @@ final class Thumbnail
     /**
      * @param string $path
      * @param array $options
-     * @param Image $asset
+     * @param Asset $asset
      *
      * @return string
      */
-    protected function addCacheBuster(string $path, array $options, Image $asset): string
+    protected function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            $path = '/cache-buster-' . $asset->getModificationDate() . $path;
+            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
         }
 
         return $path;

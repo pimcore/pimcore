@@ -7,7 +7,7 @@ Pimcore uses [Codeception](https://codeception.com/) for testing its core featur
 1. A Pimcore installation. Read this [guide](../../01_Getting_Started/00_Installation.md) for instructions.
 2. A **dedicated database** used only for testing. In other words, if the Pimcore installation is not only used for testing, create a separate database!
 3. Redis cache (optional, but needed for executing cache tests)
-4. Make sure that `require-dev` requirements of Pimcore's `composer.json` are installed, especially `codeception/codeception`, `codeception/module-symfony`, `codeception/phpunit-wrapper` for executing codeception tests. 
+4. Make sure that `require-dev` requirements of Pimcore's `composer.json` are installed, especially `codeception/codeception`, `codeception/module-symfony`, `codeception/phpunit-wrapper` for executing codeception tests.
 
 ## Executing tests
 
@@ -23,10 +23,10 @@ Always set
 PIMCORE_TEST=1
 ```
 
-This will switch special directories used for testing (like /var/classes) and prevent that you existing installation gets messed up. 
+This will switch special directories used for testing (like /var/classes) and prevent that you existing installation gets messed up.
 
 ##### Check Logfiles
-Don't forget to check logfiles (especially `test.log` and `php.log`) when problems occur. 
+Don't forget to check logfiles (especially `test.log` and `php.log`) when problems occur.
 
 #### Run all tests
 
@@ -46,10 +46,10 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test
 #### Only run a specific test group
 
 This can be a subset of a suite. You also have the option to provide a comma-seperated list of groups.
-For an overview of available groups see the table below. 
+For an overview of available groups see the table below.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Rest -g dataTypeIn    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 vendor/bin/codecept run -c vendor/pimcore/pimcore Rest -g dataTypeIn
 ```
 
 ##### Redis Cache tests
@@ -58,7 +58,7 @@ For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. Set to a value that
 other Redis DBs on your system.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore Cache    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore Cache
 ```
 
 
@@ -103,7 +103,7 @@ ones please tag them accordingly.
 | model.relations.multipleassignment | Dataobject - "allow multiple assignments" tests                        |
 | ...                                |                                                                        |
 
-#### Useful command line options 
+#### Useful command line options
 
 Useful examples:
 
@@ -125,11 +125,9 @@ Please follow the structure and principles described above.
 If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/master/tests/_support/Helper/Model.php).
 There you will find all class definitions used for testing.
 
-### Perform PHPStan Analysis 
+### Perform PHPStan Analysis
 
-First, get a copy of this [sample configuration file](../../../Samples/phpstan.local.neon) and place it in your `PIMCORE_PROJECT_ROOT` root directory.
-
-Replace all occurrences of `PIMCORE_PROJECT_ROOT` with the real directory according to your setup.
+First, get a copy of this [sample configuration file](../../../Samples/phpstan.neon) and place it in your root directory.
 
 Add dependencies:
 ```sh
@@ -137,32 +135,31 @@ Add dependencies:
 composer require "phpstan/phpstan:^0.12" "phpstan/phpstan-symfony:^0.12"
 
 # required if you want to do a full analysis
-composer require "elasticsearch/elasticsearch:2.0.0" "composer/composer:*"
+composer require "elasticsearch/elasticsearch:^7.11" "composer/composer:*"
+cp -rv vendor/pimcore/pimcore/.github/ci/files/models/* var/classes/
 ```
 
 Run
 ```sh
-TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse -c phpstan.local.neon vendor/pimcore/pimcore/bundles/ vendor/pimcore/pimcore/lib/ vendor/pimcore/pimcore/models/ -l 1 --memory-limit=-1
+TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse --memory-limit=-1
 ```
 
 where `/tmp/[dedicateddir]` must be a writable temporary directory.
-
-> Note regarding PRs: Your code has to meet level 3 requirements (run it with `-l 3` instead) for all files you touch or add.
 
 
 ![PHPStan Job](../../img/phpstan1.png)
 
 Open the build log and check for problems.
 
-![PHPStan Log](../../img/phpstan2.png) 
+![PHPStan Log](../../img/phpstan2.png)
 
 ## PHPStan Baseline Feature
 
 PHPStan can create a baseline file, which contain all current errors. See this [blog](https://medium.com/@ondrejmirtes/phpstans-baseline-feature-lets-you-hold-new-code-to-a-higher-standard-e77d815a5dff) entry.
- 
+
 To generate a new baseline file you have to execute following command:
 ```sh
-vendor/bin/phpstan analyse -c phpstan.local.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
+vendor/bin/phpstan analyse --memory-limit=-1 --generate-baseline
 ```
 
 With this baseline file include, we can detect new errors without having to fix all errors first.

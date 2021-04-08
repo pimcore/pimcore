@@ -3,13 +3,13 @@
 For production we highly recommend a *nix based system. 
 
 ### Webserver 
-- Apache >= 2.2
+- Apache >= 2.4
   - mod_rewrite
   - .htaccess support (`AllowOverride All`)
 - Nginx
 
 
-### PHP >= 7.3
+### PHP >= 8.0
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
@@ -37,9 +37,8 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 
 ### Database Server
-- MariaDB >= 10.2
-- MySQL >= 5.7
-- AWS Aurora (supported versions see MySQL)
+- MariaDB >= 10.3
+- MySQL >= 8.0
 - Percona Server (supported versions see MySQL)
 
 #### Features

@@ -17,7 +17,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Maintenance;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Maintenance\TaskInterface;
 
-class CleanupVouchersTask implements TaskInterface
+/**
+ * @internal
+ */
+final class CleanupVouchersTask implements TaskInterface
 {
     public function execute()
     {

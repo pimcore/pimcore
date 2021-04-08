@@ -22,7 +22,10 @@ use Pimcore\Extension\Bundle\Traits\StateHelperTrait;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
+/**
+ * @internal
+ */
+final class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
     use StateHelperTrait;
 

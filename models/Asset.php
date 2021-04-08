@@ -1379,7 +1379,7 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function setProperties(array $properties)
+    public function setProperties(?array $properties)
     {
         $this->properties = $properties;
 

@@ -56,12 +56,17 @@ class TargetGroup implements ConditionInterface
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
         return ['targetGroupId', 'threshold'];
     }
 
+    /**
+     * @internal
+     */
     public function __wakeup()
     {
         if ($this->targetGroupId) {

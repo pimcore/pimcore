@@ -53,7 +53,10 @@ use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class Configuration implements ConfigurationInterface
+/**
+ * @internal
+ */
+final class Configuration implements ConfigurationInterface
 {
     /**
      * @var TenantProcessor

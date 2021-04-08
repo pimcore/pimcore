@@ -24,7 +24,7 @@ trait ElementEditLockHelperTrait
         $editLock = Editlock::getByElement($id, $type);
         $user = User::getById($editLock->getUserId());
 
-        $editLock = object2array($editLock);
+        $editLock = $editLock->getObjectVars();
         unset($editLock['sessionId']);
 
         if ($user) {
