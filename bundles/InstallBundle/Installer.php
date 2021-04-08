@@ -269,13 +269,13 @@ class Installer
         $adminPass = $params['admin_password'] ?? '';
 
         //check skipping database creation or database data
-        if (array_key_exists('skip_database_structure', $params)) {
+        if (!empty($params['skip_database_structure'])) {
             $this->createDatabaseStructure = false;
         }
-        if (array_key_exists('skip_database_data', $params)) {
+        if (!empty($params['skip_database_data'])) {
             $this->importDatabaseData = false;
         }
-        if (array_key_exists('skip_database_data_dump', $params)) {
+        if (!empty($params['skip_database_data_dump'])) {
             $this->importDatabaseDataDump = false;
         }
 
