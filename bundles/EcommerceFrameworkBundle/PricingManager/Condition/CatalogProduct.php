@@ -124,6 +124,8 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
      * Don't cache the entire product object
      *
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -150,9 +152,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
         return $this;
     }
 
-    /**
-     * @return AbstractProduct[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         return $this->products;

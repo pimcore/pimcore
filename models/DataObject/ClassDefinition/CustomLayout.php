@@ -34,52 +34,52 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var Layout|null
      */
-    public $layoutDefinitions;
+    protected $layoutDefinitions;
 
     /**
      * @var int
      */
-    public $default;
+    protected $default;
 
     /**
      * @param string $id
@@ -113,16 +113,15 @@ class CustomLayout extends Model\AbstractModel
      * @param string $name
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByName(string $name)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByName($name);
-        if ($id) {
-            return self::getById($id);
-        }
 
-        return null;
+        return self::getById($id);
     }
 
     /**
@@ -130,16 +129,15 @@ class CustomLayout extends Model\AbstractModel
      * @param string $classId
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByNameAndClassId(string $name, $classId)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByNameAndClassId($name, $classId);
-        if ($id) {
-            return self::getById($id);
-        }
 
-        return null;
+        return self::getById($id);
     }
 
     /**
@@ -200,9 +198,9 @@ class CustomLayout extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_UPDATE, new CustomLayoutEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_ADD, new CustomLayoutEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_ADD);
         }
 
         $this->setModificationDate(time());
@@ -268,8 +266,21 @@ class CustomLayout extends Model\AbstractModel
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if (is_null($data)) {
+            return;
+        }
+
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {

@@ -22,10 +22,13 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
+/**
+ * @internal
+ */
+final class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -54,7 +57,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -65,7 +68,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -95,20 +98,16 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
      */
     protected function initializeContext($context, $request)
     {
-        if ($context == PimcoreContextResolver::CONTEXT_ADMIN || $context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
+        if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
-            DataObject\AbstractObject::setHideUnpublished(false);
-
-            if ($context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
-                DataObject\AbstractObject::setGetInheritedValues(filter_var($request->get('inheritance'), FILTER_VALIDATE_BOOLEAN));
-            }
+            DataObject::setHideUnpublished(false);
             DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
             \Pimcore::unsetAdminMode();
             Document::setHideUnpublished(true);
-            DataObject\AbstractObject::setHideUnpublished(true);
-            DataObject\AbstractObject::setGetInheritedValues(true);
+            DataObject::setHideUnpublished(true);
+            DataObject::setGetInheritedValues(true);
             DataObject\Localizedfield::setGetFallbackValues(true);
         }
     }

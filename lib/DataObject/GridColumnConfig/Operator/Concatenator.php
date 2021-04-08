@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Concatenator extends AbstractOperator
+/**
+ * @internal
+ */
+final class Concatenator extends AbstractOperator
 {
     /** @var string */
     private $glue;
@@ -48,7 +51,7 @@ class Concatenator extends AbstractOperator
 
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
-            $childValues = (array)$childResult->value;
+            $childValues = (array)($childResult->value ?? []);
 
             foreach ($childValues as $value) {
                 if (!$hasValue) {

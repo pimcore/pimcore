@@ -229,7 +229,6 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
     public function testFieldCollectionLocalizedAttributes()
     {
         //prepare data object
-        /** @var LazyLoading $object */
         $object = $this->createDataObject();
 
         $items = new Fieldcollection();

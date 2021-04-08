@@ -22,6 +22,8 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document $model
  */
 class Dao extends Model\Element\Dao
@@ -31,21 +33,18 @@ class Dao extends Model\Element\Dao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
-        try {
-            $data = $this->db->fetchRow("SELECT documents.*, tree_locks.locked FROM documents
-                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", $id);
-        } catch (\Exception $e) {
-        }
+        $data = $this->db->fetchRow("SELECT documents.*, tree_locks.locked FROM documents
+            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                WHERE documents.id = ?", $id);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Document with the ID ' . $id . " doesn't exists");
+            throw new  Model\Exception\NotFoundException('document with id ' . $id . ' not found');
         }
     }
 
@@ -54,7 +53,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -69,10 +68,10 @@ class Dao extends Model\Element\Dao
                 'prettyUrl' => $path,
             ]);
 
-            if ($data['id']) {
+            if (!empty($data['id'])) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new \Exception("document with path $path doesn't exist");
+                throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
             }
         }
     }

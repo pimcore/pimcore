@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
 use Pimcore\Workflow\ActionsButtonService;
@@ -35,7 +35,10 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\Registry;
 
-class WorkflowManagementListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class WorkflowManagementListener implements EventSubscriberInterface
 {
     /**
      * @var bool
@@ -77,7 +80,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -248,7 +251,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
     /**
      * @param GenericEvent $e
      *
-     * @return AbstractElement
+     * @return ElementInterface
      *
      * @throws \Exception
      */

@@ -56,8 +56,8 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                 body.setStyle(style);
                 body.getFirstChild().setStyle(style);
 
-                body.insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget"></div>');
-                body.addCls("pimcore_tag_snippet_empty");
+                body.insertHtml("beforeEnd", '<div class="pimcore_editable_droptarget"></div>');
+                body.addCls("pimcore_editable_snippet_empty");
 
                 el.getEl().on("contextmenu", this.onContextMenu.bind(this));
             } catch (e) {
@@ -134,7 +134,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             success: function (response) {
                 var body = this.getBody();
                 body.getFirstChild().dom.innerHTML = response.responseText;
-                body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+                body.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
                 this.updateDimensions();
             }.bind(this),
             params: params
@@ -144,9 +144,9 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
     updateDimensions: function () {
         var body = this.getBody();
         var parent = body.getParent();
+        this.element.getEl().setStyle("height", "auto");
         body.setStyle("height", "auto");
         parent.setStyle("height", "auto");
-        body.removeCls("pimcore_tag_snippet_empty");
         body.removeCls("pimcore_editable_snippet_empty");
     },
 
@@ -171,8 +171,8 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                     this.data = {};
                     var body = this.getBody();
                     body.getFirstChild().dom.innerHTML = '';
-                    body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget  pimcore_editable_droptarget"></div>');
-                    body.addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
+                    body.insertHtml("beforeEnd",'<div class=" pimcore_editable_droptarget"></div>');
+                    body.addCls("pimcore_editable_snippet_empty");
                     body.setStyle(height + "px");
 
                     if (this.config.reload) {

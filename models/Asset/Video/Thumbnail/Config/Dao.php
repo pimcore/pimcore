@@ -20,6 +20,8 @@ namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Asset\Video\Thumbnail\Config $model
  */
 class Dao extends Model\Dao\PhpArrayTable
@@ -47,7 +49,10 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
         } else {
-            throw new \Exception('Thumbnail with id: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Thumbnail with id "%s" does not exist.',
+                $this->model->getName()
+            ));
         }
     }
 
@@ -64,7 +69,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['name', 'description', 'group', 'items',
+        $allowedProperties = ['name', 'description', 'group', 'items', 'medias',
             'videoBitrate', 'audioBitrate', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {

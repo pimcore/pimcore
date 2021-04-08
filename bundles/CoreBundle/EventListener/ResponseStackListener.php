@@ -19,10 +19,13 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Http\ResponseStack;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ResponseStackListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class ResponseStackListener implements EventSubscriberInterface
 {
     /**
      * @var ResponseStack
@@ -38,7 +41,7 @@ class ResponseStackListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -47,7 +50,7 @@ class ResponseStackListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;

@@ -28,62 +28,62 @@ class AbstractWorkspace extends Model\AbstractModel
     /**
      * @var int
      */
-    public $userId;
+    protected $userId;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $cpath;
+    protected $cpath;
 
     /**
      * @var bool
      */
-    public $list = false;
+    protected $list = false;
 
     /**
      * @var bool
      */
-    public $view = false;
+    protected $view = false;
 
     /**
      * @var bool
      */
-    public $publish = false;
+    protected $publish = false;
 
     /**
      * @var bool
      */
-    public $delete = false;
+    protected $delete = false;
 
     /**
      * @var bool
      */
-    public $rename = false;
+    protected $rename = false;
 
     /**
      * @var bool
      */
-    public $create = false;
+    protected $create = false;
 
     /**
      * @var bool
      */
-    public $settings = false;
+    protected $settings = false;
 
     /**
      * @var bool
      */
-    public $versions = false;
+    protected $versions = false;
 
     /**
      * @var bool
      */
-    public $properties = false;
+    protected $properties = false;
 
     /**
      * @param bool $create

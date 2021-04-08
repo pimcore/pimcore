@@ -22,11 +22,14 @@ use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/link")
+ *
+ * @internal
  */
-class LinkController extends DocumentControllerBase
+final class LinkController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 
@@ -64,10 +67,11 @@ class LinkController extends DocumentControllerBase
      * @Route("/get-data-by-id", name="pimcore_admin_document_link_getdatabyid", methods={"GET"})
      *
      * @param Request $request
+     * @param SerializerInterface $serializer
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, SerializerInterface $serializer)
     {
         $link = Document\Link::getById($request->get('id'));
 
@@ -89,8 +93,6 @@ class LinkController extends DocumentControllerBase
         $link->setLocked($link->isLocked());
         $link->setParent(null);
         $link->getScheduledTasks();
-
-        $serializer = $this->get('pimcore_admin.serializer');
 
         $data = $serializer->serialize($link->getObjectVars(), 'json', []);
         $data = json_decode($data, true);

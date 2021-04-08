@@ -8,7 +8,7 @@ services:
     # REQUEST + ROUTING
     #
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener: ~
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\RoutingListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\PimcoreContextListener:
         calls:
@@ -26,7 +26,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener:
         arguments:
-            $translator: '@pimcore.translator'
+            $translator: '@Symfony\Contracts\Translation\TranslatorInterface'
 
     #
     # PIMCORE OBJECTS/PARAMS LOGIC
@@ -37,6 +37,8 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: init }
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GlobalTemplateVariablesListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
         tags:
@@ -61,14 +63,9 @@ services:
     # CONTROLLER HANDLING
     #
 
-    Pimcore\Bundle\CoreBundle\EventListener\ControllerViewModelListener: ~
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\EventedControllerListener: ~
-
-    Pimcore\Bundle\CoreBundle\EventListener\TemplateControllerListener: ~
-
 
     #
     # VARIOUS MODEL SPECIFIC LISTENERS
@@ -121,24 +118,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener:
-        public: true
-        calls:
-            - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-template.html']]
-            - [setTranslator, ['@translator']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -109 }
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener:
         public: true
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
-
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener:
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
-        public: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -107 }
 
     Pimcore\Cache\FullPage\SessionStatus:
         arguments:
@@ -161,3 +144,8 @@ services:
 
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\OutputTimestampListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\WebDebugToolbarListener:
+        arguments:
+            $excludeRoutes: '%pimcore.web_profiler.toolbar.excluded_routes%'
+            $debugToolbarListener: '@?web_profiler.debug_toolbar'

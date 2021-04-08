@@ -175,9 +175,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
+        $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -229,7 +230,7 @@ class Service extends Model\Element\Service
         }
 
         if ($language) {
-            $new->setProperty('language', 'text', $language, false);
+            $new->setProperty('language', 'text', $language, false, true);
         }
 
         $new->save();
@@ -242,9 +243,10 @@ class Service extends Model\Element\Service
         }
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
+        $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -270,7 +272,6 @@ class Service extends Model\Element\Service
             $target->setEditables($source->getEditables());
 
             $target->setTemplate($source->getTemplate());
-            $target->setAction($source->getAction());
             $target->setController($source->getController());
 
             if ($source instanceof Document\Page) {
@@ -297,6 +298,8 @@ class Service extends Model\Element\Service
      * @param Document $document
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridDocumentData($document)
     {
@@ -599,6 +602,8 @@ class Service extends Model\Element\Service
      * @return bool
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public static function generatePagePreview($id, $request = null, $hostUrl = null)
     {

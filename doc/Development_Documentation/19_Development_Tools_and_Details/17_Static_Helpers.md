@@ -16,11 +16,11 @@ Particular useful can be following methods:
 
 ### E-Mail
 There is a convenience function which allows any Pimcore system component or plugin to use a 
-preconfigured `Swift_Message` instance based on the Pimcore system settings' email configuration.
+preconfigured `Symfony\Component\Mime\Email` instance based on the Pimcore system settings' email configuration.
 
 ```php
-$mail = Pimcore\Tool::getMail($recipients,$subject);
-For any plugin or website applications it might be convenient to use this mail configuration instead of having to care for these settings themselves.
+$mail = Pimcore\Tool::getMail($recipients, $subject);
+// For any plugin or website applications it might be convenient to use this mail configuration instead of having to care for these settings themselves.
 ```
 
 
@@ -55,14 +55,3 @@ $content = Document\Service::render(Document::getById(2), $optionalParams, $useL
 echo $content;
 ```
 
-## Locking (deprecated)
-
-> This feature will be removed in Pimcore 7, please use the lock factory service  `Symfony\Component\Lock\LockFactory` instead
-
-Just have a look at `Pimcore\Model\Tool\Lock` and the static class functions 
-* `acquire()`
-* `release()`
-* `lock()`
-* `isLocked()`
-
-Active locks are stores in the database table `locks`. 

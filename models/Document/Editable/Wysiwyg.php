@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
+use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 
 /**
@@ -30,7 +31,7 @@ class Wysiwyg extends Model\Document\Editable
      *
      * @var string
      */
-    public $text;
+    protected $text;
 
     /**
      * @see EditableInterface::getType
@@ -50,6 +51,14 @@ class Wysiwyg extends Model\Document\Editable
     public function getData()
     {
         return $this->text;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->getData();
     }
 
     /**
@@ -119,27 +128,6 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-
-        if ($data->text === null or is_string($data->text)) {
-            $this->text = $data->text;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
-
-    /**
      * @return array
      */
     public function resolveDependencies()
@@ -171,41 +159,30 @@ class Wysiwyg extends Model\Document\Editable
      *
      * @param array $idMapping
      *
-     * @return string|void
+     * @return void
      *
-     * @todo: no rewriteIds method ever returns anything, why this one?
      */
     public function rewriteIds($idMapping)
     {
-        $html = str_get_html($this->text);
-        if (!$html) {
-            return $this->text;
-        }
+        $html = new DomCrawler($this->text);
 
-        $s = $html->find('a[pimcore_id],img[pimcore_id]');
+        $elements = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-        if ($s) {
-            foreach ($s as $el) {
-                if ($el->href || $el->src) {
-                    $type = $el->pimcore_type;
-                    $id = (int) $el->pimcore_id;
+        /** @var \DOMElement $el */
+        foreach ($elements as $el) {
+            if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
+                $type = $el->getAttribute('pimcore_type');
+                $id = (int)$el->getAttribute('pimcore_id');
 
-                    if (array_key_exists($type, $idMapping)) {
-                        if (array_key_exists($id, $idMapping[$type])) {
-                            $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
-                        }
-                    }
+                if ($idMapping[$type][$id] ?? false) {
+                    $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                 }
             }
         }
 
-        $this->text = $html->save();
+        $this->text = $html->html();
 
         $html->clear();
         unset($html);
-
-        return;
     }
 }
-
-class_alias(Wysiwyg::class, 'Pimcore\Model\Document\Tag\Wysiwyg');

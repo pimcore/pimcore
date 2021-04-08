@@ -32,10 +32,3 @@ _pimcore_gdpr:
     prefix:   /admin/gdpr
     options:
         expose: true
-
-_pimcore_api_rest:
-    resource: "@PimcoreAdminBundle/Controller/Rest/"
-    type:     annotation
-    prefix:   /webservice/rest
-
-

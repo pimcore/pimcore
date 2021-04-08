@@ -22,6 +22,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Sabre\DAV;
 
+/**
+ * @internal
+ */
 class Tree extends DAV\Tree
 {
     /**

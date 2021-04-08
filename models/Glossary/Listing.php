@@ -29,18 +29,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var Model\Glossary[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $glossary = null;
-
-    public function __construct()
-    {
-        $this->glossary = & $this->data;
-    }
-
-    /**
      * @return Model\Glossary[]
      */
     public function getGlossary()

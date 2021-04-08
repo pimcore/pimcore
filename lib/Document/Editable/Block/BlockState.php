@@ -101,7 +101,7 @@ class BlockState implements \JsonSerializable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function jsonSerialize()
     {
@@ -111,5 +111,3 @@ class BlockState implements \JsonSerializable
         ];
     }
 }
-
-class_alias(BlockState::class, 'Pimcore\Document\Tag\Block\BlockState');

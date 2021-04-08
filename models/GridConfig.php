@@ -21,62 +21,64 @@ use Pimcore\Db;
 
 /**
  * @method \Pimcore\Model\GridConfig\Dao getDao()
+ *
+ * @internal
  */
 class GridConfig extends AbstractModel
 {
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $ownerId;
+    protected $ownerId;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
     /**
      * @var string
      */
-    public $searchType;
+    protected $searchType;
 
     /**
      * @var string
      */
-    public $config;
+    protected $config;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var bool
      */
-    public $shareGlobally;
+    protected $shareGlobally;
 
     /**
      * @var string
      */
-    public $type = 'object';
+    protected $type = 'object';
 
     /**
      * @param int $id

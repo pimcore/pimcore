@@ -21,10 +21,10 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Objectbrick;
-use Pimcore\Model\Webservice;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
 {
     /**
      * Static type of this element
@@ -32,13 +32,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @var string
      */
     public $fieldtype = 'objectbricks';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\' . Objectbrick::class;
 
     /**
      * @var array
@@ -140,6 +133,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         if ($object) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
         }
+
+        if (!method_exists($data, $getter)) {
+            return null;
+        }
+
         /** @var DataObject\Objectbrick\Definition $item */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
@@ -228,7 +226,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             && !$fielddefinition instanceof Block) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
-            if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
+            if ($fielddefinition instanceof ReverseObjectRelation) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refId = $fielddefinition->getOwnerClassId();
             } else {
@@ -236,7 +234,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $refId = null;
             }
 
-            $relations = $item->getRelationData($refKey, !$fielddefinition instanceof ReverseManyToManyObjectRelation, $refId);
+            $relations = $item->getRelationData($refKey, !$fielddefinition instanceof ReverseObjectRelation, $refId);
             if (empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{'get' . ucfirst($this->getName())}();
                 if (!empty($parentItem)) {
@@ -267,10 +265,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
             }
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
-                $backup = DataObject\AbstractObject::getGetInheritedValues();
-                DataObject\AbstractObject::setGetInheritedValues(true);
+                $backup = DataObject::getGetInheritedValues();
+                DataObject::setGetInheritedValues(true);
                 $parentItem = $parent->{'get' . ucfirst($this->getName())}()->$getter();
-                DataObject\AbstractObject::setGetInheritedValues($backup);
+                DataObject::setGetInheritedValues($backup);
                 if (!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $params);
                 }
@@ -355,13 +353,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
+        // this is handled directly in the template
+        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
         return 'BRICKS';
     }
 
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -371,18 +371,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public function getForCsvExport($object, $params = [])
     {
         return 'NOT SUPPORTED';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**
@@ -490,126 +478,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $this->allowedTypes = array_values($this->allowedTypes); // get rid of indexed array (.join() doesnt work in JS)
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $wsData = [];
-
-        if ($data instanceof DataObject\Objectbrick) {
-            $data = $data->getObjectVars();
-            foreach ($data as $item) {
-                if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
-                    continue;
-                }
-
-                $wsDataItem = new Webservice\Data\DataObject\Element();
-                $wsDataItem->value = [];
-                $wsDataItem->type = $item->getType();
-
-                if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $el = new Webservice\Data\DataObject\Element();
-                        $el->name = $fd->getName();
-                        $el->type = $fd->getFieldType();
-                        $el->value = $fd->getForWebserviceExport($item, $params);
-                        if ($el->value == null && self::$dropNullValues) {
-                            continue;
-                        }
-
-                        $wsDataItem->value[] = $el;
-                    }
-
-                    $wsData[] = $wsDataItem;
-                }
-            }
-        }
-
-        return $wsData;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array $data
-     * @param DataObject\Concrete $relatedObject
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return Objectbrick|null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($data, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        $containerName = '\\Pimcore\\Model\\DataObject\\' . ucfirst($relatedObject->getClass()->getName()) . '\\' . ucfirst($this->getName());
-
-        if (Tool::classExists($containerName)) {
-            $container = new $containerName($relatedObject, $this->getName());
-
-            if (is_array($data)) {
-                foreach ($data as $collectionRaw) {
-                    if ($collectionRaw instanceof \stdClass) {
-                        $class = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Element';
-                        $collectionRaw = Tool\Cast::castToClass($class, $collectionRaw);
-                    }
-
-                    if ($collectionRaw != null) {
-                        if (!$collectionRaw instanceof Webservice\Data\DataObject\Element) {
-                            throw new \Exception('invalid data in objectbrick [' . $this->getName() . ']');
-                        }
-
-                        $brick = $collectionRaw->type;
-                        $collectionData = [];
-                        $collectionDef = DataObject\Objectbrick\Definition::getByKey($brick);
-
-                        if (!$collectionDef) {
-                            throw new \Exception('Unknown objectbrick in webservice import [' . $brick . ']');
-                        }
-
-                        foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                            foreach ($collectionRaw->value as $field) {
-                                if ($field instanceof \stdClass) {
-                                    $class = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Element';
-                                    $field = Tool\Cast::castToClass($class, $field);
-                                }
-                                if (!$field instanceof Webservice\Data\DataObject\Element) {
-                                    throw new \Exception('invalid data in objectbricks [' . $this->getName() . ']');
-                                } elseif ($field->name == $fd->getName()) {
-                                    if ($field->type != $fd->getFieldType()) {
-                                        throw new \Exception('Type mismatch for objectbricks field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
-                                    }
-                                    $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $params, $idMapper);
-                                    break;
-                                }
-                            }
-                        }
-
-                        $collectionClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brick);
-                        $collection = new $collectionClass($relatedObject);
-                        $collection->setValues($collectionData);
-                        $collection->setFieldname($this->getName());
-
-                        $setter = 'set' . ucfirst($brick);
-
-                        $container->$setter($collection);
-                    }
-                }
-            }
-
-            return $container;
-        }
-
-        return null;
     }
 
     /**
@@ -1080,5 +948,81 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
             }
         }
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Objectbrick::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Objectbrick::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Objectbrick::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Objectbrick::class . '|null';
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Objectbrick) {
+            $result = [];
+            $value = $value->getObjectVars();
+            /** @var Objectbrick\Data\AbstractData $item */
+            foreach ($value as $item) {
+                if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
+                    continue;
+                }
+
+                $type = $item->getType();
+                $result[$type] = [];
+                $brickDef = Objectbrick\Definition::getByKey($type);
+                $fds = $brickDef->getFieldDefinitions();
+                foreach ($fds as $fd) {
+                    $value = $item->{'get' . $fd->getName()}();
+                    if ($fd instanceof NormalizerInterface) {
+                        $result[$type][$fd->getName()] = $fd->normalize($value, $params);
+                    } else {
+                        throw new \Exception($fd->getName() . ' does not implement NormalizerInterface');
+                    }
+                }
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $key => $v) {
+                $brickDef = Objectbrick\Definition::getByKey($key);
+                $fds = $brickDef->getFieldDefinitions();
+
+                $result[$key] = [];
+
+                foreach ($v as $fieldKey => $fieldValue) {
+                    $fd = $fds[$fieldKey];
+                    if ($fd instanceof NormalizerInterface) {
+                        $fieldValue = $fd->denormalize($fieldValue, $params);
+                    }
+                    $result[$key][$fieldKey] = $fieldValue;
+                }
+            }
+
+            return $result;
+        }
+
+        return null;
     }
 }

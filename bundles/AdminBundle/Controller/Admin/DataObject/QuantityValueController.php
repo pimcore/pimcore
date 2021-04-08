@@ -20,11 +20,15 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
+use Pimcore\Model\Translation;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuantityValueController extends AdminController
+/**
+ *  @internal
+ */
+final class QuantityValueController extends AdminController
 {
     /**
      * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxyget", methods={"GET"})
@@ -76,7 +80,7 @@ class QuantityValueController extends AdminController
 
         $units = [];
         foreach ($list->getUnits() as $u) {
-            $units[] = get_object_vars($u);
+            $units[] = $u->getObjectVars();
         }
 
         return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
@@ -109,13 +113,13 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
-                    if ($data['baseunit'] === -1) {
+                    if (($data['baseunit'] ?? null) === -1) {
                         $data['baseunit'] = null;
                     }
                     $unit->setValues($data);
                     $unit->save();
 
-                    return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
+                    return $this->adminJson(['data' => $unit->getObjectVars(), 'success' => true]);
                 } else {
                     throw new \Exception('Unit with id ' . $data['id'] . ' not found.');
                 }
@@ -134,7 +138,7 @@ class QuantityValueController extends AdminController
                 $unit->setValues($data);
                 $unit->save();
 
-                return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
+                return $this->adminJson(['data' => $unit->getObjectVars(), 'success' => true]);
             }
         }
 
@@ -182,15 +186,14 @@ class QuantityValueController extends AdminController
 
         $units = $list->getUnits();
 
-        /** @var Unit $unit */
         foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
-                    $unit->setAbbreviation(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getAbbreviation(),
+                    $unit->setAbbreviation(\Pimcore\Model\Translation::getByKeyLocalized($unit->getAbbreviation(), Translation::DOMAIN_ADMIN,
                         true, true));
                 }
                 if ($unit->getLongname()) {
-                    $unit->setLongname(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getLongname(), true,
+                    $unit->setLongname(\Pimcore\Model\Translation::getByKeyLocalized($unit->getLongname(), Translation::DOMAIN_ADMIN, true,
                         true));
                 }
             } catch (\Exception $e) {
@@ -255,7 +258,6 @@ class QuantityValueController extends AdminController
         $convertedValues = [];
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        /** @var Unit $targetUnit */
         foreach ($units as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);

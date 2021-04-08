@@ -50,7 +50,7 @@ class Availability implements AvailabilityInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getAvailable(): bool
     {

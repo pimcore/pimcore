@@ -61,7 +61,7 @@ class PricingManager implements PricingManagerInterface
     protected $visitorInfoStorage = null;
 
     /**
-     * @var Rule[]
+     * @var RuleInterface[]
      */
     protected $rules;
 
@@ -209,11 +209,12 @@ class PricingManager implements PricingManagerInterface
     public function getValidRules()
     {
         if (is_null($this->rules)) {
-            /** @var Rule\Listing $rules */
             $rules = $this->getRuleListing();
             $rules->setCondition('active = 1');
             $rules->setOrderKey('prio');
             $rules->setOrder('ASC');
+
+            $rules->getDao()->setRuleClass($this->options['rule_class']);
 
             $this->rules = $rules->getRules();
         }
@@ -324,7 +325,7 @@ class PricingManager implements PricingManagerInterface
         $environment = $this->getEnvironment();
         $environment->setProduct($priceInfo->getProduct());
 
-        if (method_exists($priceInfo->getProduct(), 'getCategories')) {
+        if ($priceInfo->getProduct() && method_exists($priceInfo->getProduct(), 'getCategories')) {
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
         }
 

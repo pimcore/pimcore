@@ -21,8 +21,8 @@ use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Event\Targeting\TargetingCodeEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class TargetingCodeGenerator
 {
@@ -72,7 +72,7 @@ class TargetingCodeGenerator
             $data
         );
 
-        $this->eventDispatcher->dispatch(TargetingEvents::TARGETING_CODE, $event);
+        $this->eventDispatcher->dispatch($event, TargetingEvents::TARGETING_CODE);
 
         return $this->renderTemplate($event);
     }

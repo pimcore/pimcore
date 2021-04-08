@@ -43,7 +43,7 @@ pimcore.object.tags.password = Class.create(pimcore.object.tags.abstract, {
 
         input.value = "********";
 
-        if (intval(this.fieldConfig.width) > 1) {
+        if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
         } else {
             input.width = 350;

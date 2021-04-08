@@ -331,7 +331,7 @@ class Decimal
     {
         $signum = $this->amount < 0 ? '-' : '';
 
-        $string = strval(abs($this->amount));
+        $string = (string)abs($this->amount);
         $amount = null;
 
         if ($this->scale === 0) {

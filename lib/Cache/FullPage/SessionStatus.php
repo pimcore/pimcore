@@ -19,8 +19,8 @@ namespace Pimcore\Cache\FullPage;
 
 use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
 use Pimcore\Event\FullPageCacheEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Determines if the full page cache should be disabled due to
@@ -79,7 +79,7 @@ class SessionStatus
     {
         $event = new IgnoredSessionKeysEvent([$this->symfonyMetadataStorageKey]);
 
-        $this->eventDispatcher->dispatch(FullPageCacheEvents::IGNORED_SESSION_KEYS, $event);
+        $this->eventDispatcher->dispatch($event, FullPageCacheEvents::IGNORED_SESSION_KEYS);
 
         return $event->getKeys();
     }

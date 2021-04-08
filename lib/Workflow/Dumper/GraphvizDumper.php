@@ -29,6 +29,8 @@ use Symfony\Component\Workflow\Marking;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
+ *
+ * @internal
  */
 class GraphvizDumper implements DumperInterface
 {
@@ -83,7 +85,7 @@ class GraphvizDumper implements DumperInterface
         $places = [];
         foreach ($definition->getPlaces() as $place) {
             $attributes = [];
-            if ($place === $definition->getInitialPlace()) {
+            if (in_array($place, $definition->getInitialPlaces(), true)) {
                 $attributes['style'] = 'filled';
                 $attributes['fillcolor'] = '#DFDFDF';
             }

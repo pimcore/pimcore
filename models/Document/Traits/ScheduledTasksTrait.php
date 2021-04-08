@@ -27,7 +27,7 @@ trait ScheduledTasksTrait
      *
      * @var Task[]
      */
-    public $scheduledTasks = null;
+    protected $scheduledTasks = null;
 
     /**
      * @return Task[] the $scheduledTasks

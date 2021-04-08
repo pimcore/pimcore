@@ -23,7 +23,7 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 class DataLoader extends ImplementationLoader implements DataLoaderInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(string $name, array $params = []): DataDefinitionInterface
     {

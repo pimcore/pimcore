@@ -20,8 +20,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/printpage")
+ *
+ * @internal
  */
-class PrintpageController extends PrintpageControllerBase
+final class PrintpageController extends PrintpageControllerBase
 {
     /**
      * @Route("/save-to-session", name="pimcore_admin_document_printpage_savetosession", methods={"POST"})

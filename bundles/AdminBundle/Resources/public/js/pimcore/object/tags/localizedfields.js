@@ -193,6 +193,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                             item.labelWidth = this.fieldConfig.labelWidth;
                         }
 
+                        if (this.fieldConfig.labelAlign) {
+                            item.labelAlign = this.fieldConfig.labelAlign;
+                        }
+
                         if (side == "left") {
                             item.style = "border-right: 1px dotted #DDD;";
                         }
@@ -433,9 +437,12 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                                 for (var i = 0; i < l.childs.length; i++) {
                                     var childConfig = l.childs[i];
 
-                                    // inherit label width from localized fields configuration
+                                    // inherit label width/align from localized fields configuration
                                     if (this.fieldConfig.labelWidth) {
                                         childConfig.labelWidth = this.fieldConfig.labelWidth;
+                                    }
+                                    if (this.fieldConfig.labelAlign) {
+                                        childConfig.labelAlign = this.fieldConfig.labelAlign;
                                     }
 
                                     var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, false, dataProvider, true);
@@ -492,6 +499,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     getValue: function () {
         var localizedData = {};
         var currentLanguage;
+        var ignoreIsDirty = ['fieldcollection'].includes(this.getContext().containerType) || ['block'].includes(this.getContext().subContainerType);
 
         for (var i = 0; i < this.frontendLanguages.length; i++) {
             currentLanguage = this.frontendLanguages[i];
@@ -502,8 +510,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             for (var s = 0; s < this.languageElements[currentLanguage].length; s++) {
                 try {
-
-                    if (this.languageElements[currentLanguage][s].isDirty()) {
+                    if (ignoreIsDirty || this.languageElements[currentLanguage][s].isDirty()) {
                         localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()]
                             = this.languageElements[currentLanguage][s].getValue();
                     }

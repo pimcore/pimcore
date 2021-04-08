@@ -39,10 +39,13 @@ class File
     public static function getFileExtension($name)
     {
         $name = strtolower($name);
-        $parts = explode('.', $name);
 
-        if (count($parts) > 1) {
-            return $parts[count($parts) - 1];
+        $pos = strrpos($name, '.');
+        if ($pos) {
+            $extension = substr($name, $pos + 1);
+            if ($extension && strpos($extension, '/') === false) {
+                return $extension;
+            }
         }
 
         return '';
@@ -235,5 +238,14 @@ class File
     public static function setContext($context)
     {
         self::$context = $context;
+    }
+
+    public static function getLocalTempFilePath(?string $fileExtension = null): string
+    {
+        return sprintf('%s/temp-file-%s.%s',
+            PIMCORE_SYSTEM_TEMP_DIRECTORY,
+            uniqid() . '-' .  bin2hex(random_bytes(15)),
+            $fileExtension ?: 'tmp'
+        );
     }
 }

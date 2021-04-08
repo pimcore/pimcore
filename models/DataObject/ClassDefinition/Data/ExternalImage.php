@@ -19,12 +19,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -61,13 +61,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @var string
      */
     public $columnType = 'longtext';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ExternalImage';
 
     /**
      * @return int
@@ -149,7 +142,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $externalImage = new Model\DataObject\Data\ExternalImage($data);
 
         if (isset($params['owner'])) {
-            $externalImage->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $externalImage->_setOwner($params['owner']);
+            $externalImage->_setOwnerFieldname($params['fieldname']);
+            $externalImage->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $externalImage;
@@ -246,7 +241,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -261,50 +256,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return '';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return new Model\DataObject\Data\ExternalImage($importValue);
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        return $this->getForCsvExport($object, $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Model\Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        return $this->getFromCsvImport($value, $relatedObject, $params);
     }
 
     /** True if change is allowed in edit mode.
@@ -368,5 +319,51 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $newValue = $newValue instanceof DataObject\Data\ExternalImage ? $newValue->getUrl() : null;
 
         return $oldValue == $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ExternalImage::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ExternalImage::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\ExternalImage::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\ExternalImage::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\ExternalImage) {
+            return [
+                'url' => $value->getUrl(),
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new DataObject\Data\ExternalImage($value['url']);
+        }
+
+        return null;
     }
 }

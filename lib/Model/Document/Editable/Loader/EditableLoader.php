@@ -23,12 +23,10 @@ use Pimcore\Model\Document\Editable;
 class EditableLoader extends ImplementationLoader implements EditableLoaderInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(string $name, array $params = []): Editable
     {
         return parent::build($name, $params);
     }
 }
-
-class_alias(EditableLoader::class, 'Pimcore\Model\Document\Tag\Loader\TagLoader');

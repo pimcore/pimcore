@@ -18,17 +18,19 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Event\Ecommerce\AdminEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class IndexController
  *
  * @Route("/index")
+ *
+ * @internal
  */
-class IndexController extends AdminController
+final class IndexController extends AdminController
 {
     /**
      * @Route("/get-filter-groups", name="pimcore_ecommerceframework_index_getfiltergroups", methods={"GET"})
@@ -94,7 +96,7 @@ class IndexController extends AdminController
             }
 
             $event = new GenericEvent(null, ['data' => $data, 'field' => $request->get('field')]);
-            $eventDispatcher->dispatch(AdminEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA, $event);
+            $eventDispatcher->dispatch($event, AdminEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA);
             $data = $event->getArgument('data');
 
             return $this->adminJson(['data' => array_values($data)]);

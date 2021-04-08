@@ -69,16 +69,6 @@ final class AdminEvents
     /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
      *
-     * @deprecated will be removed in Pimcore 7, use INDEX_ACTION_SETTINGS instead
-     * @Event("Pimcore\Event\Admin\IndexSettingsEvent")
-     *
-     * @var string
-     */
-    const INDEX_SETTINGS = 'pimcore.admin.index.settings';
-
-    /**
-     * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
-     *
      * @Event("Pimcore\Event\Admin\IndexActionSettingsEvent")
      *
      * @var string
@@ -92,7 +82,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -106,7 +96,7 @@ final class AdminEvents
      *  - list | the search backend list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -120,7 +110,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -133,7 +123,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -147,11 +137,39 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
     const OBJECT_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.object.list.beforeListLoad';
+
+    /**
+     * Allows you to modify the object list before it is prepared for export.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | the object list
+     *  - context | contains contextual information
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_LIST_BEFORE_EXPORT_PREPARE = 'pimcore.admin.object.list.beforeExportPrepare';
+
+    /**
+     * Allows you to modify the object list before it is exported.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | the object list
+     *  - context | contains contextual information
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_LIST_BEFORE_EXPORT = 'pimcore.admin.object.list.beforeExport';
 
     /**
      * Allows you to modify the the result after the list was loaded. This event apply to the grid list.
@@ -161,7 +179,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -174,7 +192,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -188,7 +206,7 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -202,7 +220,7 @@ final class AdminEvents
      *  - processed
      *  - result
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -216,7 +234,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -230,7 +248,7 @@ final class AdminEvents
      *  - data | raw data as an array
      *  - processed | true to stop processing
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -244,7 +262,7 @@ final class AdminEvents
      *  - params |
      *  - processed | true to stop processing
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -257,7 +275,7 @@ final class AdminEvents
      * Arguments:
      *  - requestParams | contains the request parameters
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -271,7 +289,7 @@ final class AdminEvents
      *  - list | the object list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -285,7 +303,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -294,23 +312,23 @@ final class AdminEvents
     /**
      * Fired before the request params are parsed.
      *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\Asset\AssetController
      * Arguments:
      *  - data | array | the response data, this can be modified
      *  - asset | Asset | the current asset
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
     const ASSET_GET_PRE_SEND_DATA = 'pimcore.admin.asset.get.preSendData';
 
     /**
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\Asset\AssetController
      * Arguments:
      *  - assets | array | the list of asset tree nodes
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -324,7 +342,7 @@ final class AdminEvents
      *  - data | array | the response data, this can be modified
      *  - document | Document | the current document
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -335,7 +353,7 @@ final class AdminEvents
      * Arguments:
      *  - documents | array | the list of document tree nodes
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -349,7 +367,7 @@ final class AdminEvents
      *  - data | array | the response data, this can be modified
      *  - object | AbstractObject | the current object
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -360,7 +378,7 @@ final class AdminEvents
      * Arguments:
      *  - objects | array | the list of object tree nodes
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -372,7 +390,7 @@ final class AdminEvents
      *  - list | array | the list of field collections
      *  - objectId | int | id of the origin object
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -384,7 +402,7 @@ final class AdminEvents
      *  - icons | array | the list of selectable icons
      *  - classId | string | classid of class definition
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -396,7 +414,7 @@ final class AdminEvents
      *  - list | array | the list of object bricks
      *  - objectId | int | id of the origin object
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -407,7 +425,7 @@ final class AdminEvents
      * Arguments:
      *  - brickDefinition | the brick definition
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -421,7 +439,7 @@ final class AdminEvents
      *  - list | the search backend list
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -435,7 +453,7 @@ final class AdminEvents
      *  - list | raw result as an array
      *  - context | contains contextual information
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -484,12 +502,12 @@ final class AdminEvents
     const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.admin.permissions.elementIsAllowed';
 
     /**
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\Asset\AssetController
      * Arguments:
      *  - id | int | asset id
      *  - metadata | array | contains the data received from the editor UI
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */

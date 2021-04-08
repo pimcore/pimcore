@@ -167,7 +167,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
-    public $generateTypeDeclarations = false;
+    public $generateTypeDeclarations = true;
 
     /**
      * @var bool
@@ -251,19 +251,19 @@ class ClassDefinition extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
         try {
             $class = new self();
             $id = $class->getDao()->getIdByName($name);
-            if ($id) {
-                return self::getById($id);
-            }
-        } catch (\Exception $e) {
-        }
 
-        return null;
+            return self::getById($id);
+        } catch (Model\Exception\NotFoundException $e) {
+            return null;
+        }
     }
 
     /**
@@ -293,11 +293,30 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
+     *
+     * @internal
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if (is_null($data)) {
+            return;
+        }
+        
+        if (!is_object($data)) {
+            return;
+        }
+
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {
@@ -352,15 +371,9 @@ class ClassDefinition extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if (!$isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_ADD,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_UPDATE,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_UPDATE);
         }
 
         $this->setModificationDate(time());
@@ -376,15 +389,9 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_UPDATE,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_ADD,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
         }
     }
 
@@ -392,6 +399,8 @@ class ClassDefinition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
@@ -420,6 +429,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
         $cd .= "/**\n";
+        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).'\Listing getList()'."\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
@@ -467,7 +477,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -491,7 +501,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                if ($def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                     continue;
                 }
 
@@ -533,6 +543,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "/**\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())." current()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
+        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
         $cd .= ' */';
         $cd .= "\n\n";
         $cd .= 'class Listing extends '.$extendListingClass.' {';
@@ -578,8 +589,8 @@ class ClassDefinition extends Model\AbstractModel
                     'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
                 );
             }
-
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
 
@@ -600,6 +611,8 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @return string
+     *
+     * @internal
      */
     protected function getInfoDocBlock()
     {
@@ -648,10 +661,7 @@ class ClassDefinition extends Model\AbstractModel
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(
-            DataObjectClassDefinitionEvents::PRE_DELETE,
-            new ClassDefinitionEvent($this)
-        );
+        \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
 
         // delete all objects using this class
         $list = new Listing();
@@ -686,7 +696,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $brickListing = new DataObject\Objectbrick\Definition\Listing();
         $brickListing = $brickListing->load();
-        /** @var DataObject\Objectbrick\Definition $brickDefinition */
         foreach ($brickListing as $brickDefinition) {
             $modified = false;
 
@@ -707,10 +716,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->delete();
 
-        \Pimcore::getEventDispatcher()->dispatch(
-            DataObjectClassDefinitionEvents::POST_DELETE,
-            new ClassDefinitionEvent($this)
-        );
+        \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_DELETE);
     }
 
     /**
@@ -883,6 +889,9 @@ class ClassDefinition extends Model\AbstractModel
         return $enrichedFieldDefinitions;
     }
 
+    /**
+     * @internal
+     */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
@@ -1113,8 +1122,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function addEncryptedTables(array $tables)
     {
-        $this->encryptedTables = array_merge($this->encryptedTables, $tables);
-        array_unique($this->encryptedTables);
+        $this->encryptedTables = array_unique(array_merge($this->encryptedTables, $tables));
     }
 
     /**

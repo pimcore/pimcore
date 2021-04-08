@@ -32,7 +32,6 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,11 +39,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/asset-helper")
+ *
+ * @internal
  */
-class AssetHelperController extends AdminController
+final class AssetHelperController extends AdminController
 {
     /**
      * @param int $userId
@@ -667,7 +669,6 @@ class AssetHelperController extends AdminController
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
         $language = str_replace('default', '', $request->get('language'));
 
-        /** @var \Pimcore\Model\Asset\Listing $list */
         $list = new Asset\Listing();
 
         $quotedIds = [];
@@ -752,8 +753,8 @@ class AssetHelperController extends AdminController
                         $data = $asset->getMetadata($field, $language, true);
                     }
 
-                    if ($data instanceof Element\AbstractElement) {
-                        $data = $data->getFullPath();
+                    if ($data instanceof Element\ElementInterface) {
+                        $data = $data->getRealFullPath();
                     }
                     $dataRows[] = $data;
                 }
@@ -873,7 +874,6 @@ class AssetHelperController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
         $metadataItems = [];
         $tmp = [];
-        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
             //only allow unique metadata columns with subtypes
             $uniqueKey = $item->getName().'_'.$item->getTargetSubtype();
@@ -950,7 +950,7 @@ class AssetHelperController extends AdminController
                     'processed' => false,
                 ]);
 
-                $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE, $updateEvent);
+                $eventDispatcher->dispatch($updateEvent, AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE);
 
                 $processed = $updateEvent->getArgument('processed');
 

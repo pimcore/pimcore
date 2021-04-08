@@ -19,13 +19,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, \JsonSerializable, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+
+    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
@@ -37,19 +40,19 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * Available options to select
      *
-     * @var array
+     * @var array|null
      */
     public $options;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -86,13 +89,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @var bool
      */
     public $dynamicOptions = false;
@@ -118,7 +114,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -126,19 +122,22 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param array $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -146,13 +145,16 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param array $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -335,7 +337,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -350,18 +352,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         }
 
         return '';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return explode(',', $importValue);
     }
 
     /**
@@ -452,7 +442,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
             $html = '<ul>';
 
             foreach ($this->options as $option) {
-                if ($map[$option['value']]) {
+                if ($map[$option['value']] ?? false) {
                     $value = $option['key'];
                     $html .= '<li>' . $value . '</li>';
                 }
@@ -610,5 +600,37 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public function isEqual($value1, $value2): bool
     {
         return $this->isEqualArray($value1, $value2);
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'array|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'array|null';
     }
 }

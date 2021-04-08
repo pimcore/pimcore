@@ -16,9 +16,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -26,14 +27,14 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/data-object")
  *
- * @package GDPRDataExtractorBundle\Controller
+ * @internal
  */
-class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
+final class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
-     * @param FilterControllerEvent $event
+     * {@inheritdoc}
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -55,12 +56,12 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $result = $service->searchData(
-            intval($allParams['id']),
+            (int)$allParams['id'],
             strip_tags($allParams['firstname']),
             strip_tags($allParams['lastname']),
             strip_tags($allParams['email']),
-            intval($allParams['start']),
-            intval($allParams['limit']),
+            (int)$allParams['start'],
+            (int)$allParams['limit'],
             $allParams['sort'] ?? null
         );
 
@@ -78,7 +79,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
-        $object = AbstractObject::getById($request->get('id'));
+        $object = DataObject::getById($request->get('id'));
         if (!$object->isAllowed('view')) {
             throw new \Exception('export denied');
         }

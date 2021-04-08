@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -10,7 +10,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
     }
@@ -26,28 +26,25 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('TestKo', $object->getLinput('ko'));
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Language  not accepted in strict mode
-     */
     public function testExceptionInStrictMode()
     {
         $object = TestHelper::createEmptyObject();
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Language  not accepted in strict mode');
         $object->setLinput('Test');
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Language ko not accepted in strict mode
-     */
     public function testExceptionWithLocaleInStrictMode()
     {
         $object = TestHelper::createEmptyObject();
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Language ko not accepted in strict mode');
 
         $object->setLinput('Test', 'ko');
     }
@@ -65,7 +62,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
 
         //save data for language "de" on same index
@@ -73,7 +70,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = AbstractObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), true);
         $loadedItem = $object->getFieldcollection()->get(0);
 
         //initial value (en): index 0

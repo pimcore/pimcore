@@ -17,12 +17,14 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
@@ -30,6 +32,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
+use Pimcore\Tool\Storage;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
@@ -39,57 +42,57 @@ class Version extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var int
      */
-    public $userId;
+    protected $userId;
 
     /**
      * @var User
      */
-    public $user;
+    protected $user;
 
     /**
      * @var string
      */
-    public $note;
+    protected $note;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var mixed
      */
-    public $data;
+    protected $data;
 
     /**
      * @var bool
      */
-    public $public = false;
+    protected $public = false;
 
     /**
      * @var bool
      */
-    public $serialized = false;
+    protected $serialized = false;
 
     /**
      * @var string|null
      */
-    public $stackTrace = '';
+    protected $stackTrace = '';
 
     /**
      * @var bool
@@ -99,17 +102,17 @@ class Version extends AbstractModel
     /**
      * @var int
      */
-    public $versionCount = 0;
+    protected $versionCount = 0;
 
     /**
      * @var string|null
      */
-    public $binaryFileHash;
+    protected $binaryFileHash;
 
     /**
      * @var int|null
      */
-    public $binaryFileId;
+    protected $binaryFileId;
 
     /**
      * @var bool
@@ -168,12 +171,14 @@ class Version extends AbstractModel
      */
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_SAVE, new VersionEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_SAVE);
 
         // check if versioning is disabled for this process
         if (self::$disabled) {
             return;
         }
+
+        $storage = Storage::get('version');
 
         if (!$this->date) {
             $this->setDate(time());
@@ -214,50 +219,42 @@ class Version extends AbstractModel
         }
 
         $isAssetFile = false;
-        if ($data instanceof Asset && $data->getType() != 'folder' && file_exists($data->getFileSystemPath())) {
+        if ($data instanceof Asset && $data->getType() != 'folder') {
             $isAssetFile = true;
-            $this->binaryFileHash = hash_file('sha3-512', $data->getFileSystemPath());
+
+            $ctx = hash_init('sha3-512');
+            hash_update_stream($ctx, $data->getStream());
+            $this->binaryFileHash = hash_final($ctx);
+
             $this->binaryFileId = $this->getDao()->getBinaryFileIdForHash($this->binaryFileHash);
         }
 
         $id = $this->getDao()->save();
         $this->setId($id);
 
-        // check if directory exists
-        $saveDir = dirname($this->getFilePath());
+        $storage->write($this->getStoragePath(), $dataString);
 
-        if (!is_dir($saveDir)) {
-            File::mkdir($saveDir);
-        }
+        // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
+        if ($isAssetFile && !$storage->fileExists($this->getBinaryStoragePath())) {
+            $linked = false;
 
-        // save data to filesystem
-        if (!is_writable(dirname($this->getFilePath())) || (is_file($this->getFilePath()) && !is_writable($this->getFilePath()))) {
-            throw new \Exception('Cannot save version for element ' . $this->getCid() . ' with type ' . $this->getCtype() . ' because the file ' . $this->getFilePath() . ' is not writeable.');
-        } else {
-            File::put($this->getFilePath(), $dataString);
+            // we always try to create a hardlink onto the original file, the asset ensures that not the actual
+            // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
+            // old file first before opening a new stream -> see Asset::update()
+            $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
+            $storage->write($this->getBinaryStoragePath(), '1'); // temp file to determine if stream is local or not
+            if ($useHardlinks && stream_is_local($this->getBinaryFileStream()) && stream_is_local($data->getStream())) {
+                $linkPath = stream_get_meta_data($this->getBinaryFileStream())['uri'];
+                $storage->delete($this->getBinaryStoragePath());
+                $linked = @link(stream_get_meta_data($data->getStream())['uri'], $linkPath);
+            }
 
-            // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
-            if ($isAssetFile && !file_exists($this->getBinaryFilePath())) {
-                $linked = false;
-
-                // we always try to create a hardlink onto the original file, the asset ensures that not the actual
-                // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
-                // old file first before opening a new stream -> see Asset::update()
-                $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
-                if ($useHardlinks && stream_is_local($this->getBinaryFilePath()) && stream_is_local($data->getFileSystemPath())) {
-                    $linked = @link($data->getFileSystemPath(), $this->getBinaryFilePath());
-                }
-
-                if (!$linked) {
-                    // append binary data to version file
-                    $handle = fopen($this->getBinaryFilePath(), 'w', false, File::getContext());
-                    $src = $data->getStream();
-                    stream_copy_to_stream($src, $handle);
-                    fclose($handle);
-                }
+            if (!$linked) {
+                $storage->writeStream($this->getBinaryStoragePath(), $data->getStream());
             }
         }
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
+
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
     /**
@@ -333,25 +330,20 @@ class Version extends AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_DELETE, new VersionEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_DELETE);
 
-        foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
-            if (is_file($path)) {
-                @unlink($path);
-            }
+        $storage = Storage::get('version');
 
-            $compressed = $path . '.gz';
-            if (is_file($compressed)) {
-                @unlink($compressed);
-            }
+        if ($storage->fileExists($this->getStoragePath())) {
+            $storage->delete($this->getStoragePath());
         }
 
-        if (is_file($this->getBinaryFilePath()) && !$this->getDao()->isBinaryHashInUse($this->getBinaryFileHash())) {
-            @unlink($this->getBinaryFilePath());
+        if ($storage->fileExists($this->getBinaryStoragePath()) && !$this->getDao()->isBinaryHashInUse($this->getBinaryFileHash())) {
+            $storage->delete($this->getBinaryStoragePath());
         }
 
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_DELETE, new VersionEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_DELETE);
     }
 
     /**
@@ -363,43 +355,27 @@ class Version extends AbstractModel
      */
     public function loadData($renewReferences = true)
     {
-        $data = null;
-        $zipped = false;
-        $filePath = null;
-
-        // check both the legacy file path and the new structure
-        foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
-            if (file_exists($path)) {
-                $filePath = $path;
-                break;
-            }
-
-            if (file_exists($path . '.gz')) {
-                $filePath = $path . '.gz';
-                $zipped = true;
-                break;
-            }
-        }
-
-        if ($zipped && is_file($filePath) && is_readable($filePath)) {
-            $data = gzdecode(file_get_contents($filePath));
-        } elseif (is_file($filePath) && is_readable($filePath)) {
-            $data = file_get_contents($filePath);
-        }
+        $storage = Storage::get('version');
+        $data = $storage->read($this->getStoragePath());
 
         if (!$data) {
             Logger::err('Version: cannot read version data from file system.');
             $this->delete();
 
-            return;
+            return null;
         }
 
         if ($this->getSerialized()) {
+            // this makes it possible to restore data object versions from older Pimcore versions
+            @class_alias(GeoCoordinates::class, 'Pimcore\Model\DataObject\Data\Geopoint');
+
             $data = Serialize::unserialize($data);
+            //clear runtime cache to avoid dealing with marshalled data
+            Runtime::clear();
             if ($data instanceof \__PHP_Incomplete_Class) {
                 Logger::err('Version: cannot read version data from file system because of incompatible class.');
 
-                return;
+                return null;
             }
 
             $data = $this->unmarshalData($data);
@@ -409,12 +385,8 @@ class Version extends AbstractModel
             $data->markAllLazyLoadedKeysAsLoaded();
         }
 
-        if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
-            $binaryHandle = fopen($this->getBinaryFilePath(), 'rb', false, File::getContext());
-            $data->setStream($binaryHandle);
-        } elseif ($data instanceof Asset && $data->getObjectVar('data')) {
-            // this is for backward compatibility
-            $data->setData($data->getObjectVar('data'));
+        if ($data instanceof Asset && $storage->fileExists($this->getBinaryStoragePath())) {
+            $data->setStream($this->getBinaryFileStream());
         }
 
         if ($renewReferences) {
@@ -426,48 +398,40 @@ class Version extends AbstractModel
         return $data;
     }
 
-    /**
-     * Returns the path on the file system
-     *
-     * @param int|null $id
-     *
-     * @return string
-     */
-    public function getFilePath(?int $id = null)
+    private function getStoragePath(?int $id = null): string
     {
         if (!$id) {
             $id = $this->getId();
         }
 
         $group = floor($this->getCid() / 10000) * 10000;
-        $path = PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $id;
-        if (!is_dir(dirname($path))) {
-            \Pimcore\File::mkdir(dirname($path));
-        }
 
-        return $path;
+        return $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $id;
     }
 
     /**
-     * @return string
+     * @return resource
+     *
+     * @throws \League\Flysystem\FilesystemException
      */
-    public function getBinaryFilePath()
+    public function getFileStream()
     {
-        // compatibility
-        $compatibilityPath = $this->getLegacyFilePath() . '.bin';
-        if (file_exists($compatibilityPath)) {
-            return $compatibilityPath;
-        }
+        return Storage::get('version')->readStream($this->getStoragePath());
+    }
 
-        return $this->getFilePath($this->binaryFileId) . '.bin';
+    private function getBinaryStoragePath(): string
+    {
+        return $this->getStoragePath($this->getBinaryFileId()) . '.bin';
     }
 
     /**
-     * @return string
+     * @return resource
+     *
+     * @throws \League\Flysystem\FilesystemException
      */
-    public function getLegacyFilePath()
+    public function getBinaryFileStream()
     {
-        return PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/' . $this->getId();
+        return Storage::get('version')->readStream($this->getBinaryStoragePath());
     }
 
     /**

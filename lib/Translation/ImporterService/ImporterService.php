@@ -25,7 +25,7 @@ class ImporterService implements ImporterServiceInterface
     private $importers = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function import(AttributeSet $attributeSet, bool $saveElement = true)
     {
@@ -40,7 +40,7 @@ class ImporterService implements ImporterServiceInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getImporter(string $type): ImporterInterface
     {

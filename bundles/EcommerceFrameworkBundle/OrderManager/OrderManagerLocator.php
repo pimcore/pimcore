@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\CheckoutTenantAwareServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 
 class OrderManagerLocator extends CheckoutTenantAwareServiceLocator implements OrderManagerLocatorInterface
 {

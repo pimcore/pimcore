@@ -17,7 +17,8 @@
 
 namespace Pimcore\Model\Asset\MetaData;
 
-use Pimcore\Tool;
+use Pimcore\Logger;
+use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
@@ -62,18 +63,15 @@ trait EmbeddedMetaDataTrait
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
-        $embeddedMetaData = [];
 
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getTemporaryFile();
         }
 
-        if (stream_is_local($this->getStream()) && $exiftool && $useExifTool) {
-            $path = escapeshellarg($filePath);
-            if (!file_exists($path)) {
-                $path = escapeshellarg($this->getTemporaryFile());
-            }
-            $output = Tool\Console::exec($exiftool . ' -j ' . $path);
+        if ($exiftool && $useExifTool) {
+            $process = new Process([$exiftool, '-j', $filePath]);
+            $process->run();
+            $output = $process->getOutput();
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
 
             foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
@@ -82,7 +80,14 @@ trait EmbeddedMetaDataTrait
                 }
             }
         } else {
-            $xmp = $this->flattenArray($this->getXMPData($filePath));
+            try {
+                $xmp = $this->flattenArray($this->getXMPData($filePath));
+            } catch (\Exception $e) {
+                $xmp = [];
+                Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
+                    . $e->getMessage());
+            }
+
             $iptc = $this->flattenArray($this->getIPTCData($filePath));
             $exif = $this->flattenArray($this->getEXIFData($filePath));
             $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
@@ -118,7 +123,7 @@ trait EmbeddedMetaDataTrait
     public function getEXIFData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
@@ -140,7 +145,7 @@ trait EmbeddedMetaDataTrait
     public function getXMPData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];
@@ -164,13 +169,17 @@ trait EmbeddedMetaDataTrait
             $buffer = false;
 
             // find open tag
+            $overlapString = '';
             while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
                 if (strlen($chunk) <= $tagLength) {
                     break;
                 }
+
+                $chunk = $overlapString . $chunk;
+
                 if (($position = strpos($chunk, $tag)) === false) {
                     // if open tag not found, back up just in case the open tag is on the split.
-                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
+                    $overlapString = substr($chunk, $tagLength * -1);
                 } else {
                     $buffer = substr($chunk, $position);
                 }
@@ -237,7 +246,7 @@ trait EmbeddedMetaDataTrait
     public function getIPTCData(?string $filePath = null)
     {
         if (!$filePath) {
-            $filePath = $this->getFileSystemPath();
+            $filePath = $this->getLocalFile();
         }
 
         $data = [];

@@ -16,7 +16,7 @@ namespace Pimcore\Workflow\EventSubscriber;
 
 use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow;
 use Pimcore\Workflow\Transition;
@@ -24,6 +24,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class NotesSubscriber implements EventSubscriberInterface
 {
     const ADDITIONAL_DATA_NOTES_COMMENT = 'notes';
@@ -60,7 +63,7 @@ class NotesSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /** @var AbstractElement $subject */
+        /** @var ElementInterface $subject */
         $subject = $event->getSubject();
         /** @var Transition $transition */
         $transition = $event->getTransition();
@@ -79,7 +82,7 @@ class NotesSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /** @var AbstractElement $subject */
+        /** @var ElementInterface $subject */
         $subject = $event->getSubject();
         /** @var Transition $transition */
         $transition = $event->getTransition();
@@ -123,11 +126,11 @@ class NotesSubscriber implements EventSubscriberInterface
 
     /**
      * @param Workflow\Notes\NotesAwareInterface $notesAware
-     * @param AbstractElement $subject
+     * @param ElementInterface $subject
      *
      * @throws ValidationException
      */
-    private function handleNotesPreWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, AbstractElement $subject)
+    private function handleNotesPreWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject)
     {
         if (($setterFn = $notesAware->getNotesCommentSetterFn()) && ($notes = $this->getNotesComment())) {
             $subject->$setterFn($notes);
@@ -157,11 +160,11 @@ class NotesSubscriber implements EventSubscriberInterface
 
     /**
      * @param Workflow\Notes\NotesAwareInterface $notesAware
-     * @param AbstractElement $subject
+     * @param ElementInterface $subject
      *
      * @throws ValidationException
      */
-    private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, AbstractElement $subject)
+    private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject)
     {
         $additionalFieldsData = [];
         foreach ($notesAware->getNotesAdditionalFields() as $additionalFieldConfig) {
@@ -202,13 +205,13 @@ class NotesSubscriber implements EventSubscriberInterface
     {
         return $this->isEnabled()
                && $event->getTransition() instanceof Transition
-               && $event->getSubject() instanceof AbstractElement;
+               && $event->getSubject() instanceof ElementInterface;
     }
 
     private function checkGlobalActionEvent(GlobalActionEvent $event): bool
     {
         return $this->isEnabled()
-               && $event->getSubject() instanceof AbstractElement;
+               && $event->getSubject() instanceof ElementInterface;
     }
 
     /**

@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\Document\Editable;
 
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -37,28 +36,28 @@ class Renderlet extends Model\Document\Editable
      *
      * @var int|null
      */
-    public $id;
+    protected $id;
 
     /**
      * Contains the object
      *
      * @var Document|Asset|DataObject|null
      */
-    public $o;
+    protected $o;
 
     /**
      * Contains the type
      *
      * @var string|null
      */
-    public $type;
+    protected $type;
 
     /**
      * Contains the subtype
      *
      * @var string|null
      */
-    public $subtype;
+    protected $subtype;
 
     /**
      * @see EditableInterface::getType
@@ -109,19 +108,22 @@ class Renderlet extends Model\Document\Editable
      */
     public function frontend()
     {
-        // TODO inject services via DI when tags are built through container
+        // TODO inject services via DI when editables are built through container
         $container = \Pimcore::getContainer();
-        $editableHandler = $container->get(EditableHandlerInterface::class);
+        $editableHandler = $container->get(EditableHandler::class);
 
-        if (!$editableHandler->supports($this->view)) {
-            return '';
+        if (!is_array($this->config)) {
+            $this->config = [];
         }
 
-        if (!$this->config['controller'] && !$this->config['action']) {
-            if (is_null($this->config)) {
-                $this->config = [];
-            }
-            $this->config += Tool::getRoutingDefaults();
+        if (empty($this->config['controller']) && !empty($this->config['template'])) {
+            $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
+        }
+
+        if (empty($this->config['controller'])) {
+            // this can be the case e.g. in \Pimcore\Model\Search\Backend\Data::setDataFromElement() where
+            // this method is called without the config, so it would just render the default controller with the default template
+            return '';
         }
 
         if (method_exists($this->o, 'isPublished')) {
@@ -137,7 +139,7 @@ class Renderlet extends Model\Document\Editable
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
 
-            $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
+            $blockparams = ['controller', 'template'];
 
             $params = [
                 'template' => isset($this->config['template']) ? $this->config['template'] : null,
@@ -153,19 +155,8 @@ class Renderlet extends Model\Document\Editable
                 }
             }
 
-            $moduleOrBundle = null;
-
-            if (isset($this->config['bundle'])) {
-                $moduleOrBundle = $this->config['bundle'];
-            } elseif (isset($this->config['module'])) {
-                $moduleOrBundle = $this->config['module'];
-            }
-
             return $editableHandler->renderAction(
-                $this->view,
                 $this->config['controller'],
-                $this->config['action'],
-                $moduleOrBundle,
                 $params
             );
         }
@@ -282,64 +273,6 @@ class Renderlet extends Model\Document\Editable
         }
 
         return true;
-    }
-
-    /**
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id !== null) {
-            $this->type = $data->type;
-            $this->subtype = $data->subtype;
-            if (is_numeric($data->id)) {
-                $id = $data->id;
-                if ($idMapper) {
-                    $id = $idMapper->getMappedId($data->type, $data->id);
-                }
-                $this->id = $id;
-
-                if ($this->type == 'asset') {
-                    $this->o = Asset::getById($id);
-                    if (!$this->o instanceof Asset) {
-                        if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
-                        } else {
-                            throw new \Exception('cannot get values from web service import - referenced asset with id [ '.$this->id.' ] is unknown');
-                        }
-                    }
-                } elseif ($this->type == 'document') {
-                    $this->o = Document::getById($id);
-                    if (!$this->o instanceof Document) {
-                        if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
-                        } else {
-                            throw new \Exception('cannot get values from web service import - referenced document with id [ '.$this->id.' ] is unknown');
-                        }
-                    }
-                } elseif ($this->type == 'object') {
-                    $this->o = DataObject::getById($id);
-                    if (!$this->o instanceof DataObject\AbstractObject) {
-                        if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
-                        } else {
-                            throw new \Exception('cannot get values from web service import - referenced object with id [ '.$this->id.' ] is unknown');
-                        }
-                    }
-                } else {
-                    p_r($this);
-                    throw new \Exception('cannot get values from web service import - type is not valid');
-                }
-            } else {
-                throw new \Exception('cannot get values from web service import - id is not valid');
-            }
-        }
     }
 
     /**
@@ -472,5 +405,3 @@ class Renderlet extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Renderlet::class, 'Pimcore\Model\Document\Tag\Renderlet');

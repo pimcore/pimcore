@@ -35,7 +35,7 @@ class TargetingStorage implements DataProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function load(VisitorInfo $visitorInfo)
     {

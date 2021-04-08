@@ -17,23 +17,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Element\ValidationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class AdminExceptionListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class AdminExceptionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
     {
@@ -43,14 +46,12 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * Return JSON error responses from webservice context
-     *
-     * @param GetResponseForExceptionEvent $event
+     * @param ExceptionEvent $event
      */
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
         $request = $event->getRequest();
-        $ex = $event->getException();
+        $ex = $event->getThrowable();
 
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             // only return JSON error for XHR requests
@@ -60,17 +61,16 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             list($code, $headers, $message) = $this->getResponseData($ex);
 
+            $data = [
+                'success' => false,
+            ];
+
             if (!\Pimcore::inDebugMode()) {
                 // DBAL exceptions do include SQL statements, we don't want to expose them
                 if ($ex instanceof DBALException) {
                     $message = 'Database error, see logs for details';
                 }
             }
-
-            $data = [
-                'success' => false,
-                'message' => $message,
-            ];
 
             if (\Pimcore::inDebugMode()) {
                 $data['trace'] = $ex->getTrace();
@@ -84,26 +84,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
             }
 
-            $response = new JsonResponse($data, $code, $headers);
-            $event->setResponse($response);
-
-            return;
-        } elseif ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_WEBSERVICE)) {
-            list($code, $headers, $message) = $this->getResponseData($ex);
-
-            if ($ex instanceof DBALException) {
-                $message = 'Database error, see logs for details';
-            }
-
-            $data = [
-                'success' => false,
-                'msg' => $message,
-            ];
-
-            if (\Pimcore::inDebugMode()) {
-                $data['trace'] = $ex->getTrace();
-                $data['traceString'] = $ex->getTraceAsString();
-            }
+            $data['message'] = $message;
 
             $response = new JsonResponse($data, $code, $headers);
             $event->setResponse($response);
@@ -112,7 +93,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         }
     }
 
-    private function getResponseData(\Exception $ex, int $defaultStatusCode = 500): array
+    private function getResponseData(\Throwable $ex, int $defaultStatusCode = 500): array
     {
         $code = $defaultStatusCode;
         $headers = [];
@@ -171,11 +152,11 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      *
-     * @return \Exception
+     * @return \Throwable
      */
-    protected function getInnerStack(\Exception $e)
+    protected function getInnerStack(\Throwable $e)
     {
         while ($e->getPrevious()) {
             $e = $e->getPrevious();

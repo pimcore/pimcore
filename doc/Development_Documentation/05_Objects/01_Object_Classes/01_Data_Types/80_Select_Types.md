@@ -72,8 +72,17 @@ $valuesSingle = DataObject\Service::getOptionsForSelectField($o, "select");
 $selectedValueSingle = $valuesSingle[$o->getSelect()];
 
 // for a multiselect data field
-$valuesMulti = DataObject\Service::getOptionsForMultiSelectField($o, "multiselect");
-$selectedValueMulti = $valuesMulti[$o->getMultiselect()];
+$multiSelectFieldValues = DataObject\Service::getOptionsForMultiSelectField($o, "multiSelectField");
+$selectedValues = array_map(
+    static fn($value) => $multiSelectFieldValues[$value],
+    $o->getMultiSelectField()
+); // For PHP >= 7.4
+
+$selectedValues = array_map(
+    static function($value) use ($multiSelectFieldValues) {
+        return $multiSelectFieldValues[$value];
+    }, $o->getMultiSelectField()
+); // For PHP <= 7.3
 ```
 
 To show the selected option's display name in a Twig template, first put the option values as a view variable inside the controller action:
@@ -85,7 +94,9 @@ use Pimcore\Model\DataObject;
 
 $product = DataObject::getById(49);
 // for a select data field
-$this->view->colorOptions = DataObject\Service::getOptionsForSelectField($product, "color");
+$colorOptions = DataObject\Service::getOptionsForSelectField($product, "color");
+
+return $this->render('foo/bar.html.twig', ['colorOptions' => $colorOptions]);
 ```
 
 Then you can use it in the Twig view:

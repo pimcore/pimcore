@@ -24,7 +24,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class GDPRDataProviderPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class GDPRDataProviderPass implements CompilerPassInterface
 {
     /**
      * Registers each service with tag pimcore.gdpr.data-provider as dataprovider for gdpr data extractor

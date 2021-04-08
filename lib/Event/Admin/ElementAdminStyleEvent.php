@@ -19,7 +19,7 @@ namespace Pimcore\Event\Admin;
 
 use Pimcore\Model\Element\AdminStyle;
 use Pimcore\Model\Element\ElementInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ElementAdminStyleEvent extends Event
 {

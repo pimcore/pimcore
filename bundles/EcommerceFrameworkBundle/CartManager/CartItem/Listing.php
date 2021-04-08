@@ -27,13 +27,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var array
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $cartItems;
-
-    /**
-     * @var array
      */
     protected $order = ['ASC'];
 
@@ -42,13 +35,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     protected $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
 
-    public function __construct()
-    {
-        $this->cartItems = & $this->data;
-    }
-
     /**
-     * @var array
+     * @param string $key
      *
      * @return bool
      */

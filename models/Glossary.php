@@ -27,57 +27,52 @@ class Glossary extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $text;
+    protected $text;
 
     /**
      * @var string
      */
-    public $link;
+    protected $link;
 
     /**
      * @var string
      */
-    public $abbr;
+    protected $abbr;
 
     /**
      * @var string
      */
-    public $acronym;
-
-    /**
-     * @var string
-     */
-    public $language;
+    protected $language;
 
     /**
      * @var bool
      */
-    public $casesensitive;
+    protected $casesensitive;
 
     /**
      * @var bool
      */
-    public $exactmatch;
+    protected $exactmatch;
 
     /**
      * @var int
      */
-    public $site;
+    protected $site;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
@@ -88,7 +83,7 @@ class Glossary extends AbstractModel
     {
         try {
             $glossary = new self();
-            $glossary->setId(intval($id));
+            $glossary->setId((int)$id);
             $glossary->getDao()->getById();
 
             return $glossary;
@@ -186,26 +181,6 @@ class Glossary extends AbstractModel
     public function getAbbr()
     {
         return $this->abbr;
-    }
-
-    /**
-     * @param string $acronym
-     *
-     * @return $this
-     */
-    public function setAcronym($acronym)
-    {
-        $this->acronym = $acronym;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAcronym()
-    {
-        return $this->acronym;
     }
 
     /**

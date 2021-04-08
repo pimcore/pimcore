@@ -14,7 +14,7 @@
 
 namespace Pimcore\Event\Cache\Core;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ResultEvent extends Event
 {

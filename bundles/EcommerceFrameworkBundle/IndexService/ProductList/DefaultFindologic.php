@@ -17,11 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 class DefaultFindologic implements ProductListInterface
 {
@@ -41,7 +39,7 @@ class DefaultFindologic implements ProductListInterface
     protected $revision = '0.1';
 
     /**
-     * @var IndexableInterface[]
+     * @var IndexableInterface[]|null
      */
     protected $products = null;
 
@@ -88,17 +86,17 @@ class DefaultFindologic implements ProductListInterface
     /**
      * json result from findologic
      *
-     * @var string[]
+     * @var \SimpleXMLElement
      */
     protected $response;
 
     /**
-     * @var string[]
+     * @var array<string,\stdClass>
      */
     protected $groupedValues;
 
     /**
-     * @var string[]
+     * @var string[][]
      */
     protected $conditions = [];
 
@@ -108,12 +106,12 @@ class DefaultFindologic implements ProductListInterface
     protected $queryConditions = [];
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceFrom = null;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceTo = null;
 
@@ -143,9 +141,9 @@ class DefaultFindologic implements ProductListInterface
     protected $timeout = 3;
 
     /**
-     * @param ConfigInterface $tenantConfig
+     * @param FindologicConfigInterface $tenantConfig
      */
-    public function __construct(ConfigInterface $tenantConfig)
+    public function __construct(FindologicConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -158,9 +156,7 @@ class DefaultFindologic implements ProductListInterface
         $this->referer = $_SERVER['HTTP_REFERER'];
     }
 
-    /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -392,7 +388,7 @@ class DefaultFindologic implements ProductListInterface
                     $this->products[] = $product;
                 }
             } else {
-                $this->getLogger()->err(sprintf('object "%s" not found', $id));
+                $this->getLogger()->error(sprintf('object "%s" not found', $id));
             }
         }
 
@@ -855,16 +851,6 @@ class DefaultFindologic implements ProductListInterface
         $this->setLimit($itemCountPerPage);
 
         return $this->getProducts();
-    }
-
-    /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

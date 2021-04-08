@@ -11,13 +11,11 @@ A typical use-case would be to render product objects within a document.
 
 | Name           | Type      | Description                                                                        | Mandatory   |
 |----------------|-----------|------------------------------------------------------------------------------------|-------------|
-| `action`       | string    | Specify action                                                                     | X           |
-| `className`    | string or string[] | Specify class name (if type **object** chosen) as single string or as string array |    |
-| `controller`   | string    | Specify controller                                                                 | X           |
-| `height`       | integer   | Height of the renderlet in pixel                                                   |             |
-| `bundle`       | string    | Specify bundle (default: `AppBundle`)                                              |             |
-| `reload`       | bool      | Reload document on change                                                          |             |
+| `controller`   | string    | Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction`  | X           |
 | `template`     | string    | Specify template                                                                   |             |
+| `className`    | string or string[] | Specify class name (if type **object** chosen) as single string or as string array |    |
+| `height`       | integer or string   | Height of the renderlet in pixel or 'auto'                               |             |
+| `reload`       | bool      | Reload document on change                                                          |             |
 | `title`        | string    | Add a title to the box in editmode                                                 |             |
 | `type`         | string    | The type of the element assigned to the renderlet (document,asset,object)          |             |
 | `width`        | integer   | Width of the renderlet in pixel                                                    |             |
@@ -50,33 +48,17 @@ The code below shows how to use renderlet to create gallery based on it.
 
 ### Specify the Renderlet Editable in a Template
 
-<div class="code-section">
-
-```php
-<section id="renderlet-gallery">
-    <?= $this->renderlet("myGallery", [
-        "controller" => "content",
-        "action" => "myGallery",
-        "title" => "Drag an asset folder here to get a gallery",
-        "height" => 400
-    ]); ?>
-</section>
-```
-
 ```twig
 <section id="renderlet-gallery">
     {{
         pimcore_renderlet('myGallery', {
-            "controller" : "content",
-            "action" : "myGallery",
+            "controller" : "AppBundle\\Controller\\ContentController::myGallery",
             "title" : "Drag an asset folder here to get a gallery",
             "height" : 400
         })
     }}
 </section>
 ```
-
-</div>
 
 Now editors are able to put elements onto the renderlet in the editmode.
 
@@ -85,14 +67,21 @@ Now editors are able to put elements onto the renderlet in the editmode.
 ### Specify the Controller Action
 
 ```php
+/**
+ * @Template
+ */
 public function myGalleryAction(Request $request)
 {
     if ('asset' === $request->get('type')) {
         $asset = Asset::getById($request->get('id'));
         if ('folder' === $asset->getType()) {
-            $this->view->assets = $asset->getChildren();
+            return [
+                'assets' => $asset->getChildren()
+            ];
         }
     }
+
+    return [];
 }
 ```
 
@@ -103,44 +92,19 @@ Of course, to limit access to the renderlet, you can use the `type` configuratio
 
 Now you have to create the template file at: `website/views/scripts/content/my-gallery.php`
 
-<div class="code-section">
-
-```php
-<?php
-/** @var \Pimcore\Templating\PhpEngine $this */
-?>
-<?php if ($this->assets): ?>
-    <div class="my-gallery">
-        <?php
-        foreach ($this->assets as $asset):
-            if ($asset instanceof Pimcore\Model\Asset\Image):
-                /** @var Pimcore\Model\Asset\Image $asset */
-                ?>
-                <div class="gallery-row">
-                    <?= $asset->getThumbnail('galleryThumbnail')->getHtml(); ?>
-                </div>
-                <?php
-            endif;
-        endforeach; ?>
-    </div>
-<?php endif; ?>
-```
-
 ```twig
 {% if assets %}
 	<div class="my-gallery">
 		{% for asset in assets %}
 			{% if asset is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
 				<div class="gallery-row">
-				{{ asset.getThumbnail('galleryThumbnail').getHTML() }}
+                    {{ asset.getThumbnail('myThumbnailName').getHTML()|raw }}
 				</div>
 			{% endif %}
 		{% endfor %}
 	</div>
 {% endif %}
 ```
-
-</div>
 
 And the final view is like, below:
 ![Rendered renderlet - frontend](../../img/editables_renderlet_rendered_view.png)
@@ -150,15 +114,6 @@ And the final view is like, below:
 
 > Please be aware, that the renderlet itself is not editmode-aware. If you need to determine within the renderlet whether in editmode or not, you need to pass that parameter to the renderlet.
 
-<div class="code-section">
-
-```php
-$this->renderlet("myRenderlet", [
-....
-'editmode' => $this->editmode
-]);
-```
-
 ```twig
 {{
 	pimcore_renderlet('myRenderlet', {
@@ -167,10 +122,9 @@ $this->renderlet("myRenderlet", [
 	})
 }}
 ```
-</div>
 
 Within the renderlet, you can access the editmode parameter as follows:
 
 ```php
-$this->getParam("editmode")
+$request->get("editmode");
 ```

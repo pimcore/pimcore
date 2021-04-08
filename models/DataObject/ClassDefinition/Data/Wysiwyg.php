@@ -20,15 +20,17 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 
-class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
@@ -38,14 +40,14 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $fieldtype = 'wysiwyg';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * Type for the column to query
@@ -62,13 +64,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $columnType = 'longtext';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
-
-    /**
      * @var string
      */
     public $toolbarConfig = '';
@@ -79,7 +74,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $excludeFromSearchIndex = false;
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -87,7 +82,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -95,25 +90,31 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -363,35 +364,30 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return mixed
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        $html = str_get_html($data);
-        if ($html) {
-            $s = $html->find('a[pimcore_id],img[pimcore_id]');
+        $html = new DomCrawler($data);
+        $es = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-            if ($s) {
-                foreach ($s as $el) {
-                    if ($el->href || $el->src) {
-                        $type = $el->pimcore_type;
-                        $id = (int) $el->pimcore_id;
+        /** @var \DOMElement $el */
+        foreach ($es as $el) {
+            if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
+                $type = $el->getAttribute('pimcore_type');
+                $id = (int) $el->getAttribute('pimcore_id');
 
-                        if (array_key_exists($type, $idMapping)) {
-                            if (array_key_exists($id, $idMapping[$type])) {
-                                $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
-                            }
-                        }
-                    }
+                if ($idMapping[$type][$id] ?? false) {
+                    $el->setAttribute('pimcore_id', strtr($el->getAttribute('pimcore_id'), $idMapping[$type]));
                 }
             }
-
-            $data = $html->save();
-
-            $html->clear();
-            unset($html);
         }
+
+        $data = $html->html();
+
+        $html->clear();
+        unset($html);
 
         return $data;
     }
@@ -399,5 +395,25 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
     }
 }

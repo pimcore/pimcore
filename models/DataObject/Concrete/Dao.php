@@ -27,6 +27,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareI
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Concrete $model
  */
 class Dao extends Model\DataObject\AbstractObject\Dao
@@ -45,22 +47,20 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      * Get the data for the object from database for the given id
      *
      * @param int $id
+     *
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
-        try {
-            $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
-                LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
-                    WHERE o_id = ?", $id);
+        $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
+            LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
+                WHERE o_id = ?", $id);
 
-            if ($data['o_id']) {
-                $this->assignVariablesToModel($data);
-                $this->getData();
-            } else {
-                throw new \Exception('Object with the ID ' . $id . " doesn't exists");
-            }
-        } catch (\Exception $e) {
-            Logger::warning($e);
+        if (!empty($data['o_id'])) {
+            $this->assignVariablesToModel($data);
+            $this->getData();
+        } else {
+            throw new Model\Exception\NotFoundException('Object with the ID ' . $id . " doesn't exists");
         }
     }
 
@@ -147,7 +147,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             return;
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
+        if (!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId())) {
+            return;
+        }
 
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
@@ -176,9 +178,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     }
                     $this->model->setValue($key, $value->getDataFromResource($multidata));
                 } else {
-                    $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model,
-                        ['owner' => $this->model,
-                            'fieldname' => $key, ]));
+                    $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model, [
+                        'owner' => $this->model,
+                        'fieldname' => $key,
+                    ]));
                 }
             }
         }
@@ -199,15 +202,14 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $db = Db::get();
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if (($fd instanceof LazyLoadingSupportInterface || method_exists($fd, 'getLazyLoading'))
-                && $fd->getLazyLoading()) {
-                if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+            if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;
                 }
             }
 
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
+            if (!DataObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
                 if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
                     if (!in_array($key, $untouchable)) {
                         $untouchable[] = $key;
@@ -224,14 +226,14 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
         }
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+        if (!DataObject::isDirtyDetectionDisabled()) {
             $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
         }
 
         $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
 
-        $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
-        DataObject\AbstractObject::setGetInheritedValues(false);
+        $inheritedValues = DataObject::doGetInheritedValues();
+        DataObject::setGetInheritedValues(false);
 
         $data = [];
         $data['oo_id'] = $this->model->getId();
@@ -293,7 +295,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $parentForInheritance = $this->model->getNextParentForInheritance();
             if ($parentForInheritance) {
                 // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                // we cannot DataObject\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
+                // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
                 $parentData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', $parentForInheritance->getId());
@@ -396,7 +398,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         $this->db->insertOrUpdate('object_query_' . $this->model->getClassId(), $data);
 
-        DataObject\AbstractObject::setGetInheritedValues($inheritedValues);
+        DataObject::setGetInheritedValues($inheritedValues);
     }
 
     public function saveChildData()

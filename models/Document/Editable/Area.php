@@ -18,8 +18,11 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
+use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
+use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -28,7 +31,7 @@ use Pimcore\Tool\HtmlUtils;
 class Area extends Model\Document\Editable
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -36,7 +39,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -44,44 +47,76 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function admin()
     {
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $dialogConfig = null;
+        $brick = $areabrickManager->getBrick($this->config['type']);
+        $info = $this->buildInfoObject();
+        if ($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
+            $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
+            $dialogConfig->setId('dialogBox-' . $this->getName());
+        }
+
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
-
         $this->outputEditmode('<div ' . $attributeString . '>');
+
+        if ($dialogConfig) {
+            $dialogAttributes = [
+                'data-dialog-id' => $dialogConfig->getId(),
+            ];
+
+            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
+            $this->outputEditmode('<div class="pimcore_area_dialog" data-name="' . $attributes['data-name'] . '" data-real-name="' . $attributes['data-real-name'] . '" ' . $dialogAttributes . '></div>');
+        }
 
         $this->frontend();
 
         $this->outputEditmode('</div>');
+
+        if ($dialogConfig) {
+            $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
+            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
+        }
     }
 
     /**
-     * @inheritDoc
+     * @param array $config
+     * @param EditableRenderer $editableRenderer
+     * @param string $dialogId
      */
-    public function frontend()
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId)
+    {
+        if (isset($config['items']) && is_array($config['items'])) {
+            // layout component
+            foreach ($config['items'] as $child) {
+                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
+            }
+        } elseif (isset($config['name']) && isset($config['type'])) {
+            $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
+            if (!$editable instanceof Model\Document\Editable) {
+                throw new \Exception(sprintf('Invalid editable type "%s" configured for Dialog Box', $config['type']));
+            }
+
+            $editable->setInDialogBox($dialogId);
+            $editable->addConfig('dialogBoxConfig', $config);
+            $this->outputEditmode($editable->render());
+        } elseif (is_array($config) && isset($config[0])) {
+            foreach ($config as $item) {
+                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
+            }
+        }
+    }
+
+    protected function buildInfoObject(): Area\Info
     {
         $config = $this->getConfig();
-
-        // TODO inject area handler via DI when tags are built through container
-        $editableHandler = \Pimcore::getContainer()->get(EditableHandlerInterface::class);
-
-        // don't show disabled bricks
-        if (!$editableHandler->isBrickEnabled($this, $config['type'] && $config['dontCheckEnabled'] != true)) {
-            return;
-        }
-
-        // push current block name
-        $blockState = $this->getBlockState();
-        $blockState->pushBlock(BlockName::createFromEditable($this));
-
         // create info object and assign it to the view
-        $info = null;
         try {
             $info = new Area\Info();
             $info->setId($config['type']);
@@ -91,11 +126,49 @@ class Area extends Model\Document\Editable
             $info = null;
         }
 
+        $params = [];
+        if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
+            if (is_array($config['params'][$config['type']])) {
+                $params = $config['params'][$config['type']];
+            }
+        }
+
+        if (isset($config['globalParams'])) {
+            $params = array_merge($config['globalParams'], (array)$params);
+        }
+
+        $info->setParams($params);
+
+        return $info;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function frontend()
+    {
+        $config = $this->getConfig();
+
+        // TODO inject area handler via DI when editables are built by container
+        $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
+
+        // don't show disabled bricks
+        if (!$editableHandler->isBrickEnabled($this, $config['type'] && ($config['dontCheckEnabled'] ?? false) !== true)) {
+            return;
+        }
+
+        // push current block name
+        $blockState = $this->getBlockState();
+        $blockState->pushBlock(BlockName::createFromEditable($this));
+
+        // create info object and assign it to the view
+        $info = $this->buildInfoObject();
+
         // start at first index
         $blockState->pushIndex(1);
 
         $params = [];
-        if (is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
+        if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
             if (is_array($config['params'][$config['type']])) {
                 $params = $config['params'][$config['type']];
             }
@@ -103,7 +176,7 @@ class Area extends Model\Document\Editable
 
         $info->setParams($params);
 
-        $editableHandler->renderAreaFrontend($info);
+        echo $editableHandler->renderAreaFrontend($info);
 
         // remove current block and index from stack
         $blockState->popIndex();
@@ -111,7 +184,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -119,7 +192,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -127,7 +200,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -146,12 +219,10 @@ class Area extends Model\Document\Editable
     public function getElement(string $name)
     {
         $document = $this->getDocument();
-        $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
-
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
-        $id = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
+        $id = Model\Document\Editable::buildChildEditableName($name, 'area', $parentBlockNames, 1);
         $editable = $document->getEditable($id);
 
         if ($editable) {
@@ -161,5 +232,3 @@ class Area extends Model\Document\Editable
         return $editable;
     }
 }
-
-class_alias(Area::class, 'Pimcore\Model\Document\Tag\Area');

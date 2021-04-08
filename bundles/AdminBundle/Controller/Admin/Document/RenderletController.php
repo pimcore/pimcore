@@ -18,21 +18,22 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RenderletController extends AdminController
+/**
+ * @internal
+ */
+final class RenderletController extends AdminController
 {
     /**
      * Handles editmode preview for renderlets
@@ -41,7 +42,7 @@ class RenderletController extends AdminController
      *
      * @param Request $request
      * @param ActionRenderer $actionRenderer
-     * @param EditableHandlerInterface $editableHandler
+     * @param EditableHandler $editableHandler
      * @param LocaleServiceInterface $localeService
      *
      * @return Response
@@ -49,7 +50,7 @@ class RenderletController extends AdminController
     public function renderletAction(
         Request $request,
         ActionRenderer $actionRenderer,
-        EditableHandlerInterface $editableHandler,
+        EditableHandler $editableHandler,
         LocaleServiceInterface $localeService
     ) {
         $query = $request->query->all();
@@ -97,7 +98,7 @@ class RenderletController extends AdminController
             $localeService->setLocale($attributes['_locale']);
         }
 
-        $result = $editableHandler->renderAction(new ViewModel(), $controller, $action, $moduleOrBundle, $attributes, $query);
+        $result = $editableHandler->renderAction($controller, $attributes, $query);
 
         return new Response($result);
     }
@@ -117,10 +118,8 @@ class RenderletController extends AdminController
             throw $this->createNotFoundException(sprintf('Element with type %s and ID %d was not found', $type ?: 'null', $id ?: 'null'));
         }
 
-        if ($element instanceof AbstractElement) {
-            if (!$element->isAllowed('view')) {
-                throw $this->createAccessDeniedException(sprintf('Access to element with type %s and ID %d is not allowed', $type, $id));
-            }
+        if (!$element->isAllowed('view')) {
+            throw $this->createAccessDeniedException(sprintf('Access to element with type %s and ID %d is not allowed', $type, $id));
         }
 
         return $element;

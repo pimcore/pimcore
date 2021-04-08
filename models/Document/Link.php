@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
@@ -78,8 +79,6 @@ class Link extends Model\Document
     protected $href = '';
 
     /**
-     * @see Document::resolveDependencies
-     *
      * @return array
      */
     public function resolveDependencies()
@@ -87,11 +86,13 @@ class Link extends Model\Document
         $dependencies = parent::resolveDependencies();
 
         if ($this->getLinktype() == 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                $key = $this->getInternalType() . '_' . $this->getObject()->getId();
+            $element = $this->getObject();
+
+            if ($element instanceof Document || $element instanceof Asset) {
+                $key = $this->getInternalType() . '_' . $element->getId();
 
                 $dependencies[$key] = [
-                    'id' => $this->getObject()->getId(),
+                    'id' => $element->getId(),
                     'type' => $this->getInternalType(),
                 ];
             }
@@ -324,14 +325,21 @@ class Link extends Model\Document
      */
     public function setObjectFromId()
     {
-        if ($this->internal) {
-            if ($this->internalType == 'document') {
-                $this->object = Document::getById($this->internal);
-            } elseif ($this->internalType == 'asset') {
-                $this->object = Asset::getById($this->internal);
-            } elseif ($this->internalType == 'object') {
-                $this->object = Model\DataObject\Concrete::getById($this->internal);
+        try {
+            if ($this->internal) {
+                if ($this->internalType == 'document') {
+                    $this->object = Document::getById($this->internal);
+                } elseif ($this->internalType == 'asset') {
+                    $this->object = Asset::getById($this->internal);
+                } elseif ($this->internalType == 'object') {
+                    $this->object = Model\DataObject\Concrete::getById($this->internal);
+                }
             }
+        } catch (\Exception $e) {
+            Logger::warn($e);
+            $this->internalType = '';
+            $this->internal = null;
+            $this->object = null;
         }
 
         return $this->object;
@@ -369,7 +377,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {

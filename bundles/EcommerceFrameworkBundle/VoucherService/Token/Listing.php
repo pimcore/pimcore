@@ -15,8 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Token[] load()
@@ -24,20 +23,8 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements PaginateListingInterface
 {
-    /**
-     * @var Token[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $tokens;
-
-    public function __construct()
-    {
-        $this->tokens = & $this->data;
-    }
-
     /**
      * @param string $key
      *
@@ -358,18 +345,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
 
     /**
      * @param array $tokens
+     *
+     * @return static
      */
     public function setTokens($tokens)
     {
         return $this->setData($tokens);
-    }
-
-    /**
-     * @return \Pimcore\Model\DataObject\Listing|AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

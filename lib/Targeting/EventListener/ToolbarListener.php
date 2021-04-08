@@ -30,13 +30,13 @@ use Pimcore\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool\Authentication;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ToolbarListener implements EventSubscriberInterface
 {
@@ -114,7 +114,7 @@ class ToolbarListener implements EventSubscriberInterface
         $this->overrideHandler->handleRequest($request);
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
@@ -192,7 +192,7 @@ class ToolbarListener implements EventSubscriberInterface
     {
         $event = new RenderToolbarEvent('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
 
-        $this->eventDispatcher->dispatch(TargetingEvents::RENDER_TOOLBAR, $event);
+        $this->eventDispatcher->dispatch($event, TargetingEvents::RENDER_TOOLBAR);
 
         $code = $this->templatingEngine->render(
             $event->getTemplate(),

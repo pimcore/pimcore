@@ -1,0 +1,5 @@
+{% for call in calls %}
+_gaq.push({{ call|json_encode|raw }});
+{% endfor %}
+
+_gaq.push(['_trackTrans']);

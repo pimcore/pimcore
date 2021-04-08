@@ -16,20 +16,21 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 
 class Input extends AbstractFilterType
 {
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
-        ]);
+        ];
     }
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
@@ -50,10 +51,11 @@ class Input extends AbstractFilterType
         $currentFilter[$field] = $value;
 
         if (!empty($value)) {
+            $db = Db::get();
             if ($isPrecondition) {
-                $productList->addCondition('TRIM(`' . $field . '`) LIKE ' . $productList->quote('%' . $value . '%'), 'PRECONDITION_' . $field);
+                $productList->addCondition('TRIM(`' . $field . '`) LIKE ' . $db->quote('%' . $value . '%'), 'PRECONDITION_' . $field);
             } else {
-                $productList->addCondition('TRIM(`' . $field . '`) LIKE ' . $productList->quote('%' . $value . '%'), $field);
+                $productList->addCondition('TRIM(`' . $field . '`) LIKE ' . $db->quote('%' . $value . '%'), $field);
             }
         }
 

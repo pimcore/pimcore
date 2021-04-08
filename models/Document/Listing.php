@@ -19,8 +19,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Document[] load()
@@ -30,33 +29,22 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method onCreateQueryBuilder(?callable $callback)
  * @method array loadIdPathList()
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
      *
      * @var bool
      */
-    public $objectTypeDocument = false;
-
-    /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $documents = null;
+    protected $objectTypeDocument = false;
 
     /**
      * @var bool
      */
-    public $unpublished = false;
-
-    public function __construct()
-    {
-        $this->documents = & $this->data;
-    }
+    protected $unpublished = false;
 
     /**
      * @return Document[]
@@ -149,13 +137,5 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
         $this->setLimit($itemCountPerPage);
 
         return $this->load();
-    }
-
-    /**
-     * @return Listing
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 }

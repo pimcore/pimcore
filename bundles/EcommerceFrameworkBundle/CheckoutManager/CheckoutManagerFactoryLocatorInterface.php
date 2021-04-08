@@ -23,5 +23,3 @@ interface CheckoutManagerFactoryLocatorInterface
 
     public function hasCheckoutManagerFactory(string $tenant): bool;
 }
-
-class_alias(CheckoutManagerFactoryLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator');

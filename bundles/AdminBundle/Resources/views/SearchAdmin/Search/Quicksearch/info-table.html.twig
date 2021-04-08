@@ -1,0 +1,77 @@
+{# @var $element \Pimcore\Model\Element\AbstractElement #}
+{% set language = element.getProperty('language') %}
+<div class="data-table {{ cls ?? '' }}">
+    <table>
+        {% if element is instanceof ('\\Pimcore\\Model\\DataObject\\Concrete') %}
+            <tr>
+                <th>{{ 'class'|trans([],'admin') }}</th>
+                <td>{{ element.getClassName() }} [{{ element.getClassId() }}]</td>
+            </tr>
+        {% endif %}
+
+        {% if element is instanceof ('\\Pimcore\\Model\\Asset') %}
+            <tr>
+                <th>{{ 'mimetype'|trans([],'admin') }}</th>
+                <td>{{ element.getMimetype() }}</td>
+            </tr>
+        {% endif %}
+
+        {% if language is not empty %}
+            <tr>
+                <th>{{ 'language'|trans([],'admin') }}</th>
+                <td style="padding-left: 40px; background: url({{ pimcore_language_flag(language, false) }}) left top no-repeat; background-size: 31px 21px;">
+                    {% set locales = pimcore_supported_locales() %}
+                    {{ locales[language] }}
+                </td>
+            </tr>
+        {% endif %}
+
+        {% if element is instanceof('\\Pimcore\\Model\\Document\\Page') %}
+            {% if element.title is not empty %}
+            <tr>
+                <th>{{ 'title'|trans([],'admin') }}</th>
+                <td>{{ element.title }}</td>
+            </tr>
+            {% endif %}
+
+            {% if element.description is not empty %}
+                <tr>
+                    <th>{{ 'description'|trans([],'admin') }}</th>
+                    <td>{{ element.description }}</td>
+                </tr>
+            {% endif %}
+
+            {% if element.getProperty('navigation_name') is not empty %}
+                <tr>
+                    <th>{{ 'name'|trans([],'admin') }}</th>
+                    <td>{{ element.getProperty('navigation_name') }}</td>
+                </tr>
+            {% endif %}
+        {% endif %}
+
+        {% set owner = pimcore_user(element.getUserOwner()) %}
+        {% if owner is instanceof('\\Pimcore\\Model\\User') %}
+            <tr>
+                <th>{{ 'owner'|trans([],'admin') }}</th>
+                <td>{{ owner.name }}</td>
+            </tr>
+        {% endif %}
+
+        {% set editor = pimcore_user(element.getUserModification()) %}
+        {% if editor is instanceof('\\Pimcore\\Model\\User') %}
+            <tr>
+                <th>{{ 'usermodification'|trans([],'admin') }}</th>
+                <td>{{ editor.name }}</td>
+            </tr>
+        {% endif %}
+
+        <tr>
+            <th>{{ 'creationdate'|trans([],'admin') }}</th>
+            <td>{{ element.getCreationDate()|date('Y-m-d H:i') }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'modificationdate'|trans([],'admin') }}</th>
+            <td>{{ element.getModificationDate()|date('Y-m-d H:i') }}</td>
+        </tr>
+    </table>
+</div>

@@ -18,13 +18,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Listing;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BootstrapCommand extends AbstractIndexServiceCommand
+final class BootstrapCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
     use Parallelization
@@ -45,7 +45,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -64,7 +64,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -73,7 +73,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function fetchItems(InputInterface $input): array
     {
@@ -109,7 +109,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runSingleCommand(string $productId, InputInterface $input, OutputInterface $output): void
     {
@@ -124,7 +124,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             );
         }
 
-        if ($object = AbstractObject::getById($productId)) {
+        if ($object = DataObject::getById($productId)) {
             if ($object instanceof IndexableInterface) {
                 $indexService->updateIndex($object);
             } else {
@@ -136,7 +136,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
@@ -168,7 +168,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getItemName(int $count): string
     {

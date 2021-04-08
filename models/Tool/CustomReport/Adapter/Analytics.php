@@ -84,7 +84,7 @@ class Analytics extends AbstractAdapter
                     $value = str_replace(';', '', addslashes($filter['value']));
                     $gaFilters[] = "{$filter['field']}=~{$value}";
                 } elseif ($filter['type'] == 'numeric') {
-                    $value = floatval($filter['value']);
+                    $value = (float)$filter['value'];
                     $compMapping = [
                         'lt' => '<',
                         'gt' => '>',
@@ -244,7 +244,7 @@ class Analytics extends AbstractAdapter
     {
         $dimension = $configuration->dimension;
         if (count($dimension)) {
-            foreach ($this->fullConfig->columnConfiguration as $column) {
+            foreach ($this->fullConfig->getColumnConfiguration() as $column) {
                 if ($column['filter_drilldown'] == 'only_filter') {
                     foreach ($dimension as $key => $dim) {
                         if ($dim == $column['name']) {

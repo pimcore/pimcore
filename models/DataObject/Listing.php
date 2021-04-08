@@ -17,10 +17,8 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\DataObject[] load()
@@ -30,30 +28,19 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\DataObject\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method onCreateQueryBuilder(?callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
-    /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $objects = null;
-
     /**
      * @var bool
      */
-    public $unpublished = false;
+    protected $unpublished = false;
 
     /**
      * @var array
      */
-    public $objectTypes = [AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER];
-
-    public function __construct()
-    {
-        $this->objects = & $this->data;
-    }
+    protected $objectTypes = [Model\DataObject::OBJECT_TYPE_OBJECT, Model\DataObject::OBJECT_TYPE_FOLDER];
 
     /**
      * @return array
@@ -149,27 +136,6 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param string $groupBy
-     * @param bool $qoute
-     *
-     * @return $this
-     */
-    public function setGroupBy($groupBy, $qoute = true)
-    {
-        $this->setData(null);
-
-        if ($groupBy) {
-            $this->groupBy = $groupBy;
-
-            if (!$qoute) {
-                $this->groupBy = new Expression($groupBy);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      *
      * Methods for AdapterInterface
      */
@@ -197,14 +163,6 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function addDistinct()
@@ -217,7 +175,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      *
      * @param string $field database column to use for WHERE condition
      * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
-     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      *
      * @return static
      */

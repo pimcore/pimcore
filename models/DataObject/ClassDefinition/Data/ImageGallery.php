@@ -21,9 +21,10 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -50,23 +51,16 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
+     * @var string|int
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery';
-
-    /**
-     * @var int
-     */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var string
@@ -137,7 +131,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -145,15 +139,18 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -161,10 +158,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      */
     public function setHeight($height)
     {
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
         $this->height = $height;
     }
 
@@ -268,7 +268,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery($resultItems);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
@@ -284,7 +286,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery(null);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
@@ -386,7 +390,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -401,24 +405,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return '';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|DataObject\ClassDefinition\Data
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof DataObject\Data\ImageGallery) {
-            return $value;
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -476,66 +462,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $result = [];
-        $data = $this->getDataFromObjectParam($object, $params);
-        $fd = new Hotspotimage();
-        $fd->setName('image');
-
-        if ($data instanceof DataObject\Data\ImageGallery) {
-            foreach ($data as $item) {
-                $dataForResource = $fd->getDataForResource($item, $object, $params);
-
-                if ($dataForResource) {
-                    if ($dataForResource['image__hotspots']) {
-                        $dataForResource['image__hotspots'] = Serialize::unserialize($dataForResource['image__hotspots']);
-                    }
-                }
-                $result[] = $dataForResource;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|DataObject\Data\ImageGallery
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $resultItems = [];
-        if (is_array($value)) {
-            $fd = new Hotspotimage();
-            $fd->setName('image');
-
-            foreach ($value as $item) {
-                $resultItems[] = $fd->getFromWebserviceImport($item, $object, $params, $idMapper);
-            }
-        }
-
-        return new DataObject\Data\ImageGallery($resultItems);
-    }
-
-    /**
      * @param DataObject\Data\ImageGallery|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
@@ -575,72 +501,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return $data;
-    }
-
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value) {
-            if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\ImageGallery) {
-                $list = [];
-                $items = $value->getItems();
-                $def = new Hotspotimage();
-                if ($items) {
-                    foreach ($items as $item) {
-                        if ($item instanceof DataObject\Data\Hotspotimage) {
-                            $list[] = $def->marshal($item, $object, $params);
-                        }
-                    }
-                }
-
-                return $list;
-            }
-
-            return [
-                    'value' => $value[$this->getName() . '__images'],
-                    'value2' => $value[$this->getName() . '__hotspots'],
-                ];
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (($params['blockmode'] ?? false) && is_array($value)) {
-            $items = [];
-            $def = new Hotspotimage();
-            foreach ($value as $rawValue) {
-                $items[] = $def->unmarshal($rawValue, $object, $params);
-            }
-
-            $gal = new DataObject\Data\ImageGallery($items);
-
-            return $gal;
-        }
-
-        if ($value) {
-            $result = [];
-            $result[$this->getName() . '__images'] = $value['value'];
-            $result[$this->getName() . '__hotspots'] = $value['hotspots'];
-
-            return $result;
-        }
-
-        return null;
     }
 
     /**
@@ -688,5 +548,66 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\ImageGallery) {
+            $list = [];
+            $items = $value->getItems();
+            $def = new Hotspotimage();
+            if ($items) {
+                foreach ($items as $item) {
+                    if ($item instanceof DataObject\Data\Hotspotimage) {
+                        $list[] = $def->normalize($item, $params);
+                    }
+                }
+            }
+
+            return $list;
+        }
+
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $items = [];
+            $def = new Hotspotimage();
+            foreach ($value as $rawValue) {
+                $items[] = $def->denormalize($rawValue, $params);
+            }
+
+            return new DataObject\Data\ImageGallery($items);
+        }
+
+        return null;
     }
 }

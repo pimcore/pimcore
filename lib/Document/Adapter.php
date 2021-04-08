@@ -14,33 +14,22 @@
 
 namespace Pimcore\Document;
 
-use Pimcore\File;
+use Pimcore\Model\Asset;
 
+/**
+ * @internal
+ */
 abstract class Adapter
 {
+    /**
+     * @var null|Asset\Document
+     */
+    protected $asset;
+
     /**
      * @var array
      */
     protected $tmpFiles = [];
-
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    protected function preparePath($path)
-    {
-        if (!stream_is_local($path)) {
-            // gs is only able to deal with local files
-            // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
-            copy($path, $tmpFilePath);
-            $path = $tmpFilePath;
-            $this->tmpFiles[] = $path;
-        }
-
-        return $path;
-    }
 
     protected function removeTmpFiles()
     {
@@ -59,18 +48,28 @@ abstract class Adapter
         $this->removeTmpFiles();
     }
 
-    abstract public function load($path);
-
-    abstract public function saveImage($path, $page = 1, $resolution = 200);
+    /**
+     * @param Asset\Document $asset
+     *
+     * @return self
+     */
+    abstract public function load(Asset\Document $asset);
 
     /**
-     * @param string|null $path
+     * @param string $imageTargetPath
+     * @param int $page
+     * @param int $resolution
      *
-     * @return null|string
-     *
-     * @throws \Exception
+     * @return mixed
      */
-    abstract public function getPdf($path = null);
+    abstract public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200);
+
+    /**
+     * @param Asset\Document|null $asset
+     *
+     * @return resource
+     */
+    abstract public function getPdf(?Asset\Document $asset = null);
 
     /**
      * @param string $fileType
@@ -87,10 +86,10 @@ abstract class Adapter
     abstract public function getPageCount();
 
     /**
-     * @param int|null $page
-     * @param string|null $path
+     * @param null|int $page
+     * @param Asset\Document|null $asset
      *
-     * @return bool|string
+     * @return mixed
      */
-    abstract public function getText($page, $path);
+    abstract public function getText(?int $page = null, ?Asset\Document $asset = null);
 }

@@ -1,0 +1,30 @@
+
+name: "Documentation"
+
+on:
+    pull_request:
+        branches:
+            - "*.*"
+            - "master"
+    push:
+        branches:
+            - "*.*"
+            - "master"
+            - "*_actions"
+
+jobs:
+    docs:
+        name: "Generate docs with Daux"
+        runs-on: "ubuntu-20.04"
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: "7.4"
+
+            - name: "Run generation of docs"
+              run: ".github/ci/scripts/docs.sh"

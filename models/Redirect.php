@@ -42,72 +42,72 @@ class Redirect extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      */
-    public $source;
+    protected $source;
 
     /**
      * @var int|null
      */
-    public $sourceSite;
+    protected $sourceSite;
 
     /**
      * @var bool
      */
-    public $passThroughParameters = false;
+    protected $passThroughParameters = false;
 
     /**
      * @var string
      */
-    public $target;
+    protected $target;
 
     /**
      * @var int|null
      */
-    public $targetSite;
+    protected $targetSite;
 
     /**
      * @var int
      */
-    public $statusCode = 301;
+    protected $statusCode = 301;
 
     /**
      * @var int
      */
-    public $priority = 1;
+    protected $priority = 1;
 
     /**
      * @var bool|null
      */
-    public $regex;
+    protected $regex;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var int
      */
-    public $expiry;
+    protected $expiry;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * ID of the owner user
@@ -126,7 +126,7 @@ class Redirect extends AbstractModel
     /**
      * StatusCodes
      */
-    public static $statusCodes = [
+    protected static $statusCodes = [
         '300' => 'Multiple Choices',
         '301' => 'Moved Permanently',
         '302' => 'Found',
@@ -543,17 +543,25 @@ class Redirect extends AbstractModel
 
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_SAVE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::PRE_SAVE);
         $this->getDao()->save();
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_SAVE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::POST_SAVE);
         $this->clearDependentCache();
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_DELETE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::PRE_DELETE);
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_DELETE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::POST_DELETE);
         $this->clearDependentCache();
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getStatusCodes(): array
+    {
+        return self::$statusCodes;
     }
 }

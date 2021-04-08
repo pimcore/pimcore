@@ -34,7 +34,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -42,7 +42,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataProviderKeys(): array
     {
@@ -50,7 +50,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -58,7 +58,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {

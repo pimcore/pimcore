@@ -14,13 +14,9 @@
 
 namespace Pimcore\Extension\Document\Areabrick;
 
-use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Model\Document\Editable\Area\Info;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @method string hasTemplate()
- * @method string getTemplate()
- */
 interface AreabrickInterface
 {
     /**
@@ -68,56 +64,16 @@ interface AreabrickInterface
     /**
      * Determines if the brick has a view template
      *
-     * @deprecated use hasTemplate() instead
-     *
      * @return bool
      */
-    public function hasViewTemplate();
+    public function hasTemplate();
 
     /**
      * Get view template
      *
-     * @deprecated use getTemplate() instead
-     *
      * @return string|null
      */
-    public function getViewTemplate();
-
-    /**
-     * Determines if the brick has a view template
-     *
-     * @TODO active in Pimcore v7
-     *
-     * @return bool
-     */
-    //public function hasTemplate();
-
-    /**
-     * Get view template
-     *
-     * @TODO active in Pimcore v7
-     *
-     * @return string|null
-     */
-    //public function getTemplate();
-
-    /**
-     * Determines if the brick has an edit template
-     *
-     * @deprecated method will be removed in v7, please use the editable dialog box instead
-     *
-     * @return bool
-     */
-    public function hasEditTemplate();
-
-    /**
-     * Get edit template
-     *
-     * @deprecated method will be removed in v7, please use the editable dialog box instead
-     *
-     * @return string|null
-     */
-    public function getEditTemplate();
+    public function getTemplate();
 
     /**
      * Will be called before the view is rendered. Acts as extension point for custom area logic.
@@ -158,4 +114,11 @@ interface AreabrickInterface
      * @return string
      */
     public function getHtmlTagClose(Info $info);
+
+    /**
+     * Whether the UI needs a reload after this brick was added or removed
+     *
+     * @return bool
+     */
+    public function needsReload(): bool;
 }

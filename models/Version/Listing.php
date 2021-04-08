@@ -29,13 +29,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var Model\Version[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $versions = null;
-
-    /**
      * @var bool
      */
     protected $loadDrafts = false;
@@ -58,13 +51,6 @@ class Listing extends Model\Listing\AbstractListing
         return $this;
     }
 
-
-    public function __construct()
-    {
-        $this->versions = & $this->data;
-    }
-
-    /**
      * @return Model\Version[]
      */
     public function getVersions()

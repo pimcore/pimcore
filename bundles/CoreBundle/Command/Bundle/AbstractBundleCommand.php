@@ -18,11 +18,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Extension\Bundle\Installer\OutputWriter;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputOption;
 
+/**
+ * @internal
+ */
 abstract class AbstractBundleCommand extends AbstractCommand
 {
     /**
@@ -115,11 +117,6 @@ abstract class AbstractBundleCommand extends AbstractCommand
         if (null === $installer) {
             return null;
         }
-
-        $io = $this->io;
-        $installer->setOutputWriter(new OutputWriter(function ($message) use ($io) {
-            $io->writeln($message);
-        }));
 
         return $installer;
     }

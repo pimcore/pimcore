@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db\ConnectionInterface;
@@ -31,10 +31,11 @@ use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\Tag;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,13 +43,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * @Route("/settings")
+ *
+ * @internal
  */
-class SettingsController extends AdminController
+final class SettingsController extends AdminController
 {
     /**
      * @Route("/display-custom-logo", name="pimcore_settings_display_custom_logo", methods={"GET"})
@@ -72,7 +76,7 @@ class SettingsController extends AdminController
             $customLogoFile = $customLogoPath . $format;
             if (file_exists($customLogoFile)) {
                 try {
-                    $mime = Tool\Mime::detect($customLogoFile);
+                    $mime = MimeTypes::getDefault()->guessMimeType($customLogoFile);
                     $logo = $customLogoFile;
                     break;
                 } catch (\Exception $e) {
@@ -143,9 +147,9 @@ class SettingsController extends AdminController
      */
     public function metadataAction(Request $request)
     {
-        if ($request->get('data')) {
-            $this->checkPermission('asset_metadata');
+        $this->checkPermission('asset_metadata');
 
+        if ($request->get('data')) {
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
@@ -170,7 +174,7 @@ class SettingsController extends AdminController
                 $metadata->save();
                 $metadata->expand();
 
-                return $this->adminJson(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -187,7 +191,7 @@ class SettingsController extends AdminController
 
                 $metadata->save();
 
-                return $this->adminJson(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of types
@@ -213,7 +217,7 @@ class SettingsController extends AdminController
             if (is_array($list->getDefinitions())) {
                 foreach ($list->getDefinitions() as $metadata) {
                     $metadata->expand();
-                    $properties[] = $metadata;
+                    $properties[] = $metadata->getObjectVars();
                 }
             }
 
@@ -236,10 +240,9 @@ class SettingsController extends AdminController
         $subType = $request->get('subType');
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
-        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
             $item->expand();
-            $result[] = $item;
+            $result[] = $item->getObjectVars();
         }
 
         return $this->adminJson(['data' => $result, 'success' => true]);
@@ -276,7 +279,7 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -287,7 +290,7 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->adminJson(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of types
@@ -317,7 +320,7 @@ class SettingsController extends AdminController
             $properties = [];
             if (is_array($list->getProperties())) {
                 foreach ($list->getProperties() as $property) {
-                    $properties[] = $property;
+                    $properties[] = $property->getObjectVars();
                 }
             }
 
@@ -386,16 +389,6 @@ class SettingsController extends AdminController
         foreach (['email', 'newsletter'] as $type) {
             $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
         }
-
-        // inject debug mode
-        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-        $debugMode = [];
-        if (file_exists($debugModeFile)) {
-            $debugMode = include $debugModeFile;
-        }
-        $valueArray['general']['debug'] = $debugMode['active'] ?? false;
-        $valueArray['general']['debug_ip'] = $debugMode['ip'] ?? '';
-        $valueArray['general']['devmode'] = $debugMode['devmode'] ?? false;
 
         $response = [
             'values' => $valueArray,
@@ -472,7 +465,6 @@ class SettingsController extends AdminController
                 'disable_usage_statistics' => $values['general.disableusagestatistics'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
                 'instance_identifier' => $values['general.instanceIdentifier'],
-                'show_cookie_notice' => $values['general.show_cookie_notice'],
             ],
             'documents' => [
                 'versions' => [
@@ -515,9 +507,6 @@ class SettingsController extends AdminController
                 'exclude_patterns' => $cacheExcludePatterns,
                 'exclude_cookie' => $values['full_page_cache.excludeCookie'],
             ],
-            'webservice' => [
-                'enabled' => $values['webservice.enabled'],
-            ],
             'httpclient' => [
                 'adapter' => $values['httpclient.adapter'],
                 'proxy_host' => $values['httpclient.proxy_host'],
@@ -533,6 +522,7 @@ class SettingsController extends AdminController
                 ],
                 'archive_treshold' => $values['applicationlog.archive_treshold'],
                 'archive_alternative_database' => $values['applicationlog.archive_alternative_database'],
+                'delete_archive_threshold' => $values['applicationlog.delete_archive_threshold'],
             ],
         ];
 
@@ -547,40 +537,22 @@ class SettingsController extends AdminController
                 ],
         ];
 
-        // email & newsletter (swiftmailer settings)
+        // email & newsletter sender/return and debug email defaults
         foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
             $settings['pimcore'][$type] = [
                 'sender' => [
                     'name' => $values[$type . '.sender.name'],
-                    'email' => $values[$type . '.sender.email'], ],
+                    'email' => $values[$type . '.sender.email'],
+                ],
                 'return' => [
                     'name' => $values[$type . '.return.name'],
-                    'email' => $values[$type . '.return.email'], ],
-                'method' => $values[$type . '.method'],
+                    'email' => $values[$type . '.return.email'],
+                ],
             ];
 
-            $settings['swiftmailer']['mailers'][$group] = [
-                'transport' => $values[$type . '.method'],
-                'host' => $values[$type . '.smtp.host'],
-                'username' => $values[$type . '.smtp.auth.username'],
-                'port' => $values[$type . '.smtp.port'],
-                'encryption' => $values[$type . '.smtp.ssl'] ? $values[$type . '.smtp.ssl'] : null,
-                'auth_mode' => $values[$type . '.smtp.auth.method'] ? $values[$type . '.smtp.auth.method'] : null,
-            ];
-
-            $smtpPassword = $values[$type . '.smtp.auth.password'];
-            if ($smtpPassword !== '#####SUPER-SECRET-VALUE-PLACEHOLDER######') {
-                if (!empty($smtpPassword)) {
-                    $settings['swiftmailer']['mailers'][$group]['password'] = $smtpPassword;
-                } else {
-                    $settings['swiftmailer']['mailers'][$group]['password'] = null;
-                }
-            }
             if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
-                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [$values['email.debug.emailAddresses']];
                 $settings['pimcore'][$type]['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
             } else {
-                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [];
                 $settings['pimcore'][$type]['debug']['email_addresses'] = null;
             }
         }
@@ -591,13 +563,6 @@ class SettingsController extends AdminController
         $settingsYml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yml');
         File::put($configFile, $settingsYml);
-
-        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-        File::putPhpFile($debugModeFile, to_php_data_file_format([
-            'active' => $values['general.debug'],
-            'ip' => $values['general.debug_ip'],
-            'devmode' => $values['general.devmode'],
-        ]));
 
         // clear all caches
         $this->forward(self::class . '::clearCacheAction', [
@@ -708,7 +673,7 @@ class SettingsController extends AdminController
      * @param Request $request
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CoreHandlerInterface $cache
+     * @param CoreCacheHandler $cache
      * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
@@ -719,7 +684,7 @@ class SettingsController extends AdminController
         Request $request,
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
-        CoreHandlerInterface $cache,
+        CoreCacheHandler $cache,
         ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
@@ -737,8 +702,7 @@ class SettingsController extends AdminController
             // empty document cache
             $cache->clearAll();
 
-            $db->query('truncate table cache_tags');
-            $db->query('truncate table cache');
+            $db->query('truncate table cache_items');
 
             if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
                 $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
@@ -747,7 +711,7 @@ class SettingsController extends AdminController
             // PIMCORE-1854 - recreate .dummy file => should remain
             File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
 
-            $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR);
+            $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
         }
 
         if ($clearSymfonyCache) {
@@ -828,7 +792,7 @@ class SettingsController extends AdminController
         // empty document cache
         Cache::clearTags(['output', 'output_lifetime']);
 
-        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
+        $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
 
         return $this->adminJson(['success' => true]);
     }
@@ -845,16 +809,13 @@ class SettingsController extends AdminController
         $this->checkPermission('clear_temp_files');
 
         // public files
-        recursiveDelete(PIMCORE_TEMPORARY_DIRECTORY, false);
+        Tool\Storage::get('thumbnail')->deleteDirectory('/');
+        Tool\Storage::get('asset_cache')->deleteDirectory('/');
 
         // system files
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
 
-        // recreate .dummy files # PIMCORE-2629
-        File::put(PIMCORE_TEMPORARY_DIRECTORY . '/.dummy', '');
-        File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/.dummy', '');
-
-        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
+        $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
         return $this->adminJson(['success' => true]);
     }
@@ -1014,8 +975,8 @@ class SettingsController extends AdminController
                 $glossary->save();
 
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1040,8 +1001,8 @@ class SettingsController extends AdminController
                 $glossary->save();
 
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1071,8 +1032,8 @@ class SettingsController extends AdminController
             $glossaries = [];
             foreach ($list->getGlossary() as $glossary) {
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1320,7 +1281,7 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe);
+        return $this->adminJson($pipe->getObjectVars());
     }
 
     /**
@@ -1502,7 +1463,7 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->adminJson($pipe);
+        return $this->adminJson($pipe->getObjectVars());
     }
 
     /**
@@ -1517,27 +1478,34 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
-        $data = $this->decodeJson($request->get('configuration'));
+        $settingsData = $this->decodeJson($request->get('settings'));
+        $mediaData = $this->decodeJson($request->get('medias'));
+        $mediaOrder = $this->decodeJson($request->get('mediaOrder'));
 
-        $items = [];
-        foreach ($data as $key => $value) {
+        foreach ($settingsData as $key => $value) {
             $setter = 'set' . ucfirst($key);
             if (method_exists($pipe, $setter)) {
                 $pipe->$setter($value);
             }
-
-            if (strpos($key, 'item.') === 0) {
-                $cleanKeyParts = explode('.', $key);
-                $items[$cleanKeyParts[1]][$cleanKeyParts[2]] = $value;
-            }
         }
 
         $pipe->resetItems();
-        foreach ($items as $item) {
-            $type = $item['type'];
-            unset($item['type']);
 
-            $pipe->addItem($type, $item);
+        uksort($mediaData, function ($a, $b) use ($mediaOrder) {
+            if ($a === 'default') {
+                return -1;
+            }
+
+            return ($mediaOrder[$a] < $mediaOrder[$b]) ? -1 : 1;
+        });
+
+        foreach ($mediaData as $mediaName => $items) {
+            foreach ($items as $item) {
+                $type = $item['type'];
+                unset($item['type']);
+
+                $pipe->addItem($type, $item, $mediaName);
+            }
         }
 
         $pipe->save();
@@ -1580,171 +1548,13 @@ class SettingsController extends AdminController
             $values = [];
         }
 
-        File::putPhpFile(
-            Config::locateConfigFile('robots.php'),
-            to_php_data_file_format($values)
-        );
+        foreach ($values as $siteId => $robotsContent) {
+            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
+        }
 
         return $this->adminJson([
             'success' => true,
         ]);
-    }
-
-    /**
-     * @Route("/tag-management-tree", name="pimcore_admin_settings_tagmanagementtree", methods={"GET", "POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementTreeAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tags = [];
-
-        $list = new Tag\Config\Listing();
-        $items = $list->load();
-
-        foreach ($items as $item) {
-            $tags[] = [
-                'id' => $item->getName(),
-                'text' => $item->getName(),
-            ];
-        }
-
-        return $this->adminJson($tags);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-add", name="pimcore_admin_settings_tagmanagementadd", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementAddAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $success = false;
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-
-        if (!$tag) {
-            $tag = new Model\Tool\Tag\Config();
-            $tag->setName($request->get('name'));
-            $tag->save();
-
-            $success = true;
-        }
-
-        return $this->adminJson(['success' => $success, 'id' => $tag->getName()]);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-delete", name="pimcore_admin_settings_tagmanagementdelete", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementDeleteAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-        $tag->delete();
-
-        return $this->adminJson(['success' => true]);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-get", name="pimcore_admin_settings_tagmanagementget", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementGetAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-
-        return $this->adminJson($tag);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-update", name="pimcore_admin_settings_tagmanagementupdate", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementUpdateAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-        $data = $this->decodeJson($request->get('configuration'));
-
-        $items = [];
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            if (method_exists($tag, $setter)) {
-                $tag->$setter($value);
-            }
-
-            if (strpos($key, 'item.') === 0) {
-                $cleanKeyParts = explode('.', $key);
-
-                if ($cleanKeyParts[2] == 'date') {
-                    $date = $value;
-                    $value = null;
-
-                    if (!empty($date) && !empty($data[$cleanKeyParts[0].'.'.$cleanKeyParts[1].'.time'])) {
-                        $time = $data[$cleanKeyParts[0].'.'.$cleanKeyParts[1].'.time'];
-                        $time = explode('T', $time);
-                        $date = explode('T', $date);
-                        $value = strtotime($date[0].'T'.$time[1]);
-                    }
-                } elseif ($cleanKeyParts[2] == 'time') {
-                    continue;
-                }
-
-                $items[$cleanKeyParts[1]][$cleanKeyParts[2]] = $value;
-            }
-        }
-
-        $tag->resetItems();
-        foreach ($items as $item) {
-            $tag->addItem($item);
-        }
-
-        // parameters get/post
-        $params = [];
-        for ($i = 0; $i < 5; $i++) {
-            $params[] = [
-                'name' => $data['params.name' . $i],
-                'value' => $data['params.value' . $i],
-            ];
-        }
-        $tag->setParams($params);
-
-        if ($request->get('name') != $data['name']) {
-            $tag->setName($request->get('name')); // set the old name again, so that the old file get's deleted
-            $tag->delete(); // delete the old config / file
-            $tag->setName($data['name']);
-        }
-
-        $tag->save();
-
-        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1758,9 +1568,9 @@ class SettingsController extends AdminController
      */
     public function websiteSettingsAction(Request $request)
     {
-        if ($request->get('data')) {
-            $this->checkPermission('website_settings');
+        $this->checkPermission('website_settings');
 
+        if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
 
             if (is_array($data)) {
@@ -1811,51 +1621,26 @@ class SettingsController extends AdminController
                 return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
             }
         } else {
-            // get list of routes
-
             $list = new WebsiteSetting\Listing();
 
-            $limit = $request->get('limit');
-            $start = $request->get('start');
+            $list->setLimit($request->get('limit'));
+            $list->setOffset($request->get('start'));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-
-            if ($request->get('filter')) {
-                $filter = $request->get('filter');
-                $list->setFilter(function ($row) use ($filter) {
-                    foreach ($row as $value) {
-                        if (strpos($value, $filter) !== false) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
+            if ($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
+            } else {
+                $list->setOrderKey('name');
+                $list->setOrder('asc');
             }
 
-            $list->setOrder(static function ($a, $b) use ($sortingSettings) {
-                if (!$sortingSettings) {
-                    return 0;
-                }
-                $orderKey = $sortingSettings['orderKey'];
-                $aValue = $a[$orderKey] ?? null;
-                $bValue = $b[$orderKey] ?? null;
-                if ($aValue == $bValue) {
-                    return 0;
-                }
-
-                $result = $aValue < $bValue ? -1 : 1;
-                if ($sortingSettings['order'] === 'DESC') {
-                    $result = -1 * $result;
-                }
-
-                return $result;
-            });
+            if ($request->get('filter')) {
+                $list->setCondition('`name` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            }
 
             $totalCount = $list->getTotalCount();
             $list = $list->load();
-
-            $list = array_slice($list, $start, $limit);
 
             $settings = [];
             foreach ($list as $item) {
@@ -1965,7 +1750,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('web2print_settings');
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Settings:testWeb2print.html.php');
+        $response = $this->render('@PimcoreAdmin/Admin/Settings/testWeb2print.html.twig');
         $html = $response->getContent();
 
         $adapter = \Pimcore\Web2Print\Processor::getInstance();
@@ -1973,7 +1758,7 @@ class SettingsController extends AdminController
 
         if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
             $params['adapterConfig'] = '-O landscape';
-        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             $params['adapterConfig'] = [
                 'javaScriptMode' => 0,
                 'addLinks' => true,

@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(string $name, array $params = []): Layout
     {

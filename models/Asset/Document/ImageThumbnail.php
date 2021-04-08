@@ -19,15 +19,20 @@ namespace Pimcore\Model\Asset\Document;
 
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
+use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 
-class ImageThumbnail
+final class ImageThumbnail
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
+    use TemporaryFileHelperTrait;
 
     /**
      * @var int
@@ -55,14 +60,14 @@ class ImageThumbnail
      */
     public function getPath($deferredAllowed = true)
     {
-        $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = $this->convertToWebPath($fsPath);
+        $pathReference = $this->getPathReference($deferredAllowed);
+        $path = $this->convertToWebPath($pathReference);
 
         $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
+            'pathReference' => $pathReference,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -73,54 +78,60 @@ class ImageThumbnail
      */
     public function generate($deferredAllowed = true)
     {
-        $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $generated = false;
 
-        if (!$this->asset) {
-            $this->filesystemPath = $errorImage;
-        } elseif (!$this->filesystemPath) {
+        if ($this->asset && empty($this->pathReference)) {
             $config = $this->getConfig();
+            $cacheFileStream = null;
             $config->setFilenameSuffix('page-' . $this->page);
-            $path = null;
             $deferred = $deferredAllowed && $this->deferred;
 
             try {
                 if (!$deferred) {
-                    $converter = \Pimcore\Document::getInstance();
-                    $converter->load($this->asset->getFileSystemPath());
-                    $path = PIMCORE_TEMPORARY_DIRECTORY . '/document-image-cache/document_' . $this->asset->getId() . '__thumbnail_' .  $this->page . '.png';
-                    if (!is_dir(dirname($path))) {
-                        \Pimcore\File::mkdir(dirname($path));
-                    }
+                    $storage = Storage::get('asset_cache');
+                    $cacheFilePath = sprintf('%s/image-thumb__%s__document_original_image/page_%s.png',
+                        rtrim($this->asset->getRealPath(), '/'),
+                        $this->asset->getId(),
+                        $this->page
+                    );
 
-                    if(!is_file($path)) {
-                        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('document-thumbnail-' . $this->asset->getId() . '-' . $this->page);
+                    if (!$storage->fileExists($cacheFilePath)) {
+                        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
+                        $converter = \Pimcore\Document::getInstance();
+                        $converter->load($this->asset);
                         if ($lock->acquire()) {
-                            $converter->saveImage($path, $this->page);
+                            $tempFile = File::getLocalTempFilePath('png');
+                            $converter->saveImage($tempFile, $this->page);
                             $generated = true;
                             $lock->release();
-                        } else {
-                            $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
-                            return;
+                            $storage->write($cacheFilePath, file_get_contents($tempFile));
+                            unlink($tempFile);
                         }
                     }
+
+                    $cacheFileStream = $storage->readStream($cacheFilePath);
                 }
 
                 if ($config) {
-                    $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $deferred, true, $generated);
+                    $this->pathReference = Image\Thumbnail\Processor::process($this->asset, $config, $cacheFileStream, $deferred, $generated);
                 }
-
-                $this->filesystemPath = $path;
             } catch (\Exception $e) {
                 Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
                 Logger::error($e);
-                $this->filesystemPath = $errorImage;
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::DOCUMENT_IMAGE_THUMBNAIL, new GenericEvent($this, [
+            if (empty($this->pathReference)) {
+                $this->pathReference = [
+                    'type' => 'error',
+                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                ];
+            }
+
+            $event = new GenericEvent($this, [
                 'deferred' => $deferred,
                 'generated' => $generated,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
         }
     }
 
@@ -144,6 +155,11 @@ class ImageThumbnail
     protected function createConfig($selector)
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $config === null) {
+            throw new NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
         if ($config) {
             $format = strtolower($config->getFormat());
             if ($format == 'source') {

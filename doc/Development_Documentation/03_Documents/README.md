@@ -28,7 +28,7 @@ Not all of them are necessary, the table below shows which configurations are po
 
 | Type | Controller | Action | Template | Description                                                                                                                                        |
 |------|------------|--------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1    | X          | X      |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering. If no response is returned, the controller implements TemplateControllerInterface and `$this->setViewAutoRender($event->getRequest(), true, 'php');` is called, the template is auto-discovered based on controller and action name like `<BUNDLENAME>:<CONTROLLERNAME>:<ACTIONNAME>.html.php` .|
+| 1    | X          | X      |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering.|
 | 2    | X          | X      | X        | Same as above but the template specified is rendered and not the auto-discovered template (only if action does not return a response). |
 | 3    |            |        | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff. |
 

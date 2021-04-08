@@ -20,6 +20,8 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
  * Builds public web path for a resource saved in Resources/public of a bundle
  *
  * @see http://stackoverflow.com/questions/21017639/get-path-of-image-in-specified-bundle
+ *
+ * @internal
  */
 class WebPathResolver
 {

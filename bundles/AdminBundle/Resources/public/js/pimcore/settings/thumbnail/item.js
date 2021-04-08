@@ -143,11 +143,6 @@ pimcore.settings.thumbnail.item = Class.create({
                         style: "margin-bottom: 20px"
                     }, {
                         xtype: "checkbox",
-                        name: "forcePictureTag",
-                        boxLabel: t("force_picture_html_tag"),
-                        checked: this.data.forcePictureTag
-                    }, {
-                        xtype: "checkbox",
                         name: "preserveColor",
                         boxLabel: t("preserve_color") + " (Imagick, ORIGINAL)",
                         checked: this.data.preserveColor
@@ -170,6 +165,15 @@ pimcore.settings.thumbnail.item = Class.create({
                     }, {
                         xtype: "container",
                         html: "<small>(" + t("rasterize_svg_info_text") + ")</small>",
+                        style: "margin-bottom: 20px"
+                    }, {
+                        xtype: "checkbox",
+                        name: "preserveAnimation",
+                        boxLabel: t("preserve_animation") + " (Imagick)",
+                        checked: this.data.preserveAnimation
+                    }, {
+                        xtype: "container",
+                        html: "<small>(" + t("preserve_animation_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
                     }, {
                         xtype: "checkbox",

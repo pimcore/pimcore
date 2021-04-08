@@ -181,5 +181,3 @@ interface RuleInterface
      */
     public function delete();
 }
-
-class_alias(RuleInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule');

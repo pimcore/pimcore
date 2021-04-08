@@ -25,9 +25,7 @@ interface OrderListItemInterface
     public function getId();
 
     /**
-     * @return Order|OrderItem
+     * @return Order|OrderItem|null
      */
     public function reference();
 }
-
-class_alias(OrderListItemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem');

@@ -23,8 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/email")
+ *
+ * @internal
  */
-class EmailController extends DocumentControllerBase
+final class EmailController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

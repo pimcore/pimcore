@@ -21,6 +21,8 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 /**
  * Service locator exposing all of its services as collection
+ *
+ * @internal
  */
 class CollectionServiceLocator extends ServiceLocator implements \IteratorAggregate
 {

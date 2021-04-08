@@ -30,9 +30,9 @@ class Link extends Model\Document\Editable
     /**
      * Contains the data for the link
      *
-     * @var array
+     * @var array|null
      */
-    public $data;
+    protected $data;
 
     /**
      * @see Pimcore\Model\Document\Editable;::getType
@@ -71,7 +71,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getEditmodeElementClasses($options = []): array
     {
@@ -79,7 +79,6 @@ class Link extends Model\Document\Editable
         // the default behavior of the parent method is to include the "class" attribute
         $classes = [
             'pimcore_editable',
-            'pimcore_tag_' . $this->getType(),
             'pimcore_editable_' . $this->getType(),
         ];
 
@@ -209,8 +208,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent document with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
-                    $this->data = $new->getData();
+                    $this->data = null;
                 }
             } elseif ($this->data['internalType'] == 'asset') {
                 $asset = Asset::getById($this->data['internalId']);
@@ -220,8 +218,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent asset with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
-                    $this->data = $new->getData();
+                    $this->data = null;
                 }
             } elseif ($this->data['internalType'] == 'object') {
                 $object = Model\DataObject\Concrete::getById($this->data['internalId']);
@@ -231,8 +228,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent object with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
-                    $this->data = $new->getData();
+                    $this->data = null;
                 }
             }
         }
@@ -250,7 +246,7 @@ class Link extends Model\Document\Editable
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= '?'.str_replace('?', '', $this->getParameters());
+            $url .= (strpos($url, '?') !== false ? '&' : '?') . str_replace('?', '', $this->getParameters());
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
@@ -309,6 +305,12 @@ class Link extends Model\Document\Editable
                     }
                 }
             }
+        }
+
+        // deletes unnecessary attribute, which was set by mistake in earlier versions, see also
+        // https://github.com/pimcore/pimcore/issues/7394
+        if (isset($this->data['type'])) {
+            unset($this->data['type']);
         }
     }
 
@@ -491,7 +493,7 @@ class Link extends Model\Document\Editable
         $isInternal = $this->data['internal'] ?? false;
 
         if (is_array($this->data) && $isInternal) {
-            if (intval($this->data['internalId']) > 0) {
+            if ((int)$this->data['internalId'] > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
                         $key = 'document_'.$doc->getId();
@@ -515,112 +517,6 @@ class Link extends Model\Document\Editable
         }
 
         return $dependencies;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-
-        if (empty($data->data) or $data->data instanceof \stdClass) {
-            $this->data = $data->data instanceof \stdClass ? get_object_vars($data->data) : null;
-            if ($this->data['internal']) {
-                if (intval($this->data['internalId']) > 0) {
-                    $id = $this->data['internalId'];
-
-                    if ($this->data['internalType'] == 'document') {
-                        if ($idMapper) {
-                            $id = $idMapper->getMappedId('document', $id);
-                        }
-                        $referencedDocument = Document::getById($id);
-                        if (!$referencedDocument instanceof Document) {
-                            if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure(
-                                    'document',
-                                    $this->getDocumentId(),
-                                    $this->data['internalType'],
-                                    $this->data['internalId']
-                                );
-                            } else {
-                                throw new \Exception(
-                                    'cannot get values from web service import - link references unknown document with id [ '.$this->data['internalId'].' ] '
-                                );
-                            }
-                        }
-                    } elseif ($this->data['internalType'] == 'asset') {
-                        if ($idMapper) {
-                            $id = $idMapper->getMappedId('document', $id);
-                        }
-                        $referencedAsset = Asset::getById($id);
-                        if (!$referencedAsset instanceof Asset) {
-                            if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure(
-                                    'document',
-                                    $this->getDocumentId(),
-                                    $this->data['internalType'],
-                                    $this->data['internalId']
-                                );
-                            } else {
-                                throw new \Exception(
-                                    'cannot get values from web service import - link references unknown asset with id [ '.$this->data['internalId'].' ] '
-                                );
-                            }
-                        }
-                    }
-
-                    if ($id) {
-                        $this->data['internalId'] = $id;
-                    }
-                }
-            }
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
-
-    /**
-     * Returns the current tag's data for web service export
-     *
-     * @deprecated
-     *
-     * @param Model\Document\PageSnippet|null $document
-     * @param array $params
-     *
-     * @return \stdClass
-     */
-    public function getForWebserviceExport($document = null, $params = [])
-    {
-        $el = parent::getForWebserviceExport($document, $params);
-        if ($this->data['internal']) {
-            if (intval($this->data['internalId']) > 0) {
-                if ($this->data['internalType'] == 'document') {
-                    $referencedDocument = Document::getById($this->data['internalId']);
-                    if (!$referencedDocument instanceof Document) {
-                        //detected broken link
-                        $document = $this->getDocument();
-                    }
-                } elseif ($this->data['internalType'] == 'asset') {
-                    $referencedAsset = Asset::getById($this->data['internalId']);
-                    if (!$referencedAsset instanceof Asset) {
-                        //detected broken link
-                        $document = $this->getDocument();
-                    }
-                }
-            }
-        }
-
-        $el->data = $this->data;
-
-        return $el;
     }
 
     /**
@@ -651,5 +547,3 @@ class Link extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Link::class, 'Pimcore\Model\Document\Tag\Link');

@@ -21,14 +21,14 @@ use Pimcore\Tool;
 class Mail extends MailHandler
 {
     /**
-     * @var null
+     * @var string
      */
-    protected $address = null;
+    protected $address;
 
     /**
      * Mail constructor.
      *
-     * @param int $address
+     * @param string $address
      * @param bool|int $level
      * @param bool|true $bubble
      */
@@ -42,11 +42,11 @@ class Mail extends MailHandler
      * @param string $content
      * @param array $records
      */
-    public function send($content, array $records)
+    public function send($content, array $records): void
     {
         $mail = Tool::getMail([$this->address], 'pimcore log notification');
         $mail->setIgnoreDebugMode(true);
-        $mail->setBodyText($content);
+        $mail->setTextBody($content);
         $mail->send();
     }
 }

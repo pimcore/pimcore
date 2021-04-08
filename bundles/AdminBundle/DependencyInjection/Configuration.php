@@ -20,16 +20,19 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Adds configuration for gdpr data provider
+ *
+ * @internal
  */
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('pimcore_admin');
+        $treeBuilder = new TreeBuilder('pimcore_admin');
+        /** @var ArrayNodeDefinition $rootNode */
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->buildGdprDataExtractorNode());
         $rootNode->append($this->buildObjectsNode());
@@ -86,12 +89,12 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildGdprDataExtractorNode()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('gdpr_data_extractor');
 
-        $gdprDataExtractor = $treeBuilder->root('gdpr_data_extractor');
+        $gdprDataExtractor = $treeBuilder->getRootNode();
         $gdprDataExtractor->addDefaultsIfNotSet();
 
-        $dataObjects = $treeBuilder->root('dataObjects');
+        $dataObjects = $treeBuilder->getRootNode()->children()->arrayNode('dataObjects');
         $dataObjects
             ->addDefaultsIfNotSet()
             ->info('Settings for DataObjects DataProvider');
@@ -102,7 +105,7 @@ class Configuration implements ConfigurationInterface
                     ->info('Configure which classes should be considered, array key is class name')
                     ->prototype('array')
                         ->info('
-    MY_CLASS_NAME: 
+    MY_CLASS_NAME:
 		include: true
 		allowDelete: false
 		includedRelations:
@@ -130,7 +133,8 @@ class Configuration implements ConfigurationInterface
 
         $gdprDataExtractor->append($dataObjects);
 
-        $assets = $treeBuilder->root('assets');
+        $assets = $treeBuilder->getRootNode()->children()->arrayNode('assets');
+
         $assets
             ->addDefaultsIfNotSet()
             ->info('Settings for Assets DataProvider');
@@ -154,8 +158,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildEventsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $notesEvents = $treeBuilder->root('notes_events');
+        $treeBuilder = new TreeBuilder('notes_events');
+        $notesEvents = $treeBuilder->getRootNode();
 
         $notesEvents
             ->addDefaultsIfNotSet()
@@ -176,8 +180,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildObjectsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $objectsNode = $treeBuilder->root('objects');
+        $treeBuilder = new TreeBuilder('objects');
+        $objectsNode = $treeBuilder->getRootNode();
 
         $objectsNode
             ->addDefaultsIfNotSet()
@@ -191,8 +195,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildAssetsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $assetsNode = $treeBuilder->root('assets');
+        $treeBuilder = new TreeBuilder('assets');
+        $assetsNode = $treeBuilder->getRootNode();
 
         $assetsNode
             ->addDefaultsIfNotSet()
@@ -206,8 +210,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildDocumentsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $documentsNode = $treeBuilder->root('documents');
+        $treeBuilder = new TreeBuilder('documents');
+        $documentsNode = $treeBuilder->getRootNode();
 
         $documentsNode
             ->addDefaultsIfNotSet()

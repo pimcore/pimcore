@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Cache;
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -36,14 +36,14 @@ class Snippet extends Model\Document\Editable
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Contains the object for the snippet
      *
      * @var Document\Snippet
      */
-    public $snippet;
+    protected $snippet;
 
     /**
      * @see EditableInterface::getType
@@ -105,15 +105,11 @@ class Snippet extends Model\Document\Editable
      */
     public function frontend()
     {
-        // TODO inject services via DI when tags are built through container
+        // TODO inject services via DI when editables are built through container
         $container = \Pimcore::getContainer();
 
-        $editableHandler = $container->get(EditableHandlerInterface::class);
+        $editableHandler = $container->get(EditableHandler::class);
         $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
-
-        if (!$editableHandler->supports($this->view)) {
-            return '';
-        }
 
         if (!$this->snippet instanceof Document\Snippet) {
             return '';
@@ -147,25 +143,17 @@ class Snippet extends Model\Document\Editable
                 $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 
-            $cacheParams['webp'] = Frontend::hasWebpSupport();
-
             if (Site::isSiteRequest()) {
                 $cacheParams['siteId'] = Site::getCurrentSite()->getId();
             }
 
-            $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
+            $cacheKey = 'editable_snippet__' . md5(serialize($cacheParams));
             if ($content = Cache::load($cacheKey)) {
                 return $content;
             }
         }
 
-        $content = $editableHandler->renderAction(
-            $this->view,
-            $this->snippet->getController(),
-            $this->snippet->getAction(),
-            $this->snippet->getModule(),
-            $params
-        );
+        $content = $editableHandler->renderAction($this->snippet->getController(), $params);
 
         // write contents to the cache, if output-cache is enabled
         if (isset($params['cache']) && $params['cache'] === true) {
@@ -186,7 +174,7 @@ class Snippet extends Model\Document\Editable
      */
     public function setDataFromResource($data)
     {
-        if (intval($data) > 0) {
+        if ((int)$data > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }
@@ -203,7 +191,7 @@ class Snippet extends Model\Document\Editable
      */
     public function setDataFromEditmode($data)
     {
-        if (intval($data) > 0) {
+        if ((int)$data > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }
@@ -242,32 +230,6 @@ class Snippet extends Model\Document\Editable
         }
 
         return $dependencies;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id !== null) {
-            $this->id = $data->id;
-            if (is_numeric($this->id)) {
-                $this->snippet = Document\Snippet::getById($this->id);
-                if (!$this->snippet instanceof Document\Snippet) {
-                    throw new \Exception('cannot get values from web service import - referenced snippet with id [ ' . $this->id . ' ] is unknown');
-                }
-            } else {
-                throw new \Exception('cannot get values from web service import - id is not valid');
-            }
-        }
     }
 
     /**
@@ -339,5 +301,3 @@ class Snippet extends Model\Document\Editable
         return $this->snippet;
     }
 }
-
-class_alias(Snippet::class, 'Pimcore\Model\Document\Tag\Snippet');

@@ -20,6 +20,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Workflow\Marking;
 
+/**
+ * @internal
+ */
 class WorkflowDumpCommand extends AbstractCommand
 {
     protected static $defaultName = 'pimcore:workflow:dump';

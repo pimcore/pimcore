@@ -12,30 +12,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-/**
- * Alias to support Symfony 3.4 where ResponseEvent is not available and required for this interface
- *
- * @TODO remove in Pimcore 7
- */
+namespace Pimcore\Controller;
 
-namespace {
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
-    use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-
-    if (!class_exists('Symfony\Component\HttpKernel\Event\ResponseEvent')) {
-        class_alias(FilterResponseEvent::class, 'Symfony\Component\HttpKernel\Event\ResponseEvent');
-    }
-}
-
-namespace Pimcore\Controller {
-
-    use Symfony\Component\HttpKernel\Event\ResponseEvent;
-
-    interface KernelResponseEventInterface
-    {
-        /**
-         * @param ResponseEvent $event
-         */
-        public function onKernelResponseEvent(ResponseEvent $event);
-    }
+interface KernelResponseEventInterface
+{
+    /**
+     * @param ResponseEvent $event
+     */
+    public function onKernelResponseEvent(ResponseEvent $event);
 }

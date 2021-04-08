@@ -143,5 +143,3 @@ interface EnvironmentInterface
      */
     public function getHash();
 }
-
-class_alias(EnvironmentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment');

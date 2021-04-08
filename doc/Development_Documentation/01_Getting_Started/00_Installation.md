@@ -37,7 +37,7 @@ Specific configurations and optimizations for your web server are available here
 
 Pimcore requires write access to the following directories (relative to your project root): `/var`, `/web/var` ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
 
-If you're running the installation using a [custom environment name](../21_Deployment/03_Multi_Environment.md), ensure you already have the right config files in place, e.g. `app/config/config_[env_name].yml`. 
+If you're running the installation using a [custom environment name](../21_Deployment/03_Configuration_Environments.md), ensure you already have the right config files in place, e.g. `app/config/config_[env_name].yml`. 
 
 ## 3. Create Database
 
@@ -63,14 +63,14 @@ After the installer has finished, you can open the admin interface: `https://you
 
 ##### Debugging installation issues
 
-The installer writes a log in `var/logs` which contains any errors encountered during the installation. Please
+The installer writes a log in `var/log` which contains any errors encountered during the installation. Please
 have a look at the logs as a starting point when debugging installation issues.
 
 
 ## 5. Maintenance Cron Job
 
 ```bash
-*/5 * * * * /your/project/bin/console maintenance
+*/5 * * * * /your/project/bin/console pimcore:maintenance
 ```
 
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).

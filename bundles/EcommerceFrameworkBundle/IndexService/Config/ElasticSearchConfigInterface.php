@@ -49,13 +49,33 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      *  - value: the synonym provider
      *
      * @return SynonymProviderInterface[]
-     *
-     * @todo pimcore 7 - add this method to the interface
      */
-//    public function getSynonymProviders(): array
-//    {
-//        return $this->synonymProviders;
-//    }
-}
+    public function getSynonymProviders(): array;
 
-class_alias(ElasticSearchConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig');
+    /**
+     * @param string $property
+     *
+     * @return array|string
+     */
+    public function getClientConfig($property = null);
+
+    /**
+     * returns the full field name
+     *
+     * @param string $fieldName
+     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
+     *
+     * @return string
+     */
+    public function getFieldNameMapped($fieldName, $considerSubFieldNames = false);
+
+    /**
+     * returns short field name based on full field name
+     * also considers subfield names like name.analyzed etc.
+     *
+     * @param string $fullFieldName
+     *
+     * @return false|int|string
+     */
+    public function getReverseMappedFieldName($fullFieldName);
+}

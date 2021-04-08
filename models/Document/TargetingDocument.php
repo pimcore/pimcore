@@ -30,7 +30,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     private $useTargetGroup;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUseTargetGroup(int $useTargetGroup = null)
     {
@@ -38,7 +38,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUseTargetGroup()
     {
@@ -46,15 +46,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getTargetGroupElementPrefix(int $targetGroupId = null): string
-    {
-        return $this->getTargetGroupEditablePrefix($targetGroupId);
-    }
-
-    /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTargetGroupEditablePrefix(int $targetGroupId = null): string
     {
@@ -72,15 +64,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getTargetGroupElementName(string $name): string
-    {
-        return $this->getTargetGroupEditableName($name);
-    }
-
-    /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTargetGroupEditableName(string $name): string
     {
@@ -97,17 +81,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritDoc
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use hasTargetGroupSpecificEditables() instead.
-     */
-    public function hasTargetGroupSpecificElements(): bool
-    {
-        return $this->hasTargetGroupSpecificEditables();
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function hasTargetGroupSpecificEditables(): bool
     {
@@ -115,15 +89,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getTargetGroupSpecificElementNames(): array
-    {
-        return $this->getTargetGroupSpecificEditableNames();
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTargetGroupSpecificEditableNames(): array
     {
@@ -131,25 +97,20 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * Set an element with the given key/name
-     *
-     * @param string $name
-     * @param Editable $data
-     *
-     * @return PageSnippet
+     * {@inheritdoc}
      */
-    public function setEditable($name, $data)
+    public function setEditable(Editable $editable)
     {
         if ($this->getUseTargetGroup()) {
-            $name = $this->getTargetGroupEditableName($name);
-            $data->setName($name);
+            $name = $this->getTargetGroupEditableName($editable->getName());
+            $editable->setName($name);
         }
 
-        return parent::setEditable($name, $data);
+        return parent::setEditable($editable);
     }
 
     /**
-     * Get an element with the given key/name
+     * Get an editable with the given key/name
      *
      * @param string $name
      *
@@ -157,7 +118,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      */
     public function getEditable($name)
     {
-        // check if a target group is requested for this page, if yes deliver a different version of the element (prefixed)
+        // check if a target group is requested for this page, if yes deliver a different version of the editable (prefixed)
         if ($this->getUseTargetGroup()) {
             $targetGroupEditableName = $this->getTargetGroupEditableName($name);
 
@@ -176,7 +137,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
                     $inheritedEditable->setName($targetGroupEditableName);
                     $inheritedEditable->setInherited(true);
 
-                    $this->setEditable($targetGroupEditableName, $inheritedEditable);
+                    $this->setEditable($inheritedEditable);
 
                     return $inheritedEditable;
                 }

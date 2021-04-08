@@ -14,6 +14,9 @@
 
 namespace Pimcore\Video;
 
+/**
+ * @internal
+ */
 abstract class Adapter
 {
     /**
@@ -30,6 +33,11 @@ abstract class Adapter
      * @var string
      */
     public $format;
+
+    /**
+     * @var array
+     */
+    public $medias;
 
     /**
      * @var string
@@ -113,6 +121,22 @@ abstract class Adapter
      * @abstract
      */
     abstract public function destroy();
+
+    /**
+     * @return array|null
+     */
+    public function getMedias()
+    {
+        return $this->medias;
+    }
+
+    /**
+     * @param array|null $medias
+     */
+    public function setMedias($medias)
+    {
+        $this->medias = $medias;
+    }
 
     /**
      * @param string $format

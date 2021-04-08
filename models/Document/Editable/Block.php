@@ -31,19 +31,14 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @var array
      */
-    public $indices = [];
+    protected $indices = [];
 
     /**
      * Current step of the block while iteration
      *
      * @var int
      */
-    public $current = 0;
-
-    /**
-     * @var string[]
-     */
-    public $suffixes = [];
+    protected $current = 0;
 
     /**
      * @see EditableInterface::getType
@@ -117,12 +112,55 @@ class Block extends Model\Document\Editable implements BlockInterface
     public function setDefault()
     {
         if (empty($this->indices) && isset($this->config['default']) && $this->config['default']) {
-            for ($i = 0; $i < intval($this->config['default']); $i++) {
+            for ($i = 0; $i < (int)$this->config['default']; $i++) {
                 $this->indices[$i] = $i + 1;
             }
         }
 
         return $this;
+    }
+
+    /**
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        while ($this->loop()) {
+            yield $this->getCurrentIndex();
+        }
+
+        if ($this->getEditmode()) {
+
+            // yeah, I know the following is f******* crazy :D
+            $this->current = 0;
+            $indicesBackup = $this->indices;
+            $this->indices[0] = 1000000;
+            $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
+            $this->blockConstruct();
+            $blockStartHtml = $this->blockStart(true, true);
+            ob_start();
+
+            $editableDefCollector = $this->getEditableDefinitionCollector();
+            $editableDefCollector->stashPush();
+
+            yield $this->getCurrentIndex() + 1;
+
+            $blockEndHtml = $this->blockEnd(true);
+            $this->blockDestruct();
+            $this->getBlockState()->popBlock();
+
+            $templateEditableDefinitions = $editableDefCollector->getDefinitions();
+            $editableDefCollector->stashPull();
+
+            $this->config['template'] = [
+                'html' => $blockStartHtml . ob_get_clean() . $blockEndHtml,
+                'editables' => $templateEditableDefinitions,
+            ];
+
+            $editableDefCollector->add($this);
+
+            $this->indices = $indicesBackup;
+        }
     }
 
     /**
@@ -167,11 +205,11 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    protected function getEditmodeElementAttributes(array $options): array
+    protected function getEditmodeElementAttributes(): array
     {
-        $attributes = parent::getEditmodeElementAttributes($options);
+        $attributes = parent::getEditmodeElementAttributes();
 
         $attributes = array_merge($attributes, [
             'name' => $this->getName(),
@@ -188,13 +226,10 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function start()
     {
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
-
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
@@ -222,7 +257,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
-        $this->getBlockState()->pushIndex($this->indices[$this->current]);
+        $this->getBlockState()->pushIndex($this->indices[$this->current] ?? 0);
     }
 
     /**
@@ -237,52 +272,74 @@ class Block extends Model\Document\Editable implements BlockInterface
      * Is called evertime a new iteration starts (new entry of the block while looping)
      *
      * @param bool $showControls
+     * @param bool $return
      */
-    public function blockStart($showControls = true)
+    public function blockStart($showControls = true, $return = false)
     {
         $attr = $this->getBlockAttributes();
 
         $outerAttributes = [
-            'key' => $this->indices[$this->current],
+            'key' => $this->indices[$this->current] ?? null,
         ];
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
-        // outer element
-        $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
+        $html = '<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>';
 
         if ($showControls) {
-            $this->blockControls();
+            $html .= $this->blockControls(true);
         }
+
+        if ($return) {
+            return $html;
+        }
+
+        $this->outputEditmode($html);
     }
 
     /**
      * Custom position of button controls between blockStart -> blockEnd
+     *
+     * @param bool $return
      */
-    public function blockControls()
+    public function blockControls($return = false)
     {
         $attr = $this->getBlockAttributes();
 
-        $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
-
-        $this->outputEditmode('<div class="pimcore_block_amount" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_down" ' . $attr . '></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
-
-        $this->outputEditmode('</div>'); // .pimcore_block_buttons
+        $html = <<<EOT
+<div class="pimcore_block_buttons" $attr>
+    <div class="pimcore_block_amount" $attr></div>
+    <div class="pimcore_block_plus" $attr></div>
+    <div class="pimcore_block_minus" $attr></div>
+    <div class="pimcore_block_up" $attr></div>
+    <div class="pimcore_block_down" $attr></div>
+    <div class="pimcore_block_clear" $attr></div>
+</div>
+EOT;
 
         $this->current++;
+
+        if ($return) {
+            return $html;
+        }
+
+        $this->outputEditmode($html);
     }
 
     /**
      * Is called evertime a new iteration ends (new entry of the block while looping)
+     *
+     * @param bool $return
      */
-    public function blockEnd()
+    public function blockEnd($return = false)
     {
         // close outer element
-        $this->outputEditmode('</div>');
+        $html = '</div>';
+
+        if ($return) {
+            return $html;
+        }
+
+        $this->outputEditmode($html);
     }
 
     /**
@@ -297,6 +354,10 @@ class Block extends Model\Document\Editable implements BlockInterface
         }
 
         $this->config = $config;
+
+        if (($this->config['manual'] ?? false) === true) {
+            $this->config['reload'] = true;
+        }
 
         return $this;
     }
@@ -328,7 +389,15 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function getCurrentIndex()
     {
-        return $this->indices[$this->getCurrent()];
+        return $this->indices[$this->getCurrent()] ?? 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIndices()
+    {
+        return $this->indices;
     }
 
     /**
@@ -345,27 +414,6 @@ class Block extends Model\Document\Editable implements BlockInterface
     public function isEmpty()
     {
         return !(bool) count($this->indices);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))) {
-            $this->indices = $data->indices;
-            $this->current = $data->current;
-        } else {
-            throw new \Exception('cannot get  values from web service import - invalid data');
-        }
     }
 
     /**
@@ -404,5 +452,3 @@ class Block extends Model\Document\Editable implements BlockInterface
         return HtmlUtils::assembleAttributeString($attributes);
     }
 }
-
-class_alias(Block::class, 'Pimcore\Model\Document\Tag\Block');

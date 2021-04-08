@@ -16,9 +16,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -27,13 +28,15 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/asset")
  *
  * @package GDPRDataExtractorBundle\Controller
+ *
+ * @internal
  */
-class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
+final class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
-     * @param FilterControllerEvent $event
+     * {@inheritdoc}
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -55,12 +58,12 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $result = $service->searchData(
-            intval($allParams['id']),
+            (int)$allParams['id'],
             strip_tags($allParams['firstname']),
             strip_tags($allParams['lastname']),
             strip_tags($allParams['email']),
-            intval($allParams['start']),
-            intval($allParams['limit']),
+            (int)$allParams['start'],
+            (int)$allParams['limit'],
             $allParams['sort'] ?? null
         );
 

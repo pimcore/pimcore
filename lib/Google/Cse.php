@@ -16,11 +16,11 @@ namespace Pimcore\Google;
 
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
-class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Cse implements PaginateListingInterface
 {
     /**
      * @param string $query
@@ -58,7 +58,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
             $search = new \Google_Service_Customsearch($client);
 
             // determine language
-            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
             if ($position = strpos($language, '_')) {
                 $language = substr($language, 0, $position);
@@ -167,7 +167,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         $this->setRaw($googleResponse);
 
         // set search results
-        $total = intval($googleResponse->getSearchInformation()->getTotalResults());
+        $total = (int)$googleResponse->getSearchInformation()->getTotalResults();
         if ($total > 100) {
             $total = 100;
         }
@@ -396,7 +396,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * Methods for AdapterInterface
+     * Methods for PaginateListingInterface
      */
 
     /**
@@ -423,14 +423,6 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         $items = $this->load();
 
         return $items;
-    }
-
-    /**
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

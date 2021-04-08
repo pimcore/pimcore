@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -31,8 +31,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Pimcore\Model\Version;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
-abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
+/**
+ * @internal
+ */
+abstract class DocumentControllerBase extends AdminController implements KernelControllerEventInterface
 {
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
@@ -70,7 +74,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             'data' => $data,
             'document' => $document,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::DOCUMENT_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
     }
 
@@ -315,9 +319,9 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -326,14 +330,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
         // check permissions
         $this->checkPermission('documents');
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 
     /**

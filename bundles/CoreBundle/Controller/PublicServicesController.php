@@ -20,23 +20,27 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
-use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\EventListener\SessionListener;
 
-class PublicServicesController extends Controller
+/**
+ * @internal
+ */
+final class PublicServicesController extends Controller
 {
     /**
      * @param Request $request
      * @param SessionListener $sessionListener
      *
-     * @return BinaryFileResponse
+     * @return BinaryFileResponse|StreamedResponse
      */
     public function thumbnailAction(Request $request, SessionListener $sessionListener)
     {
@@ -53,7 +57,7 @@ class PublicServicesController extends Controller
             // assets via rewrite rules
             try {
                 $imageThumbnail = null;
-                $thumbnailFile = null;
+                $thumbnailStream = null;
                 $thumbnailConfig = null;
 
                 // just check if the thumbnail exists -> throws exception otherwise
@@ -93,7 +97,7 @@ class PublicServicesController extends Controller
                     }
 
                     $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $time);
-                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
+                    $thumbnailStream = $imageThumbnail->getStream();
                 } elseif ($asset instanceof Asset\Document) {
                     $page = 1;
                     if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
@@ -104,7 +108,7 @@ class PublicServicesController extends Controller
                     $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
                     $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $page);
-                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
+                    $thumbnailStream = $imageThumbnail->getStream();
                 } elseif ($asset instanceof Asset\Image) {
                     //check if high res image is called
 
@@ -121,22 +125,19 @@ class PublicServicesController extends Controller
                     }
 
                     $imageThumbnail = $asset->getThumbnail($thumbnailConfig);
-                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
+                    $thumbnailStream = $imageThumbnail->getStream();
                 }
 
-                if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
-                    $actualFileExtension = File::getFileExtension($thumbnailFile);
+                if ($imageThumbnail && $thumbnailStream) {
+                    $pathReference = $imageThumbnail->getPathReference();
+                    $actualFileExtension = File::getFileExtension($pathReference['src']);
 
                     if ($actualFileExtension !== $requestedFileExtension) {
                         // create a copy/symlink to the file with the original file extension
                         // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                         // is set to auto-optimized format so the resulting thumbnail can be jpeg
-                        $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $thumbnailFile);
-                        $linked = is_link($requestedFile) || symlink($thumbnailFile, $requestedFile);
-                        if (false === $linked) {
-                            // create a hard copy
-                            copy($thumbnailFile, $requestedFile);
-                        }
+                        $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
+                        Storage::get('thumbnail')->writeStream($requestedFile, $thumbnailStream);
                     }
 
                     // set appropriate caching headers
@@ -147,27 +148,20 @@ class PublicServicesController extends Controller
                         'Cache-Control' => 'public, max-age=' . $lifetime,
                         'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                         'Content-Type' => $imageThumbnail->getMimeType(),
+                        'Content-Length' => fstat($thumbnailStream)['size'],
                     ];
 
-                    // in certain cases where an event listener starts a session (e.g. when there's a firewall
-                    // configured for the entire site /*) the session event listener shouldn't modify the
-                    // cache control headers of this response
-                    if (defined('Symfony\Component\HttpKernel\EventListener\AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER')) {
-                        // this method of bypassing the session listener was introduced in Symfony 4, so we need
-                        // to check for the constant first
-                        $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
-                    } else {
-                        // @TODO to be removed in Pimcore 7
-                        // Symfony 3.4 doesn't support bypassing the session listener, so we just remove it
-                        \Pimcore::getEventDispatcher()->removeSubscriber($sessionListener);
-                    }
+                    $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
-                    return new BinaryFileResponse($thumbnailFile, 200, $headers);
+                    return new StreamedResponse(function () use ($thumbnailStream) {
+                        fpassthru($thumbnailStream);
+                    }, 200, $headers);
                 }
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
                 Logger::error($message);
-                throw $this->createNotFoundException($message, $e);
+
+                return new BinaryFileResponse(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg', 200);
             }
         } else {
             throw $this->createNotFoundException('Asset not found');
@@ -222,44 +216,6 @@ class PublicServicesController extends Controller
     public function commonFilesAction(Request $request)
     {
         return new Response("HTTP/1.1 404 Not Found\nFiltered by common files filter", 404);
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @deprecated
-     */
-    public function hybridauthAction(Request $request)
-    {
-        \Pimcore\Tool\HybridAuth::process();
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function qrcodeAction(Request $request)
-    {
-        $code = Tool\Qrcode\Config::getByName($request->get('key'));
-        if ($code) {
-            $url = $code->getUrl();
-            if ($code->getGoogleAnalytics()) {
-                $glue = '?';
-                if (strpos($url, '?')) {
-                    $glue = '&';
-                }
-
-                $url .= $glue;
-                $url .= 'utm_source=Mobile&utm_medium=QR-Code&utm_campaign=' . $code->getName();
-            }
-
-            return $this->redirect($url);
-        } else {
-            Logger::error("called an QR code but '" . $request->get('key') . ' is not a code in the system.');
-        }
     }
 
     /**

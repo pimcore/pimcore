@@ -29,7 +29,7 @@ class Table extends Model\Document\Editable
      *
      * @var array
      */
-    public $data;
+    protected $data;
 
     /**
      * @see EditableInterface::getType
@@ -79,7 +79,7 @@ class Table extends Model\Document\Editable
     }
 
     /**
-     * @see TagInterface::setDataFromResource
+     * @see EditableInterface::setDataFromResource
      *
      * @param mixed $data
      *
@@ -113,26 +113,4 @@ class Table extends Model\Document\Editable
     {
         return empty($this->data);
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $wsElement->value;
-        if ($data->data === null or is_array($data->data)) {
-            $this->data = $data->data;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
 }
-
-class_alias(Table::class, 'Pimcore\Model\Document\Tag\Table');

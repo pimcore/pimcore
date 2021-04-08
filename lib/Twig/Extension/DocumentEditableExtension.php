@@ -74,28 +74,15 @@ class DocumentEditableExtension extends AbstractExtension
 
     /**
      * @param array $context
+     * @param string $type
      * @param string $name
-     * @param string $inputName
      * @param array $options
      *
      * @return \Pimcore\Model\Document\Editable|string
      *
-     * @deprecated since v6.8 and will be removed in 7. use renderEditable instead.
+     * @throws \Exception
      */
-    public function renderTag($context, $name, $inputName, array $options = [])
-    {
-        return $this->renderEditable($context, $name, $inputName, $options);
-    }
-
-    /**
-     * @param array $context
-     * @param string $name
-     * @param string $inputName
-     * @param array $options
-     *
-     * @return \Pimcore\Model\Document\Editable|string
-     */
-    public function renderEditable($context, $name, $inputName, array $options = [])
+    public function renderEditable(array $context, string $type, string $name, array $options = [])
     {
         $document = $context['document'];
         $editmode = $context['editmode'];
@@ -103,7 +90,7 @@ class DocumentEditableExtension extends AbstractExtension
             return '';
         }
 
-        return $this->editableRenderer->render($document, $name, $inputName, $options, $editmode);
+        return $this->editableRenderer->render($document, $type, $name, $options, $editmode);
     }
 
     /**
@@ -115,10 +102,6 @@ class DocumentEditableExtension extends AbstractExtension
      */
     public function getBlockIterator(BlockInterface $block): \Generator
     {
-        while ($block->loop()) {
-            yield $block->getCurrentIndex();
-        }
+        return $block->getIterator();
     }
 }
-
-class_alias(DocumentEditableExtension::class, 'Pimcore\Twig\Extension\DocumentTagExtension');

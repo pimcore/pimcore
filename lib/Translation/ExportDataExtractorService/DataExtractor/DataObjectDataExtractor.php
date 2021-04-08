@@ -76,15 +76,15 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      */
     private function extractRawAttributeSet(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages, array $exportAttributes = null, bool $inherited): AttributeSet
     {
-        $inheritedBackup = DataObject\AbstractObject::getGetInheritedValues();
-        DataObject\AbstractObject::setGetInheritedValues($inherited);
+        $inheritedBackup = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues($inherited);
 
         $result = parent::extract($translationItem, $sourceLanguage, $targetLanguages);
 
         $object = $translationItem->getElement();
 
         if ($object instanceof DataObject\Folder) {
-            DataObject\AbstractObject::setGetInheritedValues($inheritedBackup);
+            DataObject::setGetInheritedValues($inheritedBackup);
 
             return $result;
         }
@@ -98,7 +98,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
             ->addBlocks($object, $result, $exportAttributes)
             ->addLocalizedFieldsInFieldCollections($object, $result, $exportAttributes);
 
-        DataObject\AbstractObject::setGetInheritedValues($inheritedBackup);
+        DataObject::setGetInheritedValues($inheritedBackup);
 
         return $result;
     }

@@ -19,10 +19,13 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
@@ -35,9 +38,9 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param ResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
 

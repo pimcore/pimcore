@@ -26,6 +26,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
+    applyDefaultValue: function() {
+        this.defaultValue = null;
+        if ((typeof this.data === "undefined" || !this.data) && this.fieldConfig.defaultValue && this.context.type === "classificationstore") {
+            this.data = this.fieldConfig.defaultValue;
+            this.defaultValue = this.fieldConfig.defaultValue;
+        }
+    },
+
     getGridColumnEditor: function(field) {
         var editorConfig = {};
 
@@ -73,7 +81,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.labelWidth) {
             input.labelWidth = this.fieldConfig.labelWidth;
         }
-        input.width += input.labelWidth;
+
+        if (this.fieldConfig.labelAlign) {
+            input.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            input.width = this.sumWidths(input.width, input.labelWidth);
+        }
 
         if(this.fieldConfig.columnLength) {
             input.maxLength = this.fieldConfig.columnLength;

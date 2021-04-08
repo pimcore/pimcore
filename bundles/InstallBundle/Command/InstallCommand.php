@@ -33,6 +33,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @method Application getApplication()
+ *
+ * @internal
  */
 class InstallCommand extends Command
 {
@@ -151,7 +153,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -195,7 +197,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -247,7 +249,7 @@ class InstallCommand extends Command
     /**
      * Prompt options which are not set interactively
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
@@ -306,7 +308,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -351,7 +353,7 @@ class InstallCommand extends Command
         }
 
         $this->io->writeln(sprintf(
-            'Running installation. You can find a detailed install log in <comment>var/logs/%s.log</comment>',
+            'Running installation. You can find a detailed install log in <comment>var/log/%s.log</comment>',
             $this->getApplication()->getKernel()->getEnvironment()
         ));
 

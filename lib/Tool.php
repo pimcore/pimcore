@@ -15,6 +15,8 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
+use Pimcore\Http\RequestHelper;
+use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Tool
@@ -46,6 +48,8 @@ class Tool
      * Sets the current request to operate on
      *
      * @param Request|null $request
+     *
+     * @internal
      */
     public static function setCurrentRequest(Request $request = null)
     {
@@ -123,7 +127,7 @@ class Tool
                 return [];
             }
 
-            $validLanguages = str_replace(' ', '', strval($config['valid_languages']));
+            $validLanguages = str_replace(' ', '', (string)$config['valid_languages']);
             $languages = explode(',', $validLanguages);
 
             if (!is_array($languages)) {
@@ -187,7 +191,7 @@ class Tool
      */
     public static function getSupportedLocales()
     {
-        $localeService = \Pimcore::getContainer()->get('pimcore.locale');
+        $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
         $locale = $localeService->findLocale();
 
         $cacheKey = 'system_supported_locales_' . strtolower((string) $locale);
@@ -283,20 +287,6 @@ class Tool
     }
 
     /**
-     * @static
-     *
-     * @return array
-     */
-    public static function getRoutingDefaults()
-    {
-        $container = \Pimcore::getContainer();
-        $routingDefaults = $container->getParameter('pimcore.routing.defaults');
-        $routingDefaults['module'] = $routingDefaults['bundle'];
-
-        return $routingDefaults;
-    }
-
-    /**
      * @param Request|null $request
      *
      * @return null|Request
@@ -335,7 +325,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->isFrontendRequest($request);
     }
 
@@ -355,7 +345,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->isFrontendRequestByAdmin($request);
     }
 
@@ -516,7 +506,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->getAnonymizedClientIp($request);
     }
 
@@ -539,6 +529,16 @@ class Tool
                 if (isset($tmp['name'])) {
                     $tmp['showroot'] = !empty($tmp['showroot']);
 
+                    if (!is_array($tmp['classes'] ?? [])) {
+                        $flipArray = [];
+                        $tempClasses = explode(',', $tmp['classes']);
+
+                        foreach ($tempClasses as $tempClass) {
+                            $flipArray[$tempClass] = null;
+                        }
+                        $tmp['classes'] = $flipArray;
+                    }
+
                     if (!empty($tmp['hidden'])) {
                         continue;
                     }
@@ -554,16 +554,14 @@ class Tool
     /**
      * @param array|string|null $recipients
      * @param string|null $subject
-     * @param string|null $charset
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public static function getMail($recipients = null, $subject = null, $charset = null)
+    public static function getMail($recipients = null, $subject = null)
     {
         $mail = new Mail();
-        $mail->setCharset($charset);
 
         if ($recipients) {
             if (is_string($recipients)) {

@@ -90,10 +90,6 @@ pimcore.settings.system = Class.create({
                 pimcore.globalmanager.remove("settings_system");
             }.bind(this));
 
-            // debug
-            if (this.data.values.general.debug) {
-                this.data.values.general.debug = true;
-            }
 
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
@@ -316,6 +312,7 @@ pimcore.settings.system = Class.create({
                                     valueField: 'language',
                                     forceSelection: true,
                                     typeAhead: true,
+                                    anyMatch: true,
                                     width: 450
                                 }, {
                                     xtype: "button",
@@ -362,43 +359,6 @@ pimcore.settings.system = Class.create({
                         defaultType: 'textfield',
                         defaults: {width: 600},
                         items: [
-                            {
-                                fieldLabel: "DEBUG",
-                                xtype: "checkbox",
-                                name: "general.debug",
-                                id: "system_settings_general_debug",
-                                checked: this.getValue("general.debug"),
-                                listeners: {
-                                    change: function (el, checked) {
-                                        // set the current client ip to the debug ip field
-                                        var ipField = Ext.getCmp("system_settings_general_debug_ip");
-                                        if (checked && empty(ipField.getValue())) {
-                                            ipField.setValue(this.data.config.client_ip);
-                                        }
-                                    }.bind(this)
-                                }
-                            },
-                            {
-                                fieldLabel: t("only_for_ip"),
-                                xtype: "textfield",
-                                id: "system_settings_general_debug_ip",
-                                name: "general.debug_ip",
-                                width: 600,
-                                value: this.getValue("general.debug_ip")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("debug_description")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("debug_override_warning"),
-                                cls: "pimcore_extra_label_bottom"
-                            },
                             {
                                 xtype: "displayfield",
                                 hideLabel: true,
@@ -453,6 +413,11 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("applicationlog.archive_alternative_database")
                             },
                             {
+                                fieldLabel: t('log_config_delete_archive_threshold'),
+                                name: 'applicationlog.delete_archive_threshold',
+                                value: this.getValue("applicationlog.delete_archive_threshold") ? this.getValue("applicationlog.delete_archive_threshold") : '6'
+                            },
+                            {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
@@ -464,14 +429,6 @@ pimcore.settings.system = Class.create({
                                 xtype: "checkbox",
                                 name: "general.debug_admin_translations",
                                 checked: this.getValue("general.debug_admin_translations")
-                            },
-                            {
-                                fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">'
-                                + t('do_not_use_in_production') + '</span>)',
-                                xtype: "checkbox",
-                                name: "general.devmode",
-                                id: "system_settings_general_devmode",
-                                checked: this.getValue("general.devmode")
                             },
                             {
                                 xtype: "displayfield",
@@ -504,94 +461,6 @@ pimcore.settings.system = Class.create({
                                     name: 'email.debug.emailAddresses',
                                     value: this.getValue("email.debug.emailaddresses"),
                                     emptyText: "john@doe.com,jane@doe.com"
-                                },
-                                {
-                                    fieldLabel: t("email_method") + ' <span style="color:red;">*</span>',
-                                    xtype: "combo",
-                                    name: "email.method",
-                                    value: this.getValue("email.method"),
-                                    store: [
-                                        ["sendmail", "Sendmail"],
-                                        ["smtp", "SMTP"],
-                                        ["null", t("none")]
-                                    ],
-                                    listeners: {
-                                        select: this.emailMethodSelected.bind(this, "email")
-                                    },
-                                    mode: "local",
-                                    editable: false,
-                                    forceSelection: true,
-                                    triggerAction: "all"
-                                },
-                                {
-                                    xtype: "fieldset",
-                                    title: "SMTP",
-                                    width: 600,
-                                    itemId: "emailSmtpSettings",
-                                    defaultType: 'textfield',
-                                    hidden: (this.getValue("email.method") == "smtp") ? false : true,
-                                    items: [{
-                                        fieldLabel: t("email_smtp_host") + ' <span style="color:red;">*</span>',
-                                        name: "email.smtp.host",
-                                        value: this.getValue("email.smtp.host")
-                                    },
-                                        {
-                                            fieldLabel: t("email_smtp_ssl"),
-                                            xtype: "combo",
-                                            width: 425,
-                                            name: "email.smtp.ssl",
-                                            value: this.getValue("email.smtp.ssl"),
-                                            store: [
-                                                ["", t('no_ssl')],
-                                                ["tls", "TLS"],
-                                                ["ssl", "SSL"]
-                                            ],
-                                            mode: "local",
-                                            editable: false,
-                                            forceSelection: true,
-                                            triggerAction: "all"
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_port"),
-                                            name: "email.smtp.port",
-                                            value: this.getValue("email.smtp.port")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_auth_method"),
-                                            xtype: "combo",
-                                            width: 425,
-                                            name: "email.smtp.auth.method",
-                                            value: this.getValue("email.smtp.auth.method"),
-                                            store: [
-                                                ["", t('no_authentication')],
-                                                ["login", "LOGIN"],
-                                                ["plain", "PLAIN"],
-                                                ["cram-md5", "CRAM-MD5"]
-                                            ],
-                                            mode: "local",
-                                            editable: false,
-                                            forceSelection: true,
-                                            triggerAction: "all",
-                                            listeners: {
-                                                select: this.smtpAuthSelected.bind(this, "email")
-                                            }
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_auth_username"),
-                                            name: "email.smtp.auth.username",
-                                            itemId: "email_username",
-                                            hidden: (this.getValue("email.smtp.auth.method").length > 1) ? false : true,
-                                            value: this.getValue("email.smtp.auth.username")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_auth_password"),
-                                            name: "email.smtp.auth.password",
-                                            inputType: "password",
-                                            itemId: "email_password",
-                                            hidden: (this.getValue("email.smtp.auth.method").length > 1) ? false : true,
-                                            value: this.getValue("email.smtp.auth.password")
-                                        }
-                                    ]
                                 },
                                 {
                                     fieldLabel: t("email_senderemail") + ' <span style="color:red;">*</span>',
@@ -674,11 +543,6 @@ pimcore.settings.system = Class.create({
                                         });
                                     }
                                 }
-                            }, {
-                                xtype: "checkbox",
-                                fieldLabel: t("show_cookie_notice") + "<br><b>DEPRECATED! Will be removed in 7.0</b>",
-                                name: "general.show_cookie_notice",
-                                checked: this.getValue("general.show_cookie_notice")
                             }
                         ]
                     },
@@ -986,35 +850,6 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("full_page_cache.excludeCookie")
                             }
                         ]
-                    },
-                    {
-                        xtype: 'fieldset',
-                        title: t('webservice'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 300},
-                        items: [
-                            {
-                                xtype: 'container',
-                                html: "<b>DEPRECATED! Will be removed in 7.0</b>"
-                            },
-                            {
-                                fieldLabel: t("webservice_enabled"),
-                                xtype: "checkbox",
-                                name: "webservice.enabled",
-                                checked: this.getValue("webservice.enabled")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("webservice_description"),
-                                cls: "pimcore_extra_label_bottom"
-                            }
-                        ]
                     }, {
                         xtype: 'fieldset',
                         title: t('http_connectivity_direct_proxy'),
@@ -1119,93 +954,6 @@ pimcore.settings.system = Class.create({
                             defaultType: 'textfield',
                             autoHeight: true,
                             items: [
-                                {
-                                    fieldLabel: t("email_method") + ' <span style="color:red;">*</span>',
-                                    xtype: "combo",
-                                    name: "newsletter.method",
-                                    value: this.getValue("newsletter.method"),
-                                    store: [
-                                        ["sendmail", "Sendmail"],
-                                        ["smtp", "SMTP"],
-                                        ["null", t("none")]
-                                    ],
-                                    listeners: {
-                                        select: this.emailMethodSelected.bind(this, "newsletter")
-                                    },
-                                    editable: false,
-                                    forceSelection: true,
-                                    mode: "local",
-                                    triggerAction: "all"
-                                },
-                                {
-                                    xtype: "fieldset",
-                                    title: "SMTP",
-                                    width: 600,
-                                    defaults: {width: 565},
-                                    itemId: "newsletterSmtpSettings",
-                                    defaultType: 'textfield',
-                                    hidden: (this.getValue("newsletter.method") == "smtp") ? false : true,
-                                    items: [{
-                                        fieldLabel: t("email_smtp_host") + ' <span style="color:red;">*</span>',
-                                        name: "newsletter.smtp.host",
-                                        value: this.getValue("newsletter.smtp.host")
-                                    },
-                                        {
-                                            fieldLabel: t("email_smtp_ssl"),
-                                            xtype: "combo",
-                                            name: "newsletter.smtp.ssl",
-                                            value: this.getValue("newsletter.smtp.ssl"),
-                                            store: [
-                                                ["", t('no_ssl')],
-                                                ["tls", "TLS"],
-                                                ["ssl", "SSL"]
-                                            ],
-                                            editable: false,
-                                            forceSelection: true,
-                                            mode: "local",
-                                            triggerAction: "all"
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_port"),
-                                            name: "newsletter.smtp.port",
-                                            value: this.getValue("newsletter.smtp.port")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_auth_method"),
-                                            xtype: "combo",
-                                            name: "newsletter.smtp.auth.method",
-                                            value: this.getValue("newsletter.smtp.auth.method"),
-                                            store: [
-                                                ["", t('no_authentication')],
-                                                ["login", "LOGIN"],
-                                                ["plain", "PLAIN"],
-                                                ["cram-md5", "CRAM-MD5"]
-                                            ],
-                                            mode: "local",
-                                            editable: false,
-                                            forceSelection: true,
-                                            triggerAction: "all",
-                                            listeners: {
-                                                select: this.smtpAuthSelected.bind(this, "newsletter")
-                                            }
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_auth_username"),
-                                            name: "newsletter.smtp.auth.username",
-                                            itemId: "newsletter_username",
-                                            hidden: (this.getValue("newsletter.smtp.auth.method").length > 1) ? false : true,
-                                            value: this.getValue("newsletter.smtp.auth.username")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_auth_password"),
-                                            name: "newsletter.smtp.auth.password",
-                                            inputType: "password",
-                                            itemId: "newsletter_password",
-                                            hidden: (this.getValue("newsletter.smtp.auth.method").length > 1) ? false : true,
-                                            value: this.getValue("newsletter.smtp.auth.password")
-                                        }
-                                    ]
-                                },
                                 {
                                     fieldLabel: t("email_senderemail") + ' <span style="color:red;">*</span>',
                                     name: "newsletter.sender.email",
@@ -1336,7 +1084,7 @@ pimcore.settings.system = Class.create({
             }
         }
 
-        if (value) {
+        if (value !== null) {
             Ext.getCmp("system_settings_" + elementType + "_versions_" + mappingOpposite[type]).disable();
             Ext.getCmp("system_settings_" + elementType + "_versions_" + mappingOpposite[type]).setValue("");
         } else {

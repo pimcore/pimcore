@@ -87,5 +87,3 @@ interface TrackingItemBuilderInterface
      */
     public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem);
 }
-
-class_alias(TrackingItemBuilderInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingItemBuilder');

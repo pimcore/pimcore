@@ -29,16 +29,17 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Handles element setup logic from request. Basically this does what the init() method
- * on the ZF frontend controller did.
+ * Handles element setup logic from request.
+ *
+ * @internal
  */
-class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
+final class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
@@ -85,16 +86,16 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER => ['onKernelController', 3], // has to be after DocumentFallbackListener
+            KernelEvents::CONTROLLER => ['onKernelController', 30], // has to be after DocumentFallbackListener
         ];
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         if ($event->isMasterRequest()) {
             $request = $event->getRequest();
@@ -252,7 +253,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     /**
      * @param Document $document
      *
-     * @return mixed|Document|Document\PageSnippet
+     * @return Document
      */
     protected function handleEditmode(Document $document)
     {
@@ -269,12 +270,14 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             ]);
 
             // set the latest available version for editmode if there is no doc in the session
-            $latestVersion = $document->getLatestVersion();
-            if ($latestVersion) {
-                $latestDoc = $latestVersion->loadData();
+            if ($document instanceof Document\PageSnippet) {
+                $latestVersion = $document->getLatestVersion();
+                if ($latestVersion) {
+                    $latestDoc = $latestVersion->loadData();
 
-                if ($latestDoc instanceof Document\PageSnippet) {
-                    $document = $latestDoc;
+                    if ($latestDoc instanceof Document\PageSnippet) {
+                        $document = $latestDoc;
+                    }
                 }
             }
         }
