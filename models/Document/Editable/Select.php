@@ -90,6 +90,18 @@ class Select extends Model\Document\Editable
     }
 
     /**
+     * @param array $config
+     * @return $this
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+        $this->text = $this->text ?? $this->config['defaultValue'] ?? null;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isEmpty()
