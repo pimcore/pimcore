@@ -27,8 +27,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * Class IndexController
  *
  * @Route("/index")
+ *
+ * @internal
  */
-class IndexController extends AdminController
+final class IndexController extends AdminController
 {
     /**
      * @Route("/get-filter-groups", name="pimcore_ecommerceframework_index_getfiltergroups", methods={"GET"})

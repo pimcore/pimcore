@@ -28,6 +28,9 @@ use Pimcore\Model\User\Permission;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
+/**
+ * @internal
+ */
 class Installer extends AbstractInstaller
 {
     /**

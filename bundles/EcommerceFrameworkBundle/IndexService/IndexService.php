@@ -61,6 +61,11 @@ class IndexService
         }
     }
 
+    /**
+     * @param WorkerInterface $tenantWorker
+     *
+     * @internal
+     */
     protected function registerTenantWorker(WorkerInterface $tenantWorker)
     {
         $this->tenantWorkers[$tenantWorker->getTenantConfig()->getTenantName()] = $tenantWorker;

@@ -106,6 +106,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param mixed $value
      *
      * @return AbstractModel
+     *
+     * @internal
      */
     public function setValue($key, $value)
     {
@@ -412,6 +414,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string|null $language
      *
      * @return string
+     *
+     *
      */
     protected function getLanguage($language = null)
     {

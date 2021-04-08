@@ -18,6 +18,9 @@ use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @internal
+ */
 class SessionConfigurator implements SessionConfiguratorInterface
 {
     const ATTRIBUTE_BAG_CART = 'ecommerceframework_cart';

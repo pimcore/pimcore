@@ -100,6 +100,8 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
      * Don't cache the entire category object
      *
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -108,6 +110,8 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
 
     /**
      * Restore categories from serialized ID list
+     *
+     * @internal
      */
     public function __wakeup()
     {

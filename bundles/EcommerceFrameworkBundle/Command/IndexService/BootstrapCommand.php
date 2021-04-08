@@ -24,7 +24,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BootstrapCommand extends AbstractIndexServiceCommand
+final class BootstrapCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
     use Parallelization

@@ -22,7 +22,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RegisterConfiguredServicesPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class RegisterConfiguredServicesPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

@@ -48,8 +48,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class AdminOrderController
  *
  * @Route("/admin-order")
+ *
+ * @internal
  */
-class AdminOrderController extends AdminController implements KernelControllerEventInterface
+final class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var OrderManagerInterface

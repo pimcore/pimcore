@@ -53,6 +53,8 @@ class SessionCartItem extends AbstractCartItem implements CartItemInterface
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
