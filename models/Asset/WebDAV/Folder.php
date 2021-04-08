@@ -51,17 +51,16 @@ class Folder extends DAV\Collection
     {
         $children = [];
 
-        $db = Db::get();
         $childsList = new Asset\Listing();
 
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         if ($user->isAdmin()) {
-            $condition = 'parentId =  '.$db->quote($this->asset->getId());
+            $condition = 'parentId = ?';
         } else {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $condition = 'parentId = '.$db->quote($this->asset->getId()).' AND
+            $condition = 'parentId = ? AND
             (
                 (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
                 or
@@ -69,7 +68,7 @@ class Folder extends DAV\Collection
             )';
         }
 
-        $childsList->setCondition($condition);
+        $childsList->setCondition($condition, [$this->asset->getId()]);
 
         foreach ($childsList as $child) {
             try {
