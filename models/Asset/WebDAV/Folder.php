@@ -51,35 +51,33 @@ class Folder extends DAV\Collection
     {
         $children = [];
 
-        if ($this->asset->hasChildren()) {
-            $db = Db::get();
-            $childsList = new Asset\Listing();
+        $db = Db::get();
+        $childsList = new Asset\Listing();
 
-            $user = \Pimcore\Tool\Admin::getCurrentUser();
-            if ($user->isAdmin()) {
-                $condition = 'parentId =  '.$db->quote($this->asset->getId());
-            } else {
-                $userIds = $user->getRoles();
-                $userIds[] = $user->getId();
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        if ($user->isAdmin()) {
+            $condition = 'parentId =  '.$db->quote($this->asset->getId());
+        } else {
+            $userIds = $user->getRoles();
+            $userIds[] = $user->getId();
 
-                $condition = 'parentId = '.$db->quote($this->asset->getId()).' AND
-                (
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
-                    or
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
-                )';
-            }
+            $condition = 'parentId = '.$db->quote($this->asset->getId()).' AND
+            (
+                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
+                or
+                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
+            )';
+        }
 
-            $childsList->setCondition($condition);
+        $childsList->setCondition($condition);
 
-            foreach ($childsList as $child) {
-                try {
-                    if ($child = $this->getChild($child)) {
-                        $children[] = $child;
-                    }
-                } catch (\Exception $e) {
-                    Logger::warning($e);
+        foreach ($childsList as $child) {
+            try {
+                if ($child = $this->getChild($child)) {
+                    $children[] = $child;
                 }
+            } catch (\Exception $e) {
+                Logger::warning($e);
             }
         }
 
