@@ -621,8 +621,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         if (!$this->validUnits) {
             $table = null;
             try {
-                $table = null;
-
                 if (Runtime::isRegistered(Model\DataObject\QuantityValue\Unit::CACHE_KEY)) {
                     $table = Runtime::get(Model\DataObject\QuantityValue\Unit::CACHE_KEY);
                 }
@@ -637,11 +635,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 if (!is_array($table)) {
                     $table = [];
                     $list = new Model\DataObject\QuantityValue\Unit\Listing();
-                    $list->setOrderKey('abbreviation');
-                    $list->setOrder('asc');
-                    $list = $list->load();
-                    /** @var Model\DataObject\QuantityValue\Unit $item */
-                    foreach ($list as $item) {
+                    $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
+                    $list->setOrder(['ASC', 'ASC', 'ASC']);
+                    foreach ($list->getUnits() as $item) {
                         $table[$item->getId()] = $item;
                     }
 
