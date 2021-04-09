@@ -1139,6 +1139,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $thumbnail = null;
         $thumbnailName = $request->get('thumbnail');
         $thumbnailFile = null;
+        $deleteThumbnail = true;
 
         if ($request->get('config')) {
             $config = $this->decodeJson($request->get('config'));
@@ -1170,6 +1171,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             $config = $predefined[$request->get('type')];
         } elseif ($thumbnailName) {
             $thumbnail = $image->getThumbnail($thumbnailName);
+            $deleteThumbnail = false;
         }
 
         if ($config) {
@@ -1228,7 +1230,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
             $response->headers->set('Content-Type', $thumbnail->getMimeType());
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $downloadFilename);
             $this->addThumbnailCacheHeaders($response);
-            $response->deleteFileAfterSend(true);
+            $response->deleteFileAfterSend($deleteThumbnail);
 
             return $response;
         }
