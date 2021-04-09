@@ -63,9 +63,14 @@ pimcore.object.quantityValue.unitsettings = Class.create({
     getRowEditor: function () {
 
         var baseUnitStore = Ext.create('Ext.data.JsonStore', {
+            fields: [{
+                name: 'id',
+                type: 'string'
+            }, 'abbreviation', 'longname', 'group', 'baseunit', 'factor', 'conversionOffset', 'reference', 'converter'],
             proxy: {
                 type: 'ajax',
-                async: false,
+                async: true,
+                batchActions: false,
                 url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget'),
                 reader: {
                     type: 'json',
@@ -99,7 +104,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         };
 
         var typesColumns = [
-            {flex: 1, dataIndex: 'id', text: t("id"), hidden: true, filter: 'string'},
+            {flex: 1, dataIndex: 'id', text: t("id"), filter: 'string'},
             {flex: 1, dataIndex: 'abbreviation', text: t("abbreviation"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 2, dataIndex: 'longname', text: t("longname"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
@@ -229,14 +234,43 @@ pimcore.object.quantityValue.unitsettings = Class.create({
     },
 
     onAdd: function (btn, ev) {
-        var u = {};
-        //id = -1;
-        this.cellEditing.completeEdit();
-        this.grid.store.insert(0, u);
-        this.cellEditing.startEditByPosition({
-            row: 0,
-            column: 0
-        });
+        Ext.MessageBox.prompt(' ', t('unique_identifier'),
+            function (button, value, object) {
+                var regresult = value.match(/[a-zA-Z0-9_\-]+/);
+                if (button == "ok") {
+                    if (value.length >= 1 && regresult == value) {
+
+                        // this is rather a workaround, Ext doesn't sync if the id field is already filled.
+                        Ext.Ajax.request({
+                            url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget', {xaction: 'create'}),
+                            method: 'POST',
+                            params: {
+                                data: Ext.encode({
+                                    id: value
+                                })
+                            },
+                            success: function () {
+                                var u = {
+                                    id: value
+                                };
+                                this.cellEditing.completeEdit();
+                                let recs = this.grid.store.insert(0, [u]);
+
+                                this.cellEditing.startEditByPosition({
+                                    row: 0,
+                                    column: 0
+                                });
+
+                            }.bind(this)
+                        });
+
+                    } else {
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
+                    }
+                }
+            }.bind(this)
+        );
+
     },
 
     onDelete: function () {
@@ -248,4 +282,3 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         this.grid.store.remove(rec);
     }
 });
-

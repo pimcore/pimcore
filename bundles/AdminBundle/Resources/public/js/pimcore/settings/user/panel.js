@@ -98,7 +98,6 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
     },
 
     openSearchPanel: function () {
-
         var store = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
@@ -126,10 +125,12 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             height: 150,
             modal: true,
             bodyStyle:"padding:10px",
+            defaultFocus: 'name',
             items: [Ext.create('Ext.form.ComboBox' , {
                 xtype: "combo",
                 store: store,
                 displayField:'name',
+                itemId: 'name',
                 valueField: "id",
                 typeAhead: false,
                 loadingText: t('searching'),
@@ -148,10 +149,6 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                             console.log(e)
                         }
                     }.bind(this)
-                    ,
-                    afterrender: function () {
-                        this.focus(true,500);
-                    }
                 }
             })],
             buttons: [{

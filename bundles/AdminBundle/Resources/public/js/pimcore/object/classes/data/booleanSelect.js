@@ -81,10 +81,15 @@ pimcore.object.classes.data.booleanSelect = Class.create(pimcore.object.classes.
     getSpecificPanelItems: function (datax, inEncryptedField) {
         return [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             },
             {
                 xtype: "textfield",

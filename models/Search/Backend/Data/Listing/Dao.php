@@ -19,6 +19,8 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Search\Backend\Data\Listing $model
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
@@ -64,9 +66,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $amount = (int)$this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
-
-        return $amount;
+        return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
     }
 
     /**

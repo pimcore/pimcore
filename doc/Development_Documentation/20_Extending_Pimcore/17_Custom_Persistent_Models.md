@@ -76,7 +76,7 @@ class Vote extends AbstractModel {
             return $obj;
         }
         catch (\Exception $ex) {
-            \Logger::warn("Vote with id $id not found");
+            \Pimcore\Logger::warn("Vote with id $id not found");
         }
  
         return null;
@@ -245,10 +245,9 @@ If you need to query the data using a Pimcore entity list, you also need to impl
 namespace AppBundle\Model\Vote;
  
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
  
-class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * List of Votes.
@@ -261,26 +260,6 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
      * @var string
      */
     public $locale;
- 
-    /**
-     * @return array
-     */
-    public function getData()
-    {
-        if ($this->data === null) {
-            $this->load();
-        }
- 
-        return $this->data;
-    }
- 
-    /**
-     * @param array $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
  
     /**
      * get total count.
@@ -418,9 +397,12 @@ namespace AppBundle\Model\Vote\Listing;
 use Pimcore\Model\Listing;
 use AppBundle\Model;
 use Pimcore\Tool;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
  
 class Dao extends Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+
     /**
      * @var string
      */
@@ -442,33 +424,16 @@ class Dao extends Listing\Dao\AbstractDao
      * get select query.
      * @throws \Exception
      */
-    public function getQuery()
+    public function getQueryBuilder()
     {
- 
-        // init
-        $select = $this->db->select();
- 
-        // create base
+        $queryBuilder = $this->db->createQueryBuilder(); 
         $field = $this->getTableName().'.id';
-        $select->from(
-            [$this->getTableName()], [
-                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field, 'o_type')),
-            ]
-        );
+        $queryBuilder->select([sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)]);
+        $queryBuilder->from($this->getTableName());
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
  
-        // add condition
-        $this->addConditions($select);
- 
-        // group by
-        $this->addGroupBy($select);
- 
-        // order
-        $this->addOrder($select);
- 
-        // limit
-        $this->addLimit($select);
- 
-        return $select;
+        return $queryBuilder;
     }
  
     /**
@@ -502,8 +467,8 @@ class Dao extends Listing\Dao\AbstractDao
     public function loadIdList()
     {
         try {
-            $query = $this->getQuery();
-            $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
+            $query = $this->getQueryBuilder();
+            $objectIds = $this->db->fetchCol((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
             $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
  
             return array_map('intval', $objectIds);
@@ -521,9 +486,13 @@ class Dao extends Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM '.$this->getTableName().$this->getCondition().$this->getOffsetLimit(), $this->model->getConditionVariables());
- 
-        return $amount;
+        if ($this->model->isLoaded()) {
+            return count($this->model->getData());
+        } else {
+            $idList = $this->loadIdList();
+
+            return count($idList);
+        }
     }
  
     /**
@@ -535,9 +504,12 @@ class Dao extends Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM '.$this->getTableName().$this->getCondition(), $this->model->getConditionVariables());
- 
-        return $amount;
+        $queryBuilder = $this->getQueryBuilder();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
+        
+        $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        
+        return (int) $totalCount;
     }
 }
 ```

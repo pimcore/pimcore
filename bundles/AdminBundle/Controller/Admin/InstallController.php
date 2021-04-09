@@ -24,8 +24,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/install")
+ *
+ * @internal
  */
-class InstallController extends AdminController
+final class InstallController extends AdminController
 {
     /**
      * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
@@ -45,6 +47,6 @@ class InstallController extends AdminController
         $viewParams = Requirements::checkAll($db);
         $viewParams['headless'] = (bool)$request->get('headless');
 
-        return $this->render('PimcoreAdminBundle:Admin/Install:check.html.twig', $viewParams);
+        return $this->render('@PimcoreAdmin/Admin/Install/check.html.twig', $viewParams);
     }
 }

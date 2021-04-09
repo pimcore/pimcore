@@ -69,8 +69,8 @@ $v = $object->getMyVideo();
 $videoData = $v->getData();
  
 if($videoData) {
-    $video = new \Pimcore\Model\Document\Tag\Video();
-    $video->setOptions([
+    $video = new \Pimcore\Model\Document\Editable\Video();
+    $video->setConfig([
         "thumbnail" => "myVideoThumb", // specify your thumbnail here - IMPORTANT!
         "width" => "100%",
         "height" => 480,

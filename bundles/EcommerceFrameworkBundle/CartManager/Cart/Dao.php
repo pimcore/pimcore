@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 
 /**
+ * @internal
+ *
  * @property Cart $model
  */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
@@ -50,7 +52,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function getById($id)
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
-        if (empty($classRaw)) {
+        if (empty($classRaw['id'])) {
             throw new \Exception('Cart ' . $id . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);

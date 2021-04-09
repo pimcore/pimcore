@@ -1192,13 +1192,13 @@ abstract class Page extends Container
     }
 
     /**
-     * Returns a hash code value for the page
+     * Returns a unique code value for the page
      *
-     * @return string  a hash code value for this page
+     * @return int a unique code value for this page
      */
     final public function hashCode()
     {
-        return spl_object_hash($this);
+        return \spl_object_id($this);
     }
 
     /**

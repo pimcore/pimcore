@@ -29,5 +29,3 @@ interface CheckoutStepInterface
      */
     public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null);
 }
-
-class_alias(CheckoutStepInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutStep');

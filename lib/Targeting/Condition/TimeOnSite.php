@@ -39,7 +39,7 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -51,7 +51,7 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataProviderKeys(): array
     {
@@ -59,7 +59,7 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -67,7 +67,7 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {

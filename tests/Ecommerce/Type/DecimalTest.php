@@ -64,11 +64,9 @@ class DecimalTest extends TestCase
         $this->assertSame('16', $noScale->asString(0));
     }
 
-    /**
-     * @expectedException \DomainException
-     */
     public function testInvalidScaleThrowsException()
     {
+        $this->expectException(\DomainException::class);
         Decimal::create(10000, -1);
     }
 
@@ -105,19 +103,17 @@ class DecimalTest extends TestCase
     }
 
     /**
-     * @expectedException \TypeError
      * @dataProvider invalidValueCreateProvider
      */
     public function testErrorOnInvalidCreateArgument($value)
     {
+        $this->expectException(\TypeError::class);
         Decimal::create($value);
     }
 
-    /**
-     * @expectedException \DomainException
-     */
     public function testInvalidScaleThrowsExceptionOnCreate()
     {
+        $this->expectException(\DomainException::class);
         Decimal::create('10.0', -1);
     }
 
@@ -154,11 +150,9 @@ class DecimalTest extends TestCase
         $this->assertEquals(15.99, $decimalValue->asNumeric());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testExceptionOnInvalidFromNumeric()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Decimal::fromNumeric('ABC');
     }
 
@@ -439,10 +433,10 @@ class DecimalTest extends TestCase
 
     /**
      * @dataProvider zeroDataProvider
-     * @expectedException \DivisionByZeroError
      */
     public function testExceptionOnDivisionByZero($val)
     {
+        $this->expectException(\DivisionByZeroError::class);
         $valA = Decimal::fromRawValue(159900, 4);
         $valA->div(Decimal::create($val));
     }

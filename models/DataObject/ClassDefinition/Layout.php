@@ -44,14 +44,14 @@ class Layout
     public $title;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var bool
@@ -201,33 +201,31 @@ class Layout
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        if (!empty($width) && is_numeric($width)) {
-            $this->width = intval($width);
-        } else {
-            $this->width = $width;
+        if (is_numeric($width)) {
+            $width = (int)$width;
         }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        if (!empty($height) && is_numeric($height)) {
-            $this->height = intval($height);
-        } else {
-            $this->height = $height;
+        if (is_numeric($height)) {
+            $height = (int)$height;
         }
+        $this->height = $height;
 
         return $this;
     }
@@ -308,7 +306,7 @@ class Layout
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
+                $method = 'set' . ucfirst($key);
                 if (method_exists($this, $method)) {
                     $this->$method($value);
                 }
@@ -415,7 +413,7 @@ class Layout
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param Model\DataObject\Concrete $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])

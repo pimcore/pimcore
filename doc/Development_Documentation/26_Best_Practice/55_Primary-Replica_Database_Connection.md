@@ -44,7 +44,7 @@ The main database connection which you have configured for Pimcore is always the
 Then you can add as many replica hosts as you like, in the following example there's just one replica host, 
 where only the host is different (in our case `replica1`), all other options are reused from the primary connection. 
 
-```yml 
+```yml
 doctrine:
     dbal:
         connections:

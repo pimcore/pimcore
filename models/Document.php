@@ -27,6 +27,7 @@ use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -143,13 +144,6 @@ class Document extends Element\AbstractElement
     protected $userModification;
 
     /**
-     * Dependencies for this document
-     *
-     * @var Dependency|null
-     */
-    protected $dependencies;
-
-    /**
      * List of Property, concerning the folder
      *
      * @var array|null
@@ -229,7 +223,7 @@ class Document extends Element\AbstractElement
             $helperDoc->getDao()->getByPath($path);
             $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             $doc = null;
         }
 
@@ -267,7 +261,7 @@ class Document extends Element\AbstractElement
             return null;
         }
 
-        $id = intval($id);
+        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
@@ -277,37 +271,37 @@ class Document extends Element\AbstractElement
             }
         }
 
-        try {
-            if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-                $document = new Document();
+        if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
+            $document = new Document();
+            try {
                 $document->getDao()->getById($id);
-
-                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
-
-                // this is the fallback for custom document types using prefixes
-                // so we need to check if the class exists first
-                if (!Tool::classExists($className)) {
-                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                    if (Tool::classExists($oldStyleClass)) {
-                        $className = $oldStyleClass;
-                    }
-                }
-
-                /** @var Document $document */
-                $document = self::getModelFactory()->build($className);
-                \Pimcore\Cache\Runtime::set($cacheKey, $document);
-
-                $document->getDao()->getById($id);
-                $document->__setDataVersionTimestamp($document->getModificationDate());
-
-                $document->resetDirtyMap();
-
-                \Pimcore\Cache::save($document, $cacheKey);
-            } else {
-                \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            } catch (NotFoundException $e) {
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
+
+            $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+
+            // this is the fallback for custom document types using prefixes
+            // so we need to check if the class exists first
+            if (!Tool::classExists($className)) {
+                $oldStyleClass = 'Document_' . ucfirst($document->getType());
+                if (Tool::classExists($oldStyleClass)) {
+                    $className = $oldStyleClass;
+                }
+            }
+
+            /** @var Document $document */
+            $document = self::getModelFactory()->build($className);
+            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+
+            $document->getDao()->getById($id);
+            $document->__setDataVersionTimestamp($document->getModificationDate());
+
+            $document->resetDirtyMap();
+
+            \Pimcore\Cache::save($document, $cacheKey);
+        } else {
+            \Pimcore\Cache\Runtime::set($cacheKey, $document);
         }
 
         if (!$document || !static::typeMatch($document)) {
@@ -330,10 +324,8 @@ class Document extends Element\AbstractElement
     {
         $document = new static();
         $document->setParentId($parentId);
-
-        foreach ($data as $key => $value) {
-            $document->setValue($key, $value);
-        }
+        self::checkCreateData($data);
+        $document->setValues($data);
 
         if ($save) {
             $document->save();
@@ -398,9 +390,9 @@ class Document extends Element\AbstractElement
             $preEvent = new DocumentEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_ADD, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -480,9 +472,9 @@ class Document extends Element\AbstractElement
                 if ($differentOldPath) {
                     $updateEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, $updateEvent);
+                \Pimcore::getEventDispatcher()->dispatch($updateEvent, DocumentEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD, new DocumentEvent($this));
+                \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_ADD);
             }
 
             return $this;
@@ -490,9 +482,9 @@ class Document extends Element\AbstractElement
             $failureEvent = new DocumentEvent($this);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -503,6 +495,8 @@ class Document extends Element\AbstractElement
      * Validate the document path.
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function correctPath()
     {
@@ -557,7 +551,7 @@ class Document extends Element\AbstractElement
      */
     protected function update($params = [])
     {
-        $disallowedKeysInFirstLevel = ['install', 'admin', 'webservice', 'plugin'];
+        $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
             throw new \Exception('Key: ' . $this->getKey() . ' is not allowed in first level (root-level)');
         }
@@ -629,20 +623,6 @@ class Document extends Element\AbstractElement
         } catch (\Exception $e) {
             Logger::crit($e);
         }
-    }
-
-    /**
-     * Returns the dependencies of the document
-     *
-     * @return Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->dependencies) {
-            $this->dependencies = Dependency::getBySourceId($this->getId(), 'document');
-        }
-
-        return $this->dependencies;
     }
 
     /**
@@ -819,7 +799,7 @@ class Document extends Element\AbstractElement
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -846,7 +826,7 @@ class Document extends Element\AbstractElement
             $this->rollBack();
             $failureEvent = new DocumentEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, $failureEvent);
+            \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
             Logger::error($e);
             throw $e;
         }
@@ -857,7 +837,7 @@ class Document extends Element\AbstractElement
         //clear document from registry
         \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
 
     /**
@@ -900,6 +880,7 @@ class Document extends Element\AbstractElement
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
             if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
+                    $hardlinkPath = '';
                     $hardlink = $masterDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
 
@@ -908,6 +889,10 @@ class Document extends Element\AbstractElement
 
                         $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
                             $hardlinkPath, $this->getRealFullPath());
+                    }
+
+                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
+                        $link = null;
                     }
                 }
             }
@@ -933,7 +918,7 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if (!$link && !empty($config['domain'])) {
+                if (!$link && !empty($config['domain']) && !($this instanceof WrapperInterface)) {
                     $link = $scheme . $config['domain'] . $this->getRealFullPath();
                 }
             }
@@ -968,7 +953,7 @@ class Document extends Element\AbstractElement
             $event = new GenericEvent($this, [
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::DOCUMENT_PATH, $event);
+            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::DOCUMENT_PATH);
             $path = $event->getArgument('frontendPath');
         }
 
@@ -1322,13 +1307,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Set document properties.
-     *
-     * @param Property[] $properties
-     *
-     * @return Document
+     * {@inheritdoc}
      */
-    public function setProperties($properties)
+    public function setProperties(?array $properties)
     {
         $this->properties = $properties;
 
@@ -1346,7 +1327,7 @@ class Document extends Element\AbstractElement
      *
      * @return Document
      */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = true)
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
     {
         $this->getProperties();
 
@@ -1397,9 +1378,8 @@ class Document extends Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1409,13 +1389,7 @@ class Document extends Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -1537,7 +1511,6 @@ class Document extends Element\AbstractElement
         $this->parent = null;
         $this->hasSiblings = [];
         $this->siblings = [];
-        $this->dependencies = null;
         $this->fullPathCache = null;
     }
 }

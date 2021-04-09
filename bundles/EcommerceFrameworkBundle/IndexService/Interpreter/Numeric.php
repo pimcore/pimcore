@@ -18,6 +18,6 @@ class Numeric implements InterpreterInterface
 {
     public function interpret($value, $config = null)
     {
-        return floatval($value);
+        return (float)$value;
     }
 }

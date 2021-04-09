@@ -1,0 +1,51 @@
+services:
+    minio_client:
+        class: 'Aws\S3\S3Client'
+        arguments:
+            -  endpoint: 'http://127.0.0.1:9000'
+               use_path_style_endpoint: true
+               region: 'default'
+               version: 'latest'
+               credentials:
+                   key: '%env(MINIO_ACCESS_KEY)%'
+                   secret: '%env(MINIO_SECRET_KEY)%'
+
+
+flysystem:
+    storages:
+        pimcore.asset.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'asset'
+        pimcore.asset_cache.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'assetcache'
+        pimcore.thumbnail.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'thumbnail'
+        pimcore.version.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'version'
+        pimcore.recycle_bin.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'recyclebin'
+        pimcore.admin.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'admin'

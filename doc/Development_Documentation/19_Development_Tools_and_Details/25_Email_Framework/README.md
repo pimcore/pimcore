@@ -6,9 +6,8 @@ The Pimcore Email Framework provides an easy way to send/create emails with Pimc
 For this you have several components:
 * Document\\Email
 * [Pimcore\Mail](./01_Pimcore_Mail.md)
-* [Placeholder Objects](../23_Placeholders/01_Object_Placeholder.md)
 
-Pimcore provides a `Pimcore\Mail` Class which extends the `\Swift_Message` Class. When you initialize a 
+Pimcore provides a `Pimcore\Mail` Class which extends the `\Symfony\Component\Mime\Email` Class. When you initialize a 
 `Pimcore\Mail` object, all data from *Settings* > *System* > *Email Settings* are applied 
 automatically.  
 
@@ -17,7 +16,7 @@ addresses given in *Settings* > *System* > *Email Settings* > *Debug Email Addre
 information (to whom the email would have been sent) is automatically appended.
 
 Pimcore provides a `Document Email` type where you can define the recipients ... (more information 
-[here](../../03_Documents/README.md)) and `Dynamic Placeholders` (more information [here](../23_Placeholders/README.md)). 
+[here](../../03_Documents/README.md)) and Twig variables. 
 
 To send a email you just create a `Email Document` in the Pimcore Backend UI, define the subject, 
 recipients, add Dynamic Placeholders... and pass this document to the `Pimcore\Mail` object. All 
@@ -61,6 +60,6 @@ $mail->send();
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
 $mail->addBcc("bcc@pimcore.org");
-$mail->setBodyHtml("<b>some</b> rich text");
+$mail->setHtmlBody("<b>some</b> rich text");
 $mail->send();
 ```

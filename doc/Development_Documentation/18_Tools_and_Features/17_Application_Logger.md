@@ -11,7 +11,7 @@ The logs are visible and searchable within the Pimcore backend GUI ![Tools menu]
 
 </div>
 
-![Application logger menu](..//img/applogger_menu.png)
+![Application logger menu](../img/applogger_menu.png)
 
 
 ![Application logger preview](../img/applogger_backend_preview.png)
@@ -224,7 +224,7 @@ class TestController
     public function testAction(ApplicationLogger $logger)
     {
         $fileObject = new FileObject('some interesting data');
-        $myObject   = AbstractObject::getById(73);
+        $myObject   = DataObject::getById(73);
         
         $logger->error('my error message', [
             'fileObject'    => $fileObject,

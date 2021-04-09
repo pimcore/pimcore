@@ -20,7 +20,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 
-class ObjectFieldGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class ObjectFieldGetter extends AbstractOperator
 {
     /** @var string */
     private $attribute;
@@ -71,25 +74,23 @@ class ObjectFieldGetter extends AbstractOperator
             }
 
             $valueContainer = $c->getLabeledValue($forwardObject);
-            $value = $valueContainer->value;
+            $value = $valueContainer->value ?? null;
             $result->value = $value;
 
-            if ($valueContainer->isArrayType) {
-                if (is_array($value)) {
-                    $newValues = [];
-                    foreach ($value as $o) {
-                        if ($o instanceof Concrete) {
-                            if ($this->attribute && method_exists($o, $getter)) {
-                                $targetValue = $o->$getter();
-                                $newValues[] = $targetValue;
-                            }
+            if (is_array($value)) {
+                $newValues = [];
+                foreach ($value as $o) {
+                    if ($o instanceof Concrete) {
+                        if ($this->attribute && method_exists($o, $getter)) {
+                            $targetValue = $o->$getter();
+                            $newValues[] = $targetValue;
                         }
                     }
-                    $result->value = $newValues;
-                    $result->isArrayType = true;
                 }
+                $result->value = $newValues;
+                $result->isArrayType = true;
             } elseif ($value instanceof Concrete) {
-                $o = $value; // Concrete::getById($value->getId());
+                $o = $value;
                 if ($this->attribute && method_exists($o, $getter)) {
                     $value = $o->$getter();
                     $result->value = $value;

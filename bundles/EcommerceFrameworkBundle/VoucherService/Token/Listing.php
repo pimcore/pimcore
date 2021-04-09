@@ -15,8 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Token[] load()
@@ -24,20 +23,8 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements PaginateListingInterface
 {
-    /**
-     * @var Token[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $tokens;
-
-    public function __construct()
-    {
-        $this->tokens = & $this->data;
-    }
-
     /**
      * @param string $key
      *
@@ -66,7 +53,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
             throw new \Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
         }
 
-        if (sizeof($filter)) {
+        if (count($filter)) {
             if (!empty($filter['token'])) {
                 $this->addConditionParam('token LIKE ?', '%' . $filter['token'] . '%');
             }
@@ -79,21 +66,21 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
                 $this->addConditionParam('length = ?', $filter['length']);
             }
 
-            if ($filter['creation_from']) {
+            if (isset($filter['creation_from'])) {
                 $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
             }
 
-            if ($filter['creation_to']) {
+            if (isset($filter['creation_to'])) {
                 $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             }
 
-            if ($this->isValidOrderKey($filter['sort_criteria'])) {
+            if ($this->isValidOrderKey($filter['sort_criteria'] ?? '')) {
                 $this->setOrderKey($filter['sort_criteria']);
             } else {
                 $this->setOrderKey('timestamp');
             }
 
-            if ($filter['sort_order'] == 'ASC') {
+            if (($filter['sort_order'] ?? false) == 'ASC') {
                 $this->setOrder('ASC');
             } else {
                 $this->setOrder('DESC');
@@ -157,13 +144,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
         }
 
         $tmp = new self();
-        if ($tmp->isValidOrderKey($params['sort_criteria'])) {
+        if ($tmp->isValidOrderKey($params['sort_criteria'] ?? '')) {
             $query .= ' ORDER BY ' . $params['sort_criteria'];
         } else {
             $query .= ' ORDER BY timestamp';
         }
 
-        if ($params['sort_order'] == 'ASC') {
+        if (($params['sort_order'] ?? false) == 'ASC') {
             $query .= ' ASC';
         } else {
             $query .= ' DESC';
@@ -302,10 +289,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
             $queryParts[] = 't.timestamp < STR_TO_DATE(' . $param . ",'%Y-%m-%d')";
         }
 
-        if (sizeof($queryParts) == 1) {
+        if (count($queryParts) == 1) {
             $reservationsQuery = $reservationsQuery . ' AND ' . $queryParts[0];
             $tokensQuery = $tokensQuery . ' AND ' . $queryParts[0];
-        } elseif (sizeof($queryParts) > 1) {
+        } elseif (count($queryParts) > 1) {
             $reservationsQuery = $reservationsQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
             $tokensQuery = $tokensQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
         }
@@ -358,18 +345,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
 
     /**
      * @param array $tokens
+     *
+     * @return static
      */
     public function setTokens($tokens)
     {
         return $this->setData($tokens);
-    }
-
-    /**
-     * @return \Pimcore\Model\DataObject\Listing|AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

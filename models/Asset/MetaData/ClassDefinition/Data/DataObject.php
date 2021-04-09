@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
@@ -122,7 +121,7 @@ class DataObject extends Data
         return $data;
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function getDataForEditMode($data, $params = [])
     {
         if (is_numeric($data)) {
@@ -144,7 +143,7 @@ class DataObject extends Data
     public function getDataForListfolderGrid($data, $params = [])
     {
         if (is_numeric($data)) {
-            $data = AbstractObject::getById($data);
+            $data = \Pimcore\Model\DataObject::getById($data);
         }
 
         if ($data instanceof AbstractObject) {
@@ -162,8 +161,8 @@ class DataObject extends Data
      */
     public function resolveDependencies($data, $params = [])
     {
-        if (isset($params['data'])) {
-            $elementId = $params['data'];
+        if ($data instanceof AbstractObject && isset($params['type'])) {
+            $elementId = $data->getId();
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;
@@ -186,8 +185,8 @@ class DataObject extends Data
      */
     public function getDataFromListfolderGrid($data, $params = [])
     {
-        $data = AbstractObject::getByPath($data);
-        if ($data instanceof AbstractElement) {
+        $data = \Pimcore\Model\DataObject::getByPath($data);
+        if ($data instanceof ElementInterface) {
             return $data->getId();
         }
 

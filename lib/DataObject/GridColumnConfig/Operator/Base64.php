@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Base64 extends AbstractOperator
+/**
+ * @internal
+ */
+final class Base64 extends AbstractOperator
 {
     /**
      * @var string
@@ -47,7 +50,7 @@ class Base64 extends AbstractOperator
 
             $childResult = $c->getLabeledValue($element);
 
-            $childValues = $childResult->value;
+            $childValues = $childResult->value ?? null;
             $isArrayType = is_array($childValues);
 
             if ($childValues && !is_array($childValues)) {
@@ -68,7 +71,6 @@ class Base64 extends AbstractOperator
             } else {
                 $result->value = $valueArray[0];
             }
-            $result->$valueArray;
         }
 
         if ($this->mode === 'e') {

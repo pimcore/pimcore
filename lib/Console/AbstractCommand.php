@@ -18,7 +18,6 @@ use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -39,7 +38,7 @@ abstract class AbstractCommand extends Command
     protected $input;
 
     /**
-     * @var ConsoleOutput
+     * @var OutputInterface
      */
     protected $output;
 
@@ -95,5 +94,29 @@ abstract class AbstractCommand extends Command
     protected function writeError($message)
     {
         $this->output->writeln(sprintf('<error>ERROR: %s</error>', $message));
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function writeInfo($message)
+    {
+        $this->output->writeln(sprintf('<info>INFO: %s</info>', $message));
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function writeComment($message)
+    {
+        $this->output->writeln(sprintf('<comment>COMMENT: %s</comment>', $message));
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function writeQuestion($message)
+    {
+        $this->output->writeln(sprintf('<question>QUESTION: %s</question>', $message));
     }
 }

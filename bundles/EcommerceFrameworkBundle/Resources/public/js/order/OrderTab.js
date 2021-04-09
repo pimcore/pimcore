@@ -18,14 +18,14 @@ pimcore.bundle.EcommerceFramework.OrderTab = Class.create({
 
     title: t('bundle_ecommerce_order_tab'),
     iconCls: 'pimcore_icon_portlet_feed',
-    src: '/admin/ecommerceframework/admin-order/detail',
+    src: null,
     id: null,
 
     initialize: function(object, type) {
         this.object = object;
         this.id = object.id;
-        this.src = this.src + "?id=" + this.id;
         this.type = type;
+        this.src = Routing.generate('pimcore_ecommerce_backend_admin-order_detail', {id: this.id});
     },
 
     getLayout: function () {

@@ -15,10 +15,8 @@
 namespace Pimcore\Routing\Staticroute;
 
 use Pimcore\Config;
-use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
-use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
@@ -44,11 +42,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $context;
 
     /**
-     * @var ConfigNormalizer
-     */
-    protected $configNormalizer;
-
-    /**
      * @var Staticroute[]
      */
     protected $staticRoutes;
@@ -70,15 +63,14 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $config;
 
-    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer, Config $config)
+    public function __construct(RequestContext $context, Config $config)
     {
         $this->context = $context;
-        $this->configNormalizer = $configNormalizer;
         $this->config = $config;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setContext(RequestContext $context)
     {
@@ -86,7 +78,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getContext()
     {
@@ -104,7 +96,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports($name)
     {
@@ -112,7 +104,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteCollection()
     {
@@ -120,7 +112,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteDebugMessage($name, array $parameters = [])
     {
@@ -128,7 +120,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
@@ -182,11 +174,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         }
 
         if ($name && $route = Staticroute::getByName($name, $siteId)) {
-            $reset = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
             $encode = isset($parameters['encode']) ? (bool)$parameters['encode'] : true;
             unset($parameters['encode']);
             // assemble the route / url in Staticroute::assemble()
-            $url = $route->assemble($parameters, $reset, $encode);
+            $url = $route->assemble($parameters, $encode);
             $port = '';
             $scheme = $this->context->getScheme();
 
@@ -217,7 +208,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function matchRequest(Request $request)
     {
@@ -225,7 +216,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match($pathinfo)
     {
@@ -243,7 +234,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $pathinfo = urldecode($pathinfo);
 
         $params = $this->context->getParameters();
-        $params = array_merge(Tool::getRoutingDefaults(), $params);
 
         foreach ($this->getStaticRoutes() as $route) {
             if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
@@ -297,13 +287,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $controllerParams[$key] = $value;
         }
 
-        $controller = $this->configNormalizer->formatControllerReference(
-            $controllerParams['module'],
-            $controllerParams['controller'],
-            $controllerParams['action']
-        );
-
-        $routeParams['_controller'] = $controller;
+        $routeParams['_controller'] = $controllerParams['controller'];
 
         // map common language properties (e.g. language) to _locale if not set
         if (!isset($routeParams['_locale'])) {

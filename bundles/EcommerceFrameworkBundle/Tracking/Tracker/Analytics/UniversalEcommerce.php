@@ -28,7 +28,7 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/universal',
+            'template_prefix' => '@PimcoreEcommerceFramework/Tracking/analytics/universal',
         ]);
     }
 

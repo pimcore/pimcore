@@ -18,10 +18,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
@@ -42,7 +44,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $fieldtype = 'numeric';
 
     /**
-     * @var int
+     * @var string|int
      */
     public $width = 0;
 
@@ -64,13 +66,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var string
      */
     public $columnType = 'double';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'float';
 
     /**
      * @var bool
@@ -114,10 +109,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $decimalPrecision;
 
-    /**
-     * @inheritDoc
-     */
-    public function getPhpdocType(): string
+    protected function getPhpdocType(): string
     {
         if ($this->getInteger()) {
             return 'int';
@@ -131,7 +123,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -139,13 +131,16 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
@@ -348,11 +343,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $scale = self::DECIMAL_PRECISION_DEFAULT;
 
         if (null !== $this->decimalSize) {
-            $precision = intval($this->decimalSize);
+            $precision = (int)$this->decimalSize;
         }
 
         if (null !== $this->decimalPrecision) {
-            $scale = intval($this->decimalPrecision);
+            $scale = (int)$this->decimalPrecision;
         }
 
         if ($precision < 1 || $precision > 65) {
@@ -515,7 +510,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -526,23 +521,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return strval($data);
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|int|string
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = $this->toNumeric($importValue);
-
-        return $value;
+        return (string)$data;
     }
 
     /** True if change is allowed in edit mode.
@@ -627,5 +606,25 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function isEqual($oldValue, $newValue): bool
     {
         return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?' . $this->getPhpdocType();
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?' . $this->getPhpdocType();
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return $this->getPhpdocType() . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return $this->getPhpdocType() . '|null';
     }
 }

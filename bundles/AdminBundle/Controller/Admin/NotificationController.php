@@ -29,8 +29,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/notification")
+ *
+ * @internal
  */
-class NotificationController extends AdminController
+final class NotificationController extends AdminController
 {
     /**
      * @Route("/recipients", name="pimcore_admin_notification_recipients", methods={"GET"})
@@ -102,7 +104,16 @@ class NotificationController extends AdminController
         $this->checkPermission('notifications');
 
         $id = (int) $request->get('id', 0);
-        $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
+        try {
+            $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
+        } catch (\UnexpectedValueException $e) {
+            return $this->adminJson(
+                [
+                    'success' => false,
+                ]
+            );
+        }
+
         $data = $service->format($notification);
 
         return $this->adminJson([
@@ -123,7 +134,7 @@ class NotificationController extends AdminController
     {
         $this->checkPermission('notifications');
 
-        $filter = ['recipient = ?' => (int) $this->getAdminUser()->getId()];
+        $filter = ['recipient' => (int) $this->getAdminUser()->getId()];
         $parser = new NotificationServiceFilterParser($request);
 
         foreach ($parser->parse() as $key => $val) {

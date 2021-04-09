@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class JSON extends AbstractOperator
+/**
+ * @internal
+ */
+final class JSON extends AbstractOperator
 {
     /**
      * @var string
@@ -68,7 +71,6 @@ class JSON extends AbstractOperator
             } else {
                 $result->value = $valueArray[0];
             }
-            $result->$valueArray;
         }
 
         if ($this->mode === 'e') {

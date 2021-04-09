@@ -18,20 +18,22 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Event\Ecommerce\AdminEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class IndexController
  *
  * @Route("/index")
+ *
+ * @internal
  */
-class IndexController extends AdminController
+final class IndexController extends AdminController
 {
     /**
-     * @Route("/get-filter-groups", methods={"GET"})
+     * @Route("/get-filter-groups", name="pimcore_ecommerceframework_index_getfiltergroups", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
@@ -59,9 +61,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-values-for-filter-field", methods={"GET"})
-     *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @Route("/get-values-for-filter-field", name="pimcore_ecommerceframework_index_getvaluesforfilterfield", methods={"GET"})
      */
     public function getValuesForFilterFieldAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
@@ -96,7 +96,7 @@ class IndexController extends AdminController
             }
 
             $event = new GenericEvent(null, ['data' => $data, 'field' => $request->get('field')]);
-            $eventDispatcher->dispatch(AdminEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA, $event);
+            $eventDispatcher->dispatch($event, AdminEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA);
             $data = $event->getArgument('data');
 
             return $this->adminJson(['data' => array_values($data)]);
@@ -106,7 +106,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-fields", methods={"GET"})
+     * @Route("/get-fields", name="pimcore_ecommerceframework_index_getfields", methods={"GET"})
      *
      * @param Request $request
      *
@@ -158,7 +158,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-all-tenants", methods={"GET"})
+     * @Route("/get-all-tenants", name="pimcore_ecommerceframework_index_getalltenants", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */

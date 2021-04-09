@@ -1,0 +1,9 @@
+ga('require', 'ecommerce', 'ecommerce.js');
+
+{% for call, callData in calls %}
+{% for cd in callData %}
+ga('{{ call }}', {{ cd|json_encode|raw }});
+{% endfor %}
+{% endfor %}
+
+ga('ecommerce:send');

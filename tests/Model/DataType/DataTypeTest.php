@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Test\DataType\AbstractDataTypeTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -14,12 +15,14 @@ class DataTypeTest extends AbstractDataTypeTestCase
     /**
      * Creates and saves object locally without testing against a comparison object
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    protected function createTestObject($fields = [])
+    protected function createTestObject($fields = [], &$returnData = [])
     {
         $object = TestHelper::createEmptyObject('local', true, true);
-        $this->fillObject($object, $fields);
+        if ($fields) {
+            $this->fillObject($object, $fields, $returnData);
+        }
 
         $object->save();
 
@@ -31,8 +34,8 @@ class DataTypeTest extends AbstractDataTypeTestCase
         return $this->testObject;
     }
 
-    public function testPassword()
+    public function refreshObject()
     {
-        $this->markTestIncomplete('To be checked - what is the intended behaviour here in local context?');
+        $this->testObject = AbstractObject::getById($this->testObject->getId(), true);
     }
 }

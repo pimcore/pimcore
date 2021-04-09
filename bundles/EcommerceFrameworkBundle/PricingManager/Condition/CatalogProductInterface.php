@@ -31,5 +31,3 @@ interface CatalogProductInterface extends ConditionInterface
      */
     public function getProducts();
 }
-
-class_alias(CatalogProductInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICatalogProduct');

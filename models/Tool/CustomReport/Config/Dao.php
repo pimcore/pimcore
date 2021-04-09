@@ -20,6 +20,8 @@ namespace Pimcore\Model\Tool\CustomReport\Config;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Tool\CustomReport\Config $model
  */
 class Dao extends Model\Dao\PhpArrayTable
@@ -33,7 +35,7 @@ class Dao extends Model\Dao\PhpArrayTable
     /**
      * @param string|null $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByName($id = null)
     {
@@ -47,7 +49,10 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
         } else {
-            throw new \Exception('Custom report with id: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Custom report config with name "%s" does not exist.',
+                $this->model->getName()
+            ));
         }
     }
 

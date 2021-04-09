@@ -16,9 +16,13 @@ namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Tool\Lock;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 
+/**
+ * @internal
+ */
 final class LowQualityImagePreviewTask implements TaskInterface
 {
     /**
@@ -27,11 +31,17 @@ final class LowQualityImagePreviewTask implements TaskInterface
     private $logger;
 
     /**
+     * @var LockInterface
+     */
+    private $lock;
+
+    /**
      * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, LockFactory $lockFactory)
     {
         $this->logger = $logger;
+        $this->lock = $lockFactory->createLock(self::class, 86400 * 2);
     }
 
     /**
@@ -39,10 +49,8 @@ final class LowQualityImagePreviewTask implements TaskInterface
      */
     public function execute()
     {
-        $lockId = self::class;
-        if (!Lock::isLocked($lockId, 86400 * 2) && date('H') <= 4) {
+        if (date('H') <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
-            Lock::lock($lockId);
             $this->logger->debug('Execute low quality image preview generation');
 
             $listing = new Asset\Listing();
@@ -60,7 +68,7 @@ final class LowQualityImagePreviewTask implements TaskInterface
                 /** @var Asset\Image[] $images */
                 $images = $listing->load();
                 foreach ($images as $image) {
-                    if (!file_exists($image->getLowQualityPreviewFileSystemPath())) {
+                    if (!$image->getLowQualityPreviewDataUri()) {
                         try {
                             $this->logger->debug(sprintf('Generate LQIP for asset %s', $image->getId()));
                             $image->generateLowQualityPreview();

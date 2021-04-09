@@ -15,20 +15,21 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/classificationstore")
+ *
+ * @internal
  */
-class ClassificationstoreController extends AdminController implements EventedControllerInterface
+final class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * Delete collection with the group-relations
@@ -645,16 +646,19 @@ class ClassificationstoreController extends AdminController implements EventedCo
     /**
      * @Route("/list-stores", name="pimcore_admin_dataobject_classificationstore_liststores", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function listStoresAction(Request $request)
+    public function listStoresAction()
     {
-        $list = new Classificationstore\StoreConfig\Listing();
-        $list = $list->load();
+        $storeConfigs = [];
+        $storeConfigListing = new Classificationstore\StoreConfig\Listing();
+        $storeConfigListing->load();
 
-        return $this->adminJson($list);
+        foreach ($storeConfigListing as $storeConfig) {
+            $storeConfigs[] = $storeConfig->getObjectVars();
+        }
+
+        return $this->adminJson($storeConfigs);
     }
 
     /**
@@ -788,6 +792,11 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $limit = 15;
         $orderKey = 'name';
         $order = 'ASC';
+        $relationIds = $request->get('relationIds');
+
+        if ($relationIds) {
+            $relationIds = json_decode($relationIds, true);
+        }
 
         if ($request->get('dir')) {
             $order = $request->get('dir');
@@ -795,6 +804,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $allParams = array_merge($request->request->all(), $request->query->all());
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
             $orderKey = $sortingSettings['orderKey'];
             $order = $sortingSettings['order'];
@@ -807,7 +817,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         if ($request->get('limit')) {
             $limit = $request->get('limit');
+        } elseif (is_array($relationIds)) {
+            $limit = count($relationIds);
         }
+
         if ($request->get('start')) {
             $start = $request->get('start');
         }
@@ -817,6 +830,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         if ($limit > 0) {
             $list->setLimit($limit);
         }
+
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
@@ -827,10 +841,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
-            $count = 0;
-
             foreach ($filters as $f) {
-                $count++;
                 $fieldname = $mapping[$f->field];
                 $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
@@ -841,15 +852,15 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $conditionParts[] = ' groupId = ' . $list->quote($groupId);
         }
 
-        $relationIds = $request->get('relationIds');
         if ($relationIds) {
-            $relationIds = json_decode($relationIds, true);
             $relationParts = [];
+
             foreach ($relationIds as $relationId) {
                 $keyId = $relationId['keyId'];
                 $groupId = $relationId['groupId'];
-                $relationParts[] = '(keyId = ' . $keyId . ' and groupId = ' . $groupId . ')';
+                $relationParts[] = '(keyId = ' . $list->quote($keyId) . ' AND groupId = ' . $list->quote($groupId) . ')';
             }
+
             $conditionParts[] = '(' . implode(' OR ', $relationParts) . ')';
         }
 
@@ -862,7 +873,6 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $rootElement = [];
 
         $data = [];
-        /** @var Classificationstore\KeyGroupRelation $config */
         foreach ($listItems as $config) {
             $type = $config->getType();
             $definition = json_decode($config->getDefinition());
@@ -1144,7 +1154,6 @@ class ClassificationstoreController extends AdminController implements EventedCo
                     $keyIdList = $keyIdList->load();
                     if ($keyIdList) {
                         $keyIds = [];
-                        /** @var Classificationstore\KeyGroupRelation $keyEntry */
                         foreach ($keyIdList as $keyEntry) {
                             $keyIds[] = $keyEntry->getKeyId();
                         }
@@ -1434,7 +1443,6 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $result = [];
         $list = new Classificationstore\StoreConfig\Listing();
         $list = $list->load();
-        /** @var Classificationstore\StoreConfig $item */
         foreach ($list as $item) {
             $resultItem = [
                 'id' => $item->getId(),
@@ -1522,9 +1530,9 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @inheritDoc
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -1533,12 +1541,5 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $unrestrictedActions = ['collectionsActionGet', 'groupsActionGet', 'relationsActionGet', 'addGroupsAction', 'addCollectionsAction', 'searchRelationsAction'];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
     }
 }

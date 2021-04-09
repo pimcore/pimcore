@@ -57,7 +57,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws LogicException
      */
@@ -89,12 +89,12 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws LogicException
      * @throws \Exception
      */
-    public function setMarking($subject, Marking $marking)
+    public function setMarking($subject, Marking $marking, array $context = [])
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $places = array_keys($marking->getPlaces());
@@ -141,7 +141,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         }
 
         if ($fd->getFieldtype() !== 'multiselect') {
-            if (sizeof($places) > 1) {
+            if (count($places) > 1) {
                 throw new LogicException(sprintf('field type "%s" is not able to handle multiple values - given values are [%s]', $fd->getFieldtype(), implode(', ', $places)));
             }
 
@@ -169,7 +169,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     {
         $diff = array_diff($places, array_keys($stateMapping));
 
-        if (sizeof($diff) > 0) {
+        if (count($diff) > 0) {
             throw new LogicException(sprintf('State mapping and places configuration need to match each other [detected differences: %s].', implode(', ', $diff)));
         }
     }

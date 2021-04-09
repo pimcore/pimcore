@@ -29,21 +29,7 @@ class AbstractListing extends Model\Listing\AbstractListing
     /**
      * @var string
      */
-    public $type;
-
-    /**
-     * Contains the results of the list. They are all an instance of User
-     *
-     * @var array
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $items = [];
-
-    public function __construct()
-    {
-        $this->items = & $this->data;
-    }
+    protected $type;
 
     /**
      * @return array

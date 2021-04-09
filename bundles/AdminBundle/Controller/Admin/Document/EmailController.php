@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,8 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/email")
+ *
+ * @internal
  */
-class EmailController extends DocumentControllerBase
+final class EmailController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 
@@ -81,7 +82,8 @@ class EmailController extends DocumentControllerBase
         }
 
         $email = clone $email;
-        $email = $this->getLatestVersion($email);
+        $isLatestVersion = true;
+        $email = $this->getLatestVersion($email, $isLatestVersion);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
@@ -98,6 +100,8 @@ class EmailController extends DocumentControllerBase
         $this->minimizeProperties($email, $data);
 
         $data['url'] = $email->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $email);
 
@@ -141,7 +145,7 @@ class EmailController extends DocumentControllerBase
             $page->save();
             $this->saveToSession($page);
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
                 'success' => true,

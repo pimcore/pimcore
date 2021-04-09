@@ -29,27 +29,27 @@ class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @var int
      */
-    public $colId;
+    protected $colId;
 
     /**
      * @var int
      */
-    public $groupId;
+    protected $groupId;
 
     /** The key
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The key description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /** @var int */
-    public $sorter;
+    protected $sorter;
 
     /**
      * @return Model\DataObject\Classificationstore\CollectionGroupRelation

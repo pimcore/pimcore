@@ -14,8 +14,8 @@
 
 namespace Pimcore\Image\Optimizer;
 
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypes;
 
 final class JpegoptimOptimizer extends AbstractCommandOptimizer
 {
@@ -26,7 +26,7 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
 
     public function __construct()
     {
-        $this->mimeTypeGuesser = MimeTypeGuesser::getInstance();
+        $this->mimeTypeGuesser = MimeTypes::getDefault();
     }
 
     /**
@@ -40,22 +40,22 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
-    protected function getCommand(string $executable, string $input, string $output): string
+    protected function getCommandArray(string $executable, string $input, string $output): array
     {
         $additionalParams = '';
 
         if (filesize($input) > 10000) {
-            $additionalParams = ' --all-progressive';
+            $additionalParams = '--all-progressive';
         }
 
-        return $executable.$additionalParams.' -o --strip-all --max=85 '.' -d '.escapeshellarg($output).escapeshellarg($input);
+        return [$executable, $additionalParams, '-o',  '--strip-all', '--max=85', '-d', $output, $input];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(string $input): bool
+    public function supports(string $mimeType): bool
     {
-        return $this->mimeTypeGuesser->guess($input) === 'image/jpeg';
+        return $mimeType === 'image/jpeg';
     }
 }

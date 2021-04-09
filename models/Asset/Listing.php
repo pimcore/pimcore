@@ -18,8 +18,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\Asset[] load()
@@ -29,21 +28,10 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method onCreateQueryBuilder(?callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
-    /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $assets = null;
-
-    public function __construct()
-    {
-        $this->assets = & $this->data;
-    }
-
     /**
      * @return Model\Asset[]
      */
@@ -87,13 +75,5 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
         $this->setLimit($itemCountPerPage);
 
         return $this->load();
-    }
-
-    /**
-     * @return $this
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 }

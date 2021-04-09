@@ -20,10 +20,12 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
+    use ImageTrait;
     use Extension\QueryColumnType;
 
     /**
@@ -32,23 +34,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $fieldtype = 'image';
-
-    /**
-     * @var int
-     */
-    public $width;
-
-    /**
-     * Type for the column to query
-     *
-     * @var int
-     */
-    public $height;
-
-    /**
-     * @var string
-     */
-    public $uploadPath;
 
     /**
      * Type for the column to query
@@ -65,56 +50,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'int(11)';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\Asset\\Image';
-
-    /**
-     * @return int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        $this->width = $this->getAsIntegerCast($width);
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        $this->height = $this->getAsIntegerCast($height);
-
-        return $this;
-    }
-
-    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param Asset $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -140,7 +78,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if (intval($data) > 0) {
+        if ((int)$data > 0) {
             return Asset\Image::getById($data);
         }
 
@@ -206,7 +144,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data && intval($data['id']) > 0) {
+        if ($data && (int)$data['id'] > 0) {
             return Asset\Image::getById($data['id']);
         }
 
@@ -246,7 +184,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param Model\DataObject\Concrete $object
      * @param array $params
@@ -261,25 +199,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return '';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|Asset
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-        if ($el = Asset::getByPath($importValue)) {
-            $value = $el;
-        } else {
-            $value = null;
-        }
-
-        return $value;
     }
 
     /**
@@ -331,84 +250,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return $dependencies;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return int|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Asset) {
-            return $data->getId();
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $id = $value;
-
-        $fromMapper = false;
-        if ($idMapper && !empty($value)) {
-            $id = $idMapper->getMappedId('asset', $value);
-            $fromMapper = true;
-        }
-
-        $asset = Asset::getById($id);
-        if (empty($id) && !$fromMapper) {
-            return null;
-        } elseif (is_numeric($value) and $asset instanceof Asset) {
-            return $asset;
-        } else {
-            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                throw new \Exception('cannot get values from web service import - invalid data, referencing unknown asset with id [ '.$value.' ]');
-            } else {
-                $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $uploadPath
-     *
-     * @return $this
-     */
-    public function setUploadPath($uploadPath)
-    {
-        $this->uploadPath = $uploadPath;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUploadPath()
-    {
-        return $this->uploadPath;
     }
 
     /** True if change is allowed in edit mode.
@@ -486,38 +327,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->uploadPath = $masterDefinition->uploadPath;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof \Pimcore\Model\Asset\Image) {
-            return [
-                'type' => 'asset',
-                'id' => $value->getId(),
-            ];
-        }
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        $id = $value['id'];
-        if (intval($id) > 0) {
-            return Asset\Image::getById($id);
-        }
-    }
-
     public function isFilterable(): bool
     {
         return true;
@@ -535,5 +344,43 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $newValue = $newValue instanceof Asset ? $newValue->getId() : null;
 
         return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Asset\Image::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Asset\Image::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Asset\Image::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Asset\Image::class . '|null';
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof \Pimcore\Model\Asset\Image) {
+            return [
+                'type' => 'asset',
+                'id' => $value->getId(),
+            ];
+        }
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        $id = $value['id'];
+        if (intval($id) > 0) {
+            return Asset\Image::getById($id);
+        }
     }
 }

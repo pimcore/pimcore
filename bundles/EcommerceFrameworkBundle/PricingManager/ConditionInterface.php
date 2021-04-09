@@ -35,5 +35,3 @@ interface ConditionInterface
      */
     public function fromJSON($string);
 }
-
-class_alias(ConditionInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition');

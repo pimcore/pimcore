@@ -30,8 +30,12 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ElementControllerBase extends AdminController
+/**
+ * @internal
+ */
+abstract class ElementControllerBase extends AdminController
 {
     /**
      * @param ElementInterface $element
@@ -55,7 +59,7 @@ class ElementControllerBase extends AdminController
 
         $id = 1;
         if ($request->get('id')) {
-            $id = intval($request->get('id'));
+            $id = (int)$request->get('id');
         }
 
         if (in_array($type, $allowedTypes)) {
@@ -71,10 +75,13 @@ class ElementControllerBase extends AdminController
 
     /**
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $hasDependency = false;
         $errors = false;
@@ -119,7 +126,7 @@ class ElementControllerBase extends AdminController
                 }
 
                 if ($event instanceof ElementDeleteInfoEventInterface) {
-                    $this->get('event_dispatcher')->dispatch($eventName, $event);
+                    $eventDispatcher->dispatch($event, $eventName);
 
                     if (!$event->getDeletionAllowed()) {
                         $itemResults[] = [
@@ -167,7 +174,7 @@ class ElementControllerBase extends AdminController
                         $deleteObjectsPerRequest = 5;
                         for ($i = 0, $iMax = ceil($childs / $deleteObjectsPerRequest); $i < $iMax; $i++) {
                             $deleteJobs[] = [[
-                                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
+                                'url' => $request->getBaseUrl() . '/admin/' . $type . '/delete',
                                 'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
@@ -182,7 +189,7 @@ class ElementControllerBase extends AdminController
 
                 // the element itself is the last one
                 $deleteJobs[] = [[
-                    'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
+                    'url' => $request->getBaseUrl() . '/admin/' . $type . '/delete',
                     'method' => 'DELETE',
                     'params' => [
                         'id' => $element->getId(),

@@ -18,17 +18,20 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use DeepCopy\DeepCopy;
+use Pimcore\Cache\Core\CacheMarshallerInterface;
 use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\MarshalMatcher;
-use Pimcore\Model\Version\UnmarshalMatcher;
+use Pimcore\Model\Version\SetDumpStateFilter;
 
-class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
+class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, CacheMarshallerInterface
 {
     use OwnerAwareFieldTrait;
 
@@ -152,6 +155,14 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
             ),
             new UnmarshalMatcher()
         );
+
+        $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
+            public function matches($object, $property)
+            {
+                return $object instanceof AbstractElement;
+            }
+        });
+
         $this->data = $copier->copy($this->data);
     }
 
@@ -168,37 +179,10 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
         $this->needsRenewReferences = true;
 
         if ($this->data instanceof OwnerAwareFieldInterface) {
-            $this->data->setOwner($this, $this->getName());
+            $this->data->_setOwner($this);
+            $this->data->_setOwnerFieldname($this->getName());
+            $this->data->_setOwnerLanguage(null);
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function __sleep()
-    {
-        $copier = new DeepCopy();
-        $copier->skipUncloneable(true);
-        $copier->addTypeFilter(
-            new \DeepCopy\TypeFilter\ReplaceFilter(
-                function ($currentValue) {
-                    if ($currentValue instanceof ElementInterface) {
-                        $elementType = Service::getType($currentValue);
-                        $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
-
-                        return $descriptor;
-                    }
-
-                    return $currentValue;
-                }
-            ),
-            new MarshalMatcher(null, null)
-        );
-
-        $this->needsRenewReferences = true;
-        $this->data = $copier->copy($this->data);
-
-        return parent::__sleep();
     }
 
     /**
@@ -223,5 +207,36 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     public function setLanguage(string $language)
     {
         $this->_language = $language;
+    }
+
+    public function marshalForCache()
+    {
+        $this->needsRenewReferences = true;
+
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => false,
+        ];
+        $copier = Service::getDeepCopyInstance($this, $context);
+        $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof ElementInterface) {
+                        $elementType = Service::getType($currentValue);
+                        $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
+
+                        return $descriptor;
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new \Pimcore\Model\Element\DeepCopy\MarshalMatcher(null, null)
+        );
+        $data = $copier->copy($this);
+
+        return $data;
     }
 }

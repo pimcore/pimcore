@@ -147,7 +147,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 
 
-    createGrid: function (fromConfig, response, settings, save) {
+    createGrid: function (fromConfig, response, settings, save, context) {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var fields = [];
@@ -165,16 +165,18 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.sortinfo = response.sortinfo;
 
             this.settings = response.settings || {};
+            this.context = response.context || {};
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
-                this.onlyDirectChildren = response.onlyDirectChildren;
-            }
+            this.onlyDirectChildren = response.onlyDirectChildren;
+            this.searchFilter = response.searchFilter;
+            this.sqlFilter = response.sqlFilter;
         } else {
             itemsPerPage = this.gridPageSize;
             fields = response;
             this.settings = settings;
+            this.context = context;
             this.buildColumnConfigMenu();
         }
 
@@ -287,12 +289,21 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             viewConfig: {
                 forceFit: false,
                 xtype: 'patchedgridview',
-                enableTextSelection: true
+                enableTextSelection: true,
+                listeners: {
+                    refresh: function (dataview) {
+                        Ext.each(dataview.panel.columns, function (column) {
+                            if (column.autoSizeColumn === true) {
+                                column.autoSize();
+                            }
+                        })
+                    }
+                },
             },
             listeners: {
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                    var columnName = grid.ownerGrid.getColumns();
-                    if(columnName[cellIndex].dataIndex == 'id' || columnName[cellIndex].dataIndex == 'fullpath') {
+                    var columns = grid.grid.getColumnManager().getColumns();
+                    if (columns[cellIndex].dataIndex == 'id' || columns[cellIndex].dataIndex == 'fullpath') {
                         var data = this.store.getAt(rowIndex);
                         pimcore.helpers.openObject(data.get("id"), data.get("type"));
                     }
@@ -370,6 +381,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;
         config.pageSize = this.pagingtoolbar.pageSize;
+        config.searchFilter = this.searchField.getValue();
+        config.sqlFilter = this.sqlEditor.getValue();
+        config.onlyDirectChildren = this.checkboxOnlyDirectChildren.getValue();
         return config;
     },
 

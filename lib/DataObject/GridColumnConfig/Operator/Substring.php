@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Substring extends AbstractOperator
+/**
+ * @internal
+ */
+final class Substring extends AbstractOperator
 {
     /** @var int */
     private $start;
@@ -52,8 +55,8 @@ class Substring extends AbstractOperator
             $valueArray = [];
 
             $childResult = $c->getLabeledValue($element);
-            $isArrayType = $childResult->isArrayType;
-            $childValues = $childResult->value;
+            $isArrayType = $childResult->isArrayType ?? false;
+            $childValues = $childResult->value ?? null;
             if ($childValues && !$isArrayType) {
                 $childValues = [$childValues];
             }
@@ -88,7 +91,6 @@ class Substring extends AbstractOperator
             } else {
                 $result->value = $valueArray[0];
             }
-            $result->$valueArray;
         }
 
         return $result;

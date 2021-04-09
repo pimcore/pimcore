@@ -34,8 +34,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/redirects")
+ *
+ * @internal
  */
-class RedirectsController extends AdminController
+final class RedirectsController extends AdminController
 {
     /**
      * @Route("/list", name="pimcore_admin_redirects_redirects", methods={"POST"})
@@ -47,9 +49,10 @@ class RedirectsController extends AdminController
      */
     public function redirectsAction(Request $request, RedirectHandler $redirectHandler)
     {
-        if ($request->get('data')) {
-            $this->checkPermission('redirects');
+        // check permission for both update and listing
+        $this->checkPermission('redirects');
 
+        if ($request->get('data')) {
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -82,12 +85,12 @@ class RedirectsController extends AdminController
 
                 $redirectTarget = $redirect->getTarget();
                 if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById(intval($redirectTarget))) {
+                    if ($doc = Document::getById((int)$redirectTarget)) {
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
 
-                return $this->adminJson(['data' => $redirect, 'success' => true]);
+                return $this->adminJson(['data' => $redirect->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -111,12 +114,12 @@ class RedirectsController extends AdminController
 
                 $redirectTarget = $redirect->getTarget();
                 if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById(intval($redirectTarget))) {
+                    if ($doc = Document::getById((int)$redirectTarget)) {
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
 
-                return $this->adminJson(['data' => $redirect, 'success' => true]);
+                return $this->adminJson(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of routes
@@ -155,13 +158,13 @@ class RedirectsController extends AdminController
             foreach ($list->getRedirects() as $redirect) {
                 if ($link = $redirect->getTarget()) {
                     if (is_numeric($link)) {
-                        if ($doc = Document::getById(intval($link))) {
+                        if ($doc = Document::getById((int)$link)) {
                             $redirect->setTarget($doc->getRealFullPath());
                         }
                     }
                 }
 
-                $redirects[] = $redirect;
+                $redirects[] = $redirect->getObjectVars();
             }
 
             return $this->adminJson(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);

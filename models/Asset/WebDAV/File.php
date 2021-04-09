@@ -23,6 +23,9 @@ use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Sabre\DAV;
 
+/**
+ * @internal
+ */
 class File extends DAV\File
 {
     /**
@@ -145,7 +148,7 @@ class File extends DAV\File
     public function get()
     {
         if ($this->asset->isAllowed('view')) {
-            return fopen($this->asset->getFileSystemPath(), 'r', false, FileHelper::getContext());
+            return $this->asset->getStream();
         } else {
             throw new DAV\Exception\Forbidden();
         }
@@ -158,7 +161,7 @@ class File extends DAV\File
      */
     public function getETag()
     {
-        return '"' . md5_file($this->asset->getFileSystemPath()) . '"';
+        return '"' . md5($this->asset->getRealFullPath() . $this->asset->getModificationDate()) . '"';
     }
 
     /**
@@ -178,6 +181,6 @@ class File extends DAV\File
      */
     public function getSize()
     {
-        return filesize($this->asset->getFileSystemPath());
+        return $this->asset->getFileSize();
     }
 }

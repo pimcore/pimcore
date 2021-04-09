@@ -84,7 +84,7 @@ Roles will send an notification to every user with that role.
                       # Define which channel notification should be sent to, possible values "mail" and "pimcore_notification", default value is "mail".
                       channelType:
                          - mail
-                         - pimcoreNotification
+                         - pimcore_notification
                       
                       # Type of mail source. 
                       mailType: 'template' # this is the default value, One of "template"; "pimcore_document"

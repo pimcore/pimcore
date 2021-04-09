@@ -23,7 +23,7 @@ sudo apt-get install ffmpeg
 
 ## LibreOffice, pdftotext, Inkscape, ...
 
-```bash 
+```bash
 apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
@@ -68,36 +68,9 @@ wget https://github.com/imagemin/mozjpeg-bin/raw/master/vendor/linux/cjpeg -O /u
 chmod 0755 /usr/local/bin/cjpeg
 ```
 
-### SQIP / SVG Placeholder
-Though not stricly a Image Optimizer, [SQIP](https://github.com/technopagan/sqip) is a SVG-based implementation of the [Low Quality Image Placeholders (LQIP)](https://www.guypo.com/introducing-lqip-low-quality-image-placeholders/) technique, that need some Image-Processing tools to be installed - and therefore their installation is described here.
-
-I'm assuming you've NodeJS up and running using either `npm` or `yarn` as package manager.
-
-Install SQIP globally:
-```bash
-# with npm
-npm install -g sqip
-# or with yarn
-yarn global add sqip
-```
-This should install `sqip` somewhere in your path.
-
-Since SQIP requires [Primitive](https://github.com/fogleman/primitive) - which is written in [Go](https://golang.org/) - you need that [set-up](https://www.digitalocean.com/community/tutorials/how-to-install-go-on-ubuntu-18-04) also.
-
-Then run
-```bash
-go get -u github.com/fogleman/primitive
-```
-Usually that should install the binary to `/usr/lib/go/bin/primitive` - which may not be in your path. I prefer to add a symlink:
-
-```bash
-cd /usr/local/bin
-ln -s /usr/lib/go/bin/primitive
-```
-
 ## Exiftool
 
-```bash 
+```bash
 apt-get install libimage-exiftool-perl
 ```
 
@@ -105,7 +78,7 @@ apt-get install libimage-exiftool-perl
 
 Install webp for [WebP-Support](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
 
-```bash 
+```bash
 apt-get install webp
 ```
 

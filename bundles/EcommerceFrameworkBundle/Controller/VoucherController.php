@@ -17,25 +17,28 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ExportableTokenManagerInterface;
 use Pimcore\Controller\FrontendController;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class VoucherController
  *
  * @Route("/voucher")
+ *
+ * @internal
  */
-class VoucherController extends FrontendController
+final class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
     /**
-     * @param FilterControllerEvent $event
+     * {@inheritdoc}
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
         $user = $this->get(TokenStorageUserResolver::class)->getUser();
@@ -46,11 +49,8 @@ class VoucherController extends FrontendController
         }
 
         // enable inherited values
-        AbstractObject::setGetInheritedValues(true);
+        DataObject::setGetInheritedValues(true);
         Localizedfield::setGetFallbackValues(true);
-
-        // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'twig');
     }
 
     /**
@@ -60,7 +60,7 @@ class VoucherController extends FrontendController
      */
     public function voucherCodeTabAction(Request $request)
     {
-        $onlineShopVoucherSeries = AbstractObject::getById($request->get('id'));
+        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
 
         if (!($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries)) {
             throw new \InvalidArgumentException('Voucher series not found');
@@ -81,7 +81,7 @@ class VoucherController extends FrontendController
         } else {
             $paramsBag['errors'] = ['bundle_ecommerce_voucherservice_msg-error-config-missing'];
 
-            return $this->render('PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_error.html.twig', $paramsBag);
+            return $this->render('@PimcoreEcommerceFramework/voucher/voucher_code_tab_error.html.twig', $paramsBag);
         }
     }
 
@@ -92,7 +92,7 @@ class VoucherController extends FrontendController
      */
     public function exportTokensAction(Request $request)
     {
-        $onlineShopVoucherSeries = AbstractObject::getById($request->get('id'));
+        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
         if (!($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries)) {
             throw new \InvalidArgumentException('Voucher series not found');
         }
@@ -144,7 +144,7 @@ class VoucherController extends FrontendController
      */
     public function generateAction(Request $request)
     {
-        $onlineShopVoucherSeries = AbstractObject::getById($request->get('id'));
+        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
         if ($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 $result = $tokenManager->insertOrUpdateVoucherSeries();
@@ -175,7 +175,7 @@ class VoucherController extends FrontendController
      */
     public function cleanupAction(Request $request)
     {
-        $onlineShopVoucherSeries = AbstractObject::getById($request->get('id'));
+        $onlineShopVoucherSeries = DataObject::getById($request->get('id'));
         if ($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 $translator = $this->get('translator');
@@ -223,7 +223,7 @@ class VoucherController extends FrontendController
             );
         }
 
-        $onlineShopVoucherSeries = AbstractObject::getById($id);
+        $onlineShopVoucherSeries = DataObject::getById($id);
         if ($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 if ($tokenManager->cleanUpReservations($duration, $id)) {

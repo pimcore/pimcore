@@ -23,19 +23,19 @@ use Psr\Log\LoggerInterface;
 class ApplicationLogger implements LoggerInterface
 {
     /**
-     * @var null
+     * @var string|null
      */
-    protected $component = null;
+    protected $component;
 
     /**
-     * @var null
+     * @var \Pimcore\Log\FileObject|string|null
      */
-    protected $fileObject = null;
+    protected $fileObject;
 
     /**
-     * @var null
+     * @var \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|\Pimcore\Model\Asset|int|null
      */
-    protected $relatedObject = null;
+    protected $relatedObject;
 
     /**
      * @var string
@@ -96,8 +96,6 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @deprecated
-     *
      * @param string $component
      */
     public function setComponent($component)
@@ -108,7 +106,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @deprecated
      *
-     * @param \Pimcore\Log\FileObject | string $fileObject
+     * @param \Pimcore\Log\FileObject|string $fileObject
      */
     public function setFileObject($fileObject)
     {
@@ -142,7 +140,7 @@ class ApplicationLogger implements LoggerInterface
      */
     public function log($level, $message, array $context = [])
     {
-        if (!isset($context['component'])) {
+        if (!isset($context['component']) || is_null($context['component'])) {
             $context['component'] = $this->component;
         }
 

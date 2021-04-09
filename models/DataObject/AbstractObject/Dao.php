@@ -23,6 +23,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\AbstractObject $model
  */
 class Dao extends Model\Element\Dao
@@ -40,7 +42,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE o_id = ?", $id);
 
-        if ($data['o_id']) {
+        if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('Object with the ID ' . $id . " doesn't exists");
@@ -52,7 +54,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -62,7 +64,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("object doesn't exist");
+            throw new Model\Exception\NotFoundException("object doesn't exist");
         }
     }
 
@@ -365,10 +367,16 @@ class Dao extends Model\Element\Dao
      * @param int $id
      *
      * @return array
+     *
+     * @throws Model\Exception\NotFoundException
      */
     public function getTypeById($id)
     {
         $t = $this->db->fetchRow('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', $id);
+
+        if (!$t) {
+            throw new Model\Exception\NotFoundException('object with ID ' . $id . ' not found');
+        }
 
         return $t;
     }
@@ -600,7 +608,8 @@ class Dao extends Model\Element\Dao
     {
         $data = $this->db->fetchRow('SELECT o_modificationDate, o_versionCount  from objects WHERE o_id = ?', $this->model->getId());
 
-        return $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()
+        return $data
+            && $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()
             && $data['o_versionCount'] == $this->model->getVersionCount();
     }
 }

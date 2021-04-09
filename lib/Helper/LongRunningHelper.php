@@ -14,8 +14,8 @@
 
 namespace Pimcore\Helper;
 
-use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ConnectionRegistry;
 use Monolog\Handler\HandlerInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -28,7 +28,6 @@ class LongRunningHelper
         'Config_system',
         'pimcore_admin_user',
         'Config_website',
-        'pimcore_editmode',
         'pimcore_error_document',
         'pimcore_site',
         'Pimcore_Db',

@@ -50,15 +50,6 @@ Output returned by `getPosterAsset`:
 
 To create a container for local video files you can just use the `$this->video` helperwithout any options.
 
-```php
-<section id="campaign_video">
-    <?= $this->video("campaignVideo", [
-        "width" => 700,
-        "height" => 400
-    ]); ?>
-</section>
-```
-
 ```twig
 <section id="campaign_video">
     {{ pimcore_video('campaignVideo', {
@@ -87,23 +78,6 @@ Have a look at the frontend preview:
 
 In the configuration, you could also specify additional options for external services.
 
-```php
-<section id="campaign_video">
-    <?= $this->video("campaignVideo", [
-        "width" => 700,
-        "height" => 400,
-        "youtube" => [
-            "autoplay" => 1,
-            "modestbranding" => 1
-        ],
-        "vimeo" => [
-            "autoplay" => 1,
-            "loop" => 1
-        ]
-    ]); ?>
-</section>
-```
-
 ```twig
 <section id="campaign_video">
     {{ pimcore_video('campaignVideo', {
@@ -122,26 +96,8 @@ In the configuration, you could also specify additional options for external ser
 </section>
 ```
 
+
 ### HTML5 with Automatic Video Transcoding (using video.js)
-```php
-<!DOCTYPE HTML>
-<html>
-<head>
-    <link href="http://vjs.zencdn.net/5.4.4/video-js.css" rel="stylesheet">
-</head>
-<body>
- 
-    <?= $this->video("myVideo", array(
-        "thumbnail" => "example", // NOTE: don't forget to create a video thumbnail
-        "width" => 400,
-        "height" => 300,
-        "attributes" => ["class" => "video-js custom-class", "preload" => "auto", "controls" => "", "data-custom-attr" => "my-test"]
-    )); ?>
- 
-    <script src="http://vjs.zencdn.net/5.4.4/video.js"></script>
-</body>
-</html>
-```
 
 ```twig
 <!DOCTYPE HTML>
@@ -167,6 +123,7 @@ In the configuration, you could also specify additional options for external ser
 </body>
 </html>
 ```
+
 
 Read more about [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md).
 

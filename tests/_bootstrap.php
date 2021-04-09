@@ -21,10 +21,6 @@ Autoloader::addNamespace('Pimcore\Model\DataObject', __DIR__ . '/_output/var/cla
 Autoloader::addNamespace('Pimcore\Tests', __DIR__);
 Autoloader::addNamespace('Pimcore\Tests', __DIR__ . '/_support');
 
-if (!defined('TESTS_PATH')) {
-    define('TESTS_PATH', __DIR__);
-}
-
 if (!defined('PIMCORE_TEST')) {
     define('PIMCORE_TEST', true);
 }

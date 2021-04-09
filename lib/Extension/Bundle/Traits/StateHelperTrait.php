@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle\Traits;
 
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
+
 /**
  * Helper trait exposing static isEnabled() and isInstalled() methods for bundles which can be used
  * to check bundle state from non-service definitions (e.g. class definitions).
@@ -30,7 +32,7 @@ trait StateHelperTrait
      */
     public static function isEnabled(): bool
     {
-        $bundleManager = \Pimcore::getContainer()->get('pimcore.extension.bundle_manager');
+        $bundleManager = \Pimcore::getContainer()->get(PimcoreBundleManager::class);
 
         if (!$bundleManager->exists(__CLASS__)) {
             return false;
@@ -54,7 +56,7 @@ trait StateHelperTrait
             return false;
         }
 
-        $bundleManager = \Pimcore::getContainer()->get('pimcore.extension.bundle_manager');
+        $bundleManager = \Pimcore::getContainer()->get(PimcoreBundleManager::class);
 
         $bundle = $bundleManager->getActiveBundle(__CLASS__, false);
         if (!$bundleManager->isInstalled($bundle)) {

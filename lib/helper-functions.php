@@ -42,19 +42,22 @@ function gzcompressfile($source, $level = null, $target = null)
         $dest = $source.'.gz';
     }
 
-    $mode = 'wb'.$level;
     $error = false;
 
-    $fp_out = gzopen($dest, $mode);
     $fp_in = fopen($source, 'rb');
+
+    $fp_out = fopen($dest, 'wb');
+    $deflateContext = deflate_init(ZLIB_ENCODING_GZIP, ['level' => $level]);
 
     if ($fp_out && $fp_in) {
         while (!feof($fp_in)) {
-            gzwrite($fp_out, fread($fp_in, 1024 * 512));
+            fwrite($fp_out, deflate_add($deflateContext, fread($fp_in, 1024 * 512), ZLIB_NO_FLUSH));
         }
 
         fclose($fp_in);
-        gzclose($fp_out);
+
+        fwrite($fp_out, deflate_add($deflateContext, '', ZLIB_FINISH));
+        fclose($fp_out);
     } else {
         $error = true;
     }
@@ -219,23 +222,23 @@ function array_toquerystring($args)
 }
 
 /**
- * @param array $array
+ * @param array $array with attribute names as keys, and values as values
  *
  * @return string
  */
 function array_to_html_attribute_string($array)
 {
-    $data = '';
+    $data = [];
+
     foreach ($array as $key => $value) {
         if (is_scalar($value)) {
-            if (!empty($data)) {
-                $data .= ' ';
-            }
-            $data .= $key . '="' . htmlspecialchars($value) . '"';
+            $data[] = $key . '="' . htmlspecialchars($value) . '"';
+        } elseif (is_string($key) && is_null($value)) {
+            $data[] = $key;
         }
     }
 
-    return $data;
+    return implode(' ', $data);
 }
 
 /**
@@ -326,13 +329,13 @@ function filesize2bytes($str)
         'P' => 1024 * 1024 * 1024 * 1024 * 1024,
     ];
 
-    $bytes = floatval($str);
+    $bytes = (float)$str;
 
     if (preg_match('#([KMGTP])?B?$#si', $str, $matches) && (array_key_exists(1, $matches) && !empty($bytes_array[$matches[1]]))) {
         $bytes *= $bytes_array[$matches[1]];
     }
 
-    $bytes = intval(round($bytes, 2));
+    $bytes = (int)round($bytes, 2);
 
     return $bytes;
 }

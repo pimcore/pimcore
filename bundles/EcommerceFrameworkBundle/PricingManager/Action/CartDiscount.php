@@ -54,6 +54,8 @@ class CartDiscount implements DiscountInterface
         $amount = Decimal::create($this->amount);
         if ($amount->isZero()) {
             $amount = $priceCalculator->getSubTotal()->getAmount()->toPercentage($this->getPercent());
+            //round to 2 digits for further calculations to avoid rounding issues at later point
+            $amount = Decimal::fromDecimal($amount->withScale(2));
         }
 
         $amount = $amount->mul(-1);

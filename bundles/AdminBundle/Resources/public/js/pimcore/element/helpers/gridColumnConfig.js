@@ -15,6 +15,8 @@
 pimcore.registerNS("pimcore.element.helpers.gridColumnConfig");
 pimcore.element.helpers.gridColumnConfig = {
 
+    batchJobDelay: 50,
+
     getSaveAsDialog: function () {
         var defaultName = new Date();
 
@@ -200,12 +202,12 @@ pimcore.element.helpers.gridColumnConfig = {
         }
     },
 
-    saveConfig: function (asCopy) {
+    saveConfig: function (asCopy, context) {
         if (asCopy) {
             this.getSaveAsDialog();
         } else {
             pimcore.helpers.saveColumnConfig(this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton,
-                this.columnConfigurationSavedHandler.bind(this), this.settings, this.gridType);
+                this.columnConfigurationSavedHandler.bind(this), this.settings, this.gridType, this.context);
         }
     },
 
@@ -597,7 +599,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 window.setTimeout(function () {
                     this.batchJobCurrent++;
                     this.batchProcess(jobs, append, remove);
-                }.bind(this), 400);
+                }.bind(this), this.batchJobDelay);
             }.bind(this, jobs, this.batchParameters.job)
         });
     },
@@ -608,6 +610,9 @@ pimcore.element.helpers.gridColumnConfig = {
         var fields = this.getGridConfig().columns;
         var fieldKeys = Object.keys(fields);
         params["fields[]"] = fieldKeys;
+        if (this.context) {
+            params["context"] = Ext.encode(this.context);
+        }
 
         settings = Ext.encode(settings);
         params["settings"] = settings;
@@ -679,6 +684,7 @@ pimcore.element.helpers.gridColumnConfig = {
         this.exportParameters.classId = this.classId;
         this.exportParameters.initial = initial ? 1 : 0;
         this.exportParameters.language = this.gridLanguage;
+        this.exportParameters.context = Ext.encode(this.context);
 
         Ext.Ajax.request({
             url: this.exportProcessUrl,
@@ -702,7 +708,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 window.setTimeout(function () {
                     this.exportJobCurrent++;
                     this.exportProcess(jobs, fileHandle, fields, false, settings, exportType);
-                }.bind(this), 400);
+                }.bind(this), this.batchJobDelay);
             }.bind(this, jobs, jobs[this.exportJobCurrent])
         });
     },

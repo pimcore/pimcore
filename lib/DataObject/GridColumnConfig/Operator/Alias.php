@@ -17,13 +17,11 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Alias extends AbstractOperator
+/**
+ * @internal
+ */
+final class Alias extends AbstractOperator
 {
-    public function __construct(\stdClass $config, $context = null)
-    {
-        parent::__construct($config, $context);
-    }
-
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -39,7 +37,7 @@ class Alias extends AbstractOperator
             $valueArray = [];
 
             $childResult = $c->getLabeledValue($element);
-            $isArrayType = $childResult->isArrayType;
+            $isArrayType = $childResult->isArrayType ?? null;
             $childValues = $childResult->value;
             if ($childValues && !$isArrayType) {
                 $childValues = [$childValues];
@@ -56,7 +54,7 @@ class Alias extends AbstractOperator
             if ($isArrayType) {
                 $result->value = $valueArray;
             } else {
-                $result->value = $valueArray[0];
+                $result->value = $valueArray[0] ?? null;
             }
         }
 

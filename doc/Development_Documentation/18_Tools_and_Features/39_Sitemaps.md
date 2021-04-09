@@ -15,7 +15,7 @@ an event handler and start to add entries.
 ## Exposing Sitemaps
 
 Sitemaps can either be exposed by being generated on-the-fly or by being dumped to static files. What to use depends on the size
-of your site (e.g. the size of the tree which needs to be processed). In general it's recommended to create static files 
+of your site (e.g. the size of the tree which needs to be processed). In general it's recommended to create static files
 as it reduces the overhead of creating the sitemap on every crawler request. If you want to serve the sitemap directly,
 you need to register the sitemaps routes in your routing config (see [PrestaSitemapBundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/1-installation.md)
 for details).
@@ -48,7 +48,7 @@ using the `presta:sitemaps:dump` command, you can override those parameters by p
 
 For details see:
 
-* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/2-configuration.md#configuring-your-application-base-url) 
+* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/2-configuration.md#configuring-your-application-base-url)
 * [Symfony Documentation on the Request Context](http://symfony.com/doc/3.4/console/request_context.html#configuring-the-request-context-globally)
 * [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/master/lib/Sitemap/UrlGenerator.php)
 
@@ -91,7 +91,7 @@ pimcore:
                 enabled: true
                 priority: 50
                 generator_id: AppBundle\Sitemaps\NewsGenerator
-            
+
             # Pimcore ships a default document tree generator which is enabled by default
             # but you can easily disable it here.
             pimcore_documents:
@@ -232,7 +232,7 @@ In the example above, the URL is created by using a [Link Generator](../05_Objec
 > It's important that your link generator is able to generate an absolute URL for the given object. Above is only an example, but
   you can have a look at the [demo](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle)
   for a working example building sitemap entries for News objects.
-  
+
 After creating the generator, register it as service and add it to the config. Use filters and processors to reuse already
 implemented behaviour.
 
@@ -252,7 +252,7 @@ services:
                 - '@Pimcore\Sitemap\Element\Filter\PropertiesFilter'
             $processors:
                 - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
-                - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'               
+                - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
 ```
 
 Make the generator available to the core listener by registering it on the configuration:
@@ -278,7 +278,7 @@ date older than a year could look like the following:
 
 namespace AppBundle\Sitemaps\Filter;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\Element\FilterInterface;
 use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
@@ -294,7 +294,7 @@ class AgeFilter implements FilterInterface
         $this->maxYears = $maxYears;
     }
 
-    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         $modicationDate = \DateTimeImmutable::createFromFormat('U', (string)$element->getModificationDate());
         $now            = new \DateTimeImmutable();
@@ -305,7 +305,7 @@ class AgeFilter implements FilterInterface
         return $diff->y < $this->maxYears;
     }
 
-    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         // not matching the age constraint does not mean not handling children
         return true;
@@ -321,13 +321,13 @@ services:
         autowire: true
         autoconfigure: true
         public: false
-        
+
     AppBundle\Sitemaps\Filter\AgeFilter: ~
 
     AppBundle\Sitemaps\BlogGenerator:
         arguments:
             $filters:
-                - '@AppBundle\Sitemaps\Filter\AgeFilter'   
+                - '@AppBundle\Sitemaps\Filter\AgeFilter'
 ```
 
 
@@ -341,7 +341,7 @@ to each entry.
 
 namespace AppBundle\Sitemaps\Processor;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Sitemap\Element\ProcessorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
@@ -349,7 +349,7 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 
 class RandomPriorityProcessor implements ProcessorInterface
 {
-    public function process(Url $url, AbstractElement $element, GeneratorContextInterface $context)
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
     {
         if ($url instanceof UrlConcrete) {
             $url->setPriority(rand(0, 10) / 10);
@@ -375,13 +375,13 @@ services:
         autowire: true
         autoconfigure: true
         public: false
-        
+
     AppBundle\Sitemaps\Processor\RandomPriorityProcessor: ~
 
     AppBundle\Sitemaps\BlogGenerator:
         arguments:
             $processors:
-                - '@AppBundle\Sitemaps\Processor\RandomPriorityProcessor'   
+                - '@AppBundle\Sitemaps\Processor\RandomPriorityProcessor'
 ```
 
 
@@ -397,7 +397,7 @@ for details. As example how to use the URL generator in a processor:
 
 namespace AppBundle\Sitemaps\Processor;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Sitemap\Element\ProcessorInterface;
 use Pimcore\Sitemap\UrlGeneratorInterface;
@@ -416,7 +416,7 @@ class RandomPathProcessor implements ProcessorInterface
         $this->urlGenerator = $urlGenerator;
     }
 
-    public function process(Url $url, AbstractElement $element, GeneratorContextInterface $context)
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
     {
         $path = $this->urlGenerator->generateUrl('/foo/bar');
         $url  = new UrlConcrete($path);

@@ -77,7 +77,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         tabPanel.setActiveItem(tabId);
     },
 
-    save: function (task, only, callback) {
+    save: function (task, only, callback, successCallback) {
 
         if (this.tab.disabled || this.tab.isMasked()) {
             return;
@@ -87,34 +87,24 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var saveData = this.getSaveData(only);
 
         if (saveData) {
-            if(this.data.missingRequiredEditable !== null) {
+            if (this.data.missingRequiredEditable !== null) {
                 saveData.missingRequiredEditable = this.data.missingRequiredEditable;
-            }
-
-            // check for version notification
-            if (this.newerVersionNotification) {
-                if (task == "publish" || task == "unpublish") {
-                    this.newerVersionNotification.hide();
-                } else {
-                    this.newerVersionNotification.show();
-                }
-
             }
 
             try {
                 pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
-                        this.tab.unmask();
-                        pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
-                        return false;
-                    }
+                    this.tab.unmask();
+                    pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
+                    return false;
+                }
 
-                    if (e instanceof pimcore.error.ActionCancelledException) {
-                        this.tab.unmask();
-                        pimcore.helpers.showNotification(t("Info"), 'Document not saved: ' + e.message, 'info');
-                        return false;
-                    }
+                if (e instanceof pimcore.error.ActionCancelledException) {
+                    this.tab.unmask();
+                    pimcore.helpers.showNotification(t("Info"), 'Document not saved: ' + e.message, 'info');
+                    return false;
+                }
             }
 
             Ext.Ajax.request({
@@ -124,7 +114,20 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 success: function (response) {
                     try {
                         var rdata = Ext.decode(response.responseText);
+                        if (typeof successCallback == 'function') {
+                            // the successCallback function retrieves response data information
+                            successCallback(rdata);
+                        }
                         if (rdata && rdata.success) {
+                            // check for version notification
+                            if (this.newerVersionNotification) {
+                                if (task == "publish" || task == "unpublish") {
+                                    this.newerVersionNotification.hide();
+                                } else {
+                                    this.newerVersionNotification.show();
+                                }
+                            }
+
                             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                             this.resetChanges();
                             Ext.apply(this.data, rdata.data);
@@ -138,7 +141,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     } catch (e) {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                     }
-
 
                     // reload versions
                     if (this.versions) {
@@ -162,7 +164,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         }
     },
 
-
     isAllowed: function (key) {
         return this.data.userPermissions[key];
     },
@@ -175,63 +176,69 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         pimcore.elementservice.deleteElement(options);
     },
 
+    close: function() {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
+    },
+
     saveClose: function (only) {
         this.save(null, only, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }.bind(this));
     },
 
     publishClose: function () {
         this.publish(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }.bind(this));
     },
 
     publish: function (only, callback) {
-        this.data.published = true;
+        this.save("publish", only, callback, function (rdata) {
+            if (rdata && rdata.success) {
+                this.data.published = true;
 
-        // toogle buttons
-        this.toolbarButtons.unpublish.show();
+                // toggle buttons
+                this.toolbarButtons.unpublish.show();
 
-        if (this.toolbarButtons.save) {
-            this.toolbarButtons.save.hide();
-        }
+                if (this.toolbarButtons.save) {
+                    this.toolbarButtons.save.hide();
+                }
 
-        pimcore.elementservice.setElementPublishedState({
-            elementType: "document",
-            id: this.id,
-            published: true
-        });
-
-        this.save("publish", only, callback);
+                pimcore.elementservice.setElementPublishedState({
+                    elementType: "document",
+                    id: this.id,
+                    published: true
+                });
+            }
+        }.bind(this));
     },
 
     unpublish: function (only, callback) {
-        this.data.published = false;
+        this.save("unpublish", only, callback, function (rdata) {
+            if (rdata && rdata.success) {
+                this.data.published = false;
 
-        // toogle buttons
-        this.toolbarButtons.unpublish.hide();
+                // toggle buttons
+                this.toolbarButtons.unpublish.hide();
 
-        if (this.toolbarButtons.save) {
-            this.toolbarButtons.save.show();
-        }
+                if (this.toolbarButtons.save) {
+                    this.toolbarButtons.save.show();
+                }
 
-        pimcore.elementservice.setElementPublishedState({
-            elementType: "document",
-            id: this.id,
-            published: false
-        });
-
-        this.save("unpublish", only, callback);
+                pimcore.elementservice.setElementPublishedState({
+                    elementType: "document",
+                    id: this.id,
+                    published: false
+                });
+            }
+        }.bind(this));
     },
 
     unpublishClose: function () {
         this.unpublish(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
-        });
+            this.close();
+        }.bind(this));
     },
 
     reload: function () {

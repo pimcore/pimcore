@@ -28,18 +28,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $emailLogs = null;
-
-    public function __construct()
-    {
-        $this->emailLogs = & $this->data;
-    }
-
-    /**
      * @return Model\Tool\Email\Log[]
      */
     public function getEmailLogs()

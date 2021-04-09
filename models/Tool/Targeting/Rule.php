@@ -35,42 +35,42 @@ class Rule extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var string
      */
-    public $scope = self::SCOPE_HIT;
+    protected $scope = self::SCOPE_HIT;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var int
      */
-    public $prio = 0;
+    protected $prio = 0;
 
     /**
      * @var array
      */
-    public $conditions = [];
+    protected $conditions = [];
 
     /**
      * @var array
      */
-    public $actions = [];
+    protected $actions = [];
 
     /**
      * @param mixed $target
@@ -92,7 +92,7 @@ class Rule extends Model\AbstractModel
             $targetId = (int) $target;
         }
 
-        if (array_key_exists('_ptc', $_GET) && intval($targetId) == intval($_GET['_ptc'])) {
+        if (array_key_exists('_ptc', $_GET) && (int)$targetId == (int)$_GET['_ptc']) {
             return true;
         }
 
@@ -110,7 +110,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->getDao()->getById(intval($id));
+            $target->getDao()->getById((int)$id);
 
             return $target;
         } catch (\Exception $e) {
@@ -122,6 +122,8 @@ class Rule extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -130,7 +132,7 @@ class Rule extends Model\AbstractModel
             $target->getDao()->getByName($name);
 
             return $target;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

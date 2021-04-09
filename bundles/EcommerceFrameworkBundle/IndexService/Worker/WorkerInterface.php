@@ -96,5 +96,3 @@ interface WorkerInterface
      */
     public function getProductList();
 }
-
-class_alias(WorkerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker');

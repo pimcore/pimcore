@@ -4,25 +4,24 @@ services:
         autoconfigure: true
         public: false
 
-    # public alias to the delegating engine
-    pimcore.templating.engine.delegating:
-        alias: templating.engine.delegating
-        public: true
-
     # RENDERERS
 
     Pimcore\Templating\Renderer\ActionRenderer:
         arguments:
-            $actionsHelper: '@templating.helper.actions'
+            $httpKernelRuntime: '@twig.runtime.httpkernel'
 
     Pimcore\Templating\Renderer\IncludeRenderer: ~
 
-    Pimcore\Templating\Renderer\TagRenderer:
+    Pimcore\Templating\Renderer\EditableRenderer:
+        public: true
         arguments:
-            $tagLoader: '@pimcore.implementation_loader.document.tag'
+            $editableLoader: '@Pimcore\Model\Document\Editable\Loader\EditableLoader'
         calls:
             - [setLogger, ['@logger']]
 
+    Pimcore\Templating\Renderer\TagRenderer:
+        alias: Pimcore\Templating\Renderer\EditableRenderer
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Templating\Renderer\EditableRenderer" instead'
 
     # NAVIGATION
 
@@ -36,13 +35,13 @@ services:
 
     Pimcore\Navigation\Renderer\Menu:
         arguments:
-            $templatingEngine: '@templating.engine.delegating'
+            $templatingEngine: '@pimcore.templating.engine.delegating'
         tags:
             - { name: pimcore.navigation.renderer, alias: menu }
 
     Pimcore\Navigation\Renderer\Breadcrumbs:
         arguments:
-            $templatingEngine: '@templating.engine.delegating'
+            $templatingEngine: '@pimcore.templating.engine.delegating'
         tags:
             - { name: pimcore.navigation.renderer, alias: breadcrumbs }
 
@@ -51,3 +50,9 @@ services:
 
     Pimcore\Tool\Glossary\Processor:
         public: false
+
+    Symfony\Component\Templating\EngineInterface: '@pimcore.templating.engine.delegating'
+
+    pimcore.templating.engine.delegating:
+        public: true
+        class: Pimcore\Templating\TwigDefaultDelegatingEngine

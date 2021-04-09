@@ -21,13 +21,20 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
-use Pimcore\Web2Print\Processor\PdfReactor8;
+use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 
 abstract class Processor
 {
     /**
-     * @return PdfReactor8|WkHtmlToPdf
+     * @var LockInterface|null
+     */
+    private static $lock = null;
+
+    /**
+     * @return PdfReactor|WkHtmlToPdf
      *
      * @throws \Exception
      */
@@ -36,7 +43,7 @@ abstract class Processor
         $config = Config::getWeb2PrintConfig();
 
         if ($config->get('generalTool') === 'pdfreactor') {
-            return new PdfReactor8();
+            return new PdfReactor();
         } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
         } else {
@@ -99,24 +106,27 @@ abstract class Processor
 
         $document = $this->getPrintDocument($documentId);
 
+        $lock = self::getLock($document);
         // check if there is already a generating process running, wait if so ...
-        Model\Tool\Lock::acquire($document->getLockKey(), 0);
+        $lock->acquire(true);
 
         $pdf = null;
 
         try {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
+            $preEvent = new DocumentEvent($document, [
                 'processor' => $this,
                 'jobConfig' => $jobConfigFile->config,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRINT_PRE_PDF_GENERATION);
 
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
             file_put_contents($document->getPdfFileName(), $pdf);
 
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_POST_PDF_GENERATION, new DocumentEvent($document, [
+            $postEvent = new DocumentEvent($document, [
                 'filename' => $document->getPdfFileName(),
                 'pdf' => $pdf,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::PRINT_POST_PDF_GENERATION);
 
             $document->setLastGenerated((time() + 1));
             $document->setLastGenerateMessage('');
@@ -127,7 +137,7 @@ abstract class Processor
             $document->save();
         }
 
-        Model\Tool\Lock::release($document->getLockKey());
+        $lock->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
 
         @unlink($this->getJobConfigFile($documentId));
@@ -241,7 +251,8 @@ abstract class Processor
         if (empty($document)) {
             throw new \Exception('Document with id ' . $documentId . ' not found.');
         }
-        Model\Tool\Lock::release($document->getLockKey());
+
+        self::getLock($document)->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
     }
 
@@ -253,14 +264,25 @@ abstract class Processor
      */
     protected function processHtml($html, $params)
     {
-        $placeholder = new \Pimcore\Placeholder();
         $document = $params['document'] ?? null;
         $hostUrl = $params['hostUrl'] ?? null;
 
-        $html = $placeholder->replacePlaceholders($html, $params, $document);
+        $twig = \Pimcore::getContainer()->get('twig');
+        $template = $twig->createTemplate((string) $html);
+        $html = $twig->render($template, $params);
+
         $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $document, $hostUrl);
 
         return $html;
+    }
+
+    protected function getLock(Document\PrintAbstract $document): LockInterface
+    {
+        if (!self::$lock) {
+            self::$lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($document->getLockKey());
+        }
+
+        return self::$lock;
     }
 
     /**

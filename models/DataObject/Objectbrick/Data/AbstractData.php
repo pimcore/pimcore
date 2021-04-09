@@ -232,35 +232,36 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
+     * @param string|null $language
      *
      * @return mixed
      */
-    public function get($fieldName)
+    public function get($fieldName, $language = null)
     {
-        return $this->{'get'.ucfirst($fieldName)}();
+        return $this->{'get'.ucfirst($fieldName)}($language);
     }
 
     /**
      * @param string $fieldName
      * @param mixed $value
+     * @param string|null $language
      *
      * @return mixed
      */
-    public function set($fieldName, $value)
+    public function set($fieldName, $value, $language = null)
     {
-        return $this->{'set'.ucfirst($fieldName)}($value);
+        return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                            && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -269,7 +270,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {

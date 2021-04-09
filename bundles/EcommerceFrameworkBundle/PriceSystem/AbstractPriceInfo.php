@@ -51,7 +51,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setQuantity($quantity)
     {
@@ -59,7 +59,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getQuantity()
     {
@@ -67,7 +67,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isMinPrice(): bool
     {
@@ -75,7 +75,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setPriceSystem(PriceSystemInterface $priceSystem)
     {
@@ -93,7 +93,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPrice(): PriceInterface
     {
@@ -101,7 +101,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTotalPrice(): PriceInterface
     {
@@ -109,7 +109,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setProduct(CheckoutableInterface $product)
     {
@@ -119,7 +119,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getProduct()
     {

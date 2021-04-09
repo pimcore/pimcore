@@ -52,7 +52,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $tenantName;
 
     /**
-     * @var ElasticSearch
+     * @var ElasticSearchConfigInterface
      */
     protected $tenantConfig;
 
@@ -209,11 +209,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $this;
     }
 
-    /**
-     * Returns all products valid for this search
-     *
-     * @return IndexableInterface[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -572,9 +568,12 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $params = [];
         $params['index'] = $this->getIndexName();
         $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
+        $params['track_total_hits'] = true;
+        $params['rest_total_hits_as_int'] = true;
+
         $params['body']['_source'] = true;
 
-        if (is_integer($this->getLimit())) { // null not allowed
+        if (is_int($this->getLimit())) { // null not allowed
             $params['body']['size'] = $this->getLimit();
         }
         $params['body']['from'] = $this->getOffset();
@@ -1171,30 +1170,43 @@ abstract class AbstractElasticSearch implements ProductListInterface
             // send request
             $result = $this->sendRequest($params);
 
-            if ($result['aggregations']) {
-                foreach ($result['aggregations'] as $fieldname => $aggregation) {
-                    $buckets = $this->searchForBuckets($aggregation);
-
-                    $groupByValueResult = [];
-                    if ($buckets) {
-                        foreach ($buckets as $bucket) {
-                            if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                                $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
-                            } else {
-                                $data = $this->convertBucketValues($bucket);
-                                $groupByValueResult[] = $data;
-                            }
-                        }
-                    }
-
-                    $this->preparedGroupByValuesResults[$fieldname] = $groupByValueResult;
-                }
-            }
+            // process result from elasticsearch
+            $this->processResult($result);
         } else {
             $this->preparedGroupByValuesResults = [];
         }
 
         $this->preparedGroupByValuesLoaded = true;
+    }
+
+    /**
+     * process the result array from elasticsearch
+     *
+     * @param array $result
+     *
+     * @return void
+     */
+    protected function processResult(array $result)
+    {
+        if ($result['aggregations']) {
+            foreach ($result['aggregations'] as $fieldname => $aggregation) {
+                $buckets = $this->searchForBuckets($aggregation);
+
+                $groupByValueResult = [];
+                if ($buckets) {
+                    foreach ($buckets as $bucket) {
+                        if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                            $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
+                        } else {
+                            $data = $this->convertBucketValues($bucket);
+                            $groupByValueResult[] = $data;
+                        }
+                    }
+                }
+
+                $this->preparedGroupByValuesResults[$fieldname] = $groupByValueResult;
+            }
+        }
     }
 
     /**
@@ -1386,16 +1398,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
      *
@@ -1412,30 +1414,14 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function next()
     {
         $this->getProducts();
         $var = next($this->products);
-
-        return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function rewind()
     {
         $this->getProducts();

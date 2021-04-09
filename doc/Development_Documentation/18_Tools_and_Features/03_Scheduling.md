@@ -1,8 +1,7 @@
 # Scheduling
 
 ## General
-Every element type in Pimcore (documents, objects, assets) has implemented a scheduler which provides the ability to create 
-tasks like:
+Every element type in Pimcore (documents, objects, assets) has implemented a scheduler which provides the ability to create tasks like:
 
 * Publish
 * Unpublish
@@ -16,21 +15,21 @@ Important: If object is already published, then using `Publish` option will not 
 
 ## Usage
 
-Let's get objects as an example.
+Let's use objects as an example.
 In the Pimcore backend UI find the icon: 
 
 ![Scheduling - the icon in editmode](../img/scheduling_editmode_icon.png)
 
-You can add the task by clicking on the **Add** button, then an empty row shows. 
-There is few configurable options: date, time and action which should run with that task. 
-The *"active"* checkbox is unchecked after the task finished.
-The Version option would be used only if you chosen the "Publish version"* action.
+You can add a task by clicking on the **Add** button, which will add an empty row. 
+It has some configurable options: `date`, `time` and `action` (which should run with that task). 
+The `version` option will only be used if you chose the *"Publish version"* action.
+The `active` checkbox will indicates that the task was not finished yet.
 
-To make the task which automatically publish an unpublished object just fill values like in the picture, below.
+To make a task that automatically publishes an unpublished object just fill the values like in the picture, below:
 
 ![Scheduling - the new task](../img/scheduling_new_task.png)
 
-And the effect in the database:
+The effect in the database will be:
 
 ```
 `schedule_tasks`
@@ -51,4 +50,3 @@ In the database:
 '8', '76', 'object', '1474034700', 'publish', NULL, '0'
 ```
  
-

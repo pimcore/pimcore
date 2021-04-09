@@ -17,15 +17,23 @@ declare(strict_types = 1);
 
 namespace Pimcore\Loader\ImplementationLoader;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Pimcore\Loader\ImplementationLoader\Exception\InvalidArgumentException;
 use Pimcore\Tool;
 
 /**
  * Iterates an array of namespace prefixes and tries to load classes by namespace.
+ *
+ * @internal
  */
 class PrefixLoader extends AbstractClassNameLoader
 {
+    /**
+     * @var Inflector
+     */
+    private $inflector;
+
     /**
      * @var array
      */
@@ -41,11 +49,12 @@ class PrefixLoader extends AbstractClassNameLoader
      */
     public function __construct(array $prefixes = [])
     {
+        $this->inflector = InflectorFactory::create()->build();
         $this->setPrefixes($prefixes);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     private function setPrefixes(array $prefixes)
     {
@@ -66,7 +75,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(string $name): bool
     {
@@ -74,7 +83,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getClassName(string $name)
     {
@@ -124,6 +133,6 @@ class PrefixLoader extends AbstractClassNameLoader
      */
     protected function normalizeName(string $name): string
     {
-        return Inflector::classify($name);
+        return $this->inflector->classify($name);
     }
 }

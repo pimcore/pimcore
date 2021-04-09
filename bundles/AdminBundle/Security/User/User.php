@@ -47,7 +47,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getUsername()
     {
@@ -63,7 +63,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRoles()
     {
@@ -86,7 +86,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getPassword()
     {
@@ -94,7 +94,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getSalt()
     {
@@ -102,7 +102,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function eraseCredentials()
     {
@@ -111,7 +111,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isEqualTo(UserInterface $user)
     {
@@ -146,9 +146,9 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
      * Return the Google Authenticator secret
      * When an empty string or null is returned, the Google authentication is disabled.
      *
-     * @return string
+     * @return string|null
      */
-    public function getGoogleAuthenticatorSecret(): string
+    public function getGoogleAuthenticatorSecret(): ?string
     {
         if ($this->isGoogleAuthenticatorEnabled()) {
             $secret = $this->user->getTwoFactorAuthentication('secret');
@@ -162,6 +162,6 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
             return $secret;
         }
 
-        return '';
+        return null;
     }
 }

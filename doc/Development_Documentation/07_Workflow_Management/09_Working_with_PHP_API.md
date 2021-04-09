@@ -14,7 +14,7 @@ and apply global actions (`applyGlobalAction()`).
 See following example how to interact with workflows with PHP API. 
 
 
-```php 
+```php
 
 /**
  * $object ... your element, e.g. a Pimcore data object
@@ -25,7 +25,7 @@ $workflow = $workflowRegistry->get($object, 'workflow');
 
 if($workflow->can($object, 'content_ready')) {
 
-    //modify workflow via Symfony APi and without saving additional data
+    //modify workflow via Symfony API and without saving additional data
     $workflow->apply($object, 'content_ready');
     
     //make sure you save the workflow subject afterwards if any data was changed during transition 

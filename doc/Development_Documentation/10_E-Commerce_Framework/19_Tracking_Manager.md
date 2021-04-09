@@ -9,7 +9,6 @@ Current implementations of trackers are
 * **Google Analytics Classic**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce`
 * **Google Analytics Universal**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce`
 * **Google Analytics Enhanced E-Commerce**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce`
-* **Matomo**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik`
 
 ## Supported Tracking Actions
 
@@ -33,8 +32,7 @@ trackers.
     * `$trackingManager->trackProductActionRemove($cart, $product, $quantity)`
 * Cart Update
     * Tracks a generic cart update for trackers not supporting add/remove. This can be sent on every cart list or cart
-      change (see [Piwik Docs](https://piwik.org/docs/ecommerce-analytics/#tracking-add-to-cart-items-added-to-the-cart-optional)
-      for an example)
+      change.
     * `$trackingManager->trackProductActionRemove($cart, $product, $quantity)`
 * Checkout
     * Tracks start of checkout with first step
@@ -123,18 +121,17 @@ See the following examples
 
 namespace AppBundle\Controller;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
-use Zend\Paginator\Paginator;
 
 class ShopController extends FrontendController
 {
-    public function listAction(Request $request, TrackingManager $trackingManager)
+    public function listAction(Request $request, TrackingManager $trackingManager, PaginatorInterface $paginator)
     {       
         // ...
-        $paginator = new Paginator($products);
-        $paginator->setCurrentPageNumber( $request->get('page') );
+        $paginator = $paginator->paginate($products, $request->get('page', 1));
 
         foreach ($paginator as $product) {
             $trackingManager->trackProductImpression($product);

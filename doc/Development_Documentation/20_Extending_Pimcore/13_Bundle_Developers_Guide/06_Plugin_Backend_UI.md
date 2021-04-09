@@ -8,6 +8,52 @@ add Ext components to the user interface or execute any other JavaScript require
 All JavaScript and CSS which should be included, needs to be defined in your bundle class, as described in 
 [Pimcore Bundles](./05_Pimcore_Bundles). 
 
+Alternatively, you can setup this via an Eventlistener:
+
+```yaml
+services:
+  # adds additional static files to admin backend
+  AppBundle\EventListener\PimcoreAdminListener:
+    tags:
+      - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.css, method: addCSSFiles }
+      - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.js, method: addJSFiles }
+```
+
+```php
+<?php
+namespace AppBundle\EventListener;
+
+use Pimcore\Event\BundleManager\PathsEvent;
+
+class PimcoreAdminListener
+{
+    public function addCSSFiles(PathsEvent $event)
+    {
+        $event->setPaths(
+            array_merge(
+                $event->getPaths(),
+                [
+                    '/admin-static/css/admin-style.css'
+                ]
+            )
+        );
+    }
+
+    public function addJSFiles(PathsEvent $event)
+    {
+        $event->setPaths(
+            array_merge(
+                $event->getPaths(),
+                [
+                    '/admin-static/js/startup.js'
+                ]
+            )
+        );
+    }
+}
+```
+
+
 These scripts are loaded last upon Pimcore startup. They are loaded in the same order as specified in the bundle class.
 
 Starting point for javascript development is the javascript plugin class (`plugin.js`). An instance of this class 

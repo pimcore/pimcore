@@ -16,7 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -26,6 +28,11 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      * @var string
      */
     public $fieldtype = 'country';
+
+    /**
+     * @var string|int
+     */
+    public $width = 0;
 
     /** Restrict selection to comma-separated list of countries.
      * @var string|null
@@ -39,7 +46,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
 
     private function buildOptions()
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getDisplayRegions();
         asort($countries);
         $options = [];
 
@@ -67,7 +74,30 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param string|null $restrictTo
+     * @return string|int
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param string|int $width
+     *
+     * @return $this
+     */
+    public function setWidth($width)
+    {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
+
+        return $this;
+    }
+
+    /**
+     * @param array|string|null $restrictTo
      */
     public function setRestrictTo($restrictTo)
     {
@@ -92,5 +122,17 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

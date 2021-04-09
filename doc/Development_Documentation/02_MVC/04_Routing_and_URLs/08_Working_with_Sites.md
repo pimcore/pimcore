@@ -26,7 +26,7 @@ Also, lots of other Pimcore tools and functionalities like Glossary, Tag & Snipp
 
 #### Check if Current Request is Inside a Subsite
 
-```php 
+```php
 if(\Pimcore\Model\Site::isSiteRequest()) { /* ... */ }
 ```
 
@@ -35,15 +35,15 @@ See [Navigation](../../03_Documents/03_Navigation.md) for more information.
 
 
 #### Getting the full path of a document inside a subsite-request
-```php 
+```php
 $document->getRealFullpath(); // returns the path including the site-root
 $document->getFullPath(); // returns the path relative to the site-root
 ```
 
 
 #### Getting the root-document of the current site
-```php 
-if(\Pimcore\Model\Site::isSiteRequest()) {
+```php
+if (\Pimcore\Model\Site::isSiteRequest()) {
     $site = \Pimcore\Model\Site::getCurrentSite();
     $navStartNode = $site->getRootDocument();
 } else {
@@ -53,7 +53,7 @@ if(\Pimcore\Model\Site::isSiteRequest()) {
 
 #### Some other Tools
 The functionality should be pretty self-explanatory: 
-```php 
+```php
 \Pimcore\Tool\Frontend::getSiteForDocument($document);
 \Pimcore\Tool\Frontend::isDocumentInCurrentSite($document);
 \Pimcore\Tool\Frontend::isDocumentInSite($site, $document);

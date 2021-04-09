@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -26,11 +27,6 @@ use Pimcore\Model\Search\Backend\Data;
 class DataObjects extends Elements implements DataProviderInterface
 {
     /**
-     * @var \Pimcore\Model\Webservice\Service
-     */
-    protected $service;
-
-    /**
      * @var array
      */
     protected $exportIds = [];
@@ -40,14 +36,13 @@ class DataObjects extends Elements implements DataProviderInterface
      */
     protected $config = [];
 
-    public function __construct(\Pimcore\Model\Webservice\Service $service, array $config)
+    public function __construct(array $config)
     {
-        $this->service = $service;
         $this->config = $config;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -55,7 +50,7 @@ class DataObjects extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getJsClassName(): string
     {
@@ -77,12 +72,16 @@ class DataObjects extends Elements implements DataProviderInterface
 
         $exportResult = [];
 
-        foreach (array_keys($this->exportIds['object']) as $id) {
-            $exportResult[] = $this->service->getObjectConcreteById($id);
+        if (!empty($this->exportIds['object'])) {
+            foreach (array_keys($this->exportIds['object']) as $id) {
+                $object = AbstractObject::getById($id);
+                $exportResult[] = Exporter::exportObject($object);
+            }
         }
-        if ($this->exportIds['image']) {
+        if (!empty($this->exportIds['image'])) {
             foreach (array_keys($this->exportIds['image']) as $id) {
-                $exportResult[] = $this->service->getAssetFileById($id);
+                $theAsset = Asset::getById($id);
+                $exportResult[] = Exporter::exportAsset($theAsset);
             }
         }
 
@@ -94,7 +93,7 @@ class DataObjects extends Elements implements DataProviderInterface
         $this->exportIds[$element->getType()][$element->getId()] = true;
 
         if ($element instanceof Concrete) {
-            $subFields = $this->config['classes'][$element->getClass()->getName()]['includedRelations'];
+            $subFields = $this->config['classes'][$element->getClass()->getName()]['includedRelations'] ?? [];
             if ($subFields) {
                 foreach ($subFields as $field) {
                     $getter = 'get' . ucfirst($field);
@@ -212,7 +211,7 @@ class DataObjects extends Elements implements DataProviderInterface
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element instanceof Concrete) {
                 $data = \Pimcore\Model\DataObject\Service::gridObjectData($element);
-                $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'];
+                $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;
                 $elements[] = $data;
             }
         }
@@ -228,7 +227,7 @@ class DataObjects extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortPriority(): int
     {

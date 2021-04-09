@@ -4,7 +4,7 @@ We recommend the usage of standard tools depending on your infrastructure for cr
 
 No matter which solution your're using, it's crucial to back up the following components: 
 - All files in your project root, however you can normally exclude the following directories 
-`web/var/tmp`, `var/tmp`, `var/logs`, `var/cache` and `var/sessions`
+`web/var/tmp`, `var/tmp`, `var/log`, `var/cache` and `var/sessions`
 - The entire database 
 
 ## Poor man's backup using Unix tools
@@ -12,7 +12,7 @@ No matter which solution your're using, it's crucial to back up the following co
 We definitely recommend to use a professional backup solution depending on your infrastructure, but sometimes a poor 
 man's backup can be quite handy :) 
 
-```bash 
+```bash
 
 # change directory to your project root 
 cd /var/www/your/project/

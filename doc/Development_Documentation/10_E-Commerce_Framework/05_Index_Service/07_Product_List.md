@@ -7,7 +7,7 @@ Product Index implementation specific. Detailed method documentation is availabl
 For how to get a Product List instance suitable for the current Product Index implementation and filter for products see 
 following code sample: 
 
-```php 
+```php
 <?php 
 $list = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
 $list->addCondition("name = 'testproduct'", 'name');
@@ -18,8 +18,8 @@ $list->load();
 ```
 
 All filtered attributes need to be in the *Product Index*. The Product List implements all iterator and paginator 
-interfaces and can be used in foreach loops and in combination with `Zend\Paginator`. 
+interfaces and can be used in foreach loops and in combination with `Knp\Paginator`. 
 
 > For logging standard Symfony logging is used. E-Commerce Framework Product Indices log into special channels like
-> `pimcore_ecommerce_indexupdater`, `pimcore_ecommerce_sql`, `pimcore_ecommerce_factfinder ` (Deprecated since 6.7.0), `pimcore_ecommerce_es`
+> `pimcore_ecommerce_indexupdater`, `pimcore_ecommerce_sql`, `pimcore_ecommerce_es`
 > and `pimcore_ecommerce_findologic`. 

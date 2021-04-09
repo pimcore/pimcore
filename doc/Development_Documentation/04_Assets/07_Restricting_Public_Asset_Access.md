@@ -21,12 +21,12 @@ backend permissions this is necessary anyway).
 
 ![Protected Folder](../img/asset-access-restriction.png)
 
+**Apache**
+
 In the `.htaccess` of the project, the access to this folder has to be restricted with an additional rewrite rule. It is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery. 
 
-**Apache**
-```.htaccess
-
+```apache
 ...
 RewriteRule ^protected/.* - [F,L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
@@ -34,12 +34,13 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
-
 ```
 
 **Nginx**
+
 Add the following parts to your Nginx configuration directly after the index directive. 
-````
+
+```nginx
 location ~ ^/protected/.* {
   return 403;
 }
@@ -51,7 +52,8 @@ location ~ ^/var/.*/protected(.*) {
 location ~ ^/cache-buster\-[\d]+/protected(.*) {
   return 403;
 }
-````
+```
+
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
@@ -69,12 +71,12 @@ Again all confidential assets need to be stored within one (or a few) folders, e
 
 ![Protected Folder](../img/asset-access-restriction.png)
 
+**Apache**
+
 In the `.htaccess` of the project, requests to assets of this folder need to be routed to `app.php`. Again, it is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery.
 
-**Apache**
-```.htaccess
- 
+```apache
 ...
 RewriteRule ^protected/(.*) %{ENV:BASE}/app.php [L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
@@ -82,13 +84,13 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
- 
 ```
 
 **Nginx**
+
 Add the following parts to your Nginx configuration directly after the index directive. 
 
-````
+```nginx
 rewrite ^(/protected/.*) /app.php$is_args$args last;
 
 location ~ ^/var/.*/protected(.*) {
@@ -98,26 +100,25 @@ location ~ ^/var/.*/protected(.*) {
 location ~ ^/cache-buster\-[\d]+/protected(.*) {
   return 403;
 }
-````
+```
+
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
 In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
 
-```php
-// app/config/routing.yml
+```yaml
+# app/config/routing.yml
 
-// important this has to be the first route in the file!
+# important this has to be the first route in the file!
 asset_protect:
     path: /protected/{path}
     defaults: { _controller: MyAssetController:protectedAsset }
     requirements:
         path: '.*'
-
 ```
 
-
-```php 
+```php
 <?php
 
 namespace AppBundle\Controller;
@@ -128,7 +129,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouteCollection;use Symfony\Component\Templating\Storage\Storage;
 
 class MyAssetController extends FrontendController
 {
@@ -142,14 +143,24 @@ class MyAssetController extends FrontendController
         // modify it the way you need it for your use-case
         $pathInfo = $request->getPathInfo();
         $asset = Asset::getByPath($pathInfo);
-        if($asset){
-            return new BinaryFileResponse($asset->getFileSystemPath());
-        } elseif(preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
+        if ($asset){
+            $stream = $asset->getStream();
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+            ]);
+        } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
 
-            $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . urldecode($pathInfo);
-
-            if(is_file($filePath)){
-                return new BinaryFileResponse($filePath);
+            $storage = Storage::get('thumbnail');
+            $storagePath = urldecode($pathInfo);
+            if($storage->fileExists($storagePath)){
+                $stream = $storage->readStream($storagePath);
+                return new StreamedResponse(function () use ($stream) {
+                    fpassthru($stream);
+                }, 200, [
+                    'Content-Type' => $storage->mimeType($storagePath),
+                ]);
             } else {
                 $pimcoreThumbnailRoute = '_pimcore_service_thumbnail';
                 $route = $this->get('router')->getRouteCollection()->get($pimcoreThumbnailRoute);
@@ -161,7 +172,7 @@ class MyAssetController extends FrontendController
                     $parameters = $matcher->matchRequest($request);
                     $response = $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
                     return $response;
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     // nothing to do
                 }
             }

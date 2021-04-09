@@ -28,11 +28,14 @@ use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
 use Pimcore\Event\Analytics\GoogleTagManagerEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class GoogleTagManagerListener
+/**
+ * @internal
+ */
+final class GoogleTagManagerListener
 {
     const BLOCK_HEAD_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
     const BLOCK_HEAD_AFTER_SCRIPT_TAG = 'afterScriptTag';
@@ -86,7 +89,7 @@ class GoogleTagManagerListener
         $this->templatingEngine = $templatingEngine;
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (!$this->isEnabled()) {
             return;
@@ -174,7 +177,7 @@ class GoogleTagManagerListener
 
         $event = new CodeEvent($data, $blocks, $template);
 
-        $this->eventDispatcher->dispatch($eventName, $event);
+        $this->eventDispatcher->dispatch($event, $eventName);
 
         return $this->renderTemplate($event);
     }

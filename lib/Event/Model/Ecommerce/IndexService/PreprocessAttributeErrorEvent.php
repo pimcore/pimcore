@@ -24,19 +24,19 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
     protected $attribute;
 
     /**
-     * skip attribute is currently the default behavior.
-     *
      * @var bool
      */
-    protected $skipAttribute = true;
+    protected $skipAttribute = false;
 
     /**
      * PreprocessAttributeErrorEvent constructor.
      *
      * @param Attribute $attribute
+     * @param \Throwable $exception
      * @param bool $skipAttribute
+     * @param bool $throwException
      */
-    public function __construct(Attribute $attribute, \Throwable $exception, bool $skipAttribute = true, bool $throwException = false)
+    public function __construct(Attribute $attribute, \Throwable $exception, bool $skipAttribute = false, bool $throwException = true)
     {
         parent::__construct($exception, $throwException);
         $this->attribute = $attribute;

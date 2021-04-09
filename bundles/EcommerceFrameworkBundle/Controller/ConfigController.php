@@ -22,11 +22,13 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class ConfigController
  *
  * @Route("/config")
+ *
+ * @internal
  */
-class ConfigController extends AdminController
+final class ConfigController extends AdminController
 {
     /**
-     * @Route("/js-config", methods={"GET"})
+     * @Route("/js-config", name="pimcore_ecommerceframework_config_jsconfig", methods={"GET"})
      *
      * @return string
      */

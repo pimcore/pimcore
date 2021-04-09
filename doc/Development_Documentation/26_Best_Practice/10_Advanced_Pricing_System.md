@@ -98,7 +98,7 @@ productIds that apply the other filter criteria (without offset and limit) needs
  
 Following sample implementation does that by using a sql query:
  
-```php 
+```php
 <?php
     /**
      * Filters and orders given product IDs based on price information
@@ -139,7 +139,7 @@ Following sample implementation does that by using a sql query:
 
 To tell the product list that sorting should be done based on prices, use `ProductListInterface::ORDERKEY_PRICE` as order key 
 as follows: 
-```php 
+```php
 $products = $factory->getIndexService()->getProductListForCurrentTenant();
 $products->setOrderKey(ProductListInterface::ORDERKEY_PRICE);
 ```

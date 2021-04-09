@@ -17,10 +17,9 @@
 
 namespace Pimcore\Model\Element\Recyclebin;
 
-use DeepCopy\DeepCopy;
 use DeepCopy\TypeMatcher\TypeMatcher;
+use League\Flysystem\StorageAttributes;
 use Pimcore\Cache;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -30,11 +29,14 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
-use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
+use Pimcore\Tool\Storage;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\Element\Recyclebin\Item\Dao getDao()
  */
 class Item extends Model\AbstractModel
@@ -42,42 +44,42 @@ class Item extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $path;
+    protected $path;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      */
-    public $subtype;
+    protected $subtype;
 
     /**
      * @var int
      */
-    public $amount = 0;
+    protected $amount = 0;
 
     /**
      * @var Element\ElementInterface
      */
-    public $element;
+    protected $element;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var string
      */
-    public $deletedby;
+    protected $deletedby;
 
     /**
      * @static
@@ -119,7 +121,7 @@ class Item extends Model\AbstractModel
     public function restore($user = null)
     {
         $dummy = null;
-        $raw = file_get_contents($this->getStoreageFile());
+        $raw = Storage::get('recycle_bin')->read($this->getStoreageFile());
         $element = Serialize::unserialize($raw);
 
         // check for element with the same name
@@ -157,18 +159,18 @@ class Item extends Model\AbstractModel
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $element->getParent();
-            if (!$parent->isAllowed('publish')) {
+            if ($parent && !$parent->isAllowed('publish')) {
                 throw new \Exception('Not sufficient permissions');
             }
         }
 
         try {
-            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-            AbstractObject::disableDirtyDetection();
+            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::disableDirtyDetection();
 
             $this->doRecursiveRestore($element);
 
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         } catch (\Exception $e) {
             Logger::error($e);
             if ($dummy) {
@@ -185,10 +187,7 @@ class Item extends Model\AbstractModel
      */
     public function save($user = null)
     {
-        if ($this->getElement() instanceof Element\ElementInterface) {
-            $this->setType(Element\Service::getElementType($this->getElement()));
-        }
-
+        $this->setType(Element\Service::getElementType($this->getElement()));
         $this->setSubtype($this->getElement()->getType());
         $this->setPath($this->getElement()->getRealFullPath());
         $this->setDate(time());
@@ -207,20 +206,14 @@ class Item extends Model\AbstractModel
 
         $this->getDao()->save();
 
-        if (!is_dir(PIMCORE_RECYCLEBIN_DIRECTORY)) {
-            File::mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
-        }
+        $storage = Storage::get('recycle_bin');
+        $storage->write($this->getStoreageFile(), $data);
 
-        File::put($this->getStoreageFile(), $data);
-
-        $saveBinaryData = function ($element, $rec, $scope) {
+        $saveBinaryData = function ($element, $rec, self $scope) use ($storage) {
             // assets are kind of special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
                 if ($element->getType() != 'folder') {
-                    $handle = fopen($scope->getStorageFileBinary($element), 'w', false, File::getContext());
-                    $src = $element->getStream();
-                    stream_copy_to_stream($src, $handle);
-                    fclose($handle);
+                    $storage->writeStream($scope->getStorageFileBinary($element), $element->getStream());
                 }
 
                 if (method_exists($element, 'getChildren')) {
@@ -233,20 +226,20 @@ class Item extends Model\AbstractModel
         };
 
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
-
-        @chmod($this->getStoreageFile(), File::getDefaultMode());
     }
 
     public function delete()
     {
-        unlink($this->getStoreageFile());
+        $storage = Storage::get('recycle_bin');
+        $storage->delete($this->getStoreageFile());
 
-        // remove binary files
-        $files = glob(PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $this->getId() . '_*');
-        if (is_array($files)) {
-            foreach ($files as $file) {
-                unlink($file);
-            }
+        $files = $storage->listContents($this->getType())->filter(function (StorageAttributes $item) {
+            return (bool) strpos($item->path(), '/' . $this->getId() . '_');
+        });
+
+        /** @var StorageAttributes $item */
+        foreach ($files as $item) {
+            $storage->delete($item->path());
         }
 
         $this->getDao()->delete();
@@ -296,13 +289,13 @@ class Item extends Model\AbstractModel
      */
     protected function doRecursiveRestore(Element\ElementInterface $element)
     {
-        $restoreBinaryData = function ($element, $scope) {
+        $storage = Storage::get('recycle_bin');
+        $restoreBinaryData = function (Element\ElementInterface $element, self $scope) use ($storage) {
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
                 $binFile = $scope->getStorageFileBinary($element);
-                if (file_exists($binFile)) {
-                    $binaryHandle = fopen($binFile, 'r', false, File::getContext());
-                    $element->setStream($binaryHandle);
+                if ($storage->fileExists($binFile)) {
+                    $element->setStream($storage->readStream($binFile));
                 }
             }
         };
@@ -341,10 +334,11 @@ class Item extends Model\AbstractModel
     public function marshalData($data)
     {
         //for full dump of relation fields in container types
-        $copier = new DeepCopy();
-        $copier->skipUncloneable(true);
-
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
+        $context = [
+            'source' => __METHOD__,
+            'default' => true,
+        ];
+        $copier = Element\Service::getDeepCopyInstance($data, $context);
 
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
@@ -368,7 +362,6 @@ class Item extends Model\AbstractModel
                 }
             }
         );
-        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
 
         //filter for marshaling custom data-types which implements CustomRecyclingMarshalInterface
         if ($data instanceof Concrete) {
@@ -396,25 +389,14 @@ class Item extends Model\AbstractModel
      */
     public function unmarshalData($data)
     {
-        $copier = new DeepCopy();
-        $copier->addTypeFilter(
-            new \DeepCopy\TypeFilter\ReplaceFilter(
-                function ($currentValue) {
-                    if ($currentValue instanceof Element\ElementDescriptor) {
-                        $value = Element\Service::getElementById($currentValue->getType(), $currentValue->getId());
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => 'unmarshal',
+        ];
+        $copier = Element\Service::getDeepCopyInstance($data, $context);
 
-                        return $value;
-                    }
-
-                    return $currentValue;
-                }
-            ),
-            new Model\Version\UnmarshalMatcher()
-        );
-        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
-
+        //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface
         if ($data instanceof Concrete) {
-            //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface
             $copier->addFilter(
                 new PimcoreClassDefinitionReplaceFilter(
                     function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
@@ -436,7 +418,7 @@ class Item extends Model\AbstractModel
      */
     public function getStoreageFile()
     {
-        return PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $this->getId() . '.psf';
+        return sprintf('%s/%s.psf', $this->getType(), $this->getId());
     }
 
     /**
@@ -444,9 +426,9 @@ class Item extends Model\AbstractModel
      *
      * @return string
      */
-    public function getStorageFileBinary($element)
+    protected function getStorageFileBinary($element)
     {
-        return PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $this->getId() . '_' . Element\Service::getElementType($element) . '-' . $element->getId() . '.bin';
+        return sprintf('%s/%s_%s-%s.bin', $this->getType(), $this->getId(), Element\Service::getElementType($element), $element->getId());
     }
 
     /**

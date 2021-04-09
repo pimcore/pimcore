@@ -23,5 +23,3 @@ interface FilterServiceLocatorInterface
 
     public function hasFilterService(string $tenant): bool;
 }
-
-class_alias(FilterServiceLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator');

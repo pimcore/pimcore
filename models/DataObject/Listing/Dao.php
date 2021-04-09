@@ -17,20 +17,19 @@
 
 namespace Pimcore\Model\DataObject\Listing;
 
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /**
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
+    use QueryBuilderHelperTrait;
 
     /**
      * @return string
@@ -41,41 +40,23 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param array|string|Expression $columns
+     * @param string|string[]|null $columns
      *
-     * @return QueryBuilder
+     * @return DoctrineQueryBuilder
      *
      * @throws \Exception
      */
-    public function getQuery($columns = '*')
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
-        // init
-        $select = $this->db->select();
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from($this->getTableName());
 
-        // create base
-        $select->from([$this->getTableName()], $columns);
+        // apply joins
+        $this->applyJoins($queryBuilder);
 
-        // add joins
-        $this->addJoins($select);
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
 
-        // add condition
-        $this->addConditions($select);
-
-        // group by
-        $this->addGroupBy($select);
-
-        // order
-        $this->addOrder($select);
-
-        // limit
-        $this->addLimit($select);
-
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        return $select;
+        return $queryBuilder;
     }
 
     /**
@@ -106,51 +87,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $query = $this->getQuery();
+        $queryBuilder = $this->getQueryBuilder();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        if ($this->model->addDistinct()) {
-            $query->distinct(true);
-        }
-
-        $query->reset(QueryBuilder::LIMIT_COUNT);
-        $query->reset(QueryBuilder::LIMIT_OFFSET);
-        $query->reset(QueryBuilder::ORDER);
-
-        if ($this->isQueryPartinUse($query, QueryBuilder::GROUP) || $this->isQueryPartinUse($query, QueryBuilder::HAVING)) {
-            $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
-        } else {
-            $query->reset(QueryBuilder::COLUMNS);
-
-            $countIdentifier = '*';
-            if ($this->isQueryPartinUse($query, QueryBuilder::DISTINCT)) {
-                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-            }
-
-            $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
-        }
-
-        $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return (int) $totalCount;
-    }
-
-    /**
-     * @param QueryBuilder $query
-     * @param string $part
-     *
-     * @return bool
-     */
-    private function isQueryPartinUse($query, $part)
-    {
-        try {
-            if ($query->getPart($part)) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // do nothing
-        }
-
-        return false;
     }
 
     /**
@@ -174,61 +116,19 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $query = $this->getQuery([new Expression(sprintf('%s as o_id', $this->getTableName() . '.o_id')), 'o_type']);
-        $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder([sprintf('%s as o_id', $this->getTableName() . '.o_id'), 'o_type']);
+        $objectIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $objectIds);
     }
 
     /**
-     * @param QueryBuilder $select
+     * @param DoctrineQueryBuilder $queryBuilder
      *
      * @return $this
      */
-    protected function addJoins(QueryBuilder $select)
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
     {
         return $this;
-    }
-
-    /**
-     * @param QueryBuilder $select
-     *
-     * @return $this
-     */
-    protected function addConditions(QueryBuilder $select)
-    {
-        $condition = $this->model->getCondition();
-        $objectTypes = $this->model->getObjectTypes();
-
-        $tableName = $this->getTableName();
-
-        if (!empty($objectTypes)) {
-            if (!empty($condition)) {
-                $condition .= ' AND ';
-            }
-            $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
-        }
-
-        if ($condition) {
-            if (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
-            }
-        } elseif (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-            $condition = $tableName . '.o_published = 1';
-        }
-
-        if ($condition) {
-            $select->where($condition);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        $this->onCreateQueryCallback = $callback;
     }
 }

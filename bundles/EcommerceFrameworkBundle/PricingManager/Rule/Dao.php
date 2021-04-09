@@ -18,6 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Model\Dao\AbstractDao;
 
 /**
+ * @internal
+ *
  * @property Rule $model
  */
 class Dao extends AbstractDao

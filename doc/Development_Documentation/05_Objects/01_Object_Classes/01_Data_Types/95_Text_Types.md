@@ -93,7 +93,7 @@ Please refer to the [CKeditor 4.0 Documentation](http://docs.ckeditor.com/).
 
   
 ### Global Configuration
-You can add a Global Configuration for all WYSIWYG Editors for all objects by setting ```pimcore.object.tags.wysiwyg.defaultEditorConfig```
+You can add a Global Configuration for all WYSIWYG Editors for all objects by setting `pimcore.object.tags.wysiwyg.defaultEditorConfig`
 
 For this purpose, you can create a bundle and add the configuration in the new created file `/Resources/public/js/pimcore/startup.js` like this:
 

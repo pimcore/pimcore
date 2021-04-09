@@ -15,10 +15,13 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class PimcoreHeaderListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class PimcoreHeaderListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
@@ -28,9 +31,9 @@ class PimcoreHeaderListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param ResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         if ($event->isMasterRequest()) {
             $response = $event->getResponse();

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element\Processor;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Sitemap\Element\ProcessorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
@@ -28,7 +28,7 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
  */
 class ModificationDateProcessor implements ProcessorInterface
 {
-    public function process(Url $url, AbstractElement $element, GeneratorContextInterface $context)
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
     {
         if (!$url instanceof UrlConcrete) {
             return $url;

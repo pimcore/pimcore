@@ -24,6 +24,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 
+/**
+ * @internal
+ */
 class PermissionChecker
 {
     public static function check(ElementInterface $element, $users)

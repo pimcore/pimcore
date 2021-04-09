@@ -28,37 +28,37 @@ class Task extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var string
      */
-    public $action;
+    protected $action;
 
     /**
      * @var int
      */
-    public $version;
+    protected $version;
 
     /**
      * @var bool
      */
-    public $active;
+    protected $active;
 
     /**
      * @var null|int
@@ -82,7 +82,7 @@ class Task extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $task = new self();
-                $task->getDao()->getById(intval($id));
+                $task->getDao()->getById((int)$id);
                 \Pimcore\Cache\Runtime::set($cacheKey, $task);
             } catch (\Exception $e) {
                 return null;
@@ -100,6 +100,7 @@ class Task extends Model\AbstractModel
     public static function create($data)
     {
         $task = new self();
+        self::checkCreateData($data);
         $task->setValues($data);
 
         return $task;

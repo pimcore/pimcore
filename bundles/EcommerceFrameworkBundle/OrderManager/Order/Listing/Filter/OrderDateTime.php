@@ -42,14 +42,14 @@ class OrderDateTime implements OrderListFilterInterface
     public function apply(OrderListInterface $orderList)
     {
         // init
-        $query = $orderList->getQuery();
+        $queryBuilder = $orderList->getQueryBuilder();
 
         if ($this->getFrom()) {
-            $query->where($this->getColumn() . ' >= ?', $this->getFrom()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter(':from_date', $this->getFrom()->getTimestamp());
         }
 
         if ($this->getTill()) {
-            $query->where($this->getColumn() . ' <= ?', $this->getTill()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter(':till_date', $this->getTill()->getTimestamp());
         }
 
         return $this;

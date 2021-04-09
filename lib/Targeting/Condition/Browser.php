@@ -34,7 +34,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -42,7 +42,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataProviderKeys(): array
     {
@@ -50,7 +50,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -58,7 +58,7 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
@@ -75,6 +75,10 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
 
         $type = $client['type'] ?? null;
         $name = $client['name'] ?? null;
+
+        if ($this->browser === 'ie') {
+            $this->browser = 'Internet Explorer';
+        }
 
         if ('browser' === $type && strtolower($name ?? '') === strtolower($this->browser)) {
             $this->setMatchedVariables([

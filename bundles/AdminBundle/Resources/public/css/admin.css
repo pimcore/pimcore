@@ -1112,7 +1112,12 @@ span.warning {
     height: 13px;
 }
 
-.pimcore_tag_wysiwyg {
+[class^="pimcore_tag_"], [class*=" pimcore_tag_"] {
+    --deprecated: "Warning! pimcore_tag_* class selectors are deprecated and will be removed in Pimcore 10. Use .pimcore_editable_* instead";
+}
+
+.pimcore_tag_wysiwyg,
+.pimcore_editable_wysiwyg {
     position:relative;
     padding: 10px;
     min-height: 80px;
@@ -1120,67 +1125,80 @@ span.warning {
     background-color: #fff;
 }
 
-.pimcore_tag_wysiwyg strong {
+.pimcore_tag_wysiwyg strong,
+.pimcore_editable_wysiwyg strong {
     font-weight: bold !important;
     font-style: inherit;
 }
 
-.pimcore_tag_wysiwyg em {
+.pimcore_tag_wysiwyg em,
+.pimcore_editable_wysiwyg em {
     font-style: italic !important;
     font-weight: inherit;
 }
 
-.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol {
+.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol,
+.pimcore_editable_wysiwyg ul, .pimcore_editable_wysiwyg ol {
     list-style: inherit;
     margin:inherit;
     padding-left: 30px;
 }
 
-.pimcore_tag_wysiwyg ol {
+.pimcore_tag_wysiwyg ol,
+.pimcore_editable_wysiwyg ol {
     list-style: decimal;
 }
 
-.pimcore_tag_wysiwyg ul {
+.pimcore_tag_wysiwyg ul,
+.pimcore_editable_wysiwyg ul {
     list-style: disc;
 }
 
-.pimcore_tag_wysiwyg blockquote {
+.pimcore_tag_wysiwyg blockquote,
+.pimcore_editable_wysiwyg blockquote {
     padding-left: 20px;
     border-left: 3px solid #666666;
 }
 
-.pimcore_tag_wysiwyg h1 {
+.pimcore_tag_wysiwyg h1,
+.pimcore_editable_wysiwyg h1 {
     font-size: 28px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h2 {
+.pimcore_tag_wysiwyg h2,
+.pimcore_editable_wysiwyg h2 {
     font-size: 24px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h3 {
+.pimcore_tag_wysiwyg h3,
+.pimcore_editable_wysiwyg h3 {
     font-size: 20px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h4 {
+.pimcore_tag_wysiwyg h4,
+.pimcore_editable_wysiwyg h4 {
     font-size: 18px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h5 {
+.pimcore_tag_wysiwyg h5,
+.pimcore_editable_wysiwyg h5 {
     font-size: 14px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg table {
+.pimcore_tag_wysiwyg table,
+.pimcore_editable_wysiwyg table {
     border-collapse: collapse;
     border-top:1px solid #333333;
     border-right:1px solid #333333;
 }
 
-.pimcore_tag_wysiwyg table td, .pimcore_tag_wysiwyg table th{
+.pimcore_tag_wysiwyg table td, .pimcore_tag_wysiwyg table th,
+.pimcore_editable_wysiwyg table td, .pimcore_editable_wysiwyg table th {
     border-left:1px solid #333333;
     border-bottom:1px solid #333333;
     padding: 3px;
@@ -1332,8 +1350,8 @@ span.warning {
 }
 
 
-/* ExtJS 6.0 specific styles */
-#pimcore_panel_tabs > .x-tab-bar {
+/* ExtJS 6.0 + 7.0 specific styles */
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar {
     background: #0C0F12;
     background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
     background-repeat: no-repeat;
@@ -1341,66 +1359,66 @@ span.warning {
     background-size: 105px;
 }
 
-#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar > .x-tab-bar-body {
     min-height: 36px;
     padding-top: 0;
     padding-left: 0;
 }
 
-#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-strip-default {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar > .x-tab-bar-strip-default {
     border-bottom: 0;
 }
 
-#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar > .x-tab-bar-body .x-tab {
     background: #0C0F12;
     box-shadow: none;
     border-left: 1px solid #2A2D30;
     padding: 6px 20px 6px 10px;
 }
 
-#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab:first-child {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar > .x-tab-bar-body .x-tab:first-child {
     border-left: 0;
 }
 
-#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab-active {
+#pimcore_panel_tabs  > .x-panel-bodyWrap  > .x-tab-bar  .x-tab-bar-body .x-tab-active {
     background: #393C3F;
     border-color: #393C3F;
 }
 
-#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab-active + .x-tab {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar > .x-tab-bar-body .x-tab-active + .x-tab {
     border-color: #0C0F12;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-tab-default-top {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-default-top {
     background-color: #3c3f41;
     border-top: 0;
     padding-top: 5px;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-tab-over .x-tab-default-top {
+#pimcore_panel_tabs > .x-panel-bodyWrap >.x-tab-bar .x-tab-over .x-tab-default-top {
     background-color: #2b2d2e;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-tab-inner-default {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-inner-default {
     color: #fff;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-tab-active .x-tab-inner-default {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-active .x-tab-inner-default {
     color: #fff;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-box-scroller-tab-bar-default {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-box-scroller-tab-bar-default {
     color: #fff;
     background: #0C0F12;
     z-index: 1000;
 }
 
-#pimcore_panel_tabs > .x-panel-body > .x-tabpanel-child {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-panel-body > .x-tabpanel-child {
     border-color: #393C3F;
     border-top-width: 3px;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-tab-close-btn {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-close-btn {
     width: 20px;
     height: 20px;
     border-radius: 10px;
@@ -1413,12 +1431,12 @@ span.warning {
     color: #202124;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-tab-active .x-tab-close-btn {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-active .x-tab-close-btn {
     background-color: #6D6D6D;
     color: #2A2D30;
 }
 
-#pimcore_panel_tabs > .x-tab-bar .x-tab-close-btn-over {
+#pimcore_panel_tabs > .x-panel-bodyWrap > .x-tab-bar .x-tab-close-btn-over {
     background-color: #777777 !important;
 }
 
@@ -1483,56 +1501,57 @@ span.warning {
     border-right: 0;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default {
     background: #393C3F;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-bar-body {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab-bar-body {
     padding-top: 3px;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab {
+/* TODO here */
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab {
     background: #393C3F;
     border-left: 1px solid #616467;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active + .x-tab, .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab:first-child {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab.x-tab-active + .x-tab, .pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab:first-child {
     border-color: #393C3F;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab .x-tab-inner-default {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab .x-tab-inner-default {
     color: #B2B4B6;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab.x-tab-active {
     background-color: #f6f6f6;
     opacity: 1;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .x-tab-inner-default {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab.x-tab-active .x-tab-inner-default {
     color: #000 !important;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .pimcore_material_icon {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab.x-tab-active .pimcore_material_icon {
     filter: invert(100%);
 }
 
-.x-ie11 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .pimcore_material_icon {
+.x-ie11 .pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab.x-tab-active .pimcore_material_icon {
     border-radius: 15px;
     background-color: #393C3F;
     background-size: 15px 15px;
     opacity: 1;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-over .x-tab-inner-default {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab.x-tab-over .x-tab-inner-default {
     color: #fff;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-bar-strip-default {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab-bar-strip-default {
     border-bottom: 0;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-button-default {
+.pimcore_main_toolbar + .x-panel > .x-panel-bodyWrap > .x-tab-bar-default .x-tab-button-default {
     height: 25px;
 }
 
@@ -1692,7 +1711,7 @@ span.warning {
 
 .pimcore_main_toolbar .pimcore_save_button {
     background: #28a050;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
 }
 
 .pimcore_main_toolbar .pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
@@ -1745,10 +1764,14 @@ span.warning {
 .pimcore_button_black {
     background-color: #3c3f41;
     border-color: #3c3f41;
+    margin-top: 1px !important;
 }
 
-.pimcore_button_black.x-btn-over, .pimcore_button_black.x-btn.x-btn-pressed {
-    background-color: #000;
+.pimcore_button_black.x-btn-over,
+.pimcore_button_black.x-btn.x-btn-pressed,
+.pimcore_button_black.x-btn.x-btn-focus {
+    background-color: #000 !important;
+    border-color: #000;
 }
 
 .pimcore_button_transparent {
@@ -1762,7 +1785,7 @@ span.warning {
     height: 32px;
     content: "";
     background-color: #000;
-    top: 6px;
+    top: 8px;
     left: 39px;
     z-index: 1000;
 }
@@ -2132,7 +2155,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 #leafletmap.personalization-geopoint .leaflet-pane.leaflet-marker-pane .leaflet-marker-icon.leaflet-edit-move {
-   display: none;
+    display: none;
 }
 
 .object_geo_field .leaflet-edit-marker-selected {
@@ -2277,7 +2300,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 /** END notifications **/
 
 .x-body .sf-minitoolbar {
-    left:0;
+    left:12px;
     right:auto;
     bottom: 195px;
     background: #0C0F12;

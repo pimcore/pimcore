@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
-use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
@@ -44,30 +43,22 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     private $requestHelper;
 
     /**
-     * @var ConfigNormalizer
-     */
-    private $configNormalizer;
-
-    /**
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
-     * @param ConfigNormalizer $configNormalizer
      */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
-        RequestHelper $requestHelper,
-        ConfigNormalizer $configNormalizer
+        RequestHelper $requestHelper
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
-        $this->configNormalizer = $configNormalizer;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteByName(string $name)
     {
@@ -86,17 +77,13 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {
-        $siteIds = [0];
+        $slug = null;
         $site = $this->siteResolver->getSite($context->getRequest());
-        if ($site) {
-            $siteIds[] = $site->getId();
-        }
-
-        $slug = DataObject\Data\UrlSlug::resolveSlug($context->getPath());
+        $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), $site ? $site->getId() : 0);
         if ($slug) {
             $object = DataObject::getById($slug->getObjectId());
             if ($object instanceof DataObject\Concrete && $object->isPublished()) {

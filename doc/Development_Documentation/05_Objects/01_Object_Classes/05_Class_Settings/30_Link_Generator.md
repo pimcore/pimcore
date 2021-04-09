@@ -127,16 +127,6 @@ would produce the following output
 
 #### path() / url()
 
-<div class="code-section">
-
-```php
-<ul class="foo">
-    <?php foreach($this->carList as $car) { ?>
-        <li><a href="<?= $this->path($car); ?>"><?= $car->getName() ?></a></li>
-    <?php } ?>
-</ul>
-```
-
 ```twig
 <ul class="foo">
     {% for car in carList %}
@@ -145,19 +135,7 @@ would produce the following output
 </ul>
 ```
 
-</div>
-
 #### pimcoreUrl
-
-<div class="code-section">
-
-```php
-<ul class="foo">
-    <?php foreach($this->carList as $car) { ?>
-        <li><a href="<?= $this->pimcoreUrl(['object' => $car]); ?>"><?= $car->getName() ?></a></li>
-    <?php } ?>
-</ul>
-```
 
 ```twig
 <ul class="foo">
@@ -166,5 +144,3 @@ would produce the following output
     {% endfor %}
 </ul>
 ```
-
-</div>

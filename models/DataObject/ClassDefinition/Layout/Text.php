@@ -118,7 +118,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param Model\DataObject\Concrete $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $context additional contextual data
      *
      * @return self
@@ -137,7 +137,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
             @trigger_error('Using a text renderer class which does not implement ' . DynamicTextLabelInterface::class.' is deprecated', \E_USER_DEPRECATED);
         }
 
-        if (method_exists($renderer, 'renderLayoutText')) {
+        if (method_exists($renderer, 'renderLayoutText') && $object) {
             $context['fieldname'] = $this->getName();
             $context['layout'] = $this;
             $result = call_user_func([$renderer, 'renderLayoutText'], $this->renderingData, $object, $context);

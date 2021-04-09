@@ -19,7 +19,10 @@ class BlogController extends FrontendController
         //your custom code....
 
         //return the pdf
-        $html = $this->renderView(':Blog:index.html.php', $this->view->getAllParameters());
+        $html = $this->renderView(':Blog:index.html.php', [
+            'document' => $this->document,
+            'editmode' => $this->editmode,
+        ]);
         return new \Symfony\Component\HttpFoundation\Response(
             \Pimcore\Web2Print\Processor::getInstance()->getPdfFromString($html),
             200,
@@ -39,7 +42,10 @@ class BlogController extends FrontendController
         //your custom code....
 
         //return the pdf
-            $params = $this->view->getAllParameters();
+            $params = [
+                  'document' => $this->document,
+                  'editmode' => $this->editmode,
+              ];
             $params['testPlaceholder'] = ' :-)';
             $html = $this->renderView(':Blog:index.html.php', $params);
 
@@ -47,7 +53,7 @@ class BlogController extends FrontendController
             //add custom settings if necessary
             if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
                 $params['adapterConfig'] = '-O landscape';
-            } elseif($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+            } elseif($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
                 //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
                 $params['adapterConfig'] = [
                     'author' => 'Max Mustermann',

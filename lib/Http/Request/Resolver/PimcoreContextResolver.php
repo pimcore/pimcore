@@ -30,17 +30,12 @@ class PimcoreContextResolver extends AbstractRequestResolver
     const CONTEXT_DEFAULT = 'default';
 
     /**
-     * @deprecated
-     */
-    const CONTEXT_WEBSERVICE = 'webservice';
-
-    /**
      * @var PimcoreContextGuesser
      */
     protected $guesser;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(RequestStack $requestStack, PimcoreContextGuesser $guesser)
     {

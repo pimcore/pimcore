@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
@@ -27,7 +28,6 @@ use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Zend\Paginator\Paginator;
 
 /**
  * Class Pattern
@@ -50,7 +50,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypePattern) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_pattern.html.twig';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_pattern.html.twig';
         } else {
             throw new InvalidConfigException('Invalid Configuration Class for Type VoucherTokenTypePattern.');
         }
@@ -264,10 +264,10 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $prefix = $this->configuration->getPrefix();
         if (!empty($separator)) {
             if (!empty($prefix)) {
-                return strlen($this->configuration->getPrefix()) + 1 + floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
+                return strlen($this->configuration->getPrefix()) + 1 + (int) floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
             }
 
-            return floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
+            return (int) floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
         }
 
         return strlen($this->configuration->getPrefix()) + $this->configuration->getLength();
@@ -393,7 +393,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $finalLength = $this->getFinalTokenLength();
         $insertParts = [];
 
-        if (sizeof($insertTokens) > 0) {
+        if (count($insertTokens) > 0) {
             foreach ($insertTokens as $token) {
                 $insertParts[] =
                     "('" .
@@ -490,7 +490,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             }
 
             // If there are tokens to insert add them to query.
-            if (sizeof($insertTokens)) {
+            if (count($insertTokens)) {
                 $resultTokenSet[] = $insertTokens;
             }
 
@@ -535,29 +535,27 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         try {
             $tokens->setFilterConditions($params['id'], $params);
         } catch (\Exception $e) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_error.html.twig';
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
         if ($tokens) {
-            $paginator = new Paginator($tokens);
-
-            if ($params['tokensPerPage']) {
-                $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
-            } else {
-                $paginator->setItemCountPerPage(25);
-            }
-
-            $paginator->setCurrentPageNumber($params['page']);
+            /** @var PaginatorInterface $paginator */
+            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+            $paginator = $paginator->paginate(
+                $tokens,
+                $params['page'] ?? 1,
+                $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
+            );
 
             $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = sizeof($tokens);
+            $viewParamsBag['count'] = count($tokens);
         } else {
             $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
         }
 
-        $viewParamsBag['msg']['error'] = $params['error'];
-        $viewParamsBag['msg']['success'] = $params['success'];
+        $viewParamsBag['msg']['error'] = $params['error'] ?? '';
+        $viewParamsBag['msg']['success'] = $params['success'] ?? '';
 
         // Settings parsed via foreach in view -> key is translation
         $viewParamsBag['settings'] = [
@@ -594,13 +592,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $tokens = new Token\Listing();
         $tokens->setFilterConditions($params['id'], $params);
 
-        $paginator = new Paginator($tokens);
-        $paginator->setItemCountPerPage(-1);
-
         $data = [];
 
-        /** @var Token $token */
-        foreach ($paginator as $token) {
+        foreach ($tokens as $token) {
             $data[] = [
                 'token' => $token->getToken(),
                 'usages' => $token->getUsages(),

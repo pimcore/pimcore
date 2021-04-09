@@ -69,7 +69,6 @@ class Csv
 
         $writer->insertOne($this->columns);
 
-        /** @var Redirect $redirect */
         foreach ($list->getRedirects() as $redirect) {
             $target = $redirect->getTarget();
 
@@ -120,7 +119,6 @@ class Csv
 
         $dialect = Admin::determineCsvDialect($filename);
 
-        /** @var Reader $reader */
         $reader = Reader::createFromString($content);
         $reader->setOutputBOM(Reader::BOM_UTF8);
         $reader->setDelimiter($dialect->delimiter);
@@ -174,8 +172,12 @@ class Csv
 
         if ($data['id']) {
             $redirect = Redirect::getById($data['id']);
-            $stats['updated']++;
-        } else {
+            if ($redirect instanceof Redirect) {
+                $stats['updated']++;
+            }
+        }
+
+        if (!$redirect instanceof Redirect) {
             $redirect = new Redirect();
             $stats['created']++;
         }
@@ -272,7 +274,7 @@ class Csv
         $resolver->setAllowedTypes('statusCode', ['int']);
         $resolver->setAllowedValues('statusCode', array_map(function ($code) {
             return (int)$code;
-        }, array_keys(Redirect::$statusCodes)));
+        }, array_keys(Redirect::getStatusCodes())));
 
         $resolver->setAllowedTypes('priority', ['int']);
         $resolver->setAllowedValues('priority', array_merge(range(1, 10), [99]));

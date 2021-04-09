@@ -22,8 +22,10 @@ use Symfony\Component\HttpFoundation\Response;
  * Class FindologicController
  *
  * Routing see routing.yml
+ *
+ * @internal
  */
-class FindologicController extends FrontendController
+final class FindologicController extends FrontendController
 {
     /**
      * create xml output for findologic

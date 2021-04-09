@@ -55,6 +55,33 @@
                         "permissions": null,
                         "childs": [
                             {
+                                "fieldtype": "input",
+                                "width": null,
+                                "defaultValue": null,
+                                "queryColumnType": "varchar",
+                                "columnType": "varchar",
+                                "columnLength": 190,
+                                "phpdocType": "string",
+                                "regex": "",
+                                "unique": null,
+                                "showCharCount": null,
+                                "name": "normalInput",
+                                "title": "normalInput",
+                                "tooltip": null,
+                                "mandatory": false,
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": true,
+                                "visibleSearch": true,
+                                "defaultValueGenerator": ""
+                            },
+                            {
                                 "fieldtype": "localizedfields",
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Localizedfield",
                                 "childs": [

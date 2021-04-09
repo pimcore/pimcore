@@ -189,7 +189,7 @@ At the final stage of the workflow I would like to have three choices
 We've already made the reject and start processing transition, the only thing here is to add an additional from place. 
 This can be done because we have workflow type `state_machine` activated, here our modified transition definitions.
 
-```yml 
+```yml
 
 (...)
     transitions:

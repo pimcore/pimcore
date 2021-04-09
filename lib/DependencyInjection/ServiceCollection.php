@@ -19,6 +19,9 @@ namespace Pimcore\DependencyInjection;
 
 use Psr\Container\ContainerInterface;
 
+/**
+ * @internal
+ */
 class ServiceCollection implements \IteratorAggregate
 {
     /**

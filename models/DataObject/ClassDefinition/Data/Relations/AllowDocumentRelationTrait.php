@@ -8,7 +8,7 @@ use Pimcore\Model\Document;
 trait AllowDocumentRelationTrait
 {
     /**
-     * Checks if an document is an allowed relation
+     * Checks if a document is an allowed relation
      *
      * @param Document $document
      *
@@ -16,6 +16,10 @@ trait AllowDocumentRelationTrait
      */
     protected function allowDocumentRelation($document)
     {
+        if (!$document instanceof Document || $document->getId() <= 0) {
+            return false;
+        }
+
         $allowedDocumentTypes = $this->getDocumentTypes();
 
         $allowed = true;

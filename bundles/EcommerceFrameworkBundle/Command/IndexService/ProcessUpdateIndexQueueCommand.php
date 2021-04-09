@@ -23,7 +23,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
+final class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
     use Parallelization
@@ -60,7 +60,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -77,7 +77,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -86,7 +86,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function fetchItems(InputInterface $input): array
     {
@@ -100,7 +100,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runSingleCommand(string $serializedRow, InputInterface $input, OutputInterface $output): void
     {
@@ -120,7 +120,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
@@ -159,13 +159,19 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
             }
         }
 
-        $this->childWorkerList = $workerList;
+        // collect all workers from all processed tenants
+        $this->childWorkerList = $this->childWorkerList ?? [];
+        $childWorkerList = [];
+        foreach (array_merge($this->childWorkerList, $workerList) as $worker) {
+            $childWorkerList[$worker->getTenantConfig()->getTenantName()] = $worker;
+        }
+        $this->childWorkerList = array_values($childWorkerList);
 
         return $workerList;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getItemName(int $count): string
     {
@@ -173,7 +179,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getSegmentSize(): int
     {

@@ -12,64 +12,30 @@ into a block element, and the editor cannot choose which area is used, this has 
 | `params` | array   | Optional Parameter see [areablock](./02_Areablock/README.md) for details                      |
 | `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode            |
 
-## Brick-specific Configuration
-Brick-specific configurations are passed using the `params` configuration (see above). 
-
-| Name              | Type | Description                                                                                                                                                     |
-|-------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `forceEditInView` | bool | If a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
-| `editWidth`       | int  | Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
-| `editHeight`      | int  | Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
-
-
 ## Methods
 
 | Name                | Return        | Description                                                 |
 |---------------------|---------------|-------------------------------------------------------------|
-| `getElement($name)` | Document\Tag  | Retrieves an editable from within the actual area           |
+| `getElement($name)` | Document\Editable  | Retrieves an editable from within the actual area           |
 
 ## Example
 
-<div class="code-section">
-
-```php
-<div>
-    <?= $this->area('myArea', ['type' => 'gallery-single-images']); ?>
-</div>
-```
-
 ```twig
+<div>
 {{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
-```
 </div>
-
+```
 
 ## Example with Parameters
 
-```php
-<div>
-    <?= $this->area('myArea', [
-        'type' => 'gallery-single-images',
-        'params' => [
-            'gallery-single-images' => [
-                'param1' => 123,
-                "forceEditInView" => true,
-                "editWidth" => "800px",
-                "editHeight" => "500px"
-            ]
-        ]
-    ]); ?>
-</div>
-```
 ```twig
 <div>
     {{ pimcore_area('myArea', {
         type: 'gallery-single-images',
         params: {
-            'param1': 123,
-            'forceEditInView': true,
-            'editWidth': '800px',
-            'editHeight': '500px'
+            'gallery-single-images': {
+                'param1': 123,
+            }
         }
     }) }}
 </div>
@@ -77,12 +43,11 @@ Brick-specific configurations are passed using the `params` configuration (see a
 
 Get the params in your brick:
 
-```php
+```twig
 <div>
-    <?= $this->param1; ?>
+    {{ param1 }}
 </div>
 ```
-
 
 ### Accessing Data Within an Area Element
 
@@ -93,10 +58,10 @@ Assuming your area uses a brick `gallery-single-images` which contains a `galler
 // load document
 $document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
 
-/** @var \Pimcore\Model|Document\Tag\Area $area */
+/** @var \Pimcore\Model\Document\Editable\Area $area */
 $area = $document->getEditable('myArea');
 
-/** @var \Pimcore\Model|Document\Tag\Block $block */
+/** @var \Pimcore\Model\Document\Editable\Block $block */
 $block = $area->getElement('gallery');
 ?>
 ```

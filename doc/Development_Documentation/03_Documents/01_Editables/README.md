@@ -6,13 +6,7 @@ They are the essential part of managing content in documents.
 ## Example Usage 
 The following code makes the `<h1>` headline editable in a document: 
 
-<div class="code-section">
-
-```php 
-<h1><?= $this->input("headline") ?></h1>
-```
-
-```twig 
+```twig
 <h1>{{ pimcore_input("headline") }}</h1>
 ```
 
@@ -21,15 +15,9 @@ the editables, Pimcore can't throw exceptions there. Therefore Pimcore catches t
 
 To prevent that and to have Pimcore throw the Exception, you can call editables like:
 
-```php 
-<h1><?= $this->input("headline")->render() ?></h1>
-```
-
-```twig 
+```twig
 <h1>{{ pimcore_input("headline").render() }}</h1>
 ```
-
-</div>
 
 Pimcore automatically displays an input widget in the edit mode and renders the content when accessing the document via the frontend. 
 

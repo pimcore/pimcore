@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Element\Tag $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -246,26 +248,23 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->select()
-                           ->from('tags_assignment', [])
+        $select = $this->db->createQueryBuilder()->select(['*'])
+                           ->from('tags_assignment')
                            ->where('tags_assignment.ctype = ?', $type);
 
         if (true === $considerChildTags) {
-            $select->joinInner('tags', 'tags.id = tags_assignment.tagid', ['tags_id' => 'id']);
+            $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
             $select->where(
                 '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
-                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%' . ')')
+                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%')
+                . ')'
             );
         } else {
             $select->where('tags_assignment.tagid = ?', $tag->getId());
         }
 
-        $select->joinInner(
-            ['el' => $map[$type][0]],
-            'tags_assignment.cId = el.' . $map[$type][1],
-            ['el_id' => $map[$type][1]]
-        );
+        $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);
 
         if (! empty($subtypes)) {
             foreach ($subtypes as $subType) {
@@ -281,7 +280,7 @@ class Dao extends Model\Dao\AbstractDao
             $select->where('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
-        $res = $this->db->query($select);
+        $res = $this->db->query((string) $select);
 
         while ($row = $res->fetch()) {
             $el = $map[$type][3]::getById($row['el_id']);
@@ -291,5 +290,53 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         return $elements;
+    }
+
+    /**
+     * @param string $tagPath separated by "/"
+     *
+     * @return null|Tag
+     */
+    public function getByPath($tagPath)
+    {
+        $parentTagId = 0;
+
+        $tag = null;
+        $tagPath = ltrim($tagPath, '/');
+        foreach (explode('/', $tagPath) as $tagItem) {
+            $tags = new Tag\Listing();
+            $tags->addConditionParam('name = ?', $tagItem);
+
+            if (empty($parentTagId)) {
+                $tags->addConditionParam('parentId = 0 OR parentId IS NULL'); // NULL is allowed by database schema
+            } else {
+                $tags->addConditionParam('parentId = ?', $parentTagId);
+            }
+
+            $tags->setLimit(1);
+
+            $tags = $tags->load();
+
+            if (count($tags) === 0) {
+                return null;
+            }
+
+            $tag = $tags[0];
+            $parentTagId = $tag->getId();
+        }
+
+        return $tag;
+    }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+        if (is_null($this->model->getId())) {
+            return false;
+        }
+
+        return (bool) $this->db->fetchOne('SELECT COUNT(*) FROM tags WHERE id = ?', $this->model->getId());
     }
 }

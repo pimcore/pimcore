@@ -304,7 +304,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             // check for newer version than the published
             if (this.data.versions.length > 0) {
-                if (this.data.modificationDate < this.data.versions[0].date) {
+                if (this.data.documentFromVersion) {
                     this.newerVersionNotification.show();
                 }
             }
@@ -457,11 +457,12 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         $super(only, callback);
     },
 
-    save : function ($super, task, only, callback) {
-        if(task !== "publish") {
+    save: function ($super, task, only, callback, successCallback) {
+        if (task !== "publish") {
             this.validateRequiredEditables(true);
         }
-        $super(task, only, callback);
+
+        $super(task, only, callback, successCallback);
     },
 
     validateRequiredEditables: function (dismissAlert) {
@@ -472,6 +473,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
              */
             var settingsForm = Ext.getCmp("pimcore_document_settings_" + this.id);
             if(settingsForm.dirty) {
+                this.data.missingRequiredEditable = null;
                 return;
             }
 
@@ -498,6 +500,5 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             }
         } catch(e) {
         }
-
     }
 });

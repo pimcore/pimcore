@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -29,8 +28,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *  - are tagged with the "controller.service_arguments" DI tag
  *  - extend Symfony\Bundle\FrameworkBundle\Controller\Controller
  *  - extend Symfony\Bundle\FrameworkBundle\Controller\AbstractController
+ *
+ * @internal
  */
-class ServiceControllersPass implements CompilerPassInterface
+final class ServiceControllersPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
@@ -61,7 +62,7 @@ class ServiceControllersPass implements CompilerPassInterface
                 continue;
             }
 
-            if ($reflector->isSubclassOf(AbstractController::class) || $reflector->isSubclassOf(Controller::class)) {
+            if ($reflector->isSubclassOf(AbstractController::class)) {
                 $serviceControllers[$id] = $definition->getClass();
             }
         }

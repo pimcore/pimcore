@@ -63,7 +63,7 @@ pimcore.object.classes.data.indexFieldSelection = Class.create(pimcore.object.cl
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/ecommerceframework/index/get-filter-groups',
+                    url: Routing.generate('pimcore_ecommerceframework_index_getfiltergroups'),
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'key'

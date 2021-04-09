@@ -20,7 +20,7 @@ namespace Pimcore\Targeting;
 use Pimcore\Event\Targeting\BuildConditionEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Targeting\Condition\ConditionInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ConditionFactory implements ConditionFactoryInterface
 {
@@ -48,7 +48,7 @@ class ConditionFactory implements ConditionFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(array $config): ConditionInterface
     {
@@ -71,7 +71,7 @@ class ConditionFactory implements ConditionFactoryInterface
         }, ARRAY_FILTER_USE_BOTH);
 
         $event = new BuildConditionEvent($type, $this->conditions[$type], $typeConfig);
-        $this->eventDispatcher->dispatch(TargetingEvents::BUILD_CONDITION, $event);
+        $this->eventDispatcher->dispatch($event, TargetingEvents::BUILD_CONDITION);
 
         if ($event->hasCondition()) {
             return $event->getCondition();

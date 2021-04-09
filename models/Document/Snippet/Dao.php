@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Snippet $model
  */
 class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
@@ -46,7 +48,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                     WHERE documents.id = ?", $this->model->getId());
 
-            if ($data['id'] > 0) {
+            if (!empty($data['id'])) {
                 $this->assignVariablesToModel($data);
             } else {
                 throw new \Exception('Snippet with the ID ' . $this->model->getId() . " doesn't exists");

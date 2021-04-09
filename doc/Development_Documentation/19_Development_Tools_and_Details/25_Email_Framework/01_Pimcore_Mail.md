@@ -1,6 +1,6 @@
 # Pimcore Mail
 
-The `Pimcore\Mail` Class extends the [`\Swift_Message`](http://swiftmailer.org/docs/introduction.html) 
+The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/current/mailer.html#email-addresses) 
 Class and adds some features for the usage with Pimcore.
 
 When you create a new `Pimcore\Mail` instance the E-Mail settings from *Settings* > *System* > *Email Settings*
@@ -10,35 +10,43 @@ If the Debug Mode in *Settings* > *System* > *Debug* is enabled, all emails will
 Debug Email recipients defined in *Settings* > *System* > *Email Settings* > *Debug Email Addresses*. 
 Additionally the debug information (to whom the email would have been sent) is appended to the email 
 and the Subject contains the prefix "Debug email:".
-This is done via an extension of the swift mailer `RedirectingPlugin`.   
 
-The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, compiling Less 
-files, normalizing URLs, replacement of Dynamic Placeholders...). Note that all CSS files are embedded 
+This is done by extending Symfony Mailer, with injected service `RedirectingPlugin`, which calls beforeSendPerformed before mail is sent and sendPerformed immediately after email is sent.
+
+Emails are sent via transport and `\Pimcore\Mailer` requires transports: `main` for sending emails and  `pimcore_newsletter` for sending newsletters(if newsletter specific settings are used), which needs to be configured in your config.yml e.g.,
+```yaml
+framework:
+    mailer:
+        transports:
+            main: smtp://user:pass@smtp.example.com:port
+            pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+```
+Please refer to the [Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for further details on how this can be set up.
+
+
+The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, 
+normalizing URLs and Twig expressions ...). Note that all CSS files are embedded 
 to the html with a `<style>` tag because the image paths are also normalised.
 
-Optionally, you can use `html2text` from [Martin Bayer](http://www.mbayer.de/html2text/index.shtml) 
-for the generation of the text version by calling `enableHtml2textBinary()`. (replaced with `Html2Text\Html2Text` library since 6.6.0)
- 
 ## Useful Methods
 
 | Method                            | Description                                                                                                                                                                                                |
 |-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | disableLogging()                  | Disables email logging - by default it is enabled                                                                                                                                                          |
-| setParams(array)                  | Sets the parameters to the request object and the Placeholders                                                                                                                                             |
-| setParam($key, $value)            | Sets a single parameter to the request object and the Placeholders                                                                                                                                         |
+| setParams(array)                  | Sets the parameters to the request object and the Twig engine                                                                                                                                             |
+| setParam($key, $value)            | Sets a single parameter to the request object and the Twig engine                                                                                                                                         |
 | isValidEmailAddress(emailAddress) | Static helper to validate a email address                                                                                                                                                                  |
 | setDocument(Document_Email)       | Sets the email document                                                                                                                                                                                    |
 | getDocument()                     | Returns the Document                                                                                                                                                                                       |
-| getSubjectRendered()              | Replaces the placeholders with the content and returns the rendered Subject                                                                                                                                |
-| getBodyHtmlRendered()             | Replaces the placeholders with the content and returns the rendered Html                                                                                                                                   |
-| getBodyTextRendered()             | Replaces the placeholders with the content and returns the rendered text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
-| enableHtml2textBinary()           | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed!     (deprecated since 6.6.0 and will be removed in 7.0)                                                                       |
+| getSubjectRendered()              | Renders the content as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
+| getBodyHtmlRendered()             | Renders the content as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
+| getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
 | setHtml2TextOptions($options)     | set options for html2text (only for binary version)                                                                                                                                                        |
 
 
 ## Usage Example
 
-```php 
+```php
 $params = ['firstName' => 'Pim', 'lastName' => 'Core', 'product' => 73613];
  
 //sending an email document (pimcore document)
@@ -53,20 +61,32 @@ $mail->send();
  
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
-$mail->setBodyText("This is just plain text");
+$mail->setTextBody("This is just plain text");
 $mail->send();
  
-// Sending a rich text (HTML) email:&nbsp;
- 
- 
+// Sending a rich text (HTML) email with Twig expressions 
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
 $mail->addBcc("bcc@pimcore.org");
-$mail->setBodyHtml("<b>some</b> rich text");
+$mail->setParams([
+    'myParam' => 'Just a simple text'
+]);
+$mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
 $mail->send();
  
 //adding an asset as attachment
 if($asset instanceof Asset) {
    $mail->createAttachment($asset->getData(), $asset->getMimetype(), $asset->getFilename());
 }
+
+//Embedding Images
+$mail = new \Pimcore\Mail();
+$mail->addTo('example@pimcore.org');
+
+$mail->embed($asset->getData(), 'logo', $asset->getMimetype());
+//or
+$mail->embedFromPath($asset->getFileSystemPath(), 'logo', $asset->getMimetype());
+
+$mail->setHtmlBody("Embedded Image: <img src='cid:logo'>"); //image name(passed second argument in embed) as ref
+$mail->send();
 ```

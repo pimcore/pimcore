@@ -18,7 +18,12 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class PropertyGetter extends AbstractOperator
+use Pimcore\Model\Element\AbstractElement;
+
+/**
+ * @internal
+ */
+final class PropertyGetter extends AbstractOperator
 {
     /** @var string */
     private $propertyName;
@@ -37,7 +42,7 @@ class PropertyGetter extends AbstractOperator
     }
 
     /**
-     * @param \Pimcore\Model\Element\ElementInterface $element
+     * @param AbstractElement $element
      *
      * @return \stdClass
      */
@@ -45,11 +50,7 @@ class PropertyGetter extends AbstractOperator
     {
         $result = new \stdClass();
         $result->label = $this->label;
-        $properties = $element->getProperties();
-
-        if (array_key_exists($this->getPropertyName(), $properties)) {
-            $result->value = $properties[$this->getPropertyName()]->getObjectVar('data');
-        }
+        $result->value = $element->getProperty($this->getPropertyName());
 
         return $result;
     }

@@ -16,6 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\Helper;
 
 use Carbon\Carbon;
 
+/**
+ * @internal
+ */
 class QueryParams
 {
     /**

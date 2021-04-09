@@ -16,14 +16,16 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Config;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class PrintpageControllerBase extends DocumentControllerBase
+/**
+ * @internal
+ */
+abstract class PrintpageControllerBase extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 
@@ -48,7 +50,9 @@ class PrintpageControllerBase extends DocumentControllerBase
             \Pimcore\Model\Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        $page = $this->getLatestVersion($page);
+        $page = clone $page;
+        $isLatestVersion = true;
+        $page = $this->getLatestVersion($page, $isLatestVersion);
 
         $page->getVersions();
         $page->getScheduledTasks();
@@ -64,6 +68,8 @@ class PrintpageControllerBase extends DocumentControllerBase
         $this->minimizeProperties($page, $data);
 
         $data['url'] = $page->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = !$isLatestVersion;
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }
@@ -118,7 +124,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
             $page->save();
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
                 'success' => true,
@@ -158,7 +164,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function activeGenerateProcessAction(Request $request)
     {
-        $document = Document\PrintAbstract::getById(intval($request->get('id')));
+        $document = Document\PrintAbstract::getById((int)$request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('Document with id ' . $request->get('id') . ' not found.');
@@ -194,7 +200,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function pdfDownloadAction(Request $request)
     {
-        $document = Document\PrintAbstract::getById(intval($request->get('id')));
+        $document = Document\PrintAbstract::getById((int)$request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('Document with id ' . $request->get('id') . ' not found.');
@@ -328,7 +334,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function cancelGenerationAction(Request $request)
     {
-        Processor::getInstance()->cancelGeneration(intval($request->get('id')));
+        Processor::getInstance()->cancelGeneration((int)$request->get('id'));
 
         return $this->adminJson(['success' => true]);
     }

@@ -78,13 +78,13 @@ class Analytics extends AbstractAdapter
     protected function setFilters($filters, $drillDownFilters = [])
     {
         $gaFilters = [ $this->config->filters ];
-        if (sizeof($filters)) {
+        if (count($filters)) {
             foreach ($filters as $filter) {
                 if ($filter['type'] == 'string') {
                     $value = str_replace(';', '', addslashes($filter['value']));
                     $gaFilters[] = "{$filter['field']}=~{$value}";
                 } elseif ($filter['type'] == 'numeric') {
-                    $value = floatval($filter['value']);
+                    $value = (float)$filter['value'];
                     $compMapping = [
                         'lt' => '<',
                         'gt' => '>',
@@ -100,7 +100,7 @@ class Analytics extends AbstractAdapter
             }
         }
 
-        if (sizeof($drillDownFilters)) {
+        if (count($drillDownFilters)) {
             foreach ($drillDownFilters as $key => $value) {
                 $gaFilters[] = "{$key}=={$value}";
             }
@@ -128,7 +128,7 @@ class Analytics extends AbstractAdapter
     {
         $configuration = clone $this->config;
 
-        if (is_array($fields) && sizeof($fields)) {
+        if (is_array($fields) && count($fields)) {
             $configuration = $this->handleFields($configuration, $fields);
         }
 
@@ -243,8 +243,8 @@ class Analytics extends AbstractAdapter
     protected function handleDimensions($configuration)
     {
         $dimension = $configuration->dimension;
-        if (sizeof($dimension)) {
-            foreach ($this->fullConfig->columnConfiguration as $column) {
+        if (count($dimension)) {
+            foreach ($this->fullConfig->getColumnConfiguration() as $column) {
                 if ($column['filter_drilldown'] == 'only_filter') {
                     foreach ($dimension as $key => $dim) {
                         if ($dim == $column['name']) {
@@ -283,7 +283,7 @@ class Analytics extends AbstractAdapter
                 }
             }
 
-            if (sizeof($applyModifiers)) {
+            if (count($applyModifiers)) {
                 $date = new \DateTime();
 
                 foreach ($applyModifiers as $modifier) {

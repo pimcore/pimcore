@@ -64,7 +64,7 @@ pimcore:
         source_adapters:
             myAdapter: app.document.newsletter.factory.myAdapter
 
-````
+```
 
 
 

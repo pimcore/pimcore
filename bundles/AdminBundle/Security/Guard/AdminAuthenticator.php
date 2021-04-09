@@ -43,6 +43,9 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @internal
+ */
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -108,7 +111,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(Request $request)
     {
@@ -117,7 +120,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
@@ -135,7 +138,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getCredentials(Request $request)
     {
@@ -161,7 +164,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             }
 
             $event = new LoginCredentialsEvent($request, $credentials);
-            $this->dispatcher->dispatch(AdminEvents::LOGIN_CREDENTIALS, $event);
+            $this->dispatcher->dispatch($event, AdminEvents::LOGIN_CREDENTIALS);
 
             return $event->getCredentials();
         } else {
@@ -176,7 +179,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -206,7 +209,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 } else {
                     // trigger LOGIN_FAILED event if user could not be authenticated via username/password
                     $event = new LoginFailedEvent($credentials);
-                    $this->dispatcher->dispatch(AdminEvents::LOGIN_FAILED, $event);
+                    $this->dispatcher->dispatch($event, AdminEvents::LOGIN_FAILED);
 
                     if ($event->hasUser()) {
                         $user = new User($event->getUser());
@@ -256,7 +259,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
@@ -269,7 +272,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
@@ -283,7 +286,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
@@ -335,7 +338,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsRememberMe()
     {

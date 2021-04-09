@@ -5,9 +5,9 @@ factory and wrapper of the [`IntlDateFormatter` component of php](http://php.net
   
 #### Usage Example
  
-```php 
+```php
 <?php
-$service = \Pimcore::getContainer()->get(\Pimcore\Localization\IntlFormatter::class);
+$service = \Pimcore::getContainer()->get(Pimcore\Localization\IntlFormatter::class);
 
 //optionally set locale (otherwise it is resolved from the request)
 $service->setLocale("de");
@@ -25,7 +25,7 @@ echo $service->formatCurrency("45632325.32", "EUR", "#,##0.00 ¤¤");
 
 You can overwrite the default service definition with your own, e.g. to overwrite the default currency patterns. 
 
-```yml 
+```yml
 services:
     # Formatting service for dates, times and numbers
     Pimcore\Localization\IntlFormatter:

@@ -14,6 +14,8 @@
 
 namespace Pimcore\Translation\Escaper;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 class Xliff12Escaper
 {
     const SELFCLOSING_TAGS = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
@@ -92,16 +94,18 @@ class Xliff12Escaper
         $content = $this->parseInnerXml($content);
 
         if (preg_match("/<\/?(bpt|ept)/", $content)) {
-            $xml = str_get_html($content);
-            if ($xml) {
-                $els = $xml->find('bpt,ept,ph');
-                foreach ($els as $el) {
-                    $content = html_entity_decode($el->innertext, null, 'UTF-8');
-                    $el->outertext = $content;
-                }
+            $xml = new Crawler($content);
+            $els = $xml->filter('bpt, ept, ph');
+            /** @var \DOMElement $el */
+            foreach ($els as $el) {
+                $content = html_entity_decode($el->textContent, null, 'UTF-8');
+                $el->ownerDocument->textContent = $content;
             }
-            $content = $xml->save();
+            $content = $xml->html();
         }
+
+        //parse comments
+        $content = strtr($content, ['&lt;!--' => '<!--', '--&gt;' => '-->']);
 
         return $content;
     }
@@ -114,8 +118,9 @@ class Xliff12Escaper
             return (string) $node;
         }
 
-        $content = (string) $node;
+        $content = $node->asXML();
 
+        $content = preg_replace("/<\?xml version=\"\d\.\d\"\?>/i", '', $content);
         $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
         // we have to do this again but with html entities because of CDATA content
         $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);

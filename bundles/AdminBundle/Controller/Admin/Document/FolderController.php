@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,8 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/folder")
+ *
+ * @internal
  */
-class FolderController extends DocumentControllerBase
+final class FolderController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 
@@ -124,7 +125,7 @@ class FolderController extends DocumentControllerBase
             $this->setValuesToDocument($request, $folder);
             $folder->save();
 
-            $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($folder);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData]);
         } else {

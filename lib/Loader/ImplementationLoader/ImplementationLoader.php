@@ -21,6 +21,8 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 
 /**
  * Core implementation loader delegating to a list of registered loaders
+ *
+ * @internal
  */
 class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
 {
@@ -88,7 +90,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supports(string $name): bool
     {
@@ -96,7 +98,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(string $name, array $params = [])
     {
@@ -109,7 +111,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsClassName(string $name): bool
     {
@@ -123,7 +125,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getClassNameFor(string $name): string
     {

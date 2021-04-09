@@ -33,6 +33,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @method Application getApplication()
+ *
+ * @internal
  */
 class InstallCommand extends Command
 {
@@ -123,20 +125,17 @@ class InstallCommand extends Command
             ],
             'skip-database-structure' => [
                 'description' => 'Skipping creation of database structure during install',
-                'mode' => InputOption::VALUE_OPTIONAL,
-                'default' => false,
+                'mode' => InputOption::VALUE_NONE,
                 'group' => 'install_options',
             ],
             'skip-database-data' => [
                 'description' => 'Skipping importing of any data into database',
-                'mode' => InputOption::VALUE_OPTIONAL,
-                'default' => false,
+                'mode' => InputOption::VALUE_NONE,
                 'group' => 'install_options',
             ],
             'skip-database-data-dump' => [
                 'description' => 'Skipping importing of provided data dumps into database (if available). Only imports needed base data.',
-                'mode' => InputOption::VALUE_OPTIONAL,
-                'default' => false,
+                'mode' => InputOption::VALUE_NONE,
                 'group' => 'install_options',
             ],
         ];
@@ -151,7 +150,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -177,6 +176,11 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Do not abort if a <comment>system.yml</comment> file already exists'
+            )->addOption(
+                'skip-database-config',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not write a database config file: <comment>database.yml</comment>'
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -190,7 +194,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -198,6 +202,10 @@ class InstallCommand extends Command
         $configFile = Config::locateConfigFile('system.yml');
         if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
             throw new \RuntimeException(sprintf('The system.yml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
+        }
+
+        if ($input->getOption('skip-database-config')) {
+            $this->installer->setSkipDatabaseConfig(true);
         }
 
         $this->io = new PimcoreStyle($input, $output);
@@ -238,7 +246,7 @@ class InstallCommand extends Command
     /**
      * Prompt options which are not set interactively
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
@@ -289,7 +297,7 @@ class InstallCommand extends Command
             return false;
         }
 
-        if ('install_options' === ($config['group'] ?? null) && InputOption::VALUE_OPTIONAL === ($config['mode'] ?? null)) {
+        if ('install_options' === ($config['group'] ?? null) && InputOption::VALUE_NONE !== ($config['mode'] ?? null)) {
             return false;
         }
 
@@ -297,7 +305,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -316,7 +324,7 @@ class InstallCommand extends Command
             $value = $input->getOption($name);
 
             // Empty MySQL password allowed, empty ssl cert path means it is not used
-            if ($value || $name === 'mysql-password' || $name === 'mysql-ssl-cert-path') {
+            if ($value || $name === 'mysql-password' || $name === 'mysql-ssl-cert-path' || $config['mode'] === InputOption::VALUE_NONE) {
                 $param = str_replace('-', '_', $name);
                 $params[$param] = $value;
             } else {
@@ -342,7 +350,7 @@ class InstallCommand extends Command
         }
 
         $this->io->writeln(sprintf(
-            'Running installation. You can find a detailed install log in <comment>var/installer/logs/%s.log</comment>',
+            'Running installation. You can find a detailed install log in <comment>var/log/%s.log</comment>',
             $this->getApplication()->getKernel()->getEnvironment()
         ));
 

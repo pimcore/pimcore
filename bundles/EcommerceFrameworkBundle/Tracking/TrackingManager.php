@@ -59,7 +59,7 @@ class TrackingManager implements TrackingManagerInterface
      * @param TrackerInterface[] $trackers
      * @param EnvironmentInterface $environment
      */
-    public function __construct(array $trackers = [], EnvironmentInterface $environment)
+    public function __construct(EnvironmentInterface $environment, array $trackers = [])
     {
         foreach ($trackers as $tracker) {
             $this->registerTracker($tracker);
@@ -148,8 +148,6 @@ class TrackingManager implements TrackingManagerInterface
     /**
      * Track product impression
      *
-     * @implements IProductImpression
-     *
      * @param ProductInterface $product
      * @param string $list
      */
@@ -166,8 +164,6 @@ class TrackingManager implements TrackingManagerInterface
      * Track product view
      *
      * @param ProductInterface $product
-     *
-     * @implements ProductInterfaceView
      */
     public function trackProductView(ProductInterface $product)
     {
@@ -209,23 +205,6 @@ class TrackingManager implements TrackingManagerInterface
     }
 
     /**
-     * Track product add to cart
-     *
-     * @deprecated Use CartProductActionAddInterface::trackCartProductActionAdd instead
-     *
-     * @param ProductInterface $product
-     * @param int|float $quantity
-     */
-    public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
-    {
-        foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof IProductActionAdd) {
-                $tracker->trackProductActionAdd($product, $quantity);
-            }
-        }
-    }
-
-    /**
      * Track product remove from cart
      *
      * @param CartInterface $cart
@@ -242,26 +221,7 @@ class TrackingManager implements TrackingManagerInterface
     }
 
     /**
-     * Track product remove from cart
-     *
-     * @deprecated Use CartProductActionRemoveInterface::trackCartProductActionRemove instead
-     *
-     * @param ProductInterface $product
-     * @param int|float $quantity
-     */
-    public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
-    {
-        foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof IProductActionRemove) {
-                $tracker->trackProductActionRemove($product, $quantity);
-            }
-        }
-    }
-
-    /**
      * Track start checkout with first step
-     *
-     * @implements CheckoutCompleteInterface
      *
      * @param CartInterface $cart
      */
@@ -276,8 +236,6 @@ class TrackingManager implements TrackingManagerInterface
 
     /**
      * Track checkout complete
-     *
-     * @implements CheckoutCompleteInterface
      *
      * @param AbstractOrder $order
      */
@@ -301,8 +259,6 @@ class TrackingManager implements TrackingManagerInterface
     /**
      * Track checkout step
      *
-     * @implements CheckoutStepInterface
-     *
      * @param CheckoutManagerCheckoutStepInterface $step
      * @param CartInterface $cart
      * @param string|null $stepNumber
@@ -322,7 +278,7 @@ class TrackingManager implements TrackingManagerInterface
         $result = '';
         foreach ($this->getTrackers() as $tracker) {
             if ($tracker instanceof TrackingCodeAwareInterface) {
-                if (sizeof($tracker->getTrackedCodes())) {
+                if (count($tracker->getTrackedCodes())) {
                     $result .= implode(PHP_EOL, $tracker->getTrackedCodes()).PHP_EOL.PHP_EOL;
                 }
             }
@@ -337,7 +293,7 @@ class TrackingManager implements TrackingManagerInterface
 
         foreach ($this->getTrackers() as $tracker) {
             if ($tracker instanceof TrackingCodeAwareInterface) {
-                if (sizeof($tracker->getTrackedCodes())) {
+                if (count($tracker->getTrackedCodes())) {
                     $trackedCodes[get_class($tracker)] = $tracker->getTrackedCodes();
                 }
             }

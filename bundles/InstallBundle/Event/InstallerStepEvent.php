@@ -17,8 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * @internal
+ */
 class InstallerStepEvent extends Event
 {
     /**

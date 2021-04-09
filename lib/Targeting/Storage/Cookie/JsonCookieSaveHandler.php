@@ -24,7 +24,7 @@ namespace Pimcore\Targeting\Storage\Cookie;
 class JsonCookieSaveHandler extends AbstractCookieSaveHandler
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function parseData(string $scope, string $name, $data): array
     {
@@ -41,7 +41,7 @@ class JsonCookieSaveHandler extends AbstractCookieSaveHandler
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function prepareData(string $scope, string $name, $expire, $data)
     {

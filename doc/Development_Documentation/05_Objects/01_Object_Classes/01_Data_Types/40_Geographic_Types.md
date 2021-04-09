@@ -19,7 +19,7 @@ represented by `Pimcore\Model\DataObject\Data\Geopoint`. To set a geopoint progr
 ```php
 $longitude = 107.6191228;
 $latitude = -6.9174639;
-$point = new \Pimcore\Model\DataObject\Data\Geopoint($longitude, $latitude);
+$point = new \Pimcore\Model\DataObject\Data\GeoCoordinates($latitude, $longitude);
 $object->setPoint($point);
 $object->save();
 ```
@@ -35,11 +35,12 @@ geobounds. Programmatically both points are `Pimcore\Model\DataObject\Data\Geopo
 `Pimcore\Model\DataObject\Data\Geopoints` Object. The following code snippet shows how to set Geobounds:
 
 ```php
+use Pimcore\Model\DataObject\Data\Geobounds;
 use Pimcore\Model\DataObject\Data\Geopoint;
  
-$northEast = new Geopoint(150.96588134765625, -33.704920213014425);
-$southWest = new Geopoint(150.60333251953125, -33.893217379440884)
-$object->setBounds(new Object_Data_Geobounds($northEast,$southWest));
+$northEast = new \Pimcore\Model\DataObject\Data\GeoCoordinates(150.96588134765625, -33.704920213014425);
+$southWest = new \Pimcore\Model\DataObject\Data\GeoCoordinates(150.60333251953125, -33.893217379440884);
+$object->setBounds(new Geobounds($northEast,$southWest));
 $object->save();
 ```
 
@@ -57,9 +58,9 @@ array of Geopoints has to be passed to the setter:
 use Pimcore\Model\DataObject\Data\Geopoint;
   
 $data = [
-    new Geopoint(150.54428100585938, -33.464671118242684),
-    new Geopoint(150.73654174804688, -33.913733814316245),
-    new Geopoint(151.2542724609375, -33.9946115848146)
+    new \Pimcore\Model\DataObject\Data\GeoCoordinates(-33.464671118242684, 150.54428100585938),
+    new \Pimcore\Model\DataObject\Data\GeoCoordinates(-33.913733814316245, 150.73654174804688),
+    new \Pimcore\Model\DataObject\Data\GeoCoordinates(-33.9946115848146, 151.2542724609375)
 ];
 $object->setPolygon($data);
 $object->save();
@@ -78,9 +79,9 @@ passed to the setter:
 use Pimcore\Model\DataObject\Data\Geopoint;
   
 $data = [
-    new Geopoint(150.54428100585938, -33.464671118242684),
-    new Geopoint(150.73654174804688, -33.913733814316245),
-    new Geopoint(151.2542724609375, -33.9946115848146)
+    new \Pimcore\Model\DataObject\Data\GeoCoordinates(-33.464671118242684, 150.54428100585938),
+    new \Pimcore\Model\DataObject\Data\GeoCoordinates(-33.913733814316245, 150.73654174804688),
+    new \Pimcore\Model\DataObject\Data\GeoCoordinates(-33.9946115848146, 151.2542724609375)
 ];
 $object->setPolyline($data);
 $object->save();

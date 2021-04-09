@@ -35,54 +35,54 @@ class Site extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var array
      */
-    public $domains;
+    protected $domains;
 
     /**
      * Contains the ID to the Root-Document
      *
      * @var int
      */
-    public $rootId;
+    protected $rootId;
 
     /**
      * @var Document\Page
      */
-    public $rootDocument;
+    protected $rootDocument;
 
     /**
      * @var string
      */
-    public $rootPath;
+    protected $rootPath;
 
     /**
      * @var string
      */
-    public $mainDomain = '';
+    protected $mainDomain = '';
 
     /**
      * @var string
      */
-    public $errorDocument = '';
+    protected $errorDocument = '';
 
     /**
      * @var bool
      */
-    public $redirectToMainDomain = false;
+    protected $redirectToMainDomain = false;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
@@ -98,7 +98,7 @@ class Site extends AbstractModel
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             try {
                 $site = new self();
-                $site->getDao()->getById(intval($id));
+                $site->getDao()->getById((int)$id);
             } catch (\Exception $e) {
                 $site = 'failed';
             }
@@ -124,7 +124,7 @@ class Site extends AbstractModel
     {
         try {
             $site = new self();
-            $site->getDao()->getByRootId(intval($id));
+            $site->getDao()->getByRootId((int)$id);
 
             return $site;
         } catch (\Exception $e) {
@@ -192,6 +192,7 @@ class Site extends AbstractModel
     public static function create($data)
     {
         $site = new self();
+        self::checkCreateData($data);
         $site->setValues($data);
 
         return $site;

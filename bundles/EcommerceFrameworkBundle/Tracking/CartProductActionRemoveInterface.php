@@ -28,5 +28,3 @@ interface CartProductActionRemoveInterface
      */
     public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1);
 }
-
-class_alias(CartProductActionRemoveInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove');

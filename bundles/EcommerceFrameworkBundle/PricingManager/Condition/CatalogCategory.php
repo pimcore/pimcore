@@ -100,6 +100,8 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
      * Don't cache the entire category object
      *
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -108,6 +110,8 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
 
     /**
      * Restore categories from serialized ID list
+     *
+     * @internal
      */
     public function __wakeup()
     {
@@ -124,7 +128,6 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
         foreach ($environment->getCategories() as $category) {
             /* @var AbstractCategory $category */
             foreach ($this->getCategories() as $allow) {
-                /* @var AbstractCategory $allow */
                 if (strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }

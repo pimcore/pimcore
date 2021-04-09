@@ -1,24 +1,23 @@
 {
     "description": null,
     "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractOrderItem",
-    "listingParentClass": null,
-    "useTraits": null,
-    "listingUseTraits": null,
+    "implementsInterfaces": "",
+    "listingParentClass": "",
+    "useTraits": "",
+    "listingUseTraits": "",
     "allowInherit": false,
-    "allowVariants": false,
+    "allowVariants": null,
     "showVariants": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": null,
         "border": false,
-        "icon": null,
         "name": "pimcore_root",
         "type": null,
         "region": null,
         "title": null,
-        "width": null,
-        "height": null,
+        "width": 0,
+        "height": 0,
         "collapsible": false,
         "collapsed": false,
         "bodyStyle": null,
@@ -43,10 +42,8 @@
                 "childs": [
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 150,
                         "layout": "",
                         "border": false,
-                        "icon": null,
                         "name": "general",
                         "type": null,
                         "region": null,
@@ -98,7 +95,6 @@
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 190,
-                                "phpdocType": "string",
                                 "dynamicOptions": false,
                                 "name": "orderState",
                                 "title": "Order Item State",
@@ -113,11 +109,11 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "fieldset",
-                                "labelWidth": 150,
                                 "name": "Product Information",
                                 "type": null,
                                 "region": null,
@@ -139,13 +135,11 @@
                                             "id": "int(11)",
                                             "type": "enum('document','asset','object')"
                                         },
-                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
                                         "objectsAllowed": true,
                                         "assetsAllowed": false,
                                         "assetTypes": [],
                                         "documentsAllowed": false,
                                         "documentTypes": [],
-                                        "lazyLoading": false,
                                         "classes": [],
                                         "pathFormatterClass": "",
                                         "name": "product",
@@ -165,10 +159,10 @@
                                     {
                                         "fieldtype": "input",
                                         "width": 400,
+                                        "defaultValue": null,
                                         "queryColumnType": "varchar",
                                         "columnType": "varchar",
                                         "columnLength": 255,
-                                        "phpdocType": "string",
                                         "regex": "",
                                         "unique": false,
                                         "showCharCount": false,
@@ -185,15 +179,16 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": true,
-                                        "visibleSearch": true
+                                        "visibleSearch": true,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "input",
                                         "width": 400,
+                                        "defaultValue": null,
                                         "queryColumnType": "varchar",
                                         "columnType": "varchar",
                                         "columnLength": 255,
-                                        "phpdocType": "string",
                                         "regex": "",
                                         "unique": false,
                                         "showCharCount": false,
@@ -210,14 +205,16 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": true,
-                                        "visibleSearch": true
+                                        "visibleSearch": true,
+                                        "defaultValueGenerator": ""
                                     }
                                 ],
-                                "locked": false
+                                "locked": false,
+                                "labelWidth": 150,
+                                "labelAlign": "left"
                             },
                             {
                                 "fieldtype": "fieldset",
-                                "labelWidth": 150,
                                 "name": "Price Information",
                                 "type": null,
                                 "region": null,
@@ -236,7 +233,6 @@
                                         "defaultValue": null,
                                         "queryColumnType": "double",
                                         "columnType": "double",
-                                        "phpdocType": "float",
                                         "integer": false,
                                         "unsigned": false,
                                         "minValue": null,
@@ -257,7 +253,8 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": true,
-                                        "visibleSearch": true
+                                        "visibleSearch": true,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "numeric",
@@ -265,14 +262,13 @@
                                         "defaultValue": null,
                                         "queryColumnType": "double",
                                         "columnType": "double",
-                                        "phpdocType": "float",
                                         "integer": false,
                                         "unsigned": false,
                                         "minValue": null,
                                         "maxValue": null,
-                                        "unique": null,
-                                        "decimalSize": null,
-                                        "decimalPrecision": null,
+                                        "unique": false,
+                                        "decimalSize": 19,
+                                        "decimalPrecision": 4,
                                         "name": "totalNetPrice",
                                         "title": "NetPrice",
                                         "tooltip": "",
@@ -286,7 +282,8 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "numeric",
@@ -294,14 +291,13 @@
                                         "defaultValue": null,
                                         "queryColumnType": "double",
                                         "columnType": "double",
-                                        "phpdocType": "float",
                                         "integer": false,
                                         "unsigned": false,
                                         "minValue": null,
                                         "maxValue": null,
-                                        "unique": null,
-                                        "decimalSize": null,
-                                        "decimalPrecision": null,
+                                        "unique": false,
+                                        "decimalSize": 19,
+                                        "decimalPrecision": 4,
                                         "name": "totalPrice",
                                         "title": "Price",
                                         "tooltip": "",
@@ -315,7 +311,8 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "table",
@@ -330,7 +327,6 @@
                                         "columnConfig": [],
                                         "queryColumnType": "longtext",
                                         "columnType": "longtext",
-                                        "phpdocType": "array",
                                         "name": "taxInfo",
                                         "title": "Tax Information",
                                         "tooltip": "",
@@ -348,7 +344,6 @@
                                     },
                                     {
                                         "fieldtype": "fieldcollections",
-                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
                                         "allowedTypes": [
                                             "PricingRule"
                                         ],
@@ -375,7 +370,9 @@
                                         "visibleSearch": false
                                     }
                                 ],
-                                "locked": false
+                                "locked": false,
+                                "labelWidth": 150,
+                                "labelAlign": "left"
                             },
                             {
                                 "fieldtype": "textarea",
@@ -386,7 +383,6 @@
                                 "excludeFromSearchIndex": false,
                                 "queryColumnType": "longtext",
                                 "columnType": "longtext",
-                                "phpdocType": "string",
                                 "name": "comment",
                                 "title": "Comment",
                                 "tooltip": "",
@@ -408,12 +404,11 @@
                                 "height": "",
                                 "maxItems": "",
                                 "queryColumnType": "text",
-                                "phpdocType": "array",
                                 "relationType": true,
                                 "visibleFields": null,
+                                "allowToCreateNewObject": true,
                                 "optimizedAdminLoading": false,
                                 "visibleFieldDefinitions": [],
-                                "lazyLoading": false,
                                 "classes": [
                                     {
                                         "classes": "OnlineShopOrderItem"
@@ -435,14 +430,15 @@
                                 "visibleSearch": false
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "icon": null,
+                        "labelWidth": 150,
+                        "labelAlign": "left"
                     },
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 100,
                         "layout": null,
                         "border": false,
-                        "icon": null,
                         "name": "customizations",
                         "type": null,
                         "region": "",
@@ -477,7 +473,6 @@
                             },
                             {
                                 "fieldtype": "objectbricks",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Objectbrick",
                                 "allowedTypes": [],
                                 "maxItems": "",
                                 "border": false,
@@ -497,18 +492,28 @@
                                 "visibleSearch": false
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "icon": null,
+                        "labelWidth": 100,
+                        "labelAlign": "left"
                     }
                 ],
                 "locked": false
             }
         ],
-        "locked": false
+        "locked": false,
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
     },
     "icon": "\/bundles\/pimcoreadmin\/img\/twemoji\/1f4e6.svg",
-    "previewUrl": null,
+    "previewUrl": "",
     "group": "E-Commerce",
-    "linkGeneratorReference": null,
+    "showAppLoggerTab": false,
+    "linkGeneratorReference": "",
+    "compositeIndices": [],
+    "generateTypeDeclarations": true,
+    "showFieldLookup": false,
     "propertyVisibility": {
         "grid": {
             "id": true,
@@ -526,5 +531,6 @@
             "modificationDate": false,
             "creationDate": false
         }
-    }
+    },
+    "enableGridLocking": false
 }
