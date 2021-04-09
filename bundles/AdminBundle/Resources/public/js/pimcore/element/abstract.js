@@ -96,6 +96,7 @@ pimcore.element.abstract = Class.create({
         this.tab.on("activate", this.startChangeDetector.bind(this));
         this.tab.on("beforeclose", this._dirtyClose.bind(this));
         this.tab.on("destroy", this.stopChangeDetector.bind(this));
+        this.tab.on("hide", this.stopChangeDetector.bind(this));
     },
 
     isDirty: function () {
