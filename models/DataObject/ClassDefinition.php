@@ -1186,7 +1186,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowVariants($allowVariants)
     {
-        $this->allowVariants = (bool)$allowVariants ? true : null;
+        $this->allowVariants = (bool)$allowVariants;
 
         return $this;
     }
