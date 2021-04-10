@@ -389,7 +389,7 @@ class Tool
         );
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
+        if (in_array('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
             return false;
         }
 
