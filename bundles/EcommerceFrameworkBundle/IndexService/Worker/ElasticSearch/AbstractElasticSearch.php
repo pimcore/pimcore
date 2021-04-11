@@ -214,7 +214,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         foreach ($this->getSystemAttributes(true) as $name => $type) {
             $systemAttributesMapping[$name] = ['type' => $type, 'store' => true];
         }
-        $mappingAttributes['system'] = ['type' => 'object', 'dynamic' => false, 'properties' => $systemAttributesMapping];
+        $mappingAttributes['system'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => false, 'properties' => $systemAttributesMapping];
 
         //add custom defined attributes and relation attributes
         $customAttributesMapping = [];
@@ -263,7 +263,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     }
                 }
 
-                if ($type == 'object') { //object doesn't support index or store
+                if ($type == ProductListInterface::PRODUCT_TYPE_OBJECT) { //object doesn't support index or store
                     $mapping = ['type' => $type];
                 }
 
@@ -271,7 +271,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     $mapping['store'] = false;
                 }
 
-                if ($type == 'object' || $type == 'nested') {
+                if ($type == ProductListInterface::PRODUCT_TYPE_OBJECT || $type == 'nested') {
                     unset($mapping['store']);
                 }
 
@@ -283,11 +283,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
         }
 
-        $mappingAttributes['attributes'] = ['type' => 'object', 'dynamic' => true, 'properties' => $customAttributesMapping];
-        $mappingAttributes['relations'] = ['type' => 'object', 'dynamic' => false, 'properties' => $relationAttributesMapping];
-        $mappingAttributes['subtenants'] = ['type' => 'object', 'dynamic' => true];
+        $mappingAttributes['attributes'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => true, 'properties' => $customAttributesMapping];
+        $mappingAttributes['relations'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => false, 'properties' => $relationAttributesMapping];
+        $mappingAttributes['subtenants'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => true];
         //has to be at top -> join field [system.relation] cannot be added inside an object or in a multi-field
-        $mappingAttributes[static::RELATION_FIELD] = ['type' => 'join', 'relations' => ['object' => 'variant']];
+        $mappingAttributes[static::RELATION_FIELD] = ['type' => 'join', 'relations' => ['object' => ProductListInterface::PRODUCT_TYPE_VARIANT]];
 
         return $mappingAttributes;
     }

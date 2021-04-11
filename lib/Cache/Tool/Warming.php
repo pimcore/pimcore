@@ -60,7 +60,7 @@ class Warming
     public static function objects($types = null, $classes = null)
     {
         if (empty($types)) {
-            $types = ['object', 'folder', 'variant'];
+            $types = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT];
         }
 
         $classesCondition = '';

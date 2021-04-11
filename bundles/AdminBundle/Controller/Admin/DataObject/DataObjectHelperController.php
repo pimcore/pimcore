@@ -1256,7 +1256,7 @@ final class DataObjectHelperController extends AdminController
             $quotedIds[] = $list->quote($id);
         }
 
-        $list->setObjectTypes(['object', 'folder', 'variant']);
+        $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT]);
         $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
         $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
 

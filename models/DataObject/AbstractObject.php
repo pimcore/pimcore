@@ -289,8 +289,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
-                if (!empty($typeInfo['o_type']) && ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder')) {
-                    if ($typeInfo['o_type'] == 'folder') {
+                if (!empty($typeInfo['o_type']) && ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_OBJECT || $typeInfo['o_type'] == DataObject::OBJECT_TYPE_VARIANT || $typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER)) {
+                    if ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER) {
                         $className = Folder::class;
                     } else {
                         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
@@ -766,7 +766,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->setParentId(0);
             $this->setPath('/');
             $this->setKey('');
-            $this->setType('folder');
+            $this->setType(DataObject::OBJECT_TYPE_FOLDER);
         }
 
         if (Service::pathExists($this->getRealFullPath())) {

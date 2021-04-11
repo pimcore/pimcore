@@ -287,7 +287,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         $tmpObject['leaf'] = !$hasChildren;
 
         $tmpObject['isTarget'] = true;
-        if ($tmpObject['type'] != 'variant') {
+        if ($tmpObject['type'] != DataObject::OBJECT_TYPE_VARIANT) {
             $tmpObject['allowDrop'] = true;
         }
 

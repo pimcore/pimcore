@@ -108,7 +108,7 @@ class Service extends Model\AbstractModel
 
         if ($element) {
             $type = $element->getType();
-            if ($type !== 'folder') {
+            if ($type !== DataObject::OBJECT_TYPE_FOLDER) {
                 if ($element instanceof Document) {
                     $type = 'document';
                 } elseif ($element instanceof DataObject\AbstractObject) {

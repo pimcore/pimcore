@@ -121,7 +121,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
 
                 $virtualProductId = $subObjectId;
                 $virtualProductActive = $object->isActive();
-                if ($object->getOSIndexType() == 'variant') {
+                if ($object->getOSIndexType() == DataObject::OBJECT_TYPE_VARIANT) {
                     $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
                 }
 
