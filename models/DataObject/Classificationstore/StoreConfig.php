@@ -29,21 +29,21 @@ class StoreConfig extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * The store name.
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The store description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @param int $id
@@ -66,6 +66,8 @@ class StoreConfig extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -74,7 +76,7 @@ class StoreConfig extends Model\AbstractModel
             $config->getDao()->getByName($name);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

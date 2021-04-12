@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -36,7 +36,7 @@ use Pimcore\Model\Element;
  * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
  * @method array getChildPermissions(string $type, Model\User $user, bool $quote = true)
  */
-class AbstractObject extends Model\Element\AbstractElement
+abstract class AbstractObject extends Model\Element\AbstractElement
 {
     const OBJECT_TYPE_FOLDER = 'folder';
     const OBJECT_TYPE_OBJECT = 'object';
@@ -284,12 +284,12 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        try {
-            if ($force || !($object = Cache::load($cacheKey))) {
-                $object = new Model\DataObject();
+        if ($force || !($object = Cache::load($cacheKey))) {
+            $object = new Model\DataObject();
+            try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
-                if ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder') {
+                if (!empty($typeInfo['o_type']) && ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder')) {
                     if ($typeInfo['o_type'] == 'folder') {
                         $className = Folder::class;
                     } else {
@@ -313,11 +313,11 @@ class AbstractObject extends Model\Element\AbstractElement
                 } else {
                     throw new \Exception('No entry for object id ' . $id);
                 }
-            } else {
-                Runtime::set($cacheKey, $object);
+            } catch (Model\Exception\NotFoundException $e) {
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
+        } else {
+            Runtime::set($cacheKey, $object);
         }
 
         if (!$object || !static::typeMatch($object)) {
@@ -338,11 +338,11 @@ class AbstractObject extends Model\Element\AbstractElement
         $path = Model\Element\Service::correctPath($path);
 
         try {
-            $object = new self();
+            $object = new static();
             $object->getDao()->getByPath($path);
 
             return static::getById($object->getId(), $force);
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -675,11 +675,13 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     if ($e instanceof UniqueConstraintViolationException) {
                         throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    } elseif ($e instanceof DeadlockException) {
+                    }
+
+                    if ($e instanceof RetryableException) {
                         // we try to start the transaction $maxRetries times again (deadlocks, ...)
                         if ($retries < ($maxRetries - 1)) {
                             $run = $retries + 1;
-                            $waitTime = rand(1, 5) * 100000; // microseconds
+                            $waitTime = random_int(1, 5) * 100000; // microseconds
                             Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
                             usleep($waitTime); // wait specified time until we restart the transaction
@@ -744,7 +746,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
-            $parent = AbstractObject::getById($this->getParentId());
+            $parent = DataObject::getById($this->getParentId());
 
             if ($parent) {
                 // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
@@ -768,7 +770,7 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         if (Service::pathExists($this->getRealFullPath())) {
-            $duplicate = AbstractObject::getByPath($this->getRealFullPath());
+            $duplicate = DataObject::getByPath($this->getRealFullPath());
             if ($duplicate instanceof self && $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
             }
@@ -1145,7 +1147,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function getParent()
     {
         if ($this->o_parent === null) {
-            $this->setParent(AbstractObject::getById($this->getParentId()));
+            $this->setParent(DataObject::getById($this->getParentId()));
         }
 
         return $this->o_parent;
@@ -1188,9 +1190,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setProperties(array $properties)
+    public function setProperties(?array $properties)
     {
         $this->o_properties = $properties;
 
@@ -1268,7 +1270,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         if ($this->isInDumpState() && !self::$doNotRestoreKeyAndPath) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
-            $originalElement = AbstractObject::getById($this->getId());
+            $originalElement = DataObject::getById($this->getId());
             if ($originalElement) {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getRealPath());
@@ -1485,5 +1487,3 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_siblings = [];
     }
 }
-
-class_alias(AbstractObject::class, 'Pimcore\\Model\\DataObject');

@@ -17,9 +17,11 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Normalizer\NormalizerInterface;
 
 /**
  * @internal
@@ -56,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+        if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return;
         }
         $object = $this->model->getObject();
@@ -91,20 +93,28 @@ class Dao extends Model\Dao\AbstractDao
                         'type' => $keyConfig->getType(),
                     ];
 
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Password) {
-                        $value = $fd->getDataForResource($value, null, []);
-                        $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
-                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\EncryptedField) {
-                        $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
-                        $delegate = $fd->getDelegate();
-                        $value = new DataObject\Data\EncryptedField($delegate, $value);
-                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
-                        $value = $fd->getDataForResource($value, $this->model->getObject());
-                    }
-                    $value = $fd->marshal($value, $object);
+                    $encodedData = [];
 
-                    $data['value'] = $value['value'];
-                    $data['value2'] = isset($value['value2']) ? $value['value2'] : '';
+                    if ($fd instanceof NormalizerInterface) {
+                        $normalizedData = $fd->normalize($value, [
+                            'object' => $object,
+                            'fieldDefinition' => $fd,
+                        ]);
+
+                        /** @var MarshallerService $marshallerService */
+                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                        if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
+                            $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
+                            // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                            $encodedData = $marshaller->marshal($normalizedData, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'classificationstore']);
+                        } else {
+                            $encodedData['value'] = $normalizedData;
+                        }
+                    }
+
+                    $data['value'] = $encodedData['value'] ?? null;
+                    $data['value2'] = $encodedData['value2'] ?? null;
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
@@ -146,7 +156,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load()
     {
-        /** @var DataObject\Classificationstore $classificationStore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();
@@ -191,10 +200,23 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
-            $value = $fd->unmarshal($value, $object);
 
-            if ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
-                $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            if ($fd instanceof NormalizerInterface) {
+                /** @var MarshallerService $marshallerService */
+                $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
+                if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
+                    $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
+                    // TODO format only passed in for BC reasons (localizedfields). remove it as soon as marshal is gone
+                    $value = $unmarshaller->unmarshal($value, ['object' => $object, 'fieldDefinition' => $fd, 'format' => 'classificationstore']);
+                } else {
+                    $value = $value['value'];
+                }
+
+                $value = $fd->denormalize($value, [
+                    'object' => $object,
+                    'fieldDefinition' => $fd,
+                ]);
             }
 
             $language = $item['language'];

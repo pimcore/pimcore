@@ -20,6 +20,9 @@ namespace Pimcore\Extension;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 
+/**
+ * @internal
+ */
 class Config
 {
     /**

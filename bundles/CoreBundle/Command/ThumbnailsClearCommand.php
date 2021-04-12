@@ -20,6 +20,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ThumbnailsClearCommand extends AbstractCommand
 {
     protected function configure()
@@ -42,7 +45,7 @@ class ThumbnailsClearCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -63,9 +66,9 @@ class ThumbnailsClearCommand extends AbstractCommand
         /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config $thumbConfig */
         $thumbConfig = $configClass::getByName($input->getOption('name'));
         if (!$thumbConfig) {
-            $this->writeError(sprintf('Unable to find %s thumbnail config with name: %s', $input->getOption('type'), $input->getOption('name')));
-
-            return 1;
+            $this->writeError(sprintf('Unable to find %s thumbnail config with name: %s. Nevertheless trying to delete remaining files', $input->getOption('type'), $input->getOption('name')));
+            $thumbConfig = new $configClass();
+            $thumbConfig->setName($input->getOption('name'));
         }
 
         $thumbConfig->clearTempFiles();

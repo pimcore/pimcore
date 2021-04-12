@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\JsonResponse as BaseJsonResponse;
 class JsonResponse extends BaseJsonResponse
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setData($data = [])
     {

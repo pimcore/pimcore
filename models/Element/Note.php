@@ -29,47 +29,47 @@ class Note extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var int
      */
-    public $user;
+    protected $user;
 
     /**
      * @var string
      */
-    public $title;
+    protected $title;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var array
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * @static
@@ -94,6 +94,8 @@ class Note extends Model\AbstractModel
      * @param string $name
      * @param string $type
      * @param mixed $data
+     *
+     * @return $this
      */
     public function addData($name, $type, $data)
     {
@@ -101,6 +103,8 @@ class Note extends Model\AbstractModel
             'type' => $type,
             'data' => $data,
         ];
+
+        return $this;
     }
 
     /**

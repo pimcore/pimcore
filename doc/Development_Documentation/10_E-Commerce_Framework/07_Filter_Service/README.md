@@ -23,14 +23,14 @@ The backend implementation of Filter Types takes place in php classes which exte
 the correct filter conditions based on the Product Index implementation and rendering the filter output to the frontend. 
 
 Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType` expects the two methods 
-`getFilterFrontend()` and `addCondition()` to be implemented. 
+`getFilterValues()` and `addCondition()` to be implemented. 
 
 Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
 The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
 
 > FilterTypes are dependent of the used index backend. You need to use different FilterTypes when using MySQL or ElasticSearch etc. 
 > Pimcore ships with FilterTypes implementations for all supported index backends. For details see for example 
-> [Elastic Search Config](03_Elastic_Search/README.md).  
+> [Elasticsearch Config](03_Elastic_Search/README.md).  
  
 ```yaml
 pimcore_ecommerce_framework:
@@ -149,7 +149,7 @@ Once Filter Types and Filter Definitions are set up, it is quite easy to put it 
 in controller actions. 
  
 ### Controller
-For setting up the *Filter Service* (including Product List with `Zend\Paginator`) within the controller use following 
+For setting up the *Filter Service* (including Product List with `Knp\Paginator`) within the controller use following 
 sample: 
 
 ```php
@@ -172,13 +172,14 @@ $filterService = $ecommerceFactory->getFilterService();
 $templateParams['filterService'] = $filterService;
 $templateParams['filterDefinition'] = $filterDefinition;
 
-// init pagination
-$paginator = new Paginator($productListing);
-$paginator->setCurrentPageNumber($request->get('page'));
-$paginator->setItemCountPerPage(18);
-$paginator->setPageRange(5);
+// inject and use Knp Paginator service: PaginatorInterface $paginator
+$paginator = $paginator->paginate(
+    $productListing,
+    $request->get('page', 1),
+    18
+);
 $templateParams['results'] = $paginator;
-$templateParams['paginationVariables'] = $paginator->getPages('Sliding');
+$templateParams['paginationVariables'] = $paginator->getPaginationData();
 
 return $this->render('Path/template.html.twig', $templateParams);
 ```

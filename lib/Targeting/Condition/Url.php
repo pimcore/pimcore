@@ -35,7 +35,7 @@ class Url extends AbstractVariableCondition implements ConditionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -43,7 +43,7 @@ class Url extends AbstractVariableCondition implements ConditionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -51,7 +51,7 @@ class Url extends AbstractVariableCondition implements ConditionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {

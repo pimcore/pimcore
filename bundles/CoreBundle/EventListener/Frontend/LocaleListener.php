@@ -20,7 +20,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class LocaleListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class LocaleListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

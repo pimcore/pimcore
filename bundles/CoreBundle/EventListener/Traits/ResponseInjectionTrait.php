@@ -20,6 +20,9 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Traits;
 use Pimcore\Http\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @internal
+ */
 trait ResponseInjectionTrait
 {
     /**

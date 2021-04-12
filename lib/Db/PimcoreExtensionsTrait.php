@@ -20,10 +20,6 @@ use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Exception as DBALException;
-use Pimcore\Db;
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 use Pimcore\Model\Element\ValidationException;
 
 /**
@@ -136,7 +132,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param string|QueryBuilder $query
+     * @param string $query
      * @param array $params
      * @param bool $onlyQuery
      *
@@ -144,18 +140,6 @@ trait PimcoreExtensionsTrait
      */
     private function normalizeQuery($query, array $params = [], $onlyQuery = false)
     {
-        // stringify query builder
-        if ($query instanceof QueryBuilder) {
-            $qb = $query;
-            $query = $qb->getSQL();
-            $params = array_merge($qb->getParameters(), $params);
-
-            Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
-                'query' => $query,
-                'params' => $params,
-            ]);
-        }
-
         if ($onlyQuery) {
             return $query;
         }
@@ -387,21 +371,6 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @inheritdoc
-     */
-    public function quoteIdentifier($str)
-    {
-        if ($str instanceof Expression) {
-            return (string) $str;
-        }
-        if ($str instanceof QueryBuilder) {
-            return '(' . $str->assemble() . ')';
-        }
-
-        return parent::quoteIdentifier($str);
-    }
-
-    /**
      * Quotes a value and places into a piece of text at a placeholder.
      *
      * The placeholder is a question-mark; all placeholders will be replaced
@@ -459,7 +428,7 @@ trait PimcoreExtensionsTrait
     /**
      * Quote an identifier and an optional alias.
      *
-     * @param string|array|Expression $ident The identifier or expression.
+     * @param string|array $ident The identifier or expression.
      * @param string|null $alias An optional alias.
      * @param bool $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      * @param string $as The string to add between the identifier/expression and the alias.
@@ -468,31 +437,22 @@ trait PimcoreExtensionsTrait
      */
     protected function _quoteIdentifierAs($ident, $alias = null, $auto = false, $as = ' AS ')
     {
-        if ($ident instanceof Expression) {
-            $quoted = $ident->__toString();
-        } elseif ($ident instanceof QueryBuilder) {
-            $quoted = '(' . $ident->assemble() . ')';
-        } else {
-            if (is_string($ident)) {
-                $ident = explode('.', $ident);
-            }
-            if (is_array($ident)) {
-                $segments = [];
-                foreach ($ident as $segment) {
-                    if ($segment instanceof Expression) {
-                        $segments[] = $segment->__toString();
-                    } else {
-                        $segments[] = $this->_quoteIdentifier($segment, $auto);
-                    }
-                }
-                if ($alias !== null && end($ident) == $alias) {
-                    $alias = null;
-                }
-                $quoted = implode('.', $segments);
-            } else {
-                $quoted = $this->_quoteIdentifier($ident, $auto);
-            }
+        if (is_string($ident)) {
+            $ident = explode('.', $ident);
         }
+        if (is_array($ident)) {
+            $segments = [];
+            foreach ($ident as $segment) {
+                $segments[] = $this->_quoteIdentifier($segment, $auto);
+            }
+            if ($alias !== null && end($ident) == $alias) {
+                $alias = null;
+            }
+            $quoted = implode('.', $segments);
+        } else {
+            $quoted = $this->_quoteIdentifier($ident, $auto);
+        }
+
         if ($alias !== null) {
             $quoted .= $as . $this->_quoteIdentifier($alias, $auto);
         }
@@ -517,18 +477,6 @@ trait PimcoreExtensionsTrait
         }
 
         return $value;
-    }
-
-    /**
-     * @deprecated
-     * Returns a ZF1 compatible query builder
-     * To use the standard Doctrine QueryBuilder, please use $dbal->createQueryBuilder() instead
-     *
-     * @return ZendDbCompatibleQueryBuilder
-     */
-    public function select()
-    {
-        return new ZendDbCompatibleQueryBuilder($this);
     }
 
     /**

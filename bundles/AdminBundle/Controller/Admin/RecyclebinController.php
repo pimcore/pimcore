@@ -23,7 +23,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RecyclebinController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class RecyclebinController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/recyclebin/list", name="pimcore_admin_recyclebin_list", methods={"POST"})
@@ -123,8 +126,15 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             }
 
             $items = $list->load();
+            $data = [];
+            if (is_array($items)) {
+                /** @var Recyclebin\Item $item */
+                foreach ($items as $item) {
+                    $data[] = $item->getObjectVars();
+                }
+            }
 
-            return $this->adminJson(['data' => $items, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $data, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 

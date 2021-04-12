@@ -83,7 +83,8 @@ pimcore.notification.helper.showNotifications = function (notifications) {
             height: 150,
             closable: true,
             autoClose: false,
-            tools: tools
+            tools: tools,
+            align: "br"
         });
         notification.show();
     }
@@ -116,6 +117,7 @@ pimcore.notification.helper.openDetails = function (id, callback) {
         success: function (response) {
             response = Ext.decode(response.responseText);
             if (!response.success) {
+                Ext.MessageBox.alert(t("error"), t("element_not_found"));
                 return;
             }
             pimcore.notification.helper.openDetailsWindow(

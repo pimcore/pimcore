@@ -40,5 +40,3 @@ interface TrackingManagerInterface extends
      */
     public function forwardTrackedCodesAsFlashMessage(): self;
 }
-
-class_alias(TrackingManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager');

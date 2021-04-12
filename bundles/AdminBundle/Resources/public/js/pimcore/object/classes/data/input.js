@@ -55,7 +55,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
         this.specificPanel.removeAll();
         var specificItems = this.getSpecificPanelItems(this.datax);
         this.specificPanel.add(specificItems);
-        
+
         return this.layout;
     },
 
@@ -67,25 +67,33 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 name: "defaultValue",
                 value: datax.defaultValue,
                 width: 600
-            },{
+            },
+            {
                 xtype: 'textfield',
                 width: 600,
                 fieldLabel: t("default_value_generator"),
                 labelWidth: 140,
                 name: 'defaultValueGenerator',
                 value: datax.defaultValueGenerator
-            },{
-                xtype: "numberfield",
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
-            },{
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
                 xtype: "checkbox",
                 fieldLabel: t("show_charcount"),
                 name: "showCharCount",
                 value: datax.showCharCount
             }
-            ];
+        ];
 
         if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
 

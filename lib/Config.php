@@ -15,14 +15,10 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Runtime;
-use Pimcore\Config\EnvironmentConfig;
-use Pimcore\Config\EnvironmentConfigInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\User\UserRole;
-use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\Yaml\Yaml;
 
 class Config implements \ArrayAccess
@@ -36,11 +32,6 @@ class Config implements \ArrayAccess
      * @var string
      */
     protected static $environment = null;
-
-    /**
-     * @var EnvironmentConfigInterface
-     */
-    private static $environmentConfig;
 
     /**
      * @var array|null
@@ -157,20 +148,6 @@ class Config implements \ArrayAccess
             $config = $container->getParameter('pimcore.config');
             $adminConfig = $container->getParameter('pimcore_admin.config');
 
-            //add email settings
-            foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
-                if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
-                    $config[$key]['smtp'] = [
-                        'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
-                        'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
-                        'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
-                        'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
-                        'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
-                        'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
-                    ];
-                }
-            }
-
             static::$systemConfig = array_merge_recursive($config, $adminConfig);
         }
 
@@ -252,7 +229,6 @@ class Config implements \ArrayAccess
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 
@@ -510,7 +486,7 @@ class Config implements \ArrayAccess
 
     /**
      * @deprecated use getSystemConfiguration()/Pimcore\Config service instead
-     * to be removed in v7.0
+     * to be removed in Pimcore 10
      *
      * @return mixed|null|\Pimcore\Config\Config
      *
@@ -569,6 +545,8 @@ class Config implements \ArrayAccess
      * @static
      *
      * @return \Pimcore\Config\Config
+     *
+     * @internal
      */
     public static function getRobotsConfig()
     {
@@ -576,8 +554,16 @@ class Config implements \ArrayAccess
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_robots');
         } else {
             try {
-                $file = self::locateConfigFile('robots.php');
-                $config = static::getConfigInstance($file);
+                $settingsStoreScope = 'robots.txt';
+                $configData = [];
+                $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
+                foreach ($robotsSettingsIds as $id) {
+                    $robots = SettingsStore::get($id, $settingsStoreScope);
+                    $siteId = \preg_replace('/^robots\.txt\-/', '', $robots->getId());
+                    $configData[$siteId] = $robots->getData();
+                }
+
+                $config = new \Pimcore\Config\Config($configData);
             } catch (\Exception $e) {
                 $config = new \Pimcore\Config\Config([]);
             }
@@ -592,6 +578,8 @@ class Config implements \ArrayAccess
      * @static
      *
      * @param \Pimcore\Config\Config $config
+     *
+     * @internal
      */
     public static function setRobotsConfig(\Pimcore\Config\Config $config)
     {
@@ -845,7 +833,7 @@ class Config implements \ArrayAccess
                 if ($rootNode) {
                     $tmpData['type'] = 'customview';
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ?? null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId] = $tmpData;
@@ -879,17 +867,11 @@ class Config implements \ArrayAccess
             }
         }
 
-        usort($result, function ($treeA, $treeB) {
-            $a = $treeA['sort'] ? $treeA['sort'] : 0;
-            $b = $treeB['sort'] ? $treeB['sort'] : 0;
+        usort($result, static function ($treeA, $treeB) {
+            $a = $treeA['sort'] ?: 0;
+            $b = $treeB['sort'] ?: 0;
 
-            if ($a > $b) {
-                return 1;
-            } elseif ($a < $b) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return $a <=> $b;
         });
 
         return $result;
@@ -1033,92 +1015,11 @@ class Config implements \ArrayAccess
     }
 
     /**
-     * @param bool $reset
-     * @param string|null $default
-     *
      * @return string
      */
-    public static function getEnvironment(bool $reset = false, string $default = null)
+    public static function getEnvironment(): string
     {
-        if (null === static::$environment || $reset) {
-            $environment = false;
-
-            if (php_sapi_name() === 'cli') {
-                $input = new ArgvInput();
-                $environment = $input->getParameterOption(['--env', '-e'], null, true);
-            }
-
-            // check env vars - fall back to default (prod)
-            if (!$environment) {
-                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
-                    $environment = self::resolveEnvVarValue($envVarName);
-                    if ($environment) {
-                        break;
-                    }
-                }
-            }
-
-            if (!$environment) {
-                if (null !== $default) {
-                    $environment = $default;
-                } else {
-                    $environment = static::getEnvironmentConfig()->getDefaultEnvironment();
-                }
-            }
-
-            static::$environment = $environment;
-        }
-
-        return static::$environment;
-    }
-
-    /**
-     * @internal
-     *
-     * @param string $environment
-     */
-    public static function setEnvironment($environment)
-    {
-        static::$environment = $environment;
-    }
-
-    /**
-     * @internal
-     *
-     * @return EnvironmentConfigInterface
-     */
-    public static function getEnvironmentConfig(): EnvironmentConfigInterface
-    {
-        if (null === static::$environmentConfig) {
-            static::$environmentConfig = new EnvironmentConfig();
-        }
-
-        return static::$environmentConfig;
-    }
-
-    /**
-     * @internal
-     *
-     * @param EnvironmentConfigInterface $environmentConfig
-     */
-    public static function setEnvironmentConfig(EnvironmentConfigInterface $environmentConfig)
-    {
-        self::$environmentConfig = $environmentConfig;
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getFlag($key)
-    {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
-        if (isset($config['flags'])) {
-            if (isset($config['flags'][$key])) {
-                return $config['flags'][$key];
-            }
-        }
-
-        return null;
+        return $_SERVER['APP_ENV'];
     }
 
     /**
@@ -1127,7 +1028,7 @@ class Config implements \ArrayAccess
      * @param string $file
      * @param bool $asArray
      *
-     * @return null|Config\Config
+     * @return null|Config\Config|array
      *
      * @throws \Exception
      */
@@ -1153,86 +1054,5 @@ class Config implements \ArrayAccess
         }
 
         throw new \Exception($file . ' is invalid');
-    }
-
-    /**
-     * @internal
-     *
-     * @param string $varName
-     * @param mixed $default
-     *
-     * @return string|null
-     */
-    public static function resolveEnvVarValue(string $varName, $default = null): ?string
-    {
-        $value = $_SERVER[$varName] ?? $_ENV[$varName] ?? $_SERVER['REDIRECT_' . $varName]
-            ?? $_ENV['REDIRECT_' . $varName] ?? $default;
-
-        return $value;
-    }
-
-    /**
-     * @internal
-     */
-    public static function initDebugDevMode()
-    {
-        if (defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
-            $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
-        } else {
-            // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the
-            // path from the environment variables (if customized) or we use the default structure
-            $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
-            $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
-        }
-
-        $debug = false;
-        $devMode = false;
-
-        $debugModeFile = $configDir . '/debug-mode.php';
-        if (file_exists($debugModeFile)) {
-            $confTemp = include $debugModeFile;
-            if (is_array($confTemp)) {
-                $conf = $confTemp;
-
-                // init debug mode
-                if (isset($conf['active'])) {
-                    $debug = $conf['active'];
-                    // enable debug mode only for a comma-separated list of IP addresses/ranges
-                    if ($debug && $conf['ip']) {
-                        $debug = false;
-                        $clientIp = Tool::getClientIp();
-                        if (null !== $clientIp) {
-                            $debugIpAddresses = explode_and_trim(',', $conf['ip']);
-                            if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
-                                $debug = true;
-                            }
-                        }
-                    }
-                }
-
-                // init dev mode
-                if ($debug && isset($conf['devmode'])) {
-                    $devMode = $conf['devmode'];
-                }
-            }
-        }
-
-        if (\Pimcore::getDebugMode() === null) {
-            \Pimcore::setDebugMode($debug);
-
-            /**
-             * @deprecated
-             */
-            define('PIMCORE_DEBUG', $debug);
-        }
-
-        if (\Pimcore::getDevMode() === null) {
-            \Pimcore::setDevMode($devMode);
-
-            /**
-             * @deprecated
-             */
-            define('PIMCORE_DEVMODE', $devMode);
-        }
     }
 }

@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Arithmetic extends AbstractOperator
+/**
+ * @internal
+ */
+final class Arithmetic extends AbstractOperator
 {
     /** @var bool */
     private $skipNull;
@@ -51,8 +54,8 @@ class Arithmetic extends AbstractOperator
             $valueArray = [];
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
-                $isArrayType = $childResult->isArrayType;
-                $childValues = $childResult->value;
+                $isArrayType = $childResult->isArrayType ?? false;
+                $childValues = $childResult->value ?? null;
                 if ($childValues && !$isArrayType) {
                     $childValues = [$childValues];
                 }

@@ -20,6 +20,9 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractCommand
 {
     /** @var LocaleServiceInterface */
@@ -40,7 +43,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

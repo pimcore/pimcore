@@ -27,6 +27,7 @@ use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -222,7 +223,7 @@ class Document extends Element\AbstractElement
             $helperDoc->getDao()->getByPath($path);
             $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             $doc = null;
         }
 
@@ -270,37 +271,37 @@ class Document extends Element\AbstractElement
             }
         }
 
-        try {
-            if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-                $document = new Document();
+        if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
+            $document = new Document();
+            try {
                 $document->getDao()->getById($id);
-
-                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
-
-                // this is the fallback for custom document types using prefixes
-                // so we need to check if the class exists first
-                if (!Tool::classExists($className)) {
-                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                    if (Tool::classExists($oldStyleClass)) {
-                        $className = $oldStyleClass;
-                    }
-                }
-
-                /** @var Document $document */
-                $document = self::getModelFactory()->build($className);
-                \Pimcore\Cache\Runtime::set($cacheKey, $document);
-
-                $document->getDao()->getById($id);
-                $document->__setDataVersionTimestamp($document->getModificationDate());
-
-                $document->resetDirtyMap();
-
-                \Pimcore\Cache::save($document, $cacheKey);
-            } else {
-                \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            } catch (NotFoundException $e) {
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
+
+            $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+
+            // this is the fallback for custom document types using prefixes
+            // so we need to check if the class exists first
+            if (!Tool::classExists($className)) {
+                $oldStyleClass = 'Document_' . ucfirst($document->getType());
+                if (Tool::classExists($oldStyleClass)) {
+                    $className = $oldStyleClass;
+                }
+            }
+
+            /** @var Document $document */
+            $document = self::getModelFactory()->build($className);
+            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+
+            $document->getDao()->getById($id);
+            $document->__setDataVersionTimestamp($document->getModificationDate());
+
+            $document->resetDirtyMap();
+
+            \Pimcore\Cache::save($document, $cacheKey);
+        } else {
+            \Pimcore\Cache\Runtime::set($cacheKey, $document);
         }
 
         if (!$document || !static::typeMatch($document)) {
@@ -323,10 +324,8 @@ class Document extends Element\AbstractElement
     {
         $document = new static();
         $document->setParentId($parentId);
-
-        foreach ($data as $key => $value) {
-            $document->setValue($key, $value);
-        }
+        self::checkCreateData($data);
+        $document->setValues($data);
 
         if ($save) {
             $document->save();
@@ -496,6 +495,8 @@ class Document extends Element\AbstractElement
      * Validate the document path.
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function correctPath()
     {
@@ -879,6 +880,7 @@ class Document extends Element\AbstractElement
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
             if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
+                    $hardlinkPath = '';
                     $hardlink = $masterDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
 
@@ -887,6 +889,10 @@ class Document extends Element\AbstractElement
 
                         $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
                             $hardlinkPath, $this->getRealFullPath());
+                    }
+
+                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
+                        $link = null;
                     }
                 }
             }
@@ -912,7 +918,7 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if (!$link && !empty($config['domain'])) {
+                if (!$link && !empty($config['domain']) && !($this instanceof WrapperInterface)) {
                     $link = $scheme . $config['domain'] . $this->getRealFullPath();
                 }
             }
@@ -1301,9 +1307,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setProperties(array $properties)
+    public function setProperties(?array $properties)
     {
         $this->properties = $properties;
 

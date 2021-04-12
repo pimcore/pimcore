@@ -244,7 +244,7 @@ class Analytics extends AbstractAdapter
     {
         $dimension = $configuration->dimension;
         if (count($dimension)) {
-            foreach ($this->fullConfig->columnConfiguration as $column) {
+            foreach ($this->fullConfig->getColumnConfiguration() as $column) {
                 if ($column['filter_drilldown'] == 'only_filter') {
                     foreach ($dimension as $key => $dim) {
                         if ($dim == $column['name']) {

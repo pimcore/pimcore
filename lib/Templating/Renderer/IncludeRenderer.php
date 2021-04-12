@@ -21,6 +21,7 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
+use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
 
 class IncludeRenderer
@@ -89,7 +90,7 @@ class IncludeRenderer
         $cacheKey = null;
         $cacheConfig = false;
 
-        if ($cacheEnabled) {
+        if ($cacheEnabled && !$editmode) {
             if ($cacheConfig = Frontend::isOutputCacheEnabled()) {
                 // cleanup params to avoid serializing Element\ElementInterface objects
                 $cacheParams = $params;
@@ -108,24 +109,12 @@ class IncludeRenderer
                     $cacheParams['target_group'] = $include->getUseTargetGroup();
                 }
 
-                if (Frontend::hasWebpSupport()) {
-                    $cacheParams['webp'] = true;
-                }
-
                 $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
                 if ($content = Cache::load($cacheKey)) {
                     return $content;
                 }
             }
         }
-
-        // TODO remove dependency on registry setting
-        $editmodeBackup = false;
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_editmode')) {
-            $editmodeBackup = \Pimcore\Cache\Runtime::get('pimcore_editmode');
-        }
-
-        \Pimcore\Cache\Runtime::set('pimcore_editmode', false);
 
         $params = array_merge($params, ['document' => $include]);
         $content = '';
@@ -138,10 +127,8 @@ class IncludeRenderer
             }
         }
 
-        \Pimcore\Cache\Runtime::set('pimcore_editmode', $editmodeBackup);
-
-        // write contents to the cache, if output-cache is enabled
-        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+        // write contents to the cache, if output-cache is enabled & not in editmode
+        if ($cacheConfig && !$editmode && !DeviceDetector::getInstance()->wasUsed()) {
             Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
         }
 
@@ -175,20 +162,20 @@ class IncludeRenderer
 
         // this is if the content that is included does already contain markup/html
         // this is needed by the editmode to highlight included documents
-        if ($html = str_get_html($content)) {
-            $childs = $html->find('*');
-            if (is_array($childs)) {
-                foreach ($childs as $child) {
-                    $child->class = $child->class . $editmodeClass;
-                    $child->pimcore_type = $include->getType();
-                    $child->pimcore_id = $include->getId();
-                }
+        try {
+            $html = new DomCrawler($content);
+            $childs = $html->filterXPath('//' . DomCrawler::FRAGMENT_WRAPPER_TAG . '/*'); // FRAGMENT_WRAPPER_TAG is added by DomCrawler for fragments
+            /** @var \DOMElement $child */
+            foreach ($childs as $child) {
+                $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
+                $child->setAttribute('pimcore_type', $include->getType());
+                $child->setAttribute('pimcore_id', $include->getId());
             }
-            $content = $html->save();
+            $content = $html->html();
 
             $html->clear();
             unset($html);
-        } else {
+        } catch (\Exception $e) {
             // add a div container if the include doesn't contain markup/html
             $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
         }

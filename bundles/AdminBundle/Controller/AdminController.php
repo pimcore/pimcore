@@ -21,7 +21,6 @@ use Pimcore\Controller\Controller;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Logger;
 use Pimcore\Model\User;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
@@ -43,7 +42,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function needsSessionDoubleAuthenticationCheck()
     {
@@ -51,7 +50,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function needsStorageDoubleAuthenticationCheck()
     {
@@ -109,7 +108,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []): AccessDeniedHttpException
     {
         // $headers parameter not supported by Symfony 3.4
-        return new AccessDeniedHttpException($message, $previous, $code);
+        return new AccessDeniedHttpException($message, $previous, $code, $headers);
     }
 
     /**
@@ -251,14 +250,5 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $translator = $this->get('translator');
 
         return $translator->trans($id, $parameters, $domain, $locale);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function checkCsrfToken(Request $request)
-    {
-        $csrfCheck = $this->container->get('Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener');
-        $csrfCheck->checkCsrfToken($request);
     }
 }

@@ -19,13 +19,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
+class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Layout\Traits\LabelTrait;
@@ -36,13 +36,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @var string
      */
     public $fieldtype = 'localizedfields';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Localizedfield';
 
     /**
      * @var array
@@ -70,14 +63,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $title;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var int
@@ -115,6 +108,16 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @var array|null
      */
     public $fieldDefinitionsCache;
+
+    /**
+     * @var array
+     */
+    public $permissionView = [];
+
+    /**
+     * @var array
+     */
+    public $permissionEdit = [];
 
     /**
      * @see Data::getDataForEditmode
@@ -176,7 +179,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
-                    $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+                    $lazyKey = $data->buildLazyKey($fd->getName(), $language);
                     if (!$data->isLazyKeyLoaded($lazyKey) && $fd instanceof CustomResourcePersistingInterface) {
                         $params['language'] = $language;
                         $params['object'] = $object;
@@ -355,14 +358,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /pimcore/modules/admin/views/scripts/object/preview-version.php
+        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
         return 'LOCALIZED FIELDS';
     }
 
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -372,18 +375,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getForCsvExport($object, $params = [])
     {
         return 'NOT SUPPORTED';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**
@@ -575,7 +566,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function preGetData($container, $params = [])
     {
         if (!$container instanceof DataObject\Concrete && !$container instanceof DataObject\Fieldcollection\Data\AbstractData
-                    && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
             throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
@@ -590,6 +581,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'objectbrick',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -598,6 +590,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $context = [
                     'containerType' => 'fieldcollection',
                     'containerKey' => $container->getType(),
+                    'fieldname' => $container->getFieldname(),
                 ];
                 $lf->setContext($context);
             } elseif ($container instanceof DataObject\Concrete) {
@@ -810,19 +803,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param int|string|null $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -904,19 +900,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param int|string|null $width
+     * @param int|string $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|string
      */
     public function getWidth()
     {
@@ -955,8 +954,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             if ($data->getObject()->getClass()->getAllowInherit()) {
                                 //try again with parent data when inheritance is activated
                                 try {
-                                    $getInheritedValues = AbstractObject::doGetInheritedValues();
-                                    AbstractObject::setGetInheritedValues(true);
+                                    $getInheritedValues = DataObject::doGetInheritedValues();
+                                    DataObject::setGetInheritedValues(true);
 
                                     $value = null;
                                     $context = $data->getContext();
@@ -973,7 +972,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     }
 
                                     $fd->checkValidity($value, $omitMandatoryCheck);
-                                    AbstractObject::setGetInheritedValues($getInheritedValues);
+                                    DataObject::setGetInheritedValues($getInheritedValues);
                                 } catch (\Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
@@ -1153,8 +1152,17 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function __sleep()
     {
         $vars = get_object_vars($this);
-        unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
+        $blockedVars = [
+            'fieldDefinitionsCache',
+            'referencedFields',
+            'blockedVarsForExport',
+            'permissionView',
+            'permissionEdit',
+        ];
+
+        foreach ($blockedVars as $blockedVar) {
+            unset($vars[$blockedVar]);
+        }
 
         return array_keys($vars);
     }
@@ -1246,90 +1254,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->provideSplitView = $provideSplitView;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof DataObject\Localizedfield) {
-            $items = $value->getInternalData();
-            if (is_array($items)) {
-                $result = [];
-                foreach ($items as $language => $languageData) {
-                    $languageResult = [];
-                    foreach ($languageData as $elementName => $elementData) {
-                        $fd = $this->getFieldDefinition($elementName);
-                        if (!$fd) {
-                            // class definition seems to have changed
-                            Logger::warn('class definition seems to have changed, element name: '.$elementName);
-                            continue;
-                        }
-
-                        $childParams = ['raw' => true];
-                        if ($params['blockmode'] ?? false) {
-                            $childParams['blockmode'] = true;
-                        }
-
-                        $dataForResource = $fd->marshal($elementData, $object, $childParams);
-
-                        $languageResult[$elementName] = $dataForResource;
-                    }
-
-                    $result[$language] = $languageResult;
-                }
-
-                return $result;
-            }
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        $lf = new DataObject\Localizedfield();
-        $lf->setObject($object);
-        if (is_array($value)) {
-            $items = [];
-            foreach ($value as $language => $languageData) {
-                $languageResult = [];
-                foreach ($languageData as $elementName => $elementData) {
-                    $fd = $this->getFieldDefinition($elementName);
-                    if (!$fd) {
-                        // class definition seems to have changed
-                        Logger::warn('class definition seems to have changed, element name: '.$elementName);
-                        continue;
-                    }
-
-                    $childParams = ['raw' => true];
-                    if ($params['blockmode'] ?? false) {
-                        $childParams['blockmode'] = true;
-                    }
-                    $dataFromResource = $fd->unmarshal($elementData, $object, $childParams);
-
-                    $languageResult[$elementName] = $dataFromResource;
-                }
-
-                $items[$language] = $languageResult;
-            }
-
-            $lf->setItems($items);
-        }
-
-        return $lf;
-    }
-
     /**
      * @return bool
      */
@@ -1357,5 +1281,124 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function setTabPosition($tabPosition): void
     {
         $this->tabPosition = $tabPosition;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Localizedfield::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Localizedfield::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\'. DataObject\Localizedfield::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Localizedfield::class . '|null';
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionView(): array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param array $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param array $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Localizedfield) {
+            $items = $value->getInternalData();
+            if (is_array($items)) {
+                $result = [];
+                foreach ($items as $language => $languageData) {
+                    $languageResult = [];
+                    foreach ($languageData as $elementName => $elementData) {
+                        $fd = $this->getFieldDefinition($elementName);
+                        if (!$fd) {
+                            // class definition seems to have changed
+                            Logger::warn('class definition seems to have changed, element name: '.$elementName);
+                            continue;
+                        }
+
+                        if ($fd instanceof NormalizerInterface) {
+                            $dataForResource = $fd->normalize($elementData, $params);
+                            $languageResult[$elementName] = $dataForResource;
+                        }
+                    }
+
+                    $result[$language] = $languageResult;
+                }
+
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $lf = new DataObject\Localizedfield();
+            $lf->setObject($params['object']);
+
+            $items = [];
+
+            foreach ($value as $language => $languageData) {
+                $languageResult = [];
+                foreach ($languageData as $elementName => $elementData) {
+                    $fd = $this->getFieldDefinition($elementName);
+                    if (!$fd) {
+                        // class definition seems to have changed
+                        Logger::warn('class definition seems to have changed, element name: '.$elementName);
+                        continue;
+                    }
+
+                    if ($fd instanceof NormalizerInterface) {
+                        $dataFromResource = $fd->denormalize($elementData, $params);
+                        $languageResult[$elementName] = $dataFromResource;
+                    }
+                }
+
+                $items[$language] = $languageResult;
+            }
+
+            $lf->setItems($items);
+
+            return $lf;
+        }
+
+        return null;
     }
 }

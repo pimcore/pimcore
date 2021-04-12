@@ -37,7 +37,7 @@ abstract class AbstractDefinitionHelper extends Module
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _beforeSuite($settings = [])
     {
@@ -54,7 +54,7 @@ abstract class AbstractDefinitionHelper extends Module
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _afterSuite()
     {
@@ -78,7 +78,12 @@ abstract class AbstractDefinitionHelper extends Module
         if (!$name) {
             $name = $type;
         }
-        $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
+
+        if (strpos($type, 'indexField') === 0) {
+            $classname = 'Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ClassDefinition\\' . ucfirst($type);
+        } else {
+            $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
+        }
         /** @var $child Data */
         $child = new $classname();
         $child->setName($name);

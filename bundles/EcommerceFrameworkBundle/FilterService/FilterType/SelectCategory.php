@@ -16,6 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
 
 class SelectCategory extends AbstractFilterType
@@ -25,17 +27,18 @@ class SelectCategory extends AbstractFilterType
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = [];
 
         $availableRelations = [];
         if ($filterDefinition->getAvailableCategories()) {
+            /** @var Concrete $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[$rel->getId()] = true;
             }
@@ -43,6 +46,7 @@ class SelectCategory extends AbstractFilterType
 
         foreach ($rawValues as $v) {
             $explode = explode(',', $v['value']);
+            /** @var int $e */
             foreach ($explode as $e) {
                 if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
                     if (!empty($values[$e])) {
@@ -57,7 +61,7 @@ class SelectCategory extends AbstractFilterType
 
         $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
 
-        $parameters = [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
@@ -69,8 +73,6 @@ class SelectCategory extends AbstractFilterType
             'document' => $request->get('contentDocument'),
             'resultCount' => $productList->count(),
         ];
-
-        return $this->render($this->getTemplate($filterDefinition), $parameters);
     }
 
     /**
@@ -101,10 +103,12 @@ class SelectCategory extends AbstractFilterType
         if (!empty($value)) {
             $value = '%,' . trim($value) . ',%';
 
+            $db = Db::get();
+
             if ($isPrecondition) {
-                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $productList->quote($value), 'PRECONDITION_' . $filterDefinition->getField());
+                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $db->quote($value), 'PRECONDITION_' . $filterDefinition->getField());
             } else {
-                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $productList->quote($value), $filterDefinition->getField());
+                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $db->quote($value), $filterDefinition->getField());
             }
         }
 

@@ -50,7 +50,7 @@ class EncoderFactory implements EncoderFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getEncoder($user)
     {

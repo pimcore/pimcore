@@ -201,7 +201,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         if ($generateDefinitionFile) {
             $this->cleanupOldFiles($definitionFile);
 
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             unset($clone->oldClassDefinitions);
             unset($clone->fieldDefinitions);
@@ -452,6 +453,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $containerDefinition[$cl['classname']][$cl['fieldname']][] = $this->key;
 
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
+                if (!$class) {
+                    throw new \Exception('Could not load class ' . $cl['classname']);
+                }
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
                 if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
@@ -525,7 +529,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= 'public function get' . ucfirst($brickKey) . "() { \n";
 
                     if ($class->getAllowInherit()) {
-                        $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject\\AbstractObject::doGetInheritedValues($this->getObject())) { ' . "\n";
+                        $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject::doGetInheritedValues($this->getObject())) { ' . "\n";
                         $cd .= "\t\t" . 'try {' . "\n";
                         $cd .= "\t\t\t" . '$brickContainer = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
                         $cd .= "\t\t\t" . 'if(!empty($brickContainer)) {' . "\n";
@@ -617,23 +621,25 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
-                if (!$processedClasses[$cl['classname']]) {
-                    $class = DataObject\ClassDefinition::getByName($cl['classname']);
-                    $this->getDao()->delete($class);
+                if (!isset($processedClasses[$cl['classname']])) {
                     $processedClasses[$cl['classname']] = true;
+                    $class = DataObject\ClassDefinition::getByName($cl['classname']);
+                    if ($class instanceof DataObject\ClassDefinition) {
+                        $this->getDao()->delete($class);
 
-                    foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                            $allowedTypes = $fieldDef->getAllowedTypes();
-                            $idx = array_search($this->getKey(), $allowedTypes);
-                            if ($idx !== false) {
-                                array_splice($allowedTypes, $idx, 1);
+                        foreach ($class->getFieldDefinitions() as $fieldDef) {
+                            if ($fieldDef instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                                $allowedTypes = $fieldDef->getAllowedTypes();
+                                $idx = array_search($this->getKey(), $allowedTypes);
+                                if ($idx !== false) {
+                                    array_splice($allowedTypes, $idx, 1);
+                                }
+                                $fieldDef->setAllowedTypes($allowedTypes);
                             }
-                            $fieldDef->setAllowedTypes($allowedTypes);
                         }
-                    }
 
-                    $class->save();
+                        $class->save();
+                    }
                 }
             }
         }

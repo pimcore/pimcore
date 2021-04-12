@@ -92,7 +92,7 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
                     if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
@@ -256,7 +256,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -267,7 +267,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function appendData($existingData, $additionalData)
     {
@@ -298,7 +298,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeData($existingData, $removeData)
     {
@@ -420,79 +420,50 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     * @internal checks for multiple assignments and throws an exception in case the rules are violated.
      *
-     * @param array|null $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
-     *
-     * @return array
+     * @param array|null $data*
      *
      * @throws \Exception
      */
-    public function filterMultipleAssignments($data, $container, $params)
+    public function performMultipleAssignmentCheck($data)
     {
-        if (
-            (!is_array($data) || count($data) < 2)
-            || !$container instanceof Element\DirtyIndicatorInterface
-            || ($container instanceof DataObject\Concrete && !$container->isFieldDirty($this->getName()))
-            || (($container instanceof DataObject\Fieldcollection\Data\AbstractData
-                || $container instanceof DataObject\Localizedfield
-                || $container instanceof DataObject\Objectbrick\Data\AbstractData)
-                && !$container->isFieldDirty('_self'))
-        ) {
-            return $data;
-        }
+        if (is_array($data)) {
+            if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
+                $relationItems = [];
+                $fieldName = $this->getName();
 
-        if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
-            $relationItems = [];
-            $objectId = null;
-            $fieldName = $this->getName();
-
-            if ($container instanceof DataObject\Concrete) {
-                $objectId = $container->getId();
-            } elseif (
-                    $container instanceof DataObject\Fieldcollection\Data\AbstractData ||
-                    $container instanceof DataObject\Localizedfield ||
-                    $container instanceof DataObject\Objectbrick\Data\AbstractData
-                ) {
-                $objectFromContainer = $container->getObject();
-                if ($objectFromContainer) {
-                    $objectId = $objectFromContainer->getId();
-                }
-            }
-
-            foreach ($data as $item) {
-                $elementHash = null;
-                if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
-                    if ($item->getElement() instanceof Element\ElementInterface) {
-                        $elementHash = Element\Service::getElementHash($item->getElement());
+                foreach ($data as $item) {
+                    $elementHash = null;
+                    if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
+                        if ($item->getElement() instanceof Element\ElementInterface) {
+                            $elementHash = Element\Service::getElementHash($item->getElement());
+                        }
+                    } elseif ($item instanceof Element\ElementInterface) {
+                        $elementHash = Element\Service::getElementHash($item);
                     }
-                } elseif ($item instanceof Element\ElementInterface) {
-                    $elementHash = Element\Service::getElementHash($item);
+
+                    if ($elementHash === null) {
+                        throw new \Exception('Passing relations without ID or type not allowed anymore!');
+                    } elseif (!isset($relationItems[$elementHash])) {
+                        $relationItems[$elementHash] = $item;
+                    } else {
+                        $message = 'Passing relations multiple times not allowed anymore: ' . $elementHash
+                            . ' multiple times in field ' . $fieldName;
+
+                        if (method_exists($this, 'getAllowMultipleAssignments')) {
+                            $message .= ", Reason: 'Allow Multiple Assignments' setting is disabled in class definition. ";
+                        }
+
+                        throw new \Exception($message);
+                    }
                 }
-
-                if ($elementHash === null) {
-                    $relationItems[] = $item; //do not filter if element hash fails
-                } elseif (!isset($relationItems[$elementHash])) {
-                    $relationItems[$elementHash] = $item;
-                } else {
-                    throw new \Exception(sprintf('Passing relations multiple times is not allowed: %s in field %s of object id: %s', $elementHash, $fieldName, $objectId));
-                }
-            }
-
-            if (count($relationItems) !== count($data)) {
-                $this->setDataToObject(array_values($relationItems), $container, $params);
-
-                return array_values($relationItems);
             }
         }
-
-        return $data;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -500,10 +471,39 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    abstract protected function getPhpdocType();
 }

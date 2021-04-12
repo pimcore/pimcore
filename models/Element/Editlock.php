@@ -30,37 +30,37 @@ class Editlock extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var int
      */
-    public $userId;
+    protected $userId;
 
     /**
      * @var string
      */
-    public $sessionId;
+    protected $sessionId;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var string
      */
-    public $cpath;
+    protected $cpath;
 
     /**
      * @param int $cid

@@ -22,31 +22,33 @@ trait LabelTrait
     /**
      * Width of input field labels
      *
-     * @var int
+     * @var string|int
      */
-    public $labelWidth = 100;
+    protected $labelWidth = 100;
 
     /**
      * @var string
      */
-    public $labelAlign = 'left';
+    protected $labelAlign = 'left';
 
     /**
-     * @param int $labelWidth
+     * @param string|int $labelWidth
      *
      * @return $this
      */
     public function setLabelWidth($labelWidth)
     {
-        if (!empty($labelWidth)) {
-            $this->labelWidth = (int)$labelWidth;
+        if (is_numeric($labelWidth)) {
+            $labelWidth = (int)$labelWidth;
         }
+
+        $this->labelWidth = $labelWidth;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getLabelWidth()
     {

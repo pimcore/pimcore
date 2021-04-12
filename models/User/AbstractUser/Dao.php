@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("user doesn't exist");
+            throw new Model\Exception\NotFoundException(sprintf('User with name "%s" does not exist', $name));
         }
     }
 

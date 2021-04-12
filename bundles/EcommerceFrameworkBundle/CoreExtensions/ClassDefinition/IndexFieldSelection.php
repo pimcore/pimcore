@@ -55,13 +55,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         'preSelect' => 'text',
     ];
 
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
-
     public $width;
     public $considerTenants = false;
     public $multiPreSelect = false;
@@ -263,7 +256,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
@@ -284,28 +277,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         }
 
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @param string $importValue
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return ObjectData\IndexFieldSelection|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode('%%%%', $importValue);
-
-        $value = null;
-        if ($values[0] && $values[1] && $values[2]) {
-            $preSelect = explode('%%', $value[2]);
-            $value = new ObjectData\IndexFieldSelection($value[0], $values[1], $preSelect);
-        }
-
-        return $value;
     }
 
     /**
@@ -335,5 +306,25 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public function setWidth($width)
     {
         $this->width = (int)$width;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . ObjectData\IndexFieldSelection::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . ObjectData\IndexFieldSelection::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 }

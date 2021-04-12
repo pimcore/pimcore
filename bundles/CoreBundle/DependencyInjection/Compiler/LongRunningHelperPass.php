@@ -24,11 +24,13 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Adds tagged navigation renderers to navigation helper
+ *
+ * @internal
  */
-class LongRunningHelperPass implements CompilerPassInterface
+final class LongRunningHelperPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {

@@ -61,12 +61,17 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
 
-        specificItems = [
+        var specificItems = [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             },
             {
                 xtype: "numberfield",

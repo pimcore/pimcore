@@ -6,7 +6,6 @@
     "group": null,
     "layoutDefinitions": {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": null,
         "border": false,
         "name": null,
@@ -39,7 +38,6 @@
                 "childs": [
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 100,
                         "layout": null,
                         "border": false,
                         "name": "MyLayout",
@@ -61,7 +59,6 @@
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 190,
-                                "phpdocType": "string",
                                 "regex": "",
                                 "unique": null,
                                 "showCharCount": null,
@@ -88,7 +85,6 @@
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 190,
-                                "phpdocType": "string",
                                 "regex": "",
                                 "unique": null,
                                 "showCharCount": null,
@@ -115,7 +111,6 @@
                                 "maxItems": null,
                                 "assetUploadPath": null,
                                 "queryColumnType": "text",
-                                "phpdocType": "array",
                                 "relationType": true,
                                 "objectsAllowed": true,
                                 "assetsAllowed": true,
@@ -145,7 +140,6 @@
                                 "maxItems": null,
                                 "assetUploadPath": null,
                                 "queryColumnType": "text",
-                                "phpdocType": "array",
                                 "relationType": true,
                                 "objectsAllowed": true,
                                 "assetsAllowed": true,
@@ -170,7 +164,6 @@
                             },
                             {
                                 "fieldtype": "localizedfields",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Localizedfield",
                                 "childs": [
                                     {
                                         "fieldtype": "input",
@@ -179,7 +172,6 @@
                                         "queryColumnType": "varchar",
                                         "columnType": "varchar",
                                         "columnLength": 190,
-                                        "phpdocType": "string",
                                         "regex": "",
                                         "unique": null,
                                         "showCharCount": null,
@@ -208,7 +200,6 @@
                                             "id": "int(11)",
                                             "type": "enum('document','asset','object')"
                                         },
-                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
                                         "objectsAllowed": true,
                                         "assetsAllowed": false,
                                         "assetTypes": [],
@@ -220,8 +211,8 @@
                                             }
                                         ],
                                         "pathFormatterClass": null,
-                                        "name": "relation",
-                                        "title": "relation",
+                                        "name": "lrelation",
+                                        "title": "lrelation",
                                         "tooltip": null,
                                         "mandatory": false,
                                         "noteditable": null,
@@ -242,12 +233,13 @@
                                 "width": null,
                                 "height": null,
                                 "maxTabs": null,
-                                "labelWidth": null,
                                 "border": false,
                                 "provideSplitView": null,
                                 "tabPosition": "top",
                                 "hideLabelsWhenTabsReached": null,
                                 "fieldDefinitionsCache": null,
+                                "permissionView": [],
+                                "permissionEdit": [],
                                 "tooltip": null,
                                 "mandatory": null,
                                 "noteditable": null,
@@ -259,18 +251,24 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": true,
-                                "visibleSearch": true
+                                "visibleSearch": true,
+                                "labelWidth": 100,
+                                "labelAlign": "left"
                             }
                         ],
                         "locked": false,
-                        "icon": null
+                        "icon": null,
+                        "labelWidth": 100,
+                        "labelAlign": "left"
                     }
                 ],
                 "locked": false
             }
         ],
         "locked": false,
-        "icon": null
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
     },
     "generateTypeDeclarations": true
 }

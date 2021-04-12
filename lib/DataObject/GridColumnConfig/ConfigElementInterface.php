@@ -29,7 +29,7 @@ interface ConfigElementInterface
     /**
      * @param ElementInterface $element
      *
-     * @return \stdClass|null
+     * @return \stdClass|ResultContainer|null
      */
     public function getLabeledValue($element);
 }

@@ -26,32 +26,32 @@ class Info
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var Editable|Editable\Area|Editable\Areablock
      */
-    public $editable;
+    protected $editable;
 
     /**
      * @var array
      */
-    public $params = [];
+    protected $params = [];
 
     /**
      * @var Request
      */
-    public $request;
+    protected $request;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var int
      */
-    public $index;
+    protected $index;
 
     /**
      * @return string

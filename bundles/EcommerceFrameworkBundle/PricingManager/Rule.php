@@ -30,7 +30,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param int $id
      *
-     * @return RuleInterface
+     * @return RuleInterface|null
      */
     public static function getById($id)
     {
@@ -75,7 +75,7 @@ class Rule extends AbstractModel implements RuleInterface
     protected $description = [];
 
     /**
-     * @var BracketInterface
+     * @var ConditionInterface
      */
     protected $condition;
 
@@ -106,6 +106,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param mixed $value
      *
      * @return AbstractModel
+     *
+     * @internal
      */
     public function setValue($key, $value)
     {
@@ -412,6 +414,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string|null $language
      *
      * @return string
+     *
+     *
      */
     protected function getLanguage($language = null)
     {

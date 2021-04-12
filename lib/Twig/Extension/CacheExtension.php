@@ -16,7 +16,6 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Tool;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -70,10 +69,6 @@ class CacheExtension extends AbstractExtension
     {
         $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
-
-        if (Tool\Frontend::hasWebpSupport()) {
-            $this->key .= 'webp';
-        }
 
         if (!$lifetime) {
             $lifetime = null;

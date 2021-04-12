@@ -107,9 +107,6 @@ for details.
 #### Subrequests
 
 ```twig
-{# render an action #}
-{{ pimcore_action('sidebarBox', 'Blog', null, { items: count }) }}
-
 {# include another document #}
 {{ pimcore_inc('/snippets/foo') }}
 ```

@@ -39,5 +39,3 @@ interface CachingPriceSystemInterface extends PriceSystemInterface
      */
     public function clearPriceInfos($productEntries, $options);
 }
-
-class_alias(CachingPriceSystemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ICachingPriceSystem');

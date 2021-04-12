@@ -18,10 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface;
 
 interface CheckoutManagerFactoryInterface
 {
     public function createCheckoutManager(CartInterface $cart): CheckoutManagerInterface;
 }
-
-class_alias(CheckoutManagerFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory');

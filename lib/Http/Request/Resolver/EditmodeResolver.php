@@ -15,7 +15,6 @@
 namespace Pimcore\Http\Request\Resolver;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Pimcore\Cache\Runtime;
 use Pimcore\Http\RequestHelper;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -126,9 +125,6 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
         ]);
 
         $request->attributes->set(static::ATTRIBUTE_EDITMODE, $result);
-
-        // TODO this can be removed later
-        Runtime::set('pimcore_editmode', $result);
 
         return $result;
     }

@@ -22,12 +22,12 @@ use Symfony\Component\Routing\Route;
 class DataObjectRoute extends Route implements RouteObjectInterface
 {
     /**
-     * @var Concrete
+     * @var Concrete|null
      */
     protected $object;
 
     /**
-     * @var UrlSlug
+     * @var UrlSlug|null
      */
     protected $slug;
 
@@ -79,7 +79,7 @@ class DataObjectRoute extends Route implements RouteObjectInterface
      * If there is no specific content for this url (i.e. its an "application"
      * page), may return null.
      *
-     * @return object the document or entity this route entry points to
+     * @return object|null the document or entity this route entry points to
      */
     public function getContent()
     {
@@ -104,5 +104,7 @@ class DataObjectRoute extends Route implements RouteObjectInterface
         if ($this->object) {
             return sprintf('data_object_%d_%s', $this->object->getId(), $this->getPath());
         }
+
+        return null;
     }
 }

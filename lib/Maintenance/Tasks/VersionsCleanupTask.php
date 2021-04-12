@@ -23,6 +23,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class VersionsCleanupTask implements TaskInterface
 {
     /**
@@ -58,9 +61,13 @@ final class VersionsCleanupTask implements TaskInterface
 
         foreach ($conf as $elementType => $tConf) {
             $versioningType = 'steps';
-            $value = $tConf['steps'] ?? 0;
+            //skip cleanup if both, 'steps' & 'days', is null
+            if (is_null($tConf['steps']) && is_null($tConf['days'])) {
+                continue;
+            }
+            $value = $tConf['steps'] ?? 10;
 
-            if (isset($tConf['days']) && (int)$tConf['days'] > 0) {
+            if (isset($tConf['days']) && !is_null($tConf['days'])) {
                 $versioningType = 'days';
                 $value = (int)$tConf['days'];
             }

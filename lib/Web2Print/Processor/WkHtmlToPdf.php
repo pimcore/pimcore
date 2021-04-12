@@ -144,7 +144,7 @@ class WkHtmlToPdf extends Processor
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
-        if ($params['adapterConfig']) {
+        if (!empty($params['adapterConfig'])) {
             $this->setOptions($params['adapterConfig']);
         }
         $html = $this->processHtml($html, $params);

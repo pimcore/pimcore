@@ -21,23 +21,23 @@ use Pimcore\Translation\AttributeSet\Attribute;
 class DocumentImporter extends AbstractElementImporter
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
     {
         parent::importAttribute($element, $targetLanguage, $attribute);
 
         if ($attribute->getType() === Attribute::TYPE_TAG && $element instanceof Document\PageSnippet) {
-            $tag = $element->getEditable($attribute->getName());
-            if ($tag) {
-                if (in_array($tag->getType(), ['image', 'link'])) {
-                    $tag->setText($attribute->getContent());
+            $editable = $element->getEditable($attribute->getName());
+            if ($editable) {
+                if ($editable instanceof Document\Editable\Image || $editable instanceof Document\Editable\Link) {
+                    $editable->setText($attribute->getContent());
                 } else {
-                    $tag->setDataFromEditmode($attribute->getContent());
+                    $editable->setDataFromEditmode($attribute->getContent());
                 }
 
-                $tag->setInherited(false);
-                $element->setEditable($tag);
+                $editable->setInherited(false);
+                $element->setEditable($editable);
             }
         }
 

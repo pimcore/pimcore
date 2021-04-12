@@ -164,10 +164,15 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             },
             algorithmsCombo,
             salt,

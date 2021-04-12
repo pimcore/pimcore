@@ -26,7 +26,7 @@ abstract class AbstractUserAwarePasswordEncoder extends BasePasswordEncoder impl
     protected $user;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setUser(UserInterface $user)
     {
@@ -38,7 +38,7 @@ abstract class AbstractUserAwarePasswordEncoder extends BasePasswordEncoder impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getUser()
     {

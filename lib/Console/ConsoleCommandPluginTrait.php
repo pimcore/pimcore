@@ -37,7 +37,6 @@ trait ConsoleCommandPluginTrait
      */
     public function handleSystemConsoleInitEvent(ConsoleEvent $e)
     {
-        /** @var Application $application */
         $application = $e->getApplication();
         $application->addCommands($this->getConsoleCommands());
     }

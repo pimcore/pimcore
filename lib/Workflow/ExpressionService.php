@@ -21,7 +21,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\EventListener\ExpressionLanguage;
-use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class ExpressionService
@@ -68,26 +67,24 @@ class ExpressionService
 
     public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
     {
-        return $this->expressionLanguage->evaluate($expression, $this->getVariables($workflow, $subject));
+        return $this->expressionLanguage->evaluate($expression, $this->getVariables($subject));
     }
 
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
-    private function getVariables(Workflow $workflow, $subject)
+    private function getVariables($subject)
     {
         $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
 
-        $roles = $token ? $token->getRoles() : [];
+        $roles = $token ? $token->getRoleNames() : [];
         if (null !== $this->roleHierarchy) {
-            $roles = $this->roleHierarchy->getReachableRoles($roles);
+            $roles = $this->roleHierarchy->getReachableRoleNames($roles);
         }
 
         $variables = [
             'token' => $token,
             'user' => $token->getUser(),
             'subject' => $subject,
-            'roles' => array_map(function ($role) {
-                return $role->getRole();
-            }, $roles),
+            'roles' => $roles,
             // needed for the is_granted expression function
             'auth_checker' => $this->authenticationChecker,
             // needed for the is_* expression function

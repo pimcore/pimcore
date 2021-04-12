@@ -18,7 +18,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Maintenance\TaskInterface;
 
-class CleanupPendingOrdersTask implements TaskInterface
+/**
+ * @internal
+ */
+final class CleanupPendingOrdersTask implements TaskInterface
 {
     public function execute()
     {

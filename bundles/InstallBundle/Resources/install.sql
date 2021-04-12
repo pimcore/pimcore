@@ -55,22 +55,7 @@ CREATE TABLE `assets_metadata` (
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `cache`;
-CREATE TABLE `cache` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `data` longblob,
-  `mtime` INT(11) UNSIGNED DEFAULT NULL,
-  `expire` INT(11) UNSIGNED DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `cache_tags`;
-CREATE TABLE `cache_tags` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `tag` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`,`tag`),
-  INDEX `tag` (`tag`)
-) DEFAULT CHARSET=ascii;
+DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
@@ -323,6 +308,8 @@ CREATE TABLE `lock_keys` (
   PRIMARY KEY (`key_id`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `migration_versions`; /* table is created using doctrine:migrations:sync-metadata-storage command */
+
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -341,11 +328,11 @@ CREATE TABLE `notes` (
 
 DROP TABLE IF EXISTS `notes_data`;
 CREATE TABLE `notes_data` (
-  `id` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(255) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
   `data` text,
-  KEY `id` (`id`)
+  PRIMARY KEY (`id`, `name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;
@@ -559,9 +546,20 @@ CREATE TABLE `tmp_store` (
   KEY `expiryDate` (`expiryDate`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `settings_store`;
+CREATE TABLE `settings_store` (
+  `id` varchar(190) NOT NULL DEFAULT '',
+  `scope` varchar(190) NOT NULL DEFAULT '',
+  `data` longtext,
+  `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
+  PRIMARY KEY (`id`, `scope`),
+  KEY `scope` (`scope`)
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
+  `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
@@ -570,9 +568,10 @@ CREATE TABLE `translations_admin` (
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `translations_website`;
-CREATE TABLE `translations_website` (
+DROP TABLE IF EXISTS `translations_messages`;
+CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
+  `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
@@ -637,7 +636,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -656,7 +655,7 @@ CREATE TABLE `users_workspaces_asset` (
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -677,7 +676,7 @@ CREATE TABLE `users_workspaces_document` (
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -726,6 +725,21 @@ CREATE TABLE `versions` (
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`)
+) DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `website_settings`;
+CREATE TABLE `website_settings` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(190) NOT NULL DEFAULT '',
+    `type` ENUM('text','document','asset','object','bool') DEFAULT NULL,
+    `data` TEXT,
+    `language` VARCHAR(15) NOT NULL DEFAULT '',
+    `siteId` INT(11) UNSIGNED DEFAULT NULL,
+    `creationDate` INT(11) UNSIGNED DEFAULT '0',
+    `modificationDate` INT(11) UNSIGNED DEFAULT '0',
+    PRIMARY KEY (`id`),
+    INDEX `name` (`name`),
+    INDEX `siteId` (`siteId`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;

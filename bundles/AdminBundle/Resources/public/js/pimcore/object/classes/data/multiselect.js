@@ -75,7 +75,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             fields: ["key", {name: "value", allowBlank: false}],
             data: datax.options
         });
-        
+
         var valueGrid;
 
         valueGrid = Ext.create('Ext.grid.Panel', {
@@ -233,16 +233,26 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
 
         var specificItems = [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
                 fieldLabel: t("height"),
                 name: "height",
                 value: datax.height
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
             },
             {
                 xtype: "numberfield",

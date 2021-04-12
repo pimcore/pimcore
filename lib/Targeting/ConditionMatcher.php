@@ -23,8 +23,8 @@ use Pimcore\Targeting\Condition\VariableConditionInterface;
 use Pimcore\Targeting\ConditionMatcher\ExpressionBuilder;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ConditionMatcher implements ConditionMatcherInterface
 {
@@ -73,7 +73,7 @@ class ConditionMatcher implements ConditionMatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo, array $conditions, bool $collectVariables = false): bool
     {
@@ -105,7 +105,7 @@ class ConditionMatcher implements ConditionMatcherInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getCollectedVariables(): array
     {

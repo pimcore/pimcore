@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 class SentMail implements DataProviderInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -26,7 +26,7 @@ class SentMail implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getJsClassName(): string
     {
@@ -34,7 +34,7 @@ class SentMail implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortPriority(): int
     {

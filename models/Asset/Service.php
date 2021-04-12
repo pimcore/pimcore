@@ -188,6 +188,8 @@ class Service extends Model\Element\Service
      * @param array $params
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridAssetData($asset, $fields = null, $requestedLanguage = null, $params = [])
     {
@@ -214,9 +216,7 @@ class Service extends Model\Element\Service
                     if ($fieldDef[0] === 'preview') {
                         $data[$field] = self::getPreviewThumbnail($asset, ['treepreview' => true, 'width' => 108, 'height' => 70, 'frame' => true]);
                     } elseif ($fieldDef[0] === 'size') {
-                        /** @var Asset $asset */
-                        $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
-                        $size = @filesize($filename);
+                        $size = $asset->getFileSize();
                         $data[$field] = formatBytes($size);
                     }
                 } else {
@@ -258,6 +258,8 @@ class Service extends Model\Element\Service
      * @param bool $onlyMethod
      *
      * @return string|null
+     *
+     * @internal
      */
     public static function getPreviewThumbnail($asset, $params = [], $onlyMethod = false)
     {
@@ -313,7 +315,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param Element\ElementInterface $element
      *
@@ -336,6 +338,8 @@ class Service extends Model\Element\Service
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
+     * @internal
      *
      * @param Asset $asset
      * @param array $rewriteConfig
@@ -395,6 +399,8 @@ class Service extends Model\Element\Service
      * @param array $metadata
      *
      * @return array
+     *
+     * @internal
      */
     public static function expandMetadataForEditmode($metadata)
     {

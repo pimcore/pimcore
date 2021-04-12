@@ -22,27 +22,27 @@ class DataObject extends AbstractWorkspace
     /**
      * @var bool
      */
-    public $save = false;
+    protected $save = false;
 
     /**
      * @var bool
      */
-    public $unpublish = false;
+    protected $unpublish = false;
 
     /**
      * @var string
      */
-    public $lEdit = null;
+    protected $lEdit = null;
 
     /**
      * @var string
      */
-    public $lView = null;
+    protected $lView = null;
 
     /**
      * @var string
      */
-    public $layouts = null;
+    protected $layouts = null;
 
     /**
      * @param bool $save

@@ -34,9 +34,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -182,7 +180,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            textConfig.width += textConfig.labelWidth;
+            textConfig.width = this.sumWidths(textConfig.width, textConfig.labelWidth);
         }
 
         var text = new Ext.form.TextField(textConfig);

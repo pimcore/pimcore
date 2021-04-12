@@ -55,6 +55,16 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
+    Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler:
+        public: true
+        arguments:
+            - '%pimcore_admin.csrf_protection.excluded_routes%'
+            - '@twig'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: security }
+
     # user checker checking admin users for validity
     Pimcore\Bundle\AdminBundle\Security\User\UserChecker: ~
 

@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -94,41 +95,20 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $inDialogBox = null;
 
     /**
-     * @param string $type
-     * @param string $name
-     * @param int $documentId
-     * @param array|null $config
-     * @param string|null $controller
-     * @param null $view
-     * @param bool|null $editmode
-     *
-     * @return Editable
+     * @var EditmodeEditableDefinitionCollector|null
      */
-    public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
-    {
-        $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
-
-        /** @var Editable $editable */
-        $editable = $loader->build($type);
-        $editable->setName($name);
-        $editable->setDocumentId($documentId);
-        $editable->setEditmode($editmode);
-        $editable->setConfig($config);
-
-        return $editable;
-    }
+    private $editableDefinitionCollector;
 
     /**
      * @return string|void
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function admin()
     {
-        $config = $this->getEditmodeConfig();
-        $code = $this->outputEditmodeConfig($config, true);
-
-        $attributes = $this->getEditmodeElementAttributes($config);
+        $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $htmlContainerCode = ('<div ' . $attributeString . '></div>');
@@ -137,9 +117,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             $htmlContainerCode = $this->wrapEditmodeContainerCodeForDialogBox($attributes['id'], $htmlContainerCode);
         }
 
-        $code .= $htmlContainerCode;
-
-        return $code;
+        return $htmlContainerCode;
     }
 
     /**
@@ -166,8 +144,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Builds config passed to editmode frontend as JSON config
      *
      * @return array
+     *
+     * @internal
      */
-    protected function getEditmodeConfig(): array
+    public function getEditmodeDefinition(): array
     {
         $config = [
             // we don't use : and . in IDs (although it's allowed in HTML spec)
@@ -189,6 +169,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Builds data used for editmode
      *
      * @return mixed
+     *
+     * @internal
      */
     protected function getEditmodeData()
     {
@@ -205,12 +187,14 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Builds attributes used on the editmode HTML element
      *
-     * @param array $config
-     *
      * @return array
+     *
+     * @internal
      */
-    protected function getEditmodeElementAttributes(array $config): array
+    protected function getEditmodeElementAttributes(): array
     {
+        $config = $this->getEditmodeDefinition();
+
         if (!isset($config['id'])) {
             throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable config array', $this->getName()));
         }
@@ -223,6 +207,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $attributes;
     }
 
+    /**
+     * @return array
+     *
+     * @internal
+     */
     protected function getEditmodeBlockStateAttributes(): array
     {
         $blockState = $this->getBlockState();
@@ -245,6 +234,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Builds classes used on the editmode HTML element
      *
      * @return array
+     *
+     * @internal
      */
     protected function getEditmodeElementClasses(): array
     {
@@ -275,49 +266,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         if ($this->getEditmode()) {
             echo $value . "\n";
         }
-    }
-
-    /**
-     * Push editmode config into the JS config array
-     *
-     * @param array $config
-     * @param bool $return
-     *
-     * @return string|void
-     */
-    protected function outputEditmodeConfig(array $config, $return = false)
-    {
-        // filter all non-scalar values before we pass them to the config object (JSON)
-        $clean = function ($value) use (&$clean) {
-            if (is_array($value)) {
-                foreach ($value as &$item) {
-                    $item = $clean($item);
-                }
-            } elseif (!is_scalar($value)) {
-                $value = null;
-            }
-
-            return $value;
-        };
-        $config = $clean($config);
-
-        $code = '
-            <script>
-                editableDefinitions.push(' . json_encode($config, JSON_PRETTY_PRINT) . ');
-            </script>
-        ';
-
-        if (json_last_error()) {
-            throw new \Exception('json encode failed: ' . json_last_error_msg());
-        }
-
-        if ($return) {
-            return $code;
-        }
-
-        $this->outputEditmode($code);
-
-        return;
     }
 
     /**
@@ -496,9 +444,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return mixed
      */
-    public function render()
+    final public function render()
     {
         if ($this->editmode) {
+            if ($collector = $this->getEditableDefinitionCollector()) {
+                $collector->add($this);
+            }
+
             return $this->admin();
         }
 
@@ -617,13 +569,16 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * TODO inject block state via DI
-     *
      * @return BlockState
      */
     protected function getBlockState(): BlockState
     {
-        return \Pimcore::getContainer()->get(BlockStateStack::class)->getCurrentState();
+        return $this->getBlockStateStack()->getCurrentState();
+    }
+
+    protected function getBlockStateStack(): BlockStateStack
+    {
+        return \Pimcore::getContainer()->get(BlockStateStack::class);
     }
 
     /**
@@ -758,7 +713,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @throws \Exception
      */
-    public static function buildChildElementTagName(string $name, string $type, array $parentBlockNames, int $index): string
+    public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
     {
         if (count($parentBlockNames) === 0) {
             throw new \Exception(sprintf(
@@ -818,6 +773,26 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function setInDialogBox(?string $inDialogBox): self
     {
         $this->inDialogBox = $inDialogBox;
+
+        return $this;
+    }
+
+    /**
+     * @return EditmodeEditableDefinitionCollector|null
+     */
+    public function getEditableDefinitionCollector(): ?EditmodeEditableDefinitionCollector
+    {
+        return $this->editableDefinitionCollector;
+    }
+
+    /**
+     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
+     *
+     * @return $this
+     */
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    {
+        $this->editableDefinitionCollector = $editableDefinitionCollector;
 
         return $this;
     }

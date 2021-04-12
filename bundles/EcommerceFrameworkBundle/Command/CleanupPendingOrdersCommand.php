@@ -20,7 +20,7 @@ use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CleanupPendingOrdersCommand extends AbstractCommand
+final class CleanupPendingOrdersCommand extends AbstractCommand
 {
     protected function configure()
     {

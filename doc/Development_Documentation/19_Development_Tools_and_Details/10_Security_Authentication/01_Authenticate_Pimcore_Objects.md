@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User extends BaseUser implements UserInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getSalt()
     {
@@ -42,7 +42,7 @@ class User extends BaseUser implements UserInterface
      * Trigger the hash calculation to remove the plain text password from the instance. This
      * is necessary to make sure no plain text passwords are serialized.
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function eraseCredentials()
     {

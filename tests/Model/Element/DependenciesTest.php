@@ -5,7 +5,6 @@ namespace Pimcore\Tests\Model\Element;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Property;
@@ -20,7 +19,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class DependenciesTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -38,7 +37,6 @@ class DependenciesTest extends ModelTestCase
         $count = $db->fetchOne("SELECT count(*) from dependencies WHERE sourceType = 'object' AND sourceID = " . $sourceId);
         $this->assertEquals(0, $count);
 
-        /** @var Unittest[] $targets */
         $targets = TestHelper::createEmptyObjects('', true, 5);
         $source->setMultihref([$targets[0], $targets[1]]);
         $source->save();
@@ -84,7 +82,7 @@ class DependenciesTest extends ModelTestCase
         $this->saveElementDependencies($source, $targets);
 
         //Reload source object
-        $source = AbstractObject::getById($source->getId(), true);
+        $source = DataObject::getById($source->getId(), true);
 
         //get dependencies
         $dependencies = $source->getDependencies();
@@ -102,7 +100,6 @@ class DependenciesTest extends ModelTestCase
      */
     public function testDocumentDependencies()
     {
-        /** @var Document $source */
         $source = TestHelper::createEmptyDocumentPage();
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
@@ -129,7 +126,6 @@ class DependenciesTest extends ModelTestCase
      */
     public function testAssetDependencies()
     {
-        /** @var Asset $source */
         $source = TestHelper::createImageAsset();
         /** @var Unittest[] $targets */
         $targets = [];

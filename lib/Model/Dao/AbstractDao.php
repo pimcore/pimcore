@@ -86,7 +86,9 @@ abstract class AbstractDao implements DaoInterface
     public function resetValidTableColumnsCache($table)
     {
         $cacheKey = self::CACHEKEY . $table;
-        \Pimcore\Cache\Runtime::getInstance()->offsetUnset($cacheKey);
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            \Pimcore\Cache\Runtime::getInstance()->offsetUnset($cacheKey);
+        }
         Cache::clearTags(['system', 'resource']);
     }
 }

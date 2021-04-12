@@ -19,8 +19,12 @@ use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Contracts\Service\ResetInterface;
 
-class PimcoreDataCollector extends DataCollector
+/**
+ * @internal
+ */
+class PimcoreDataCollector extends DataCollector implements ResetInterface
 {
     /**
      * @var PimcoreContextResolver
@@ -33,7 +37,7 @@ class PimcoreDataCollector extends DataCollector
         $this->contextResolver = $contextResolver;
     }
 
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null)
     {
         $this->data = [
             'version' => Version::getVersion(),

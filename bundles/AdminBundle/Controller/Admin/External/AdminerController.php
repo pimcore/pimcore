@@ -23,7 +23,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
     use Symfony\Component\HttpKernel\Profiler\Profiler;
     use Symfony\Component\Routing\Annotation\Route;
 
-    class AdminerController extends AdminController implements KernelControllerEventInterface
+    /**
+     * @internal
+     */
+    final class AdminerController extends AdminController implements KernelControllerEventInterface
     {
         /**
          * @var string

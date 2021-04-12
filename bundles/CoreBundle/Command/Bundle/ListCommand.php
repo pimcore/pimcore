@@ -23,6 +23,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ListCommand extends AbstractBundleCommand
 {
     protected function configure()
@@ -49,7 +52,6 @@ class ListCommand extends AbstractBundleCommand
                 'Installed',
                 $input->hasOption('json') ? 'Installable' : 'I?',
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
-                $input->hasOption('json') ? 'Updatable' : 'UP?',
                 'Priority',
             ],
         ];
@@ -77,7 +79,6 @@ class ListCommand extends AbstractBundleCommand
                 $row[] = $this->bundleManager->isInstalled($bundle);
                 $row[] = $this->bundleManager->canBeInstalled($bundle);
                 $row[] = $this->bundleManager->canBeUninstalled($bundle);
-                $row[] = $this->bundleManager->canBeUpdated($bundle);
 
                 $bundleState = $this->bundleManager->getState($bundle);
                 $row[] = $bundleState['priority'];
@@ -94,7 +95,7 @@ class ListCommand extends AbstractBundleCommand
 
         if ($input->getOption('json')) {
             $jsonData = array_map(static function ($row) use ($returnData) {
-                return array_combine($returnData['headers'], $row);
+                return array_combine($returnData['headers'], $row) ?: [];
             }, $returnData['rows']);
             $output->write(\json_encode($jsonData, \JSON_PRETTY_PRINT));
         } else {

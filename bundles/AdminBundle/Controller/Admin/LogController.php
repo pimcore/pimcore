@@ -23,11 +23,15 @@ use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LogController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class LogController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @param ControllerEvent $event
@@ -232,24 +236,31 @@ class LogController extends AdminController implements KernelControllerEventInte
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
-        $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
-        $filePath = realpath($filePath);
-        $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
+            $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
+            $filePath = realpath($filePath);
+            $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        } else {
+            $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
+        }
 
         if (!preg_match('@^' . $fileObjectPath . '@', $filePath)) {
             throw new AccessDeniedHttpException('Accessing file out of scope');
         }
 
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/plain');
-
         if (file_exists($filePath)) {
-            $response->setContent(file_get_contents($filePath));
-            if (strpos($response->getContent(), '</html>') > 0 || strpos($response->getContent(), '</pre>') > 0) {
-                $response->headers->set('Content-Type', 'text/html');
-            }
+            $response = new StreamedResponse(
+                static function () use ($filePath) {
+                    $handle = fopen($filePath, 'rb');
+                    fpassthru($handle);
+                    fclose($handle);
+                }
+            );
+            $response->headers->set('Content-Type', 'text/plain');
         } else {
-            $response->setContent('Path `' . $filePath . '` not found.');
+            $response = new Response();
+            $response->headers->set('Content-Type', 'text/plain');
+            $response->setContent('Path `'.$filePath.'` not found.');
             $response->setStatusCode(404);
         }
 

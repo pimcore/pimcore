@@ -18,10 +18,13 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToMoveFile;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
@@ -29,9 +32,11 @@ use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
-use Pimcore\Tool\Mime;
+use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Mime\MimeTypes;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -41,6 +46,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Asset extends Element\AbstractElement
 {
+    use TemporaryFileHelperTrait;
+
     /**
      * possible types of an asset
      *
@@ -201,11 +208,6 @@ class Asset extends Element\AbstractElement
     protected $versionCount;
 
     /**
-     * @var string[]
-     */
-    protected $_temporaryFiles = [];
-
-    /**
      *
      * @return array
      */
@@ -231,7 +233,7 @@ class Asset extends Element\AbstractElement
             $asset->getDao()->getByPath($path);
 
             return static::getById($asset->getId(), $force);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }
@@ -277,11 +279,10 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        try {
-            if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
-                $asset = new Asset();
+        if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
+            $asset = new Asset();
+            try {
                 $asset->getDao()->getById($id);
-
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
                 /** @var Asset $asset */
@@ -293,11 +294,11 @@ class Asset extends Element\AbstractElement
                 $asset->resetDirtyMap();
 
                 \Pimcore\Cache::save($asset, $cacheKey);
-            } else {
-                \Pimcore\Cache\Runtime::set($cacheKey, $asset);
+            } catch (NotFoundException $e) {
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
+        } else {
+            \Pimcore\Cache\Runtime::set($cacheKey, $asset);
         }
 
         if (!$asset || !static::typeMatch($asset)) {
@@ -327,19 +328,19 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
-                    $mimeType = Mime::detect($tmpFile);
+                    $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
-                        $mimeType = Mime::detect($streamMeta['uri']);
+                        $mimeType = MimeTypes::getDefault()->guessMimeType($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
-                        $mimeType = Mime::detect($tmpFile);
+                        $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
 
                         if (!$isRewindable) {
                             $data['stream'] = $dest;
@@ -350,9 +351,9 @@ class Asset extends Element\AbstractElement
                     }
                 }
             } else {
-                $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
+                $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
                 if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'r', false, File::getContext());
+                    $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                 }
 
                 unset($data['sourcePath']);
@@ -368,6 +369,7 @@ class Asset extends Element\AbstractElement
         /** @var Asset $asset */
         $asset = self::getModelFactory()->build($class);
         $asset->setParentId($parentId);
+        self::checkCreateData($data);
         $asset->setValues($data);
 
         if ($save) {
@@ -459,16 +461,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Get full path to the asset on the filesystem
-     *
-     * @return string
-     */
-    public function getFileSystemPath()
-    {
-        return PIMCORE_ASSET_DIRECTORY . $this->getRealFullPath();
-    }
-
-    /**
      * @return $this
      *
      * @throws \Exception
@@ -518,19 +510,20 @@ class Asset extends Element\AbstractElement
 
                     $this->update($params);
 
+                    $storage = Storage::get('asset');
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
-                        if (is_file($oldFullPath) || is_dir($oldFullPath)) {
-                            if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
-                                $error = error_get_last();
-                                throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
-                            }
+                        try {
+                            $storage->move($oldPath, $this->getRealFullPath());
                             $differentOldPath = $oldPath;
                             $this->getDao()->updateWorkspaces();
                             $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                        } catch (UnableToMoveFile $e) {
+                            //nothing to do
                         }
+
+                        $this->relocateThumbnails($oldPath);
                     }
 
                     // lastly create a new version if necessary
@@ -604,6 +597,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @throws \Exception
+     *
+     * @internal
      */
     public function correctPath()
     {
@@ -666,75 +661,48 @@ class Asset extends Element\AbstractElement
      */
     protected function update($params = [])
     {
+        $storage = Storage::get('asset');
         $this->updateModificationInfos();
 
-        // create foldertree
         // use current file name in order to prevent problems when filename has changed
         // (otherwise binary data would be overwritten with old binary data with rename() in save method)
-        $destinationPathRelative = $this->getDao()->getCurrentFullPath();
-        if (!$destinationPathRelative) {
+        $path = $this->getDao()->getCurrentFullPath();
+        if (!$path) {
             // this is happen during a restore from the recycle bin
-            $destinationPathRelative = $this->getRealFullPath();
-        }
-        $destinationPath = PIMCORE_ASSET_DIRECTORY . $destinationPathRelative;
-
-        $dirPath = dirname($destinationPath);
-        if (!is_dir($dirPath)) {
-            if (!File::mkdir($dirPath)) {
-                throw new \Exception('Unable to create directory: ' . $dirPath . ' for asset :' . $this->getId());
-            }
+            $path = $this->getRealFullPath();
         }
 
         $typeChanged = false;
 
-        // fix for missing parent folders
-        // check if folder of new destination is already created and if not do so
-        $newPath = dirname($this->getFileSystemPath());
-        if (!is_dir($newPath)) {
-            if (!File::mkdir($newPath)) {
-                throw new \Exception('Unable to create directory: ' . $newPath . ' for asset :' . $this->getId());
-            }
-        }
-
         if ($this->getType() != 'folder') {
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
-                $streamMeta = stream_get_meta_data($src);
-                if ($destinationPath != $streamMeta['uri']) {
-                    if (file_exists($destinationPath)) {
+                $sourceUri = stream_get_meta_data($src)['uri'];
+                try {
+                    $targetUri = stream_get_meta_data($storage->readStream($path));
+                } catch (\Exception $e) {
+                    $targetUri = null;
+                }
+
+                if ($targetUri !== $sourceUri) {
+                    if ($storage->fileExists($path)) {
                         // We don't open a stream on existing files, because they could be possibly used by versions
                         // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
                         // versioning information persists. Using the stream on the existing file would overwrite the
                         // contents of the inode and therefore leads to wrong version data
-                        unlink($destinationPath);
+                        $storage->delete($path);
                     }
 
-                    $dest = fopen($destinationPath, 'w', false, File::getContext());
-                    if ($dest) {
-                        stream_copy_to_stream($src, $dest);
-                        if (!fclose($dest)) {
-                            throw new \Exception('Unable to close file handle ' . $destinationPath . ' for asset ' . $this->getId());
-                        }
-                    } else {
-                        throw new \Exception('Unable to open file: ' . $destinationPath . ' for asset ' . $this->getId());
-                    }
+                    $storage->writeStream($path, $src);
                 }
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 
-                @chmod($destinationPath, File::getDefaultMode());
-
-                // check file exists
-                if (!is_file($destinationPath)) {
-                    throw new \Exception("couldn't create new asset, file " . $destinationPath . " doesn't exist");
-                }
-
-                // set mime type
-                $mimetype = Mime::detect($destinationPath, $this->getFilename());
-                $this->setMimetype($mimetype);
+                $mimeType = $storage->mimeType($path);
+                $this->setMimetype($mimeType);
 
                 // set type
-                $type = self::getTypeFromMimeMapping($mimetype, $this->getFilename());
+                $type = self::getTypeFromMimeMapping($mimeType, $this->getFilename());
                 if ($type != $this->getType()) {
                     $this->setType($type);
                     $typeChanged = true;
@@ -746,14 +714,8 @@ class Asset extends Element\AbstractElement
                     throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
-
-            // scheduled tasks are saved in $this->saveVersion();
         } else {
-            if (!is_dir($destinationPath) && !is_dir($this->getFileSystemPath())) {
-                if (!File::mkdir($this->getFileSystemPath())) {
-                    throw new \Exception('Unable to create directory: ' . $this->getFileSystemPath() . ' for asset :' . $this->getId());
-                }
-            }
+            $storage->createDirectory($path);
         }
 
         if (!$this->getType()) {
@@ -847,7 +809,8 @@ class Asset extends Element\AbstractElement
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
             $assetsConfig = \Pimcore\Config::getSystemConfiguration('assets');
-            if (!empty($assetsConfig['versions']['steps'])
+            if ((is_null($assetsConfig['versions']['days']) && is_null($assetsConfig['versions']['steps']))
+                || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
@@ -901,6 +864,9 @@ class Asset extends Element\AbstractElement
     {
         $path = $this->getPath() . $this->getFilename();
         $path = urlencode_ignore_slash($path);
+
+        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
             'frontendPath' => $path,
@@ -1012,16 +978,11 @@ class Asset extends Element\AbstractElement
      */
     protected function deletePhysicalFile()
     {
-        $fsPath = $this->getFileSystemPath();
-
+        $storage = Storage::get('asset');
         if ($this->getType() != 'folder') {
-            if (is_file($fsPath) && is_writable($fsPath)) {
-                unlink($fsPath);
-            }
+            $storage->delete($this->getRealFullPath());
         } else {
-            if (is_dir($fsPath) && is_writable($fsPath)) {
-                recursiveDelete($fsPath, true);
-            }
+            $storage->deleteDirectory($this->getRealFullPath());
         }
     }
 
@@ -1084,6 +1045,8 @@ class Asset extends Element\AbstractElement
                     $this->deletePhysicalFile();
                 }
             }
+
+            $this->clearThumbnails(true);
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new AssetEvent($this);
@@ -1317,18 +1280,15 @@ class Asset extends Element\AbstractElement
         if ($this->stream) {
             if (get_resource_type($this->stream) !== 'stream') {
                 $this->stream = null;
-            } else {
-                $streamMeta = stream_get_meta_data($this->stream);
-                if (!@rewind($this->stream) && $streamMeta['stream_type'] === 'STDIO') {
-                    $this->stream = null;
-                }
+            } elseif (!@rewind($this->stream)) {
+                $this->stream = null;
             }
         }
 
-        if (!$this->stream && $this->getType() != 'folder') {
-            if (file_exists($this->getFileSystemPath())) {
-                $this->stream = fopen($this->getFileSystemPath(), 'r', false, File::getContext());
-            } else {
+        if (!$this->stream && $this->getType() !== 'folder') {
+            try {
+                $this->stream = Storage::get('asset')->readStream($this->getRealFullPath());
+            } catch (\Exception $e) {
                 $this->stream = tmpfile();
             }
         }
@@ -1355,12 +1315,9 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($this->getFilename());
-                $dest = fopen($tmpFile, 'w+', false, File::getContext());
-                stream_copy_to_stream($this->stream, $dest);
+                $tempFile = $this->getTemporaryFile();
+                $dest = fopen($tempFile, 'w+', false, File::getContext());
                 $this->stream = $dest;
-
-                $this->_temporaryFiles[] = $tmpFile;
             }
         } elseif (is_null($stream)) {
             $this->stream = null;
@@ -1375,29 +1332,6 @@ class Asset extends Element\AbstractElement
             @fclose($this->stream);
             $this->stream = null;
         }
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return null|string
-     *
-     * @throws \Exception
-     */
-    public function getChecksum($type = 'md5')
-    {
-        if (!in_array($type, hash_algos())) {
-            throw new \Exception(sprintf('Hashing algorithm `%s` is not supported', $type));
-        }
-
-        $file = $this->getFileSystemPath();
-        if (is_file($file)) {
-            return hash_file($type, $file);
-        } elseif (\is_resource($this->getStream())) {
-            return hash($type, $this->getData());
-        }
-
-        return null;
     }
 
     /**
@@ -1443,9 +1377,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setProperties(array $properties)
+    public function setProperties(?array $properties)
     {
         $this->properties = $properties;
 
@@ -1546,27 +1480,29 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * returns the path to a temp file
+     * @internal
+     *
+     * @param bool $keep whether to delete this file on shutdown or not
      *
      * @return string
+     *
+     * @throws \Exception
      */
-    public function getTemporaryFile()
+    public function getTemporaryFile(bool $keep = false)
     {
-        $destinationPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-temporary/asset_' . $this->getId() . '_' . md5(microtime()) . '__' . $this->getFilename();
-        if (!is_dir(dirname($destinationPath))) {
-            File::mkdir(dirname($destinationPath));
-        }
+        return self::getTemporaryFileFromStream($this->getStream(), $keep);
+    }
 
-        $src = $this->getStream();
-        $dest = fopen($destinationPath, 'w+', false, File::getContext());
-        stream_copy_to_stream($src, $dest);
-        fclose($dest);
-
-        @chmod($destinationPath, File::getDefaultMode());
-
-        $this->_temporaryFiles[] = $destinationPath;
-
-        return $destinationPath;
+    /**
+     * @internal
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function getLocalFile()
+    {
+        return self::getLocalFileFromStream($this->getStream());
     }
 
     /**
@@ -1840,7 +1776,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        return $metaData;
+        return $result;
     }
 
     /**
@@ -1895,9 +1831,10 @@ class Asset extends Element\AbstractElement
      */
     public function getFileSize($formatted = false, $precision = 2)
     {
-        $bytes = 0;
-        if (is_file($this->getFileSystemPath())) {
-            $bytes = filesize($this->getFileSystemPath());
+        try {
+            $bytes = Storage::get('asset')->fileSize($this->getRealFullPath());
+        } catch (\Exception $e) {
+            $bytes = 0;
         }
 
         if ($formatted) {
@@ -1934,32 +1871,10 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getImageThumbnailSavePath()
-    {
-        $path = PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails' . $this->getRealPath();
-        $path = rtrim($path, '/');
-
-        return $path;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVideoThumbnailSavePath()
-    {
-        $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails' . $this->getRealPath();
-        $path = rtrim($path, '/');
-
-        return $path;
-    }
-
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
@@ -2024,13 +1939,6 @@ class Asset extends Element\AbstractElement
     {
         // close open streams
         $this->closeStream();
-
-        // delete temporary files
-        foreach ($this->_temporaryFiles as $tempFile) {
-            if (file_exists($tempFile)) {
-                @unlink($tempFile);
-            }
-        }
     }
 
     /**
@@ -2054,7 +1962,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -2091,5 +1999,71 @@ class Asset extends Element\AbstractElement
         $this->siblings = null;
         $this->scheduledTasks = null;
         $this->closeStream();
+    }
+
+    /**
+     * @param bool $force
+     */
+    public function clearThumbnails($force = false)
+    {
+        if ($this->getDataChanged() || $force) {
+            foreach (['thumbnail', 'asset_cache'] as $storageName) {
+                $storage = Storage::get($storageName);
+                $contents = $storage->listContents($this->getRealPath());
+
+                /** @var StorageAttributes $item */
+                foreach ($contents as $item) {
+                    if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
+                        if ($item->isDir()) {
+                            $storage->deleteDirectory($item->path());
+                        } elseif ($item->isFile()) {
+                            $storage->delete($item->path());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $oldPath
+     *
+     * @throws \League\Flysystem\FilesystemException
+     */
+    public function relocateThumbnails(string $oldPath)
+    {
+        $oldParent = dirname($oldPath);
+        $newParent = dirname($this->getRealFullPath());
+        $storage = Storage::get('thumbnail');
+
+        try {
+            $contents = $storage->listContents($oldParent);
+            /** @var StorageAttributes $item */
+            foreach ($contents as $item) {
+                if (preg_match('@(image|video|pdf)\-thumb__' . $this->getId() . '__@', $item->path())) {
+                    $replacePath = ltrim($newParent, '/') .'/' . basename($item->path());
+                    if (!$storage->fileExists($replacePath)) {
+                        $storage->move($item->path(), $replacePath);
+                    }
+                }
+            }
+
+            //required in case if there is only renaming on parent
+            $storage->move($oldPath, $this->getRealFullPath());
+        } catch (UnableToMoveFile $e) {
+            // noting to do
+        }
+    }
+
+    /**
+     * @param string $name
+     */
+    public function clearThumbnail($name)
+    {
+        try {
+            Storage::get('thumbnail')->deleteDirectory($this->getRealPath() . 'image-thumb__' . $this->getId() . '__' . $name);
+        } catch (\Exception $e) {
+            // noting to do
+        }
     }
 }

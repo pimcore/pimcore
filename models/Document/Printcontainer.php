@@ -43,6 +43,8 @@ class Printcontainer extends Document\PrintAbstract
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function getTreeNodeConfig()
     {

@@ -22,7 +22,6 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,13 +30,16 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ResponseExceptionListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class ResponseExceptionListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
     /**
-     * @var ActionRenderer
+     * @var DocumentRenderer
      */
     protected $documentRenderer;
 
@@ -70,7 +72,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

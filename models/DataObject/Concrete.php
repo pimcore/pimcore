@@ -22,6 +22,7 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
@@ -31,7 +32,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
  * @method \Pimcore\Model\Version getLatestVersion()
  */
-class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
+class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
@@ -129,19 +130,21 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         if ($this->getClass()->getAllowInherit()) {
                             //try again with parent data when inheritance is activated
                             try {
-                                $getInheritedValues = AbstractObject::doGetInheritedValues();
-                                AbstractObject::setGetInheritedValues(true);
+                                $getInheritedValues = DataObject::doGetInheritedValues();
+                                DataObject::setGetInheritedValues(true);
 
                                 $value = $this->$getter();
                                 $fd->checkValidity($value, $omitMandatoryCheck);
 
-                                AbstractObject::setGetInheritedValues($getInheritedValues);
+                                DataObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
                                 if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
-                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException->setSubItems($e->getSubItems());
+                                throw $newException;
                             }
                         } else {
                             if ($e instanceof Model\Element\ValidationException) {
@@ -237,7 +240,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -284,7 +287,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
             $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
-            if (!empty($objectsConfig['versions']['steps'])
+            if ((is_null($objectsConfig['versions']['days']) && is_null($objectsConfig['versions']['steps']))
+                || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
@@ -353,7 +357,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             return $value;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -729,12 +733,12 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function save()
     {
-        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+        $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
         // if the class is newer then better disable the dirty detection. This should fix issues with the query table if
         // the inheritance enabled flag has been changed in the meantime
         if ($this->getClass()->getModificationDate() >= $this->getModificationDate() && $this->getId()) {
-            AbstractObject::disableDirtyDetection();
+            DataObject::disableDirtyDetection();
         }
         try {
             $params = [];
@@ -747,7 +751,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $this->resetDirtyMap();
             }
         } finally {
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
 
         return $this;
@@ -755,7 +759,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLazyLoadedFieldNames(): array
     {
@@ -771,7 +775,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
@@ -792,9 +796,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $parentVars = parent::__sleep();
 
         $finalVars = [];
-        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+
+        $blockedVars = [];
 
         if (!$this->isInDumpState()) {
+            $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
             // do not dump lazy loaded fields for caching
             $lazyLoadedFields = $this->getLazyLoadedFieldNames();
             $blockedVars = array_merge($lazyLoadedFields, $blockedVars);

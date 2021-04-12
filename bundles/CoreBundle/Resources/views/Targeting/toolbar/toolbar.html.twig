@@ -1,7 +1,7 @@
 {% import '@PimcoreCore/Targeting/toolbar/macros.html.twig' as toolbar %}
 
 {% block toolbar %}
-    {% spaceless %}
+    {% apply spaceless %}
     <div id="_ptgtb-{{ token }}" class="_ptgtb _ptgtb--collapsed">
         <div class="_ptgtb__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
             <span class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--target">
@@ -170,7 +170,7 @@
 
                                     <tr class="_ptgtb__table__row-with-details">
                                         <td>
-                                            {{ toolbar.trigger_label(assignment.document.path|truncate(32), '#' ~ rowIdentifier, [], { title: assignment.document.path }) }}
+                                            {{ toolbar.trigger_label(assignment.document.path|u.truncate(32), '#' ~ rowIdentifier, [], { title: assignment.document.path }) }}
                                         </td>
                                         <td class="_ptgtb__table__col-right">
                                             {{ toolbar.label(assignment.targetGroup.name, ['_ptgtb__label--target-group']) }}
@@ -279,17 +279,17 @@
             </div>
         </div>
     </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block css %}
-    {%- spaceless -%}
+    {%- apply spaceless -%}
     <style type="text/css">
         {%- pimcoreassetcompress -%}
         {{ include('@PimcoreCore/Targeting/toolbar/toolbar.css') }}
         {%- endpimcoreassetcompress -%}
     </style>
-    {%- endspaceless -%}
+    {%- endapply -%}
 {% endblock %}
 
 {% block js %}

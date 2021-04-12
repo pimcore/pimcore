@@ -21,6 +21,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInte
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @internal
+ */
 class DataObjectParamConverter implements ParamConverterInterface
 {
     /**
@@ -46,7 +49,7 @@ class DataObjectParamConverter implements ParamConverterInterface
 
         $class = $configuration->getClass();
 
-        /** @var AbstractObject|Concrete $object */
+        /** @var Concrete|null $object */
         $object = $class::getById($value);
         if (!$object) {
             throw new NotFoundHttpException(sprintf('Invalid data object ID given for parameter "%s".', $param));

@@ -29,17 +29,17 @@ class Blacklist extends Model\AbstractModel
     /**
      * @var string
      */
-    public $address;
+    protected $address;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param string $addr

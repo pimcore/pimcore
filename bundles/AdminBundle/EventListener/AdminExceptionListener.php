@@ -28,12 +28,15 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class AdminExceptionListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class AdminExceptionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
     {
@@ -58,17 +61,16 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             list($code, $headers, $message) = $this->getResponseData($ex);
 
+            $data = [
+                'success' => false,
+            ];
+
             if (!\Pimcore::inDebugMode()) {
                 // DBAL exceptions do include SQL statements, we don't want to expose them
                 if ($ex instanceof DBALException) {
                     $message = 'Database error, see logs for details';
                 }
             }
-
-            $data = [
-                'success' => false,
-                'message' => $message,
-            ];
 
             if (\Pimcore::inDebugMode()) {
                 $data['trace'] = $ex->getTrace();
@@ -82,6 +84,8 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
             }
 
+            $data['message'] = $message;
+
             $response = new JsonResponse($data, $code, $headers);
             $event->setResponse($response);
 
@@ -89,7 +93,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         }
     }
 
-    private function getResponseData(\Exception $ex, int $defaultStatusCode = 500): array
+    private function getResponseData(\Throwable $ex, int $defaultStatusCode = 500): array
     {
         $code = $defaultStatusCode;
         $headers = [];
@@ -148,11 +152,11 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      *
-     * @return \Exception
+     * @return \Throwable
      */
-    protected function getInnerStack(\Exception $e)
+    protected function getInnerStack(\Throwable $e)
     {
         while ($e->getPrevious()) {
             $e = $e->getPrevious();

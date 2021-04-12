@@ -69,13 +69,19 @@ services:
 
     Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware: ~
 
+    Pimcore\Twig\Extension\AssetHelperExtensions: ~
+
+    Pimcore\Twig\Extension\DataObjectHelperExtensions: ~
+
+    Pimcore\Twig\Extension\DocumentHelperExtensions: ~
+
+    Pimcore\Twig\Extension\ImageThumbnailExtension: ~
+
     # the deferred extension is needed for placeholder helpers to work
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)
-    Phive\Twig\Extensions\Deferred\DeferredExtension: ~
+    Twig\DeferredExtension\DeferredExtension: ~
 
-    # provides truncate and wordwrap filters
-    Twig_Extensions_Extension_Text:
-        class: Twig_Extensions_Extension_Text
+    Twig\Extra\String\StringExtension: ~
 
     Pimcore\Twig\Extension\AdminExtension: ~

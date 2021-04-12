@@ -57,11 +57,9 @@ class BlockStateTest extends TestCase
         $this->assertFalse($state->hasBlocks());
     }
 
-    /**
-     * @expectedException \UnderflowException
-     */
     public function testPopBlocksThrowsExceptionIfEmpty()
     {
+        $this->expectException(\UnderflowException::class);
         $state = new BlockState();
         $state->popBlock();
     }
@@ -108,11 +106,9 @@ class BlockStateTest extends TestCase
         $this->assertFalse($state->hasIndexes());
     }
 
-    /**
-     * @expectedException \UnderflowException
-     */
     public function testPopIndexesThrowsExceptionIfEmpty()
     {
+        $this->expectException(\UnderflowException::class);
         $state = new BlockState();
         $state->popIndex();
     }

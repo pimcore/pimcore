@@ -37,7 +37,7 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -45,7 +45,7 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDataProviderKeys(): array
     {
@@ -53,7 +53,7 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -61,7 +61,7 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {

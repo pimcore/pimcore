@@ -32,41 +32,41 @@ class GroupConfig extends Model\AbstractModel
     /** Group id.
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Store ID
      *
      * @var int
      */
-    public $storeId = 1;
+    protected $storeId = 1;
 
     /** Parent id
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /** The group name.
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The group description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
@@ -103,6 +103,8 @@ class GroupConfig extends Model\AbstractModel
      * @param int $storeId
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $storeId = 1)
     {
@@ -113,7 +115,7 @@ class GroupConfig extends Model\AbstractModel
             $config->getDao()->getByName();
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

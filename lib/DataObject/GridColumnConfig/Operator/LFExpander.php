@@ -21,7 +21,10 @@ use Pimcore\DataObject\GridColumnConfig\ResultContainer;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 
-class LFExpander extends AbstractOperator
+/**
+ * @internal
+ */
+final class LFExpander extends AbstractOperator
 {
     /**
      * @var LocaleServiceInterface

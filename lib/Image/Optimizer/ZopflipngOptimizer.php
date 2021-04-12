@@ -14,8 +14,8 @@
 
 namespace Pimcore\Image\Optimizer;
 
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypes;
 
 final class ZopflipngOptimizer extends AbstractCommandOptimizer
 {
@@ -26,7 +26,7 @@ final class ZopflipngOptimizer extends AbstractCommandOptimizer
 
     public function __construct()
     {
-        $this->mimeTypeGuesser = MimeTypeGuesser::getInstance();
+        $this->mimeTypeGuesser = MimeTypes::getDefault();
     }
 
     /**
@@ -40,16 +40,16 @@ final class ZopflipngOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
-    protected function getCommand(string $executable, string $input, string $output): string
+    protected function getCommandArray(string $executable, string $input, string $output): array
     {
-        return $executable.' '.escapeshellarg($input).' '.$output;
+        return [$executable, $input, $output];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(string $input): bool
+    public function supports(string $mimeType): bool
     {
-        return $this->mimeTypeGuesser->guess($input) === 'image/png';
+        return $mimeType === 'image/png';
     }
 }

@@ -21,12 +21,12 @@ use Symfony\Component\Routing\Route;
 class DocumentRoute extends Route implements RouteObjectInterface
 {
     /**
-     * @var Document
+     * @var Document|null
      */
     protected $document;
 
     /**
-     * @return Document
+     * @return Document|null
      */
     public function getDocument()
     {
@@ -53,7 +53,7 @@ class DocumentRoute extends Route implements RouteObjectInterface
      * If there is no specific content for this url (i.e. its an "application"
      * page), may return null.
      *
-     * @return object the document or entity this route entry points to
+     * @return object|null the document or entity this route entry points to
      */
     public function getContent()
     {
@@ -78,5 +78,7 @@ class DocumentRoute extends Route implements RouteObjectInterface
         if ($this->document) {
             return sprintf('document_%d', $this->document->getId());
         }
+
+        return null;
     }
 }

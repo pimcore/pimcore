@@ -17,10 +17,12 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Model\DataObject;
+
 /**
  * @method \Pimcore\Model\DataObject\Folder\Dao getDao()
  */
-class Folder extends AbstractObject
+class Folder extends DataObject
 {
     /**
      * @var string
@@ -35,6 +37,7 @@ class Folder extends AbstractObject
     public static function create($values)
     {
         $object = new static();
+        self::checkCreateData($values);
         $object->setValues($values);
 
         $object->save();
@@ -55,7 +58,7 @@ class Folder extends AbstractObject
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function delete()
     {

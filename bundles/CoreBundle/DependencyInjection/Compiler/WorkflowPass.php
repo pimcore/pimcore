@@ -29,10 +29,13 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Workflow;
 use Symfony\Component\Workflow\Exception\LogicException;
 
-class WorkflowPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class WorkflowPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
@@ -90,6 +93,17 @@ class WorkflowPass implements CompilerPassInterface
                         }
                     }
                 }
+
+                if (isset($transitionConfig['options']['notes']['customHtml'])) {
+                    $customHtmlServiceName = $transitionConfig['options']['notes']['customHtml']['service'];
+                    $position = $transitionConfig['options']['notes']['customHtml']['position'];
+                    foreach ($transitions as $transition) {
+                        $customHtmlServiceDefinition = new Definition($customHtmlServiceName, [$transitionName, false, $position]);
+                        $customHtmlServiceDefinition->setPublic(false);
+                        $customHtmlServiceDefinition->setAutowired(true);
+                        $transition->addMethodCall('setCustomHtmlService', [$customHtmlServiceDefinition]);
+                    }
+                }
             }
 
             $places = [];
@@ -100,7 +114,15 @@ class WorkflowPass implements CompilerPassInterface
             }
 
             foreach ($workflowConfig['globalActions'] ?? [] as $action => $actionConfig) {
-                $workflowManagerDefinition->addMethodCall('addGlobalAction', [$workflowName, $action, $actionConfig]);
+                $customHtmlServiceDefinition = null;
+                if (isset($actionConfig['notes']['customHtml'])) {
+                    $customHtmlServiceName = $actionConfig['notes']['customHtml']['service'];
+                    $position = $actionConfig['notes']['customHtml']['position'];
+                    $customHtmlServiceDefinition = new Definition($customHtmlServiceName, [$action, true, $position]);
+                    $customHtmlServiceDefinition->setPublic(false);
+                    $customHtmlServiceDefinition->setAutowired(true);
+                }
+                $workflowManagerDefinition->addMethodCall('addGlobalAction', [$workflowName, $action, $actionConfig, $customHtmlServiceDefinition]);
             }
 
             $markingStoreType = $workflowConfig['marking_store']['type'] ?? null;
@@ -164,11 +186,11 @@ class WorkflowPass implements CompilerPassInterface
             if ($workflowConfig['supports']) {
                 foreach ((array)$workflowConfig['supports'] as $supportedClassName) {
                     $strategyDefinition = new Definition(
-                        Workflow\SupportStrategy\ClassInstanceSupportStrategy::class,
+                        Workflow\SupportStrategy\InstanceOfSupportStrategy::class,
                         [$supportedClassName]
                     );
                     $strategyDefinition->setPublic(false);
-                    $registryDefinition->addMethodCall('add', [new Reference($workflowId), $strategyDefinition]);
+                    $registryDefinition->addMethodCall('addWorkflow', [new Reference($workflowId), $strategyDefinition]);
                 }
             } elseif (isset($workflowConfig['support_strategy'])) {
                 $supportStrategyType = $workflowConfig['support_strategy']['type'] ?? null;
@@ -179,10 +201,10 @@ class WorkflowPass implements CompilerPassInterface
                     foreach ($workflowConfig['support_strategy']['arguments'] ?? [] as $argument) {
                         $supportStrategyDefinition->addArgument($argument);
                     }
-                    $registryDefinition->addMethodCall('add', [new Reference($workflowId), $supportStrategyDefinition]);
+                    $registryDefinition->addMethodCall('addWorkflow', [new Reference($workflowId), $supportStrategyDefinition]);
                 } elseif (isset($workflowConfig['support_strategy']['service'])) {
                     $registryDefinition->addMethodCall(
-                        'add',
+                        'addWorkflow',
                         [new Reference($workflowId), new Reference($workflowConfig['support_strategy']['service'])]
                     );
                 }

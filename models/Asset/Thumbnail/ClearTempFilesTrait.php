@@ -17,33 +17,23 @@
 
 namespace Pimcore\Model\Asset\Thumbnail;
 
+use League\Flysystem\StorageAttributes;
+use Pimcore\Tool\Storage;
+
+/**
+ * @internal
+ */
 trait ClearTempFilesTrait
 {
-    public function doClearTempFiles($rootDir, $name)
+    public function clearTempFiles()
     {
-        $this->recursiveDelete($rootDir, $name);
-    }
+        $storage = Storage::get('thumbnail');
+        $contents = $storage->listContents('/', true)->filter(function (StorageAttributes $item) {
+            return $item->isDir() && preg_match('@(image|video|pdf)\-thumb__[\d]+__' . preg_quote($this->getName(), '@') . '(?:_auto_.+)?$@', $item->path());
+        })->map(fn (StorageAttributes $attributes) => $attributes->path())->toArray();
 
-    protected function recursiveDelete($dir, $thumbnail, &$matches = [])
-    {
-        if (!is_dir($dir)) {
-            return [];
+        foreach ($contents as $item) {
+            $storage->deleteDirectory($item);
         }
-
-        $directoryIterator = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
-
-        /** @var \SplFileInfo $fileInfo */
-        foreach (new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST, \RecursiveIteratorIterator::CATCH_GET_CHILD) as $fileInfo) {
-            if ($fileInfo->isDir()) {
-                if (
-                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '$@', $fileInfo->getPathname(), $matches) ||
-                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '_auto_@', $fileInfo->getPathname(), $matches)
-                ) {
-                    recursiveDelete($fileInfo->getPathname());
-                }
-            }
-        }
-
-        return $matches;
     }
 }

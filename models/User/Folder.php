@@ -25,7 +25,7 @@ class Folder extends UserRole\Folder
     /**
      * @var string
      */
-    public $type = 'userfolder';
+    protected $type = 'userfolder';
 
     /**
      * @return array

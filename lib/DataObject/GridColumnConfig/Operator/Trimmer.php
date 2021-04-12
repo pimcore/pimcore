@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Trimmer extends AbstractOperator
+/**
+ * @internal
+ */
+final class Trimmer extends AbstractOperator
 {
     const LEFT = 1;
     const RIGHT = 2;
@@ -48,8 +51,8 @@ class Trimmer extends AbstractOperator
             $valueArray = [];
 
             $childResult = $c->getLabeledValue($element);
-            $isArrayType = $childResult->isArrayType;
-            $childValues = $childResult->value;
+            $isArrayType = $childResult->isArrayType ?? false;
+            $childValues = $childResult->value ?? null;
             if ($childValues && !$isArrayType) {
                 $childValues = [$childValues];
             }

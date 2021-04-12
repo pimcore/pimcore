@@ -23,6 +23,9 @@ services:
         tags:
             - { name: monolog.logger, channel: pimcore }
 
+
+    Pimcore\Document\Editable\EditmodeEditableDefinitionCollector: ~
+
     #
     # AREABRICKS
     #

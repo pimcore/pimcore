@@ -14,10 +14,14 @@
 
 namespace Pimcore\Console;
 
+use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
 use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
+use Pimcore\Migrations\FilteredMigrationsRepository;
+use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Pimcore\Tool\Admin;
 use Pimcore\Version;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -27,6 +31,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * The console application
+ *
+ * @internal
  */
 class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {
@@ -57,11 +63,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 
         $this->setDispatcher($dispatcher);
 
-        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
-            if ($event->getInput()->getOption('no-debug')) {
-                \Pimcore::setDebugMode(false);
-            }
-
+        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
             if ($event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
@@ -69,6 +71,11 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
                 $event->getOutput()->writeln('Activating maintenance mode with ID <comment>' . $maintenanceModeId . '</comment> ...');
 
                 Admin::activateMaintenanceMode($maintenanceModeId);
+            }
+
+            if ($event->getCommand() instanceof DoctrineCommand && $prefix = $event->getInput()->getOption('prefix')) {
+                $kernel->getContainer()->get(FilteredMigrationsRepository::class)->setPrefix($prefix);
+                $kernel->getContainer()->get(FilteredTableMetadataStorage::class)->setPrefix($prefix);
             }
         });
 
@@ -92,5 +99,22 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $inputDefinition->addOption(new InputOption('maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force maintenance mode while this task runs'));
 
         return $inputDefinition;
+    }
+
+    public function add(Command $command)
+    {
+        $definition = $command->getDefinition();
+
+        if ($command instanceof DoctrineCommand) {
+            // add filter option
+            $definition->addOption(new InputOption(
+                'prefix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Optional prefix filter for version classes, eg. Pimcore\Bundle\CoreBundle\Migrations'
+            ));
+        }
+
+        return parent::add($command);
     }
 }

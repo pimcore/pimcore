@@ -33,7 +33,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
             renderer: function (key, value, metaData, record) {
                                     this.applyPermissionStyle(key, value, metaData, record);
 
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
+                if(record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
                     == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }

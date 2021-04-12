@@ -18,6 +18,9 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 
+/**
+ * @internal
+ */
 class ClassCommand extends AbstractStructureImportCommand
 {
     /**

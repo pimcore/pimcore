@@ -222,23 +222,23 @@ function array_toquerystring($args)
 }
 
 /**
- * @param array $array
+ * @param array $array with attribute names as keys, and values as values
  *
  * @return string
  */
 function array_to_html_attribute_string($array)
 {
-    $data = '';
+    $data = [];
+
     foreach ($array as $key => $value) {
         if (is_scalar($value)) {
-            if (!empty($data)) {
-                $data .= ' ';
-            }
-            $data .= $key . '="' . htmlspecialchars($value) . '"';
+            $data[] = $key . '="' . htmlspecialchars($value) . '"';
+        } elseif (is_string($key) && is_null($value)) {
+            $data[] = $key;
         }
     }
 
-    return $data;
+    return implode(' ', $data);
 }
 
 /**

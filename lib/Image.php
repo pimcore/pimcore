@@ -35,6 +35,8 @@ class Image
      * @return null|Adapter\GD|Adapter\Imagick
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public static function create()
     {

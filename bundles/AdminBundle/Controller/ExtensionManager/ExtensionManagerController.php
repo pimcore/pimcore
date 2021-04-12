@@ -35,7 +35,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var PimcoreBundleManager
@@ -56,7 +59,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
@@ -354,7 +357,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         try {
             /** @var PimcoreBundleInterface $bundle */
             $bundle = new $bundleName();
-            $bundle->setContainer($this->container);
+            $bundle->setContainer(\Pimcore::getContainer());
 
             return $bundle;
         } catch (\Exception $e) {
@@ -483,11 +486,12 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
         $installer = $this->bundleManager->getInstaller($bundle);
         if (null !== $installer) {
-            $output = $installer->getOutputWriter()->getOutput();
+            /** @var \Symfony\Component\Console\Output\BufferedOutput $output */
+            $output = $installer->getOutput();
             if (!empty($output)) {
                 $converter = new AnsiToHtmlConverter(null);
 
-                $converted = Encoding::fixUTF8($output);
+                $converted = Encoding::fixUTF8($output->fetch());
                 $converted = $converter->convert($converted);
 
                 if (!$decorated) {

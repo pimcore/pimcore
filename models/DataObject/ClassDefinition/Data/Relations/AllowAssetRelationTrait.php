@@ -16,6 +16,10 @@ trait AllowAssetRelationTrait
      */
     protected function allowAssetRelation($asset)
     {
+        if (!$asset instanceof Asset || $asset->getId() <= 0) {
+            return false;
+        }
+
         $allowedAssetTypes = $this->getAssetTypes();
         $allowedTypes = [];
         $allowed = true;

@@ -113,5 +113,3 @@ interface CartPriceCalculatorInterface
      */
     public function isCalculated(): bool;
 }
-
-class_alias(CartPriceCalculatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator');

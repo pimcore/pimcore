@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_STORES . ' WHERE id = ?', $this->model->getId());
 
-        if ($data) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('StoreConfig with id: ' . $this->model->getId() . ' does not exist');
@@ -65,10 +65,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_STORES . ' WHERE name = ?', $name);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('StoreConfig with name: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf('Classification store config with name "%s" does not exist.', $name));
         }
     }
 

@@ -40,7 +40,7 @@ class Assets extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -48,7 +48,7 @@ class Assets extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getJsClassName(): string
     {
@@ -77,13 +77,9 @@ class Assets extends Elements implements DataProviderInterface
 
         foreach (array_keys($this->exportIds) as $id) {
             $theAsset = Asset::getById($id);
-            // @TODO: this needs to be done independently from the REST webservices
-            $webAsset = [];
-            //$webAsset = $this->service->getAssetFileById($id);
 
-            $resultItem = json_decode(json_encode($webAsset), true);
-            unset($resultItem['data']);
-            $resultItem = json_encode($resultItem, JSON_PRETTY_PRINT);
+            $resultItem = Exporter::exportAsset($theAsset);
+            $resultItem = json_encode($resultItem);
 
             $zip->addFromString($asset->getFilename() . '.txt', $resultItem);
 
@@ -195,7 +191,6 @@ class Assets extends Elements implements DataProviderInterface
         $hits = $searcherList->load();
 
         $elements = [];
-        /** @var Data $hit */
         foreach ($hits as $hit) {
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
 
@@ -217,7 +212,7 @@ class Assets extends Elements implements DataProviderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSortPriority(): int
     {

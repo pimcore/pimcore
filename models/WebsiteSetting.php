@@ -16,11 +16,11 @@ namespace Pimcore\Model;
 
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
- * @method void delete()
  */
 class WebsiteSetting extends AbstractModel
 {
@@ -72,6 +72,18 @@ class WebsiteSetting extends AbstractModel
     protected static $nameIdMappingCache = [];
 
     /**
+     * @param string $name
+     * @param int|null $siteId
+     * @param string|null $language
+     *
+     * @return string
+     */
+    protected static function getCacheKey($name, $siteId = null, $language = null): string
+    {
+        return $name . '~~~' . $siteId . '~~~' . $language;
+    }
+
+    /**
      * @param int $id
      *
      * @return WebsiteSetting|null
@@ -90,7 +102,7 @@ class WebsiteSetting extends AbstractModel
                 $setting = new self();
                 $setting->getDao()->getById((int)$id);
                 \Pimcore\Cache\Runtime::set($cacheKey, $setting);
-            } catch (\Exception $e) {
+            } catch (NotFoundException $e) {
                 return null;
             }
         }
@@ -105,10 +117,12 @@ class WebsiteSetting extends AbstractModel
      * @param string|null $fallbackLanguage fallback language
      *
      * @return null|WebsiteSetting
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $siteId = null, $language = null, $fallbackLanguage = null)
     {
-        $nameCacheKey = $name . '~~~' . $siteId . '~~~' . $language;
+        $nameCacheKey = static::getCacheKey($name, $siteId, $language);
 
         // check if pimcore already knows the id for this $name, if yes just return it
         if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {
@@ -120,7 +134,7 @@ class WebsiteSetting extends AbstractModel
 
         try {
             $setting->getDao()->getByName($name, $siteId, $language);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             if ($language != $fallbackLanguage) {
                 $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);
 
@@ -310,5 +324,17 @@ class WebsiteSetting extends AbstractModel
     public function clearDependentCache()
     {
         \Pimcore\Cache::clearTag('website_config');
+    }
+
+    public function delete(): void
+    {
+        $nameCacheKey = static::getCacheKey($this->getName(), $this->getSiteId(), $this->getLanguage());
+
+        // Remove cached element to avoid returning it with e.g. getByName() after if it is deleted
+        if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {
+            unset(self::$nameIdMappingCache[$nameCacheKey]);
+        }
+
+        $this->getDao()->delete();
     }
 }

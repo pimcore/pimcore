@@ -141,6 +141,14 @@ class Iframe extends AbstractTemplateAreabrick
     {
         return static::TEMPLATE_LOCATION_GLOBAL;
     }
+    
+    public function needsReload(): bool
+    {
+        // optional
+        // here you can decide whether adding this bricks should trigger a reload
+        // in the editing interface, this could be necessary in some cases. default=false
+        return false;
+    }
 }
 ```
 
@@ -219,7 +227,6 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | `$info->getDocument()`  | Retrieve the document   |
 | `$info->getDocumentElement($name)` | Retrieve the editable tag from document   |
 | `$info->getRequest()`   | Returns the current request                      |
-| `$info->getView()`      | Returns the ViewModel to be rendered             |
 | `$info->getIndex()`     | Returns the current index inside the areablock   |
 | `$info->getParam($name)`| Retrieve a param passed by `globalParams` or `params` config option  |
 | `$info->getParams()`    | Retrieve all params passed by `globalParams` or `params` config option  |
@@ -470,12 +477,14 @@ class Iframe extends AbstractTemplateAreabrick
     {
         $myVar = $info->getRequest()->get('myParam');
 
-        $info->getView()->myVar = $myVar;
+        $info->setParam('myVar', $myVar);
 
         // optionally return a response object
         if ('POST' === $info->getRequest()->getMethod()) {
             return new RedirectResponse('/foo');
         }
+
+        return null;
     }
 
     // OPTIONAL METHODS

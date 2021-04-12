@@ -21,14 +21,15 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+    use DataObject\Traits\ObjectVarTrait;
 
     /**
      * Static type of this element
@@ -52,13 +53,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Link';
-
-    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Link $data
@@ -71,7 +65,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data instanceof DataObject\Data\Link) {
             $data = clone $data;
-            $data->setOwner(null, '');
+            $data->_setOwner(null);
+            $data->_setOwnerFieldname('');
+            $data->_setOwnerLanguage(null);
 
             if ($data->getLinktype() == 'internal' && !$data->getPath()) {
                 $data->setLinktype(null);
@@ -111,7 +107,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
-                $link->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $link->_setOwner($params['owner']);
+                $link->_setOwnerFieldname($params['fieldname']);
+                $link->_setOwnerLanguage($params['language'] ?? null);
             }
 
             try {
@@ -217,20 +215,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
-    /** @inheritDoc */
-    public function unmarshal($data, $object = null, $params = [])
-    {
-        if ($data instanceof DataObject\Data\Link) {
-            $target = Element\Service::getElementById($data->getInternalType(), $data->getInternal());
-            if (!$target) {
-                $data->setInternal(0);
-                $data->setInternalType(null);
-            }
-        }
-
-        return parent::unmarshal($data, $object, $params);
-    }
-
     /**
      * Checks if data is valid for current data field
      *
@@ -331,7 +315,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -346,25 +330,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Data\Link|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof DataObject\Data\Link) {
-            return $value;
-        }
-
-        return null;
     }
 
     /**
@@ -478,5 +443,52 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return $this->isEqualArray($oldValue, $newValue);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Link::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Link::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Link::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Link::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Link) {
+            return $value->getObjectVars();
+        }
+
+        return null;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $link = new DataObject\Data\Link();
+            $link->setValues($value);
+
+            return $link;
+        }
+
+        return null;
     }
 }

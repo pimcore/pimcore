@@ -20,24 +20,16 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface
 {
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-
     /**
      * Static type of this element
      *
      * @var string
      */
     public $fieldtype = 'fieldcollections';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Fieldcollection';
 
     /**
      * @var array
@@ -57,9 +49,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @var bool
      */
-    public $disallowAddRemove;
+    public $disallowAddRemove = false;
 
-    public $disallowReorder;
+    /**
+     * @var bool
+     */
+    public $disallowReorder = false;
 
     /**
      * @var bool
@@ -248,7 +243,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -258,18 +253,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getForCsvExport($object, $params = [])
     {
         return 'NOT SUPPORTED';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**
@@ -846,10 +829,102 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supportsInheritance()
     {
         return false;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Fieldcollection::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Fieldcollection::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Fieldcollection::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Fieldcollection::class . '|null';
+    }
+
+    /** { @inheritdoc } */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Fieldcollection) {
+            $resultItems = [];
+            $items = $value->getItems();
+
+            /** @var DataObject\Fieldcollection\Data\AbstractData $item */
+            foreach ($items as $item) {
+                $type = $item->getType();
+
+                $resultItem = ['type' => $type];
+
+                $fcDef = DataObject\Fieldcollection\Definition::getByKey($type);
+                $fcs = $fcDef->getFieldDefinitions();
+                foreach ($fcs as $fc) {
+                    $getter = 'get' . ucfirst($fc->getName());
+                    $value = $item->$getter();
+
+                    if ($fc instanceof NormalizerInterface) {
+                        $value = $fc->normalize($value, $params);
+                    }
+                    $resultItem[$fc->getName()] = $value;
+                }
+
+                $resultItems[] = $resultItem;
+            }
+
+            return $resultItems;
+        }
+
+        return null;
+    }
+
+    /** { @inheritdoc } */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $resultItems = [];
+            foreach ($value as $idx => $itemData) {
+                $type = $itemData['type'];
+                $fcDef = DataObject\Fieldcollection\Definition::getByKey($type);
+
+                $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($type);
+                /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
+                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
+                $collection->setObject($params['object'] ?? null);
+                $collection->setIndex($idx);
+                $collection->setFieldname($params['fieldname'] ?? null);
+
+                foreach ($itemData as $fieldKey => $fieldValue) {
+                    if ($fieldKey == 'type') {
+                        continue;
+                    }
+                    $fc = $fcDef->getFieldDefinition($fieldKey);
+                    if ($fc instanceof NormalizerInterface) {
+                        $fieldValue = $fc->denormalize($fieldValue, $params);
+                    }
+                    $collection->set($fieldKey, $fieldValue);
+                }
+                $resultItems[] = $collection;
+            }
+
+            $resultCollection = new DataObject\Fieldcollection();
+            $resultCollection->setItems($resultItems);
+
+            return $resultCollection;
+        }
+
+        return null;
     }
 }

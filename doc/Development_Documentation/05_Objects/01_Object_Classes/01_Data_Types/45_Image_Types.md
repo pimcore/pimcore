@@ -4,7 +4,7 @@
 
 ![Image Field](../../../img/classes-datatypes-image1.jpg)
 
-An image field is stored in an INT column in the database. It holds the ID of the referenced Asset_Image. 
+An image field is stored in an INT column in the database. It holds the ID of the referenced `\Pimcore\Model\Asset\Image`. 
 Unlike other object relation types, an image relation is not stored in the relations table (this has historic reasons), 
 but it creates a dependency in the dependencies table.
 

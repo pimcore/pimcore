@@ -20,7 +20,7 @@ namespace Pimcore\Model\Tool;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Tool\TmpStore\Dao getById(string $id)
+ * @method bool getById(string $id)
  * @method \Pimcore\Model\Tool\TmpStore\Dao getDao()
  */
 class TmpStore extends Model\AbstractModel
@@ -28,35 +28,35 @@ class TmpStore extends Model\AbstractModel
     /**
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $tag;
+    protected $tag;
 
     /**
      * @var mixed
      */
-    public $data;
+    protected $data;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var int
      */
-    public $expiryDate;
+    protected $expiryDate;
 
     /**
      * @var bool
      */
-    public $serialized = false;
+    protected $serialized = false;
 
     /**
-     * @var TmpStore
+     * @var TmpStore|null
      */
     protected static $instance;
 

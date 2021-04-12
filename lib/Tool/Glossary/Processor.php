@@ -22,6 +22,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Glossary;
 use Pimcore\Model\Site;
+use Pimcore\Tool\DomCrawler;
 
 class Processor
 {
@@ -87,15 +88,10 @@ class Processor
         }
 
         // why not using a simple str_ireplace(array(), array(), $subject) ?
-        // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content of the html must be reloaded every searchterm to ensure that there is no replacement within a blocked tag
-        // kind of a hack but,
-        // changed to this because of that: http://www.pimcore.org/issues/browse/PIMCORE-687
-        $html = str_get_html($content);
-        if (!$html) {
-            return $content;
-        }
-
-        $es = $html->find('text');
+        // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content
+        // of the html must be reloaded every search term to ensure that there is no replacement within a blocked tag
+        $html = new DomCrawler($content);
+        $es = $html->filterXPath('//*[normalize-space(text())]');
 
         $tmpData = [
             'search' => [],
@@ -128,12 +124,18 @@ class Processor
             $tmpData['replace'][] = $entry['replace'];
         }
 
+        $result = '';
         $data = $tmpData;
         $data['count'] = array_fill(0, count($data['search']), 0);
 
-        foreach ($es as $e) {
-            $text = $e->innertext;
-            if (!in_array((string)$e->parent()->tag, $this->blockedTags) && strlen(trim($text))) {
+        $es->each(function ($parentNode, $i) use ($options, $data) {
+            /** @var DomCrawler|null $parentNode */
+            $text = $parentNode->text();
+            if (
+                $parentNode instanceof DomCrawler &&
+                !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
+                strlen(trim($text))
+            ) {
                 if ($options['limit'] < 0) {
                     $text = preg_replace($data['search'], $data['replace'], $text);
                 } else {
@@ -146,12 +148,16 @@ class Processor
                     }
                 }
 
-                $e->innertext = $text;
+                $domNode = $parentNode->getNode(0);
+                $fragment = $domNode->ownerDocument->createDocumentFragment();
+                $fragment->appendXML($text);
+                $clone = $domNode->cloneNode();
+                $clone->appendChild($fragment);
+                $domNode->parentNode->replaceChild($clone, $domNode);
             }
-        }
+        });
 
-        $result = $html->save();
-
+        $result = $html->html();
         $html->clear();
         unset($html);
 

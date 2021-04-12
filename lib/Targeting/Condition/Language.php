@@ -37,7 +37,7 @@ class Language extends AbstractVariableCondition implements ConditionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function fromConfig(array $config)
     {
@@ -45,7 +45,7 @@ class Language extends AbstractVariableCondition implements ConditionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function canMatch(): bool
     {
@@ -53,7 +53,7 @@ class Language extends AbstractVariableCondition implements ConditionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function match(VisitorInfo $visitorInfo): bool
     {

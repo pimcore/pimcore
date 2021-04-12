@@ -26,8 +26,10 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/link")
+ *
+ * @internal
  */
-class LinkController extends DocumentControllerBase
+final class LinkController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

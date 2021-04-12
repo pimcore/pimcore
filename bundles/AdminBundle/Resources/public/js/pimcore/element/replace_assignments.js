@@ -43,8 +43,7 @@ pimcore.element.replace_assignments = Class.create({
                         }
                     }.bind(this),
                     load: function (store, records, success, operation) {
-                        var responseText = operation.getResponse().responseText;
-                        var response = Ext.decode(responseText);
+                        var response = operation.getResponse().responseJson;
                         this.requiredByNote.setHidden(!response.hasHidden);
                         this.panel.updateLayout();
                     }.bind(this)

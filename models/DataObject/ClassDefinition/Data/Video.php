@@ -20,13 +20,13 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -36,16 +36,16 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $fieldtype = 'video';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * Type for the column to query
@@ -62,14 +62,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Video';
-
-    /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -77,19 +70,22 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -97,13 +93,16 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
@@ -121,7 +120,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
-            $data->setOwner(null, '');
+            $data->_setOwner(null);
+            $data->_setOwnerFieldname('');
+            $data->_setOwnerLanguage(null);
 
             if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
@@ -167,7 +168,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($raw['data']) {
                 $video = new DataObject\Data\Video();
                 if (isset($params['owner'])) {
-                    $video->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                    $video->_setOwner($params['owner']);
+                    $video->_setOwnerFieldname($params['fieldname']);
+                    $video->_setOwnerLanguage($params['language'] ?? null);
                 }
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
@@ -210,10 +213,10 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data) {
             $data = clone $data;
             if ($data->getData() instanceof Asset) {
-                $data->setData($data->getData()->getFullpath());
+                $data->setData($data->getData()->getRealFullPath());
             }
             if ($data->getPoster() instanceof Asset) {
-                $data->setPoster($data->getPoster()->getFullpath());
+                $data->setPoster($data->getPoster()->getRealFullPath());
             }
             $data = object2array($data->getObjectVars());
         }
@@ -318,7 +321,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete $object
      * @param array $params
@@ -338,37 +341,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return '';
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $video = null;
-
-        if ($importValue && strpos($importValue, '~')) {
-            list($type, $data) = explode('~', $importValue);
-            if ($type && $data) {
-                $video = new DataObject\Data\Video();
-                $video->setType($type);
-                if ($type == 'asset') {
-                    if ($asset = Asset::getById($data)) {
-                        $video->setData($asset);
-                    } else {
-                        return null;
-                    }
-                } else {
-                    $video->setData($data);
-                }
-            }
-        }
-
-        return $video;
     }
 
     /**
@@ -507,82 +479,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $data;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof DataObject\Data\Video) {
-            $result = [];
-            $result['type'] = $value->getType();
-            if ($value->getTitle()) {
-                $result['title'] = $value->getTitle();
-            }
-
-            if ($value->getDescription()) {
-                $result['description'] = $value->getDescription();
-            }
-
-            $poster = $value->getPoster();
-            if ($poster) {
-                $result['poster'] = [
-                    'type' => Model\Element\Service::getType($poster),
-                    'id' => $poster->getId(),
-                ];
-            }
-
-            $data = $value->getData();
-
-            if ($data && $value->getType() == 'asset') {
-                $result['data'] = [
-                    'type' => Model\Element\Service::getType($data),
-                    'id' => $data->getId(),
-                ];
-            } else {
-                $result['data'] = $data;
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (is_array($value)) {
-            $video = new DataObject\Data\Video();
-            $video->setType($value['type']);
-            $video->setTitle($value['title']);
-            $video->setDescription($value['description']);
-
-            if ($value['poster']) {
-                $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
-            }
-
-            if ($value['data']) {
-                if (is_array($value['data'])) {
-                    $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
-                } else {
-                    $video->setData($value['data']);
-                }
-            }
-
-            return $video;
-        }
-    }
-
     /**
      * @param DataObject\Data\Video|null $oldValue
      * @param DataObject\Data\Video|null $newValue
@@ -629,5 +525,89 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return true;
+    }
+
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Video) {
+            $result = [];
+            $result['type'] = $value->getType();
+            if ($value->getTitle()) {
+                $result['title'] = $value->getTitle();
+            }
+
+            if ($value->getDescription()) {
+                $result['description'] = $value->getDescription();
+            }
+
+            $poster = $value->getPoster();
+            if ($poster) {
+                $result['poster'] = [
+                    'type' => Model\Element\Service::getType($poster),
+                    'id' => $poster->getId(),
+                ];
+            }
+
+            $data = $value->getData();
+
+            if ($data && $value->getType() == 'asset') {
+                $result['data'] = [
+                    'type' => Model\Element\Service::getType($data),
+                    'id' => $data->getId(),
+                ];
+            } else {
+                $result['data'] = $data;
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $video = new DataObject\Data\Video();
+            $video->setType($value['type']);
+            $video->setTitle($value['title']);
+            $video->setDescription($value['description']);
+
+            if ($value['poster']) {
+                $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
+            }
+
+            if ($value['data']) {
+                if (is_array($value['data'])) {
+                    $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
+                } else {
+                    $video->setData($value['data']);
+                }
+            }
+
+            return $video;
+        }
+
+        return null;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
     }
 }

@@ -20,6 +20,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
+/**
+ * @internal
+ */
 final class LowQualityImagePreviewTask implements TaskInterface
 {
     /**
@@ -65,7 +68,7 @@ final class LowQualityImagePreviewTask implements TaskInterface
                 /** @var Asset\Image[] $images */
                 $images = $listing->load();
                 foreach ($images as $image) {
-                    if (!file_exists($image->getLowQualityPreviewFileSystemPath())) {
+                    if (!$image->getLowQualityPreviewDataUri()) {
                         try {
                             $this->logger->debug(sprintf('Generate LQIP for asset %s', $image->getId()));
                             $image->generateLowQualityPreview();

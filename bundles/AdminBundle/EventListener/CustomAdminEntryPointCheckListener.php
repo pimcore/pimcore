@@ -24,7 +24,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
@@ -36,7 +39,7 @@ class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents(): array
     {

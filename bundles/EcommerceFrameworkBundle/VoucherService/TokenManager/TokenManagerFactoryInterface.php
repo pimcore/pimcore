@@ -23,5 +23,3 @@ interface TokenManagerFactoryInterface
 {
     public function getTokenManager(AbstractVoucherTokenType $configuration): TokenManagerInterface;
 }
-
-class_alias(TokenManagerFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManagerFactory');

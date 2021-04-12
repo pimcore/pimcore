@@ -27,27 +27,27 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var int
      */
-    public $threshold = 1;
+    protected $threshold = 1;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @param int $id
@@ -70,6 +70,8 @@ class TargetGroup extends Model\AbstractModel
      * @param string $name
      *
      * @return TargetGroup|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -78,7 +80,7 @@ class TargetGroup extends Model\AbstractModel
             $target->getDao()->getByName($name);
 
             return $target;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

@@ -33,7 +33,7 @@ class Imagick extends Adapter
     protected static $CMYKColorProfile;
 
     /**
-     * @var \Imagick
+     * @var \Imagick|null
      */
     protected $resource;
 
@@ -57,24 +57,6 @@ class Imagick extends Adapter
             $this->setPreserveColor($options['preserveColor']);
         }
 
-        // support image URLs
-        if (preg_match('@^https?://@', $imagePath)) {
-            $tmpFilename = 'imagick_auto_download_' . md5($imagePath) . '.' . File::getFileExtension($imagePath);
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFilename;
-
-            $this->tmpFiles[] = $tmpFilePath;
-
-            File::put($tmpFilePath, \Pimcore\Tool::getHttpData($imagePath));
-            $imagePath = $tmpFilePath;
-        }
-
-        if (!stream_is_local($imagePath) && isset($options['asset'])) {
-            // imagick is only able to deal with local files
-            // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $imagePath = $options['asset']->getTemporaryFile();
-            $this->tmpFiles[] = $imagePath;
-        }
-
         if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
             // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes
             // Inkscape to completely go crazy -> Debian 8.10, Inkscape 0.48.5 r10040, Imagick 6.8.9-9 Q16, Imagick 3.4.3
@@ -92,16 +74,6 @@ class Imagick extends Adapter
             $i = new \Imagick();
             $this->imagePath = $imagePath;
 
-            if (!$this->isPreserveColor() && method_exists($i, 'setcolorspace')) {
-                $i->setcolorspace(\Imagick::COLORSPACE_SRGB);
-            }
-
-            if (!$this->isPreserveColor() && $this->isVectorGraphic($imagePath)) {
-                // only for vector graphics
-                // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
-                $i->setBackgroundColor(new \ImagickPixel('transparent'));
-            }
-
             if (isset($options['resolution'])) {
                 // set the resolution to 2000x2000 for known vector formats
                 // otherwise this will cause problems with eg. cropPercent in the image editable (select specific area)
@@ -111,10 +83,6 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePath;
 
-            if (strpos($imagePathLoad, ':') !== false) {
-                $imagePathLoad = ':' . $imagePathLoad;
-            }
-
             $imagePathLoad = $imagePathLoad . '[0]';
 
             if (!$i->readImage($imagePathLoad) || !filesize($imagePath)) {
@@ -122,6 +90,20 @@ class Imagick extends Adapter
             }
 
             $this->resource = $i;
+
+            if (!$this->isPreserveColor()) {
+                if (method_exists($i, 'setColorspace')) {
+                    $i->setColorspace(\Imagick::COLORSPACE_SRGB);
+                }
+
+                if ($this->isVectorGraphic($imagePath)) {
+                    // only for vector graphics
+                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
+                    $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                }
+
+                $this->setColorspaceToRGB();
+            }
 
             // set dimensions
             $dimensions = $this->getDimensions();
@@ -138,10 +120,6 @@ class Imagick extends Adapter
                 if ($alphaChannel) {
                     $this->setIsAlphaPossible(true);
                 }
-            }
-
-            if (!$this->isPreserveColor()) {
-                $this->setColorspaceToRGB();
             }
 
             if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
@@ -613,7 +591,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param float $tolerance
+     * @param int $tolerance
      *
      * @return self
      */
@@ -1110,7 +1088,7 @@ class Imagick extends Adapter
     protected static $supportedFormatsCache = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supportsFormat(string $format, bool $force = false)
     {

@@ -32,8 +32,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/misc")
+ *
+ * @internal
  */
-class MiscController extends AdminController
+final class MiscController extends AdminController
 {
     /**
      * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
@@ -107,8 +109,7 @@ class MiscController extends AdminController
             }
         }
 
-        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive();
-        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. json_encode($caseInsensitive));
+        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';');
         $response->headers->set('Content-Type', 'text/javascript');
 
         return $response;

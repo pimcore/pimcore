@@ -14,24 +14,33 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 
 class MultiSelect extends AbstractFilterType
 {
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        if (!$filterDefinition instanceof FilterMultiSelect) {
+            throw new InvalidConfigException('invalid configuration');
+        }
+
+        $useAndCondition = $filterDefinition->getUseAndCondition();
+
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
-            'values' => $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition()),
+            'values' => $productList->getGroupByValues($field, true, !$useAndCondition),
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
@@ -60,12 +69,17 @@ class MultiSelect extends AbstractFilterType
 
         if (!empty($value)) {
             $quotedValues = [];
+            $db = Db::get();
             foreach ($value as $v) {
                 if (!empty($v)) {
-                    $quotedValues[] = $productList->quote($v);
+                    $quotedValues[] = $db->quote($v);
                 }
             }
             if (!empty($quotedValues)) {
+                if (!$filterDefinition instanceof FilterMultiSelect) {
+                    throw new InvalidConfigException('invalid configuration');
+                }
+
                 if ($filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
                         if ($isPrecondition) {

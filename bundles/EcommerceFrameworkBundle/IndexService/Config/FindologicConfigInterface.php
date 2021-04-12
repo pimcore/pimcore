@@ -33,7 +33,7 @@ interface FindologicConfigInterface extends ConfigInterface
     /**
      * returns condition for current subtenant
      *
-     * @return string
+     * @return array
      */
     public function getSubTenantCondition();
 
@@ -44,5 +44,3 @@ interface FindologicConfigInterface extends ConfigInterface
      */
     public function getTenantWorker();
 }
-
-class_alias(FindologicConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig');

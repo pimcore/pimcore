@@ -19,11 +19,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+    use DataObject\Traits\SimpleNormalizerTrait;
 
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -53,14 +54,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public $columnType = 'tinyint(1)';
-
-    /**
-     * Type for the generated phpdoc. Do not use boolean here because boolean is an alias for bool and
-     * aliases don't work in type declarations.
-     *
-     * @var string
-     */
-    public $phpdocType = 'bool';
 
     /**
      * @return int|null
@@ -198,6 +191,8 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Converts object data to a simple string value or CSV Export
      *
+     * @internal
+     *
      * @param DataObject\Concrete $object
      * @param array $params
      *
@@ -208,22 +203,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         $data = $this->getDataFromObjectParam($object, $params);
 
         return (string)$data;
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @abstract
-     *
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return (bool)$importValue;
     }
 
     /** True if change is allowed in edit mode.
@@ -298,7 +277,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isEmpty($data)
     {
@@ -330,5 +309,25 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isEqual($oldValue, $newValue): bool
     {
         return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'bool|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'bool|null';
     }
 }

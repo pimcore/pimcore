@@ -55,7 +55,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function register(string $id, AreabrickInterface $brick)
     {
@@ -83,7 +83,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function registerService(string $id, string $serviceId)
     {
@@ -109,7 +109,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBrick(string $id): AreabrickInterface
     {
@@ -128,7 +128,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBricks(): array
     {
@@ -140,7 +140,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBrickIds(): array
     {
@@ -204,7 +204,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function enable(string $id)
     {
@@ -212,7 +212,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function disable(string $id)
     {

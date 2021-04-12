@@ -17,6 +17,9 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Maintenance\TaskInterface;
 
+/**
+ * @internal
+ */
 final class TmpStoreCleanupTask implements TaskInterface
 {
     /**

@@ -43,7 +43,7 @@ class InputQuantityValue extends QuantityValue
      */
     public $queryColumnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
 
     /**
@@ -53,10 +53,8 @@ class InputQuantityValue extends QuantityValue
      */
     public $columnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)',
+        'unit' => 'varchar(50)',
     ];
-
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
 
     /**
      * @param array $data
@@ -71,7 +69,9 @@ class InputQuantityValue extends QuantityValue
             $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $dataObject->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $dataObject->_setOwner($params['owner']);
+                $dataObject->_setOwnerFieldname($params['fieldname']);
+                $dataObject->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $dataObject;
@@ -90,7 +90,7 @@ class InputQuantityValue extends QuantityValue
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data['value'] || $data['unit']) {
-            if (is_numeric($data['unit'])) {
+            if ($data['unit']) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return $this->getNewDataObject($data['value'], null);
                 }
@@ -118,58 +118,6 @@ class InputQuantityValue extends QuantityValue
             ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
-
-        if (!empty($data)) {
-            if (!empty($data->getUnitId())) {
-                if (!is_numeric($data->getUnitId())) {
-                    throw new Model\Element\ValidationException('Unit id has to be empty or numeric ' . $data->getUnitId());
-                }
-            }
-        }
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null|InputQuantityValueDataObject
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode('_', $importValue);
-
-        $value = null;
-        if ($values[0] && $values[1]) {
-            $number = (float) str_replace(',', '.', $values[0]);
-            $value = $this->getNewDataObject($number, $values[1]);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return array|mixed|null|InputQuantityValueDataObject
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (($params['blockmode'] ?? false) && is_array($value)) {
-            return $this->getNewDataObject($value['value'], $value['value2']);
-        } elseif ($params['simple'] ?? false) {
-            return $value;
-        } elseif (is_array($value)) {
-            return [
-                $this->getName() . '__value' => $value['value'],
-                $this->getName() . '__unit' => $value['value2'],
-
-            ];
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -181,5 +129,50 @@ class InputQuantityValue extends QuantityValue
     protected function getNewDataObject($value = null, $unitId = null)
     {
         return new InputQuantityValueDataObject($value, $unitId);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
+            return [
+                'value' => $value->getValue(),
+                'unitId' => $value->getUnitId(),
+            ];
+        }
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new Model\DataObject\Data\InputQuantityValue($value['value'], $value['unitId']);
+        }
+
+        return null;
     }
 }
