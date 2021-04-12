@@ -391,6 +391,8 @@ class Translation extends AbstractModel implements TranslationInterface
      */
     public static function importTranslationsFromFile($file /*, $domain = self::DOMAIN_DEFAULT, $replaceExistingTranslations = true, $languages = null, $dialect = null */)
     {
+        $args = func_get_args();
+
         //old params set
         if (isset($args[1]) && is_bool($args[1])) {
             $domain = self::DOMAIN_DEFAULT;

@@ -31,4 +31,27 @@ class Website extends AbstractTranslation
     {
         return \Pimcore\Tool::getValidLanguages();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public static function importTranslationsFromFile($file /*, $domain = self::DOMAIN_DEFAULT, $replaceExistingTranslations = true, $languages = null, $dialect = null */)
+    {
+        $args = func_get_args();
+
+        //old params set
+        if (isset($args[1]) && is_bool($args[1])) {
+            $domain = self::DOMAIN_DEFAULT;
+            $replaceExistingTranslations = $args[1] ?? true;
+            $languages = $args[2] ?? null;
+            $dialect = $args[3] ?? null;
+        } else {
+            $domain = $args[1] ?? self::DOMAIN_DEFAULT;
+            $replaceExistingTranslations = $args[2] ?? true;
+            $languages = $args[3] ?? null;
+            $dialect = $args[4] ?? null;
+        }
+
+        return parent::importTranslationsFromFile($file, $domain, $replaceExistingTranslations, $languages, $dialect);
+    }
 }
