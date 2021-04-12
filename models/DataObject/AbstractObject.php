@@ -289,7 +289,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
-                if (!empty($typeInfo['o_type']) && ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_OBJECT || $typeInfo['o_type'] == DataObject::OBJECT_TYPE_VARIANT || $typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER)) {
+                if (!empty($typeInfo['o_type']) && in_array($typeInfo['o_type'], DataObject::$types)) {
                     if ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER) {
                         $className = Folder::class;
                     } else {
@@ -527,7 +527,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     protected function doDelete()
     {
         // delete children
-        $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
+        $children = $this->getChildren(self::$types, true);
         if (count($children) > 0) {
             foreach ($children as $child) {
                 $child->delete();

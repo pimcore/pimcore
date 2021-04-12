@@ -162,7 +162,7 @@ class Dao extends Model\Element\Dao
      */
     public function updateChildPaths($oldPath)
     {
-        if ($this->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
+        if ($this->hasChildren(DataObject::$types)) {
             //get objects to empty their cache
             $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', $this->db->escapeLike($oldPath) . '%');
 
