@@ -374,31 +374,10 @@ final class SettingsController extends AdminController
             }
         }
 
-        //cache exclude patterns - add as array
-        if (!empty($valueArray['full_page_cache']['excludePatterns'])) {
-            $patterns = explode(',', $valueArray['full_page_cache']['excludePatterns']);
-            if (is_array($patterns)) {
-                foreach ($patterns as $pattern) {
-                    $valueArray['full_page_cache']['excludePatternsArray'][] = ['value' => $pattern];
-                }
-            }
-        }
-
-        //remove password from values sent to frontend
-        unset($valueArray['database']);
-        foreach (['email', 'newsletter'] as $type) {
-            $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
-        }
-
         $response = [
             'values' => $valueArray,
             'config' => [
-                'timezones' => $timezones,
                 'languages' => $languageOptions,
-                'client_ip' => $request->getClientIp(),
-                'google_private_key_exists' => file_exists(\Pimcore\Google\Api::getPrivateKeyPath()),
-                'google_private_key_path' => \Pimcore\Google\Api::getPrivateKeyPath(),
-                'path_separator' => PATH_SEPARATOR,
             ],
         ];
 
@@ -447,24 +426,15 @@ final class SettingsController extends AdminController
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
-        $cacheExcludePatterns = $values['full_page_cache.excludePatterns'];
-        if (is_array($cacheExcludePatterns)) {
-            $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
-        }
-
         $settings['pimcore'] = [
             'general' => [
-                'timezone' => $values['general.timezone'],
-                'path_variable' => $values['general.path_variable'],
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
                 'language' => $values['general.language'],
                 'valid_languages' => implode(',', $filteredLanguages),
                 'fallback_languages' => $fallbackLanguages,
                 'default_language' => $values['general.defaultLanguage'],
-                'disable_usage_statistics' => $values['general.disableusagestatistics'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
-                'instance_identifier' => $values['general.instanceIdentifier'],
             ],
             'documents' => [
                 'versions' => [
@@ -474,8 +444,6 @@ final class SettingsController extends AdminController
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default'],
                 ],
-                'allow_trailing_slash' => $values['documents.allowtrailingslash'],
-                'generate_preview' => $values['documents.generatepreview'],
             ],
             'objects' => [
                 'versions' => [
@@ -488,41 +456,8 @@ final class SettingsController extends AdminController
                     'days' => $values['assets.versions.days'] ?? null,
                     'steps' => $values['assets.versions.steps'] ?? null,
                 ],
-                'icc_rgb_profile' => $values['assets.icc_rgb_profile'],
-                'icc_cmyk_profile' => $values['assets.icc_cmyk_profile'],
                 'hide_edit_image' => $values['assets.hide_edit_image'],
                 'disable_tree_preview' => $values['assets.disable_tree_preview'],
-            ],
-            'services' => [
-                'google' => [
-                    'client_id' => $values['services.google.client_id'],
-                    'email' => $values['services.google.email'],
-                    'simple_api_key' => $values['services.google.simpleapikey'],
-                    'browser_api_key' => $values['services.google.browserapikey'],
-                ],
-            ],
-            'full_page_cache' => [
-                'enabled' => $values['full_page_cache.enabled'],
-                'lifetime' => $values['full_page_cache.lifetime'],
-                'exclude_patterns' => $cacheExcludePatterns,
-                'exclude_cookie' => $values['full_page_cache.excludeCookie'],
-            ],
-            'httpclient' => [
-                'adapter' => $values['httpclient.adapter'],
-                'proxy_host' => $values['httpclient.proxy_host'],
-                'proxy_port' => $values['httpclient.proxy_port'],
-                'proxy_user' => $values['httpclient.proxy_user'],
-                'proxy_pass' => $values['httpclient.proxy_pass'],
-            ],
-            'applicationlog' => [
-                'mail_notification' => [
-                    'send_log_summary' => $values['applicationlog.mail_notification.send_log_summary'],
-                    'filter_priority' => $values['applicationlog.mail_notification.filter_priority'],
-                    'mail_receiver' => $values['applicationlog.mail_notification.mail_receiver'],
-                ],
-                'archive_treshold' => $values['applicationlog.archive_treshold'],
-                'archive_alternative_database' => $values['applicationlog.archive_alternative_database'],
-                'delete_archive_threshold' => $values['applicationlog.delete_archive_threshold'],
             ],
         ];
 
@@ -537,28 +472,9 @@ final class SettingsController extends AdminController
                 ],
         ];
 
-        // email & newsletter sender/return and debug email defaults
-        foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
-            $settings['pimcore'][$type] = [
-                'sender' => [
-                    'name' => $values[$type . '.sender.name'],
-                    'email' => $values[$type . '.sender.email'],
-                ],
-                'return' => [
-                    'name' => $values[$type . '.return.name'],
-                    'email' => $values[$type . '.return.email'],
-                ],
-            ];
-
-            if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
-                $settings['pimcore'][$type]['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
-            } else {
-                $settings['pimcore'][$type]['debug']['email_addresses'] = null;
-            }
+        if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
+            $settings['pimcore']['email']['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
         }
-        $settings['pimcore']['newsletter']['use_specific'] = $values['newsletter.usespecific'];
-
-        $settings = array_replace_recursive($existingValues, $settings);
 
         $settingsYml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yml');
