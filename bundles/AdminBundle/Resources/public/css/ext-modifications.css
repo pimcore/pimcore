@@ -652,6 +652,7 @@ body > .x-mask {
     position: absolute;
     height: 100%;
     width: 100%;
+    z-index: 1;
 }
 
 /* Ext override for making disabled fields show tooltip on mouseover - should be fixed in 6.2.0 */
