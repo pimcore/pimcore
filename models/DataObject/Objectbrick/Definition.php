@@ -163,6 +163,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
 
         $this->checkTablenames();
+        $this->checkContainerRestrictions();
 
         $newClassDefinitions = [];
         $classDefinitionsToDelete = [];
@@ -185,6 +186,30 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->createContainerClasses();
         $this->updateDatabase();
+    }
+
+
+    public function enforceBlockRules($fds, $found = []) {
+        if (($found['block'] ?? false) && ($found['localizedfield'] ?? false)) {
+            throw new \Exception("A localizedfield cannot be nested inside a block and vice versa");
+        }
+        /** @var DataObject\ClassDefinition\Data $fd */
+        foreach ($fds as $fd) {
+            $childParams = $found;
+            if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
+                $childParams['block'] = true;
+            } else if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                $childParams['localizedfield']= true;
+            }
+            if (method_exists($fd, 'getFieldDefinitions')) {
+                $this->enforceBlockRules($fd->getFieldDefinitions(), $childParams);
+            }
+        }
+    }
+
+    public function checkContainerRestrictions() {
+        $fds = $this->getFieldDefinitions();
+        $this->enforceBlockRules($fds);
     }
 
     /**
