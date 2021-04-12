@@ -95,5 +95,4 @@ services:
 
     # service
     Pimcore\Element\MarshallerService:
-        arguments:
-            - '@service_container'
+        arguments: ['@service_container', !tagged_locator { tag: 'pimcore.dataobject.fielddefinition.marshaller', index_by: 'key' }]
