@@ -151,21 +151,19 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 This extension makes it easy to implement "Adaptive Design" in Pimcore. 
 
-```twig
-{{ pimcore_device('a default value') }}
-```
-
+##### Arguments
 | Name         | Type         | Description  |
 |--------------|--------------|--------------|
-| `default`    | string       | Default if no device can be detected |
+| `default`    | string       | *optional* Default if no device can be detected |
 
 ##### Example
 ```twig
-{% if pimcore_device().isPhone() %}
+{% set device = pimcore_device('desktop') %}
+{% if device.isPhone() %}
     This is my phone content
-{% elseif pimcore_device().isTablet() %}
+{% elseif device.isTablet() %}
     This text is shown on a tablet
-{% elseif pimcore_device().isDesktop() %}
+{% elseif device.isDesktop() %}
     This is for default desktop Browser
 {% endif %}
 ```
