@@ -197,6 +197,10 @@ class CustomLayout extends Model\AbstractModel
     {
         $isUpdate = $this->exists();
 
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception("definitions in config/pimcore folder cannot be overwritten");
+        }
+
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
         } else {
@@ -251,12 +255,34 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
+    public function isWritable()
+    {
+        $name = $this->getName();
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/customlayouts/custom_definition_'. $this->getId() .'.php';
+        if (is_file($customFile)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
+     * @param string|null $id
+     *
      * @return string
      */
-    public function getDefinitionFile()
+    public function getDefinitionFile($id = null)
     {
-        $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $this->getId() .'.php';
+        if (!$id) {
+            $id = $this->getId();
+        }
+
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/customlayouts/custom_definition_'. $id .'.php';
+        if (is_file($customFile)) {
+            return $customFile;
+        } else {
+            $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $id .'.php';
+            return $file;
+        }
 
         return $file;
     }

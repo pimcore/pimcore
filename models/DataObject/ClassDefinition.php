@@ -301,7 +301,7 @@ class ClassDefinition extends Model\AbstractModel
         if (is_null($data)) {
             return;
         }
-        
+
         if (!is_object($data)) {
             return;
         }
@@ -369,6 +369,9 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         $isUpdate = $this->exists();
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception("definitions in config/pimcore folder cannot be overwritten");
+        }
 
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
@@ -518,7 +521,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= "}\n";
         $cd .= "\n";
-
+        //TODO here
         $classFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php';
         if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
             throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
@@ -731,6 +734,17 @@ class ClassDefinition extends Model\AbstractModel
         @unlink($this->getDefinitionFile());
     }
 
+
+    public function isWritable()
+    {
+        $name = $this->getName();
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/definition_' . $name . '.php';
+        if (is_file($customFile)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * @param string|null $name
      *
@@ -742,7 +756,13 @@ class ClassDefinition extends Model\AbstractModel
             $name = $this->getName();
         }
 
-        $file = PIMCORE_CLASS_DIRECTORY.'/definition_'.$name.'.php';
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/definition_'.$name.'.php';
+        if (is_file($customFile)) {
+            return $customFile;
+        } else {
+            $file = PIMCORE_CLASS_DIRECTORY . '/definition_'.$name.'.php';
+            return $file;
+        }
 
         return $file;
     }

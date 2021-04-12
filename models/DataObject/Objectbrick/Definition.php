@@ -83,8 +83,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 throw new \Exception('ObjectBrick in Registry is not valid');
             }
         } catch (\Exception $e) {
-            $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
-            $fieldFile = $objectBrickFolder . '/' . $key . '.php';
+            $def = new Definition();
+            $def->setKey($key);
+            $fieldFile = $def->getDefinitionFile();
 
             if (is_file($fieldFile)) {
                 $brick = include $fieldFile;
@@ -194,6 +195,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
+        $existingDefinition = Definition::getByKey($this->getKey());
+        $isUpdate = $existingDefinition != null;
+
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception("brick updates in config folder not allowed");
+        }
+
         $definitionFile = $this->getDefinitionFile();
 
         $infoDocBlock = $this->getInfoDocBlock();
@@ -671,16 +679,38 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $fieldDefinition;
     }
 
+    public function isWritable()
+    {
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/objectbricks/'. $this->getKey() . '.php';
+        if (is_file($customFile)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
+     * @param string|null $key
+     *
      * @return string
      */
-    protected function getDefinitionFile()
+    public function getDefinitionFile($key = null)
     {
-        $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
-        $definitionFile = $objectBrickFolder . '/' . $this->getKey() . '.php';
+        if (!$key) {
+            $key = $this->getKey();
+        }
 
-        return $definitionFile;
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/objectbricks/'. $key . '.php';
+        if (is_file($customFile)) {
+            return $customFile;
+        } else {
+            $file = PIMCORE_CLASS_DIRECTORY.'/objectbricks/' . $key . '.php';
+            return $file;
+        }
+
+        return $file;
     }
+
+
 
     /**
      * @return string

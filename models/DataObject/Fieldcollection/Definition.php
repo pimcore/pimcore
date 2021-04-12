@@ -89,8 +89,9 @@ class Definition extends Model\AbstractModel
                 throw new \Exception('FieldCollection in registry is not valid');
             }
         } catch (\Exception $e) {
-            $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
-            $fieldFile = $fieldCollectionFolder . '/' . $key . '.php';
+            $def = new Definition();
+            $def->setKey($key);
+            $fieldFile = $def->getDefinitionFile();
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
@@ -112,6 +113,7 @@ class Definition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
+
         if (!$this->getKey()) {
             throw new \Exception('A field-collection needs a key to be saved!');
         }
@@ -151,6 +153,13 @@ class Definition extends Model\AbstractModel
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
+        $existingDefinition = Definition::getByKey($this->getKey());
+        $isUpdate = $existingDefinition != null;
+
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception("fieldcollection updates in config folder not allowed");
+        }
+
         $infoDocBlock = $this->getInfoDocBlock();
 
         $definitionFile = $this->getDefinitionFile();
@@ -255,15 +264,35 @@ class Definition extends Model\AbstractModel
         }
     }
 
+    public function isWritable()
+    {
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/fieldcollections/'. $this->getKey() . '.php';
+        if (is_file($customFile)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
+     * @param string|null $key
+     *
      * @return string
      */
-    protected function getDefinitionFile()
+    public function getDefinitionFile($key = null)
     {
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
-        $definitionFile = $fieldClassFolder . '/' . $this->getKey() . '.php';
+        if (!$key) {
+            $key = $this->getKey();
+        }
 
-        return $definitionFile;
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/fieldcollections/'. $key . '.php';
+        if (is_file($customFile)) {
+            return $customFile;
+        } else {
+            $file = PIMCORE_CLASS_DIRECTORY.'/fieldcollections/' . $key . '.php';
+            return $file;
+        }
+
+        return $file;
     }
 
     /**
@@ -315,4 +344,5 @@ class Definition extends Model\AbstractModel
 
         return $text;
     }
+
 }
