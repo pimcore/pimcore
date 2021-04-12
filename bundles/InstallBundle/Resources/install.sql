@@ -332,7 +332,7 @@ CREATE TABLE `notes_data` (
   `name` varchar(255) DEFAULT NULL,
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
   `data` text,
-  KEY `id` (`id`)
+  PRIMARY KEY (`id`, `name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;

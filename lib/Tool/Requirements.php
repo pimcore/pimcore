@@ -147,20 +147,8 @@ final class Requirements
         // Manage indexes
         $queryCheck = true;
         try {
-            $db->query('ALTER TABLE __pimcore_req_check
-                  CHANGE COLUMN id id int(11) NOT NULL,
-                  CHANGE COLUMN field field varchar(190) NULL DEFAULT NULL,
-                  CHANGE COLUMN alter_field alter_field varchar(190) NULL DEFAULT NULL,
-                  ADD KEY field (field),
-                  DROP PRIMARY KEY ,
-                 DEFAULT CHARSET=utf8mb4');
-
-            $db->query('ALTER TABLE __pimcore_req_check
-                  CHANGE COLUMN id id int(11) NOT NULL AUTO_INCREMENT,
-                  CHANGE COLUMN field field varchar(190) NULL DEFAULT NULL,
-                  CHANGE COLUMN alter_field alter_field varchar(190) NULL DEFAULT NULL,
-                  ADD PRIMARY KEY (id) ,
-                 DEFAULT CHARSET=utf8mb4');
+            $db->query('CREATE INDEX field_alter_field ON __pimcore_req_check (field, alter_field);');
+            $db->query('DROP INDEX field_alter_field ON __pimcore_req_check;');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
