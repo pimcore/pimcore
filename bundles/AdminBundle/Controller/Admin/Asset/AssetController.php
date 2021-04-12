@@ -713,11 +713,6 @@ final class AssetController extends ElementControllerBase implements KernelContr
                 $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
                 $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
 
-                // this is for backward-compatibility, to calculate the dimensions if they are not there
-                if (!$asset->getCustomSetting('imageDimensionsCalculated')) {
-                    $asset->save();
-                }
-
                 // we need the dimensions for the wysiwyg editors, so that they can resize the image immediately
                 if ($asset->getCustomSetting('imageWidth') && $asset->getCustomSetting('imageHeight')) {
                     $tmpAsset['imageWidth'] = $asset->getCustomSetting('imageWidth');
