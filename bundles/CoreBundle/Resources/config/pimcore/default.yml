@@ -24,6 +24,9 @@ framework:
     assets: ~
     mailer:
         enabled: true
+        transports:
+            main: native://default
+            pimcore_newsletter: native://default
 
 # Twig Configuration
 twig:
