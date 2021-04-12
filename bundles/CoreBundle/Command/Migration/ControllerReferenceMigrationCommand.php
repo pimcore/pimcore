@@ -16,11 +16,13 @@ namespace Pimcore\Bundle\CoreBundle\Command\Migration;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Controller\Config\ConfigNormalizer;
+use Pimcore\Db;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Staticroute;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -56,7 +58,12 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
             ->setName('migration:controller-reference')
             ->setDescription('Migrates legacy controller references to Symfony v5 reference.')
             ->setHidden(true)
-        ;
+            ->addOption(
+                'documentId',
+                'd',
+                InputOption::VALUE_OPTIONAL,
+                'only process a particular document tree'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -78,7 +85,18 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
 
         // documents
         $documents = new Document\Listing();
-        $documents->setCondition('type NOT IN (:types)', ['types' => [
+        $documents->setUnpublished(1);
+        $condition = 'type NOT IN (:types)';
+
+        if ($input->getOption('documentId')) {
+            $document = Document::getById($input->getOption('documentId'));
+
+            if ($document) {
+                $condition .= ' AND (id = ' . Db::get()->quote($document->getId()) . ' OR parentId =  ' . Db::get()->quote($document->getId()) . ')';
+            }
+        }
+
+        $documents->setCondition($condition, ['types' => [
             'link',
             'hardlink',
             'folder',
