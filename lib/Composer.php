@@ -126,7 +126,7 @@ class Composer
             try {
                 static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle['Bundle']);
             } catch (\Throwable $e) {
-                $event->getIO()->write('<comment>Skipping migrations for bundle "'.$bundle.'": '.PHP_EOL.$e.'</comment>', true);
+                $event->getIO()->write('<comment>Skipping migrations for bundle "'.$bundle['Bundle'].'": '.PHP_EOL.$e.'</comment>', true);
             }
         }
 
