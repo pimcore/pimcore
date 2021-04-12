@@ -27,13 +27,8 @@ class Email extends Model\DataObject\ClassDefinition\Data\Input
      */
     public $fieldtype = 'email';
 
-    /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws Model\Element\ValidationException
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && strlen($data) > 0) {
             $validator = new EmailValidator();

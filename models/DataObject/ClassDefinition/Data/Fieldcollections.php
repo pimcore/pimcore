@@ -430,15 +430,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $tags;
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data instanceof DataObject\Fieldcollection) {
             $validationExceptions = [];
@@ -461,7 +454,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             try {
                                 $getter = 'get' . ucfirst($fd->getName());
                                 if (!$fd instanceof CalculatedValue) {
-                                    $fd->checkValidity($item->$getter());
+                                    $fd->checkValidity($item->$getter(), false, $params);
                                 }
                             } catch (Model\Element\ValidationException $ve) {
                                 $ve->addContext($this->getName() . '-' . $idx);
