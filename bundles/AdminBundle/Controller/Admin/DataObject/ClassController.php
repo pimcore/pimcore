@@ -359,7 +359,7 @@ final class ClassController extends AdminController implements KernelControllerE
             $customLayout->setDefault($values['default']);
             $customLayout->save();
 
-            return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout]);
+            return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout->getObjectVars()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
