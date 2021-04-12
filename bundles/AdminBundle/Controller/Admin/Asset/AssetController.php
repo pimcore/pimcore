@@ -191,7 +191,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
-        $data['url'] = $asset->getFrontendFullPath();
+        $data['url'] = $request->getSchemeAndHttpHost() . $asset->getFrontendFullPath();
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
