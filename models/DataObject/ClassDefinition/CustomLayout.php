@@ -280,11 +280,8 @@ class CustomLayout extends Model\AbstractModel
         if (is_file($customFile)) {
             return $customFile;
         } else {
-            $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $id .'.php';
-            return $file;
+            return PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $id .'.php';
         }
-
-        return $file;
     }
 
     /**

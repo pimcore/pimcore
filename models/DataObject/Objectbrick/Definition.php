@@ -703,11 +703,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         if (is_file($customFile)) {
             return $customFile;
         } else {
-            $file = PIMCORE_CLASS_DIRECTORY.'/objectbricks/' . $key . '.php';
-            return $file;
+            return PIMCORE_CLASS_DIRECTORY.'/objectbricks/' . $key . '.php';
         }
-
-        return $file;
     }
 
 
