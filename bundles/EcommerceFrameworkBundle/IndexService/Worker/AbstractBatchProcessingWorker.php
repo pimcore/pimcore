@@ -266,11 +266,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 Localizedfield::setGetFallbackValues($getFallbackLanguagesMemory);
 
                 $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);
-                $jsonData = json_encode([
-                    'data' => $data,
-                    'relations' => ($relationData ? $relationData : []),
-                    'subtenants' => ($subTenantData ? $subTenantData : []),
-                ]);
+                $jsonData = json_encode(
+                    [
+                        'data' => $data,
+                        'relations' => ($relationData ? $relationData : []),
+                        'subtenants' => ($subTenantData ? $subTenantData : []),
+                    ],
+                    JSON_PRESERVE_ZERO_FRACTION
+                );
 
                 $jsonLastError = \json_last_error();
                 $generalErrors = [];
