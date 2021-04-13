@@ -19,7 +19,7 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Document;
 use Pimcore\File;
-use Pimcore\Templating\Helper\PimcoreUrl;
+use Pimcore\Twig\Extension\Templating\PimcoreUrl;
 use Pimcore\Video;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
