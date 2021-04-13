@@ -258,9 +258,11 @@ final class DocumentController extends ElementControllerBase implements KernelCo
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
                 } elseif ($request->get('translationsBaseDocument')) {
-                    $translationsBaseDocument = Document\PageSnippet::getById($request->get('translationsBaseDocument'));
-                    $createValues['template'] = $translationsBaseDocument->getTemplate();
-                    $createValues['controller'] = $translationsBaseDocument->getController();
+                    $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+                    if ($translationsBaseDocument instanceof Document\PageSnippet) {
+                        $createValues['template'] = $translationsBaseDocument->getTemplate();
+                        $createValues['controller'] = $translationsBaseDocument->getController();
+                    }
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
                     $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
                 }
