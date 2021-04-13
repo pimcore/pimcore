@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 6.9.0
+- [Documents] Announcement: Run the `pimcore:documents:migrate-elements` command before (!) you upgrade to Pimcore 10. Not needed if you don't intend to keep your document versions.   
 - [Data Objects] Deprecated `\Pimcore\Model\DataObject\ClassDefinition\Data\DataInterface` as it isn't used anymore. Will be removed in Pimcore 10.
 - [Data Objects] Deprecated method `getFromCsvImport()` on all data-types
 - [Data Objects] Data types: `marshal`/`unmarshal` is deprecated and will be removed in Pimcore 10. Use `normalize`/`denormalize` instead.
