@@ -116,7 +116,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         if ($object instanceof DataObject\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
-                $objectTypes = [DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT];
+                $objectTypes = DataObject::$types;
             }
         }
 
@@ -287,7 +287,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         $tmpObject['leaf'] = !$hasChildren;
 
         $tmpObject['isTarget'] = true;
-        if ($tmpObject['type'] != 'variant') {
+        if ($tmpObject['type'] != DataObject::OBJECT_TYPE_VARIANT) {
             $tmpObject['allowDrop'] = true;
         }
 
@@ -1850,13 +1850,13 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                 ],
             ]];
 
-            if ($object->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
+            if ($object->hasChildren(DataObject::$types)) {
                 // get amount of children
                 $list = new DataObject\Listing();
                 $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
-                $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes(DataObject::$types);
                 $childIds = $list->loadIdList();
 
                 if (count($childIds) > 0) {

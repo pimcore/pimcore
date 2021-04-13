@@ -98,7 +98,7 @@ final class BootstrapCommand extends AbstractIndexServiceCommand
             /** @var Listing\Concrete $products */
             $products = new $objectListClass();
             $products->setUnpublished(true);
-            $products->setObjectTypes(['object', 'folder', 'variant']);
+            $products->setObjectTypes(DataObject::$types);
             $products->setIgnoreLocalizedFields(true);
             $products->setCondition($listCondition);
 

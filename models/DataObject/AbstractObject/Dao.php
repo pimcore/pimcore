@@ -109,7 +109,7 @@ class Dao extends Model\Element\Dao
         $checkColumns = ['o_type', 'o_classId', 'o_className'];
         $existingData = $this->db->fetchRow('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE o_id = ?', [$this->model->getId()]);
         foreach ($checkColumns as $column) {
-            if ($column == 'o_type' && in_array($data[$column], ['variant', 'object']) && (isset($existingData[$column]) && in_array($existingData[$column], ['variant', 'object']))) {
+            if ($column == 'o_type' && in_array($data[$column], [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]) && (isset($existingData[$column]) && in_array($existingData[$column], [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]))) {
                 // type conversion variant <=> object should be possible
                 continue;
             }
@@ -162,7 +162,7 @@ class Dao extends Model\Element\Dao
      */
     public function updateChildPaths($oldPath)
     {
-        if ($this->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
+        if ($this->hasChildren(DataObject::$types)) {
             //get objects to empty their cache
             $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', $this->db->escapeLike($oldPath) . '%');
 
