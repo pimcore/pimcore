@@ -300,12 +300,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $id = $elementData['id'];
                 $fullpath = $elementData['fullpath'];
 
-                if ($targetType == 'object') {
-                    if ($type == 'folder') {
-                        $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => 'folder'];
+                if ($targetType == DataObject::OBJECT_TYPE_OBJECT) {
+                    if ($type == DataObject::OBJECT_TYPE_FOLDER) {
+                        $itemData = ['id' => $id, 'path' => $fullpath, 'type' => DataObject::OBJECT_TYPE_OBJECT, 'subtype' => DataObject::OBJECT_TYPE_FOLDER];
                     } else {
                         $className = $elementData['className'];
-                        $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => $className];
+                        $itemData = ['id' => $id, 'path' => $fullpath, 'type' => DataObject::OBJECT_TYPE_OBJECT, 'subtype' => $className];
                         /** @var DataObject\Concrete $obj */
                         $obj = Element\Service::getElementById('object', $id);
                         $itemData['published'] = $obj->getPublished();

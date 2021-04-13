@@ -392,11 +392,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             if ($allowInherit) {
                 if ($object->getParent() instanceof AbstractObject) {
                     $parent = $object->getParent();
-                    while ($parent && $parent->getType() == 'folder') {
+                    while ($parent && $parent->getType() == AbstractObject::OBJECT_TYPE_FOLDER) {
                         $parent = $parent->getParent();
                     }
 
-                    if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                    if ($parent && ($parent->getType() == AbstractObject::OBJECT_TYPE_OBJECT || $parent->getType() == AbstractObject::OBJECT_TYPE_VARIANT)) {
                         /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $getter = 'get' . ucfirst($this->fieldname);

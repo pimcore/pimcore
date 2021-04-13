@@ -269,7 +269,7 @@ class Item extends Model\AbstractModel
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
-                $children = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true);
+                $children = $element->getChildren(DataObject::$types, true);
             } elseif ($element instanceof Document) {
                 $children = $element->getChildren(true);
             } else {
@@ -311,7 +311,7 @@ class Item extends Model\AbstractModel
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
-                $children = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true);
+                $children = $element->getChildren(DataObject::$types, true);
             } elseif ($element instanceof Document) {
                 $children = $element->getChildren(true);
             } else {

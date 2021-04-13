@@ -107,9 +107,9 @@ class Relations extends Model\Document\Editable implements \Iterator
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
                 if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName()];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
                 } elseif ($element instanceof DataObject\AbstractObject) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', 'folder'];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
                 } elseif ($element instanceof Document) {

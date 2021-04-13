@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Event\Ecommerce\IndexServiceEvents;
@@ -203,7 +204,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
         $virtualProductId = $subObjectId;
         $virtualProductActive = $object->isActive();
-        if ($object->getOSIndexType() == 'variant') {
+        if ($object->getOSIndexType() == ProductListInterface::PRODUCT_TYPE_VARIANT) {
             $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
         }
 
