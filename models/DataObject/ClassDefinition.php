@@ -760,11 +760,8 @@ class ClassDefinition extends Model\AbstractModel
         if (is_file($customFile)) {
             return $customFile;
         } else {
-            $file = PIMCORE_CLASS_DIRECTORY . '/definition_'.$name.'.php';
-            return $file;
+            return PIMCORE_CLASS_DIRECTORY . '/definition_'.$name.'.php';
         }
-
-        return $file;
     }
 
     /**
