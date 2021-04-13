@@ -112,77 +112,6 @@ pimcore.settings.system = Class.create({
                 items: [
                     {
                         xtype: 'fieldset',
-                        title: t('general'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        defaultType: 'textfield',
-                        defaults: {width: 450},
-                        items: [
-                            {
-                                fieldLabel: t('timezone'),
-                                name: 'general.timezone',
-                                xtype: "combo",
-                                forceSelection: true,
-                                triggerAction: 'all',
-                                store: this.data.config.timezones,
-                                value: this.getValue("general.timezone"),
-                                width: 600
-                            },
-                            {
-                                fieldLabel: t("additional_path_variable") + " (" + t(this.data.config.path_separator) + " " + t("separated") + ") (/x/y" + this.data.config.path_separator + "/foo/bar)",
-                                xtype: "textfield",
-                                name: "general.path_variable",
-                                value: this.getValue("general.path_variable"),
-                                width: 600
-                            },
-                            {
-                                xtype: 'combo',
-                                fieldLabel: t('language_admin'),
-                                typeAhead: true,
-                                value: this.getValue("general.language"),
-                                queryMode: 'local',
-                                mode: 'local',
-                                listWidth: 100,
-                                //editable: true,     // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
-                                store: pimcore.globalmanager.get("pimcorelanguages"),
-                                displayField: 'display',
-                                valueField: 'language',
-                                forceSelection: true,
-                                triggerAction: 'all',
-                                name: 'general.language'
-                            },
-                            {
-                                fieldLabel: t('turn_off_usage_statistics'),
-                                xtype: "checkbox",
-                                name: "general.disableusagestatistics",
-                                checked: this.getValue("general.disableusagestatistics")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('usage_statistics_explanation'),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                fieldLabel: 'UUID ' + t("instance_identifier"),
-                                xtype: "textfield",
-                                name: "general.instanceIdentifier",
-                                value: this.getValue("general.instanceIdentifier"),
-                                width: 450
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('instance_identifier_info'),
-                                cls: "pimcore_extra_label_bottom"
-                            }
-                        ]
-                    } ,
-                    {
-                        xtype: 'fieldset',
                         title: t('appearance_and_branding'),
                         collapsible: true,
                         collapsed: true,
@@ -213,7 +142,7 @@ pimcore.settings.system = Class.create({
                                 name: 'branding.color_admin_interface'
                             }, {
                                 xtype: "checkbox",
-                                fieldLabel: t('invert_colors_on_login_screen'),
+                                boxLabel: t('invert_colors_on_login_screen'),
                                 width: 330,
                                 checked: this.getValue("branding.login_screen_invert_colors"),
                                 name: 'branding.login_screen_invert_colors'
@@ -287,6 +216,22 @@ pimcore.settings.system = Class.create({
                         defaultType: 'textfield',
                         defaults: {width: 300},
                         items: [{
+                            xtype: 'combo',
+                            fieldLabel: t('language_admin'),
+                            typeAhead: true,
+                            value: this.getValue("general.language"),
+                            queryMode: 'local',
+                            mode: 'local',
+                            listWidth: 100,
+                            width: 500,
+                            //editable: true,     // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
+                            store: pimcore.globalmanager.get("pimcorelanguages"),
+                            displayField: 'display',
+                            valueField: 'language',
+                            forceSelection: true,
+                            triggerAction: 'all',
+                            name: 'general.language'
+                        }, {
                             xtype: "displayfield",
                             hideLabel: true,
                             width: 600,
@@ -355,134 +300,21 @@ pimcore.settings.system = Class.create({
                         collapsible: true,
                         collapsed: true,
                         autoHeight: true,
-                        labelWidth: 250,
+                        labelWidth: 300,
                         defaultType: 'textfield',
                         defaults: {width: 600},
-                        items: [
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: "<b>" + t("log_applicationlog") + "</b>"
-                            },
-                            {
-                                fieldLabel: t("log_config_send_summary_per_mail"),
-                                xtype: "checkbox",
-                                name: "applicationlog.mail_notification.send_log_summary",
-                                checked: this.getValue("applicationlog.mail_notification.send_log_summary")
-                            },
-                            {
-                                fieldLabel: t("log_config_filter_priority"),
-                                xtype: "combo",
-                                name: "applicationlog.mail_notification.filter_priority",
-                                value: this.getValue("applicationlog.mail_notification.filter_priority"),
-                                store: [
-                                    [7, "DEBUG"],
-                                    [6, "INFO"],
-                                    [5, "NOTICE"],
-                                    [4, "WARNING"],
-                                    [3, "ERROR"],
-                                    [2, "CRITICAL"],
-                                    [1, "ALERT"],
-                                    [0, "EMERG"]
-                                ],
-                                mode: "local",
-                                editable: false,
-                                triggerAction: "all"
-                            },
-                            {
-                                fieldLabel: t('log_config_mail_receiver'),
-                                name: 'applicationlog.mail_notification.mail_receiver',
-                                value: this.getValue("applicationlog.mail_notification.mail_receiver")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('log_config_mail_receiver_description'),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                fieldLabel: t('log_config_archive_treshold'),
-                                name: 'applicationlog.archive_treshold',
-                                value: this.getValue("applicationlog.archive_treshold") ? this.getValue("applicationlog.archive_treshold") : '30'
-                            },
-                            {
-                                fieldLabel: t('log_config_archive_alternative_database'),
-                                name: 'applicationlog.archive_alternative_database',
-                                value: this.getValue("applicationlog.archive_alternative_database")
-                            },
-                            {
-                                fieldLabel: t('log_config_delete_archive_threshold'),
-                                name: 'applicationlog.delete_archive_threshold',
-                                value: this.getValue("applicationlog.delete_archive_threshold") ? this.getValue("applicationlog.delete_archive_threshold") : '6'
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('log_config_archive_description'),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                fieldLabel: t("debug_admin_translations"),
-                                xtype: "checkbox",
-                                name: "general.debug_admin_translations",
-                                checked: this.getValue("general.debug_admin_translations")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('dev_mode_description'),
-                                cls: "pimcore_extra_label_bottom"
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'fieldset',
-                        title: t('email_settings'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
                         items: [{
-                            xtype: "fieldset",
-                            title: t("delivery_settings"),
-                            collapsible: false,
-                            defaults: {width: 600},
-                            labelWidth: 250,
-                            defaultType: 'textfield',
-                            autoHeight: true,
-                            items: [
-                                {
-                                    xtype: 'textfield',
-                                    width: 650,
-                                    fieldLabel: t("email_debug_addresses") + "(CSV)" + ' <span style="color:red;">*</span>',
-                                    name: 'email.debug.emailAddresses',
-                                    value: this.getValue("email.debug.emailaddresses"),
-                                    emptyText: "john@doe.com,jane@doe.com"
-                                },
-                                {
-                                    fieldLabel: t("email_senderemail") + ' <span style="color:red;">*</span>',
-                                    name: "email.sender.email",
-                                    value: this.getValue("email.sender.email")
-                                },
-                                {
-                                    fieldLabel: t("email_sendername"),
-                                    name: "email.sender.name",
-                                    value: this.getValue("email.sender.name")
-                                },
-                                {
-                                    fieldLabel: t("email_returnemail"),
-                                    name: "email.return.email",
-                                    value: this.getValue("email.return.email")
-                                },
-                                {
-                                    fieldLabel: t("email_returnname"),
-                                    name: "email.return.name",
-                                    value: this.getValue("email.return.name")
-                                }
-                            ]
+                            boxLabel: t("debug_admin_translations"),
+                            xtype: "checkbox",
+                            name: "general.debug_admin_translations",
+                            checked: this.getValue("general.debug_admin_translations")
+                        }, {
+                            xtype: 'textfield',
+                            width: 650,
+                            fieldLabel: t("email_debug_addresses") + "(CSV)" + ' <span style="color:red;">*</span>',
+                            name: 'email.debug.emailAddresses',
+                            value: this.getValue("email.debug.emailaddresses"),
+                            emptyText: "john@doe.com,jane@doe.com"
                         }]
                     },
                     {
@@ -502,7 +334,7 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 xtype: "checkbox",
-                                fieldLabel: t("redirect_unknown_domains_to_main_domain"),
+                                boxLabel: t("redirect_unknown_domains_to_main_domain"),
                                 name: "general.redirect_to_maindomain",
                                 checked: this.getValue("general.redirect_to_maindomain")
                             },
@@ -581,31 +413,6 @@ pimcore.settings.system = Class.create({
                                     "afterrender": this.checkVersionInputs.bind(this, "documents", "steps", "init")
                                 },
                                 minValue: 0
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                style: "margin-top: 10px;",
-                                width: 600,
-                                value: "&nbsp;"
-                            }, {
-                                fieldLabel: t("allow_trailing_slash_for_documents"),
-                                xtype: "combo",
-                                name: "documents.allowtrailingslash",
-                                value: this.getValue("documents.allowtrailingslash"),
-                                store: [
-                                    ["", t("yes")],
-                                    ["no", t("no")]
-                                ],
-                                mode: "local",
-                                editable: false,
-                                forceSelection: true,
-                                triggerAction: "all"
-                            }, {
-                                fieldLabel: t("generate_previews"),
-                                xtype: "checkbox",
-                                name: "documents.generatepreview",
-                                checked: this.getValue("documents.generatepreview")
                             }
                         ]
                     }
@@ -687,295 +494,17 @@ pimcore.settings.system = Class.create({
                                 minValue: 0
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (Imagick)",
-                                name: 'assets.icc_rgb_profile',
-                                value: this.getValue("assets.icc_rgb_profile")
-                            },
-                            {
-                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (Imagick)",
-                                name: 'assets.icc_cmyk_profile',
-                                value: this.getValue("assets.icc_cmyk_profile")
-                            },
-                            {
-                                fieldLabel: t("hide_edit_image_tab"),
+                                boxLabel: t("hide_edit_image_tab"),
                                 xtype: "checkbox",
                                 name: "assets.hide_edit_image",
                                 checked: this.getValue("assets.hide_edit_image")
                             },
                             {
-                                fieldLabel: t("disable_tree_preview"),
+                                boxLabel: t("disable_tree_preview"),
                                 xtype: "checkbox",
                                 name: "assets.disable_tree_preview",
                                 checked: this.getValue("assets.disable_tree_preview")
                             }
-                        ]
-                    }
-                    ,
-                    {
-                        xtype: 'fieldset',
-                        title: t('google_credentials_and_api_keys'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 800},
-                        items: [
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 800,
-                                value: "<b>" + t('google_api_key_service') + "</b>",
-                                cls: "pimcore_extra_label"
-                            }, {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 800,
-                                value: t("google_api_access_description"),
-                                cls: "pimcore_extra_label"
-                            },
-                            {
-                                fieldLabel: t('client_id'),
-                                name: 'services.google.client_id',
-                                value: this.getValue("services.google.client_id"),
-                                width: 800
-                            },
-                            {
-                                fieldLabel: t('email'),
-                                name: 'services.google.email',
-                                value: this.getValue("services.google.email"),
-                                width: 800
-                            }, {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 800,
-                                value: this.data.config.google_private_key_exists ?
-                                    t("google_api_private_key_installed")
-                                    : ('<span style="color:red;">'
-                                + t("google_api_key_missing")
-                                + " <br />" + this.data.config.google_private_key_path
-                                + '</span>'),
-                                cls: "pimcore_extra_label"
-                            }, {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                style: "margin-top: 10px;",
-                                width: 800,
-                                value: "&nbsp;"
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 800,
-                                value: "<b>" + t('google_api_key_simple') + "</b>",
-                                cls: "pimcore_extra_label"
-                            },
-                            {
-                                fieldLabel: t('server_api_key'),
-                                name: 'services.google.simpleapikey',
-                                value: this.getValue("services.google.simpleapikey"),
-                                width: 850
-                            },
-                            {
-                                fieldLabel: t('browser_api_key'),
-                                name: 'services.google.browserapikey',
-                                value: this.getValue("services.google.browserapikey"),
-                                width: 850
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        xtype: 'fieldset',
-                        title: t('full_page_cache'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 600},
-                        items: [
-                            {
-                                fieldLabel: t("cache_enabled"),
-                                xtype: "checkbox",
-                                name: "full_page_cache.enabled",
-                                checked: this.getValue("full_page_cache.enabled")
-                            },
-                            {
-                                fieldLabel: t('lifetime'),
-                                xtype: "numberfield",
-                                name: 'full_page_cache.lifetime',
-                                value: this.getValue("full_page_cache.lifetime"),
-                                width: 350,
-                                step: 100
-                            },
-                            {
-                                xtype: "displayfield",
-                                width: 600,
-                                value: t("outputcache_lifetime_description"),
-                                cls: "pimcore_extra_label_bottom"
-                            }
-                            ,
-                            {
-                                xtype: 'tagfield',
-                                width: "100%",
-                                resizable: true,
-                                minChars: 2,
-                                store: Ext.create('Ext.data.JsonStore', {
-                                    proxy: {
-                                        type: 'memory'
-                                    },
-                                    fields: ['value'],
-                                    data: this.getValue("full_page_cache.excludePatternsArray", true)
-                                }),
-                                fieldLabel: t('exclude_patterns'),
-                                name: 'full_page_cache.excludePatterns',
-                                value: this.getValue("full_page_cache.excludePatterns"),
-                                displayField: 'value',
-                                valueField: 'value',
-                                forceSelection: false,
-                                delimiter: ',',
-                                createNewOnEnter: true,
-                                componentCls: 'superselect-no-drop-down'
-                            },
-                            {
-                                xtype: "displayfield",
-                                width: 600,
-                                value: t("exclude_patterns_description"),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                fieldLabel: t('cache_disable_cookies'),
-                                name: 'full_page_cache.excludeCookie',
-                                value: this.getValue("full_page_cache.excludeCookie")
-                            }
-                        ]
-                    }, {
-                        xtype: 'fieldset',
-                        title: t('http_connectivity_direct_proxy'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 300},
-                        items: [
-                            {
-                                fieldLabel: t("select_connectivity_type"),
-                                xtype: "combo",
-                                name: "httpclient.adapter",
-                                width: 400,
-                                value: this.getValue("httpclient.adapter"),
-                                store: [
-                                    ["Socket", t("direct_socket")],
-                                    ["Proxy", t("proxy")]
-                                ],
-                                mode: "local",
-                                triggerAction: "all",
-                                editable: false,
-                                listeners: {
-                                    afterrender: function (el) {
-                                        if (el.getValue() == "Proxy") {
-                                            Ext.getCmp("system_settings_proxy_settings").show();
-                                        } else {
-                                            Ext.getCmp("system_settings_proxy_settings").hide();
-                                        }
-                                    },
-                                    select: function (el) {
-                                        if (el.getValue() == "Proxy") {
-                                            Ext.getCmp("system_settings_proxy_settings").show();
-                                        } else {
-                                            Ext.getCmp("system_settings_proxy_settings").hide();
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                xtype: "fieldset",
-                                hidden: true,
-                                id: "system_settings_proxy_settings",
-                                collapsible: false,
-                                title: t("proxy_settings"),
-                                width: 600,
-                                defaults: {width: 565},
-                                items: [{
-                                    xtype: "textfield",
-                                    fieldLabel: t('proxy_host'),
-                                    name: 'httpclient.proxy_host',
-                                    value: this.getValue("httpclient.proxy_host")
-                                }, {
-                                    xtype: "textfield",
-                                    fieldLabel: t('proxy_port'),
-                                    name: 'httpclient.proxy_port',
-                                    value: this.getValue("httpclient.proxy_port")
-                                }, {
-                                    xtype: "textfield",
-                                    fieldLabel: t('proxy_user'),
-                                    name: 'httpclient.proxy_user',
-                                    value: this.getValue("httpclient.proxy_user")
-                                }, {
-                                    xtype: "textfield",
-                                    fieldLabel: t('proxy_pass'),
-                                    name: 'httpclient.proxy_pass',
-                                    value: this.getValue("httpclient.proxy_pass")
-                                }]
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'fieldset',
-                        title: t('newsletter'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 350,
-                        items: [{
-                            xtype: "checkbox",
-                            fieldLabel: t("use_different_email_delivery_settings"),
-                            name: "newsletter.usespecific",
-                            checked: this.getValue("newsletter.usespecific"),
-                            listeners: {
-                                "change": function (el, checked) {
-                                    if (checked) {
-                                        Ext.getCmp("system_settings_newsletter_fieldset").show();
-                                    } else {
-                                        Ext.getCmp("system_settings_newsletter_fieldset").hide();
-                                    }
-                                }
-                            }
-                        }, {
-                            xtype: "fieldset",
-                            title: t("delivery_settings"),
-                            collapsible: false,
-                            defaults: {width: 600},
-                            labelWidth: 250,
-                            hidden: !this.getValue("newsletter.usespecific"),
-                            id: "system_settings_newsletter_fieldset",
-                            defaultType: 'textfield',
-                            autoHeight: true,
-                            items: [
-                                {
-                                    fieldLabel: t("email_senderemail") + ' <span style="color:red;">*</span>',
-                                    name: "newsletter.sender.email",
-                                    value: this.getValue("newsletter.sender.email")
-                                },
-                                {
-                                    fieldLabel: t("email_sendername"),
-                                    name: "newsletter.sender.name",
-                                    value: this.getValue("newsletter.sender.name")
-                                },
-                                {
-                                    fieldLabel: t("email_returnemail"),
-                                    name: "newsletter.return.email",
-                                    value: this.getValue("newsletter.return.email")
-                                },
-                                {
-                                    fieldLabel: t("email_returnname"),
-                                    name: "newsletter.return.name",
-                                    value: this.getValue("newsletter.return.name")
-                                }
-                            ]
-                        }
                         ]
                     }
                 ]
@@ -1140,7 +669,7 @@ pimcore.settings.system = Class.create({
                 }, {
                     xtype: "radio",
                     name: "general.defaultLanguageRadio",
-                    fieldLabel: t("default_language"),
+                    boxLabel: t("default_language"),
                     checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
                     listeners: {
                         change: function (el, checked) {
