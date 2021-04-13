@@ -242,6 +242,8 @@
   - Removed configuration node `worker_mode` in `index_service` configuration  
 - [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is 
   implemented in `AbstractConfig` this should not have any consequences.
+- [Ecommerce][PricingManager] Added two new interfaces `ProductActionInterface` and `CartActionInterface`. All actions
+  need to implement either of it - otherwise they will not be considered anymore in price calculation. 
 - [Web2Print] 
    - Removed `PdfReactor8`, use `PdfReactor` instead.
    - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib

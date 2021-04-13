@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
 /**
  * Adds a gift product to the given cart
  */
-interface GiftInterface extends ActionInterface
+interface GiftInterface extends ActionInterface, CartActionInterface
 {
     /**
      * Set gift product

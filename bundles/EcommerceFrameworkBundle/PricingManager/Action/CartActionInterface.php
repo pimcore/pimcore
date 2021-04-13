@@ -12,19 +12,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-interface ActionInterface
+
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
+
+/**
+ * Interface to identify actions that apply pricing actions on cart level
+ */
+interface CartActionInterface
 {
     /**
-     * @return string
-     */
-    public function toJSON();
-
-    /**
-     * @param string $string
-     *
+     * @param EnvironmentInterface $environment
      * @return ActionInterface
      */
-    public function fromJSON($string);
+    public function executeOnCart(EnvironmentInterface $environment);
 }
