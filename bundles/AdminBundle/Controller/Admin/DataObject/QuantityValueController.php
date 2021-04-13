@@ -43,16 +43,18 @@ final class QuantityValueController extends AdminController
     {
         $list = new Unit\Listing();
 
-        $orderKey = 'abbreviation';
-        $order = 'asc';
+        $order = ['ASC', 'ASC', 'ASC'];
+        $orderKey = ['baseunit', 'factor', 'abbreviation'];
 
         $allParams = array_merge($request->request->all(), $request->query->all());
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+
+        // Prepend user-requested sorting settings but keep the others to keep secondary order of quantity values in respective order
         if ($sortingSettings['orderKey']) {
-            $orderKey = $sortingSettings['orderKey'];
+            array_unshift($orderKey, $sortingSettings['orderKey']);
         }
         if ($sortingSettings['order']) {
-            $order = $sortingSettings['order'];
+            array_unshift($order, $sortingSettings['order']);
         }
 
         $list->setOrder($order);
@@ -76,7 +78,6 @@ final class QuantityValueController extends AdminController
             }
             $list->setCondition($condition);
         }
-        $list->load();
 
         $units = [];
         foreach ($list->getUnits() as $u) {
@@ -171,8 +172,8 @@ final class QuantityValueController extends AdminController
     public function unitListAction(Request $request)
     {
         $list = new Unit\Listing();
-        $list->setOrderKey('abbreviation');
-        $list->setOrder('ASC');
+        $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
+        $list->setOrder(['ASC', 'ASC', 'ASC']);
         if ($request->get('filter')) {
             $array = explode(',', $request->get('filter'));
             $quotedArray = [];
@@ -185,7 +186,6 @@ final class QuantityValueController extends AdminController
         }
 
         $units = $list->getUnits();
-
         foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
@@ -253,12 +253,11 @@ final class QuantityValueController extends AdminController
 
         $units = new Unit\Listing();
         $units->setCondition('baseunit = '.$units->quote($baseUnit->getId()).' AND id != '.$units->quote($fromUnit->getId()));
-        $units = $units->load();
 
         $convertedValues = [];
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        foreach ($units as $targetUnit) {
+        foreach ($units->getUnits() as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
 
