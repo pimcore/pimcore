@@ -17,13 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
-use Pimcore\Twig\Extension\Templating\HeadLink;
-use Pimcore\Twig\Extension\Templating\HeadMeta;
-use Pimcore\Twig\Extension\Templating\HeadScript;
-use Pimcore\Twig\Extension\Templating\HeadStyle;
-use Pimcore\Twig\Extension\Templating\HeadTitle;
-use Pimcore\Twig\Extension\Templating\InlineScript;
-use Pimcore\Twig\Extension\Templating\Placeholder;
+use Pimcore\Templating\Helper\HeadLink;
+use Pimcore\Templating\Helper\HeadMeta;
+use Pimcore\Templating\Helper\HeadScript;
+use Pimcore\Templating\Helper\HeadStyle;
+use Pimcore\Templating\Helper\HeadTitle;
+use Pimcore\Templating\Helper\InlineScript;
+use Pimcore\Templating\Helper\Placeholder;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
