@@ -63,33 +63,51 @@ class BooleanSelect extends Data implements
     ];
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'booleanSelect';
-    /** @var string */
+
+    /**
+     * @internal
+     * @var string
+     */
     public $yesLabel;
-    /** @var string */
+
+    /**
+     * @internal
+     * @var string
+     */
     public $noLabel;
-    /** @var string */
+
+    /**
+     * @internal
+     * @var string
+     */
     public $emptyLabel;
+
+    /**
+     * @internal
+     * @var array|array[]
+     */
     public $options = self::DEFAULT_OPTIONS;
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'tinyint(1) null';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'tinyint(1) null';
@@ -248,8 +266,8 @@ class BooleanSelect extends Data implements
 
         $value = '';
         foreach ($this->options as $option) {
-            if ($option->value == $data) {
-                $value = $option->key;
+            if ($option['value'] == $data) {
+                $value = $option['key'];
                 break;
             }
         }

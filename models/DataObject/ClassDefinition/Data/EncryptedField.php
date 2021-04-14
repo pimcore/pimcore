@@ -51,24 +51,26 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'encryptedField';
 
     /**
+     * @internal
      * @var string
      */
     public $delegateDatatype;
 
     /**
+     * @internal
      * @var Model\DataObject\ClassDefinition\Data|null
      */
     public $delegate;
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'LONGBLOB';

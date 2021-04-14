@@ -28,34 +28,39 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'calculatedValue';
 
-    /** @var string */
+    /**
+     * @internal
+     * @var string
+     */
     public $elementType = 'input';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
      * @var string
      */
     public $calculatorClass;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'varchar';
 
     /**
      * Column length
-     *
+     * @internal
      * @var int
      */
     public $columnLength = 190;

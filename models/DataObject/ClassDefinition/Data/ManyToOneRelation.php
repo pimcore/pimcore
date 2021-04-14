@@ -35,29 +35,32 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'manyToOneRelation';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
      * @var string
      */
     public $assetUploadPath;
 
     /**
+     * @internal
      * @var bool
      */
     public $relationType = true;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var array
      */
     public $queryColumnType = [
@@ -66,33 +69,33 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     ];
 
     /**
-     *
+     * @internal
      * @var bool
      */
     public $objectsAllowed = false;
 
     /**
-     *
+     * @internal
      * @var bool
      */
     public $assetsAllowed = false;
 
     /**
      * Allowed asset types
-     *
+     * @internal
      * @var array
      */
     public $assetTypes = [];
 
     /**
-     *
+     * @internal
      * @var bool
      */
     public $documentsAllowed = false;
 
     /**
      * Allowed document types
-     *
+     * @internal
      * @var array
      */
     public $documentTypes = [];

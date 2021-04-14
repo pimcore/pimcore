@@ -29,26 +29,27 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'consent';
 
     /**
+     * @internal
      * @var int
      */
     public $defaultValue = 0;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'tinyint(1)';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var array
      */
     public $columnType = [
@@ -58,7 +59,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * Width of field
-     *
+     * @internal
      * @var string|int
      */
     public $width = 0;

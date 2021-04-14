@@ -24,12 +24,13 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
 {
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'languagemultiselect';
 
     /**
+     * @internal
      * @var bool
      */
     public $onlySystemLanguages = false;

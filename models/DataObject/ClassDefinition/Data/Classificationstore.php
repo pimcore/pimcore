@@ -30,97 +30,116 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'classificationstore';
 
     /**
+     * @internal
      * @var array
      */
     public $childs = [];
 
     /**
+     * @internal
      * @var string
      */
     public $name;
 
     /**
+     * @internal
      * @var string
      */
     public $region;
 
     /**
+     * @internal
      * @var string
      */
     public $layout;
 
     /**
+     * @internal
      * @var string
      */
     public $title;
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
      * @var string|int
      */
     public $height = 0;
 
     /**
+     * @internal
      * @var int
      */
     public $maxTabs;
 
     /**
+     * @internal
      * @var string|int
      */
     public $labelWidth = 0;
 
-    /** @var bool */
+    /**
+     * @internal
+     * @var bool
+     */
     public $localized;
 
     /**
+     * @internal
      * @var int
      */
     public $storeId;
 
     /**
+     * @internal
      * @var bool
      */
     public $hideEmptyData;
 
     /**
+     * @internal
      * @var bool
      */
     public $disallowAddRemove;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
-     *
+     * @internal
      * @var array
      */
     protected $referencedFields = [];
 
     /**
+     * @internal
      * @var array|null
      */
     public $fieldDefinitionsCache;
 
     /**
+     * @internal
      * @var array
      */
     public $allowedGroupIds;
 
     /**
+     * @internal
      * @var array
      */
     public $activeGroupDefinitions = [];
 
     /**
+     * @internal
      * @var int
      */
     public $maxItems;

@@ -37,53 +37,58 @@ class Input extends Data implements
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'input';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
      * @var string|null
      */
     public $defaultValue;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'varchar';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'varchar';
 
     /**
      * Column length
-     *
+     * @internal
      * @var int
      */
     public $columnLength = 190;
 
     /**
+     * @internal
      * @var string
      */
     public $regex = '';
 
     /**
+     * @internal
      * @var bool
      */
     public $unique;
 
     /**
+     * @internal
      * @var bool
      */
     public $showCharCount;
