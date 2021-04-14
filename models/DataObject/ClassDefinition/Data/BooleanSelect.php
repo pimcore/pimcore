@@ -266,8 +266,8 @@ class BooleanSelect extends Data implements
 
         $value = '';
         foreach ($this->options as $option) {
-            if ($option->value == $data) {
-                $value = $option->key;
+            if ($option['value'] == $data) {
+                $value = $option['key'];
                 break;
             }
         }
