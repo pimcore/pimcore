@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 6.9.0
+- [Templating] If you are using Twig, then overriding templating helpers will no effect on Twig extension calls on frontend. Please override Twig extensions instead.
 - [Data Objects] Deprecated `\Pimcore\Model\DataObject\ClassDefinition\Data\DataInterface` as it isn't used anymore. Will be removed in Pimcore 10.
 - [Data Objects] Deprecated method `getFromCsvImport()` on all data-types
 - [Data Objects] Data types: `marshal`/`unmarshal` is deprecated and will be removed in Pimcore 10. Use `normalize`/`denormalize` instead.
