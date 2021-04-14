@@ -772,7 +772,7 @@ final class SettingsController extends AdminController
 
                 $route->save();
 
-                return $this->adminJson(['data' => $route, 'success' => true]);
+                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 unset($data['id']);
 
@@ -782,7 +782,7 @@ final class SettingsController extends AdminController
 
                 $route->save();
 
-                return $this->adminJson(['data' => $route, 'success' => true]);
+                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of routes
@@ -811,8 +811,7 @@ final class SettingsController extends AdminController
             /** @var Staticroute $route */
             foreach ($list->getRoutes() as $route) {
                 if (is_array($route->getSiteId())) {
-                    $route = json_encode($route);
-                    $route = json_decode($route, true);
+                    $route = $route->getObjectVars();
                     $route['siteId'] = implode(',', $route['siteId']);
                 }
                 $routes[] = $route;
