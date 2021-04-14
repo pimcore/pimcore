@@ -31,31 +31,33 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'datetime';
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'bigint(20)';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'bigint(20)';
 
     /**
+     * @internal
      * @var int|null
      */
     public $defaultValue;
 
     /**
+     * @internal
      * @var bool
      */
     public $useCurrentDate;

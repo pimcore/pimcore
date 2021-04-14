@@ -5,6 +5,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 
+/**
+ * @internal
+ */
 trait AllowDocumentRelationTrait
 {
     /**

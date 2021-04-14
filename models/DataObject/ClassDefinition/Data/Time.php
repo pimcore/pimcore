@@ -22,29 +22,32 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
 {
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'time';
 
     /**
      * Column length
-     *
+     * @internal
      * @var int
      */
     public $columnLength = 5;
 
     /**
+     * @internal
      * @var string|null
      */
     public $minValue;
 
     /**
+     * @internal
      * @var string|null
      */
     public $maxValue;
 
     /**
+     * @internal
      * @var int
      */
     public $increment = 15 ;

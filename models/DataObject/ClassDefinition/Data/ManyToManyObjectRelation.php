@@ -31,56 +31,63 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'manyToManyObjectRelation';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string|int
      */
     public $height = 0;
 
     /**
+     * @internal
      * @var int
      */
     public $maxItems;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'text';
 
     /**
+     * @internal
      * @var bool
      */
     public $relationType = true;
 
     /**
+     * @internal
      * @var string|null
      */
     public $visibleFields;
 
     /**
+     * @internal
      * @var bool
      */
     public $allowToCreateNewObject = true;
 
     /**
+     * @internal
      * @var bool
      */
     public $optimizedAdminLoading = false;
 
     /**
+     * @internal
      * @var array
      */
     public $visibleFieldDefinitions = [];

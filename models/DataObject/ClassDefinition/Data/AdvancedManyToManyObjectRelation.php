@@ -29,43 +29,50 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
 
     /**
+     * @internal
      * @var string
      */
     public $allowedClassId;
 
     /**
+     * @internal
      * @var string|null
      */
     public $visibleFields;
 
     /**
+     * @internal
      * @var array
      */
     public $columns;
 
     /**
+     * @internal
      * @var string[]
      */
     public $columnKeys;
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'advancedManyToManyObjectRelation';
 
     /**
+     * @internal
      * @var bool
      */
     public $enableBatchEdit;
 
     /**
+     * @internal
      * @var bool
      */
     public $allowMultipleAssignments;
 
     /**
+     * @internal
      * @var array
      */
     public $visibleFieldDefinitions = [];
@@ -762,7 +769,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * @return int
      */
-    public function sort($a, $b)
+    private function sort($a, $b)
     {
         if (is_array($a) && is_array($b)) {
             return $a['position'] - $b['position'];

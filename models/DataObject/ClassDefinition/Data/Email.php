@@ -23,6 +23,7 @@ use Pimcore\Model;
 class Email extends Model\DataObject\ClassDefinition\Data\Input
 {
     /**
+     * @internal
      * @var string
      */
     public $fieldtype = 'email';

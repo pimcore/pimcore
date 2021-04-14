@@ -28,19 +28,20 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'rgbaColor';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var array
      */
     public $queryColumnType = [
@@ -50,7 +51,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var array
      */
     public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',

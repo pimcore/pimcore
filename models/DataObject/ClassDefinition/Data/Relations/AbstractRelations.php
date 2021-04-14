@@ -182,6 +182,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
      * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params

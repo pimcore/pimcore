@@ -33,14 +33,14 @@ class Geopoint extends AbstractGeo implements
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'geopoint';
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var array
      */
     public $queryColumnType = [
@@ -50,7 +50,7 @@ class Geopoint extends AbstractGeo implements
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var array
      */
     public $columnType = [

@@ -34,41 +34,45 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'wysiwyg';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
      * @var string|int
      */
     public $height = 0;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'longtext';
 
     /**
+     * @internal
      * @var string
      */
     public $toolbarConfig = '';
 
     /**
+     * @internal
      * @var bool
      */
     public $excludeFromSearchIndex = false;

@@ -30,56 +30,63 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'slider';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
      * @var string|int
      */
     public $height = 0;
 
     /**
+     * @internal
      * @var float
      */
     public $minValue;
 
     /**
+     * @internal
      * @var float
      */
     public $maxValue;
 
     /**
+     * @internal
      * @var bool
      */
     public $vertical;
 
     /**
+     * v
      * @var float
      */
     public $increment;
 
     /**
+     * @internal
      * @var int
      */
     public $decimalPrecision;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'double';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'double';

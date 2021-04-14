@@ -32,31 +32,33 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'date';
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'bigint(20)';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'bigint(20)';
 
     /**
+     * @internal
      * @var int
      */
     public $defaultValue;
 
     /**
+     * @internal
      * @var bool
      */
     public $useCurrentDate;
