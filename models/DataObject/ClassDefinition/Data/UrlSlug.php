@@ -155,15 +155,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data && !is_array($data)) {
             throw new Model\Element\ValidationException('Invalid slug data');

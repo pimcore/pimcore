@@ -281,15 +281,8 @@ class Input extends Data implements
         return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getRegex() && strlen($data) > 0) {
             if (!preg_match('#' . $this->getRegex() . '#', $data)) {

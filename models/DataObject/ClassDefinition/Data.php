@@ -149,10 +149,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @param mixed $data
      * @param bool $omitMandatoryCheck
+     * @param array $params
      *
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
 

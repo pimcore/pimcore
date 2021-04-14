@@ -922,15 +922,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->width;
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $config = \Pimcore\Config::getSystemConfiguration('general');
         $languages = [];
@@ -946,9 +939,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     try {
                         try {
                             if (isset($dataForValidityCheck[$language]) && isset($dataForValidityCheck[$language][$fd->getName()])) {
-                                $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()]);
+                                $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()], false, $params);
                             } else {
-                                $fd->checkValidity(null);
+                                $fd->checkValidity(null, false, $params);
                             }
                         } catch (\Exception $e) {
                             if ($data->getObject()->getClass()->getAllowInherit()) {
@@ -971,7 +964,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                         $value = $data->getObject()->$getter($language);
                                     }
 
-                                    $fd->checkValidity($value, $omitMandatoryCheck);
+                                    $fd->checkValidity($value, $omitMandatoryCheck, $params);
                                     DataObject::setGetInheritedValues($getInheritedValues);
                                 } catch (\Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {

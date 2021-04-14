@@ -731,15 +731,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->width;
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param DataObject\Classificationstore $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $activeGroups = $data->getActiveGroups();
         if (!$activeGroups) {
@@ -785,7 +778,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $keyDef->setMandatory(1);
                             }
                             try {
-                                $keyDef->checkValidity($value);
+                                $keyDef->checkValidity($value, false, $params);
                             } catch (\Exception $exception) {
                                 $subItems[] = new Model\Element\ValidationException(
                                     $exception->getMessage() . ' (' . $validLanguage . ')',

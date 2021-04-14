@@ -60,7 +60,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     {
         if (!empty($data)) {
             try {
-                $this->checkValidity($data, true);
+                $this->checkValidity($data, true, $params);
             } catch (\Exception $e) {
                 $data = null;
             }
@@ -83,7 +83,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $this->init();
         if (!empty($data)) {
             try {
-                $this->checkValidity($data, true);
+                $this->checkValidity($data, true, $params);
             } catch (\Exception $e) {
                 $data = null;
             }
@@ -119,15 +119,8 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');

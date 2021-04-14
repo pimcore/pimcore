@@ -605,15 +605,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $code;
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data instanceof DataObject\Objectbrick) {
             $validationExceptions = [];
@@ -651,7 +644,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                             try {
                                 $key = $fd->getName();
                                 $getter = 'get' . ucfirst($key);
-                                $fd->checkValidity($item->$getter());
+                                $fd->checkValidity($item->$getter(), false, $params);
                             } catch (Model\Element\ValidationException $ve) {
                                 $ve->addContext($this->getName());
                                 $validationExceptions[] = $ve;

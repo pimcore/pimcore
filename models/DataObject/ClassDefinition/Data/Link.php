@@ -78,7 +78,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             }
 
             try {
-                $this->checkValidity($data, true);
+                $this->checkValidity($data, true, $params);
             } catch (\Exception $e) {
                 $data->setInternalType(null);
                 $data->setInternal(null);
@@ -113,7 +113,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             }
 
             try {
-                $this->checkValidity($link, true);
+                $this->checkValidity($link, true, $params);
             } catch (\Exception $e) {
                 $link->setInternalType(null);
                 $link->setInternal(null);
@@ -215,15 +215,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data) {
             if ($data instanceof DataObject\Data\Link) {

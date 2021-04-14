@@ -199,15 +199,8 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param DataObject\Data\CalculatedValue|null $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         // nothing to do
     }

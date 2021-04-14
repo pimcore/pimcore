@@ -1051,15 +1051,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->disallowReorder = $disallowReorder;
     }
 
-    /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
-     */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    /** { @inheritdoc } */
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck) {
             if (is_array($data)) {
@@ -1102,7 +1095,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 $fd->performMultipleAssignmentCheck($data);
                             }
 
-                            $fd->checkValidity($data);
+                            $fd->checkValidity($data, false, $params);
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
                             $validationExceptions[] = $ve;
