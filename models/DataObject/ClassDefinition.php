@@ -521,7 +521,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= "}\n";
         $cd .= "\n";
-        //TODO here
+
         $classFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php';
         if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
             throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
