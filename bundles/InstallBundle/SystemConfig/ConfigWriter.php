@@ -31,69 +31,7 @@ final class ConfigWriter
     private $defaultConfig = [
         'pimcore' => [
             'general' => [
-                'timezone' => 'Europe/Berlin',
                 'language' => 'en',
-                'valid_languages' => 'en',
-            ],
-            'documents' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-                'error_pages' => [
-                    'default' => '/',
-                ],
-                'allow_trailing_slash' => 'no',
-                'generate_preview' => false,
-            ],
-            'objects' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-            ],
-            'assets' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-            ],
-            'services' => [],
-            'full_page_cache' => [
-                'exclude_cookie' => '',
-            ],
-            'httpclient' => [
-                'adapter' => 'Socket',
-            ],
-            'email' => [
-                'sender' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'return' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'method' => 'sendmail',
-                'debug' => [
-                    'email_addresses' => '',
-                ],
-            ],
-            'newsletter' => [
-                'sender' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'return' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'method' => 'sendmail',
-                'use_specific' => false,
-            ],
-        ],
-        'pimcore_admin' => [
-            'branding' => [
-                'color_login_screen' => '',
-                'color_admin_interface' => '',
-                'login_screen_custom_image' => '',
             ],
         ],
     ];
