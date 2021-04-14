@@ -970,7 +970,7 @@ class Service extends Model\AbstractModel
             $childsList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
-                    $select->where($where);
+                    $select->andWhere($where);
                 }
 
                 $fromAlias = $select->getQueryPart('form')[1];
