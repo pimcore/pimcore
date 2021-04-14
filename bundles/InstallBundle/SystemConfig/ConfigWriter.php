@@ -31,7 +31,6 @@ final class ConfigWriter
     private $defaultConfig = [
         'pimcore' => [
             'general' => [
-                'timezone' => 'Europe/Berlin',
                 'language' => 'en',
                 'valid_languages' => 'en',
             ],
@@ -42,8 +41,6 @@ final class ConfigWriter
                 'error_pages' => [
                     'default' => '/',
                 ],
-                'allow_trailing_slash' => 'no',
-                'generate_preview' => false,
             ],
             'objects' => [
                 'versions' => [
@@ -54,39 +51,6 @@ final class ConfigWriter
                 'versions' => [
                     'steps' => '10',
                 ],
-            ],
-            'services' => [],
-            'full_page_cache' => [
-                'exclude_cookie' => '',
-            ],
-            'httpclient' => [
-                'adapter' => 'Socket',
-            ],
-            'email' => [
-                'sender' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'return' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'method' => 'sendmail',
-                'debug' => [
-                    'email_addresses' => '',
-                ],
-            ],
-            'newsletter' => [
-                'sender' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'return' => [
-                    'name' => '',
-                    'email' => '',
-                ],
-                'method' => 'sendmail',
-                'use_specific' => false,
             ],
         ],
         'pimcore_admin' => [
