@@ -206,7 +206,6 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('general')
-            ->ignoreExtraKeys()
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('timezone')
@@ -217,7 +216,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultNull()
                 ->end()
                 ->scalarNode('domain')
-                    ->defaultNull()
+                    ->defaultValue('')
                 ->end()
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()
@@ -283,8 +282,10 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('services')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('google')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('client_id')
                             ->info('This is required for the Google API integrations. Only use a `Service Account´ from the Google Cloud Console.')
@@ -411,7 +412,6 @@ final class Configuration implements ConfigurationInterface
         $assetsNode = $rootNode
             ->children()
                 ->arrayNode('assets')
-                ->ignoreExtraKeys()
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('frontend_prefixes')

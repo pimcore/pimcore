@@ -32,32 +32,6 @@ final class ConfigWriter
         'pimcore' => [
             'general' => [
                 'language' => 'en',
-                'valid_languages' => 'en',
-            ],
-            'documents' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-                'error_pages' => [
-                    'default' => '/',
-                ],
-            ],
-            'objects' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-            ],
-            'assets' => [
-                'versions' => [
-                    'steps' => '10',
-                ],
-            ],
-        ],
-        'pimcore_admin' => [
-            'branding' => [
-                'color_login_screen' => '',
-                'color_admin_interface' => '',
-                'login_screen_custom_image' => '',
             ],
         ],
     ];
