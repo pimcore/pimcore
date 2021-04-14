@@ -6,7 +6,7 @@ to implement `match()` method which always returns a boolean.
 To implement a condition, you need to implement 2 parts:
 
 * A PHP class implementing the [`ConditionInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/Condition/ConditionInterface.php).
-  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Targeting/Condition)
+  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/master/lib/Targeting/Condition)
   to get an idea how to implement your own conditions.
 * A frontend JS class defining the admin UI for your condition. You can have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/conditions.js)
   for UI examples and at the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
