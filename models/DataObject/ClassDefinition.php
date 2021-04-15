@@ -737,12 +737,7 @@ class ClassDefinition extends Model\AbstractModel
 
     public function isWritable()
     {
-        $name = $this->getName();
-        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/definition_' . $name . '.php';
-        if (is_file($customFile)) {
-            return false;
-        }
-        return true;
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**

@@ -217,6 +217,10 @@ final class ClassController extends AdminController implements KernelControllerE
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->setFieldDefinitions([]);
+        $isWriteable = $class->isWritable();
+        $class = json_encode($class);
+        $class = json_decode($class, true);
+        $class['isWriteable'] = $isWriteable;
 
         return $this->adminJson($class);
     }
@@ -231,8 +235,12 @@ final class ClassController extends AdminController implements KernelControllerE
     public function getCustomLayoutAction(Request $request)
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
+        $isWriteable = $customLayout->isWritable();
+        $customLayout = json_encode($customLayout->getObjectVars());
+        $customLayout = json_decode($customLayout, true);
+        $customLayout['isWriteable'] = $isWriteable;
 
-        return $this->adminJson(['success' => true, 'data' => $customLayout->getObjectVars()]);
+        return $this->adminJson(['success' => true, 'data' => $customLayout]);
     }
 
     /**
@@ -671,6 +679,11 @@ final class ClassController extends AdminController implements KernelControllerE
     {
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
+        $isWriteable = $fc->isWritable();
+        $fc = json_encode($fc);
+        $fc = json_decode($fc, true);
+        $fc['isWriteable'] = $isWriteable;
+
         return $this->adminJson($fc);
     }
 
@@ -1044,6 +1057,11 @@ final class ClassController extends AdminController implements KernelControllerE
     public function objectbrickGetAction(Request $request)
     {
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
+
+        $isWriteable = $fc->isWritable();
+        $fc = json_encode($fc);
+        $fc = json_decode($fc, true);
+        $fc['isWriteable'] = $isWriteable;
 
         return $this->adminJson($fc);
     }

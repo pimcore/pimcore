@@ -93,7 +93,8 @@ pimcore.object.classes.klass = Class.create({
         panelButtons.push({
             text: t("import"),
             iconCls: "pimcore_icon_upload",
-            handler: this.upload.bind(this)
+            handler: this.upload.bind(this),
+            disabled: !this.data.isWriteable
         });
 
         panelButtons.push({
@@ -108,7 +109,8 @@ pimcore.object.classes.klass = Class.create({
         panelButtons.push({
             text: t("save"),
             iconCls: "pimcore_icon_apply",
-            handler: this.save.bind(this)
+            handler: this.save.bind(this),
+            disabled: !this.data.isWriteable
         });
 
 

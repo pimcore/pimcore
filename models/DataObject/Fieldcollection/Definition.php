@@ -266,11 +266,7 @@ class Definition extends Model\AbstractModel
 
     public function isWritable()
     {
-        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/fieldcollections/'. $this->getKey() . '.php';
-        if (is_file($customFile)) {
-            return false;
-        }
-        return true;
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**

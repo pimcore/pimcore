@@ -99,7 +99,6 @@ class CustomLayout extends Model\AbstractModel
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
-                DataObject\Service::synchronizeCustomLayout($customLayout);
                 \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
             } catch (\Exception $e) {
                 return null;
@@ -257,12 +256,7 @@ class CustomLayout extends Model\AbstractModel
 
     public function isWritable()
     {
-        $name = $this->getName();
-        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/customlayouts/custom_definition_'. $this->getId() .'.php';
-        if (is_file($customFile)) {
-            return false;
-        }
-        return true;
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
