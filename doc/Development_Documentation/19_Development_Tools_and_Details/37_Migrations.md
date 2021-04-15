@@ -12,6 +12,12 @@ Normally Doctrine Migrations just runs/lists all available migrations, defined i
 Since it could be useful to filter migrations for a certain path (core, bundle or project), Pimcore adds the `--prefix` option to all 
 Doctrine commands, which let's you filter migrations by the given namespace. 
 
+If you'd like to create migrations for your bundle, please have a look at our
+[bundles documentation](../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md). 
+We're providing a customized abstract for bundles which makes using bundles even 
+more comfortable. 
+
+
 ### Example Commands
 ```bash
 # just run migrations of the Pimcore core
