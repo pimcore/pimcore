@@ -933,7 +933,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @todo: Method returns void/null, should be boolean or null
      */
-    public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
+    private function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
     {
         if (!$object) {
             return null;
@@ -966,6 +966,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
+     * @internal
      * @param DataObject\Concrete $object
      * @param array $activeGroups
      *
@@ -1152,7 +1153,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return string[]
      */
-    public function getValidLanguages()
+    private function getValidLanguages()
     {
         if ($this->localized) {
             $validLanguages = Tool::getValidLanguages();

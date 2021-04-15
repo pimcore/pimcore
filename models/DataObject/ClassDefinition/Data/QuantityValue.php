@@ -480,10 +480,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return Model\DataObject\Data\QuantityValue|null
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {

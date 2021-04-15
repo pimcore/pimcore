@@ -381,12 +381,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags($data, $tags = [])
     {

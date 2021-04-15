@@ -113,7 +113,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function encrypt($data, $object, $params = [])
+    private function encrypt($data, $object, $params = [])
     {
         if (!is_null($data)) {
             $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
@@ -145,7 +145,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @throws \Exception
      */
-    public function decrypt($data, $object, $params = [])
+    private function decrypt($data, $object, $params = [])
     {
         if ($data) {
             try {
@@ -280,9 +280,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
-            $result = $fd->checkValidity($data, $omitMandatoryCheck);
-
-            return $result;
+            $fd->checkValidity($data, $omitMandatoryCheck);
         }
     }
 
@@ -413,6 +411,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
+     * @internal
      * @param mixed $data
      */
     public function setupDelegate($data)

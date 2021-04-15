@@ -152,7 +152,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @return \Carbon\Carbon
      */
-    protected function getDateFromTimestamp($timestamp)
+    private function getDateFromTimestamp($timestamp)
     {
         $date = new \Carbon\Carbon();
         $date->setTimestamp($timestamp);
@@ -398,10 +398,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return Carbon|null
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {

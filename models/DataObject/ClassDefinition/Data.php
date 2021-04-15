@@ -501,8 +501,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
      * @param mixed $data
      * @param array $tags
      *

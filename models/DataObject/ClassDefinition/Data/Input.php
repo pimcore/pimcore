@@ -315,10 +315,7 @@ class Input extends Data implements
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return null|string
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {

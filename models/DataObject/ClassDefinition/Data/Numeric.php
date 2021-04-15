@@ -580,10 +580,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return null|int
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {
