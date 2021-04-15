@@ -1054,6 +1054,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
+     * @internal
      * @param DataObject\Data\ObjectMetadata $item
      *
      * @return string

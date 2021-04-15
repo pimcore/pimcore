@@ -35,12 +35,14 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * Set of allowed classes
-     *
+     * @internal
      * @var array
      */
     public $classes = [];
 
-    /** Optional path formatter class
+    /**
+     * Optional path formatter class
+     * @internal
      * @var null|string
      */
     public $pathFormatterClass;
@@ -68,7 +70,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @return bool
+     * { @inheritdoc }
      */
     public function getLazyLoading()
     {
@@ -76,10 +78,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @throws \Exception
+     * { @inheritdoc }
      */
     public function save($object, $params = [])
     {
@@ -131,10 +130,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array|null
+     * { @inheritdoc }
      */
     public function load($object, $params = [])
     {
@@ -192,6 +188,7 @@ abstract class AbstractRelations extends Data implements
     abstract public function loadData($data, $object = null, $params = []);
 
     /**
+     * @internal
      * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params
@@ -201,8 +198,7 @@ abstract class AbstractRelations extends Data implements
     abstract public function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * { @inheritdoc }
      */
     public function delete($object, $params = [])
     {
@@ -219,12 +215,13 @@ abstract class AbstractRelations extends Data implements
      *  "asset" => array(...)
      * )
      *
+     * @internal
      * @param mixed $data
      * @param array $idMapping
      *
      * @return array
      */
-    public function rewriteIdsService($data, $idMapping)
+    protected function rewriteIdsService($data, $idMapping)
     {
         if (is_array($data)) {
             foreach ($data as &$element) {
@@ -241,7 +238,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @return null|string
+     * { @inheritdoc }
      */
     public function getPathFormatterClass(): ?string
     {
@@ -330,6 +327,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
      * @param Element\ElementInterface $item
      *
      * @return string
@@ -343,10 +341,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param mixed $array1
-     * @param mixed $array2
-     *
-     * @return bool
+     * { @inheritdoc }
      */
     public function isEqual($array1, $array2): bool
     {
@@ -376,7 +371,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @return bool
+     * { @inheritdoc }
      */
     public function supportsDirtyDetection()
     {
@@ -384,11 +379,12 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
      * @param DataObject\Fieldcollection\Data\AbstractData $item
      *
      * @throws \Exception
      */
-    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
+    protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($item->getObject()) {
             /** @var DataObject\Fieldcollection $container */
@@ -403,11 +399,12 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
      * @param DataObject\Objectbrick\Data\AbstractData $item
      *
      * @throws \Exception
      */
-    public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
+    protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($item->getObject()) {
             /** @var DataObject\Objectbrick $container */
@@ -421,13 +418,14 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @internal checks for multiple assignments and throws an exception in case the rules are violated.
+     * checks for multiple assignments and throws an exception in case the rules are violated.
+     * @internal
      *
      * @param array|null $data*
      *
      * @throws \Exception
      */
-    public function performMultipleAssignmentCheck($data)
+    protected function performMultipleAssignmentCheck($data)
     {
         if (is_array($data)) {
             if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {

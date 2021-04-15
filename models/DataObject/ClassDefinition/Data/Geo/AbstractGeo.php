@@ -22,31 +22,37 @@ use Pimcore\Tool\Serialize;
 abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
     /**
+     * @internal
      * @var float
      */
     public $lat = 0.0;
 
     /**
+     * @internal
      * @var float
      */
     public $lng = 0.0;
 
     /**
+     * @internal
      * @var int
      */
     public $zoom = 1;
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
+     * @internal
      * @var string|int
      */
     public $height = 0;
 
     /**
+     * @internal
      * @var string
      */
     public $mapType = 'roadmap';
