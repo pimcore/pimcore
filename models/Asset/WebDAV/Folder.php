@@ -50,17 +50,19 @@ class Folder extends DAV\Collection
     {
         $children = [];
 
-        if ($this->asset->hasChildren()) {
-            foreach ($this->asset->getChildren() as $child) {
-                if ($child->isAllowed('view')) {
-                    try {
-                        if ($child = $this->getChild($child)) {
-                            $children[] = $child;
-                        }
-                    } catch (\Exception $e) {
-                        Logger::warning($e);
-                    }
+        $childsList = new Asset\Listing();
+
+        $childsList->addConditionParam('parentId = ?', [$this->asset->getId()]);
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        $childsList->filterAccessibleByUser($user);
+
+        foreach ($childsList as $child) {
+            try {
+                if ($child = $this->getChild($child)) {
+                    $children[] = $child;
                 }
+            } catch (\Exception $e) {
+                Logger::warning($e);
             }
         }
 
@@ -68,7 +70,7 @@ class Folder extends DAV\Collection
     }
 
     /**
-     * @param string $name
+     * @param Asset|string $name
      *
      * @return DAV\INode|void
      *
@@ -76,13 +78,13 @@ class Folder extends DAV\Collection
      */
     public function getChild($name)
     {
-        $nameParts = explode('/', $name);
-        $name = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
         $asset = null;
 
         if (is_string($name)) {
+            $name = Element\Service::getValidKey(substr($name, strrpos($name, '/') + 1), 'asset');
+
             $parentPath = $this->asset->getRealFullPath();
-            if ($parentPath == '/') {
+            if ($parentPath === '/') {
                 $parentPath = '';
             }
 
@@ -94,11 +96,10 @@ class Folder extends DAV\Collection
         }
 
         if ($asset instanceof Asset) {
-            if ($asset->getType() == 'folder') {
+            if ($asset instanceof Asset\Folder) {
                 return new Asset\WebDAV\Folder($asset);
-            } else {
-                return new Asset\WebDAV\File($asset);
             }
+            return new Asset\WebDAV\File($asset);
         }
         throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
