@@ -512,9 +512,12 @@ class ElementController extends AdminController
         $data = $this->decodeJson($request->get('data'));
 
         $version = Version::getById($data['id']);
-        $version->setPublic($data['public']);
-        $version->setNote($data['note']);
-        $version->save();
+
+        if ($data['public'] != $version->getPublic() || $data['note'] != $version->getNote()) {
+            $version->setPublic($data['public']);
+            $version->setNote($data['note']);
+            $version->save();
+        }
 
         return $this->adminJson(['success' => true]);
     }
