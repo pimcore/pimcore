@@ -425,7 +425,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @throws \Exception
      */
-    protected function performMultipleAssignmentCheck($data)
+    public function performMultipleAssignmentCheck($data)
     {
         if (is_array($data)) {
             if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
