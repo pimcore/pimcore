@@ -406,10 +406,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {

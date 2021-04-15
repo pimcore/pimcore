@@ -338,10 +338,7 @@ class  Video extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {

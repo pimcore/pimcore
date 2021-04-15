@@ -275,12 +275,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
-     *
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {

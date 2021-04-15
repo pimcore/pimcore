@@ -215,12 +215,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
-     *
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
