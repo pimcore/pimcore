@@ -383,6 +383,9 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->decimalPrecision = $masterDefinition->decimalPrecision;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

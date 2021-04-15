@@ -924,6 +924,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

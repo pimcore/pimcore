@@ -854,6 +854,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

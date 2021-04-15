@@ -314,6 +314,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->uploadPath = $masterDefinition->uploadPath;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

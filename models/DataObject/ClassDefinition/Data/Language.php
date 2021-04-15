@@ -102,6 +102,9 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

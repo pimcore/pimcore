@@ -306,6 +306,9 @@ class Input extends Data implements
         $this->columnLength = $masterDefinition->columnLength;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

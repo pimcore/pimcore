@@ -267,6 +267,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $data === null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

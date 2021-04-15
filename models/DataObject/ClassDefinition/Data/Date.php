@@ -389,6 +389,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return parent::getFilterConditionExt($value, $operator, $params);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

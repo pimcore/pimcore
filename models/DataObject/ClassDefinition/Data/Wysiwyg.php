@@ -384,6 +384,9 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

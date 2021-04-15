@@ -606,7 +606,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isFilterable(): bool
     {

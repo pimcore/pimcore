@@ -119,6 +119,9 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return $this->restrictTo;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

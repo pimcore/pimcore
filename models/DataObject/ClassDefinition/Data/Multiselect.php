@@ -575,6 +575,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         return $existingData;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

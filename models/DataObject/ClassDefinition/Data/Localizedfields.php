@@ -1248,6 +1248,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

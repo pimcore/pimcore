@@ -522,6 +522,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
