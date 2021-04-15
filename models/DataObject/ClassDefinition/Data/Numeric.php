@@ -517,11 +517,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return (string)$data;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

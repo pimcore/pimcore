@@ -529,9 +529,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getGetterCode($class)
     {
@@ -579,11 +577,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->maxItems;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

@@ -218,11 +218,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

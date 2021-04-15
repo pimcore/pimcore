@@ -169,7 +169,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return (string)$data;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
@@ -192,11 +194,8 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return (string)$data;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

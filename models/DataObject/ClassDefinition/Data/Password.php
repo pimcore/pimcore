@@ -367,11 +367,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

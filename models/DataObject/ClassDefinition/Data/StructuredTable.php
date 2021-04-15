@@ -26,6 +26,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Data\Extension\PositionSortTrait;
 
     /**
      * Static type of this element
@@ -218,21 +219,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         }
 
         return $this;
-    }
-
-    /**
-     * @param array|null $a
-     * @param array|null $b
-     *
-     * @return int|mixed
-     */
-    public function sort($a, $b)
-    {
-        if (is_array($a) && is_array($b)) {
-            return $a['position'] - $b['position']; // strcmp($a['position'], $b['position']);
-        }
-
-        return strcmp($a, $b);
     }
 
     /**
@@ -526,11 +512,8 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return true;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

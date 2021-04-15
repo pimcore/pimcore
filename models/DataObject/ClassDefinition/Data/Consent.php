@@ -303,11 +303,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data ? (string)$data->getConsent() : '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

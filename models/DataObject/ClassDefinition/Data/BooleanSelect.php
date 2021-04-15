@@ -36,12 +36,16 @@ class BooleanSelect extends Data implements
 
     /** storage value for yes */
     const YES_VALUE = 1;
+
     /** storage value for no */
     const NO_VALUE = -1;
+
     /** storage value for empty */
     const EMPTY_VALUE = null;
+
     /** edit mode valze for empty */
     const EMPTY_VALUE_EDITMODE = 0;
+
     /**
      * Available options to select - Default options
      *
@@ -235,11 +239,8 @@ class BooleanSelect extends Data implements
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

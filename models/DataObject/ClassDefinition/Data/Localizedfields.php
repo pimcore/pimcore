@@ -609,9 +609,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getGetterCode($class)
     {
@@ -633,9 +631,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSetterCode($class)
     {
@@ -1131,11 +1127,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $localizedFields;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

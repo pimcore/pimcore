@@ -408,11 +408,8 @@ class  Video extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $dependencies;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

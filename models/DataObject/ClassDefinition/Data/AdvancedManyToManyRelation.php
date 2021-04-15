@@ -26,6 +26,7 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+    use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**
      * @internal
@@ -756,21 +757,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param array|null $a
-     * @param array|null $b
-     *
-     * @return int
-     */
-    public function sort($a, $b)
-    {
-        if (is_array($a) && is_array($b)) {
-            return $a['position'] - $b['position'];
-        }
-
-        return strcmp($a, $b);
-    }
-
-    /**
      * @param DataObject\ClassDefinition $class
      */
     public function classSaved($class)
@@ -835,7 +821,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->columns = $masterDefinition->columns;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
@@ -869,6 +857,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         return $dependencies;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -896,6 +887,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -1027,7 +1021,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {

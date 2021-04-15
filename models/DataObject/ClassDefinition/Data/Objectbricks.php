@@ -549,9 +549,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getGetterCode($class)
     {
@@ -823,11 +821,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $brickdata;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

@@ -27,6 +27,7 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+    use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**
      * @internal
@@ -749,21 +750,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public function setEnableBatchEdit($enableBatchEdit)
     {
         $this->enableBatchEdit = $enableBatchEdit;
-    }
-
-    /**
-     * @param array|null $a
-     * @param array|null $b
-     *
-     * @return int
-     */
-    private function sort($a, $b)
-    {
-        if (is_array($a) && is_array($b)) {
-            return $a['position'] - $b['position'];
-        }
-
-        return strcmp($a, $b);
     }
 
     /**

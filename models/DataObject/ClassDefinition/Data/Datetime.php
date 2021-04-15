@@ -297,11 +297,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->useCurrentDate;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

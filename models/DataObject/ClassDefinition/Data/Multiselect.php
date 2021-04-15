@@ -406,11 +406,8 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         return null;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

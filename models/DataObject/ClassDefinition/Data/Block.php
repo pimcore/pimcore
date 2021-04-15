@@ -461,12 +461,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -962,8 +958,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
@@ -1047,7 +1042,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->disallowReorder = $disallowReorder;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck) {
@@ -1180,7 +1177,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         $result = null;
@@ -1213,7 +1212,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $result;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

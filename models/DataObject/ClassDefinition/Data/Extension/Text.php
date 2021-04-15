@@ -39,12 +39,7 @@ trait Text
     }
 
     /**
-     * True if change is allowed in edit mode.
-     *
-     * @param Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
