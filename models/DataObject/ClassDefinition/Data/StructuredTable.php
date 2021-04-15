@@ -421,7 +421,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         }
     }
 
-    v
+    /**
+     * {@inheritdoc}
+     */
     public function getForCsvExport($object, $params = [])
     {
         $value = $this->getDataFromObjectParam($object, $params);

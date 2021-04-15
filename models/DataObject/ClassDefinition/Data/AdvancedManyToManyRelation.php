@@ -525,8 +525,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -664,8 +663,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {

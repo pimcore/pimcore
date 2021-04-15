@@ -478,8 +478,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -502,10 +501,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return DataObject\Localizedfield
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -526,8 +522,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {

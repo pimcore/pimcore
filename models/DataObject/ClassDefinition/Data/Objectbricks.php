@@ -399,8 +399,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -411,10 +410,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return Objectbrick|null
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -431,8 +427,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {

@@ -523,8 +523,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -536,10 +535,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Classificationstore
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -552,8 +548,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {

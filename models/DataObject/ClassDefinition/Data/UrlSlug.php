@@ -229,10 +229,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Localizedfield $object
-     * @param array $params
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -375,10 +372,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed|void
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -417,8 +411,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {

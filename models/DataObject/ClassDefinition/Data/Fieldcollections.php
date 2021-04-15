@@ -284,10 +284,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -313,10 +310,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null|DataObject\Fieldcollection
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -331,8 +325,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {

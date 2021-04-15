@@ -900,18 +900,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
     public function load($container, $params = [])
     {
@@ -974,10 +970,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array|mixed|null
+     * {@inheritdoc}
      */
     public function preGetData($object, $params = [])
     {

@@ -237,7 +237,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $data->format('Y-m-d H:i');
         }
 
-        return null;
+        return '';
     }
 
     /**
