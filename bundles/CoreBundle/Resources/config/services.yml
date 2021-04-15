@@ -225,6 +225,7 @@ services:
     Pimcore\Image\Adapter\Imagick:
         shared: false
         public: true
+
     Pimcore\Image\Adapter\GD:
         shared: false
         public: true
