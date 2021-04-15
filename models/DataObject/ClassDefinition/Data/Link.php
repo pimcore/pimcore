@@ -306,14 +306,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {

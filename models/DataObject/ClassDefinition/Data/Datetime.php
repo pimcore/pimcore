@@ -228,14 +228,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {

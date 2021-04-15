@@ -205,7 +205,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             $type = Element\Service::getType($data);
@@ -224,7 +224,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    public function loadData($data, $object = null, $params = [])
+    protected function loadData($data, $object = null, $params = [])
     {
         // data from relation table
         $data = is_array($data) ? $data : [];
@@ -402,14 +402,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {

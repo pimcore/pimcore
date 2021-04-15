@@ -74,7 +74,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -106,7 +106,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    public function loadData($data, $object = null, $params = [])
+    protected function loadData($data, $object = null, $params = [])
     {
         $list = [
             'dirty' => false,
@@ -467,7 +467,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         return null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -502,14 +504,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -934,7 +929,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
         if ($data) {
             $data = $data[0];

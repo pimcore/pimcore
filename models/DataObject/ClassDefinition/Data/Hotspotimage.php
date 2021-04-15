@@ -360,16 +360,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {

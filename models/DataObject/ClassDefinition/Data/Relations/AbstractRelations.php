@@ -185,17 +185,17 @@ abstract class AbstractRelations extends Data implements
      *
      * @return mixed
      */
-    abstract public function loadData($data, $object = null, $params = []);
+    abstract protected function loadData($data, $object = null, $params = []);
 
     /**
      * @internal
-     * @param array $data
+     * @param array|Element\ElementInterface $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
      */
-    abstract public function prepareDataForPersistence($data, $object = null, $params = []);
+    abstract protected function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
      * {@inheritdoc}

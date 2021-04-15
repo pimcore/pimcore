@@ -215,7 +215,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -246,7 +246,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function loadData($data, $object = null, $params = [])
+    protected function loadData($data, $object = null, $params = [])
     {
         $elements = [
             'dirty' => false,
@@ -514,14 +514,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -834,7 +827,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
         if ($data) {
             $data = $data[0];

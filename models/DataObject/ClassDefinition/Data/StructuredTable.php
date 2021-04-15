@@ -421,16 +421,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         }
     }
 
-    /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
+    v
     public function getForCsvExport($object, $params = [])
     {
         $value = $this->getDataFromObjectParam($object, $params);

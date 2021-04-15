@@ -80,7 +80,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -112,7 +112,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    public function loadData($data, $container = null, $params = [])
+    protected function loadData($data, $container = null, $params = [])
     {
         $list = [
             'dirty' => false,
@@ -404,14 +404,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -456,8 +449,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -563,10 +555,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function preGetData($object, $params = [])
     {
@@ -595,8 +584,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
@@ -794,21 +782,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * Rewrites id from source to target, $idMapping contains
-     * array(
-     *  "document" => array(
-     *      SOURCE_ID => TARGET_ID,
-     *      SOURCE_ID => TARGET_ID
-     *  ),
-     *  "object" => array(...),
-     *  "asset" => array(...)
-     * )
-     *
-     * @param mixed $object
-     * @param array $idMapping
-     * @param array $params
-     *
-     * @return DataObject\Data\ObjectMetadata[]
+     * {@inheritdoc}
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
@@ -833,7 +807,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation $masterDefinition
+     * {@inheritdoc}
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -843,10 +817,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     *
-     * @param DataObject\Concrete $object
-     * @param array $context additional contextual data
+     * {@inheritdoc}
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
@@ -918,6 +889,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -948,6 +922,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -977,7 +954,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
         if ($data) {
             $data = $data[0];
