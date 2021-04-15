@@ -58,35 +58,8 @@ class MigrateElementsCommand extends AbstractCommand
             $this->processVersionRow($versionRaw);
         }
 
-        $recycleBinItemsRaw = $db->fetchAll("SELECT * FROM recyclebin WHERE `type` = 'document' ");
-        foreach ($recycleBinItemsRaw as $recycleBinItemRaw) {
-            $this->processRecycleBinItemRow($recycleBinItemRaw);
-        }
-
         return 0;
     }
-
-    private function processRecycleBinItemRow(array $row)
-    {
-        $path = $row['path'];
-        $id = $row['id'];
-
-        $this->output->writeln(sprintf('processing recyclebin item %s', $path));
-
-        $item = Item::getById($id);
-        if ($item) {
-            $storageFile = $item->getStoreageFile();
-            $contents = file_get_contents($storageFile);
-            $contents = Serialize::unserialize($contents);
-            $contents = Serialize::serialize($contents);
-            file_put_contents($storageFile, $contents);
-            $this->output->writeln(sprintf('saved recyclebin item %s', $path));
-        } else {
-            $this->output->writeln(sprintf('skipped recyclebin item %s', $path));
-
-        }
-    }
-
 
     private function processVersionRow(array $row)
     {
