@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Asset\WebDAV;
 
-use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -54,8 +53,8 @@ class Folder extends DAV\Collection
         $childsList = new Asset\Listing();
 
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        $childsList->filterAccessibleByUser($user);
         $childsList->addConditionParam('parentId = ?', [$this->asset->getId()]);
+        $childsList->filterAccessibleByUser($user);
 
         foreach ($childsList as $child) {
             try {
