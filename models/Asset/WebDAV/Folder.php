@@ -54,21 +54,8 @@ class Folder extends DAV\Collection
         $childsList = new Asset\Listing();
 
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        if ($user->isAdmin()) {
-            $condition = 'parentId = ?';
-        } else {
-            $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
-
-            $condition = 'parentId = ? AND
-            (
-                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
-                or
-                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
-            )';
-        }
-
-        $childsList->setCondition($condition, [$this->asset->getId()]);
+        $childsList->filterAccessibleByUser($user);
+        $childsList->addConditionParam('parentId = ?', [$this->asset->getId()])
 
         foreach ($childsList as $child) {
             try {

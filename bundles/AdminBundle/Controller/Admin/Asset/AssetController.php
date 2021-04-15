@@ -254,29 +254,12 @@ final class AssetController extends ElementControllerBase implements KernelContr
 
             // get assets
             $childsList = new Asset\Listing();
-            $db = Db::get();
-
-            if ($this->getAdminUser()->isAdmin()) {
-                $condition = 'parentId =  ' . $db->quote($asset->getId());
-            } else {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-
-                $condition = 'parentId = ' . $db->quote($asset->getId()) . ' AND
-                (
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
-                    or
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
-                )';
-            }
+            $childsList->addConditionParam('parentId = ?', [$asset->getId()]);
+            $childsList->filterAccessibleByUser($this->getAdminUser());
 
             if (!is_null($filter)) {
-                $db = Db::get();
-
-                $condition = '(' . $condition . ')' . ' AND  CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
+                $childsList->addConditionParam('CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ?', [$filter]);
             }
-
-            $childsList->setCondition($condition);
 
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
