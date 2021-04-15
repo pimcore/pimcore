@@ -308,22 +308,24 @@ final class DataObjectHelperController extends AdminController
             }
 
             if ($savedGridConfig) {
-                $shared = null;
-                try {
-                    $userIds = [$this->getAdminUser()->getId()];
-                    if ($this->getAdminUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                    }
-                    $userIds = implode(',', $userIds);
-                    $shared = ($savedGridConfig->getOwnerId() != $userId && !$this->getAdminUser()->isAdmin() && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
-
+                $shared = false;
+                if(!$this->getAdminUser()->isAdmin()) {
+                    try {
+                        $userIds = [$this->getAdminUser()->getId()];
+                        if ($this->getAdminUser()->getRoles()) {
+                            $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
+                        }
+                        $userIds = implode(',', $userIds);
+                        $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
 //                    $shared = $savedGridConfig->isShareGlobally() ||GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
-                } catch (\Exception $e) {
+                    } catch (\Exception $e) {
+                    }
+
+                    if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
+                        throw new \Exception('you are neither the onwner of this config nor it is shared with you');
+                    }
                 }
 
-                if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
-                    throw new \Exception('you are neither the onwner of this config nor it is shared with you');
-                }
                 $gridConfigId = $savedGridConfig->getId();
                 $gridConfig = $savedGridConfig->getConfig();
                 $gridConfig = json_decode($gridConfig, true);
