@@ -330,7 +330,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $result;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {

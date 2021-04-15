@@ -282,7 +282,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {

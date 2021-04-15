@@ -90,7 +90,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function load(Asset\Document $asset)
     {
@@ -112,7 +112,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getPdf(?Asset\Document $asset = null)
     {
@@ -130,7 +130,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getPageCount()
     {
@@ -187,7 +187,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200)
     {
@@ -208,7 +208,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getText(?int $page = null, ?Asset\Document $asset = null)
     {

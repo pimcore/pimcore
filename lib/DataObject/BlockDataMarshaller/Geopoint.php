@@ -22,7 +22,7 @@ use Pimcore\Marshaller\MarshallerInterface;
 class Geopoint implements MarshallerInterface
 {
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function marshal($value, $params = [])
     {
@@ -37,7 +37,7 @@ class Geopoint implements MarshallerInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function unmarshal($value, $params = [])
     {

@@ -70,7 +70,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getLazyLoading()
     {
@@ -78,7 +78,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -130,7 +130,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -198,7 +198,7 @@ abstract class AbstractRelations extends Data implements
     abstract public function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
@@ -238,7 +238,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getPathFormatterClass(): ?string
     {
@@ -341,7 +341,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function isEqual($array1, $array2): bool
     {
@@ -371,7 +371,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function supportsDirtyDetection()
     {

@@ -280,7 +280,7 @@ class BooleanSelect extends Data implements
         return $result;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         //TODO mandatory probably doesn't make much sense

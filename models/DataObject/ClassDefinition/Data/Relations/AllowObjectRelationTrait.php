@@ -13,6 +13,7 @@ trait AllowObjectRelationTrait
     /**
      * Checks if an object is an allowed relation
      *
+     * @internal
      * @param DataObject\AbstractObject $object
      *
      * @return bool

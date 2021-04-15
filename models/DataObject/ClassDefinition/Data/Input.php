@@ -286,7 +286,7 @@ class Input extends Data implements
         return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getRegex() && strlen($data) > 0) {

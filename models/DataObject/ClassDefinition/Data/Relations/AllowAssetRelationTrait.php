@@ -13,6 +13,7 @@ trait AllowAssetRelationTrait
     /**
      * Checks if an asset is an allowed relation
      *
+     * @internal
      * @param Asset $asset
      *
      * @return bool

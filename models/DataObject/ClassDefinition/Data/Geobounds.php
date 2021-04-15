@@ -90,7 +90,7 @@ class Geobounds extends AbstractGeo implements
         ];
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
@@ -267,7 +267,7 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -288,7 +288,7 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {

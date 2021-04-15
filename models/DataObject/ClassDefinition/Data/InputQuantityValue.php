@@ -103,7 +103,7 @@ class InputQuantityValue extends QuantityValue
         return null;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($omitMandatoryCheck) {
@@ -148,7 +148,7 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -161,7 +161,7 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {

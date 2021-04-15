@@ -234,7 +234,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($data, $params = [])
     {
@@ -249,7 +249,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($data, $params = [])
     {
@@ -272,7 +272,7 @@ class Geopoint extends AbstractGeo implements
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;

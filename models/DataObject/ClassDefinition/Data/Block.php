@@ -1061,7 +1061,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->disallowReorder = $disallowReorder;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck) {
@@ -1194,7 +1194,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function normalize($value, $params = [])
     {
         $result = null;
@@ -1227,7 +1227,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $result;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

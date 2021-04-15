@@ -24,7 +24,7 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class Multiselect implements MarshallerInterface
 {
-    /** { @inheritDoc } */
+    /** {@inheritdoc} */
     public function marshal($value, $params = [])
     {
         if (is_array($value)) {
@@ -34,7 +34,7 @@ class Multiselect implements MarshallerInterface
         return null;
     }
 
-    /** { @inheritDoc } */
+    /** {@inheritdoc} */
     public function unmarshal($value, $params = [])
     {
         if (is_array($value) && strlen($value['value']) > 0) {

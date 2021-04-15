@@ -608,7 +608,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $code;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data instanceof DataObject\Objectbrick) {

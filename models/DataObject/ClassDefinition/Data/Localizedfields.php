@@ -937,7 +937,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->width;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $config = \Pimcore\Config::getSystemConfiguration('general');

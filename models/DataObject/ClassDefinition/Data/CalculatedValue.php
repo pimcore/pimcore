@@ -204,7 +204,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         // nothing to do

@@ -155,7 +155,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return false;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         //TODO

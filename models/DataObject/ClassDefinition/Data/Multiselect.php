@@ -324,7 +324,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         return null;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {

@@ -93,7 +93,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {

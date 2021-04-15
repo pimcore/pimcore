@@ -92,7 +92,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         }
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         parent::checkValidity($data, $omitMandatoryCheck);

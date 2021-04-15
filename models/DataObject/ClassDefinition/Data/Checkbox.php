@@ -169,7 +169,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return (string)$data;
     }
 
-    /** { @inheritdoc } */
+    /** {@inheritdoc} */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
