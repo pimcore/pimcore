@@ -52,8 +52,8 @@ class Folder extends DAV\Collection
 
         $childsList = new Asset\Listing();
 
-        $user = \Pimcore\Tool\Admin::getCurrentUser();
         $childsList->addConditionParam('parentId = ?', [$this->asset->getId()]);
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
         $childsList->filterAccessibleByUser($user);
 
         foreach ($childsList as $child) {
