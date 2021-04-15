@@ -547,6 +547,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        $inheritanceEnabled = AbstractObject::getGetInheritedValues();
+        AbstractObject::setGetInheritedValues(true);
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {
             $result = $result->value;
@@ -562,6 +564,7 @@ class Service extends Model\Element\Service
 
             return $result;
         }
+        AbstractObject::setGetInheritedValues($inheritanceEnabled);
 
         return null;
     }
