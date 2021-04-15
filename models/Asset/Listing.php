@@ -87,8 +87,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $condition = 'parentId = ? AND
-            (
+            $condition = '(
                 (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
                 or
                 (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
