@@ -221,3 +221,11 @@ services:
         public: true
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }
+
+    Pimcore\Image\Adapter\Imagick:
+        shared: false
+        public: true
+
+    Pimcore\Image\Adapter\GD:
+        shared: false
+        public: true
