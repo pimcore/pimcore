@@ -202,7 +202,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {

@@ -914,7 +914,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {
@@ -930,11 +930,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param DataObject\Listing      $listing
-     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
-     * @param string                  $operator SQL comparison operator, currently only "=" supported
-     *
-     * @return DataObject\Listing
+     * {@inheritdoc}
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {

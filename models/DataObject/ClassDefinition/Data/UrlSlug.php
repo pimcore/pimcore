@@ -475,7 +475,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function supportsDirtyDetection()
     {

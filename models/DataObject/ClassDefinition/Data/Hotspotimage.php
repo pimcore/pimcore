@@ -506,11 +506,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /**
      * @internal
-     * @param $object
-     * @param $idMapping
-     * @param $params
-     * @param $data
-     * @return mixed|DataObject\Data\Hotspotimage
      */
     public function doRewriteIds($object, $idMapping, $params, $data)
     {

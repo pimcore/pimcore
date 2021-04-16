@@ -644,7 +644,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getPhpdocType()
     {
@@ -697,18 +697,23 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * Returns a ID which must be unique across the grid rows
-     *
+     * @internal
      * @param array $item
      *
      * @return string
      */
-    public function buildUniqueKeyForDiffEditor($item)
+    protected function buildUniqueKeyForDiffEditor($item)
     {
         return $item['id'];
     }
 
     /**
-     * {@inheritdoc}
+     * @internal
+     * @param $originalData
+     * @param $data
+     * @param null $object
+     * @param array $params
+     * @return array|null
      */
     protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
@@ -841,7 +846,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {
@@ -865,11 +870,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param DataObject\Listing      $listing
-     * @param DataObject\Concrete|int $data     object or object ID
-     * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
-     *
-     * @return DataObject\Listing
+     * {@inheritdoc}
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {

@@ -704,7 +704,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $enrichedFieldDefinitions;
     }
 
-    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    private function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['class'] = $this;
@@ -720,7 +720,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @return array
      */
-    public function doGetFieldDefinitions($def = null, $fields = [])
+    private function doGetFieldDefinitions($def = null, $fields = [])
     {
         if ($def === null) {
             $def = $this->getChildren();
@@ -995,7 +995,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @return array
      */
-    protected function getDataForValidity($localizedObject, array $languages)
+    private function getDataForValidity($localizedObject, array $languages)
     {
         if (!$localizedObject->getObject()
             || $localizedObject->getObject()->getType() != DataObject::OBJECT_TYPE_VARIANT
@@ -1015,7 +1015,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $data;
     }
 
-    /** See parent class.
+    /**
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
@@ -1065,7 +1065,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $return;
     }
 
-    /** See parent class.
+    /**
      * @param array $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
@@ -1238,7 +1238,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function supportsDirtyDetection()
     {
@@ -1333,6 +1333,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->permissionEdit = $permissionEdit;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Localizedfield) {
@@ -1365,6 +1368,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
