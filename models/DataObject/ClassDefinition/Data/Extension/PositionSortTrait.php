@@ -16,31 +16,25 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
-trait ColumnType
+/**
+ * @internal
+ */
+trait PositionSortTrait
 {
     /**
-     * {@inheritdoc}
-     */
-    public function getColumnType()
-    {
-        if (property_exists($this, 'columnType')) {
-            return $this->columnType;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string | array $columnType
+     * @param array|null $a
+     * @param array|null $b
      *
-     * @return $this
+     * @return int
      */
-    public function setColumnType($columnType)
+    protected function sort($a, $b): int
     {
-        if (property_exists($this, 'columnType')) {
-            $this->columnType = $columnType;
+        if (is_array($a) && is_array($b)) {
+            return $a['position'] - $b['position'];
+        } elseif (is_string($a) && is_string($b)) {
+            return strcmp($a, $b);
         }
 
-        return $this;
+        return 0;
     }
 }

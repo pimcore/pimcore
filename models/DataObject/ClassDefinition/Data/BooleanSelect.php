@@ -36,12 +36,16 @@ class BooleanSelect extends Data implements
 
     /** storage value for yes */
     const YES_VALUE = 1;
+
     /** storage value for no */
     const NO_VALUE = -1;
+
     /** storage value for empty */
     const EMPTY_VALUE = null;
+
     /** edit mode valze for empty */
     const EMPTY_VALUE_EDITMODE = 0;
+
     /**
      * Available options to select - Default options
      *
@@ -235,11 +239,8 @@ class BooleanSelect extends Data implements
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -280,7 +281,9 @@ class BooleanSelect extends Data implements
         return $result;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         //TODO mandatory probably doesn't make much sense
@@ -457,14 +460,7 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -480,21 +476,33 @@ class BooleanSelect extends Data implements
         return $value;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'bool|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'bool|null';

@@ -205,7 +205,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             $type = Element\Service::getType($data);
@@ -224,7 +224,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    public function loadData($data, $object = null, $params = [])
+    protected function loadData($data, $object = null, $params = [])
     {
         // data from relation table
         $data = is_array($data) ? $data : [];
@@ -376,7 +376,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -402,14 +404,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -512,11 +507,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetUploadPath;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -561,7 +553,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getPhpdocType()
     {
@@ -569,7 +561,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -587,7 +579,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {
@@ -616,7 +608,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isFilterable(): bool
     {
@@ -624,7 +616,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -632,7 +624,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {
@@ -640,11 +632,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param DataObject\Listing      $listing
-     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
-     * @param string                  $operator SQL comparison operator, currently only "=" possible
-     *
-     * @return DataObject\Listing
+     * {@inheritdoc}
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -668,7 +656,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getPhpdocReturnType(): ?string
     {

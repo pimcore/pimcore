@@ -151,7 +151,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return \Carbon\Carbon
      */
-    protected function getDateFromTimestamp($timestamp)
+    private function getDateFromTimestamp($timestamp)
     {
         $date = new \Carbon\Carbon();
         $date->setTimestamp($timestamp);
@@ -228,14 +228,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -244,14 +237,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $data->format('Y-m-d H:i');
         }
 
-        return null;
+        return '';
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -304,11 +294,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->useCurrentDate;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -399,16 +386,16 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return parent::getFilterConditionExt($value, $operator, $params);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
     }
 
     /**
-     * @param \Pimcore\Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return Carbon|null
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {
@@ -438,28 +425,40 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Carbon::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Carbon::class . '|null';
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -471,7 +470,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {

@@ -113,7 +113,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function encrypt($data, $object, $params = [])
+    private function encrypt($data, $object, $params = [])
     {
         if (!is_null($data)) {
             $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
@@ -145,7 +145,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @throws \Exception
      */
-    public function decrypt($data, $object, $params = [])
+    private function decrypt($data, $object, $params = [])
     {
         if ($data) {
             try {
@@ -274,15 +274,15 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $data;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
-            $result = $fd->checkValidity($data, $omitMandatoryCheck);
-
-            return $result;
+            $fd->checkValidity($data, $omitMandatoryCheck);
         }
     }
 
@@ -353,14 +353,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -420,6 +413,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
+     * @internal
      * @param mixed $data
      */
     public function setupDelegate($data)
@@ -516,27 +510,41 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocInputType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Model\DataObject\Data\EncryptedField) {
@@ -548,7 +556,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if ($this->delegate instanceof NormalizerInterface) {

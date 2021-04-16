@@ -215,7 +215,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -246,7 +246,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function loadData($data, $object = null, $params = [])
+    protected function loadData($data, $object = null, $params = [])
     {
         $elements = [
             'dirty' => false,
@@ -480,7 +480,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -514,14 +516,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -541,12 +536,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags($data, $tags = [])
     {
@@ -682,11 +672,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetUploadPath;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -757,7 +744,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getPhpdocType()
     {
@@ -765,7 +752,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -834,7 +821,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
         if ($data) {
             $data = $data[0];
@@ -927,24 +914,23 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
     }
 
     /**
-     * @param DataObject\Listing      $listing
-     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
-     * @param string                  $operator SQL comparison operator, currently only "=" supported
-     *
-     * @return DataObject\Listing
+     * {@inheritdoc}
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {

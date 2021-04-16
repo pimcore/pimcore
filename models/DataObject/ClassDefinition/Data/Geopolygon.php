@@ -62,7 +62,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return Serialize::serialize($data);
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
@@ -187,14 +189,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -215,21 +210,15 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -290,28 +279,40 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'array|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'array|null';
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -329,7 +330,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {

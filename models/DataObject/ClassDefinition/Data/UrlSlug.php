@@ -161,7 +161,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data && !is_array($data)) {
@@ -229,10 +231,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Localizedfield $object
-     * @param array $params
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -375,10 +374,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed|void
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -417,8 +413,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
@@ -437,10 +432,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -483,7 +475,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function supportsDirtyDetection()
     {
@@ -713,14 +705,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -737,13 +722,16 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return implode(',', $result);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supportsInheritance()
     {
         return false;
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -751,25 +739,31 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -790,7 +784,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {

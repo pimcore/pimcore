@@ -65,11 +65,8 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -122,6 +119,9 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return $this->restrictTo;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

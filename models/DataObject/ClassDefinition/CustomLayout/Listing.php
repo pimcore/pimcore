@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing\Dao getDao()
  * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
  * @method Model\DataObject\ClassDefinition\CustomLayout current()

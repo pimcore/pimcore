@@ -125,7 +125,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @param string $type
      */
-    protected function correctColumnDefinition($type)
+    private function correctColumnDefinition($type)
     {
         if (preg_match("/(.*)\((\d+)\)/i", $this->$type, $matches)) {
             $this->{'set' . ucfirst($type)}($matches[1]);
@@ -137,7 +137,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getColumnType()
     {
@@ -147,7 +147,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -285,11 +285,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $data;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -330,7 +327,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $result;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -525,16 +524,16 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return null|string
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {
@@ -572,21 +571,33 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

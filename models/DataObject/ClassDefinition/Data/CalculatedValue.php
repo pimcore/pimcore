@@ -204,21 +204,16 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         // nothing to do
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -226,7 +221,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -234,11 +229,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates getter code which is used for generation of php file for object classes using this data type
-     *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getGetterCode($class)
     {
@@ -268,11 +259,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates getter code which is used for generation of php file for localized fields in classes using this data type
-     *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getGetterCodeLocalizedfields($class)
     {
@@ -326,11 +313,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates getter code which is used for generation of php file for object brick classes using this data type
-     *
-     * @param DataObject\Objectbrick\Definition $brickClass
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getGetterCodeObjectbrick($brickClass)
     {
@@ -356,11 +339,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates getter code which is used for generation of php file for fieldcollection classes using this data type
-     *
-     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getGetterCodeFieldcollection($fieldcollectionDefinition)
     {
@@ -388,11 +367,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates setter code which is used for generation of php file for object classes using this data type
-     *
-     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSetterCode($class)
     {
@@ -413,11 +388,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates setter code which is used for generation of php file for object brick classes using this data type
-     *
-     * @param DataObject\Objectbrick\Definition $brickClass
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSetterCodeObjectbrick($brickClass)
     {
@@ -438,11 +409,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
-     *
-     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSetterCodeFieldcollection($fieldcollectionDefinition)
     {
@@ -463,11 +430,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates setter code which is used for generation of php file for localized fields in classes using this data type
-     *
-     * @param DataObject\ClassDefinition $class
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSetterCodeLocalizedfields($class)
     {
@@ -505,6 +468,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supportsInheritance()
     {
         return false;
@@ -521,21 +487,33 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\CalculatedValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\CalculatedValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\CalculatedValue::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\CalculatedValue::class . '|null';

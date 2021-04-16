@@ -238,7 +238,9 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() &&

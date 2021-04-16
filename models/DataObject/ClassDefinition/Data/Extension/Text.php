@@ -20,7 +20,9 @@ use Pimcore\Model;
 
 trait Text
 {
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -39,12 +41,7 @@ trait Text
     }
 
     /**
-     * True if change is allowed in edit mode.
-     *
-     * @param Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

@@ -28,7 +28,9 @@ class Email extends Model\DataObject\ClassDefinition\Data\Input
      */
     public $fieldtype = 'email';
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && strlen($data) > 0) {

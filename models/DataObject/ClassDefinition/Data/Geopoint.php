@@ -192,14 +192,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -212,21 +205,15 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
         return '';
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -234,7 +221,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($data, $params = [])
     {
@@ -249,7 +236,7 @@ class Geopoint extends AbstractGeo implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($data, $params = [])
     {
@@ -272,7 +259,9 @@ class Geopoint extends AbstractGeo implements
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
@@ -311,21 +300,33 @@ class Geopoint extends AbstractGeo implements
             && (abs($oldValue->getLatitude() - $newValue->getLatitude()) < 0.000000000001);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';

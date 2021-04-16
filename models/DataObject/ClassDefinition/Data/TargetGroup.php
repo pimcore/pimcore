@@ -73,6 +73,9 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $data;
     }
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
@@ -93,7 +96,9 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {

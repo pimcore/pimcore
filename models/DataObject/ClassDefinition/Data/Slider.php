@@ -351,7 +351,9 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return (string)$data;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
@@ -363,11 +365,8 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         }
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -386,6 +385,9 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->decimalPrecision = $masterDefinition->decimalPrecision;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
@@ -408,21 +410,33 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?float';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?float';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'float|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'float|null';

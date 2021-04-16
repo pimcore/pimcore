@@ -182,14 +182,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -202,10 +195,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -213,12 +203,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags($data, $tags = [])
     {
@@ -252,11 +237,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $dependencies;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -327,6 +309,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->uploadPath = $masterDefinition->uploadPath;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
@@ -346,26 +331,41 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof \Pimcore\Model\Asset\Image) {
@@ -376,6 +376,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         $id = $value['id'];

@@ -22,7 +22,7 @@ use Pimcore\Marshaller\MarshallerInterface;
 class Geobounds implements MarshallerInterface
 {
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function marshal($value, $params = [])
     {
@@ -37,7 +37,7 @@ class Geobounds implements MarshallerInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function unmarshal($value, $params = [])
     {

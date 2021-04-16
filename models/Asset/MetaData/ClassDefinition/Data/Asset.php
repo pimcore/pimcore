@@ -120,7 +120,9 @@ class Asset extends Data
         return $data;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getDataForEditMode($data, $params = [])
     {
         if (is_numeric($data)) {

@@ -45,7 +45,7 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function isFileTypeSupported($fileType)
     {
@@ -69,7 +69,7 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function load(Asset\Document $asset)
     {
@@ -99,7 +99,7 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getPdf(?Asset\Document $asset = null)
     {
@@ -168,7 +168,7 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function getText(?int $page = null, ?Asset\Document $asset = null)
     {

@@ -103,7 +103,9 @@ class InputQuantityValue extends QuantityValue
         return null;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($omitMandatoryCheck) {
@@ -122,33 +124,45 @@ class InputQuantityValue extends QuantityValue
      *
      * @return InputQuantityValueDataObject
      */
-    protected function getNewDataObject($value = null, $unitId = null)
+    private function getNewDataObject($value = null, $unitId = null)
     {
         return new InputQuantityValueDataObject($value, $unitId);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -161,7 +175,7 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {

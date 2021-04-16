@@ -206,7 +206,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -219,7 +221,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         }
     }
 
-    public function checkColorComponent($color)
+    private function checkColorComponent($color)
     {
         if (!is_null($color)) {
             if (!($color >= 0 && $color <= 255)) {
@@ -281,7 +283,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -298,7 +300,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {
@@ -316,14 +318,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -424,21 +419,33 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';

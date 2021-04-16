@@ -41,7 +41,9 @@ class EncryptedField implements MarshallerInterface
         $this->marshallerService = $marshallerService;
     }
 
-    /** { @inheritDoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function marshal($value, $params = [])
     {
         if ($value !== null) {
@@ -59,7 +61,9 @@ class EncryptedField implements MarshallerInterface
         return null;
     }
 
-    /** { @inheritDoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function unmarshal($value, $params = [])
     {
         if ($value !== null) {

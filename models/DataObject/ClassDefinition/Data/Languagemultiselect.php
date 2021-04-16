@@ -35,6 +35,10 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
      */
     public $onlySystemLanguages = false;
 
+    /**
+     * @internal
+     * @throws \Exception
+     */
     public function configureOptions()
     {
         $validLanguages = (array) Tool::getValidLanguages();

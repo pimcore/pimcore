@@ -35,6 +35,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public $unique;
 
     /**
+     * @internal
      * @return User
      */
     protected function init()
@@ -93,6 +94,9 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $data;
     }
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         $list = new Model\User\Listing();
@@ -120,7 +124,9 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -136,10 +142,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {

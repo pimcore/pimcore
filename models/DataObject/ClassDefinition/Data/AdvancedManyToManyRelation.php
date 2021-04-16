@@ -26,6 +26,7 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+    use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
 
     /**
      * @internal
@@ -74,7 +75,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -106,7 +107,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    public function loadData($data, $object = null, $params = [])
+    protected function loadData($data, $object = null, $params = [])
     {
         $list = [
             'dirty' => false,
@@ -467,7 +468,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         return null;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -502,14 +505,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -530,8 +526,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -669,8 +664,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
@@ -763,21 +757,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param array|null $a
-     * @param array|null $b
-     *
-     * @return int
-     */
-    public function sort($a, $b)
-    {
-        if (is_array($a) && is_array($b)) {
-            return $a['position'] - $b['position'];
-        }
-
-        return strcmp($a, $b);
-    }
-
-    /**
      * @param DataObject\ClassDefinition $class
      */
     public function classSaved($class)
@@ -842,7 +821,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->columns = $masterDefinition->columns;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
@@ -876,6 +857,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         return $dependencies;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -903,6 +887,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
@@ -934,7 +921,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
         if ($data) {
             $data = $data[0];
@@ -1019,6 +1006,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
+     * @internal
      * @param DataObject\Data\ElementMetadata $item
      *
      * @return string
@@ -1033,7 +1021,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {
@@ -1084,11 +1072,17 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->enableBatchEdit = $enableBatchEdit;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';

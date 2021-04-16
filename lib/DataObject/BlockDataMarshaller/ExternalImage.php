@@ -22,7 +22,7 @@ use Pimcore\Marshaller\MarshallerInterface;
 class ExternalImage implements MarshallerInterface
 {
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function marshal($value, $params = [])
     {
@@ -34,7 +34,7 @@ class ExternalImage implements MarshallerInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function unmarshal($value, $params = [])
     {

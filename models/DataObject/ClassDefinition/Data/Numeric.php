@@ -116,7 +116,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $decimalPrecision;
 
-    protected function getPhpdocType(): string
+    /**
+     * @return string
+     */
+    private function getPhpdocType(): string
     {
         if ($this->getInteger()) {
             return 'int';
@@ -299,7 +302,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getColumnType()
     {
@@ -315,7 +318,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -330,11 +333,17 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->genericGetQueryColumnType();
     }
 
-    public function isDecimalType(): bool
+    /**
+     * @return bool
+     */
+    private function isDecimalType(): bool
     {
         return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
+    /**
+     * @return string
+     */
     private function buildDecimalColumnType(): string
     {
         // decimalPrecision already existed in earlier versions to denote the amount of digits after the
@@ -471,7 +480,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -508,14 +519,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -524,11 +528,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return (string)$data;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -550,7 +551,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string
      */
-    protected function toNumeric($value)
+    private function toNumeric($value)
     {
         $value = str_replace(',', '.', (string) $value);
 
@@ -581,16 +582,16 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return null|int
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {
@@ -608,21 +609,33 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return $this->getPhpdocType() . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return $this->getPhpdocType() . '|null';

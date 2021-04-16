@@ -26,6 +26,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Data\Extension\PositionSortTrait;
 
     /**
      * Static type of this element
@@ -221,21 +222,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param array|null $a
-     * @param array|null $b
-     *
-     * @return int|mixed
-     */
-    public function sort($a, $b)
-    {
-        if (is_array($a) && is_array($b)) {
-            return $a['position'] - $b['position']; // strcmp($a['position'], $b['position']);
-        }
-
-        return strcmp($a, $b);
-    }
-
-    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\StructuredTable $data
@@ -396,7 +382,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return null;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory()) {
@@ -422,14 +410,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -449,7 +430,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return array|string
+     * {@inheritdoc}
      */
     public function getColumnType()
     {
@@ -462,7 +443,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return array|string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -533,11 +514,8 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return true;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -589,28 +567,40 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->isEqualArray($oldData, $newData);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function normalize($value, $params = [])
     {
@@ -624,7 +614,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function denormalize($value, $params = [])
     {

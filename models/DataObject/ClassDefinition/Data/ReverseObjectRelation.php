@@ -134,12 +134,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     *
-     * Checks if an object is an allowed relation
-     *
-     * @param DataObject\Concrete $object
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     protected function allowObjectRelation($object)
     {
@@ -155,7 +150,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return false;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         //TODO
@@ -174,14 +171,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -189,12 +179,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags($data, $tags = [])
     {
@@ -212,7 +197,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {

@@ -208,7 +208,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function blockStart($showControls = true, $return = false)
     {
@@ -270,7 +270,7 @@ class Scheduledblock extends Block implements BlockInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function setConfig($config)
     {

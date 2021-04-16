@@ -23,7 +23,7 @@ use Pimcore\Marshaller\MarshallerInterface;
 class Date implements MarshallerInterface
 {
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function marshal($value, $params = [])
     {
@@ -38,7 +38,7 @@ class Date implements MarshallerInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function unmarshal($value, $params = [])
     {

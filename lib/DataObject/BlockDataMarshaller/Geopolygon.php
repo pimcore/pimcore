@@ -22,7 +22,7 @@ use Pimcore\Marshaller\MarshallerInterface;
 class Geopolygon implements MarshallerInterface
 {
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function marshal($value, $params = [])
     {
@@ -41,7 +41,7 @@ class Geopolygon implements MarshallerInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function unmarshal($value, $params = [])
     {

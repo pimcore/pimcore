@@ -398,14 +398,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -413,10 +406,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -530,8 +520,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -543,10 +532,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return DataObject\Classificationstore
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -559,8 +545,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
@@ -750,7 +735,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->width;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $activeGroups = $data->getActiveGroups();
@@ -846,11 +833,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         throw new \Exception('not supported');
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -951,7 +935,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @todo: Method returns void/null, should be boolean or null
      */
-    public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
+    private function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
     {
         if (!$object) {
             return null;
@@ -984,6 +968,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
+     * @internal
      * @param DataObject\Concrete $object
      * @param array $activeGroups
      *
@@ -1170,7 +1155,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return string[]
      */
-    public function getValidLanguages()
+    private function getValidLanguages()
     {
         if ($this->localized) {
             $validLanguages = Tool::getValidLanguages();
@@ -1222,27 +1207,41 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Classificationstore) {
@@ -1286,7 +1285,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return null;
     }
 
-    /** { @inheritdoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
