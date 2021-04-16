@@ -123,21 +123,6 @@ class InstallCommand extends Command
                 'default' => '',
                 'group' => 'db_credentials',
             ],
-            'skip-database-structure' => [
-                'description' => 'Skipping creation of database structure during install',
-                'mode' => InputOption::VALUE_NONE,
-                'group' => 'install_options',
-            ],
-            'skip-database-data' => [
-                'description' => 'Skipping importing of any data into database',
-                'mode' => InputOption::VALUE_NONE,
-                'group' => 'install_options',
-            ],
-            'skip-database-data-dump' => [
-                'description' => 'Skipping importing of provided data dumps into database (if available). Only imports needed base data.',
-                'mode' => InputOption::VALUE_NONE,
-                'group' => 'install_options',
-            ],
         ];
 
         foreach (array_keys($options) as $name) {
@@ -181,6 +166,21 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Do not write a database config file: <comment>database.yml</comment>'
+            )->addOption(
+                'skip-database-structure',
+                null,
+                InputOption::VALUE_NONE,
+                'Skip creation of database structure during install'
+            )->addOption(
+                'skip-database-data',
+                null,
+                InputOption::VALUE_NONE,
+                'Skip importing of any data into database'
+            )->addOption(
+                'skip-database-data-dump',
+                null,
+                InputOption::VALUE_NONE,
+                'Skipping importing of provided data dumps into database (if available). Only imports needed base data.'
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -206,6 +206,17 @@ class InstallCommand extends Command
 
         if ($input->getOption('skip-database-config')) {
             $this->installer->setSkipDatabaseConfig(true);
+        }
+
+        //check skipping database creation or database data
+        if ($input->getOption('skip-database-structure')) {
+            $this->installer->setCreateDatabaseStructure(false);
+        }
+        if ($input->getOption('skip-database-data')) {
+            $this->installer->setImportDatabaseData(false);
+        }
+        if ($input->getOption('skip-database-data-dump')) {
+            $this->installer->setImportDatabaseDataDump(false);
         }
 
         $this->io = new PimcoreStyle($input, $output);
@@ -294,10 +305,6 @@ class InstallCommand extends Command
     private function installerNeedsOption(array $config): bool
     {
         if ('db_credentials' === ($config['group'] ?? null) && !$this->installer->needsDbCredentials()) {
-            return false;
-        }
-
-        if ('install_options' === ($config['group'] ?? null) && InputOption::VALUE_NONE !== ($config['mode'] ?? null)) {
             return false;
         }
 
