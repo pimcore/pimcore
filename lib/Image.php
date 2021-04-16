@@ -43,9 +43,9 @@ class Image
     {
         try {
             if (extension_loaded('imagick')) {
-                return Pimcore::getContainer()->get(Adapter\Imagick::class);
+                return new Adapter\Imagick();
             } else {
-                return Pimcore::getContainer()->get(Adapter\GD::class);
+                return new Adapter\GD();
             }
         } catch (\Exception $e) {
             Logger::crit('Unable to load image extensions: ' . $e->getMessage());
