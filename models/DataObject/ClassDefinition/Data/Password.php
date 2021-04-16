@@ -206,7 +206,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Calculate hash according to configured parameters
-     *
+     * @internal
      * @param string $data
      *
      * @return bool|null|string
@@ -238,6 +238,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
+     * @internal
      * @param string $password
      * @param DataObject\Concrete $object
      * @param bool|true $updateHash

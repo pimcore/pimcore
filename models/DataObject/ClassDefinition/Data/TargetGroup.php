@@ -73,6 +73,9 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $data;
     }
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */

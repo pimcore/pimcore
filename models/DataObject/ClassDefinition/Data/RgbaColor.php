@@ -221,7 +221,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         }
     }
 
-    public function checkColorComponent($color)
+    private function checkColorComponent($color)
     {
         if (!is_null($color)) {
             if (!($color >= 0 && $color <= 255)) {

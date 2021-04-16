@@ -134,12 +134,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     *
-     * Checks if an object is an allowed relation
-     *
-     * @param DataObject\Concrete $object
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     protected function allowObjectRelation($object)
     {

@@ -143,7 +143,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return null|string
      */
-    public function toTime($timestamp)
+    private function toTime($timestamp)
     {
         $time = @date('H:i', strtotime($timestamp));
         if (!$time) {
@@ -161,7 +161,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return int
      */
-    protected function toTimestamp($string, $baseTimestamp = null)
+    private function toTimestamp($string, $baseTimestamp = null)
     {
         if ($baseTimestamp === null) {
             $baseTimestamp = time();
@@ -178,7 +178,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return bool
      */
-    public function isEarlier($subject, $comparison)
+    private function isEarlier($subject, $comparison)
     {
         $baseTs = time();
 
@@ -193,7 +193,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return bool
      */
-    public function isLater($subject, $comparison)
+    private function isLater($subject, $comparison)
     {
         $baseTs = time();
 

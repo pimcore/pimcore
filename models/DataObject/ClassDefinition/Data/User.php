@@ -35,6 +35,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public $unique;
 
     /**
+     * @internal
      * @return User
      */
     protected function init()
@@ -93,6 +94,9 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $data;
     }
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         $list = new Model\User\Listing();

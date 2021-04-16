@@ -125,7 +125,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @param string $type
      */
-    protected function correctColumnDefinition($type)
+    private function correctColumnDefinition($type)
     {
         if (preg_match("/(.*)\((\d+)\)/i", $this->$type, $matches)) {
             $this->{'set' . ucfirst($type)}($matches[1]);

@@ -439,6 +439,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         if (!$this->validUnits) {

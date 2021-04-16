@@ -722,6 +722,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return implode(',', $result);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supportsInheritance()
     {
         return false;

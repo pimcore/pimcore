@@ -333,11 +333,17 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->genericGetQueryColumnType();
     }
 
-    public function isDecimalType(): bool
+    /**
+     * @return bool
+     */
+    private function isDecimalType(): bool
     {
         return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
+    /**
+     * @return string
+     */
     private function buildDecimalColumnType(): string
     {
         // decimalPrecision already existed in earlier versions to denote the amount of digits after the
@@ -545,7 +551,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string
      */
-    protected function toNumeric($value)
+    private function toNumeric($value)
     {
         $value = str_replace(',', '.', (string) $value);
 

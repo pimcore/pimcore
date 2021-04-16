@@ -510,6 +510,9 @@ class  Video extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Data\Video) {
@@ -548,6 +551,9 @@ class  Video extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
