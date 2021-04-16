@@ -24,7 +24,9 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class BooleanSelect implements MarshallerInterface
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function marshal($value, $params = [])
     {
         if ($value === true) {
@@ -36,7 +38,9 @@ class BooleanSelect implements MarshallerInterface
         return null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function unmarshal($value, $params = [])
     {
         if (is_array($value)) {

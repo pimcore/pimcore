@@ -259,7 +259,9 @@ class Geopoint extends AbstractGeo implements
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
@@ -298,21 +300,33 @@ class Geopoint extends AbstractGeo implements
             && (abs($oldValue->getLatitude() - $newValue->getLatitude()) < 0.000000000001);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';

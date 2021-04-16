@@ -294,21 +294,33 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'bool|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'bool|null';

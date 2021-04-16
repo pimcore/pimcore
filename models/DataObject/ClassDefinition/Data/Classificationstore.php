@@ -735,7 +735,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->width;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $activeGroups = $data->getActiveGroups();
@@ -1205,27 +1207,41 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Classificationstore) {
@@ -1269,7 +1285,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

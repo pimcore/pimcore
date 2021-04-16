@@ -314,21 +314,33 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $oldValue == $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ExternalImage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ExternalImage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\ExternalImage::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\ExternalImage::class . '|null';

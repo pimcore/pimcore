@@ -428,21 +428,33 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Carbon::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Carbon::class . '|null';

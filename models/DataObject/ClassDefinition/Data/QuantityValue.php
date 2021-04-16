@@ -375,7 +375,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return '';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($omitMandatoryCheck) {
@@ -585,21 +587,33 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $unitId;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';

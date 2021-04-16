@@ -324,7 +324,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         return null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -606,21 +608,33 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'array|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'array|null';

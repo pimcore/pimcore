@@ -221,7 +221,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -487,21 +487,33 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\CalculatedValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\CalculatedValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\CalculatedValue::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\CalculatedValue::class . '|null';

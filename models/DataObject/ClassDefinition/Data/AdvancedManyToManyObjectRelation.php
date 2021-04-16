@@ -376,7 +376,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return '';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -1033,11 +1035,17 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return $elementType . $id;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';

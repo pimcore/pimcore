@@ -487,7 +487,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getPhpdocReturnType(): ?string
     {

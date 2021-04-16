@@ -20,7 +20,9 @@ use Pimcore\Model;
 
 trait Text
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {

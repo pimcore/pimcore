@@ -206,7 +206,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         parent::checkValidity($data, $omitMandatoryCheck);
@@ -417,21 +419,33 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         return $oldValue === $newValue;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';

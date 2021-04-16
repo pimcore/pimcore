@@ -1072,11 +1072,17 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->enableBatchEdit = $enableBatchEdit;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';

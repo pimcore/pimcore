@@ -486,7 +486,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -617,21 +619,33 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->isEqualArray($oldValue, $newValue);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'array';

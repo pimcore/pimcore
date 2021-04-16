@@ -586,7 +586,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $code;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data instanceof DataObject\Objectbrick) {
@@ -921,26 +923,41 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Objectbrick) {
@@ -972,6 +989,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

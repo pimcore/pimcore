@@ -161,7 +161,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data && !is_array($data)) {
@@ -741,11 +743,17 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return '?array';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';

@@ -272,7 +272,9 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -387,21 +389,33 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

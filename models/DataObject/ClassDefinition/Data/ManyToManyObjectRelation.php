@@ -344,7 +344,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {

@@ -382,7 +382,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory()) {
@@ -428,7 +430,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return array|string
+     * {@inheritdoc}
      */
     public function getColumnType()
     {
@@ -441,7 +443,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return array|string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -565,21 +567,33 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->isEqualArray($oldData, $newData);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';

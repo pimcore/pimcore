@@ -103,7 +103,9 @@ class InputQuantityValue extends QuantityValue
         return null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($omitMandatoryCheck) {
@@ -127,21 +129,33 @@ class InputQuantityValue extends QuantityValue
         return new InputQuantityValueDataObject($value, $unitId);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';

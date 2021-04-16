@@ -504,6 +504,14 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $data;
     }
 
+    /**
+     * @internal
+     * @param $object
+     * @param $idMapping
+     * @param $params
+     * @param $data
+     * @return mixed|DataObject\Data\Hotspotimage
+     */
     public function doRewriteIds($object, $idMapping, $params, $data)
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage()) {
@@ -615,21 +623,33 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';

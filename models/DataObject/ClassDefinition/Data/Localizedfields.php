@@ -913,7 +913,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->width;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $config = \Pimcore\Config::getSystemConfiguration('general');
@@ -1267,21 +1269,33 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->tabPosition = $tabPosition;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Localizedfield::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Localizedfield::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\'. DataObject\Localizedfield::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Localizedfield::class . '|null';

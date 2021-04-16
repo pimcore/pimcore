@@ -137,7 +137,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getColumnType()
     {
@@ -147,7 +147,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -327,7 +327,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $result;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -569,21 +571,33 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

@@ -299,7 +299,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getColumnType()
     {
@@ -315,7 +315,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getQueryColumnType()
     {
@@ -471,7 +471,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -598,21 +600,33 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return $this->getPhpdocType() . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return $this->getPhpdocType() . '|null';

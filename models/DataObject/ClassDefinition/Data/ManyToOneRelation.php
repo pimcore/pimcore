@@ -376,7 +376,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -658,7 +660,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getPhpdocReturnType(): ?string
     {

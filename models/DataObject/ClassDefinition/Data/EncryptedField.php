@@ -274,7 +274,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $data;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $fd = $this->getDelegateDatatypeDefinition();
@@ -508,27 +510,41 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocInputType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof Model\DataObject\Data\EncryptedField) {
@@ -540,7 +556,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if ($this->delegate instanceof NormalizerInterface) {

@@ -416,7 +416,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $tags;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if ($data instanceof DataObject\Fieldcollection) {
@@ -810,27 +812,41 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Fieldcollection::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Fieldcollection::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function normalize($value, $params = [])
     {
         if ($value instanceof DataObject\Fieldcollection) {
@@ -864,7 +880,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return null;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function denormalize($value, $params = [])
     {
         if (is_array($value)) {

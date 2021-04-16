@@ -1162,11 +1162,17 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\BlockElement::class . '[][]';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
