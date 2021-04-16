@@ -612,7 +612,12 @@ final class Requirements
         ]);
 
         // WebP for active image adapter
-        $imageAdapter = Image::getInstance();
+        if (extension_loaded('imagick')) {
+            $imageAdapter = new Image\Adapter\Imagick();
+        } else {
+            $imageAdapter = new Image\Adapter\GD();
+        }
+
         $reflect = new \ReflectionClass($imageAdapter);
         $imageAdapterType = $reflect->getShortName();
         $checks[] = new Check([
