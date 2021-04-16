@@ -116,7 +116,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $decimalPrecision;
 
-    protected function getPhpdocType(): string
+    /**
+     * @return string
+     */
+    private function getPhpdocType(): string
     {
         if ($this->getInteger()) {
             return 'int';

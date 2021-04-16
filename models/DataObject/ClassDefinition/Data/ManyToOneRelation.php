@@ -553,7 +553,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getPhpdocType()
     {

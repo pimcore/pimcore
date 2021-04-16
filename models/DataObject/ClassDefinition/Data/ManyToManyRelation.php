@@ -744,7 +744,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getPhpdocType()
     {
