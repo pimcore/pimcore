@@ -40,7 +40,7 @@
   "mimetype": "MIME-Type",
   "creationdate": "Creation Date",
   "usermodification": "User Modification",
-  "userowner": "User Owner",
+  "userowner": "Owner",
   "languages": "Languages",
   "password_was_not_changed": "Password wasn't changed because it isn't secure enough",
   "marketing": "Marketing",
