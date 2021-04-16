@@ -35,6 +35,9 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
      */
     public $onlySystemLanguages = false;
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         $validLanguages = (array) Tool::getValidLanguages();

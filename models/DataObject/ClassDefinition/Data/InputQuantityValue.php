@@ -124,7 +124,7 @@ class InputQuantityValue extends QuantityValue
      *
      * @return InputQuantityValueDataObject
      */
-    protected function getNewDataObject($value = null, $unitId = null)
+    private function getNewDataObject($value = null, $unitId = null)
     {
         return new InputQuantityValueDataObject($value, $unitId);
     }
