@@ -268,17 +268,6 @@ class Installer
         $adminUser = $params['admin_username'] ?? '';
         $adminPass = $params['admin_password'] ?? '';
 
-        //check skipping database creation or database data
-        if (!empty($params['skip_database_structure'])) {
-            $this->createDatabaseStructure = false;
-        }
-        if (!empty($params['skip_database_data'])) {
-            $this->importDatabaseData = false;
-        }
-        if (!empty($params['skip_database_data_dump'])) {
-            $this->importDatabaseDataDump = false;
-        }
-
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
             $errors[] = 'Username and password should have at least 4 characters';
         }
