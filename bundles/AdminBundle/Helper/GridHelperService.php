@@ -234,7 +234,7 @@ class GridHelperService
                     //if the definition doesn't exist check for object brick
                     $keyParts = explode('~', $filterField);
 
-                    if (substr($filterField, 0, 1) == '~') {
+                    if (substr($filterField, 0, 1) === '~') {
                         // not needed for now
 //                            $type = $keyParts[1];
 //                            $field = $keyParts[2];
@@ -532,7 +532,7 @@ class GridHelperService
         }
         if ($sortingSettings['orderKey'] !== null && strlen($sortingSettings['orderKey']) > 0) {
             $orderKey = $sortingSettings['orderKey'];
-            if (!(substr($orderKey, 0, 1) == '~')) {
+            if (substr($orderKey, 0, 1) !== '~') {
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
                 } elseif ($orderKey === 'fullpath') {
@@ -553,10 +553,9 @@ class GridHelperService
                         $db = Db::get();
                         $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
                         $doNotQuote = true;
-                    } else {
-                        if (count($orderKeyParts) == 2) {
-                            $orderKey = $orderKeyParts[1];
-                        }
+                    } elseif (count($orderKeyParts) === 2) {
+                        $orderKey = $orderKeyParts[0].'.'.$orderKeyParts[1];
+                        $doNotQuote = true;
                     }
                 }
             }
