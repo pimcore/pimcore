@@ -736,15 +736,20 @@ final class UserController extends AdminController implements KernelControllerEv
             }
         }
 
+        $replaceFn = function($value) {
+            return $value->getObjectVars();
+        };
+
         // get available permissions
         $availableUserPermissionsList = new User\Permission\Definition\Listing();
         $availableUserPermissions = $availableUserPermissionsList->load();
+        $availableUserPermissions = array_map($replaceFn, $availableUserPermissions);
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
         return $this->adminJson([
             'success' => true,
-            'role' => $role,
+            'role' => $role->getObjectVars(),
             'permissions' => $role->generatePermissionList(),
             'classes' => $role->getClasses(),
             'docTypes' => $role->getDocTypes(),
