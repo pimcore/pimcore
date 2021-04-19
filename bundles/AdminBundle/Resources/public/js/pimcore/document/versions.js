@@ -342,18 +342,19 @@ pimcore.document.versions = Class.create({
         });
     },
 
-    dataUpdate: function (store, record, operation) {
+    dataUpdate: function (store, record, operation, columns) {
 
         if (operation == "edit") {
-            Ext.Ajax.request({
-                method: "post",
-                url: Routing.generate('pimcore_admin_element_versionupdate'),
-                method: 'PUT',
-                params: {
-                    data: Ext.encode(record.data)
-                }
-            });
-
+            if (in_array("public", columns) || in_array("note", columns)) {
+                Ext.Ajax.request({
+                    method: "post",
+                    url: Routing.generate('pimcore_admin_element_versionupdate'),
+                    method: 'PUT',
+                    params: {
+                        data: Ext.encode(record.data)
+                    }
+                });
+            }
             this.checkForPreview(store);
         }
 
