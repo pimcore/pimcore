@@ -48,14 +48,13 @@ class LocalizedFieldTest extends ModelTestCase
         $two->setParentId($one->getId());
         $two->setPublished(true);
 
+        // this will create the fr and de table on the fly
         $two->setInput(null, "de");
         $two->setInput(null, "fr");
 
         $two->save();
 
         $one->setInput("abc", "en");
-        // this will create the fr and de table on the fly
-
         $one->save();
 
         $one->save();
