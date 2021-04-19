@@ -139,6 +139,25 @@ class Dao extends Model\Dao\AbstractDao
          * which is a great performance gain if you have a lot of languages
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
+
+        $ignoreLocalizedQueryFallback = \Pimcore::getContainer()->getParameter("pimcore.objects.ignoreLocalizedQueryFallback");
+        if (!$ignoreLocalizedQueryFallback) {
+            foreach ($validLanguages as $validLanguage) {
+                $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
+                foreach ($fallbackLanguages as $fallbackLanguage) {
+                    if ($this->model->isLanguageDirty($fallbackLanguage)) {
+                        $this->model->markLanguageAsDirty($validLanguage);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!$ignoreLocalizedQueryFallback) {
+            $flag = DataObject\Localizedfield::getGetFallbackValues();
+            DataObject\Localizedfield::setGetFallbackValues(true);
+        }
+
         foreach ($validLanguages as $language) {
             if (empty($params['newParent'])
                 && !empty($params['isUpdate'])
@@ -147,6 +166,7 @@ class Dao extends Model\Dao\AbstractDao
             ) {
                 continue;
             }
+
             $inheritedValues = DataObject::doGetInheritedValues();
             DataObject::setGetInheritedValues(false);
 
@@ -293,7 +313,7 @@ class Dao extends Model\Dao\AbstractDao
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
                         if (!in_array($key, $untouchable)) {
-                            $localizedValue = $this->model->getLocalizedValue($key, $language);
+                            $localizedValue = $this->model->getLocalizedValue($key, $language, $ignoreLocalizedQueryFallback);
                             $insertData = $fd->getDataForQueryResource(
                                 $localizedValue,
                                 $object,
@@ -411,6 +431,11 @@ class Dao extends Model\Dao\AbstractDao
 
             DataObject::setGetInheritedValues($inheritedValues);
         } // foreach language
+
+
+        if (!$ignoreLocalizedQueryFallback) {
+        DataObject\Localizedfield::setGetFallbackValues($flag);
+        }
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
         DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
     }
