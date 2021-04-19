@@ -17,14 +17,18 @@
 
 namespace Pimcore\Model\Translation\Listing;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Cache;
 use Pimcore\Model;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
  * @property \Pimcore\Model\Translation\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+
     /**
      * @return string
      */
@@ -34,29 +38,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
-
-    /**
      * @return int
      */
     public function getTotalCount()
     {
-        $select = $this->db->select();
-        $select->from(
-            [ $this->getDatabaseTableName()],
-            $this->getDatabaseTableName() . '.key'
-        );
-        $this->addConditions($select);
-        $this->addGroupBy($select);
+        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        $query = "SELECT COUNT(*) as amount FROM ($select) AS a";
+        $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
         $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return $amount;
@@ -71,22 +60,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
             return count($this->model->load());
         }
 
-        $select = $this->db->select();
-        $select->from(
-            [ $this->getDatabaseTableName()],
-            $this->getDatabaseTableName() . '.key'
-        );
-        $this->addConditions($select);
-        $this->addGroupBy($select);
-        $this->addOrder($select);
-        $this->addLimit($select);
+        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
 
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM (' . $select . ') AS a', $this->model->getConditionVariables());
+        $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
+        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return $amount;
     }
@@ -96,29 +73,19 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getAllTranslations()
     {
-        $cacheKey = $this->getDatabaseTableName().'_data';
-        if (!$translations = Cache::load($cacheKey)) {
+        $queryBuilder = $this->getQueryBuilder(['*']);
+        $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
+        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
-
-            $select = $this->db->select();
-
-            // create base
-            $select->from(
-                [ $this->getDatabaseTableName()]
-            );
-
-            if ($this->onCreateQueryCallback) {
-                $closure = $this->onCreateQueryCallback;
-                $closure($select);
-            }
-
-            $translationsData = $this->db->fetchAll($select);
+            $queryBuilder->setMaxResults(null); //retrieve all results
+            $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
                     $translations[$t['key']] = new Model\Translation();
                     $translations[$t['key']]->setDomain($this->model->getDomain());
                     $translations[$t['key']]->setKey($t['key']);
+                    $translations[$t['key']]->setType($t['type']);
                 }
 
                 $translations[$t['key']]->addTranslation($t['language'], $t['text']);
@@ -132,7 +99,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $translations[$t['key']]->setModificationDate($t['modificationDate']);
             }
 
-            Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);
+            if (empty($this->model->getConditionParams())) {
+                Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);
+            }
         }
 
         return $translations;
@@ -143,23 +112,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadRaw()
     {
-        $select = $this->db->select();
-        $select->from(
-            [ $this->getDatabaseTableName()]
-        );
-        $this->addConditions($select);
-        $this->addGroupBy($select);
-        $this->addOrder($select);
-        $this->addLimit($select);
-
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        $select = (string) $select;
-
-        $translationsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
+        $queryBuilder = $this->getQueryBuilder(['*']);
+        $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
         return $translationsData;
     }
@@ -173,25 +127,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $translations = [];
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
-        $select = $this->db->select();
-        $select->from(
-            [ $this->getDatabaseTableName()],
-            $this->getDatabaseTableName() . '.key'
-        );
-        $this->addConditions($select);
-        $this->addGroupBy($select);
-        $this->addOrder($select);
-        $this->addLimit($select);
-
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
-
-        $translationsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
+        $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
+        $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
-            $translations[] = $allTranslations[$t['key']];
+            $translations[] = $allTranslations[$t['key']] ?? '';
         }
 
         $this->model->setTranslations($translations);
@@ -232,10 +172,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param callable $callback
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
      */
-    public function onCreateQuery(callable $callback)
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
-        $this->onCreateQueryCallback = $callback;
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from($this->getDatabaseTableName());
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
     }
 }

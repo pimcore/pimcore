@@ -17,7 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class Merge extends AbstractOperator
+/**
+ * @internal
+ */
+final class Merge extends AbstractOperator
 {
     /** @var bool */
     private $flatten;

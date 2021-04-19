@@ -21,14 +21,9 @@ use Pimcore\Model;
 trait Text
 {
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param string $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -46,12 +41,7 @@ trait Text
     }
 
     /**
-     * True if change is allowed in edit mode.
-     *
-     * @param Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {

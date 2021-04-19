@@ -392,11 +392,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             if ($allowInherit) {
                 if ($object->getParent() instanceof AbstractObject) {
                     $parent = $object->getParent();
-                    while ($parent && $parent->getType() == 'folder') {
+                    while ($parent && $parent->getType() == AbstractObject::OBJECT_TYPE_FOLDER) {
                         $parent = $parent->getParent();
                     }
 
-                    if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                    if ($parent && ($parent->getType() == AbstractObject::OBJECT_TYPE_OBJECT || $parent->getType() == AbstractObject::OBJECT_TYPE_VARIANT)) {
                         /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $getter = 'get' . ucfirst($this->fieldname);
@@ -470,5 +470,43 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         return null;
+    }
+
+    /**
+     * @return Model\DataObject\Classificationstore\Group[]
+     */
+    public function getGroups(): array
+    {
+        $activeGroups = $this->getActiveGroups();
+        $groups = [];
+        foreach (array_keys($activeGroups) as $groupId) {
+            $groupConfig = $this->getGroupConfigById($groupId);
+            $groups[] = $this->createGroup($this, $groupConfig);
+        }
+
+        return $groups;
+    }
+
+    /**
+     * @param Classificationstore $classificationstore
+     * @param Classificationstore\GroupConfig $groupConfig
+     *
+     * @return Model\DataObject\Classificationstore\Group
+     */
+    public function createGroup(
+        Classificationstore $classificationstore,
+        Classificationstore\GroupConfig $groupConfig
+    ): Model\DataObject\Classificationstore\Group {
+        return new Model\DataObject\Classificationstore\Group($classificationstore, $groupConfig);
+    }
+
+    /**
+     * @param int $groupId
+     *
+     * @return Classificationstore\GroupConfig|null
+     */
+    protected function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
+    {
+        return Classificationstore\GroupConfig::getById($groupId);
     }
 }

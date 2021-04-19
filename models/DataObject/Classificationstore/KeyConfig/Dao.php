@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?', $this->model->getId());
 
-        if ($data) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('KeyConfig with id: ' . $this->model->getId() . ' does not exist');
@@ -110,6 +110,12 @@ class Dao extends Model\Dao\AbstractDao
             if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_KEYS))) {
                 if (is_bool($value)) {
                     $value = (int) $value;
+
+                    if (!$value && $key === 'enabled') {
+                        $this->db->delete(
+                            Model\DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS,
+                            ['keyId' => $this->model->getId()]);
+                    }
                 }
                 if (is_array($value) || is_object($value)) {
                     if ($this->model->getType() == 'select') {

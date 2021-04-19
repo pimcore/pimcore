@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
 
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnService;
-use Pimcore\DataObject\Import\Service as ImportService;
 use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -26,41 +25,14 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-class ImportExportLocatorsPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class ImportExportLocatorsPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $this->processImport($container);
         $this->processGridColumns($container);
-    }
-
-    private function processImport(ContainerBuilder $container)
-    {
-        $importService = $container->getDefinition(ImportService::class);
-
-        $this->createLocatorForTaggedServices(
-            $container,
-            $importService,
-            'import resolver',
-            'pimcore.data_object.import.resolver',
-            '$resolvers'
-        );
-
-        $this->createLocatorForTaggedServices(
-            $container,
-            $importService,
-            'import operator factory',
-            'pimcore.data_object.import.operator_factory',
-            '$operatorFactories'
-        );
-
-        $this->createLocatorForTaggedServices(
-            $container,
-            $importService,
-            'import value factory',
-            'pimcore.data_object.import.value_factory',
-            '$valueFactories'
-        );
     }
 
     private function processGridColumns(ContainerBuilder $container)

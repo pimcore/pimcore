@@ -14,14 +14,13 @@
 
 namespace Pimcore\Google;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
-class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Cse implements PaginateListingInterface
 {
     /**
      * @param string $query
@@ -397,7 +396,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * Methods for AdapterInterface
+     * Methods for PaginateListingInterface
      */
 
     /**
@@ -424,14 +423,6 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
         $items = $this->load();
 
         return $items;
-    }
-
-    /**
-     * @return self
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

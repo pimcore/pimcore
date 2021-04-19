@@ -36,22 +36,22 @@ class Translation extends AbstractModel
     /**
      * @var string
      */
-    public $key;
+    protected $key;
 
     /**
      * @var string[]
      */
-    public $translations;
+    protected $translations;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var string
@@ -59,7 +59,28 @@ class Translation extends AbstractModel
     protected $domain = self::DOMAIN_DEFAULT;
 
     /**
-     * @inheritDoc
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type): void
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public static function IsAValidLanguage(string $domain, string $locale): bool
     {
@@ -181,7 +202,7 @@ class Translation extends AbstractModel
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
-        if ($domain == 'admin') {
+        if ($domain == self::DOMAIN_ADMIN) {
             return \Pimcore\Tool\Admin::getLanguages();
         }
 
@@ -292,7 +313,13 @@ class Translation extends AbstractModel
      */
     public static function getByKeyLocalized(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $language = null)
     {
-        if ($domain == 'admin') {
+        $args = func_get_args();
+        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
+        $create = $args[2] ?? false;
+        $returnIdIfEmpty = $args[3] ?? false;
+        $language = $args[4] ?? null;
+
+        if ($domain == self::DOMAIN_ADMIN) {
             if ($user = Tool\Admin::getCurrentUser()) {
                 $language = $user->getLanguage();
             } elseif ($user = Tool\Authentication::authenticateSession()) {
@@ -322,6 +349,18 @@ class Translation extends AbstractModel
         }
 
         return null;
+    }
+
+    /**
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public static function isAValidDomain(string $domain): bool
+    {
+        $translation = new static();
+
+        return $translation->getDao()->isAValidDomain($domain);
     }
 
     public function save()

@@ -18,10 +18,13 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
-class ProfilerAliasPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class ProfilerAliasPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {

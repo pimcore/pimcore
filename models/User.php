@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
 
@@ -27,80 +28,82 @@ use Pimcore\Tool;
  */
 class User extends User\UserRole
 {
-    /**
-     * @var string
-     */
-    public $type = 'user';
+    use TemporaryFileHelperTrait;
 
     /**
      * @var string
      */
-    public $password;
+    protected $type = 'user';
 
     /**
      * @var string
      */
-    public $firstname;
+    protected $password;
 
     /**
      * @var string
      */
-    public $lastname;
+    protected $firstname;
 
     /**
      * @var string
      */
-    public $email;
+    protected $lastname;
 
     /**
      * @var string
      */
-    public $language = 'en';
+    protected $email;
+
+    /**
+     * @var string
+     */
+    protected $language = 'en';
 
     /**
      * @var bool
      */
-    public $admin = false;
+    protected $admin = false;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var array
      */
-    public $roles = [];
+    protected $roles = [];
 
     /**
      * @var bool
      */
-    public $welcomescreen = false;
+    protected $welcomescreen = false;
 
     /**
      * @var bool
      */
-    public $closeWarning = true;
+    protected $closeWarning = true;
 
     /**
      * @var bool
      */
-    public $memorizeTabs = true;
+    protected $memorizeTabs = true;
 
     /**
      * @var bool
      */
-    public $allowDirtyClose = false;
+    protected $allowDirtyClose = false;
 
     /**
      * @var string|null
      */
-    public $contentLanguages;
+    protected $contentLanguages;
 
     /**
      * @var string|null
      */
-    public $activePerspective;
+    protected $activePerspective;
 
     /**
      * @var null|array
@@ -120,17 +123,17 @@ class User extends User\UserRole
     /**
      * @var int
      */
-    public $lastLogin;
+    protected $lastLogin;
 
     /**
      * @var string
      */
-    public $keyBindings;
+    protected $keyBindings;
 
     /**
      * @var array
      */
-    public $twoFactorAuthentication;
+    protected $twoFactorAuthentication;
 
     /**
      * @return string
@@ -505,23 +508,37 @@ class User extends User\UserRole
         return $this->allowDirtyClose;
     }
 
+    protected function getOriginalImageStoragePath(): string
+    {
+        return sprintf('/user-image/user-%s.png', $this->getId());
+    }
+
+    protected function getThumbnailImageStoragePath(): string
+    {
+        return sprintf('/user-image/user-thumbnail-%s.png', $this->getId());
+    }
+
     /**
      * @param string|null $path
      */
     public function setImage($path)
     {
-        if (!is_dir(PIMCORE_USERIMAGE_DIRECTORY)) {
-            File::mkdir(PIMCORE_USERIMAGE_DIRECTORY);
+        $storage = Tool\Storage::get('admin');
+        $originalFileStoragePath = $this->getOriginalImageStoragePath();
+        $thumbFileStoragePath = $this->getThumbnailImageStoragePath();
+
+        if ($storage->fileExists($originalFileStoragePath)) {
+            $storage->delete($originalFileStoragePath);
         }
 
-        $destFile = PIMCORE_USERIMAGE_DIRECTORY . '/user-' . $this->getId() . '.png';
-        $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/user-thumbnail-' . $this->getId() . '.png';
-        @unlink($destFile);
-        @unlink($thumb);
+        if ($storage->fileExists($thumbFileStoragePath)) {
+            $storage->delete($thumbFileStoragePath);
+        }
 
         if ($path) {
-            copy($path, $destFile);
-            @chmod($destFile, File::getDefaultMode());
+            $handle = fopen($path, 'rb');
+            $storage->writeStream($originalFileStoragePath, $handle);
+            fclose($handle);
         }
     }
 
@@ -529,7 +546,7 @@ class User extends User\UserRole
      * @param int|null $width
      * @param int|null $height
      *
-     * @return string
+     * @return resource
      */
     public function getImage($width = null, $height = null)
     {
@@ -540,21 +557,25 @@ class User extends User\UserRole
             $height = 46;
         }
 
-        $id = $this->getId();
-        $user = PIMCORE_USERIMAGE_DIRECTORY . '/user-' . $id . '.png';
-        if (file_exists($user)) {
-            $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/user-thumbnail-' . $id . '.png';
-            if (!file_exists($thumb)) {
+        $storage = Tool\Storage::get('admin');
+        if ($storage->fileExists($this->getOriginalImageStoragePath())) {
+            if (!$storage->fileExists($this->getThumbnailImageStoragePath())) {
+                $localFile = self::getLocalFileFromStream($storage->readStream($this->getOriginalImageStoragePath()));
+                $targetFile = File::getLocalTempFilePath('png');
+
                 $image = \Pimcore\Image::getInstance();
-                $image->load($user);
+                $image->load($localFile);
                 $image->cover($width, $height);
-                $image->save($thumb, 'png');
+                $image->save($targetFile, 'png');
+
+                $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                unlink($targetFile);
             }
 
-            return $thumb;
+            return $storage->readStream($this->getThumbnailImageStoragePath());
         }
 
-        return $this->getFallbackImage();
+        return fopen($this->getFallbackImage(), 'rb');
     }
 
     /**
@@ -570,7 +591,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param null|string $contentLanguages
+     * @param null|string|array $contentLanguages
      */
     public function setContentLanguages($contentLanguages)
     {
@@ -1021,11 +1042,7 @@ class User extends User\UserRole
 
     public function hasImage()
     {
-        if ($this->getImage() == $this->getFallbackImage()) {
-            return false;
-        }
-
-        return true;
+        return Tool\Storage::get('admin')->fileExists($this->getOriginalImageStoragePath());
     }
 
     protected function getFallbackImage()

@@ -955,7 +955,7 @@ pimcore.helpers.addCsrfTokenToUrl = function (url) {
     return url;
 };
 
-pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
+pimcore.helpers.uploadDialog = function (url, filename, success, failure, description) {
 
     if (typeof success != "function") {
         success = function () {
@@ -983,42 +983,54 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
         modal: true
     });
 
+    var items = [];
+
+    if (description) {
+        items.push({
+           xtype: 'displayfield',
+           value: description
+        });
+    }
+
+    items.push({
+        xtype: 'fileuploadfield',
+        emptyText: t("select_a_file"),
+        fieldLabel: t("file"),
+        width: 470,
+        name: filename,
+        buttonText: "",
+        buttonConfig: {
+            iconCls: 'pimcore_icon_upload'
+        },
+        listeners: {
+            change: function () {
+                uploadForm.getForm().submit({
+                    url: url,
+                    params: {
+                        csrfToken: pimcore.settings['csrfToken']
+                    },
+                    waitMsg: t("please_wait"),
+                    success: function (el, res) {
+                        // content-type in response has to be text/html, otherwise (when application/json is sent)
+                        // chrome will complain in Ext.form.Action.Submit and mark the submission as failed
+                        success(res);
+                        uploadWindowCompatible.close();
+                    },
+                    failure: function (el, res) {
+                        failure(res);
+                        uploadWindowCompatible.close();
+                    }
+                });
+            }
+        }
+    });
+
+
     var uploadForm = new Ext.form.FormPanel({
         fileUpload: true,
         width: 500,
         bodyStyle: 'padding: 10px;',
-        items: [{
-            xtype: 'fileuploadfield',
-            emptyText: t("select_a_file"),
-            fieldLabel: t("file"),
-            width: 470,
-            name: filename,
-            buttonText: "",
-            buttonConfig: {
-                iconCls: 'pimcore_icon_upload'
-            },
-            listeners: {
-                change: function () {
-                    uploadForm.getForm().submit({
-                        url: url,
-                        params: {
-                            csrfToken: pimcore.settings['csrfToken']
-                        },
-                        waitMsg: t("please_wait"),
-                        success: function (el, res) {
-                            // content-type in response has to be text/html, otherwise (when application/json is sent)
-                            // chrome will complain in Ext.form.Action.Submit and mark the submission as failed
-                            success(res);
-                            uploadWindowCompatible.close();
-                        },
-                        failure: function (el, res) {
-                            failure(res);
-                            uploadWindowCompatible.close();
-                        }
-                    });
-                }
-            }
-        }]
+        items: items
     });
 
     uploadWindowCompatible.add(uploadForm);
@@ -3181,3 +3193,28 @@ pimcore.helpers.reloadUserImage = function (userId) {
         Ext.getCmp("pimcore_profile_image_" + userId).setSrc(image);
     }
 };
+
+/**
+ * Takes a number representing seconds and formats it as a human-readable string such as "1:15:05" for 1 hour 15 minutes 5 seconds
+ * @param {int|float} dataDuration duration in seconds
+ * @returns {string|*}
+ */
+pimcore.helpers.formatTimeDuration = function (dataDuration) {
+    if (!is_numeric(dataDuration)) {
+        // Unknown data, return as is
+        return dataDuration;
+    }
+
+    let durationString = '';
+
+    let hours = Math.floor(dataDuration / 3600);
+    dataDuration %= 3600;
+    if (hours > 0) {
+        durationString += hours + ":";
+    }
+
+    durationString += Math.floor(dataDuration / 60) + ":";
+    durationString += ("0" + Math.round(dataDuration % 60)).slice(-2);
+
+    return durationString;
+}

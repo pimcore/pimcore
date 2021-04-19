@@ -35,7 +35,10 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\Registry;
 
-class WorkflowManagementListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class WorkflowManagementListener implements EventSubscriberInterface
 {
     /**
      * @var bool
@@ -77,7 +80,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

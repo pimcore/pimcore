@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -40,8 +41,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/translation")
+ *
+ * @internal
  */
-class TranslationController extends AdminController
+final class TranslationController extends AdminController
 {
     /**
      * @Route("/import", name="pimcore_admin_translation_import", methods={"POST"})
@@ -274,7 +277,7 @@ class TranslationController extends AdminController
         $response = new Response("\xEF\xBB\xBF" . $csv);
         $response->headers->set('Content-Encoding', 'UTF-8');
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export_ ' . $domain . '_translations.csv"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export_' . $domain . '_translations.csv"');
         ini_set('display_errors', false); //to prevent warning messages in csv
 
         return $response;
@@ -365,7 +368,7 @@ class TranslationController extends AdminController
 
                 foreach ($data as $key => $value) {
                     $key = preg_replace('/^_/', '', $key, 1);
-                    if ($key != 'key') {
+                    if (!in_array($key, ['key', 'type'])) {
                         $t->addTranslation($key, $value);
                     }
                 }
@@ -373,13 +376,20 @@ class TranslationController extends AdminController
                 if ($data['key']) {
                     $t->setKey($data['key']);
                 }
+
+                if ($data['type']) {
+                    $t->setType($data['type']);
+                }
                 $t->setModificationDate(time());
                 $t->save();
 
                 $return = array_merge(
-                    ['key' => $t->getKey(),
+                    [
+                        'key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
-                        'modificationDate' => $t->getModificationDate(), ],
+                        'modificationDate' => $t->getModificationDate(),
+                        'type' => $t->getType(),
+                    ],
                     $this->prefixTranslations($t->getTranslations())
                 );
 
@@ -395,6 +405,7 @@ class TranslationController extends AdminController
                 $t->setKey($data['key']);
                 $t->setCreationDate(time());
                 $t->setModificationDate(time());
+                $t->setType($data['type'] ?? null);
 
                 foreach (Tool::getValidLanguages() as $lang) {
                     $t->addTranslation($lang, '');
@@ -406,6 +417,7 @@ class TranslationController extends AdminController
                         'key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
                         'modificationDate' => $t->getModificationDate(),
+                        'type' => $t->getType(),
                     ],
                     $this->prefixTranslations($t->getTranslations())
                 );
@@ -464,9 +476,12 @@ class TranslationController extends AdminController
             foreach ($list->getTranslations() as $t) {
                 $translations[] = array_merge(
                     $this->prefixTranslations($t->getTranslations()),
-                    ['key' => $t->getKey(),
+                    [
+                        'key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
-                        'modificationDate' => $t->getModificationDate(), ]
+                        'modificationDate' => $t->getModificationDate(),
+                        'type' => $t->getType(),
+                    ]
                 );
             }
 
@@ -504,8 +519,8 @@ class TranslationController extends AdminController
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
         if ($joins) {
-            $list->onCreateQuery(
-                function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use (
+            $list->onCreateQueryBuilder(
+                function (DoctrineQueryBuilder $select) use (
                     $joins,
                     $tableName,
                     $filters
@@ -522,15 +537,15 @@ class TranslationController extends AdminController
                         }
                         $alreadyJoined[$fieldname] = 1;
 
-                        $select->joinLeft(
-                            [$fieldname => $tableName],
+                        $select->addSelect($fieldname . '.text AS ' . $fieldname);
+                        $select->leftJoin(
+                            $tableName,
+                            $tableName,
+                            $fieldname,
                             '('
                             . $fieldname . '.key = ' . $tableName . '.key'
                             . ' and ' . $fieldname . '.language = ' . $db->quote($fieldname)
-                            . ')',
-                            [
-                                $fieldname => 'text',
-                            ]
+                            . ')'
                         );
                     }
 
@@ -650,24 +665,18 @@ class TranslationController extends AdminController
     public function cleanupAction(Request $request)
     {
         $admin = $request->get('admin');
-
-        $listClass = '\\Pimcore\\Model\\Translation\\Listing';
         $domain = Translation::DOMAIN_DEFAULT;
         if ($admin) {
             $domain = Translation::DOMAIN_ADMIN;
         }
 
-        if (Tool::classExists($listClass)) {
-            $list = new $listClass();
-            $list->setDomain($domain);
-            $list->cleanup();
+        $list = new Translation\Listing();
+        $list->setDomain($domain);
+        $list->cleanup();
 
-            \Pimcore\Cache::clearTags(['translator', 'translate']);
+        \Pimcore\Cache::clearTags(['translator', 'translate']);
 
-            return $this->adminJson(['success' => true]);
-        }
-
-        return $this->adminJson(['success' => false]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1013,73 +1022,59 @@ class TranslationController extends AdminController
                     );
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
-                    $dom = str_get_html($html);
-                    if ($dom) {
-
-                        // remove containers including their contents
-                        $elements = $dom->find(
-                            'form,script,style,noframes,noscript,object,area,mapm,video,audio,iframe,textarea,input,select,button,'
-                        );
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $el->outertext = '';
-                            }
-                        }
-
-                        $clearText = function ($string) {
-                            $string = str_replace("\r\n", '', $string);
-                            $string = str_replace("\n", '', $string);
-                            $string = str_replace("\r", '', $string);
-                            $string = str_replace("\t", '', $string);
-                            $string = preg_replace('/&[a-zA-Z0-9]+;/', '', $string); // remove html entities
-                            $string = preg_replace('#[ ]+#', '', $string);
-
-                            return $string;
-                        };
-
-                        // remove empty tags (where it matters)
-                        $elements = $dom->find('a, li');
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $string = $clearText($el->plaintext);
-                                if (empty($string)) {
-                                    $el->outertext = '';
-                                }
-                            }
-                        }
-
-                        // replace links => links get [Linktext]
-                        $elements = $dom->find('a');
-                        if ($elements) {
-                            foreach ($elements as $el) {
-                                $string = $clearText($el->plaintext);
-                                if (!empty($string)) {
-                                    $el->outertext = '[' . $el->plaintext . ']';
-                                } else {
-                                    $el->outertext = '';
-                                }
-                            }
-                        }
-
-                        $html = $dom->save();
-                        $dom->clear();
-                        unset($dom);
-
-                        // force closing tags (simple_html_dom doesn't seem to support this anymore)
-                        $doc = new \DOMDocument();
-                        libxml_use_internal_errors(true);
-                        $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . '</article>');
-                        libxml_clear_errors();
-                        $html = $doc->saveHTML();
-
-                        $bodyStart = strpos($html, '<body>') + 6;
-                        $bodyEnd = strpos($html, '</body>');
-                        if ($bodyStart && $bodyEnd) {
-                            $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
-                        }
-
-                        $output .= $html;
+                    $dom = new Tool\DomCrawler($html);
+                    // remove containers including their contents
+                    $elements = $dom->filter('form, script, style, noframes, noscript, object, area, mapm, video, audio, iframe, textarea, input, select, button');
+                    foreach ($elements as $element) {
+                        $element->parentNode->removeChild($element);
                     }
+
+                    $clearText = function ($string) {
+                        $string = str_replace("\r\n", '', $string);
+                        $string = str_replace("\n", '', $string);
+                        $string = str_replace("\r", '', $string);
+                        $string = str_replace("\t", '', $string);
+                        $string = preg_replace('/&[a-zA-Z0-9]+;/', '', $string); // remove html entities
+                        $string = preg_replace('#[ ]+#', '', $string);
+
+                        return $string;
+                    };
+
+                    // remove empty tags (where it matters)
+                    // replace links => links get [Linktext]
+                    $elements = $dom->filter('a');
+                    foreach ($elements as $element) {
+                        $string = $clearText($element->textContent);
+                        if (!empty($string)) {
+                            $newNode = $element->ownerDocument->createTextNode('[' . $element->textContent . ']');
+
+                            $element->parentNode->replaceChild($newNode, $element);
+                        } else {
+                            $element->ownerDocument->textContent = '';
+                        }
+                    }
+
+                    if ($dom->count() > 0) {
+                        $html = $dom->html();
+                    }
+
+                    $dom->clear();
+                    unset($dom);
+
+                    // force closing tags
+                    $doc = new \DOMDocument();
+                    libxml_use_internal_errors(true);
+                    $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . '</article>');
+                    libxml_clear_errors();
+                    $html = $doc->saveHTML();
+
+                    $bodyStart = strpos($html, '<body>') + 6;
+                    $bodyEnd = strpos($html, '</body>');
+                    if ($bodyStart && $bodyEnd) {
+                        $html = substr($html, $bodyStart, $bodyEnd - $bodyStart);
+                    }
+
+                    $output .= $html;
                 } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 
@@ -1227,7 +1222,7 @@ class TranslationController extends AdminController
         $dataList = json_decode($request->get('data'), true);
 
         $domain = Translation::DOMAIN_DEFAULT;
-        if ($translationType == "admin") {
+        if ($translationType == 'admin') {
             $domain = Translation::DOMAIN_ADMIN;
         }
         foreach ($dataList as $data) {

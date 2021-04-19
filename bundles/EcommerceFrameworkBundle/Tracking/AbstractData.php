@@ -112,14 +112,13 @@ abstract class AbstractData implements \JsonSerializable
     /**
      * Serialize all non-null properties
      *
-     * @implements \JsonSerializable
-     *
      * @return array
      */
     public function jsonSerialize()
     {
         $json = [];
-        foreach ($this as $key => $value) {
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
             if (null !== $value) {
                 $json[$key] = $value;
             }

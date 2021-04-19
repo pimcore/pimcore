@@ -35,14 +35,11 @@ class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
-                        OwnerAwareFieldInterface
+    OwnerAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
-
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\Element\Traits\DirtyIndicatorTrait;
-
     use Model\Element\ElementDumpStateTrait;
 
     const STRICT_DISABLED = 0;
@@ -384,10 +381,12 @@ class Localizedfield extends Model\AbstractModel implements
      * @param ClassDefinition\Data $fieldDefinition
      * @param string $name
      * @param string $language
+     *
+     * @internal
      */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
-        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+        $lazyKey = $this->buildLazyKey($name, $language);
         if (!$this->isLazyKeyLoaded($lazyKey) && $fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
@@ -459,11 +458,11 @@ class Localizedfield extends Model\AbstractModel implements
             if ($allowInherit) {
                 if ($object->getParent() instanceof AbstractObject) {
                     $parent = $object->getParent();
-                    while ($parent && $parent->getType() == 'folder') {
+                    while ($parent && $parent->getType() == AbstractObject::OBJECT_TYPE_FOLDER) {
                         $parent = $parent->getParent();
                     }
 
-                    if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                    if ($parent && ($parent->getType() == AbstractObject::OBJECT_TYPE_OBJECT || $parent->getType() == AbstractObject::OBJECT_TYPE_VARIANT)) {
                         /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $method = 'getLocalizedfields';
@@ -484,6 +483,7 @@ class Localizedfield extends Model\AbstractModel implements
                                 $localizedFields = $parentContainer->getLocalizedFields();
                                 if ($localizedFields instanceof Localizedfield) {
                                     if ($localizedFields->getObject()->getId() != $this->getObject()->getId()) {
+                                        $localizedFields->setContext($this->getContext());
                                         $data = $localizedFields->getLocalizedValue($name, $language, true);
                                     }
                                 }
@@ -577,7 +577,7 @@ class Localizedfield extends Model\AbstractModel implements
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
         $isLazyLoadedField = $fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading();
-        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+        $lazyKey = $this->buildLazyKey($name, $language);
 
         if ($isLazyLoadedField) {
             if (!$this->isLazyKeyLoaded($lazyKey)) {
@@ -596,7 +596,13 @@ class Localizedfield extends Model\AbstractModel implements
             );
         }
 
-        if ($markFieldAsDirty && ($forceLanguageDirty || !$fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value))) {
+        $isEqual = false;
+
+        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+            $isEqual = $fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value);
+        }
+
+        if ($markFieldAsDirty && ($forceLanguageDirty || !$isEqual)) {
             $this->markLanguageAsDirty($language);
         }
         $this->items[$language][$name] = $value;
@@ -609,7 +615,7 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {
@@ -635,6 +641,9 @@ class Localizedfield extends Model\AbstractModel implements
             foreach ($lazyLoadedFields as $fieldName) {
                 foreach (Tool::getValidLanguages() as $language) {
                     unset($this->items[$language][$fieldName]);
+
+                    $lazyKey = $this->buildLazyKey($fieldName, $language);
+                    $this->unmarkLazyKeyAsLoaded($lazyKey);
                 }
             }
         }
@@ -744,7 +753,7 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getLazyLoadedFieldNames(): array
     {

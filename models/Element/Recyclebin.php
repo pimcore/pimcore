@@ -18,21 +18,18 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
+use Pimcore\Tool\Storage;
 
 /**
  * @method \Pimcore\Model\Element\Recyclebin\Dao getDao()
+ *
+ * @internal
  */
 class Recyclebin extends Model\AbstractModel
 {
     public function flush()
     {
         $this->getDao()->flush();
-
-        $files = scandir(PIMCORE_RECYCLEBIN_DIRECTORY);
-        foreach ($files as $file) {
-            if (is_file(PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $file)) {
-                unlink(PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $file);
-            }
-        }
+        Storage::get('recycle_bin')->deleteDirectory('/');
     }
 }

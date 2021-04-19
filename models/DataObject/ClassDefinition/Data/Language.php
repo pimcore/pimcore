@@ -24,16 +24,20 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'language';
 
     /**
+     * @internal
      * @var bool
      */
     public $onlySystemLanguages = false;
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         $validLanguages = (array) Tool::getValidLanguages();
@@ -101,6 +105,9 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

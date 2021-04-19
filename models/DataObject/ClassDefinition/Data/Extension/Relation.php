@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait Relation
 {
     /**
+     * @internal
      * @param bool|false $asArray
      *
      * @return string[]

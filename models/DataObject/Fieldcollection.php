@@ -279,6 +279,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @param string $field
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
     {

@@ -30,7 +30,6 @@ use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,11 +38,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/document")
+ *
+ * @internal
  */
-class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
+final class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
 
@@ -170,8 +172,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
 
             if ($filter) {
-                $db = Db::get();
-
                 $condition = '(' . $condition . ')' . ' AND CAST(documents.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
@@ -258,9 +258,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
                 } elseif ($request->get('translationsBaseDocument')) {
-                    $translationsBaseDocument = Document\PageSnippet::getById($request->get('translationsBaseDocument'));
-                    $createValues['template'] = $translationsBaseDocument->getTemplate();
-                    $createValues['controller'] = $translationsBaseDocument->getController();
+                    $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+                    if ($translationsBaseDocument instanceof Document\PageSnippet) {
+                        $createValues['template'] = $translationsBaseDocument->getTemplate();
+                        $createValues['controller'] = $translationsBaseDocument->getController();
+                    }
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
                     $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
                 }
@@ -345,7 +347,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $properties = $translationsBaseDocument->getProperties();
                 $properties = array_merge($properties, $document->getProperties());
                 $document->setProperties($properties);
-                $document->setProperty('language', 'text', $request->get('language'));
+                $document->setProperty('language', 'text', $request->get('language'), false, true);
                 $document->save();
 
                 $service = new Document\Service();
@@ -807,7 +809,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $site->save();
 
         $site->setRootDocument(null); // do not send the document to the frontend
-        return $this->adminJson($site);
+        return $this->adminJson($site->getObjectVars());
     }
 
     /**
@@ -1348,7 +1350,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $translations = is_null($translations) ? $service->getTranslations($document) : $translations;
 
         foreach ($languages as $language) {
-            if ($languageDocument = $translations[$language]) {
+            if ($languageDocument = $translations[$language] ?? false) {
                 $languageDocument = Document::getById($languageDocument);
                 $config[$language] = [
                     'text' => $languageDocument->getKey(),

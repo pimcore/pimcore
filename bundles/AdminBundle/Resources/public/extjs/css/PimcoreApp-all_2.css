@@ -10967,7 +10967,7 @@
 @font-face {
     font-family: 'Font Awesome 5 Free';
     font-style: normal;
-    font-weight: 900;
+    font-weight: auto;
     src: url('/bundles/pimcoreadmin/extjs/font/font-awesome/fonts/fa-solid-900.eot');
     src: url('/bundles/pimcoreadmin/extjs/font/font-awesome/fonts/fa-solid-900.eot?#iefix') format('embedded-opentype'), url('/bundles/pimcoreadmin/extjs/font/fonts/fa-solid-900.woff2') format('woff2'), url('/bundles/pimcoreadmin/extjs/font/font-awesome/fonts/fa-solid-900.woff') format('woff'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.ttf') format('truetype'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.svg#fontawesome') format('svg');
 }

@@ -171,4 +171,20 @@ interface ConfigInterface
      * @return IndexableInterface | array
      */
     public function getObjectMockupById($objectId);
+
+    /**
+     * returns column type for id
+     *
+     * @param bool $isPrimary
+     *
+     * @return string
+     */
+    public function getIdColumnType($isPrimary);
+
+    /**
+     * Attribute configuration
+     *
+     * @return array
+     */
+    public function getAttributeConfig();
 }

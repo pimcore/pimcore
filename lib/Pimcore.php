@@ -25,16 +25,6 @@ class Pimcore
     public static $adminMode;
 
     /**
-     * @var bool|null
-     */
-    protected static $debugMode;
-
-    /**
-     * @var bool|null
-     */
-    protected static $devMode;
-
-    /**
      * @var bool
      */
     private static $inShutdown = false;
@@ -59,27 +49,7 @@ class Pimcore
      */
     public static function inDebugMode(): bool
     {
-        return (bool) self::$debugMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @return bool|null
-     */
-    public static function getDebugMode(): ?bool
-    {
-        return self::$debugMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @param bool $debugMode
-     */
-    public static function setDebugMode(bool $debugMode): void
-    {
-        self::$debugMode = $debugMode;
+        return (bool) self::getKernel()->isDebug();
     }
 
     /**
@@ -87,33 +57,15 @@ class Pimcore
      */
     public static function inDevMode(): bool
     {
-        return (bool) self::$devMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @return bool|null
-     */
-    public static function getDevMode(): ?bool
-    {
-        return self::$devMode;
-    }
-
-    /**
-     * @internal
-     *
-     * @param bool $devMode
-     */
-    public static function setDevMode(bool $devMode): void
-    {
-        self::$devMode = $devMode;
+        return (bool) ($_SERVER['PIMCORE_DEV_MODE'] ?? false);
     }
 
     /**
      * switches pimcore into the admin mode - there you can access also unpublished elements, ....
      *
      * @static
+     *
+     * @internal
      */
     public static function setAdminMode()
     {
@@ -124,6 +76,8 @@ class Pimcore
      * switches back to the non admin mode, where unpublished elements are invisible
      *
      * @static
+     *
+     * @internal
      */
     public static function unsetAdminMode()
     {
@@ -211,6 +165,8 @@ class Pimcore
 
     /**
      * @return bool
+     *
+     * @internal
      */
     public static function hasContainer()
     {
@@ -226,6 +182,8 @@ class Pimcore
 
     /**
      * @return \Composer\Autoload\ClassLoader
+     *
+     * @internal
      */
     public static function getAutoloader(): \Composer\Autoload\ClassLoader
     {
@@ -234,6 +192,8 @@ class Pimcore
 
     /**
      * @param \Composer\Autoload\ClassLoader $autoloader
+     *
+     * @internal
      */
     public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader)
     {
@@ -328,7 +288,9 @@ class Pimcore
 
             $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);
 
-            foreach (self::getContainer()->getServiceIds() as $id) {
+            /** @var \Symfony\Component\DependencyInjection\Container $container */
+            $container = self::getContainer();
+            foreach ($container->getServiceIds() as $id) {
                 if (strpos($id, 'monolog.logger.') === 0) {
                     $logger = self::getContainer()->get($id);
                     if ($logger->getName() != 'event') {

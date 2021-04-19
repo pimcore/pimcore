@@ -79,21 +79,6 @@ pimcore.settings.web2print = Class.create({
                 defaults: {width: 450},
                 items: [
                     {
-                        fieldLabel: t("web2print_version"),
-                        xtype: "combo",
-                        width: 600,
-                        editable: false,
-                        name: "pdfreactorVersion",
-                        value: this.getValue("pdfreactorVersion"),
-                        store: [
-                            ["8.0", "8.0"],
-                            ["8.1", "8.1"],
-                            ["9.0", "9.0"],
-                            ["10.0", "10.0"]
-                        ],
-                        mode: "local",
-                        triggerAction: "all"
-                    },{
                         fieldLabel: t("web2print_protocol"),
                         xtype: "combo",
                         width: 600,

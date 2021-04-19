@@ -167,7 +167,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
-    public $generateTypeDeclarations = false;
+    public $generateTypeDeclarations = true;
 
     /**
      * @var bool
@@ -293,11 +293,30 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
+     *
+     * @internal
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if (is_null($data)) {
+            return;
+        }
+        
+        if (!is_object($data)) {
+            return;
+        }
+
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {
@@ -380,6 +399,8 @@ class ClassDefinition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
+     *
+     * @internal
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
@@ -456,7 +477,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -480,7 +501,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                if ($def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                     continue;
                 }
 
@@ -568,8 +589,8 @@ class ClassDefinition extends Model\AbstractModel
                     'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
                 );
             }
-
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
 
@@ -590,6 +611,8 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @return string
+     *
+     * @internal
      */
     protected function getInfoDocBlock()
     {
@@ -866,6 +889,9 @@ class ClassDefinition extends Model\AbstractModel
         return $enrichedFieldDefinitions;
     }
 
+    /**
+     * @internal
+     */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
@@ -1096,8 +1122,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function addEncryptedTables(array $tables)
     {
-        $this->encryptedTables = array_merge($this->encryptedTables, $tables);
-        array_unique($this->encryptedTables);
+        $this->encryptedTables = array_unique(array_merge($this->encryptedTables, $tables));
     }
 
     /**
@@ -1161,7 +1186,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowVariants($allowVariants)
     {
-        $this->allowVariants = (bool)$allowVariants ? true : null;
+        $this->allowVariants = (bool)$allowVariants;
 
         return $this;
     }

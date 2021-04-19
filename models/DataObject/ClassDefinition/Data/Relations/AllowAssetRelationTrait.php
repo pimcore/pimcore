@@ -5,11 +5,15 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 
+/**
+ * @internal
+ */
 trait AllowAssetRelationTrait
 {
     /**
      * Checks if an asset is an allowed relation
      *
+     * @internal
      * @param Asset $asset
      *
      * @return bool

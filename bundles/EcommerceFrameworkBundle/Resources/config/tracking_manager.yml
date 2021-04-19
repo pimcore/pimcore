@@ -33,13 +33,6 @@ services:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
 
 
-    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik:
-        arguments:
-            - '@Pimcore\Analytics\Piwik\Tracker'
-            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-
-
-
     #
     # GOOGLE TAG MANAGER
     #

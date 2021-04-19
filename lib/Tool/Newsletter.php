@@ -72,7 +72,7 @@ class Newsletter
         }
 
         if (strlen(trim($newsletterDocument->getPlaintext())) > 0) {
-            $mail->setBodyText(trim($newsletterDocument->getPlaintext()));
+            $mail->setTextBody(trim($newsletterDocument->getPlaintext()));
         }
 
         $contentHTML = $mail->getBodyHtmlRendered();
@@ -80,48 +80,47 @@ class Newsletter
 
         // render the document and rewrite the links (if analytics is enabled)
         if ($contentHTML && $newsletterDocument->getEnableTrackingParameters()) {
-            $html = str_get_html($contentHTML);
-            if ($html) {
-                $links = $html->find('a');
-                foreach ($links as $link) {
-                    if (preg_match('/^(mailto|#)/i', trim($link->href))) {
-                        // No tracking for mailto and hash only links
-                        continue;
-                    }
-
-                    $urlParts = parse_url($link->href);
-                    $glue = '?';
-                    $params = sprintf(
-                        'utm_source=%s&utm_medium=%s&utm_campaign=%s',
-                        $newsletterDocument->getTrackingParameterSource(),
-                        $newsletterDocument->getTrackingParameterMedium(),
-                        $newsletterDocument->getTrackingParameterName()
-                    );
-
-                    if (isset($urlParts['query'])) {
-                        $glue = '&';
-                    }
-
-                    $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
-
-                    if (isset($urlParts['fragment'])) {
-                        $link->href .= '#'.$urlParts['fragment'];
-                    }
+            $html = new DomCrawler($contentHTML);
+            $links = $html->filter('a');
+            /** @var \DOMElement $link */
+            foreach ($links as $link) {
+                if (preg_match('/^(mailto|#)/i', trim($link->getAttribute('href')))) {
+                    // No tracking for mailto and hash only links
+                    continue;
                 }
 
-                $contentHTML = $html->save();
+                $urlParts = parse_url($link->getAttribute('href'));
+                $glue = '?';
+                $params = sprintf(
+                    'utm_source=%s&utm_medium=%s&utm_campaign=%s',
+                    $newsletterDocument->getTrackingParameterSource(),
+                    $newsletterDocument->getTrackingParameterMedium(),
+                    $newsletterDocument->getTrackingParameterName()
+                );
 
-                $html->clear();
-                unset($html);
+                if (isset($urlParts['query'])) {
+                    $glue = '&';
+                }
+
+                $href = preg_replace('/[#].+$/', '', $link->getAttribute('href')).$glue.$params;
+
+                if (isset($urlParts['fragment'])) {
+                    $href .= '#'.$urlParts['fragment'];
+                }
+
+                $link->setAttribute('href', $href);
             }
+            $contentHTML = $html->html();
 
-            $mail->setBodyHtml($contentHTML);
+            $html->clear();
+            unset($html);
+
+            $mail->setHtmlBody($contentHTML);
         }
 
-        $mail->setBodyHtml($contentHTML);
-        $mail->setBodyText($contentText);
+        $mail->setHtmlBody($contentHTML);
         // Adds the plain text part to the message, that it becomes a multipart email
-        $mail->addPart($contentText, 'text/plain');
+        $mail->setTextBody($contentText);
         $mail->setSubject($mail->getSubjectRendered());
 
         return $mail;
@@ -144,12 +143,12 @@ class Newsletter
         }
 
         if (!empty($mailAddress)) {
-            $mail->setTo($mailAddress);
+            $mail->to($mailAddress);
 
             $mailer = null;
             // check if newsletter specific mailer is needed
             if ($config['use_specific']) {
-                $mailer = Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
+                $mail->getHeaders()->addTextHeader('X-Transport', 'pimcore_newsletter');
             }
 
             $event = new GenericEvent($mail, [

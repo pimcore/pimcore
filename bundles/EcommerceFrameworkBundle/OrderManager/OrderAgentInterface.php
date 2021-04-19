@@ -20,8 +20,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Pimcore\Model\Element\Note;
 
 interface OrderAgentInterface
@@ -89,7 +89,7 @@ interface OrderAgentInterface
      * @param PaymentInterface $paymentProvider
      * @param AbstractOrder|null $sourceOrder
      *
-     * @return Order
+     * @return OrderAgentInterface
      */
     public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null);
 

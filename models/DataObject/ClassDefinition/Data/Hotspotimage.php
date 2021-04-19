@@ -16,51 +16,56 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
+class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface
 {
-    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
+    use ImageTrait;
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\QueryColumnType;
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'hotspotimage';
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var array
      */
     public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
+     * @internal
      * @var int
      */
     public $ratioX;
 
     /**
+     * @internal
      * @var int
      */
     public $ratioY;
 
     /**
+     * @internal
      * @var string
      */
     public $predefinedDataTemplates;
@@ -321,7 +326,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
+        return new DataObject\Data\Hotspotimage($data['id'] ?? null, $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
     }
 
     /**
@@ -355,16 +360,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -377,28 +373,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null|DataObject\ClassDefinition\Data
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $value = null;
-        $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof DataObject\Data\Hotspotimage) {
-            return $value;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -406,12 +381,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags($data, $tags = [])
     {
@@ -534,6 +504,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         return $data;
     }
 
+    /**
+     * @internal
+     */
     public function doRewriteIds($object, $idMapping, $params, $data)
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage()) {
@@ -604,62 +577,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         return $newDataArray;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof DataObject\Data\Hotspotimage) {
-            $result = [];
-            $result['hotspots'] = $value->getHotspots();
-            $result['marker'] = $value->getMarker();
-            $result['crop'] = $value->getCrop();
-
-            $image = $value->getImage();
-            if ($image) {
-                $type = Element\Service::getType($image);
-                $id = $image->getId();
-                $result['image'] = [
-                    'type' => $type,
-                    'id' => $id,
-                ];
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (is_array($value)) {
-            $image = new DataObject\Data\Hotspotimage();
-            $image->setHotspots($value['hotspots']);
-            $image->setMarker($value['marker']);
-            $image->setCrop($value['crop']);
-            if ($value['image']) {
-                $type = $value['image']['type'];
-                $id = $value['image']['id'];
-                $asset = Element\Service::getElementById($type, $id);
-                $image->setImage($asset);
-            }
-
-            return $image;
-        }
-    }
-
     /**
      * @param DataObject\Data\Hotspotimage|null $oldValue
      * @param DataObject\Data\Hotspotimage|null $newValue
@@ -701,23 +618,83 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Hotspotimage) {
+            $result = [];
+            $result['hotspots'] = $value->getHotspots();
+            $result['marker'] = $value->getMarker();
+            $result['crop'] = $value->getCrop();
+
+            $image = $value->getImage();
+            if ($image) {
+                $type = Element\Service::getType($image);
+                $id = $image->getId();
+                $result['image'] = [
+                    'type' => $type,
+                    'id' => $id,
+                ];
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $image = new DataObject\Data\Hotspotimage();
+            $image->setHotspots($value['hotspots']);
+            $image->setMarker($value['marker']);
+            $image->setCrop($value['crop']);
+            if ($value['image']) {
+                $type = $value['image']['type'];
+                $id = $value['image']['id'];
+                $asset = Element\Service::getElementById($type, $id);
+                $image->setImage($asset);
+            }
+
+            return $image;
+        }
     }
 }

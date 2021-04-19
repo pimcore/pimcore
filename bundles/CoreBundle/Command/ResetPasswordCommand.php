@@ -23,6 +23,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+/**
+ * @internal
+ */
 class ResetPasswordCommand extends AbstractCommand
 {
     protected function configure()
@@ -45,7 +48,7 @@ class ResetPasswordCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

@@ -28,11 +28,15 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class UserController extends AdminController implements KernelControllerEventInterface
+/**
+ * @internal
+ */
+final class UserController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/user/tree-get-childs-by-id", name="pimcore_admin_user_treegetchildsbyid", methods={"GET"})
@@ -143,8 +147,9 @@ class UserController extends AdminController implements KernelControllerEventInt
                             $workspaces = $rObject->$getter();
                             $clonedWorkspaces = [];
                             if (is_array($workspaces)) {
+                                /** @var User\Workspace\AbstractWorkspace $workspace */
                                 foreach ($workspaces as $workspace) {
-                                    $vars = get_object_vars($workspace);
+                                    $vars = $workspace->getObjectVars();
                                     if ($key == 'object') {
                                         $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\DataObject';
                                     } else {
@@ -152,7 +157,7 @@ class UserController extends AdminController implements KernelControllerEventInt
                                     }
                                     $newWorkspace = new $workspaceClass();
                                     foreach ($vars as $varKey => $varValue) {
-                                        $newWorkspace->$varKey = $varValue;
+                                        $newWorkspace->setObjectVar($varKey, $varValue);
                                     }
                                     $newWorkspace->setUserId($user->getId());
                                     $clonedWorkspaces[] = $newWorkspace;
@@ -402,13 +407,15 @@ class UserController extends AdminController implements KernelControllerEventInt
         $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
             $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
-            foreach ($workspaces as $workspace) {
+            foreach ($workspaces as $wKey => $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getRealFullPath();
+                    $workspaces[$wKey] = $workspace->getObjectVars();
                 }
             }
+            $user->{'setWorkspaces' . ucfirst($type)}($workspaces);
         }
 
         // object <=> user dependencies
@@ -431,6 +438,13 @@ class UserController extends AdminController implements KernelControllerEventInt
         // get available permissions
         $availableUserPermissionsList = new User\Permission\Definition\Listing();
         $availableUserPermissions = $availableUserPermissionsList->load();
+
+        $availableUserPermissionsData = [];
+        if (is_array($availableUserPermissions)) {
+            foreach ($availableUserPermissions as $availableUserPermission) {
+                $availableUserPermissionsData[] = $availableUserPermission->getObjectVars();
+            }
+        }
 
         // get available roles
         $list = new User\Role\Listing();
@@ -460,7 +474,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),
-            'availablePermissions' => $availableUserPermissions,
+            'availablePermissions' => $availableUserPermissionsData,
             'availablePerspectives' => $availablePerspectives,
             'validLanguages' => Tool::getValidLanguages(),
             'objectDependencies' => [
@@ -883,18 +897,19 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return StreamedResponse
      */
     public function getImageAction(Request $request)
     {
         /** @var User $userObj */
         $userObj = User::getById($this->getUserId($request));
-        $thumb = $userObj->getImage();
+        $stream = $userObj->getImage();
 
-        $response = new BinaryFileResponse($thumb);
-        $response->headers->set('Content-Type', 'image/png');
-
-        return $response;
+        return new StreamedResponse(function () use ($stream) {
+            fpassthru($stream);
+        }, 200, [
+            'Content-Type' => 'image/png',
+        ]);
     }
 
     /**
@@ -1153,7 +1168,7 @@ class UserController extends AdminController implements KernelControllerEventInt
                 try {
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
                     $mail->setIgnoreDebugMode(true);
-                    $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
+                    $mail->setTextBody("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
                     $mail->send();
 
                     $success = true;

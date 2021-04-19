@@ -14,6 +14,7 @@
 
 namespace Pimcore\Templating\Renderer;
 
+use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
@@ -35,14 +36,18 @@ class EditableRenderer implements LoggerAwareInterface
      */
     protected $editmodeResolver;
 
+    private ?EditmodeEditableDefinitionCollector $configCollector;
+
     /**
      * @param EditableLoaderInterface $editableLoader
      * @param EditmodeResolver $editmodeResolver
+     * @param EditmodeEditableDefinitionCollector $configCollector
      */
-    public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver)
+    public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver, EditmodeEditableDefinitionCollector $configCollector)
     {
         $this->editableLoader = $editableLoader;
         $this->editmodeResolver = $editmodeResolver;
+        $this->configCollector = $configCollector;
     }
 
     /**
@@ -58,7 +63,7 @@ class EditableRenderer implements LoggerAwareInterface
     /**
      * @param PageSnippet $document
      * @param string $type
-     * @param string $inputName
+     * @param string $name
      * @param array $config
      * @param bool|null $editmode
      *
@@ -66,12 +71,13 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function getEditable(PageSnippet $document, string $type, string $inputName, array $config = [], bool $editmode = null): Editable\EditableInterface
+    public function getEditable(PageSnippet $document, string $type, string $name, array $config = [], bool $editmode = null): Editable\EditableInterface
     {
         $type = strtolower($type);
 
-        $name = Editable::buildEditableName($type, $inputName, $document);
-        $realName = Editable::buildEditableRealName($inputName, $document);
+        $originalName = $name;
+        $name = Editable::buildEditableName($type, $originalName, $document);
+        $realName = Editable::buildEditableRealName($originalName, $document);
 
         if (null === $editmode) {
             $editmode = $this->editmodeResolver->isEditmode();
@@ -83,17 +89,26 @@ class EditableRenderer implements LoggerAwareInterface
             if (method_exists($editable, 'load')) {
                 $editable->load();
             }
-
-            $editable->setEditmode($editmode);
-            $editable->setConfig($config);
-            $editable->setDocument($document);
         } else {
-            $editable = Editable::factory($type, $name, $document->getId(), $config, null, null, $editmode);
+            $editable = $this->editableLoader->build($type);
+            $editable->setName($name);
             $document->setEditable($editable);
+
+            //set default value on initial build
+            if (isset($config['defaultValue'])) {
+                $editable->setDataFromResource($config['defaultValue']);
+            }
         }
 
+        $editable->setDocument($document);
+        $editable->setEditmode($editmode);
         // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
         $editable->setRealName($realName);
+        $editable->setConfig($config);
+
+        if ($editmode) {
+            $editable->setEditableDefinitionCollector($this->configCollector);
+        }
 
         return $editable;
     }
@@ -103,7 +118,7 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @param PageSnippet $document
      * @param string $type
-     * @param string $inputName
+     * @param string $name
      * @param array $options
      * @param bool|null $editmode
      *
@@ -111,8 +126,8 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function render(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
+    public function render(PageSnippet $document, string $type, string $name, array $options = [], bool $editmode = null)
     {
-        return $this->getEditable($document, $type, $inputName, $options, $editmode);
+        return $this->getEditable($document, $type, $name, $options, $editmode);
     }
 }

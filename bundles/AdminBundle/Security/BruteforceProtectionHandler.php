@@ -21,7 +21,10 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 
-class BruteforceProtectionHandler implements LoggerAwareInterface
+/**
+ * @internal
+ */
+final class BruteforceProtectionHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

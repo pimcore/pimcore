@@ -43,7 +43,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     /**
      * @param array $record
      */
-    public function write(array $record)
+    public function write(array $record): void
     {
         $data = [
             'pid' => getmypid(),

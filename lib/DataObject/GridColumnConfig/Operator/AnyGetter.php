@@ -18,8 +18,12 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\AbstractModel;
+use Pimcore\Tool\Admin;
 
-class AnyGetter extends AbstractOperator
+/**
+ * @internal
+ */
+final class AnyGetter extends AbstractOperator
 {
     /** @var string */
     private $attribute;
@@ -41,6 +45,10 @@ class AnyGetter extends AbstractOperator
 
     public function __construct(\stdClass $config, $context = null)
     {
+        if (!Admin::getCurrentUser()->isAdmin()) {
+            throw new \Exception('AnyGetter only allowed for admin users');
+        }
+
         parent::__construct($config, $context);
 
         $this->attribute = $config->attribute ?? '';

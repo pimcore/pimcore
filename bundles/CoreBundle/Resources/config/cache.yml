@@ -31,6 +31,7 @@ services:
 
     pimcore.cache.adapter.redis_tag_aware:
         class: Symfony\Component\Cache\Adapter\RedisTagAwareAdapter
+        lazy: true
         arguments:
             - null
             - null

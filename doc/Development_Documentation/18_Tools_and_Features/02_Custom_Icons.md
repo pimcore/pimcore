@@ -96,7 +96,7 @@ The example outlines how to provide a custom tooltip for `Car` objects.
 
 ```php
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getElementQtipConfig()
     {

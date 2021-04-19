@@ -428,7 +428,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __toString()
     {

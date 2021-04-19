@@ -25,7 +25,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
+/**
+ * @internal
+ */
+final class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -54,7 +57,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

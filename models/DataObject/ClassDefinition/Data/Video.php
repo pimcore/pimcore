@@ -20,42 +20,44 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class  Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'video';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string|int
      */
     public $height = 0;
 
     /**
      * Type for the column to query
-     *
+     * @internal
      * @var string
      */
     public $queryColumnType = 'text';
 
     /**
      * Type for the column
-     *
+     * @internal
      * @var string
      */
     public $columnType = 'text';
@@ -212,10 +214,10 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data) {
             $data = clone $data;
             if ($data->getData() instanceof Asset) {
-                $data->setData($data->getData()->getFullpath());
+                $data->setData($data->getData()->getRealFullPath());
             }
             if ($data->getPoster() instanceof Asset) {
-                $data->setPoster($data->getPoster()->getFullpath());
+                $data->setPoster($data->getPoster()->getRealFullPath());
             }
             $data = object2array($data->getObjectVars());
         }
@@ -318,14 +320,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -343,41 +338,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $video = null;
-
-        if ($importValue && strpos($importValue, '~')) {
-            list($type, $data) = explode('~', $importValue);
-            if ($type && $data) {
-                $video = new DataObject\Data\Video();
-                $video->setType($type);
-                if ($type == 'asset') {
-                    if ($asset = Asset::getById($data)) {
-                        $video->setData($asset);
-                    } else {
-                        return null;
-                    }
-                } else {
-                    $video->setData($data);
-                }
-            }
-        }
-
-        return $video;
-    }
-
-    /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -392,12 +353,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags($data, $tags = [])
     {
@@ -444,11 +400,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $dependencies;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -509,82 +462,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $data;
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if ($value instanceof DataObject\Data\Video) {
-            $result = [];
-            $result['type'] = $value->getType();
-            if ($value->getTitle()) {
-                $result['title'] = $value->getTitle();
-            }
-
-            if ($value->getDescription()) {
-                $result['description'] = $value->getDescription();
-            }
-
-            $poster = $value->getPoster();
-            if ($poster) {
-                $result['poster'] = [
-                    'type' => Model\Element\Service::getType($poster),
-                    'id' => $poster->getId(),
-                ];
-            }
-
-            $data = $value->getData();
-
-            if ($data && $value->getType() == 'asset') {
-                $result['data'] = [
-                    'type' => Model\Element\Service::getType($data),
-                    'id' => $data->getId(),
-                ];
-            } else {
-                $result['data'] = $data;
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($value, $object = null, $params = [])
-    {
-        if (is_array($value)) {
-            $video = new DataObject\Data\Video();
-            $video->setType($value['type']);
-            $video->setTitle($value['title']);
-            $video->setDescription($value['description']);
-
-            if ($value['poster']) {
-                $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
-            }
-
-            if ($value['data']) {
-                if (is_array($value['data'])) {
-                    $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
-                } else {
-                    $video->setData($value['data']);
-                }
-            }
-
-            return $video;
-        }
-    }
-
     /**
      * @param DataObject\Data\Video|null $oldValue
      * @param DataObject\Data\Video|null $newValue
@@ -633,21 +510,103 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\Video) {
+            $result = [];
+            $result['type'] = $value->getType();
+            if ($value->getTitle()) {
+                $result['title'] = $value->getTitle();
+            }
+
+            if ($value->getDescription()) {
+                $result['description'] = $value->getDescription();
+            }
+
+            $poster = $value->getPoster();
+            if ($poster) {
+                $result['poster'] = [
+                    'type' => Model\Element\Service::getType($poster),
+                    'id' => $poster->getId(),
+                ];
+            }
+
+            $data = $value->getData();
+
+            if ($data && $value->getType() == 'asset') {
+                $result['data'] = [
+                    'type' => Model\Element\Service::getType($data),
+                    'id' => $data->getId(),
+                ];
+            } else {
+                $result['data'] = $data;
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            $video = new DataObject\Data\Video();
+            $video->setType($value['type']);
+            $video->setTitle($value['title']);
+            $video->setDescription($value['description']);
+
+            if ($value['poster']) {
+                $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
+            }
+
+            if ($value['data']) {
+                if (is_array($value['data'])) {
+                    $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
+                } else {
+                    $video->setData($value['data']);
+                }
+            }
+
+            return $video;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Video::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Video::class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Video::class . '|null';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Video::class . '|null';

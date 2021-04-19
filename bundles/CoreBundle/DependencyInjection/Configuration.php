@@ -25,7 +25,10 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class Configuration implements ConfigurationInterface
+/**
+ * @internal
+ */
+final class Configuration implements ConfigurationInterface
 {
     /**
      * @var PlaceholderProcessor
@@ -49,9 +52,9 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
-        $rootNode->ignoreExtraKeys();
 
         $rootNode
             ->children()
@@ -162,7 +165,6 @@ class Configuration implements ConfigurationInterface
         $this->addCustomReportsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
-        $this->addMimeNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -204,17 +206,17 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('general')
-            ->ignoreExtraKeys()
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('timezone')
-                    ->defaultValue('Europe/Berlin')
+                    ->defaultValue('')
                 ->end()
                 ->scalarNode('path_variable')
+                    ->info('Additional $PATH variable (: separated) (/x/y:/foo/bar):')
                     ->defaultNull()
                 ->end()
                 ->scalarNode('domain')
-                    ->defaultNull()
+                    ->defaultValue('')
                 ->end()
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()
@@ -255,6 +257,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
                 ->booleanNode('debug_admin_translations')
+                    ->info('Debug Admin-Translations (displayed wrapped in +)')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -264,7 +267,9 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
                 ->scalarNode('instance_identifier')
-                    ->defaultNull()->end()
+                    ->defaultNull()
+                    ->info('UUID instance identifier. Has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)')
+                    ->end()
                 ->end()
             ->end();
     }
@@ -277,19 +282,25 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('services')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('google')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('client_id')
+                            ->info('This is required for the Google API integrations. Only use a `Service Account´ from the Google Cloud Console.')
                             ->defaultNull()
                         ->end()
                         ->scalarNode('email')
+                            ->info('Email address of the Google service account')
                             ->defaultNull()
                         ->end()
                         ->scalarNode('simple_api_key')
+                            ->info('Server API key')
                             ->defaultNull()
                         ->end()
                         ->scalarNode('browser_api_key')
+                            ->info('Browser API key')
                             ->defaultNull()
                         ->end()
                     ->end()
@@ -324,6 +335,7 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('adapter')
+                            ->info('Set to `Proxy` if proxy server should be used')
                             ->defaultValue('Socket')
                         ->end()
                         ->scalarNode('proxy_host')
@@ -356,6 +368,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('mail_notification')
                             ->children()
                                 ->booleanNode('send_log_summary')
+                                    ->info('Send log summary via email')
                                     ->beforeNormalization()
                                         ->ifString()
                                         ->then(function ($v) {
@@ -365,19 +378,24 @@ class Configuration implements ConfigurationInterface
                                     ->defaultFalse()
                                 ->end()
                                 ->scalarNode('filter_priority')
+                                    ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
                                     ->defaultNull()
                                 ->end()
                                 ->scalarNode('mail_receiver')
+                                ->info('Log summary receivers. Separate multiple email receivers by using ;')
                                 ->end()
                             ->end()
                         ->end()
                         ->scalarNode('archive_treshold')
+                            ->info('Archive threshold in days')
                             ->defaultValue('')
                         ->end()
                         ->scalarNode('archive_alternative_database')
+                            ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
                             ->defaultValue('')
                         ->end()
                         ->scalarNode('delete_archive_threshold')
+                            ->info('Threshold for deleting application log archive tables (in months)')
                             ->defaultValue('6')
                         ->end()
                     ->end()
@@ -394,9 +412,22 @@ class Configuration implements ConfigurationInterface
         $assetsNode = $rootNode
             ->children()
                 ->arrayNode('assets')
-                ->ignoreExtraKeys()
                 ->addDefaultsIfNotSet()
                 ->children()
+                    ->arrayNode('frontend_prefixes')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('source')
+                                ->defaultValue('')
+                                ->end()
+                            ->scalarNode('thumbnail')
+                                ->defaultValue('')
+                                ->end()
+                            ->scalarNode('thumbnail_deferred')
+                                ->defaultValue('')
+                                ->end()
+                        ->end()
+                    ->end()
                     ->scalarNode('preview_image_thumbnail')
                         ->defaultNull()
                         ->end()
@@ -412,11 +443,6 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('low_quality_image_preview')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('generator')
-                                    ->defaultNull()
-                                    ->end()
-                                ->end()
                             ->end()
                             ->arrayNode('focal_point_detection')
                                 ->addDefaultsIfNotSet()
@@ -490,9 +516,11 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                     ->scalarNode('icc_rgb_profile')
+                        ->info('Absolute path to default ICC RGB profile (if no embedded profile is given)')
                         ->defaultNull()
                     ->end()
                     ->scalarNode('icc_cmyk_profile')
+                        ->info('Absolute path to default ICC CMYK profile (if no embedded profile is given)')
                         ->defaultNull()
                     ->end()
                     ->booleanNode('hide_edit_image')
@@ -943,7 +971,7 @@ class Configuration implements ConfigurationInterface
     {
         $node = $parent->children()->arrayNode($name);
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
+        /** @var ArrayNodeDefinition $prototype */
         $prototype = $node->prototype('array');
         $prototype
             ->beforeNormalization()
@@ -975,10 +1003,15 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('lifetime')
+                        ->info('Optional output-cache lifetime (in seconds) after the cache expires, if not defined the cache will be cleaned on every action inside the CMS, otherwise not (for high traffic sites)')
                         ->defaultNull()
                     ->end()
-                    ->scalarNode('exclude_patterns')->end()
-                    ->scalarNode('exclude_cookie')->end()
+                    ->scalarNode('exclude_patterns')
+                        ->info('Regular Expressions like: /^\/dir\/toexclude/')
+                    ->end()
+                    ->scalarNode('exclude_cookie')
+                        ->info('Comma separated list of cookie names, that will automatically disable the full-page cache')
+                    ->end()
                 ->end()
             ->end();
     }
@@ -996,21 +1029,29 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('sender')
+                            ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
+                                ->scalarNode('name')
+                                    ->defaultValue('')
+                                ->end()
+                                ->scalarNode('email')
+                                    ->defaultValue('')
+                                ->end()
                             ->end()
                         ->end()
                         ->arrayNode('return')
+                            ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
+                                ->scalarNode('name')
+                                    ->defaultValue('')
+                                ->end()
+                                ->scalarNode('email')
+                                    ->defaultValue('')
+                                ->end()
                             ->end()
                         ->end()
-                        ->scalarNode('method')
-                            ->defaultNull()
-                        ->end()
                         ->arrayNode('debug')
+                            ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('email_addresses')
                                     ->defaultValue('')
@@ -1018,6 +1059,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->scalarNode('usespecific')
+                            ->defaultFalse()
                         ->end()
                     ->end()
                 ->end()
@@ -1166,23 +1208,6 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    private function addMimeNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('mime')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('extensions')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()

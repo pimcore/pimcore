@@ -19,7 +19,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Pro
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class TenantProcessor
+/**
+ * @internal
+ */
+final class TenantProcessor
 {
     /**
      * Merges tenant configs with an optional _defaults key which is applied

@@ -32,41 +32,41 @@ class GroupConfig extends Model\AbstractModel
     /** Group id.
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Store ID
      *
      * @var int
      */
-    public $storeId = 1;
+    protected $storeId = 1;
 
     /** Parent id
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /** The group name.
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The group description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id

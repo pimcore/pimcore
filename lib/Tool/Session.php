@@ -113,21 +113,31 @@ class Session
      *
      * @param string $namespace
      *
-     * @return AttributeBagInterface
+     * @return AttributeBagInterface|null
      */
-    public static function get(string $namespace = 'pimcore_admin'): AttributeBagInterface
+    public static function get(string $namespace = 'pimcore_admin')
     {
-        return static::getHandler()->loadAttributeBag($namespace);
+        $bag = static::getHandler()->loadAttributeBag($namespace);
+        if ($bag instanceof AttributeBagInterface) {
+            return $bag;
+        }
+
+        return null;
     }
 
     /**
      * @param string $namespace
      *
-     * @return AttributeBagInterface
+     * @return AttributeBagInterface|null
      */
-    public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
+    public static function getReadOnly(string $namespace = 'pimcore_admin')
     {
-        return static::getHandler()->getReadOnlyAttributeBag($namespace);
+        $bag = static::getHandler()->getReadOnlyAttributeBag($namespace);
+        if ($bag instanceof AttributeBagInterface) {
+            return $bag;
+        }
+
+        return null;
     }
 
     /**

@@ -248,13 +248,21 @@ pimcore.object.tree = Class.create({
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
                         "error",t(rdata.message));
-                    pimcore.elementservice.refreshNode(oldParent);
+                    // we have to delay refresh between two nodes,
+                    // as there could be parent child relationship leading to race condition
+                    window.setTimeout(function () {
+                        pimcore.elementservice.refreshNode(oldParent);
+                    }, 500);
                     pimcore.elementservice.refreshNode(newParent);
                 }
             } catch(e){
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
-                pimcore.elementservice.refreshNode(oldParent);
+                // we have to delay refresh between two nodes,
+                // as there could be parent child relationship leading to race condition
+                window.setTimeout(function () {
+                    pimcore.elementservice.refreshNode(oldParent);
+                }, 500);
                 pimcore.elementservice.refreshNode(newParent);
             }
             tree.loadMask.hide();
@@ -345,13 +353,22 @@ pimcore.object.tree = Class.create({
             var tmpMenuEntryImport;
             var $this = this;
 
-            object_types.sort([{property: 'translatedText', direction: 'ASC'}]);
+            object_types.sort([
+                {property: 'translatedGroup', direction: 'ASC'},
+                {property: 'translatedText', direction: 'ASC'}
+            ]);
 
             object_types.each(function (classRecord) {
 
-                if ($this.config.allowedClasses && !in_array(classRecord.get("id"), $this.config.allowedClasses)) {
+                if ($this.config.allowedClasses && !in_array(classRecord.get("id"), Object.keys($this.config.allowedClasses))) {
                     return;
                 }
+                
+                if ($this.config.allowedClasses && $this.config.allowedClasses[classRecord.get("id")] !== null) {
+                    if(record.data.depth >= $this.config.allowedClasses[classRecord.get("id")]) {
+                        return;
+                    }
+                };
 
                 tmpMenuEntry = {
                     text: classRecord.get("translatedText"),
@@ -381,7 +398,7 @@ pimcore.object.tree = Class.create({
                 if (classRecord.get("group")) {
                     if (!groups["objects"][classRecord.get("group")]) {
                         groups["objects"][classRecord.get("group")] = {
-                            text: classRecord.get("group"),
+                            text: classRecord.get("translatedGroup"),
                             iconCls: "pimcore_icon_folder",
                             hideOnClick: false,
                             menu: {
@@ -389,7 +406,7 @@ pimcore.object.tree = Class.create({
                             }
                         };
                         groups["importer"][classRecord.get("group")] = {
-                            text: classRecord.get("group"),
+                            text: classRecord.get("translatedGroup"),
                             iconCls: "pimcore_icon_folder",
                             hideOnClick: false,
                             menu: {
@@ -439,15 +456,6 @@ pimcore.object.tree = Class.create({
                             iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                             handler: this.addFolder.bind(this, tree, record)
                         }));
-                    }
-
-                    if (perspectiveCfg.inTreeContextMenu("object.importCsv")) {
-                        menu.add({
-                            text: t('import_csv'),
-                            hideOnClick: false,
-                            iconCls: "pimcore_icon_object pimcore_icon_overlay_upload",
-                            menu: objectMenu.importer
-                        });
                     }
 
                     menu.add("-");
@@ -636,7 +644,7 @@ pimcore.object.tree = Class.create({
                     }
                 }
 
-                if (lockMenu.length > 0) {
+                if (lockMenu.length > 0 && perspectiveCfg.inTreeContextMenu("object.unlock")) {
                     advancedMenuItems.push({
                         text: t('lock'),
                         iconCls: "pimcore_icon_lock",

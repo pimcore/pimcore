@@ -23,7 +23,10 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Twig\Environment;
 
-class CsrfProtectionHandler implements LoggerAwareInterface
+/**
+ * @internal
+ */
+final class CsrfProtectionHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

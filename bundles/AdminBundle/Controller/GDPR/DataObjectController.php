@@ -27,12 +27,12 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/data-object")
  *
- * @package GDPRDataExtractorBundle\Controller
+ * @internal
  */
-class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+final class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

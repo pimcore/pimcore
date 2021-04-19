@@ -22,7 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Pimcore\Web2Print\Processor\HeadlessChrome;
-use Pimcore\Web2Print\Processor\PdfReactor8;
+use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
@@ -35,7 +35,7 @@ abstract class Processor
     private static $lock = null;
 
     /**
-     * @return HeadlessChrome|PdfReactor8|WkHtmlToPdf
+     * @return HeadlessChrome|PdfReactor|WkHtmlToPdf
      *
      * @throws \Exception
      */
@@ -44,7 +44,7 @@ abstract class Processor
         $config = Config::getWeb2PrintConfig();
 
         if ($config->get('generalTool') === 'pdfreactor') {
-            return new PdfReactor8();
+            return new PdfReactor();
         } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
         } elseif ($config->get('generalTool') === 'headlesschrome') {

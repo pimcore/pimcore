@@ -20,8 +20,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Handles block state for sub requests (saves parent state and restores it after request completes)
+ *
+ * @internal
  */
-class DocumentRendererListener implements EventSubscriberInterface
+final class DocumentRendererListener implements EventSubscriberInterface
 {
     /**
      * @var ContainerService
@@ -34,7 +36,7 @@ class DocumentRendererListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

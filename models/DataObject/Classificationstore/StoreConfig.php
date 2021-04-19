@@ -29,21 +29,21 @@ class StoreConfig extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * The store name.
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The store description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @param int $id

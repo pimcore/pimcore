@@ -96,8 +96,6 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @deprecated
-     *
      * @param string $component
      */
     public function setComponent($component)
@@ -142,7 +140,7 @@ class ApplicationLogger implements LoggerInterface
      */
     public function log($level, $message, array $context = [])
     {
-        if (!isset($context['component'])) {
+        if (!isset($context['component']) || is_null($context['component'])) {
             $context['component'] = $this->component;
         }
 

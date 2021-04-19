@@ -58,6 +58,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->setKey($d['key']);
                 $this->model->setCreationDate($d['creationDate']);
                 $this->model->setModificationDate($d['modificationDate']);
+                $this->model->setType($d['type']);
             }
         } else {
             throw new \Exception("Translation-Key -->'" . $key . "'<-- not found");
@@ -73,15 +74,18 @@ class Dao extends Model\Dao\AbstractDao
         $this->createOrUpdateTable();
 
         if ($this->model->getKey() !== '') {
-            foreach ($this->model->getTranslations() as $language => $text) {
-                $data = [
-                    'key' => $this->model->getKey(),
-                    'language' => $language,
-                    'text' => $text,
-                    'modificationDate' => $this->model->getModificationDate(),
-                    'creationDate' => $this->model->getCreationDate(),
-                ];
-                $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+            if (is_array($this->model->getTranslations())) {
+                foreach ($this->model->getTranslations() as $language => $text) {
+                    $data = [
+                        'key' => $this->model->getKey(),
+                        'type' => $this->model->getType(),
+                        'language' => $language,
+                        'text' => $text,
+                        'modificationDate' => $this->model->getModificationDate(),
+                        'creationDate' => $this->model->getCreationDate(),
+                    ];
+                    $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+                }
             }
         }
     }
@@ -111,12 +115,31 @@ class Dao extends Model\Dao\AbstractDao
         return $languages;
     }
 
+    /**
+     * Returns boolean, if the domain table exists
+     *
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public function isAValidDomain(string $domain): bool
+    {
+        try {
+            $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function createOrUpdateTable()
     {
         $table = $this->getDatabaseTableName();
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+                          `type` varchar(10) DEFAULT NULL,
                           `language` varchar(10) NOT NULL DEFAULT '',
                           `text` text DEFAULT NULL,
                           `creationDate` int(11) unsigned DEFAULT NULL,

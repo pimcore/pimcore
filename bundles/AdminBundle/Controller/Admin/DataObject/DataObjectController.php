@@ -30,10 +30,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
-use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,11 +41,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/object")
+ *
+ * @internal
  */
-class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
+final class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
@@ -114,7 +116,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object instanceof DataObject\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
-                $objectTypes = [DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT];
+                $objectTypes = DataObject::$types;
             }
         }
 
@@ -149,9 +151,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 if ($cv['classes']) {
                     $cvConditions = [];
-                    $cvClasses = explode(',', $cv['classes']);
-                    foreach ($cvClasses as $cvClass) {
-                        $cvConditions[] = "objects.o_classId = '" . $cvClass . "'";
+                    $cvClasses = $cv['classes'];
+                    foreach ($cvClasses as $key => $cvClass) {
+                        $cvConditions[] = "objects.o_classId = '" . $key . "'";
                     }
 
                     $cvConditions[] = "objects.o_type = 'folder'";
@@ -285,7 +287,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $tmpObject['leaf'] = !$hasChildren;
 
         $tmpObject['isTarget'] = true;
-        if ($tmpObject['type'] != 'variant') {
+        if ($tmpObject['type'] != DataObject::OBJECT_TYPE_VARIANT) {
             $tmpObject['allowDrop'] = true;
         }
 
@@ -590,15 +592,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
         // LazyLoadingSupportInterface types. It tries to optimize fetching the data needed for the editmode without
         // loading the entire target element.
-        // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),
+        // ReverseObjectRelation should go in there anyway (regardless if it a version or not),
         // so that the values can be loaded.
         if (
             (!$objectFromVersion && $fielddefinition instanceof AbstractRelations)
-            || $fielddefinition instanceof ReverseManyToManyObjectRelation
+            || $fielddefinition instanceof ReverseObjectRelation
         ) {
             $refId = null;
 
-            if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
+            if ($fielddefinition instanceof ReverseObjectRelation) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refClass = DataObject\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
                 if ($refClass) {
@@ -608,7 +610,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $refKey = $key;
             }
 
-            $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseManyToManyObjectRelation, $refId);
+            $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseObjectRelation, $refId);
 
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
@@ -1206,7 +1208,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         }
                     }
 
-                    if ($fd instanceof ReverseManyToManyObjectRelation) {
+                    if ($fd instanceof ReverseObjectRelation) {
                         $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
@@ -1239,10 +1241,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->assignPropertiesFromEditmode($request, $object);
         $this->applySchedulerDataToElement($request, $object);
 
-        if ($request->get('task') == 'unpublish' && $object->isAllowed('unpublish')) {
+        if (($request->get('task') === 'unpublish' && !$object->isAllowed('unpublish')) || ($request->get('task') === 'publish' && !$object->isAllowed('publish'))) {
+            throw $this->createAccessDeniedHttpException();
+        }
+
+        if ($request->get('task') == 'unpublish') {
             $object->setPublished(false);
         }
-        if ($request->get('task') == 'publish' && $object->isAllowed('publish')) {
+
+        if ($request->get('task') == 'publish') {
             $object->setPublished(true);
         }
 
@@ -1251,7 +1258,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $object->setOmitMandatoryCheck(true);
         }
 
-        if (($request->get('task') == 'publish' && $object->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $object->isAllowed('unpublish'))) {
+        if (($request->get('task') == 'publish') || ($request->get('task') == 'unpublish')) {
             if ($data) {
                 if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
                     return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
@@ -1475,14 +1482,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/previewVersion.html.twig',
                     [
                         'object' => $object,
+                        'versionNote' => $version->getNote(),
                         'validLanguages' => Tool::getValidLanguages(),
                     ]);
-            } else {
-                throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
             }
-        } else {
-            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
+            throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
         }
+
+        throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
     }
 
     /**
@@ -1516,15 +1523,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig',
                     [
                         'object1' => $object1,
+                        'versionNote1' => $version1->getNote(),
                         'object2' => $object2,
+                        'versionNote2' => $version2->getNote(),
                         'validLanguages' => Tool::getValidLanguages(),
                     ]);
-            } else {
-                throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }
-        } else {
-            throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+
+            throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
         }
+
+        throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
     }
 
     /**
@@ -1841,13 +1850,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 ],
             ]];
 
-            if ($object->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
+            if ($object->hasChildren(DataObject::$types)) {
                 // get amount of children
                 $list = new DataObject\Listing();
                 $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
-                $list->setObjectTypes([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes(DataObject::$types);
                 $childIds = $list->loadIdList();
 
                 if (count($childIds) > 0) {
@@ -2077,14 +2086,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         if ($currentData[$i]->getId() == $object->getId()) {
                             unset($currentData[$i]);
                             $owner->$setter($currentData);
-                            $owner->setUserModification($this->getAdminUser()->getId());
-                            $owner->save();
-                            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
                             break;
                         }
                     }
+                } else {
+                    if ($currentData->getId() == $object->getId()) {
+                        $owner->$setter(null);
+                    }
                 }
             }
+            $owner->setUserModification($this->getAdminUser()->getId());
+            $owner->save();
+            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
         }
 
         foreach ($toAdd as $id) {
@@ -2092,8 +2105,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             //TODO: lock ?!
             if (method_exists($owner, $getter)) {
                 $currentData = $owner->$getter();
-                $currentData[] = $object;
-
+                if (is_array($currentData)) {
+                    $currentData[] = $object;
+                } else {
+                    $currentData = $object;
+                }
                 $owner->$setter($currentData);
                 $owner->setUserModification($this->getAdminUser()->getId());
                 $owner->save();

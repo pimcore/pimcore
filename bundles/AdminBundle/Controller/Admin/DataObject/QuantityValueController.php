@@ -25,7 +25,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuantityValueController extends AdminController
+/**
+ *  @internal
+ */
+final class QuantityValueController extends AdminController
 {
     /**
      * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxyget", methods={"GET"})
@@ -40,16 +43,18 @@ class QuantityValueController extends AdminController
     {
         $list = new Unit\Listing();
 
-        $orderKey = 'abbreviation';
-        $order = 'asc';
+        $order = ['ASC', 'ASC', 'ASC'];
+        $orderKey = ['baseunit', 'factor', 'abbreviation'];
 
         $allParams = array_merge($request->request->all(), $request->query->all());
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+
+        // Prepend user-requested sorting settings but keep the others to keep secondary order of quantity values in respective order
         if ($sortingSettings['orderKey']) {
-            $orderKey = $sortingSettings['orderKey'];
+            array_unshift($orderKey, $sortingSettings['orderKey']);
         }
         if ($sortingSettings['order']) {
-            $order = $sortingSettings['order'];
+            array_unshift($order, $sortingSettings['order']);
         }
 
         $list->setOrder($order);
@@ -73,11 +78,10 @@ class QuantityValueController extends AdminController
             }
             $list->setCondition($condition);
         }
-        $list->load();
 
         $units = [];
         foreach ($list->getUnits() as $u) {
-            $units[] = get_object_vars($u);
+            $units[] = $u->getObjectVars();
         }
 
         return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
@@ -110,13 +114,13 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
-                    if ($data['baseunit'] === -1) {
+                    if (($data['baseunit'] ?? null) === -1) {
                         $data['baseunit'] = null;
                     }
                     $unit->setValues($data);
                     $unit->save();
 
-                    return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
+                    return $this->adminJson(['data' => $unit->getObjectVars(), 'success' => true]);
                 } else {
                     throw new \Exception('Unit with id ' . $data['id'] . ' not found.');
                 }
@@ -135,7 +139,7 @@ class QuantityValueController extends AdminController
                 $unit->setValues($data);
                 $unit->save();
 
-                return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
+                return $this->adminJson(['data' => $unit->getObjectVars(), 'success' => true]);
             }
         }
 
@@ -168,8 +172,8 @@ class QuantityValueController extends AdminController
     public function unitListAction(Request $request)
     {
         $list = new Unit\Listing();
-        $list->setOrderKey('abbreviation');
-        $list->setOrder('ASC');
+        $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
+        $list->setOrder(['ASC', 'ASC', 'ASC']);
         if ($request->get('filter')) {
             $array = explode(',', $request->get('filter'));
             $quotedArray = [];
@@ -182,7 +186,6 @@ class QuantityValueController extends AdminController
         }
 
         $units = $list->getUnits();
-
         foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
@@ -250,12 +253,11 @@ class QuantityValueController extends AdminController
 
         $units = new Unit\Listing();
         $units->setCondition('baseunit = '.$units->quote($baseUnit->getId()).' AND id != '.$units->quote($fromUnit->getId()));
-        $units = $units->load();
 
         $convertedValues = [];
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        foreach ($units as $targetUnit) {
+        foreach ($units->getUnits() as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
 

@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Console\Traits\Parallelization;
@@ -25,7 +24,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
+final class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
     use Parallelization
@@ -57,7 +56,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -74,7 +73,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -83,7 +82,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function fetchItems(InputInterface $input): array
     {
@@ -97,7 +96,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runSingleCommand(string $serializedRow, InputInterface $input, OutputInterface $output): void
     {
@@ -133,7 +132,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     /**
      * @param string[] $openTenantList a list of tenants for which the workers should be retrieved
      *
-     * @return AbstractBatchProcessingWorker[]
+     * @return ProductCentricBatchProcessingWorker[]
      */
     private function getTenantWorkers(array $openTenantList): array
     {

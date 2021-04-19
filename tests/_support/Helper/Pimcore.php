@@ -22,7 +22,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class Pimcore extends Module\Symfony
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
@@ -75,8 +75,6 @@ class Pimcore extends Module\Symfony
 
     public function _initialize(): void
     {
-        Config::setEnvironment($this->config['environment']);
-
         // don't initialize the kernel multiple times if running multiple suites
         // TODO can this lead to side-effects?
         if (null !== $kernel = \Pimcore::getKernel()) {
@@ -120,7 +118,6 @@ class Pimcore extends Module\Symfony
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
-            PIMCORE_ASSET_DIRECTORY,
         ];
 
         $filesystem = new Filesystem();
@@ -278,7 +275,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _before(TestInterface $test): void
     {

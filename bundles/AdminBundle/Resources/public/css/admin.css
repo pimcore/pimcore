@@ -1764,10 +1764,14 @@ span.warning {
 .pimcore_button_black {
     background-color: #3c3f41;
     border-color: #3c3f41;
+    margin-top: 1px !important;
 }
 
-.pimcore_button_black.x-btn-over, .pimcore_button_black.x-btn.x-btn-pressed {
-    background-color: #000;
+.pimcore_button_black.x-btn-over,
+.pimcore_button_black.x-btn.x-btn-pressed,
+.pimcore_button_black.x-btn.x-btn-focus {
+    background-color: #000 !important;
+    border-color: #000;
 }
 
 .pimcore_button_transparent {
@@ -1781,7 +1785,7 @@ span.warning {
     height: 32px;
     content: "";
     background-color: #000;
-    top: 6px;
+    top: 8px;
     left: 39px;
     z-index: 1000;
 }

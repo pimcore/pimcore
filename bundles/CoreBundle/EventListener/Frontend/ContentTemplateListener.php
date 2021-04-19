@@ -25,8 +25,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * If a contentTemplate attribute was set on the request (done by router when building a document route), extract the
  * value and set it on the Template annotation. This handles custom template files being configured on documents.
+ *
+ * @internal
  */
-class ContentTemplateListener implements EventSubscriberInterface
+final class ContentTemplateListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
@@ -44,7 +46,7 @@ class ContentTemplateListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

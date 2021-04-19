@@ -108,6 +108,8 @@ class Gift implements GiftInterface
      * dont cache the entire product object
      *
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -120,6 +122,8 @@ class Gift implements GiftInterface
 
     /**
      * restore product
+     *
+     * @internal
      */
     public function __wakeup()
     {

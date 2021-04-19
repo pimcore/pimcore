@@ -237,15 +237,11 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return '';
     }
 
+
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() &&
             ($data === null || $data->getField() === null)) {
@@ -256,7 +252,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
@@ -277,28 +273,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         }
 
         return '';
-    }
-
-    /**
-     * fills object field data values from CSV Import String
-     *
-     * @param string $importValue
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return ObjectData\IndexFieldSelection|null
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        $values = explode('%%%%', $importValue);
-
-        $value = null;
-        if ($values[0] && $values[1] && $values[2]) {
-            $preSelect = explode('%%', $value[2]);
-            $value = new ObjectData\IndexFieldSelection($value[0], $values[1], $preSelect);
-        }
-
-        return $value;
     }
 
     /**
@@ -332,21 +306,21 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\' . IndexFieldSelection::class;
+        return '?\\' . ObjectData\IndexFieldSelection::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\' . IndexFieldSelection::class;
+        return '?\\' . ObjectData\IndexFieldSelection::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . IndexFieldSelection::class . '|null';
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . IndexFieldSelection::class . '|null';
+        return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 }

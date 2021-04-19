@@ -24,11 +24,14 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
 {
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'targetGroupMultiselect';
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */

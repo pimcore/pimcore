@@ -40,16 +40,16 @@ final class AdvancedPngOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
-    protected function getCommand(string $executable, string $input, string $output): string
+    protected function getCommandArray(string $executable, string $input, string $output): array
     {
-        return $executable.' -z4 '.escapeshellarg($output);
+        return [$executable, '-z4', $output];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(string $input): bool
+    public function supports(string $mimeType): bool
     {
-        return $this->mimeTypeGuesser->guessMimeType($input) === 'image/png';
+        return $mimeType === 'image/png';
     }
 }

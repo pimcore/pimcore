@@ -36,78 +36,78 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @var Data\Id
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $fullPath;
+    protected $fullPath;
 
     /**
      * document | object | asset
      *
      * @var string
      */
-    public $maintype;
+    protected $maintype;
 
     /**
      * webresource type (e.g. page, snippet ...)
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * currently only relevant for objects where it portrays the class name
      *
      * @var string
      */
-    public $subtype;
+    protected $subtype;
 
     /**
      * published or not
      *
      * @var bool
      */
-    public $published;
+    protected $published;
 
     /**
      * timestamp of creation date
      *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * timestamp of modification date
      *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * User-ID of the owner
      *
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * User-ID of the user last modified the element
      *
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * @var string|null
      */
-    public $data;
+    protected $data;
 
     /**
      * @var string
      */
-    public $properties;
+    protected $properties;
 
     /**
      * @param Element\ElementInterface $element

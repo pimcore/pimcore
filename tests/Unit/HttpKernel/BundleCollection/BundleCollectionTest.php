@@ -37,7 +37,7 @@ class BundleCollectionTest extends TestCase
     private $bundles;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {

@@ -23,8 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/snippet")
+ *
+ * @internal
  */
-class SnippetController extends DocumentControllerBase
+final class SnippetController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

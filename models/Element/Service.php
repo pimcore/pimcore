@@ -23,8 +23,8 @@ use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
@@ -108,7 +108,7 @@ class Service extends Model\AbstractModel
 
         if ($element) {
             $type = $element->getType();
-            if ($type !== 'folder') {
+            if ($type !== DataObject::OBJECT_TYPE_FOLDER) {
                 if ($element instanceof Document) {
                     $type = 'document';
                 } elseif ($element instanceof DataObject\AbstractObject) {
@@ -780,7 +780,7 @@ class Service extends Model\AbstractModel
             } else {
 
                 // if this is the initial element set the correct path and key
-                if ($data instanceof ElementInterface && $initial) {
+                if ($data instanceof ElementInterface && $initial && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
                     $originalElement = self::getElementById(self::getElementType($data), $data->getId());
 
                     if ($originalElement) {
@@ -795,9 +795,7 @@ class Service extends Model\AbstractModel
                             $data->setKey($originalElement->getKey());
                         }
 
-                        if (!DataObject::doNotRestoreKeyAndPath()) {
-                            $data->setPath($originalElement->getRealPath());
-                        }
+                        $data->setPath($originalElement->getRealPath());
                     }
                 }
 
@@ -969,21 +967,24 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(static function (QueryBuilder $select) use ($cv) {
+            $childsList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
-                    $select->where($where);
+                    $select->andWhere($where);
                 }
+
+                $fromAlias = $select->getQueryPart('form')[1];
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
-                        $method = $type == 'left' || $type == 'right' ? $method = 'join' . ucfirst($type) : 'join';
+                        $method = $type == 'left' || $type == 'right' ? $method = $type . 'Join' : 'join';
                         $name = $joinConfig['name'];
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->$method($name, $condition, $columns);
+                        $select->addSelect($columns);
+                        $select->$method($fromAlias, $name, $name, $condition);
                     }
                 }
 
@@ -1159,18 +1160,26 @@ class Service extends Model\AbstractModel
         $result = [];
 
         if (is_array($versions)) {
-            $versions = json_decode(json_encode($versions), true);
-            foreach ($versions as $version) {
-                $name = null;
-                $id = null;
-                if (isset($version['user'])) {
-                    $name = $version['user']['name'];
-                    $id = $version['user']['id'];
+            foreach ($versions as $versionObj) {
+                $version = [
+                    'id' => $versionObj->getId(),
+                    'cid' => $versionObj->getCid(),
+                    'ctype' => $versionObj->getCtype(),
+                    'note' => $versionObj->getNote(),
+                    'date' => $versionObj->getDate(),
+                    'public' => $versionObj->getPublic(),
+                    'versionCount' => $versionObj->getVersionCount(),
+                ];
+
+                $version['user'] = ['name' => '', 'id' => ''];
+                if ($versionObj->getUser()) {
+                    $version['user'] = [
+                        'name' => $versionObj->getUser()->getName(),
+                        'id' => $versionObj->getUser()->getId(),
+                    ];
                 }
-                unset($version['user']);
-                $version['user']['name'] = $name;
-                $version['user']['id'] = $id;
-                $versionKey = $version['date'] . '-' . $version['versionCount'];
+
+                $versionKey = $versionObj->getDate() . '-' . $versionObj->getVersionCount();
                 if (!isset($indexMap[$versionKey])) {
                     $indexMap[$versionKey] = 0;
                 }

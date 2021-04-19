@@ -92,11 +92,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      * @param EventDispatcherInterface $eventDispatcher
-     * @param string|null $workerMode
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
     }
@@ -215,7 +214,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         foreach ($this->getSystemAttributes(true) as $name => $type) {
             $systemAttributesMapping[$name] = ['type' => $type, 'store' => true];
         }
-        $mappingAttributes['system'] = ['type' => 'object', 'dynamic' => false, 'properties' => $systemAttributesMapping];
+        $mappingAttributes['system'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => false, 'properties' => $systemAttributesMapping];
 
         //add custom defined attributes and relation attributes
         $customAttributesMapping = [];
@@ -264,7 +263,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     }
                 }
 
-                if ($type == 'object') { //object doesn't support index or store
+                if ($type == ProductListInterface::PRODUCT_TYPE_OBJECT) { //object doesn't support index or store
                     $mapping = ['type' => $type];
                 }
 
@@ -272,7 +271,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     $mapping['store'] = false;
                 }
 
-                if ($type == 'object' || $type == 'nested') {
+                if ($type == ProductListInterface::PRODUCT_TYPE_OBJECT || $type == 'nested') {
                     unset($mapping['store']);
                 }
 
@@ -284,11 +283,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
         }
 
-        $mappingAttributes['attributes'] = ['type' => 'object', 'dynamic' => true, 'properties' => $customAttributesMapping];
-        $mappingAttributes['relations'] = ['type' => 'object', 'dynamic' => false, 'properties' => $relationAttributesMapping];
-        $mappingAttributes['subtenants'] = ['type' => 'object', 'dynamic' => true];
+        $mappingAttributes['attributes'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => true, 'properties' => $customAttributesMapping];
+        $mappingAttributes['relations'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => false, 'properties' => $relationAttributesMapping];
+        $mappingAttributes['subtenants'] = ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'dynamic' => true];
         //has to be at top -> join field [system.relation] cannot be added inside an object or in a multi-field
-        $mappingAttributes[static::RELATION_FIELD] = ['type' => 'join', 'relations' => ['object' => 'variant']];
+        $mappingAttributes[static::RELATION_FIELD] = ['type' => 'join', 'relations' => ['object' => ProductListInterface::PRODUCT_TYPE_VARIANT]];
 
         return $mappingAttributes;
     }
@@ -432,10 +431,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             if ($metadata !== null && $routingId != $metadata) {
                 //routing has changed, need to delete old ES entry
-                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $metadata]];
+                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_id' => $objectId, $this->routingParamName => $metadata]];
             }
 
-            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, $this->routingParamName => $routingId]];
+            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_id' => $objectId, $this->routingParamName => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
                 return $value !== null;
             }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
@@ -519,24 +518,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         // reset
         $this->bulkIndexData = [];
         $this->indexStoreMetaData = [];
-    }
-
-    /**
-     * @deprecated
-     *
-     * first run processUpdateIndexQueue of trait and then commit updated entries
-     *
-     * @param int $limit
-     *
-     * @return int number of entries processed
-     */
-    public function processUpdateIndexQueue($limit = 100)
-    {
-        $entriesUpdated = parent::processUpdateIndexQueue($limit);
-        Logger::info('Entries updated:' . $entriesUpdated);
-        $this->commitBatchToIndex();
-
-        return $entriesUpdated;
     }
 
     protected function getStoreTableName()
@@ -629,9 +610,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
 
             try {
+                $tenantConfig = $this->getTenantConfig();
+                if (!$tenantConfig instanceof ElasticSearchConfigInterface) {
+                    throw new \Exception('Expected a ElasticSearchConfigInterface');
+                }
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
-                    'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
+                    'type' => $tenantConfig->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
                     $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
@@ -774,16 +759,21 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $esClient = $this->getElasticSearchClient();
 
         Logger::info('Index-Actions - creating new Index. Name: ' . $indexName);
+
+        $configuredSettings = $this->tenantConfig->getIndexSettings();
+        $synonymSettings = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
+        if (isset($synonymSettings['analysis'])) {
+            $configuredSettings['analysis']['filter'] = array_replace_recursive($configuredSettings['analysis']['filter'], $synonymSettings['analysis']['filter']);
+        }
+
         $result = $esClient->indices()->create([
             'index' => $indexName,
-            'body' => ['settings' => $this->tenantConfig->getIndexSettings()],
+            'body' => ['settings' => $configuredSettings],
         ]);
 
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
-
-        $this->updateSynonyms($indexName, true, true);
     }
 
     /**

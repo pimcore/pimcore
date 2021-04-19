@@ -25,7 +25,10 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class BruteforceProtectionListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class BruteforceProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
@@ -43,7 +46,7 @@ class BruteforceProtectionListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

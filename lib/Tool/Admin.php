@@ -82,7 +82,7 @@ class Admin
             }
         }
 
-        return $languages;
+        return array_unique($languages);
     }
 
     /**

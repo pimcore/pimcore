@@ -48,7 +48,7 @@ class ActionRenderer
     public function render($uri, array $options = [])
     {
         if ($uri instanceof Document\PageSnippet) {
-            $uri = $this->createDocumentReference($uri);
+            $uri = $this->createDocumentReference($uri, [], $options);
         }
 
         return $this->httpKernelRuntime->renderFragment($uri, $options);

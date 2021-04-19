@@ -37,7 +37,7 @@ class DataLoader implements DataLoaderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadDataFromProviders(VisitorInfo $visitorInfo, $providerKeys)
     {
@@ -75,7 +75,7 @@ class DataLoader implements DataLoaderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasDataProvider(string $type): bool
     {
@@ -83,7 +83,7 @@ class DataLoader implements DataLoaderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDataProvider(string $type): DataProviderInterface
     {

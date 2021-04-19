@@ -19,6 +19,9 @@ namespace Pimcore\Model\Element\DeepCopy;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
 
+/**
+ * @internal
+ */
 class UnmarshalMatcher extends TypeMatcher
 {
     /**

@@ -6,7 +6,7 @@ Following tools are provided by Pimcore to support deployment processes.
 
 All Pimcore configurations are saved as YAML or PHP files on the file system. As a result they can be included into 
 [version control systems](./01_Version_Control_Systems.md) and by utilizing the 
-[multi environment feature](./03_Multi_Environment.md) different configuration files for different deployment stages 
+[multi environment feature](03_Configuration_Environments.md) different configuration files for different deployment stages 
 can be defined. 
 
 * <https://github.com/pimcore/pimcore/tree/master/app/config> 

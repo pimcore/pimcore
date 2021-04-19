@@ -23,17 +23,15 @@ use Pimcore\Model;
 class Email extends Model\DataObject\ClassDefinition\Data\Input
 {
     /**
+     * @internal
      * @var string
      */
     public $fieldtype = 'email';
 
     /**
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws Model\Element\ValidationException
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && strlen($data) > 0) {
             $validator = new EmailValidator();

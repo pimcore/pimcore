@@ -26,6 +26,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
+/**
+ * @internal
+ */
 class PostStateChange
 {
     /**

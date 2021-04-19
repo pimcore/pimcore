@@ -15,15 +15,17 @@
 namespace Pimcore\Model\Listing;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Listing\Dao\AbstractDao;
 
 /**
  * Class AbstractListing
  *
  * @package Pimcore\Model\Listing
  *
- * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
+ * @method QueryBuilder getQueryBuilder()
  */
 abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
@@ -169,7 +171,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if ((int)$offset > 0) {
+        if ((int)$offset >= 0) {
             $this->offset = (int)$offset;
         }
 
@@ -513,7 +515,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         if ($this->data === null) {
             $dao = $this->getDao();
             if (\method_exists($dao, 'load')) {
-                $this->getDao()->load();
+                /** @var AbstractDao $dao */
+                $dao = $this->getDao();
+                $dao->load();
             } else {
                 @trigger_error(
                     'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 10.',

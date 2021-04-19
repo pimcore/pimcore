@@ -29,10 +29,13 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Workflow;
 use Symfony\Component\Workflow\Exception\LogicException;
 
-class WorkflowPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class WorkflowPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
@@ -173,6 +176,7 @@ class WorkflowPass implements CompilerPassInterface
                 $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
             }
             $workflowDefinition->replaceArgument(3, $workflowName);
+            $workflowDefinition->replaceArgument(4, $workflowConfig['events_to_dispatch'] ?? null);
 
             // Store to container
             $container->setDefinition($workflowId, $workflowDefinition);

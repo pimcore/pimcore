@@ -22,6 +22,9 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputOption;
 
+/**
+ * @internal
+ */
 abstract class AbstractBundleCommand extends AbstractCommand
 {
     /**

@@ -164,11 +164,13 @@ Ext.onReady(function () {
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 
-        var jsonData = null;
-        try {
-            jsonData = Ext.decode(response.responseText);
-        } catch (e) {
+        var jsonData = response.responseJson;
+        if (!jsonData) {
+            try {
+                jsonData = Ext.decode(response.responseText);
+            } catch (e) {
 
+            }
         }
 
         var date = new Date();
@@ -270,6 +272,17 @@ Ext.onReady(function () {
                 },
                 depends : ['name']
             },
+            'group',
+            {
+                name: "translatedGroup",
+                convert: function (v, rec) {
+                    if (rec.data.group) {
+                        return t(rec.data.group);
+                    }
+                    return '';
+                },
+                depends : ['group']
+            },
             'controller',
             'template',
             {name: 'type', allowBlank: false},
@@ -322,12 +335,24 @@ Ext.onReady(function () {
         {name: 'id'},
         {name: 'text', allowBlank: false},
         {
-            name: "translatedText", convert: function (v, rec) {
+            name: "translatedText",
+            convert: function (v, rec) {
                 return t(rec.data.text);
-            }
+            },
+            depends : ['text']
         },
         {name: 'icon'},
         {name: 'group'},
+        {
+            name: "translatedGroup",
+            convert: function (v, rec) {
+                if (rec.data.group) {
+                    return t(rec.data.group);
+                }
+                return '';
+            },
+            depends : ['group']
+        },
         {name: "propertyVisibility"}
     ];
 
@@ -597,7 +622,7 @@ Ext.onReady(function () {
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
                                     Ext.create('Ext.ux.TabReorderer', {}),
-                                    //TODO EXTJS7, Ext.create('Ext.ux.TabMiddleButtonClose', {})
+                                    Ext.create('Ext.ux.TabMiddleButtonClose', {})
                                 ]
                         })
                         ,
@@ -925,8 +950,7 @@ Ext.onReady(function () {
             navigationModel: 'quicksearch.boundlist',
             listeners: {
                 "highlightitem": function (view, node, opts) {
-                    // we use getAttribute() here instead of dataset -> IE11 has some strange issues with that in this case
-                    var record = quicksearchStore.getAt(node.getAttribute('data-recordIndex'));
+                    var record = quicksearchStore.getAt(node.dataset.recordIndex);
                     var previewHtml = record.get('preview');
                     if(!previewHtml) {
                         previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';

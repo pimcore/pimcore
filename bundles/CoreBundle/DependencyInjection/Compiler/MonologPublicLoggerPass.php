@@ -20,7 +20,10 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class MonologPublicLoggerPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class MonologPublicLoggerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

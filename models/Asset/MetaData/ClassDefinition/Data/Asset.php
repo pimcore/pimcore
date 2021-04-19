@@ -120,7 +120,9 @@ class Asset extends Data
         return $data;
     }
 
-    /** @inheritDoc */
+    /**
+     * {@inheritdoc}
+     */
     public function getDataForEditMode($data, $params = [])
     {
         if (is_numeric($data)) {
@@ -146,7 +148,7 @@ class Asset extends Data
         }
 
         if ($data instanceof \Pimcore\Model\Asset) {
-            return $data->getFullPath();
+            return $data->getRealFullPath();
         }
 
         return $data;
@@ -160,8 +162,8 @@ class Asset extends Data
      */
     public function resolveDependencies($data, $params = [])
     {
-        if (isset($params['data'])) {
-            $elementId = $params['data'];
+        if ($data instanceof \Pimcore\Model\Asset && isset($params['type'])) {
+            $elementId = $data->getId();
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;

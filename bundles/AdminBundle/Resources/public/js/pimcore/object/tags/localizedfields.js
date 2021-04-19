@@ -499,6 +499,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     getValue: function () {
         var localizedData = {};
         var currentLanguage;
+        var ignoreIsDirty = ['fieldcollection'].includes(this.getContext().containerType) || ['block'].includes(this.getContext().subContainerType);
 
         for (var i = 0; i < this.frontendLanguages.length; i++) {
             currentLanguage = this.frontendLanguages[i];
@@ -509,8 +510,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             for (var s = 0; s < this.languageElements[currentLanguage].length; s++) {
                 try {
-
-                    if (this.languageElements[currentLanguage][s].isDirty()) {
+                    if (ignoreIsDirty || this.languageElements[currentLanguage][s].isDirty()) {
                         localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()]
                             = this.languageElements[currentLanguage][s].getValue();
                     }

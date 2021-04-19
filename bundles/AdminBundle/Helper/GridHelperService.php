@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -27,6 +28,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
 
+/**
+ * @internal
+ */
 class GridHelperService
 {
     /**
@@ -392,7 +396,13 @@ class GridHelperService
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureAndSlugFilters, $me) {
+
+            $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                $featureJoins,
+                $class,
+                $featureAndSlugFilters,
+                $me
+            ) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -406,18 +416,18 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
 
                     $table = $me->getDao()->getTableName();
-                    $select->joinLeft(
-                        [$mappedKey => 'object_classificationstore_data_' . $class->getId()],
+                    $select->addSelect('value AS ' . $mappedKey);
+                    $select->leftJoin(
+                        $table,
+                        'object_classificationstore_data_' . $class->getId(),
+                        $mappedKey,
                         '('
                         . $mappedKey . '.o_id = ' . $table . '.o_id'
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
                         . ' and ' . $mappedKey . '.groupId=' . $featureJoin['groupId']
                         . ' and ' . $mappedKey . '.keyId=' . $featureJoin['keyId']
                         . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
-                        . ')',
-                        [
-                            $mappedKey => 'value',
-                        ]
+                        . ')'
                     );
                 }
 
@@ -441,7 +451,12 @@ class GridHelperService
     {
         if ($slugJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($slugJoins, $featureAndSlugFilters, $me) {
+
+            $list->onCreateQueryBuilder(function (DoctrineQueryBuilder $select) use (
+                $slugJoins,
+                $featureAndSlugFilters,
+                $me
+            ) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -453,15 +468,15 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
                     $table = $me->getDao()->getTableName();
 
-                    $select->joinLeft(
-                        [$mappedKey => 'object_url_slugs'],
+                    $select->addSelect('slug AS ' . $mappedKey);
+                    $select->leftJoin(
+                        $table,
+                        'object_url_slugs',
+                        $mappedKey,
                         '('
                         . $mappedKey . '.objectId = ' . $table . '.o_id'
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
-                        . ')',
-                        [
-                            $mappedKey => 'slug',
-                        ]
+                        . ')'
                     );
                 }
 
@@ -487,7 +502,6 @@ class GridHelperService
         $colMappings = [
             'key' => 'o_key',
             'filename' => 'o_key',
-            'fullpath' => ['o_path', 'o_key'],
             'id' => 'oo_id',
             'published' => 'o_published',
             'modificationDate' => 'o_modificationDate',
@@ -524,6 +538,9 @@ class GridHelperService
             if (!(substr($orderKey, 0, 1) == '~')) {
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
+                } elseif ($orderKey === 'fullpath') {
+                    $orderKey = 'CAST(CONCAT(o_path, o_key) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                    $doNotQuote = true;
                 } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\QuantityValue) {
                     $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
                     $doNotQuote = true;

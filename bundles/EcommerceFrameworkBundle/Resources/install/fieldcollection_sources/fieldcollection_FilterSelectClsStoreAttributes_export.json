@@ -199,5 +199,6 @@
             }
         ],
         "locked": false
-    }
+    },
+    "generateTypeDeclarations": true
 }

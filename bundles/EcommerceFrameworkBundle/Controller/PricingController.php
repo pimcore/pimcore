@@ -30,11 +30,13 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class ConfigController
  *
  * @Route("/pricing")
+ *
+ * @internal
  */
-class PricingController extends AdminController implements KernelControllerEventInterface
+final class PricingController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

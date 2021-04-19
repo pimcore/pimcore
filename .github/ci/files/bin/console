@@ -16,9 +16,11 @@
 ob_get_clean();
 
 include __DIR__ . "/../vendor/autoload.php";
-\Pimcore\Bootstrap::setProjectRoot();
 
+define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('PIMCORE_CONSOLE', true);
+
+\Pimcore\Bootstrap::setProjectRoot();
 
 /** @var \Pimcore\Kernel $kernel */
 $kernel = \Pimcore\Bootstrap::startupCli();

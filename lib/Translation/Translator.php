@@ -165,11 +165,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
         $this->initializedCatalogues[$cacheKey] = true;
 
-        if (!empty($domain)) {
+        if (Translation::isAValidDomain($domain)) {
             $catalogue = null;
 
             if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ['__pimcore_dummy' => 'only_a_dummy'];
+                $dataIntl = ['__pimcore_dummy' => 'only_a_dummy'];
 
                 if ($domain == 'admin') {
                     $jsonFiles = [
@@ -214,7 +215,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                             $translationTerm = $translationKey;
                         }
 
-                        $data[$translationKey] = $translationTerm;
+                        if (empty($translation['type']) || $translation['type'] === 'simple') {
+                            $data[$translationKey] = $translationTerm;
+                        } else {
+                            $dataIntl[$translationKey] = $translationTerm;
+                        }
                     }
                 }
 
@@ -229,7 +234,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     }
                 }
 
-                $data = [$domain => $data];
+                $data = [
+                    $domain => $data,
+                    $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX => $dataIntl,
+                ];
                 $catalogue = new MessageCatalogue($locale, $data);
 
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
@@ -259,20 +267,23 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         $normalizedId = $id;
-        if (isset($parameters['%count%'])) {
+
+        //translate only plural form(seperated by pipe "|") with count param
+        if (isset($parameters['%count%']) && $translated && strpos($normalizedId, '|') !== false) {
             $normalizedId = $id = $translated;
+            $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
 
-        $lookForFallback = $normalizedId == $translated;
+        $lookForFallback = empty($translated);
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
-                if ($translated != $normalizedId) {
+                if ($normalizedId != $translated && $translated) {
                     return $translated;
                 }
-            } elseif (!empty($domain)) {
+            } elseif (Translation::isAValidDomain($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
@@ -329,7 +340,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             }
         }
 
-        return $translated;
+        return !empty($translated) ? $translated : $id;
     }
 
     /**

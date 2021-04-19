@@ -20,6 +20,9 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @internal
+ */
 final class CleanupBrickTablesTask implements TaskInterface
 {
     /**

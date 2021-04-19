@@ -24,7 +24,7 @@ use Pimcore\Model;
  * @method void save()
  * @method void delete()
  */
-class Config extends Model\AbstractModel
+final class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
@@ -43,42 +43,52 @@ class Config extends Model\AbstractModel
      *
      * @var array
      */
-    public $items = [];
+    protected $items = [];
+
+    /**
+     * @var array
+     */
+    public $medias = [];
 
     /**
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var string
      */
-    public $group = '';
+    protected $group = '';
 
     /**
      * @var int
      */
-    public $videoBitrate;
+    protected $videoBitrate;
 
     /**
      * @var int
      */
-    public $audioBitrate;
+    protected $audioBitrate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
+
+    /**
+     * @var string
+     */
+    public $filenameSuffix;
 
     /**
      * @param string $name
@@ -110,6 +120,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return Config
      */
     public static function getPreviewConfig()
@@ -134,30 +146,60 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     */
+    protected function createMediaIfNotExists($name)
+    {
+        if (!array_key_exists($name, $this->medias)) {
+            $this->medias[$name] = [];
+        }
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $name
      * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
-    public function addItem($name, $parameters)
+    public function addItem($name, $parameters, $media = null)
     {
-        $this->items[] = [
+        $item = [
             'method' => $name,
             'arguments' => $parameters,
         ];
+
+        // default is added to $this->items for compatibility reasons
+        if (!$media || $media == 'default') {
+            $this->items[] = $item;
+        } else {
+            $this->createMediaIfNotExists($media);
+            $this->medias[$media][] = $item;
+        }
 
         return true;
     }
 
     /**
+     * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
      *
      * @return bool
      */
-    public function addItemAt($position, $name, $parameters)
+    public function addItemAt($position, $name, $parameters, $media = null)
     {
-        array_splice($this->items, $position, 0, [[
+        if (!$media || $media == 'default') {
+            $itemContainer = &$this->items;
+        } else {
+            $this->createMediaIfNotExists($media);
+            $itemContainer = &$this->medias[$media];
+        }
+
+        array_splice($itemContainer, $position, 0, [[
             'method' => $name,
             'arguments' => $parameters,
         ]]);
@@ -165,9 +207,39 @@ class Config extends Model\AbstractModel
         return true;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function selectMedia($name)
+    {
+        if (preg_match('/^[0-9a-f]{8}$/', $name)) {
+            $hash = $name;
+        } else {
+            $hash = hash('crc32b', $name);
+        }
+
+        foreach ($this->medias as $key => $value) {
+            $currentHash = hash('crc32b', $key);
+            if ($key === $name || $currentHash === $hash) {
+                $this->setItems($value);
+                $this->setFilenameSuffix('media--' . $currentHash . '--query');
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @internal
+     */
     public function resetItems()
     {
         $this->items = [];
+        $this->medias = [];
     }
 
     /**
@@ -208,6 +280,46 @@ class Config extends Model\AbstractModel
     public function getItems()
     {
         return $this->items;
+    }
+
+    /**
+     * @param array $medias
+     */
+    public function setMedias($medias)
+    {
+        $this->medias = $medias;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMedias()
+    {
+        return $this->medias;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMedias()
+    {
+        return !empty($this->medias);
+    }
+
+    /**
+     * @param string $filenameSuffix
+     */
+    public function setFilenameSuffix($filenameSuffix)
+    {
+        $this->filenameSuffix = $filenameSuffix;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilenameSuffix()
+    {
+        return $this->filenameSuffix;
     }
 
     /**
@@ -271,6 +383,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return array
      */
     public function getEstimatedDimensions()
@@ -340,10 +454,5 @@ class Config extends Model\AbstractModel
     public function setGroup(string $group): void
     {
         $this->group = $group;
-    }
-
-    public function clearTempFiles()
-    {
-        $this->doClearTempFiles(PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails', $this->getName());
     }
 }

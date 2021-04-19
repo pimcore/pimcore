@@ -40,16 +40,16 @@ final class CjpegOptimizer extends AbstractCommandOptimizer
     /**
      * {@inheritdoc}
      */
-    protected function getCommand(string $executable, string $input, string $output): string
+    protected function getCommandArray(string $executable, string $input, string $output): array
     {
-        return $executable.' -outfile '.$output.' '.escapeshellarg($input);
+        return [$executable, '-outfile', $output, $input];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(string $input): bool
+    public function supports(string $mimeType): bool
     {
-        return $this->mimeTypeGuesser->guessMimeType($input) === 'image/jpeg';
+        return $mimeType === 'image/jpeg';
     }
 }

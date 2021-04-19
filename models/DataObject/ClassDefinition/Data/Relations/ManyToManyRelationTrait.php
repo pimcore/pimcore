@@ -8,8 +8,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 trait ManyToManyRelationTrait
 {
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
+     * {@inheritdoc}
      */
     public function save($container, $params = [])
     {

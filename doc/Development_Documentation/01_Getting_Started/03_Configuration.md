@@ -60,8 +60,7 @@ The following file is an example of how you can overwrite some paths:
 // to use this file you have to rename it to constants.php
 // you can use this file to overwrite the constants defined in lib/Bootstrap.php
 
-define("PIMCORE_ASSET_DIRECTORY", "/custom/path/to/assets");
-define("PIMCORE_TEMPORARY_DIRECTORY", "/my/tmp/path");
+define("PIMCORE_CLASS_DIRECTORY", "/my/tmp/path");
 
 ```
 
@@ -95,7 +94,7 @@ This gives you the possibility to reconfigure environment settings before they a
 your needs. Examples:
 
 * Defining the [Trusted Proxies](http://symfony.com/doc/3.4/deployment/proxies.html) configuration on the `Request` object
-* Influencing the default [environment handling](../21_Deployment/03_Multi_Environment.md)
+* Influencing the default [environment handling](../21_Deployment/03_Configuration_Environments.md)
 
 ```php
 <?php

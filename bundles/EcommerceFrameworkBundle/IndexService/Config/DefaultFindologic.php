@@ -103,7 +103,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {

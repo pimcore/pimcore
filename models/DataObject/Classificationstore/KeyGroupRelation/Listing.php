@@ -28,7 +28,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /** @var bool */
-    public $resolveGroupName;
+    protected $resolveGroupName;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyGroupRelation[]

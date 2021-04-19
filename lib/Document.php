@@ -14,6 +14,9 @@
 
 namespace Pimcore;
 
+/**
+ * @internal
+ */
 class Document
 {
     /**

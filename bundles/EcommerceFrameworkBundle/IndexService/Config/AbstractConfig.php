@@ -64,7 +64,7 @@ abstract class AbstractConfig implements ConfigInterface
     protected $tenantWorker;
 
     /**
-     * @var Config
+     * @var array|null
      */
     protected $filterTypeConfig;
 
@@ -175,7 +175,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {
@@ -202,7 +202,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTenantWorker()
     {

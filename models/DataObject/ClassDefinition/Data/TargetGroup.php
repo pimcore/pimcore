@@ -24,7 +24,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'targetGroup';
@@ -42,7 +42,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     {
         if (!empty($data)) {
             try {
-                $this->checkValidity($data, true);
+                $this->checkValidity($data, true, $params);
             } catch (\Exception $e) {
                 $data = null;
             }
@@ -64,7 +64,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     {
         if (!empty($data)) {
             try {
-                $this->checkValidity($data, true);
+                $this->checkValidity($data, true, $params);
             } catch (\Exception $e) {
                 $data = null;
             }
@@ -73,6 +73,9 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $data;
     }
 
+    /**
+     * @internal
+     */
     public function configureOptions()
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
@@ -94,14 +97,9 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');

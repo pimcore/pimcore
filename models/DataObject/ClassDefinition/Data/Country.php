@@ -24,17 +24,20 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
-     *
+     * @internal
      * @var string
      */
     public $fieldtype = 'country';
 
     /**
+     * @internal
      * @var string|int
      */
     public $width = 0;
 
-    /** Restrict selection to comma-separated list of countries.
+    /**
+     * Restrict selection to comma-separated list of countries.
+     * @internal
      * @var string|null
      */
     public $restrictTo = null;
@@ -62,11 +65,8 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /** True if change is allowed in edit mode.
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -119,6 +119,9 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return $this->restrictTo;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

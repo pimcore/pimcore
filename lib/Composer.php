@@ -115,6 +115,8 @@ class Composer
 
     /**
      * @param string $rootPath
+     *
+     * @internal
      */
     public static function parametersYmlCheck($rootPath)
     {
@@ -129,7 +131,7 @@ class Composer
         if (strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
             $parameters = preg_replace_callback('/ThisTokenIsNotSoSecretChangeIt/', function ($match) {
                 // generate a unique token for each occurrence
-                return base64_encode(random_bytes(24));
+                return base64_encode(random_bytes(32));
             }, $parameters);
             file_put_contents($parametersYml, $parameters);
         }
@@ -149,6 +151,8 @@ class Composer
 
     /**
      * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
+     *
+     * @internal
      */
     protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true)
     {
@@ -171,12 +175,15 @@ class Composer
             }
         });
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\n%s\n\n%s", escapeshellarg($cmd), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
+            throw new \RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\nExit code: %d\n\n%s\n\n%s", implode(' ', $command), $process->getExitCode(), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
         }
 
         return $process;
     }
 
+    /**
+     * @internal
+     */
     protected static function getPhp($includeArgs = true)
     {
         $phpFinder = new PhpExecutableFinder();
@@ -187,6 +194,11 @@ class Composer
         return $phpPath;
     }
 
+    /**
+     * @return array
+     *
+     * @internal
+     */
     protected static function getPhpArguments()
     {
         $ini = null;

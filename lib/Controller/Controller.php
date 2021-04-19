@@ -22,7 +22,7 @@ use Symfony\Component\Templating\EngineInterface;
 abstract class Controller extends AbstractController
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     protected function render(string $view, array $parameters = [], Response $response = null): Response
@@ -43,7 +43,7 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     protected function stream(string $view, array $parameters = [], StreamedResponse $response = null): StreamedResponse
@@ -67,7 +67,7 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     protected function renderView(string $view, array $parameters = []): string
@@ -81,7 +81,7 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     public static function getSubscribedServices()

@@ -17,6 +17,9 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 
+/**
+ * @internal
+ */
 final class LogErrorCleanupTask implements TaskInterface
 {
     /**

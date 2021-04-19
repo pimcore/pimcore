@@ -27,8 +27,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/analytics")
+ *
+ * @internal
  */
-class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
+final class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {
     /**
      * @var \Google_Service_Analytics
@@ -500,7 +502,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

@@ -19,7 +19,10 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Tool\Serialize;
 
-class PHP extends AbstractOperator
+/**
+ * @internal
+ */
+final class PHP extends AbstractOperator
 {
     /** @var string */
     private $mode;

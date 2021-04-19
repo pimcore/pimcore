@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
@@ -34,11 +35,15 @@ use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class Installer
 {
     const EVENT_NAME_STEP = 'pimcore.installer.step';
@@ -263,17 +268,6 @@ class Installer
         $adminUser = $params['admin_username'] ?? '';
         $adminPass = $params['admin_password'] ?? '';
 
-        //check skipping database creation or database data
-        if (array_key_exists('skip_database_structure', $params)) {
-            $this->createDatabaseStructure = false;
-        }
-        if (array_key_exists('skip_database_data', $params)) {
-            $this->importDatabaseData = false;
-        }
-        if (array_key_exists('skip_database_data_dump', $params)) {
-            $this->importDatabaseDataDump = false;
-        }
-
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
             $errors[] = 'Username and password should have at least 4 characters';
         }
@@ -364,22 +358,24 @@ class Installer
             'bit' => 'boolean',
         ];
 
-        $this->createConfigFiles([
+        $doctrineConfig = [
             'doctrine' => [
                 'dbal' => [
-                  'connections' => [
-                      'default' => $dbConfig,
-                  ],
+                    'connections' => [
+                        'default' => $dbConfig,
+                    ],
                 ],
             ],
-        ]);
+        ];
+
+        $this->createConfigFiles($doctrineConfig);
 
         $this->dispatchStepEvent('boot_kernel');
 
         // resolve environment with default=dev here as we set debug mode to true and want to
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
-        $environment = Config::getEnvironment(true, 'dev');
+        $environment = Config::getEnvironment();
         $kernel = new \App\Kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
@@ -391,6 +387,19 @@ class Installer
         $this->dispatchStepEvent('setup_database');
 
         $errors = $this->setupDatabase($userCredentials, $errors);
+
+        if (!$this->skipDatabaseConfig) {
+            // now we're able to write the server version to the database.yml
+            $db = \Pimcore\Db::get();
+            if ($db instanceof Connection) {
+                $connection = $db->getWrappedConnection();
+                if ($connection instanceof ServerInfoAwareConnection) {
+                    $writer = new ConfigWriter();
+                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    $writer->writeDbConfig($doctrineConfig);
+                }
+            }
+        }
 
         $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
@@ -532,7 +541,6 @@ class Installer
         }
 
         $writer->writeSystemConfig();
-        $writer->writeDebugModeConfig();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)
@@ -554,7 +562,11 @@ class Installer
 
         $filesystem->rename($cacheDir, $oldCacheDir);
         $filesystem->mkdir($cacheDir);
-        $filesystem->remove($oldCacheDir);
+        try {
+            $filesystem->remove($oldCacheDir);
+        } catch (IOException $e) {
+            $this->logger->error($e->getMessage());
+        }
     }
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
@@ -754,8 +766,6 @@ class Installer
             ['key' => 'http_errors'],
             ['key' => 'notes_events'],
             ['key' => 'objects'],
-            ['key' => 'piwik_settings'],
-            ['key' => 'piwik_reports'],
             ['key' => 'plugins'],
             ['key' => 'predefined_properties'],
             ['key' => 'asset_metadata'],

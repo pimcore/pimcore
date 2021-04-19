@@ -31,62 +31,62 @@ class Staticroute extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $pattern;
+    protected $pattern;
 
     /**
      * @var string
      */
-    public $reverse;
+    protected $reverse;
 
     /**
      * @var string
      */
-    public $controller;
+    protected $controller;
 
     /**
      * @var string
      */
-    public $variables;
+    protected $variables;
 
     /**
      * @var string
      */
-    public $defaults;
+    protected $defaults;
 
     /**
      * @var array
      */
-    public $siteId;
+    protected $siteId;
 
     /**
      * @var array
      */
-    public $methods;
+    protected $methods;
 
     /**
      * @var int
      */
-    public $priority = 1;
+    protected $priority = 1;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * Associative array filled on match() that holds matched path values
@@ -94,7 +94,7 @@ class Staticroute extends AbstractModel
      *
      * @var array
      */
-    public $_values = [];
+    protected $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
@@ -432,54 +432,22 @@ class Staticroute extends AbstractModel
 
     /**
      * @param array $urlOptions
-     * @param bool $reset
      * @param bool $encode
      *
      * @return mixed|string
      */
-    public function assemble(array $urlOptions = [], $reset = false, $encode = true)
+    public function assemble(array $urlOptions = [], $encode = true)
     {
-        // get request parameters
-        $blockedRequestParams = ['controller', 'document'];
-
-        // allow blocked params if we use it as variables
-        $variables = explode(',', $this->getVariables());
-        foreach ($variables as $name) {
-            $pos = array_search($name, $blockedRequestParams);
-            if ($pos !== false) {
-                unset($blockedRequestParams[$pos]);
-            }
-        }
-
-        if ($reset) {
-            $requestParameters = [];
-        } else {
-            $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
-
-            // merge route params from static routes here
-            $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-            if (null !== $request && $request->attributes->get('_route_params')) {
-                $requestParameters = array_merge($requestParameters, $request->attributes->get('_route_params'));
-            }
-
-            // remove blocked parameters from request
-            foreach ($blockedRequestParams as $key) {
-                if (array_key_exists($key, $requestParameters)) {
-                    unset($requestParameters[$key]);
-                }
-            }
-        }
-
         $defaultValues = $this->getDefaultsArray();
 
         // apply values (controller, ... ) from previous match if applicable (only when )
-        if ($reset) {
-            if (self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName())) {
-                $defaultValues = array_merge($defaultValues, self::$_currentRoute->_values);
-            }
+        if (self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName())) {
+            $defaultValues = array_merge($defaultValues, self::$_currentRoute->_values);
         }
 
         // merge with defaults
+        // merge router.request_context params e.g. "_locale"
+        $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
         $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
 
         $parametersInReversePattern = [];
@@ -504,8 +472,7 @@ class Staticroute extends AbstractModel
                 $tmpReversePattern = str_replace('%' . $key, '---', $tmpReversePattern);
             } else {
                 // only append the get parameters if there are defined in $urlOptions
-                // or if they are defined in $_GET an $reset is false
-                if (array_key_exists($key, $urlOptions) || (!$reset && array_key_exists($key, $_GET))) {
+                if (array_key_exists($key, $urlOptions)) {
                     $parametersGet[$key] = $param;
                 }
             }
@@ -551,7 +518,6 @@ class Staticroute extends AbstractModel
         $event = new GenericEvent($this, [
             'frontendPath' => $url,
             'params' => $urlParams,
-            'reset' => $reset,
             'encode' => $encode,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);

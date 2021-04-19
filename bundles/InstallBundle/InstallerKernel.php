@@ -28,6 +28,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
+/**
+ * @internal
+ */
 class InstallerKernel extends Kernel
 {
     use MicroKernelTrait;
@@ -45,7 +48,7 @@ class InstallerKernel extends Kernel
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getProjectDir()
     {
@@ -53,7 +56,7 @@ class InstallerKernel extends Kernel
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRootDir()
     {
@@ -77,7 +80,7 @@ class InstallerKernel extends Kernel
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function registerBundles()
     {
@@ -95,7 +98,7 @@ class InstallerKernel extends Kernel
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
@@ -116,7 +119,7 @@ class InstallerKernel extends Kernel
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {

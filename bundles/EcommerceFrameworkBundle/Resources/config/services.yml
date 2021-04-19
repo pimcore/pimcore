@@ -32,9 +32,3 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-
-    #
-    # REPORTS
-    #
-
-    Pimcore\Bundle\EcommerceFrameworkBundle\Reports\Piwik\PiwikReportsProvider: ~

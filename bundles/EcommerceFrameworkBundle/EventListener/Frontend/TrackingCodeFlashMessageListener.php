@@ -26,7 +26,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class TrackingCodeFlashMessageListener implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

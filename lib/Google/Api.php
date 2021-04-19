@@ -16,6 +16,7 @@ namespace Pimcore\Google;
 
 use Pimcore\Config;
 use Pimcore\Model\Tool\TmpStore;
+use Psr\Cache\CacheItemPoolInterface;
 
 class Api
 {
@@ -115,7 +116,8 @@ class Api
 
         $client = new \Google_Client();
 
-        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        /** @var CacheItemPoolInterface $cache */
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.pool');
         $client->setCache($cache);
 
         $client->setApplicationName('pimcore CMF');
@@ -161,7 +163,8 @@ class Api
 
         $client = new \Google_Client();
 
-        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        /** @var CacheItemPoolInterface $cache */
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.pool');
         $client->setCache($cache);
 
         $client->setApplicationName('pimcore CMF');

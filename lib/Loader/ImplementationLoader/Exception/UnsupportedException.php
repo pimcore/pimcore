@@ -14,6 +14,9 @@
 
 namespace Pimcore\Loader\ImplementationLoader\Exception;
 
+/**
+ * @internal
+ */
 class UnsupportedException extends \RuntimeException
 {
 }

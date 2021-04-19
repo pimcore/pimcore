@@ -130,7 +130,7 @@ final class AssetEvents
      *  - deferred | bool | Whether the thumbnail should be generated on demand or not
      *  - generated | bool | Whether a new thumbnail file was actually generated or not (from cache)
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -143,7 +143,7 @@ final class AssetEvents
      *  - deferred | bool | Whether the thumbnail should be generated on demand or not
      *  - generated | bool | Whether a new thumbnail file was actually generated or not (from cache)
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -156,7 +156,7 @@ final class AssetEvents
      *  - deferred | bool | Whether the thumbnail should be generated on demand or not
      *  - generated | bool | Whether a new thumbnail file was actually generated or not (from cache)
      *
-     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */

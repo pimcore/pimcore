@@ -25,18 +25,20 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/class")
+ *
+ * @internal
  */
-class ClassController extends AdminController implements KernelControllerEventInterface
+final class ClassController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-document-types", name="pimcore_admin_dataobject_class_getdocumenttypes", methods={"GET"})
@@ -158,6 +160,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
         }
 
         $treeNodes = [];
+        if (!empty($groups)) {
+            $types = array_column($groups, 'type');
+            array_multisort($types, SORT_ASC, array_keys($groups), SORT_ASC, $groups);
+        }
 
         if (!$request->get('grouped')) {
             // list output
@@ -226,7 +232,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
 
-        return $this->adminJson(['success' => true, 'data' => $customLayout]);
+        return $this->adminJson(['success' => true, 'data' => $customLayout->getObjectVars()]);
     }
 
     /**
@@ -353,7 +359,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout->setDefault($values['default']);
             $customLayout->save();
 
-            return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout]);
+            return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout->getObjectVars()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
@@ -629,16 +635,13 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout = DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $name = $customLayout->getName();
-                unset($customLayout->id);
-                unset($customLayout->classId);
-                unset($customLayout->name);
-                unset($customLayout->creationDate);
-                unset($customLayout->modificationDate);
-                unset($customLayout->userOwner);
-                unset($customLayout->userModification);
-                unset($customLayout->fieldDefinitions);
+                $customLayoutData = [
+                    'description' => $customLayout->getDescription(),
+                    'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
+                    'default' => $customLayout->getDefault() ?? 0,
+                ];
 
-                $json = json_encode($customLayout, JSON_PRETTY_PRINT);
+                $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);
 
                 $response = new Response($json);
                 $response->headers->set('Content-type', 'application/json');

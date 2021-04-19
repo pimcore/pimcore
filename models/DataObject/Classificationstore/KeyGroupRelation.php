@@ -29,52 +29,52 @@ class KeyGroupRelation extends Model\AbstractModel
     /**
      * @var int
      */
-    public $keyId;
+    protected $keyId;
 
     /**
      * @var int
      */
-    public $groupId;
+    protected $groupId;
 
     /** The key
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The key description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * Field definition
      *
      * @var string
      */
-    public $definition;
+    protected $definition;
 
     /**
      * Field type
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /** @var int */
-    public $sorter;
+    protected $sorter;
 
     /** The group name
      * @var string
      */
-    public $groupName;
+    protected $groupName;
 
     /** @var bool */
-    public $mandatory;
+    protected $mandatory;
 
     /** @var bool */
-    public $enabled;
+    protected $enabled;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyGroupRelation

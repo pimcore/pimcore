@@ -1,9 +1,11 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
-{% spaceless -%}
-    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
-    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
-{%- endspaceless %}
+{% block styles %}
+    {% apply spaceless %}
+        {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
+        {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
+    {% endapply %}
+{% endblock %}
 
 {% set urlParams = app.request.query.all %}
 {% block content %}
@@ -85,12 +87,12 @@
         <tbody>
         {% set totalSum = 0 %}
 
-        {% for item in paginator %}
+        {% for item in paginator.items %}
             {% set totalSum = totalSum + item.getTotalPrice() %}
 
         <tr>
             <td>
-                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}|merge(urlParams), null, true) %}
+                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}|merge(urlParams)) %}
                 <a href="{{ urlDetail }}">{{ item.getOrderNumber() }}</a>
             </td>
             <td>
@@ -98,12 +100,12 @@
 
                 {% if date.timestamp is defined %}
                     {% set date = date() %}
-                    {% do date.setTimestamp(item.getOrderDate()) %}
+                    {% do date.setTimestamp(item.getOrderDate().getTimestamp()) %}
                 {% endif %}
 
                 {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
             </td>
-            <td>{{ item.getItems() }}</td>
+            <td>{{ item.getItems()|length }}</td>
             </td>
             <td class="text-right">{{ formatter.formatCurrency(item.getTotalPrice(), item.getCurrency()) }}</td>
         </tr>
@@ -119,8 +121,8 @@
         </tfoot>
     </table>
 
-    {% if paginator.getPages().pageCount > 1 %}
-        {% include "@PimcoreEcommerceFramework/includes/paging.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
+    {% if paginator.getPaginationData().pageCount > 1 %}
+        {% include "@PimcoreEcommerceFramework/includes/paging.html.twig" with {'paginationVariables': paginator.getPaginationData() } %}
     {% endif %}
 
     {% do pimcore_head_script().captureStart() %}

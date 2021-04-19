@@ -78,7 +78,7 @@ class VersionTest extends TestCase
         $this->assertEquals($randomText, $targetObject->getInput(), 'random text does not match');
 
         $latestVersion1 = $this->getNewestVersion($sourceObject->getId());
-        $content = file_get_contents($latestVersion1->getFilePath());
+        $content = stream_get_contents($latestVersion1->getFileStream());
         $this->assertTrue(strpos($content, $randomText) === false, "random text shouldn't be there");
 
         $multihref = $sourceObjectFromDb->getMultihref();
@@ -86,7 +86,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {
@@ -98,7 +98,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function needsDb()
     {

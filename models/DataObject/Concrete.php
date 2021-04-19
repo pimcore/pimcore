@@ -125,7 +125,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                     //check throws Exception
                     try {
-                        $fd->checkValidity($value, $omitMandatoryCheck);
+                        $fd->checkValidity($value, $omitMandatoryCheck, $params);
                     } catch (\Exception $e) {
                         if ($this->getClass()->getAllowInherit()) {
                             //try again with parent data when inheritance is activated
@@ -134,7 +134,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 DataObject::setGetInheritedValues(true);
 
                                 $value = $this->$getter();
-                                $fd->checkValidity($value, $omitMandatoryCheck);
+                                $fd->checkValidity($value, $omitMandatoryCheck, $params);
 
                                 DataObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
@@ -142,7 +142,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
-                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $newException->setSubItems($e->getSubItems());
+                                throw $newException;
                             }
                         } else {
                             if ($e instanceof Model\Element\ValidationException) {
@@ -238,7 +240,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -285,7 +287,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
             $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
-            if (!empty($objectsConfig['versions']['steps'])
+            if ((is_null($objectsConfig['versions']['days']) && is_null($objectsConfig['versions']['steps']))
+                || (!empty($objectsConfig['versions']['steps']))
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
@@ -756,7 +759,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLazyLoadedFieldNames(): array
     {
@@ -772,7 +775,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {

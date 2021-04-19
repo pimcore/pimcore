@@ -31,7 +31,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
     protected $timestampWasQueried = false;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(RequestStack $requestStack)
     {
