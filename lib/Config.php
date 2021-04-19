@@ -136,7 +136,7 @@ class Config implements \ArrayAccess
     }
 
     /**
-     * @internal
+     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      *
      * @param null|array $configuration
      * @param null|mixed $offset
