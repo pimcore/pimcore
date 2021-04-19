@@ -744,7 +744,7 @@ final class UserController extends AdminController implements KernelControllerEv
 
         return $this->adminJson([
             'success' => true,
-            'role' => $role,
+            'role' => $role->getObjectVars(),
             'permissions' => $role->generatePermissionList(),
             'classes' => $role->getClasses(),
             'docTypes' => $role->getDocTypes(),
