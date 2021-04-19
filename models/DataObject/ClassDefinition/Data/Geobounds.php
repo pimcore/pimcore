@@ -33,14 +33,18 @@ class Geobounds extends AbstractGeo implements
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'geobounds';
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var array
      */
     public $queryColumnType = [
@@ -52,7 +56,9 @@ class Geobounds extends AbstractGeo implements
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var array
      */
     public $columnType = [

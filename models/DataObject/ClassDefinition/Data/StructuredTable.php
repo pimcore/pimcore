@@ -37,36 +37,42 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $labelWidth = 0;
 
     /**
      * v
+     *
      * @var string
      */
     public $labelFirstCell;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $cols = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     public $rows = [];

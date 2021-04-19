@@ -79,11 +79,14 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @internal
+     *
      * @param Model\User $user
+     *
      * @return static
      */
-    public function filterAccessibleByUser(Model\User $user) {
-        if(!$user->isAdmin()) {
+    public function filterAccessibleByUser(Model\User $user)
+    {
+        if (!$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 

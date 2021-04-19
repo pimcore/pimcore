@@ -23,41 +23,50 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class  Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'video';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'text';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'text';

@@ -32,72 +32,89 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'multiselect';
 
     /**
      * Available options to select
+     *
      * @internal
+     *
      * @var array|null
      */
     public $options;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $maxItems;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $renderType;
 
     /**
      * Options provider class
+     *
      * @internal
+     *
      * @var string
      */
     public $optionsProviderClass;
 
     /**
      * Options provider data
+     *
      * @internal
+     *
      * @var string
      */
     public $optionsProviderData;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'text';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'text';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $dynamicOptions = false;

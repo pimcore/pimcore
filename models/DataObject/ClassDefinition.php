@@ -301,7 +301,7 @@ class ClassDefinition extends Model\AbstractModel
         if (is_null($data)) {
             return;
         }
-        
+
         if (!is_object($data)) {
             return;
         }

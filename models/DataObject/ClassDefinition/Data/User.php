@@ -23,19 +23,23 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'user';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $unique;
 
     /**
      * @internal
+     *
      * @return User
      */
     protected function init()

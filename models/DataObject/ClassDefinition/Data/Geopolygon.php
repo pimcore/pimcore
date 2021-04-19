@@ -29,21 +29,27 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'geopolygon';
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'longtext';

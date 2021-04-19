@@ -24,20 +24,25 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'country';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Restrict selection to comma-separated list of countries.
+     *
      * @internal
+     *
      * @var string|null
      */
     public $restrictTo = null;

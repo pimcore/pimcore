@@ -28,7 +28,6 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class EncryptedField implements MarshallerInterface
 {
-
     /** @var MarshallerService */
     protected $marshallerService;
 
@@ -57,8 +56,6 @@ class EncryptedField implements MarshallerInterface
                 $fd = $params['fieldDefinition'];
                 $delegateFd = $fd->getDelegate();
 
-
-
                 if ($this->marshallerService->supportsFielddefinition('classificationstore', $delegateFd->getFieldtype())) {
                     $marshaller = $this->marshallerService->buildFieldefinitionMarshaller('classificationstore', $delegateFd->getFieldtype());
                     $encodedData = $marshaller->marshal($value, ['fieldDefinition' => $delegateFd, 'format' => 'classificationstore']);
@@ -66,19 +63,20 @@ class EncryptedField implements MarshallerInterface
                     if (is_array($encodedData)) {
                         $encryptedValue = $this->encrypt($encodedData['value'], $params);
                         $encryptedValue2 = $this->encrypt($encodedData['value2'], $params);
-
                     }
                 }
             } else {
                 $encryptedValue = $this->encrypt($value, $params);
             }
 
-            $result =[
+            $result = [
                 'value' => $encryptedValue,
-                'value2' => $encryptedValue2
+                'value2' => $encryptedValue2,
             ];
+
             return $result;
         }
+
         return null;
     }
 
@@ -87,7 +85,6 @@ class EncryptedField implements MarshallerInterface
      */
     public function unmarshal($value, $params = [])
     {
-
         if (is_array($value)) {
 
             /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField $fd */
@@ -101,7 +98,7 @@ class EncryptedField implements MarshallerInterface
 
                 $decodedData = $marshaller->unmarshal([
                     'value' => $encryptedValue,
-                    'value2' => $encryptedValue2
+                    'value2' => $encryptedValue2,
                 ], ['fieldDefinition' => $delegateFd, 'format' => 'classificationstore']);
 
                 return $decodedData;
@@ -191,5 +188,4 @@ class EncryptedField implements MarshallerInterface
 
         return null;
     }
-
 }

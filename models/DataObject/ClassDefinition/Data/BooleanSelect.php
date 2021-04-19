@@ -67,51 +67,62 @@ class BooleanSelect extends Data implements
     ];
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'booleanSelect';
 
     /**
      * @internal
+     *
      * @var string
      */
     public $yesLabel;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $noLabel;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $emptyLabel;
 
     /**
      * @internal
+     *
      * @var array|array[]
      */
     public $options = self::DEFAULT_OPTIONS;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'tinyint(1) null';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'tinyint(1) null';

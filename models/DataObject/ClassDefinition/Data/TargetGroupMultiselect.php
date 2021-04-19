@@ -24,7 +24,9 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'targetGroupMultiselect';

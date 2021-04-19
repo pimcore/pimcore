@@ -33,67 +33,84 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'select';
 
     /**
      * Available options to select
+     *
      * @internal
+     *
      * @var array|null
      */
     public $options;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var string|null
      */
     public $defaultValue;
 
     /**
      * Options provider class
+     *
      * @internal
+     *
      * @var string
      */
     public $optionsProviderClass;
 
     /**
      * Options provider data
+     *
      * @internal
+     *
      * @var string
      */
     public $optionsProviderData;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'varchar';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'varchar';
 
     /**
      * Column length
+     *
      * @internal
+     *
      * @var int
      */
     public $columnLength = 190;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $dynamicOptions = false;

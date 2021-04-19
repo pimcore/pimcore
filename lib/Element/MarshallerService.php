@@ -23,8 +23,6 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class MarshallerService
 {
-
-
     /** @var ContainerInterface */
     private $container;
 
@@ -33,9 +31,11 @@ final class MarshallerService
 
     /**
      * MarshallerService constructor.
+     *
      * @param ContainerInterface $container
      */
-    public function __construct($container, ServiceLocator $marshallerLocator) {
+    public function __construct($container, ServiceLocator $marshallerLocator)
+    {
         $this->container = $container;
         $this->marshallerLocator = $marshallerLocator;
     }
@@ -43,21 +43,26 @@ final class MarshallerService
     /**
      * @param string $format
      * @param string $name
+     *
      * @return MarshallerInterface
      */
     public function buildFieldefinitionMarshaller($format, $name)
     {
-        $result = $this->marshallerLocator->get($format . "_" . $name);
+        $result = $this->marshallerLocator->get($format . '_' . $name);
+
         return $result;
     }
 
     /**
      * @param string $format
      * @param string $name
+     *
      * @return bool
      */
-    public function supportsFielddefinition(string $format, string $name) {
-        $supported = $this->marshallerLocator->has($format . "_" . $name);
+    public function supportsFielddefinition(string $format, string $name)
+    {
+        $supported = $this->marshallerLocator->has($format . '_' . $name);
+
         return $supported;
     }
 }

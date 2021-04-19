@@ -26,55 +26,65 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'fieldcollections';
 
     /**
      * @internal
+     *
      * @var array
      */
     public $allowedTypes = [];
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $lazyLoading;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $maxItems;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $disallowAddRemove = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $disallowReorder = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $collapsed;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $collapsible;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $border = false;

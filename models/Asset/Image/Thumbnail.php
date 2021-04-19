@@ -74,8 +74,8 @@ final class Thumbnail
 
         $path = $this->convertToWebPath($pathReference);
 
-        if($cacheBuster) {
-            $path= $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());
+        if ($cacheBuster) {
+            $path = $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());
         }
 
         if ($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {

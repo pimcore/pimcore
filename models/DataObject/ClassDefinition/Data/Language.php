@@ -24,13 +24,16 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'language';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $onlySystemLanguages = false;

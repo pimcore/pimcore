@@ -30,51 +30,62 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'textarea';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $maxLength;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $showCharCount;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $excludeFromSearchIndex = false;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'longtext';

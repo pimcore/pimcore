@@ -28,25 +28,30 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'objectbricks';
 
     /**
      * @internal
+     *
      * @var array
      */
     public $allowedTypes = [];
 
     /**
      * @internal
+     *
      * @var int
      */
     public $maxItems;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $border = false;

@@ -28,12 +28,12 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class EncryptedField implements MarshallerInterface
 {
-
     /** @var MarshallerService */
     protected $marshallerService;
 
     /**
      * EncryptedField constructor.
+     *
      * @param MarshallerService $marshallerService
      */
     public function __construct(MarshallerService $marshallerService)
@@ -47,7 +47,6 @@ class EncryptedField implements MarshallerInterface
     public function marshal($value, $params = [])
     {
         if ($value !== null) {
-
             $fd = $params['fieldDefinition'];
             $delegateFd = $fd->getDelegate();
 
@@ -56,8 +55,10 @@ class EncryptedField implements MarshallerInterface
                 $value = $marshaller->marshal($value, ['fieldDefinition' => $delegateFd, 'format' => 'block']);
             }
             $encryptedValue = $this->encrypt($value, $params);
+
             return $encryptedValue;
         }
+
         return null;
     }
 
@@ -160,5 +161,4 @@ class EncryptedField implements MarshallerInterface
 
         return null;
     }
-
 }

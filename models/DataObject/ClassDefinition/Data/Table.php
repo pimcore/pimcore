@@ -32,76 +32,92 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'table';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $cols;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $colsFixed;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $rows;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $rowsFixed;
 
     /**
      * Default data
+     *
      * @internal
+     *
      * @var string
      */
     public $data = '';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $columnConfigActivated = false;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $columnConfig = [];
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'longtext';

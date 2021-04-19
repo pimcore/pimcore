@@ -34,81 +34,97 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'block';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $lazyLoading;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $disallowAddRemove;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $disallowReorder;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $collapsible;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $collapsed;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $maxItems;
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'longtext';
 
     /**
      * @internal
+     *
      * @var string
      */
     public $styleElement = '';
 
     /**
      * @internal
+     *
      * @var array
      */
     public $childs = [];
 
     /**
      * @internal
+     *
      * @var array|null
      */
     public $layout;
 
     /**
      * contains further child field definitions if there are more than one localized fields in on class
+     *
      * @internal
+     *
      * @var array
      */
     protected $referencedFields = [];
 
     /**
      * @internal
+     *
      * @var array|null
      */
     public $fieldDefinitionsCache;

@@ -35,77 +35,94 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'manyToManyRelation';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $maxItems;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $assetUploadPath;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'text';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $relationType = true;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $objectsAllowed = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $assetsAllowed = false;
 
     /**
      * Allowed asset types
+     *
      * @internal
+     *
      * @var array
      */
     public $assetTypes = [];
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $documentsAllowed = false;
 
     /**
      * Allowed document types
+     *
      * @internal
+     *
      * @var array
      */
     public $documentTypes = [];

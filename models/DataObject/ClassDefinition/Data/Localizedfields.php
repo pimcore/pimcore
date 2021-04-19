@@ -32,104 +32,123 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'localizedfields';
 
     /**
      * @internal
+     *
      * @var array
      */
     public $childs = [];
 
     /**
      * @internal
+     *
      * @var string
      */
     public $name;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $region;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $layout;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $title;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $maxTabs;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $border = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $provideSplitView;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $tabPosition = 'top';
 
     /**
      * @internal
+     *
      * @var int
      */
     public $hideLabelsWhenTabsReached;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
+     *
      * @internal
+     *
      * @var array
      */
     protected $referencedFields = [];
 
     /**
      * @internal
+     *
      * @var array|null
      */
     public $fieldDefinitionsCache;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $permissionView = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     public $permissionEdit = [];

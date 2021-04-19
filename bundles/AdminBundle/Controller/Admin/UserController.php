@@ -736,7 +736,7 @@ final class UserController extends AdminController implements KernelControllerEv
             }
         }
 
-        $replaceFn = function($value) {
+        $replaceFn = function ($value) {
             return $value->getObjectVars();
         };
 

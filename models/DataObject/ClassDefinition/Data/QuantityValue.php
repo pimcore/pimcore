@@ -34,56 +34,67 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'quantityValue';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $unitWidth;
 
     /**
      * @internal
+     *
      * @var float
      */
     public $defaultValue;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $defaultUnit;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $validUnits;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $decimalPrecision;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $autoConvert;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var array
      */
     public $queryColumnType = [
@@ -93,7 +104,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var array
      */
     public $columnType = [

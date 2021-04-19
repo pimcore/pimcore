@@ -33,13 +33,16 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'inputQuantityValue';
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var array
      */
     public $queryColumnType = [
@@ -49,7 +52,9 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var array
      */
     public $columnType = [

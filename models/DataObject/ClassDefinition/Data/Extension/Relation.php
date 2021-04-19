@@ -18,6 +18,7 @@ trait Relation
 {
     /**
      * @internal
+     *
      * @param bool|false $asArray
      *
      * @return string[]

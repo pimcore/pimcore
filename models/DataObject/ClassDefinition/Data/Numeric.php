@@ -38,63 +38,76 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'numeric';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var float
      */
     public $defaultValue;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'double';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'double';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $integer = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $unsigned = false;
 
     /**
      * @internal
+     *
      * @var float
      */
     public $minValue;
 
     /**
      * @internal
+     *
      * @var float
      */
     public $maxValue;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $unique;
@@ -103,7 +116,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
      * but as decimalPrecision already existed to denote the amount of digits after the point (as it is called on the ExtJS
      * number field), decimalSize was chosen instead.
+     *
      * @internal
+     *
      * @var int|null
      */
     public $decimalSize;
@@ -111,7 +126,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
      * commend on decimalSize.
+     *
      * @internal
+     *
      * @var int|null
      */
     public $decimalPrecision;

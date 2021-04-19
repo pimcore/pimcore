@@ -32,31 +32,37 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'urlSlug';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     public $domainLabelWidth;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $action;
 
     /**
      * @internal
+     *
      * @var null|int[]
      */
     public $availableSites;

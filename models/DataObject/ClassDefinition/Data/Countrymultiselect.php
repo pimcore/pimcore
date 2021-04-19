@@ -24,14 +24,18 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'countrymultiselect';
 
     /**
      * Restrict selection to comma-separated list of countries.
+     *
      * @internal
+     *
      * @var string|null
      */
     public $restrictTo = null;

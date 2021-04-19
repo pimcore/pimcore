@@ -25,32 +25,39 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'reverseObjectRelation';
 
     /**
      * @internal
+     *
      * @var string
      */
     public $ownerClassName;
 
     /**
      * @internal
+     *
      * @var string|null
      */
     public $ownerClassId;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $ownerFieldName;
 
     /**
      * ReverseObjectRelation must be lazy loading!
+     *
      * @internal
+     *
      * @var bool
      */
     public $lazyLoading = true;

@@ -23,19 +23,23 @@ trait ImageTrait
 {
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $uploadPath;

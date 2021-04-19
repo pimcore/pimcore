@@ -32,45 +32,55 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'password';
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'varchar(255)';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'varchar(255)';
 
     /**
      * @internal
+     *
      * @var string
      */
     public $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $salt = '';
 
     /**
      * @internal
+     *
      * @var string
      */
     public $saltlocation = '';
@@ -206,7 +216,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Calculate hash according to configured parameters
+     *
      * @internal
+     *
      * @param string $data
      *
      * @return bool|null|string
@@ -239,6 +251,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
      * @internal
+     *
      * @param string $password
      * @param DataObject\Concrete $object
      * @param bool|true $updateHash

@@ -35,14 +35,18 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * Set of allowed classes
+     *
      * @internal
+     *
      * @var array
      */
     public $classes = [];
 
     /**
      * Optional path formatter class
+     *
      * @internal
+     *
      * @var null|string
      */
     public $pathFormatterClass;
@@ -179,6 +183,7 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
+     *
      * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params
@@ -189,6 +194,7 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
+     *
      * @param array|Element\ElementInterface $data
      * @param DataObject\Concrete $object
      * @param array $params
@@ -216,6 +222,7 @@ abstract class AbstractRelations extends Data implements
      * )
      *
      * @internal
+     *
      * @param mixed $data
      * @param array $idMapping
      *
@@ -325,6 +332,7 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
+     *
      * @param Element\ElementInterface $item
      *
      * @return string
@@ -377,6 +385,7 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
+     *
      * @param DataObject\Fieldcollection\Data\AbstractData $item
      *
      * @throws \Exception
@@ -397,6 +406,7 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
+     *
      * @param DataObject\Objectbrick\Data\AbstractData $item
      *
      * @throws \Exception
@@ -416,6 +426,7 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * checks for multiple assignments and throws an exception in case the rules are violated.
+     *
      * @internal
      *
      * @param array|null $data*
@@ -500,6 +511,7 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @internal
+     *
      * @return string
      */
     abstract protected function getPhpdocType();

@@ -30,44 +30,53 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /**
      * @internal
+     *
      * @var array
      */
     public $columns;
 
     /**
      * @internal
+     *
      * @var string[]
      */
     public $columnKeys;
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'advancedManyToManyRelation';
 
     /**
      * Type for the generated phpdoc
+     *
      * @internal
+     *
      * @var string
      */
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $optimizedAdminLoading = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $enableBatchEdit;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $allowMultipleAssignments;
@@ -1007,6 +1016,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /**
      * @internal
+     *
      * @param DataObject\Data\ElementMetadata $item
      *
      * @return string

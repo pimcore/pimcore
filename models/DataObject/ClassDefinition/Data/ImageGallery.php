@@ -31,58 +31,71 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'imageGallery';
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var array
      */
     public $queryColumnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var array
      */
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
      * @internal
+     *
      * @var string|int
      */
     public $width = 0;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string|int
      */
     public $height = 0;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $uploadPath;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $ratioX;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $ratioY;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $predefinedDataTemplates;

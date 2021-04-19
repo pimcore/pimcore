@@ -151,7 +151,6 @@ class Config implements \ArrayAccess
         }
     }
 
-
     /**
      * @internal
      *

@@ -33,39 +33,48 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'hotspotimage';
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var array
      */
     public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
      * @internal
+     *
      * @var int
      */
     public $ratioX;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $ratioY;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $predefinedDataTemplates;

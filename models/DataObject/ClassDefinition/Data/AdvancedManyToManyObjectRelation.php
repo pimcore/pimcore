@@ -31,49 +31,58 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @internal
+     *
      * @var string
      */
     public $allowedClassId;
 
     /**
      * @internal
+     *
      * @var string|null
      */
     public $visibleFields;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $columns;
 
     /**
      * @internal
+     *
      * @var string[]
      */
     public $columnKeys;
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'advancedManyToManyObjectRelation';
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $enableBatchEdit;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $allowMultipleAssignments;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $visibleFieldDefinitions = [];
@@ -799,7 +808,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        if($masterDefinition instanceof self) {
+        if ($masterDefinition instanceof self) {
             $this->allowedClassId = $masterDefinition->getAllowedClassId();
             $this->visibleFields = $masterDefinition->getVisibleFields();
             $this->columns = $masterDefinition->getColumns();
@@ -1022,6 +1031,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @internal
+     *
      * @param DataObject\Data\ObjectMetadata $item
      *
      * @return string

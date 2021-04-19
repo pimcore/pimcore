@@ -28,39 +28,48 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'externalImage';
 
     /**
      * @internal
+     *
      * @var int
      */
     public $previewWidth;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $inputWidth;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $previewHeight;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'longtext';

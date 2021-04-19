@@ -23,7 +23,9 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'gender';

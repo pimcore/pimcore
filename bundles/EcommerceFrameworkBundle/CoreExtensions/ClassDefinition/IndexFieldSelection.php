@@ -237,7 +237,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return '';
     }
 
-
     /**
      * {@inheritdoc}
      */

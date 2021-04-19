@@ -324,7 +324,7 @@ final class DataObjectHelperController extends AdminController
 
             if ($savedGridConfig) {
                 $shared = false;
-                if(!$this->getAdminUser()->isAdmin()) {
+                if (!$this->getAdminUser()->isAdmin()) {
                     try {
                         $userIds = [$this->getAdminUser()->getId()];
                         if ($this->getAdminUser()->getRoles()) {
@@ -347,7 +347,7 @@ final class DataObjectHelperController extends AdminController
                 $gridConfigName = $savedGridConfig->getName();
                 $owner = $savedGridConfig->getOwnerId();
                 $ownerObject = User::getById($owner);
-                if($ownerObject instanceof User) {
+                if ($ownerObject instanceof User) {
                     $owner = $ownerObject->getName();
                 }
                 $modificationDate = $savedGridConfig->getModificationDate();

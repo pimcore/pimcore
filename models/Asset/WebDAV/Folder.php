@@ -99,6 +99,7 @@ class Folder extends DAV\Collection
             if ($asset instanceof Asset\Folder) {
                 return new Asset\WebDAV\Folder($asset);
             }
+
             return new Asset\WebDAV\File($asset);
         }
         throw new DAV\Exception\NotFound('File not found: ' . $name);

@@ -31,27 +31,34 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Static type of this element
+     *
      * @internal
+     *
      * @var string
      */
     public $fieldtype = 'checkbox';
 
     /**
      * @internal
+     *
      * @var int|null
      */
     public $defaultValue;
 
     /**
      * Type for the column to query
+     *
      * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'tinyint(1)';
 
     /**
      * Type for the column
+     *
      * @internal
+     *
      * @var string
      */
     public $columnType = 'tinyint(1)';
