@@ -58,9 +58,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     protected $blockStarted;
 
     /**
+     * @internal
+     *
      * @var array
      */
-    private $brickTypeUsageCounter = [];
+    protected $brickTypeUsageCounter = [];
 
     /**
      * @see EditableInterface::getType
@@ -266,9 +268,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @internal
+     *
      * @return EditableHandler
      */
-    private function getEditableHandler()
+    protected function getEditableHandler()
     {
         // TODO inject area handler via DI when editables are built through container
         return \Pimcore::getContainer()->get(EditableHandler::class);
