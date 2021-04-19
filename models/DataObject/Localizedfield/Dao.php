@@ -153,8 +153,9 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        $flag = DataObject\Localizedfield::getGetFallbackValues();
+
         if (!$ignoreLocalizedQueryFallback) {
-            $flag = DataObject\Localizedfield::getGetFallbackValues();
             DataObject\Localizedfield::setGetFallbackValues(true);
         }
 
@@ -434,7 +435,7 @@ class Dao extends Model\Dao\AbstractDao
 
 
         if (!$ignoreLocalizedQueryFallback) {
-        DataObject\Localizedfield::setGetFallbackValues($flag);
+            DataObject\Localizedfield::setGetFallbackValues($flag);
         }
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
         DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
