@@ -460,8 +460,8 @@ $scripts = array(
     "pimcore/asset/metadata/editor.js",
     "pimcore/asset/tree.js",
     "pimcore/asset/customviews/tree.js",
-    "pimcore/asset/gridexport/xlsx.js",
     "pimcore/asset/gridexport/csv.js",
+    "pimcore/asset/gridexport/xlsx.js",
 
     // object
     "pimcore/object/helpers/edit.js",
@@ -666,8 +666,8 @@ $scripts = array(
     "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
-    "pimcore/object/gridexport/xlsx.js",
     "pimcore/object/gridexport/csv.js",
+    "pimcore/object/gridexport/xlsx.js",
 
     //plugins
     "pimcore/plugin/broker.js",
