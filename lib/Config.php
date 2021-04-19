@@ -136,6 +136,23 @@ class Config implements \ArrayAccess
     }
 
     /**
+     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
+     *
+     * @param null|array $configuration
+     * @param null|mixed $offset
+     */
+    public static function setSystemConfiguration($configuration, $offset = null)
+    {
+        if (null !== $offset) {
+            self::getSystemConfiguration();
+            static::$systemConfig[$offset] = $configuration;
+        } else {
+            static::$systemConfig = $configuration;
+        }
+    }
+
+
+    /**
      * @internal
      *
      * @param null|mixed $offset
