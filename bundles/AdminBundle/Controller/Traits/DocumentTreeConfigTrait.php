@@ -81,7 +81,7 @@ trait DocumentTreeConfigTrait
             // test for a site
             if ($site = Site::getByRootId($childDocument->getId())) {
                 $site->setRootDocument(null);
-                $tmpDocument['site'] = $site;
+                $tmpDocument['site'] = $site->getObjectVars();
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;
