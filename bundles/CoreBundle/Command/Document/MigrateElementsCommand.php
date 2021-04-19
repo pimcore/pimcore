@@ -17,17 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
-use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
-use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
-use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\Version;
-use Pimcore\Tool\Serialize;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 

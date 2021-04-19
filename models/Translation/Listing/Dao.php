@@ -86,7 +86,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
 
-
             $queryBuilder->setMaxResults(null); //retrieve all results
             $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
@@ -108,7 +107,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $translations[$t['key']]->setModificationDate($t['modificationDate']);
             }
 
-            if(empty($this->model->getConditionParams())) {
+            if (empty($this->model->getConditionParams())) {
                 Cache::save($translations, $cacheKey, ['translator', 'translate'], 999);
             }
         }
