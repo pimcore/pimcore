@@ -392,7 +392,7 @@
 }
 
 .pimcore_nav_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/mind_map.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/globe.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_clear_cache {
@@ -792,7 +792,7 @@
 
 
 .pimcore_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/mind_map.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/globe.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_redirects {

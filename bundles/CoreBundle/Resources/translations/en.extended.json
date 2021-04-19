@@ -210,7 +210,6 @@
   "enable": "Enable",
   "disable": "Disable",
   "configure": "Configure",
-  "manage_extensions": "Manage Extensions",
   "beginning_with": "Beginning with",
   "matching_exact": "Matching exactly",
   "add_expert_mode": "Add (Expert Mode)",

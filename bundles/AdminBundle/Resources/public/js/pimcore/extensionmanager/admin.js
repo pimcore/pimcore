@@ -29,7 +29,7 @@ pimcore.extensionmanager.admin = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_extensionmanager_admin",
-                title: t("manage_extensions"),
+                title: t("bundles") + ' & ' + t('bricks'),
                 iconCls: "pimcore_icon_plugin",
                 border: false,
                 layout: "fit",

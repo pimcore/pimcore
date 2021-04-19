@@ -324,7 +324,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("plugins") && perspectiveCfg.inToolbar("extras.plugins")) {
                 extrasItems.push({
-                    text: t("bundles"),
+                    text: t("bundles") + ' & ' + t('bricks'),
                     iconCls: "pimcore_nav_icon_bundles",
                     handler: this.extensionAdmin
                 });
