@@ -97,7 +97,6 @@ final class SnippetController extends DocumentControllerBase
         $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
-        $data['elementType'] = Element\Service::getType($snippet);
 
         $this->addTranslationsData($snippet, $data);
         $this->minimizeProperties($snippet, $data);

@@ -95,7 +95,6 @@ final class EmailController extends DocumentControllerBase
         $email->setChildren(null);
 
         $data = $email->getObjectVars();
-        $data['elementType'] = Element\Service::getType($email);
 
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);

@@ -64,7 +64,6 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
-        $data['elementType'] = Element\Service::getType($page);
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);

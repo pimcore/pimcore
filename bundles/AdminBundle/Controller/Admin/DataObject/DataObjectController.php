@@ -431,10 +431,11 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             }
 
             if($latestVersion && $latestVersion->isDraft()){
-                $objectData['draft'] = ['id' => $latestVersion->getId(),'modificationDate' => $latestVersion->getDate()];
+                $objectData['draft'] = [
+                    'id' => $latestVersion->getId(),
+                    'modificationDate' => $latestVersion->getDate()
+                ];
             }
-
-            $objectData['elementType'] = Element\Service::getType($object);
 
             $objectData['general'] = [];
             $objectData['general']['objectFromVersion'] = $objectFromVersion;

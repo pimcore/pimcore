@@ -183,7 +183,7 @@ pimcore.element.abstract = Class.create({
     },
 
     startDraftSaving : function(){
-        let interval = pimcore.settings['draft_saving_interval_' + this.data.elementType];
+        let interval = pimcore.settings['draft_saving_interval_' + pimcore.helpers.getElementTypeByObject(this)];
         if (interval && !this.draftSavingInterval) {
             this.draftSavingInterval = window.setInterval(this.saveDraft.bind(this), interval*1000);
         }
@@ -267,13 +267,13 @@ pimcore.element.abstract = Class.create({
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_element_deletedraft'),
             method: 'DELETE',
-            params: {id : this.id,
-                elementType : this.data.elementType
+            params: {
+                id : this.id,
+                elementType : pimcore.helpers.getElementTypeByObject(this)
             },
             success : function () {
                 this.reload();
             }.bind(this)
         });
-
     }
 });
