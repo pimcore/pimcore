@@ -79,7 +79,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     save: function (task, only, callback, successCallback) {
 
-        if (this.tab.disabled || this.tab.isMasked()) {
+        if (this.tab.disabled || (this.tab.isMasked() && task != 'draft')) {
             return;
         }
 
@@ -155,7 +155,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     }
 
                     // reload versions
-                    if (this.versions) {
+                    if (task != 'draft' && this.versions) {
                         if (typeof this.versions.reload == "function") {
                             this.versions.reload();
                         }
