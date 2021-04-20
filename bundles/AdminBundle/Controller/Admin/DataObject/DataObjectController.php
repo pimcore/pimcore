@@ -1092,11 +1092,9 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         for ($retries = 0; $retries < $maxRetries; $retries++) {
             try {
                 Db::get()->beginTransaction();
-                $updateLatestVersionIndex = function ($objectId, $modificationDate, $versionCount, $newIndex) {
-                    if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate(
-                        $objectId, $modificationDate, $versionCount
-                    )) {
-
+                $updateLatestVersionIndex = function ($objectId, $newIndex) {
+                    $object = DataObject::getById($objectId);
+                    if ($object && $latestVersion = $object->getLatestVersion()) {
                         // don't renew references (which means loading the target elements)
                         // Not needed as we just save a new version with the updated index
                         $object = $latestVersion->loadData(false);

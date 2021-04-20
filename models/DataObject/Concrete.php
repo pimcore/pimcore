@@ -30,7 +30,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion($force = false, $draftUserId = null)
+ * @method \Pimcore\Model\Version getLatestVersion($userId = null)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
