@@ -264,7 +264,7 @@ class Definition extends Model\AbstractModel
         }
     }
 
-    public function isWritable()
+    public function isWritable(): bool
     {
         return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
