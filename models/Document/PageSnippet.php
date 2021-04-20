@@ -28,7 +28,7 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion()
+ * @method \Pimcore\Model\Version getLatestVersion($userId = null)
  */
 abstract class PageSnippet extends Model\Document
 {
@@ -182,7 +182,7 @@ abstract class PageSnippet extends Model\Document
                 'isDraft' => $isDraft
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
-          
+
             throw $e;
         }
     }

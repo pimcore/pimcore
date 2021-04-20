@@ -124,25 +124,24 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         }
                         if (rdata && rdata.success) {
                             // check for version notification
-                            if (this.newerVersionNotification) {
-                                if (task == "publish" || task == "unpublish" || task == "draft") {
-                                    this.newerVersionNotification.hide();
-                                } else {
-                                    this.newerVersionNotification.show();
+                            if (this.draftVersionNotification) {
+                                if (task == "publish" || task == "unpublish") {
+                                    this.draftVersionNotification.hide();
+                                } else if (task === 'version' || task === 'draft') {
+                                    this.draftVersionNotification.show();
                                 }
                             }
 
                             if(task != "draft") {
                                 pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
-                                if(task === null || task == 'publish'){
-                                    this.draftVersionNotification.hide();
-                                }
-                            }else{
-                                this.draftVersionNotification.show();
                             }
 
                             this.resetChanges(task);
                             Ext.apply(this.data, rdata.data);
+
+                            if(rdata['draft']) {
+                                this.data['draft'] = rdata['draft'];
+                            }
 
                             if (typeof this["createScreenshot"] == "function") {
                                 this.createScreenshot();
@@ -194,7 +193,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     saveClose: function (only) {
-        this.save(null, only, function () {
+        this.save('version', only, function () {
             this.close();
         }.bind(this));
     },

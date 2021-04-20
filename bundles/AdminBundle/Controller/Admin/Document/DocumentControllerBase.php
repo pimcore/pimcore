@@ -41,7 +41,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
 
-    protected function preSendDataActions(&$data, Model\Document $document)
+    protected function preSendDataActions(&$data, Model\Document $document, ?Version $draftVersion = null)
     {
         $documentFromDatabase = Model\Document::getById($document->getId(), true);
 
@@ -56,19 +56,12 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
-        $list = new Version\Listing();
-        $list->setLoadDrafts(true);
-        $list->setCondition("cid = ? AND ctype=? AND draft=1 AND userId = ? ",[$document->getId(),Element\Service::getType($document),$this->getUser()->getId()])
-            ->setOrderKey('date')
-            ->setOrder('DESC');
-        $activeDraft = $list->current();
-
-        //only display user daft is a other user has not saved the document later on...
-        if($activeDraft && $document->getModificationDate() < $activeDraft->getDate()){
-            $data['draft'] = ['id' => $activeDraft->getId(),'modificationDate' => $activeDraft->getDate()];
-            Model\Document\Service::saveElementToSession($activeDraft->loadData());
+        if($draftVersion && $documentFromDatabase->getModificationDate() < $draftVersion->getDate()){
+            $data['draft'] = [
+                'id' => $draftVersion->getId(),
+                'modificationDate' => $draftVersion->getDate()
+            ];
         }
-
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -280,18 +273,16 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
     /**
      * @param Model\Document\PageSnippet $document
-     * @param bool $isLatestVersion
-     *
+     * @param null|Version $draftVersion
      * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document\PageSnippet $document, &$isLatestVersion = true)
+    protected function getLatestVersion(Model\Document\PageSnippet $document, &$draftVersion = null)
     {
-        $latestVersion = $document->getLatestVersion();
+        $latestVersion = $document->getLatestVersion($this->getUser()->getId());
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
-                $isLatestVersion = false;
-
+                $draftVersion = $latestVersion;
                 return $latestDoc;
             }
         }

@@ -23,6 +23,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
+use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Psr\Log\LoggerAwareInterface;
@@ -127,7 +128,7 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
-                $document = $this->handleAdminUserDocumentParams($request, $document);
+                $document = $this->handleAdminUserDocumentParams($request, $document, $user);
                 $this->handleObjectParams($request);
             }
 
@@ -194,10 +195,11 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
     /**
      * @param Request $request
      * @param Document|null $document
+     * @param User $user
      *
      * @return Document|null
      */
-    protected function handleAdminUserDocumentParams(Request $request, ?Document $document)
+    private function handleAdminUserDocumentParams(Request $request, ?Document $document, User $user)
     {
         if (!$document) {
             return null;
@@ -205,7 +207,7 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $document = $this->handleEditmode($document);
+            $document = $this->handleEditmode($document, $user);
         }
 
         // document preview
@@ -252,10 +254,11 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
     /**
      * @param Document $document
+     * @param User $user
      *
      * @return Document
      */
-    protected function handleEditmode(Document $document)
+    protected function handleEditmode(Document $document, User $user)
     {
         // check if there is the document in the session
         if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
@@ -271,7 +274,7 @@ final class ElementListener implements EventSubscriberInterface, LoggerAwareInte
 
             // set the latest available version for editmode if there is no doc in the session
             if ($document instanceof Document\PageSnippet) {
-                $latestVersion = $document->getLatestVersion();
+                $latestVersion = $document->getLatestVersion($user->getId());
                 if ($latestVersion) {
                     $latestDoc = $latestVersion->loadData();
 

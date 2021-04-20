@@ -651,9 +651,9 @@ final class ElementController extends AdminController
      */
     public function deleteDraftAction(Request $request)
     {
-        $element = Element\Service::getElementById($request->get('elementType'),$request->get('id'));
-        if($element){
-            $element->deleteDraftVersions($this->getUser()->getId());
+        $version = Version::getById($request->get('id'));
+        if($version){
+            $version->delete();
         }
 
         return $this->adminJson(['success' => true]);

@@ -137,10 +137,10 @@ pimcore.element.abstract = Class.create({
 
         try {
             if(task != "draft"){
+                this.dirty = false;
                 this.tab.setTitle(this.tab.initialConfig.title);
                 this.stopDraftSaving();
                 this.startChangeDetector();
-                this.dirty = false;
             }
         } catch(exception) {
             // tab was closed to fast
@@ -292,12 +292,13 @@ pimcore.element.abstract = Class.create({
 
     deleteDraft : function () {
 
+        this.dirty = false;
+
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_element_deletedraft'),
             method: 'DELETE',
             params: {
-                id : this.id,
-                elementType : pimcore.helpers.getElementTypeByObject(this)
+                id : this.data['draft']['id']
             },
             success : function () {
                 this.reload();

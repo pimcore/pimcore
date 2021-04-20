@@ -44,9 +44,9 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
                         iconCls: "pimcore_icon_save",
                         handler: this.publishClose.bind(this)
                     },{
-                        text: t('save_only_new_version'),
+                        text: t('save_draft'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.save.bind(this)
+                        handler: this.save.bind(this, 'version')
                     }
                 ]
             });

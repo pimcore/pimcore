@@ -399,10 +399,8 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $latestVersion = $this->getLatestVersion($objectFromDatabase);
-
-        $object = $latestVersion ? $latestVersion->getData() : $objectFromDatabase;
-
+        $draftVersion = null;
+        $object = $this->getLatestVersion($objectFromDatabase, $draftVersion);
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
@@ -430,15 +428,14 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                 $objectData['hasPreview'] = true;
             }
 
-            if($latestVersion && $latestVersion->isDraft()){
+            if($draftVersion && $objectFromDatabase->getModificationDate() < $draftVersion->getDate()){
                 $objectData['draft'] = [
-                    'id' => $latestVersion->getId(),
-                    'modificationDate' => $latestVersion->getDate()
+                    'id' => $draftVersion->getId(),
+                    'modificationDate' => $draftVersion->getDate()
                 ];
             }
 
             $objectData['general'] = [];
-            $objectData['general']['objectFromVersion'] = $objectFromVersion;
 
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
@@ -1194,12 +1191,8 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         $originalModificationDate = $object->getModificationDate();
 
         // set the latest available version for editmode
-        $latestVersion = $this->getLatestVersion($object);
-        if($latestVersion){
-            $object = $latestVersion->getData();
-        }
+        $object = $this->getLatestVersion($object);
         $object->setUserModification($this->getAdminUser()->getId());
-
 
         // data
         $data = [];
@@ -1310,9 +1303,14 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             }
         } elseif ($object->isAllowed('save')) {
             $isDraft = $request->get('task') == "draft";
+            $draftData = [];
 
             if ($object->isPublished() || $isDraft) {
-                $object->saveVersion(true,true,null,$isDraft);
+                $version = $object->saveVersion(true,true,null,$isDraft);
+                $draftData = [
+                    'id' => $version->getId(),
+                    'modificationDate' => $version->getDate()
+                ];
             } else {
                 $object->save();
             }
@@ -1331,6 +1329,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                     'versionDate' => $newObject->getModificationDate(),
                     'versionCount' => $newObject->getVersionCount(),
                 ],
+                'draft' => $draftData,
                 'treeData' => $treeData,
             ]);
         }
@@ -2191,21 +2190,22 @@ final class DataObjectController extends ElementControllerBase implements Kernel
     }
 
     /**
-     * @param  DataObject\Concrete $object
-     *
-     * @return Version | null
+     * @param DataObject\Concrete $object
+     * @param null|Version $draftVersion
+     * @return DataObject\Concrete|null
      */
-    protected function getLatestVersion(DataObject\Concrete $object)
+    protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null)
     {
-        $latestVersion = $object->getLatestVersion(false,$this->getUser()->getId());
+        $latestVersion = $object->getLatestVersion($this->getUser()->getId());
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
-                return $latestVersion;
+                $draftVersion = $latestVersion;
+                return $latestObj;
             }
         }
 
-        return null;
+        return $object;
     }
 
     /**
