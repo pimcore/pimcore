@@ -1093,7 +1093,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             try {
                 Db::get()->beginTransaction();
                 $updateLatestVersionIndex = function ($objectId, $newIndex) {
-                    $object = DataObject::getById($objectId);
+                    $object = DataObject\Concrete::getById($objectId);
                     if ($object && $latestVersion = $object->getLatestVersion()) {
                         // don't renew references (which means loading the target elements)
                         // Not needed as we just save a new version with the updated index
@@ -1147,7 +1147,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                         $index++;
                     }
 
-                    $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $sibling['o_versionCount'], $index);
+                    $updateLatestVersionIndex($sibling['o_id'], $index);
                     $index++;
 
                     DataObject::clearDependentCacheByObjectId($sibling['o_id']);
