@@ -218,8 +218,7 @@ final class ClassController extends AdminController implements KernelControllerE
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->setFieldDefinitions([]);
         $isWriteable = $class->isWritable();
-        $class = json_encode($class);
-        $class = json_decode($class, true);
+        $class = $class->getObjectVars();
         $class['isWriteable'] = $isWriteable;
 
         return $this->adminJson($class);
