@@ -23,7 +23,7 @@ Overwrite the service `Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageLi
 ```yaml
 Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
     calls:
-        - [loadTemplateFromResource, ['@@AppBundle/Resources/misc/maintenance.html']]
+        - [loadTemplateFromResource, ['@@App/Resources/misc/maintenance.html']]
     tags:
         - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 ```

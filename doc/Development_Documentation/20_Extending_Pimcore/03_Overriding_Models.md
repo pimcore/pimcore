@@ -25,8 +25,8 @@ The configuration is a simple key / value map in your `app/config/config.yml` us
 pimcore:
     models:
         class_overrides:
-            'Pimcore\Model\DataObject\News': 'AppBundle\Model\DataObject\News'
-            'Pimcore\Model\DataObject\News\Listing': 'AppBundle\Model\DataObject\News\Listing'
+            'Pimcore\Model\DataObject\News': 'App\Model\DataObject\News'
+            'Pimcore\Model\DataObject\News\Listing': 'App\Model\DataObject\News\Listing'
 ```
 
 **It is crucial that your override class extends the origin class, if not you'll break the entire system.**
@@ -42,15 +42,15 @@ In your `app/config/config.yml`:
 pimcore:
     models:
         class_overrides:
-            'Pimcore\Model\DataObject\News': 'AppBundle\Model\DataObject\News'
+            'Pimcore\Model\DataObject\News': 'App\Model\DataObject\News'
 ```
 
-Your `AppBundle\Model\DataObject\News`: 
+Your `App\Model\DataObject\News`: 
 
 ```php
 <?php 
 
-namespace AppBundle\Model\DataObject; 
+namespace App\Model\DataObject; 
 
 class News extends \Pimcore\Model\DataObject\News {
 

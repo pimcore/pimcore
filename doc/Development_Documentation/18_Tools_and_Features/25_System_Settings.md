@@ -72,7 +72,7 @@ Using `\Pimcore\Config::getSystemConfig()` is deprecated. You can choose one of 
 ```php 
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;

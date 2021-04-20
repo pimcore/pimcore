@@ -24,7 +24,7 @@ Following options are relevant:
 * *Name* - name of the Custom Route for identifying it
 * *Pattern* - URL pattern configured with a regex
 * *Reverse* - reverse pattern that is used to build URLs for this route, see also [Building URLs](#building-urls-based-on-custom-routes).
-* *Bundle* - When this column is filled, Pimcore routes the request to a different bundle than the standard bundle (AppBundle). 
+* *Bundle* - When this column is filled, Pimcore routes the request to a different bundle than the standard bundle (App). 
 * *Controller*, *Action* - configuration for which controller/action the request is delegated to. You can use a Service as Controller Name as well. In this case, the Bundle Setting will be ignored
 * *Variables* - comma-seperated list of names for the placeholders in the pattern regex. At least all variables used in the reverse pattern must be listed here.  
 * *Defaults* - defaults for variables separated by | - e.g. key=value|key2=value2 
@@ -44,7 +44,7 @@ the custom route:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +57,7 @@ class NewsController extends FrontendController
         $text = $request->get('text');
         
         // ...
-        return $this->render('News/detail.html.twig');
+        return $this->render('news/detail.html.twig');
     }
 }
 ```
@@ -255,7 +255,7 @@ Service Definition:
 ```yml
 services:
   app.controller.default:
-    class: AppBundle\Controller\DefaultController
+    class: App\Controller\DefaultController
     calls:
       - [setContainer, ['@service_container']]
 

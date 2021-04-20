@@ -70,7 +70,7 @@
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`. 
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.
-- [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction` 
+- [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `App\Controller\FooController::myAction` 
 - Bumped `codeception/codeception` to "^4.1.12".
 - Pimcore Bundle Migrations: Extending the functionality of `DoctrineMigrationsBundle` is not any longer possible the way we did it in the past. Therefore we're switching to standard Doctrine migrations, this means also that migration sets are not supported anymore and that the available migrations have to be configured manually or by using flex.
     ```yaml
@@ -379,7 +379,7 @@
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
-Staticroutes and Document Types to the new controller references in the format: `AppBundle\Controller\FooController::barAction`.
+Staticroutes and Document Types to the new controller references in the format: `App\Controller\FooController::barAction`.
 The migration has to be done **before** upgrading to the next major version! We recomment to perform the migration 
 right after the upgrade to version 6.9.0. 
 If there are some errors during the execution of the command, don't panic. 

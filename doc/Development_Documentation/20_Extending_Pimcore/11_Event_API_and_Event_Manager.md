@@ -61,17 +61,17 @@ The following example shows how to register events for assets, documents and obj
 in your `app/config/services.yml`: 
 ```yaml
 services:
-    AppBundle\EventListener\TestListener:
+    App\EventListener\TestListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.asset.preUpdate, method: onPreUpdate }
             - { name: kernel.event_listener, event: pimcore.document.preUpdate, method: onPreUpdate }
             - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onPreUpdate }
 ```
 
-in your listener class `src/AppBundle/EventListener/TestListener`
+in your listener class `src/EventListener/TestListener`
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
   
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\Model\DataObjectEvent;

@@ -25,7 +25,7 @@ To do so, Pimcore provides two events:
 Services in Container:
 ```yml
  app.event_listener.test:
-        class: AppBundle\EventListener\PDFConfigListener
+        class: App\EventListener\PDFConfigListener
         tags:
             - { name: kernel.event_listener, event: pimcore.document.print.processor.modifyProcessingOptions, method: modifyProcessingOptions }
             - { name: kernel.event_listener, event: pimcore.document.print.processor.modifyConfig, method: modifyConfig }
@@ -34,7 +34,7 @@ Services in Container:
 Implementation of Listener
 ```php
 <?php 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 class PDFConfigListener
 {
@@ -81,7 +81,7 @@ Services in Container see above.
 Implementation of Listener
 ```php
 <?php 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 class PDFConfigListener
 {

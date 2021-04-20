@@ -28,9 +28,9 @@ hour, not the full time.
 ```php
 <?php
 
-// src/AppBundle/Targeting/Condition/TimeOfTheDay.php
+// src/Targeting/Condition/TimeOfTheDay.php
 
-namespace AppBundle\Targeting\Condition;
+namespace App\Targeting\Condition;
 
 use Pimcore\Targeting\Condition\ConditionInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -82,7 +82,7 @@ name when implementing the JS class.
 pimcore:
     targeting:
         conditions:
-            timeoftheday: AppBundle\Targeting\Condition\TimeOfTheDay
+            timeoftheday: App\Targeting\Condition\TimeOfTheDay
 ```
 
 
@@ -129,7 +129,7 @@ resolved current hour.
 ```php
 <?php
 
-namespace AppBundle\Targeting\Condition;
+namespace App\Targeting\Condition;
 
 use Pimcore\Targeting\Condition\AbstractVariableCondition;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -166,7 +166,7 @@ for examples.
 Start by adding a new JS file implementing the admin UI panel for your condition:
 
 ```javascript
-// src/AppBundle/Resources/public/js/targeting/conditions.js
+// /public/js/targeting/conditions.js
 
 (function () {
     'use strict';

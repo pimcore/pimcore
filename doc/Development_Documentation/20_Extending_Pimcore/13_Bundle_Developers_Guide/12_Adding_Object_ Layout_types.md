@@ -35,14 +35,14 @@ Following steps are necessary to do so:
 
    Example:
     ```yaml
-    # src/AppBundle/Resources/config/pimcore/config.yml
+    # src/App/Resources/config/pimcore/config.yml
     
     pimcore:
         objects:
             class_definitions:
                 Layout:
                     map:
-                      myLayoutType: \AppBundle\Model\DataObject\ClassDefinition\Layout\MyLayoutType
+                      myLayoutType: \App\Model\DataObject\ClassDefinition\Layout\MyLayoutType
     ```
 
 5) Add your layout type in the context menu of the Class Definition editor.
@@ -50,7 +50,7 @@ Following steps are necessary to do so:
 
    Here is an example:
    ```javascript
-   // src/AppBundle/Resources/public/js/MyTestBundle.js
+   // src/App/Resources/public/js/MyTestBundle.js
    
    pimcore.registerNS("pimcore.plugin.MyTestBundle");
    

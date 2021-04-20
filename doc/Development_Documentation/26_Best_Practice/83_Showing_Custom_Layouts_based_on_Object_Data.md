@@ -27,20 +27,20 @@ To do so create a [Event Listener](../20_Extending_Pimcore/11_Event_API_and_Even
 with following content: 
 
 
-`app/config/services.yml`
+`config/services.yaml`
 ```yml
 services:
     app.event_listener.my_event_listner:
-        class: AppBundle\EventListener\MyEventListener
+        class: App\EventListener\MyEventListener
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.dataobject.get.preSendData, method: selectCustomLayout }
 ```
 
-`src/AppBundle/EventListener/MyEventListener`
+`src/EventListener/MyEventListener`
 
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use ... 
 

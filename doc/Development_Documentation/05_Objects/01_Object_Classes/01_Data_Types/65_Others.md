@@ -133,7 +133,7 @@ Pimcore then cares automatically about the routing and calls the configured cont
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\DataObject;

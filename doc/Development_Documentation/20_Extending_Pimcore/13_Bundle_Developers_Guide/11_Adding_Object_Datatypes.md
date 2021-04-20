@@ -44,13 +44,13 @@ with a bundle you should define it in a configuration file which is [automatical
    Example:
 
 ```yaml
-# src/AppBundle/Resources/config/pimcore/config.yml
+# config/config.yaml
 
 pimcore:
     objects:
         class_definitions:
             data:
                 map:
-                  myDataType: \AppBundle\Model\DataObject\Data\MyDataType
+                  myDataType: \App\Model\DataObject\Data\MyDataType
 ```
 

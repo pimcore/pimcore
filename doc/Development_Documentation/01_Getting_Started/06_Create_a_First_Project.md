@@ -12,12 +12,12 @@ In the first part you'll learn the basics for creating CMS pages with Pimcore Do
 ### New Controller
 First of all, we need a controller. 
 Let's call it `ContentController.php`. 
-You have to put the file into the `/src/AppBundle/Controller` directory.
+You have to put the file into the `/src/Controller` directory.
 
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
@@ -207,7 +207,7 @@ Therefore create another action in the controller (ContentController) called `pr
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;

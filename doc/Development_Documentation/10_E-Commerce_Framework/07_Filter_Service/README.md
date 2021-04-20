@@ -184,7 +184,7 @@ $templateParams['paginationVariables'] = $paginator->getPaginationData();
 return $this->render('Path/template.html.twig', $templateParams);
 ```
 
-For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/master/src/AppBundle/Controller/ProductController.php#L118). 
+For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/master/src/Controller/ProductController.php#L118). 
 
 ### View
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 

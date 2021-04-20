@@ -276,10 +276,10 @@ In the following example we're adding news items (objects) to the navigation usi
 
 ```php
 <?php
-namespace AppBundle\Twig\Extension;
+namespace App\Twig\Extension;
 
 
-use AppBundle\Website\LinkGenerator\NewsLinkGenerator;
+use App\Website\LinkGenerator\NewsLinkGenerator;
 use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\Templating\Navigation;
 use Twig\Extension\AbstractExtension;
@@ -383,7 +383,7 @@ But sometimes it's necessary to get some properties or other data out of the doc
 For that we've introduced a new parameter for the navigation extension, which acts as a callback and allows to map custom data onto the navigation page item.
 ```php
 <?php
-namespace AppBundle\Twig\Extension;
+namespace App\Twig\Extension;
 
 use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\Templating\Navigation;

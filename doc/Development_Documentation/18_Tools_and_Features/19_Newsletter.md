@@ -66,12 +66,12 @@ This simple framework allows you to create a hassle free subscribe/confirm/unsub
  
 ### Controller
 
-For example, `\NewsletterController`: `src/AppBundle/Controllers/NewsletterController.php`
+For example, `\NewsletterController`: `src/Controllers/NewsletterController.php`
 
 ```php
 <?php
 
-namespace AppBundle\Controller; 
+namespace App\Controller; 
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model;

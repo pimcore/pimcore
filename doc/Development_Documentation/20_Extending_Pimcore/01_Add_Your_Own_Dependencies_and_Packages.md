@@ -42,8 +42,8 @@ class AppKernel extends Kernel
      */
     public function registerBundlesToCollection(BundleCollection $collection)
     {
-        if (class_exists('\\AppBundle\\AppBundle')) {
-            $collection->addBundle(new \AppBundle\AppBundle);
+        if (class_exists('\\XYZBundle\\XYZBundle')) {
+            $collection->addBundle(new \XYZBundle\XYZBundle);
         }
 
         // add a custom third-party bundle here with a high priority and only for dev environment

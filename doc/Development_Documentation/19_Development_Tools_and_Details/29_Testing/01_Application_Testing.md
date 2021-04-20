@@ -57,18 +57,18 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
 </phpunit>
 ``` 
 
-Now we're ready to write a first test. Assuming we have an `AppBundle\Calculator` class which has an `add(int $a, int $b): int`
-method, add a test in `tests/AppBundle/CalculatorTest.php`. It is not necessary but recommended to resemble the directory
+Now we're ready to write a first test. Assuming we have an `App\Calculator` class which has an `add(int $a, int $b): int`
+method, add a test in `tests/App/CalculatorTest.php`. It is not necessary but recommended to resemble the directory
 structure from your application code in your test directory.
 
 ```php
 <?php
 
-// tests/AppBundle/CalculatorTest.php
+// tests/App/CalculatorTest.php
 
-namespace Tests\AppBundle;
+namespace Tests\App;
 
-use AppBundle\Calculator;
+use App\Calculator;
 use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase
@@ -184,11 +184,11 @@ below assumes an installation running the `demo-basic` install profile.
 ```php
 <?php
 
-// tests/AppBundle/Controller/ContentControllerTest.php
+// tests/App/Controller/ContentControllerTest.php
 
 declare(strict_types=1);
 
-namespace Tests\AppBundle\Controller;
+namespace Tests\App\Controller;
 
 use Pimcore\Test\WebTestCase;
 
@@ -378,7 +378,7 @@ Let's start writing tests by adding a simple unit test:
 
 // tests/unit/ExampleTest.php
 
-namespace Tests\Unit\AppBundle;
+namespace Tests\Unit\App;
 
 use Codeception\Test\Unit;
 
@@ -461,9 +461,9 @@ can directly use Symfony tests such as `$I->amOnRoute()`.
 ```php
 <?php
 
-// tests/functional/AppBundle/IndexPageCest.php
+// tests/functional/App/IndexPageCest.php
 
-namespace Tests\Functional\AppBundle;
+namespace Tests\Functional\App;
 
 use Tests\FunctionalTester;
 

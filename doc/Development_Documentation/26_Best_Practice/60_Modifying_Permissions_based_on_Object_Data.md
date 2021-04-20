@@ -32,18 +32,18 @@ with following content:
 ```yml
 services:
     app.event_listener.my_event_listner:
-        class: AppBundle\EventListener\MyEventListener
+        class: App\EventListener\MyEventListener
         arguments:
             - '@pimcore_admin.security.user_loader'
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.object.get.preSendData, method: checkPermissions }
 ```
 
-`src/AppBundle/EventListener/MyEventListener`
+`src/EventListener/MyEventListener`
 
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use ... 
 

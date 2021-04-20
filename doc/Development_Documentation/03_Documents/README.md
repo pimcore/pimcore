@@ -33,7 +33,7 @@ Not all of them are necessary, the table below shows which configurations are po
 | 3    |            |        | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff. |
 
 Optionally you can specify a module to each of the above combinations, this is useful if you want to use controllers/actions or templates out of plugins which are simply another Symfony bundle. 
-The default module (when empty) is AppBundle.
+The default module (when empty) is App Bundle.
 
 Pimcore is shipped with a default controller containing a default action, which is called when only a template is given to the document.
 
@@ -43,9 +43,8 @@ You can set a default module/bundle, controller and action in the symfony config
 pimcore:
     routing:
         defaults:
-            bundle: AppBundle
-            controller: Default
-            action: default 
+            bundle: App
+            controller: App\Controller\DefaultController::defaultAction
 ```  
 
 ## Properties
