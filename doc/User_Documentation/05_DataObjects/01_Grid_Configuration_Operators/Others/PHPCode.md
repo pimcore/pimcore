@@ -10,7 +10,7 @@ Sample implementation.
 ```php
 <?php
 
-namespace AppBundle\Operator;
+namespace App\Operator;
 
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\DataObject\GridColumnConfig\ResultContainer;
