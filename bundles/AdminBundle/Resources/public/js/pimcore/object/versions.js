@@ -100,6 +100,14 @@ pimcore.object.versions = Class.create({
                         editable: false
                     },
                     {
+                        xtype: "checkcolumn",
+                        text: t("draft"),
+                        disabled : true,
+                        dataIndex: "draft",
+                        hidden: true,
+                        width: 50
+                    },
+                    {
                         text: t("date"), width: 150, sortable: true, dataIndex: 'date', renderer: function (d) {
                             var date = new Date(d * 1000);
                             return Ext.Date.format(date, "Y-m-d H:i:s");

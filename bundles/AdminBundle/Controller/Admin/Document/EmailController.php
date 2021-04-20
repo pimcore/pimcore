@@ -95,6 +95,7 @@ final class EmailController extends DocumentControllerBase
         $email->setChildren(null);
 
         $data = $email->getObjectVars();
+        $data['elementType'] = Element\Service::getType($email);
 
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);
@@ -147,6 +148,7 @@ final class EmailController extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($page);
 
+            $this->handleTask($request->get('task'),$page);
             return $this->adminJson([
                 'success' => true,
                 'data' => [
@@ -158,9 +160,10 @@ final class EmailController extends DocumentControllerBase
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
 
-            $page->saveVersion();
+            $page->saveVersion(true,true,null,$request->get('task') == "draft");
             $this->saveToSession($page);
 
+            $this->handleTask($request->get('task'),$page);
             return $this->adminJson(['success' => true]);
         } else {
             throw $this->createAccessDeniedHttpException();

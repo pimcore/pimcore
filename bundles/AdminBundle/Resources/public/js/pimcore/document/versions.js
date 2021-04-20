@@ -98,6 +98,14 @@ pimcore.document.versions = Class.create({
                 columns: [
                     checkShow,
                     {
+                        xtype: "checkcolumn",
+                        text: t("draft"),
+                        disabled : true,
+                        dataIndex: "draft",
+                        hidden: true,
+                        width: 50
+                    },
+                    {
                         text: t("published"),
                         width: 50,
                         sortable: false,

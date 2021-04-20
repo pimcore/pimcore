@@ -41,6 +41,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Pimcore\Model\Version;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -398,7 +399,10 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($objectFromDatabase);
+        $latestVersion = $this->getLatestVersion($objectFromDatabase);
+
+        $object = $latestVersion ? $latestVersion->getData() : $objectFromDatabase;
+
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
@@ -412,6 +416,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
         $objectFromVersion = $object !== $objectFromDatabase;
 
+
         if ($object->isAllowed('view')) {
             $objectData = [];
 
@@ -424,6 +429,12 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             if ($objectFromDatabase->getClass()->getPreviewUrl() || $objectFromDatabase->getClass()->getLinkGeneratorReference()) {
                 $objectData['hasPreview'] = true;
             }
+
+            if($latestVersion && $latestVersion->isDraft()){
+                $objectData['draft'] = ['id' => $latestVersion->getId(),'modificationDate' => $latestVersion->getDate()];
+            }
+
+            $objectData['elementType'] = Element\Service::getType($object);
 
             $objectData['general'] = [];
             $objectData['general']['objectFromVersion'] = $objectFromVersion;
@@ -1182,8 +1193,12 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         $originalModificationDate = $object->getModificationDate();
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($object);
+        $latestVersion = $this->getLatestVersion($object);
+        if($latestVersion){
+            $object = $latestVersion->getData();
+        }
         $object->setUserModification($this->getAdminUser()->getId());
+
 
         // data
         $data = [];
@@ -1254,7 +1269,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         }
 
         // unpublish and save version is possible without checking mandatory fields
-        if ($request->get('task') == 'unpublish' || $request->get('task') == 'version') {
+        if (in_array($request->get('task'),['unpublish','version','draft'])) {
             $object->setOmitMandatoryCheck(true);
         }
 
@@ -1269,6 +1284,10 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             $treeData = $this->getTreeNodeConfig($object);
 
             $newObject = DataObject::getById($object->getId(), true);
+
+            if($request->get('task') == 'publish'){
+                $object->deleteDraftVersions($this->getUser()->getId());
+            }
 
             return $this->adminJson([
                 'success' => true,
@@ -1289,10 +1308,16 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                 return $this->adminJson(['success' => true]);
             }
         } elseif ($object->isAllowed('save')) {
-            if ($object->isPublished()) {
-                $object->saveVersion();
+            $isDraft = $request->get('task') == "draft";
+
+            if ($object->isPublished() || $isDraft) {
+                $object->saveVersion(true,true,null,$isDraft);
             } else {
                 $object->save();
+            }
+
+            if($request->get('task') == 'version'){
+                $object->deleteDraftVersions($this->getUser()->getId());
             }
 
             $treeData = $this->getTreeNodeConfig($object);
@@ -2167,19 +2192,19 @@ final class DataObjectController extends ElementControllerBase implements Kernel
     /**
      * @param  DataObject\Concrete $object
      *
-     * @return DataObject\Concrete
+     * @return Version | null
      */
     protected function getLatestVersion(DataObject\Concrete $object)
     {
-        $latestVersion = $object->getLatestVersion();
+        $latestVersion = $object->getLatestVersion(false,$this->getUser()->getId());
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
-                $object = $latestObj;
+                return $latestVersion;
             }
         }
 
-        return $object;
+        return null;
     }
 
     /**

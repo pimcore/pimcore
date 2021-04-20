@@ -82,6 +82,7 @@ pimcore.element.abstract = Class.create({
     stopChangeDetector: function () {
         window.clearInterval(this.changeDetectorInterval);
         this.changeDetectorInterval = null;
+        this.stopDraftSaving();
     },
 
     setupChangeDetector: function () {
@@ -95,6 +96,7 @@ pimcore.element.abstract = Class.create({
         this.tab.on("activate", this.startChangeDetector.bind(this));
         this.tab.on("beforeclose", this._dirtyClose.bind(this));
         this.tab.on("destroy", this.stopChangeDetector.bind(this));
+        this.tab.on("hide", this.stopChangeDetector.bind(this));
     },
 
     isDirty: function () {
@@ -115,11 +117,14 @@ pimcore.element.abstract = Class.create({
         this.stopChangeDetector();
     },
 
-    resetChanges: function () {
+    resetChanges: function (task) {
         this.changeDetectorInitData = {};
 
         try {
-            this.tab.setTitle(this.tab.initialConfig.title);
+            if(task != "draft"){
+                this.tab.setTitle(this.tab.initialConfig.title);
+            }
+            this.stopDraftSaving();
             this.startChangeDetector();
             this.dirty = false;
         } catch(exception) {
@@ -171,6 +176,26 @@ pimcore.element.abstract = Class.create({
             }
             this.changeDetectorInitData[keys[i]] = liveData[keys[i]];
         }
+
+        if(this.isDirty()){
+            this.startDraftSaving();
+        }
+    },
+
+    startDraftSaving : function(){
+        let interval = pimcore.settings['draft_saving_interval_' + this.data.elementType];
+        if (interval && !this.draftSavingInterval) {
+            this.draftSavingInterval = window.setInterval(this.saveDraft.bind(this), interval*1000);
+        }
+    },
+
+    stopDraftSaving: function () {
+        window.clearInterval(this.draftSavingInterval);
+        this.draftSavingInterval = null;
+    },
+
+    saveDraft : function(){
+        this.save('draft');
     },
 
     setAddToHistory: function (addToHistory) {
@@ -235,5 +260,20 @@ pimcore.element.abstract = Class.create({
             iconClass = pimcore.helpers.getClassForIcon(this.data.icon);
         }
         return iconClass;
+    },
+
+    deleteDraft : function () {
+
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_element_deletedraft'),
+            method: 'DELETE',
+            params: {id : this.id,
+                elementType : this.data.elementType
+            },
+            success : function () {
+                this.reload();
+            }.bind(this)
+        });
+
     }
 });

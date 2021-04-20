@@ -391,10 +391,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 scale: "medium",
                 handler: this.publish.bind(this),
                 menu: [{
-                        text: t('save_pubish_close'),
-                        iconCls: "pimcore_icon_save",
-                        handler: this.publishClose.bind(this)
-                    },
+                    text: t('save_pubish_close'),
+                    iconCls: "pimcore_icon_save",
+                    handler: this.publishClose.bind(this)
+                },
                     {
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
@@ -564,12 +564,23 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
                 text: '&nbsp;&nbsp;<img src="/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg" style="height: 16px;" align="absbottom" />&nbsp;&nbsp;'
-                + t("this_is_a_newer_not_published_version"),
+                    + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
 
             buttons.push(this.newerVersionNotification);
+
+            this.draftVersionNotification = new Ext.Button({
+                text: t('delete_draft'),
+                tooltip: t('this_is_a_draft_version'),
+                iconCls: "pimcore_icon_delete pimcore_material_icon",
+                scale: "medium",
+                hidden: true,
+                handler: this.deleteDraft.bind(this)
+            });
+
+            buttons.push(this.draftVersionNotification);
 
             //workflow management
             pimcore.elementservice.integrateWorkflowManagement('object', this.id, this, buttons);
@@ -581,6 +592,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
 
+            if(this.data.draft){
+                this.draftVersionNotification.show();
+                this.newerVersionNotification.hide();
+            }
             this.toolbar = new Ext.Toolbar({
                 id: "object_toolbar_" + this.id,
                 region: "north",
@@ -735,7 +750,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var omitMandatoryCheck = false;
 
         // unpublish and save version is possible without checking mandatory fields
-        if (task == "version" || task == "unpublish") {
+        if (task == "version" || task == "unpublish" || task == "draft") {
             omitMandatoryCheck = true;
         }
 
@@ -743,7 +758,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             return;
         }
 
-        this.tab.mask();
+        if(task != 'draft'){
+            this.tab.mask();
+        }
 
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
@@ -779,15 +796,24 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             if (rdata && rdata.success) {
                                 // check for version notification
                                 if (this.newerVersionNotification) {
-                                    if (task == "publish" || task == "unpublish") {
+                                    if (task == "publish" || task == "unpublish"  || task == "draft") {
                                         this.newerVersionNotification.hide();
                                     } else {
                                         this.newerVersionNotification.show();
                                     }
                                 }
 
-                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
-                                this.resetChanges();
+                                if(task != "draft") {
+                                    pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
+                                    if(task === null || task == "publish" || task == "version"){
+                                        this.draftVersionNotification.hide();
+                                    }
+                                }else{
+                                    this.draftVersionNotification.show();
+                                }
+
+
+                                this.resetChanges(task);
                                 Ext.apply(this.data.general, rdata.general);
 
                                 pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);

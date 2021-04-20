@@ -583,6 +583,7 @@ final class ElementController extends AdminController
         return $this->adminJson(['success' => true, 'data' => $result]);
     }
 
+
     /**
      * @Route("/element/get-versions", name="pimcore_admin_element_getversions", methods={"GET"})
      *
@@ -610,7 +611,16 @@ final class ElementController extends AdminController
                         }
                     }
 
-                    $versions = $element->getVersions();
+                    //only load drafts from current user
+                    $list = new Version\Listing();
+                    $list->setLoadDrafts(true);
+                    $list->setCondition("cid = ? AND ctype=? AND (draft=0 OR (draft=1 AND userId = ?)) ",[$element->getId(),Element\Service::getType($element),$this->getUser()->getId()])
+                        ->setOrderKey('date')
+                        ->setOrder('ASC');
+
+
+                    $versions = $list->load();
+
                     $versions = Model\Element\Service::getSafeVersionInfo($versions);
                     $versions = array_reverse($versions); //reverse array to sort by ID DESC
                     foreach ($versions as &$version) {
@@ -630,6 +640,23 @@ final class ElementController extends AdminController
         }
 
         throw $this->createNotFoundException('Element type not found');
+    }
+
+    /**
+     * @Route("/element/delete-draft", name="pimcore_admin_element_deletedraft", methods={"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteDraftAction(Request $request)
+    {
+        $element = Element\Service::getElementById($request->get('elementType'),$request->get('id'));
+        if($element){
+            $element->deleteDraftVersions($this->getUser()->getId());
+        }
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**

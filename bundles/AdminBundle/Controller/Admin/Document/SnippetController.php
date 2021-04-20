@@ -97,6 +97,7 @@ final class SnippetController extends DocumentControllerBase
         $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
+        $data['elementType'] = Element\Service::getType($snippet);
 
         $this->addTranslationsData($snippet, $data);
         $this->minimizeProperties($snippet, $data);
@@ -160,6 +161,7 @@ final class SnippetController extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($snippet);
 
+            $this->handleTask($request->get('task'),$snippet);
             return $this->adminJson([
                 'success' => true,
                 'data' => [
@@ -171,9 +173,10 @@ final class SnippetController extends DocumentControllerBase
         } elseif ($snippet->isAllowed('save')) {
             $this->setValuesToDocument($request, $snippet);
 
-            $snippet->saveVersion();
+            $snippet->saveVersion(true,true,null,$request->get('task') == "draft");
             $this->saveToSession($snippet);
 
+            $this->handleTask($request->get('task'),$snippet);
             return $this->adminJson(['success' => true]);
         } else {
             throw $this->createAccessDeniedHttpException();

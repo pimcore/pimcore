@@ -53,9 +53,33 @@ final class VersionsCleanupTask implements TaskInterface
      */
     public function execute()
     {
+        $this->doVersionCleanup();
+        $this->doDraftCleanup();
+    }
+
+    protected function doDraftCleanup(){
+        $date = \Carbon\Carbon::now();
+        $date->subHours(72);
+
+        $list = new Version\Listing();
+        $ids = $list->setLoadDrafts(true)
+            ->setCondition(' `draft` = 1 AND `date` < ' . $date->getTimestamp())
+            ->loadIdList();
+
+        $this->logger->debug('Drafts to delete: ' . count($ids));
+        foreach($ids as $i => $id){
+            $this->logger->debug('Deleting draft: ' . $id);
+            $version = Version::getById($id);
+            $version->delete();
+        }
+    }
+
+    protected function doVersionCleanup(){
+
         $conf['document'] = $this->config['documents']['versions'] ?? null;
         $conf['asset'] = $this->config['assets']['versions'] ?? null;
         $conf['object'] = $this->config['objects']['versions'] ?? null;
+
 
         $elementTypes = [];
 
@@ -80,7 +104,10 @@ final class VersionsCleanupTask implements TaskInterface
             }
         }
 
-        $ignoredIds = [];
+        $list = new Version\Listing();
+        $ignoredIds = $list->setLoadDrafts(true)->setCondition(' draft = 1 ')->loadIdList();
+
+
 
         // Not very pretty and should be solved using a repository....
         $dao = new Version();

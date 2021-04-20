@@ -70,12 +70,13 @@ abstract class Dao extends Model\Document\Dao
      */
     public function getVersions()
     {
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` ASC", $this->model->getId());
+        $list = new Version\Listing();
+        $list->setCondition("cid = ? AND ctype='document'",[$this->model->getId()])
+            ->setOrderKey('id')
+            ->setOrder('ASC');
 
-        $versions = [];
-        foreach ($versionIds as $versionId) {
-            $versions[] = Version::getById($versionId);
-        }
+
+        $versions = $list->load();
 
         $this->model->setVersions($versions);
 
@@ -91,7 +92,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function getLatestVersion($force = false)
     {
-        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
+        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='document' AND draft = 0 ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
         if ($versionData && $versionData['id'] && ($versionData['date'] > $this->model->getModificationDate() || $force)) {
             $version = Version::getById($versionData['id']);

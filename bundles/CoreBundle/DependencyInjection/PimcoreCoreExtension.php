@@ -147,6 +147,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('templating_twig.yml');
 
         $this->addContextRoutes($container, $config['context']);
+
+        $container->setParameter('pimcore.admin.draft_saving_interval_document', 0);
+        $container->setParameter('pimcore.admin.draft_saving_interval_object', 0);
     }
 
     /**

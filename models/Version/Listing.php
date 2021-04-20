@@ -21,12 +21,36 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Version\Listing\Dao getDao()
+ * @method array loadIdList()
  * @method Model\Version[] load()
  * @method Model\Version current()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    /**
+     * @var bool
+     */
+    protected $loadDrafts = false;
+
+    /**
+     * @return bool
+     */
+    public function getLoadDrafts(): bool
+    {
+        return $this->loadDrafts;
+    }
+
+    /**
+     * @param bool $loadDrafts
+     * @return $this
+     */
+    public function setLoadDrafts($loadDrafts)
+    {
+        $this->loadDrafts = $loadDrafts;
+        return $this;
+    }
+
     /**
      * @return Model\Version[]
      */

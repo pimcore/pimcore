@@ -313,17 +313,30 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param string|null $versionNote
      * @param bool $saveOnlyVersion
      * @param bool $saveStackTrace
+     * @param bool $isDraft
      *
      * @return Model\Version
      *
      * @throws \Exception
      */
-    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true, $saveStackTrace = true)
+    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true, $saveStackTrace = true, $isDraft = false)
     {
+        $version = null;
+
+        if($isDraft){
+            $list = new Model\Version\Listing();
+            $list->setLoadDrafts(true);
+            $list->setCondition('draft = 1 AND cid = ? AND cType = ? AND userId = ? ',[$this->getId(),Service::getElementType($this),$this->getUserModification()]);
+            $version = $list->current();
+        }
+
         /**
          * @var Model\Version $version
          */
-        $version = self::getModelFactory()->build(Model\Version::class);
+        if(!$version){
+            $version = self::getModelFactory()->build(Model\Version::class);
+        }
+
         $version->setCid($this->getId());
         $version->setCtype(Service::getElementType($this));
         $version->setDate($this->getModificationDate());
@@ -331,6 +344,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setData($this);
         $version->setNote($versionNote);
         $version->setGenerateStackTrace($saveStackTrace);
+        $version->setDraft($isDraft);
 
         if ($saveOnlyVersion) {
             $versionCount = $this->getDao()->getVersionCountForUpdate();
@@ -388,5 +402,23 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         parent::__clone();
         $this->dependencies = null;
+    }
+
+    /**
+     * @param int $userId
+     */
+    public function deleteDraftVersions($userId = null){
+        $list = new Model\Version\Listing();
+        $list->setLoadDrafts(true);
+        if($userId){
+            $list->setCondition('`ctype` = ? AND cid = ? AND `draft` = 1 AND userId = ?',[Service::getType($this),$this->getId(),$userId]);
+        }else{
+            $list->setCondition('`ctype` = ? AND cid = ? AND `draft` = 1',[Service::getType($this),$this->getId()]);
+        }
+
+        $draftVersions = $list->load();
+        foreach($draftVersions as $version){
+            $version->delete();
+        }
     }
 }

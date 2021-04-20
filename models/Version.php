@@ -120,6 +120,11 @@ class Version extends AbstractModel
     public static $disabled = false;
 
     /**
+     * @var bool
+     */
+    public $draft = false;
+
+    /**
      * @param int $id
      *
      * @return Version|null
@@ -724,5 +729,24 @@ class Version extends AbstractModel
     public function getStackTrace(): ?string
     {
         return $this->stackTrace;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isDraft(): bool
+    {
+        return $this->draft;
+    }
+
+    /**
+     * @param bool $draft
+     * @return $this
+     */
+    public function setDraft($draft)
+    {
+        $this->draft = (bool)$draft;
+        return $this;
     }
 }
