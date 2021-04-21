@@ -203,10 +203,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         foreach ($validLanguages as $language) {
             foreach ($activeGroupIds as $groupId => $enabled) {
-                if (!$enabled) {
-                    continue;
-                }
-
                 $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
                 $relation->setCondition("type = 'calculatedValue' and groupId = " . $relation->quote($groupId));
                 $relation = $relation->load();
@@ -287,10 +283,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                 foreach ($validLanguages as $language) {
                     foreach ($activeGroupIds as $groupId => $enabled) {
-                        if (!$enabled) {
-                            continue;
-                        }
-
                         $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
                         $relation->setCondition('groupId = ' . $relation->quote($groupId));
                         $relation = $relation->load();
@@ -778,41 +770,39 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             }
 
             foreach ($activeGroups as $activeGroupId => $enabled) {
-                if ($enabled) {
-                    $groupDefinition = DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
-                    if (!$groupDefinition) {
-                        continue;
-                    }
+                $groupDefinition = DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
+                if (!$groupDefinition) {
+                    continue;
+                }
 
-                    $keyGroupRelations = $groupDefinition->getRelations();
+                $keyGroupRelations = $groupDefinition->getRelations();
 
-                    foreach ($keyGroupRelations as $keyGroupRelation) {
-                        foreach ($validLanguages as $validLanguage) {
-                            $keyId = $keyGroupRelation->getKeyId();
+                foreach ($keyGroupRelations as $keyGroupRelation) {
+                    foreach ($validLanguages as $validLanguage) {
+                        $keyId = $keyGroupRelation->getKeyId();
 
-                            $object = $data->getObject();
-                            if ($object->getClass()->getAllowInherit()) {
-                                DataObject::setGetInheritedValues(true);
-                                $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
-                                DataObject::setGetInheritedValues($getInheritedValues);
-                            } else {
-                                $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
-                            }
+                        $object = $data->getObject();
+                        if ($object->getClass()->getAllowInherit()) {
+                            DataObject::setGetInheritedValues(true);
+                            $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
+                            DataObject::setGetInheritedValues($getInheritedValues);
+                        } else {
+                            $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
+                        }
 
-                            $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                        $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
 
-                            if ($keyGroupRelation->isMandatory()) {
-                                $keyDef->setMandatory(1);
-                            }
-                            try {
+                        if ($keyGroupRelation->isMandatory()) {
+                            $keyDef->setMandatory(1);
+                        }
+                        try {
                                 $keyDef->checkValidity($value, false, $params);
-                            } catch (\Exception $exception) {
-                                $subItems[] = new Model\Element\ValidationException(
-                                    $exception->getMessage() . ' (' . $validLanguage . ')',
-                                    $exception->getCode(),
-                                    $exception->getPrevious()
-                                );
-                            }
+                        } catch (\Exception $exception) {
+                            $subItems[] = new Model\Element\ValidationException(
+                                $exception->getMessage() . ' (' . $validLanguage . ')',
+                                $exception->getCode(),
+                                $exception->getPrevious()
+                            );
                         }
                     }
                 }
@@ -1272,10 +1262,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $activeGroups = $value->getActiveGroups();
             if ($activeGroups) {
                 foreach ($activeGroups as $groupId => $active) {
-                    if (!$active) {
-                        continue;
-                    }
-
                     $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
                     $result[$groupConfig->getName()] = [];
 
