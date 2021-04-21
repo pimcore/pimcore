@@ -62,7 +62,7 @@ final class VersionsCleanupTask implements TaskInterface
         $date->subHours(72);
 
         $list = new Version\Listing();
-        $ids = $list->setLoadDrafts(true)
+        $ids = $list->setLoadAutoSave(true)
             ->setCondition(' `draft` = 1 AND `date` < ' . $date->getTimestamp())
             ->loadIdList();
 
@@ -105,7 +105,7 @@ final class VersionsCleanupTask implements TaskInterface
         }
 
         $list = new Version\Listing();
-        $ignoredIds = $list->setLoadDrafts(true)->setCondition(' draft = 1 ')->loadIdList();
+        $ignoredIds = $list->setLoadAutoSave(true)->setCondition(' draft = 1 ')->loadIdList();
 
 
 
