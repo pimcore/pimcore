@@ -21,12 +21,35 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Version\Listing\Dao getDao()
+ * @method array loadIdList()
  * @method Model\Version[] load()
  * @method Model\Version current()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    /**
+     * @var bool
+     */
+    protected bool $loadAutoSave = false;
+
+    /**
+     * @return bool
+     */
+    public function isLoadAutoSave(): bool
+    {
+        return $this->loadAutoSave;
+    }
+
+    /**
+     * @param bool $loadAutoSave
+     */
+    public function setLoadAutoSave(bool $loadAutoSave): self
+    {
+        $this->loadAutoSave = $loadAutoSave;
+        return $this;
+    }
+
     /**
      * @return Model\Version[]
      */

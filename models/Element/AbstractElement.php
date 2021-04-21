@@ -313,17 +313,30 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param string|null $versionNote
      * @param bool $saveOnlyVersion
      * @param bool $saveStackTrace
+     * @param bool $isAutoSave
      *
      * @return Model\Version
      *
      * @throws \Exception
      */
-    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true, $saveStackTrace = true)
+    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true, $saveStackTrace = true, $isAutoSave = false)
     {
+        $version = null;
+
+        if($isAutoSave){
+            $list = new Model\Version\Listing();
+            $list->setLoadAutoSave(true);
+            $list->setCondition('autoSave = 1 AND cid = ? AND cType = ? AND userId = ? ',[$this->getId(),Service::getElementType($this),$this->getUserModification()]);
+            $version = $list->current();
+        }
+
         /**
          * @var Model\Version $version
          */
-        $version = self::getModelFactory()->build(Model\Version::class);
+        if(!$version){
+            $version = self::getModelFactory()->build(Model\Version::class);
+        }
+
         $version->setCid($this->getId());
         $version->setCtype(Service::getElementType($this));
         $version->setDate($this->getModificationDate());
@@ -331,6 +344,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setData($this);
         $version->setNote($versionNote);
         $version->setGenerateStackTrace($saveStackTrace);
+        $version->setAutoSave($isAutoSave);
 
         if ($saveOnlyVersion) {
             $versionCount = $this->getDao()->getVersionCountForUpdate();
@@ -388,5 +402,22 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         parent::__clone();
         $this->dependencies = null;
+    }
+
+    /**
+     * @param int $userId
+     */
+    public function deleteAutoSaveVersions($userId = null){
+        $list = new Model\Version\Listing();
+        $list->setLoadAutoSave(true);
+        if($userId){
+            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1 AND userId = ?',[Service::getType($this),$this->getId(),$userId]);
+        }else{
+            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1',[Service::getType($this),$this->getId()]);
+        }
+
+        foreach($list->load() as $version){
+            $version->delete();
+        }
     }
 }

@@ -120,6 +120,11 @@ class Version extends AbstractModel
     public static $disabled = false;
 
     /**
+     * @var bool
+     */
+    protected bool $autoSave = false;
+
+    /**
      * @param int $id
      *
      * @return Version|null
@@ -724,5 +729,22 @@ class Version extends AbstractModel
     public function getStackTrace(): ?string
     {
         return $this->stackTrace;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoSave(): bool
+    {
+        return $this->autoSave;
+    }
+
+    /**
+     * @param bool $autoSave
+     */
+    public function setAutoSave(bool $autoSave): self
+    {
+        $this->autoSave = $autoSave;
+        return $this;
     }
 }

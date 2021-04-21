@@ -570,6 +570,9 @@ final class Configuration implements ConfigurationInterface
                         ->integerNode('tree_paging_limit')
                             ->defaultValue(30)
                         ->end()
+                        ->integerNode('auto_save_interval')
+                            ->defaultValue(60)
+                        ->end()
                         ->arrayNode('versions')
                             ->children()
                                 ->scalarNode('days')->defaultNull()->end()
@@ -711,6 +714,9 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue('2048M')
                         ->end()
                     ->end()
+                ->end()
+                ->integerNode('auto_save_interval')
+                    ->defaultValue(60)
                 ->end()
             ->end();
     }

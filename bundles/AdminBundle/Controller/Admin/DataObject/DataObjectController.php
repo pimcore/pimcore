@@ -41,6 +41,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Pimcore\Model\Version;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -398,7 +399,8 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($objectFromDatabase);
+        $draftVersion = null;
+        $object = $this->getLatestVersion($objectFromDatabase, $draftVersion);
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
@@ -411,6 +413,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
         $objectFromVersion = $object !== $objectFromDatabase;
+
 
         if ($object->isAllowed('view')) {
             $objectData = [];
@@ -425,8 +428,14 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                 $objectData['hasPreview'] = true;
             }
 
+            if($draftVersion && $objectFromDatabase->getModificationDate() < $draftVersion->getDate()){
+                $objectData['draft'] = [
+                    'id' => $draftVersion->getId(),
+                    'modificationDate' => $draftVersion->getDate()
+                ];
+            }
+
             $objectData['general'] = [];
-            $objectData['general']['objectFromVersion'] = $objectFromVersion;
 
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
@@ -1083,11 +1092,9 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         for ($retries = 0; $retries < $maxRetries; $retries++) {
             try {
                 Db::get()->beginTransaction();
-                $updateLatestVersionIndex = function ($objectId, $modificationDate, $versionCount, $newIndex) {
-                    if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate(
-                        $objectId, $modificationDate, $versionCount
-                    )) {
-
+                $updateLatestVersionIndex = function ($objectId, $newIndex) {
+                    $object = DataObject\Concrete::getById($objectId);
+                    if ($object && $latestVersion = $object->getLatestVersion()) {
                         // don't renew references (which means loading the target elements)
                         // Not needed as we just save a new version with the updated index
                         $object = $latestVersion->loadData(false);
@@ -1140,7 +1147,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                         $index++;
                     }
 
-                    $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $sibling['o_versionCount'], $index);
+                    $updateLatestVersionIndex($sibling['o_id'], $index);
                     $index++;
 
                     DataObject::clearDependentCacheByObjectId($sibling['o_id']);
@@ -1254,7 +1261,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         }
 
         // unpublish and save version is possible without checking mandatory fields
-        if ($request->get('task') == 'unpublish' || $request->get('task') == 'version') {
+        if (in_array($request->get('task'),['unpublish','version','autoSave'])) {
             $object->setOmitMandatoryCheck(true);
         }
 
@@ -1269,6 +1276,10 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             $treeData = $this->getTreeNodeConfig($object);
 
             $newObject = DataObject::getById($object->getId(), true);
+
+            if($request->get('task') == 'publish'){
+                $object->deleteAutoSaveVersions($this->getUser()->getId());
+            }
 
             return $this->adminJson([
                 'success' => true,
@@ -1289,10 +1300,21 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                 return $this->adminJson(['success' => true]);
             }
         } elseif ($object->isAllowed('save')) {
-            if ($object->isPublished()) {
-                $object->saveVersion();
+            $isAutoSave = $request->get('task') == "autoSave";
+            $draftData = [];
+
+            if ($object->isPublished() || $isAutoSave) {
+                $version = $object->saveVersion(true,true,null, $isAutoSave);
+                $draftData = [
+                    'id' => $version->getId(),
+                    'modificationDate' => $version->getDate()
+                ];
             } else {
                 $object->save();
+            }
+
+            if($request->get('task') == 'version'){
+                $object->deleteAutoSaveVersions($this->getUser()->getId());
             }
 
             $treeData = $this->getTreeNodeConfig($object);
@@ -1305,6 +1327,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                     'versionDate' => $newObject->getModificationDate(),
                     'versionCount' => $newObject->getVersionCount(),
                 ],
+                'draft' => $draftData,
                 'treeData' => $treeData,
             ]);
         }
@@ -2165,17 +2188,18 @@ final class DataObjectController extends ElementControllerBase implements Kernel
     }
 
     /**
-     * @param  DataObject\Concrete $object
-     *
-     * @return DataObject\Concrete
+     * @param DataObject\Concrete $object
+     * @param null|Version $draftVersion
+     * @return DataObject\Concrete|null
      */
-    protected function getLatestVersion(DataObject\Concrete $object)
+    protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null)
     {
-        $latestVersion = $object->getLatestVersion();
+        $latestVersion = $object->getLatestVersion($this->getUser()->getId());
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
-                $object = $latestObj;
+                $draftVersion = $latestVersion;
+                return $latestObj;
             }
         }
 

@@ -30,7 +30,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion()
+ * @method \Pimcore\Model\Version getLatestVersion($userId = null)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
@@ -261,10 +261,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
      * @param string $versionNote version note
+     * @param bool $isAutoSave
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isAutoSave = false)
     {
         try {
             if ($setModificationDate) {
@@ -275,6 +276,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
             }
@@ -292,13 +294,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $postUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
             }
@@ -308,6 +311,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             $postUpdateFailureEvent = new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
+                'isAutoSave' => $isAutoSave
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
 
@@ -836,30 +840,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $this->o_class = null;
         $this->o_versions = null;
         $this->scheduledTasks = null;
-    }
-
-    /**
-     * @internal
-     *
-     * @param int $objectId
-     * @param int $modificationDate
-     * @param int $versionCount
-     * @param bool $force
-     *
-     * @return Model\Version|void
-     */
-    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $versionCount, $force = false)
-    {
-        $db = Db::get();
-        $versionData = $db->fetchRow("SELECT id,date,versionCount FROM versions WHERE cid = ? AND ctype='object' ORDER BY `versionCount` DESC, `id` DESC LIMIT 1", $objectId);
-
-        if (!empty($versionData['id']) && ($versionData['date'] > $modificationDate || $versionData['versionCount'] > $versionCount || $force)) {
-            $version = Model\Version::getById($versionData['id']);
-
-            return $version;
-        }
-
-        return;
     }
 
     /**

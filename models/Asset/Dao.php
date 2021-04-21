@@ -31,6 +31,8 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\VersionDaoTrait;
+
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
@@ -280,25 +282,6 @@ class Dao extends Model\Element\Dao
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
     }
 
-    /**
-     * get versions from database, and assign it to object
-     *
-     * @return Model\Version[]
-     */
-    public function getVersions()
-    {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` ASC", [$this->model->getId()]);
-
-        $versions = [];
-        foreach ($versionIds as $versionId) {
-            $versions[] = Model\Version::getById($versionId['id']);
-        }
-
-        $this->model->setVersions($versions);
-
-        return $versions;
-    }
-
     public function deleteAllPermissions()
     {
         $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
@@ -419,28 +402,6 @@ class Dao extends Model\Element\Dao
         $this->db->deleteWhere('tree_locks', "type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
-    }
-
-    /**
-     * Get latest available version, using $force always returns a version no matter if it is the same as the published one
-     *
-     * @param bool $force
-     *
-     * @return Model\Version|null
-     */
-    public function getLatestVersion($force = false)
-    {
-        if ($this->model->getType() != 'folder') {
-            $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
-
-            if ($versionData && $versionData['id'] && ($versionData['date'] > $this->model->getModificationDate() || $force)) {
-                $version = Model\Version::getById($versionData['id']);
-
-                return $version;
-            }
-        }
-
-        return null;
     }
 
     /**

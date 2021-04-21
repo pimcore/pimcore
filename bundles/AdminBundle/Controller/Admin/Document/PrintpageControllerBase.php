@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Config;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Web2Print\Processor;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,8 +52,8 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         }
 
         $page = clone $page;
-        $isLatestVersion = true;
-        $page = $this->getLatestVersion($page, $isLatestVersion);
+        $draftVersion = null;
+        $page = $this->getLatestVersion($page, $draftVersion);
 
         $page->getVersions();
         $page->getScheduledTasks();
@@ -68,13 +69,11 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         $this->minimizeProperties($page, $data);
 
         $data['url'] = $page->getUrl();
-        // this used for the "this is not a published version" hint
-        $data['documentFromVersion'] = !$isLatestVersion;
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }
 
-        $this->preSendDataActions($data, $page);
+        $this->preSendDataActions($data, $page, $draftVersion);
 
         if ($page->isAllowed('view')) {
             return $this->adminJson($data);
@@ -126,6 +125,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($page);
 
+            $this->handleTask($request->get('task'),$page);
             return $this->adminJson([
                 'success' => true,
                 'data' => [
@@ -136,9 +136,16 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
-            $page->saveVersion();
 
-            return $this->adminJson(['success' => true]);
+            $version = $page->saveVersion(true,true,null,$request->get('task') == "autoSave");
+
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate()
+            ];
+
+            $this->handleTask($request->get('task'),$page);
+            return $this->adminJson(['success' => true, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }

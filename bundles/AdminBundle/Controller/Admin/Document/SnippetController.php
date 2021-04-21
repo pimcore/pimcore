@@ -84,8 +84,8 @@ final class SnippetController extends DocumentControllerBase
         }
 
         $snippet = clone $snippet;
-        $isLatestVersion = true;
-        $snippet = $this->getLatestVersion($snippet, $isLatestVersion);
+        $draftVersion = null;
+        $snippet = $this->getLatestVersion($snippet, $draftVersion);
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
@@ -102,13 +102,11 @@ final class SnippetController extends DocumentControllerBase
         $this->minimizeProperties($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
-        // this used for the "this is not a published version" hint
-        $data['documentFromVersion'] = !$isLatestVersion;
         if ($snippet->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }
 
-        $this->preSendDataActions($data, $snippet);
+        $this->preSendDataActions($data, $snippet, $draftVersion);
 
         if ($snippet->isAllowed('view')) {
             return $this->adminJson($data);
@@ -160,6 +158,7 @@ final class SnippetController extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($snippet);
 
+            $this->handleTask($request->get('task'),$snippet);
             return $this->adminJson([
                 'success' => true,
                 'data' => [
@@ -171,10 +170,16 @@ final class SnippetController extends DocumentControllerBase
         } elseif ($snippet->isAllowed('save')) {
             $this->setValuesToDocument($request, $snippet);
 
-            $snippet->saveVersion();
+            $version = $snippet->saveVersion(true,true,null,$request->get('task') == "autoSave");
             $this->saveToSession($snippet);
 
-            return $this->adminJson(['success' => true]);
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate()
+            ];
+
+            $this->handleTask($request->get('task'),$snippet);
+            return $this->adminJson(['success' => true, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }
