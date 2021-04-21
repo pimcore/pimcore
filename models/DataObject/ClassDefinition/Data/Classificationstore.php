@@ -981,7 +981,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\Concrete $object
      * @param array $activeGroups
      *
-     * @return array|null
+     * @return array|null With groupId:s as keys
      *
      * @todo: Method returns void/null, should be boolean or null
      */
