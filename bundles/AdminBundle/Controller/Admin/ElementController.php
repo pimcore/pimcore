@@ -611,10 +611,14 @@ final class ElementController extends AdminController
                         }
                     }
 
-                    //only load drafts from current user
+                    //only load auto-save versions from current user
                     $list = new Version\Listing();
-                    $list->setLoadDrafts(true);
-                    $list->setCondition("cid = ? AND ctype=? AND (draft=0 OR (draft=1 AND userId = ?)) ",[$element->getId(),Element\Service::getType($element),$this->getUser()->getId()])
+                    $list->setLoadAutoSave(true);
+                    $list->setCondition("cid = ? AND ctype = ? AND (autoSave=0 OR (autoSave=1 AND userId = ?)) ",[
+                        $element->getId(),
+                        Element\Service::getType($element),
+                        $this->getUser()->getId()
+                    ])
                         ->setOrderKey('date')
                         ->setOrder('ASC');
 

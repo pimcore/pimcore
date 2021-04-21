@@ -137,7 +137,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
 
-            $version = $page->saveVersion(true,true,null,$request->get('task') == "draft");
+            $version = $page->saveVersion(true,true,null,$request->get('task') == "autoSave");
 
             $draftData = [
                 'id' => $version->getId(),

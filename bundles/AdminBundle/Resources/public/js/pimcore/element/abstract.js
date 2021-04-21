@@ -68,11 +68,11 @@ pimcore.element.abstract = Class.create({
             return true;
         }
 
-        if(this.getDraftSavingIntervalTime()) {
+        if(this.getAutoSaveIntervalTime()) {
             this.tab.mask();
             this._confirmedDirtyClose = true;
-            this.stopDraftSaving();
-            this.saveDraft(this._closeTabPanel.bind(this));
+            this.stopAutoSaving();
+            this.saveAutoVersion(this._closeTabPanel.bind(this));
             return false;
         }
 
@@ -106,12 +106,12 @@ pimcore.element.abstract = Class.create({
 
         this.tab.on("activate", function () {
             if(this.isDirty()) {
-                this.startDraftSaving();
+                this.startAutoSaving();
             }
         }.bind(this));
 
-        this.tab.on("deactivate", this.stopDraftSaving.bind(this));
-        this.tab.on("destroy", this.stopDraftSaving.bind(this));
+        this.tab.on("deactivate", this.stopAutoSaving.bind(this));
+        this.tab.on("destroy", this.stopAutoSaving.bind(this));
     },
 
     isDirty: function () {
@@ -136,10 +136,10 @@ pimcore.element.abstract = Class.create({
         this.changeDetectorInitData = {};
 
         try {
-            if(task != "draft"){
+            if(task !== "autoSave"){
                 this.dirty = false;
                 this.tab.setTitle(this.tab.initialConfig.title);
-                this.stopDraftSaving();
+                this.stopAutoSaving();
                 this.startChangeDetector();
             }
         } catch(exception) {
@@ -193,34 +193,34 @@ pimcore.element.abstract = Class.create({
         }
 
         if(this.isDirty()){
-            this.startDraftSaving();
+            this.startAutoSaving();
         }
     },
 
-    getDraftSavingIntervalTime: function () {
-        return pimcore.settings['draft_saving_interval_' + pimcore.helpers.getElementTypeByObject(this)];
+    getAutoSaveIntervalTime: function () {
+        return pimcore.settings[pimcore.helpers.getElementTypeByObject(this) + '_auto_save_interval'];
     },
 
-    startDraftSaving : function(){
-        let interval = this.getDraftSavingIntervalTime();
-        if (interval && !this.draftSavingInterval) {
-            this.draftSavingInterval = window.setInterval(this.saveDraft.bind(this), interval*1000);
-            this.saveDraft(); // run immediately
+    startAutoSaving : function(){
+        let interval = this.getAutoSaveIntervalTime();
+        if (interval && !this.autoSavingInterval) {
+            this.autoSavingInterval = window.setInterval(this.saveAutoVersion.bind(this), interval*1000);
+            this.saveAutoVersion(); // run immediately
         }
     },
 
-    stopDraftSaving: function () {
-        window.clearInterval(this.draftSavingInterval);
-        this.draftSavingInterval = null;
+    stopAutoSaving: function () {
+        window.clearInterval(this.autoSavingInterval);
+        this.autoSavingInterval = null;
     },
 
-    saveDraft : function(callback) {
+    saveAutoVersion : function(callback) {
         // do not run when browser tab is not active
         if(document.hidden) {
             return;
         }
 
-        this.save('draft', null, callback);
+        this.save('autoSave', null, callback);
     },
 
     setAddToHistory: function (addToHistory) {
@@ -293,6 +293,7 @@ pimcore.element.abstract = Class.create({
     deleteDraft : function () {
 
         this.dirty = false;
+        this.stopAutoSaving();
 
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_element_deletedraft'),

@@ -18,8 +18,8 @@ class Version20190102153226 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE `versions` ADD `draft` TINYINT(4) NOT NULL DEFAULT 0");
-        $this->addSql('ALTER TABLE `versions` ADD INDEX `draft` (`draft`)');
+        $this->addSql("ALTER TABLE `versions` ADD `autoSave` TINYINT(4) NOT NULL DEFAULT 0");
+        $this->addSql('ALTER TABLE `versions` ADD INDEX `autoSave` (`autoSave`)');
     }
 
     /**
@@ -27,6 +27,6 @@ class Version20190102153226 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `versions` DROP COLUMN `draft`');
+        $this->addSql('ALTER TABLE `versions` DROP COLUMN `autoSave`');
     }
 }

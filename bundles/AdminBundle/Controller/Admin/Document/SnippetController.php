@@ -170,7 +170,7 @@ final class SnippetController extends DocumentControllerBase
         } elseif ($snippet->isAllowed('save')) {
             $this->setValuesToDocument($request, $snippet);
 
-            $version = $snippet->saveVersion(true,true,null,$request->get('task') == "draft");
+            $version = $snippet->saveVersion(true,true,null,$request->get('task') == "autoSave");
             $this->saveToSession($snippet);
 
             $draftData = [

@@ -17,7 +17,7 @@ trait VersionDaoTrait
      */
     public function getLatestVersion($userId = null)
     {
-        $versionId = $this->db->fetchOne("SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` > :mdate OR versionCount > :versionCount) AND ((draft = 1 AND userId = :userId) OR draft = 0) ORDER BY `versionCount` DESC LIMIT 1", [
+        $versionId = $this->db->fetchOne("SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` > :mdate OR versionCount > :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1", [
             'cid' => $this->model->getId(),
             'ctype' => Element\Service::getType($this->model),
             'userId' => $userId,

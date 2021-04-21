@@ -31,23 +31,22 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @var bool
      */
-    protected $loadDrafts = false;
+    protected bool $loadAutoSave = false;
 
     /**
      * @return bool
      */
-    public function getLoadDrafts(): bool
+    public function isLoadAutoSave(): bool
     {
-        return $this->loadDrafts;
+        return $this->loadAutoSave;
     }
 
     /**
-     * @param bool $loadDrafts
-     * @return $this
+     * @param bool $loadAutoSave
      */
-    public function setLoadDrafts($loadDrafts)
+    public function setLoadAutoSave(bool $loadAutoSave): self
     {
-        $this->loadDrafts = $loadDrafts;
+        $this->loadAutoSave = $loadAutoSave;
         return $this;
     }
 

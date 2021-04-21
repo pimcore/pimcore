@@ -30,11 +30,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getCondition()
     {
         $condition = parent::getCondition();
-        if($this->model->getLoadDrafts() == false){
+        if($this->model->isLoadAutoSave() == false){
             if(trim($condition)){
-                $condition .=' AND draft = 0';
+                $condition .=' AND autoSave = 0';
             }else{
-                $condition = ' WHERE draft = 0';
+                $condition = ' WHERE autoSave = 0';
             }
         }
 

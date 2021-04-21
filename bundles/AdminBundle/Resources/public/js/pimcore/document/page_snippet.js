@@ -453,7 +453,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
     },
 
     save: function ($super, task, only, callback, successCallback) {
-        if (task !== "publish" && task !== "draft") {
+        if (task !== "publish" && task !== "autoSave") {
             this.validateRequiredEditables(true);
         }
 

@@ -261,11 +261,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
      * @param string $versionNote version note
-     * @param bool $isDraft
+     * @param bool $isAutoSave
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isDraft = false)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isAutoSave = false)
     {
         try {
             if ($setModificationDate) {
@@ -276,7 +276,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
-                    'isDraft' => $isDraft
+                    'isAutoSave' => $isAutoSave
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
             }
@@ -294,14 +294,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isDraft);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $postUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
-                    'isDraft' => $isDraft
+                    'isAutoSave' => $isAutoSave
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
             }
@@ -311,7 +311,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             $postUpdateFailureEvent = new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
-                'isDraft' => $isDraft
+                'isAutoSave' => $isAutoSave
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
 

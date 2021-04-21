@@ -1169,6 +1169,7 @@ class Service extends Model\AbstractModel
                     'date' => $versionObj->getDate(),
                     'public' => $versionObj->getPublic(),
                     'versionCount' => $versionObj->getVersionCount(),
+                    'autoSave' => $versionObj->isAutoSave(),
                 ];
 
                 $version['user'] = ['name' => '', 'id' => ''];

@@ -1261,7 +1261,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
         }
 
         // unpublish and save version is possible without checking mandatory fields
-        if (in_array($request->get('task'),['unpublish','version','draft'])) {
+        if (in_array($request->get('task'),['unpublish','version','autoSave'])) {
             $object->setOmitMandatoryCheck(true);
         }
 
@@ -1278,7 +1278,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             $newObject = DataObject::getById($object->getId(), true);
 
             if($request->get('task') == 'publish'){
-                $object->deleteDraftVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getUser()->getId());
             }
 
             return $this->adminJson([
@@ -1300,11 +1300,11 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                 return $this->adminJson(['success' => true]);
             }
         } elseif ($object->isAllowed('save')) {
-            $isDraft = $request->get('task') == "draft";
+            $isAutoSave = $request->get('task') == "autoSave";
             $draftData = [];
 
-            if ($object->isPublished() || $isDraft) {
-                $version = $object->saveVersion(true,true,null,$isDraft);
+            if ($object->isPublished() || $isAutoSave) {
+                $version = $object->saveVersion(true,true,null, $isAutoSave);
                 $draftData = [
                     'id' => $version->getId(),
                     'modificationDate' => $version->getDate()
@@ -1314,7 +1314,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             }
 
             if($request->get('task') == 'version'){
-                $object->deleteDraftVersions($this->getUser()->getId());
+                $object->deleteAutoSaveVersions($this->getUser()->getId());
             }
 
             $treeData = $this->getTreeNodeConfig($object);

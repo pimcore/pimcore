@@ -335,8 +335,8 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function handleTask($task,$page) {
 
-        if($task == 'publish' || $task == 'null'){ //null when only a version is saved
-            $page->deleteDraftVersions($this->getUser()->getId());
+        if($task == 'publish' || $task == 'version') {
+            $page->deleteAutoSaveVersions($this->getUser()->getId());
         }
     }
 }

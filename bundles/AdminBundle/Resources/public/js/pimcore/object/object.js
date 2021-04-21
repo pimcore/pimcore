@@ -731,15 +731,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var omitMandatoryCheck = false;
 
         // unpublish and save version is possible without checking mandatory fields
-        if (task == "version" || task == "unpublish" || task == "draft") {
+        if (task == "version" || task == "unpublish" || task == "autoSave") {
             omitMandatoryCheck = true;
         }
 
-        if (this.tab.disabled || (this.tab.isMasked() && task != 'draft')) {
+        if (this.tab.disabled || (this.tab.isMasked() && task != 'autoSave')) {
             return;
         }
 
-        if(task != 'draft'){
+        if(task != 'autoSave'){
             this.tab.mask();
         }
 
@@ -777,14 +777,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             if (rdata && rdata.success) {
                                 // check for version notification
                                 if (this.draftVersionNotification) {
-                                    if (task == "publish" || task == "unpublish"  || task === null || task == "version") {
+                                    if (task == "publish" || task == "unpublish") {
                                         this.draftVersionNotification.hide();
-                                    } else {
+                                    } else if (task === 'version' || task === 'autoSave') {
                                         this.draftVersionNotification.show();
                                     }
                                 }
 
-                                if(task != "draft") {
+                                if(task != "autoSave") {
                                     pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                                 }
 
@@ -805,7 +805,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                         }
                         // reload versions
-                        if (task != "draft" && this.isAllowed("versions")) {
+                        if (task != "autoSave" && this.isAllowed("versions")) {
                             if (typeof this.versions.reload == "function") {
                                 try {
                                     //TODO remove this as soon as it works

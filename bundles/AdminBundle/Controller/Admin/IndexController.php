@@ -249,8 +249,8 @@ final class IndexController extends AdminController implements KernelResponseEve
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
             'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
-            'draft_saving_interval_document' => $config['documents']['draft_saving_interval'],
-            'draft_saving_interval_object' => $config['objects']['draft_saving_interval'],
+            'document_auto_save_interval' => $config['documents']['auto_save_interval'],
+            'object_auto_save_interval' => $config['objects']['auto_save_interval'],
 
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],

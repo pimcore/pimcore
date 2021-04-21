@@ -79,12 +79,12 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     save: function (task, only, callback, successCallback) {
 
-        if (this.tab.disabled || (this.tab.isMasked() && task != 'draft')) {
+        if (this.tab.disabled || (this.tab.isMasked() && task != 'autoSave')) {
             return;
         }
 
 
-        if(task != 'draft'){
+        if(task != 'autoSave'){
             this.tab.mask();
         }
 
@@ -127,12 +127,12 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             if (this.draftVersionNotification) {
                                 if (task == "publish" || task == "unpublish") {
                                     this.draftVersionNotification.hide();
-                                } else if (task === 'version' || task === 'draft') {
+                                } else if (task === 'version' || task === 'autoSave') {
                                     this.draftVersionNotification.show();
                                 }
                             }
 
-                            if(task != "draft") {
+                            if(task !== "autoSave") {
                                 pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                             }
 
@@ -154,7 +154,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     }
 
                     // reload versions
-                    if (task != 'draft' && this.versions) {
+                    if (task !== 'autoSave' && this.versions) {
                         if (typeof this.versions.reload == "function") {
                             this.versions.reload();
                         }

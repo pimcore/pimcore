@@ -122,7 +122,7 @@ class Version extends AbstractModel
     /**
      * @var bool
      */
-    public $draft = false;
+    protected bool $autoSave = false;
 
     /**
      * @param int $id
@@ -731,22 +731,20 @@ class Version extends AbstractModel
         return $this->stackTrace;
     }
 
-
     /**
      * @return bool
      */
-    public function isDraft(): bool
+    public function isAutoSave(): bool
     {
-        return $this->draft;
+        return $this->autoSave;
     }
 
     /**
-     * @param bool $draft
-     * @return $this
+     * @param bool $autoSave
      */
-    public function setDraft($draft)
+    public function setAutoSave(bool $autoSave): self
     {
-        $this->draft = (bool)$draft;
+        $this->autoSave = $autoSave;
         return $this;
     }
 }

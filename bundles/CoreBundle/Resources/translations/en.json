@@ -207,6 +207,7 @@
   "element_cannot_be_moved": "The element cannot be moved here",
   "no_collections_allowed": "No Collections allowed",
   "draft": "Draft",
+  "auto_save": "Auto save",
   "filter_condition": "Filter Condition",
   "all_types": "All Types",
   "audio": "Audio",
