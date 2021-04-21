@@ -178,21 +178,19 @@ pimcore.element.abstract = Class.create({
         }
 
         var liveData = this.getSaveData();
-
-        var keys = Object.keys(liveData);
-
-        for (var i = 0; i < keys.length; i++) {
-            if (this.changeDetectorInitData[keys[i]]) {
-                if (this.changeDetectorInitData[keys[i]] != liveData[keys[i]]) {
+        Object.keys(liveData).forEach(key => {
+            if (this.changeDetectorInitData[key]) {
+                if (this.changeDetectorInitData[key] != liveData[key]) {
                     if(!this.isDirty()) {
                         this.detectedChange();
                     }
                 }
             }
-            this.changeDetectorInitData[keys[i]] = liveData[keys[i]];
-        }
+            this.changeDetectorInitData[key] = liveData[key];
+        });
 
         if(this.isDirty()){
+            this.autoSaveDetectorInitData = {};
             this.startAutoSaving();
         }
     },
@@ -220,7 +218,20 @@ pimcore.element.abstract = Class.create({
             return;
         }
 
-        this.save('autoSave', null, callback);
+        var doSave = false;
+        var liveData = this.getSaveData();
+        Object.keys(liveData).forEach(key => {
+            if (this.autoSaveDetectorInitData[key] != liveData[key]) {
+                doSave = true;
+            }
+            this.autoSaveDetectorInitData[key] = liveData[key];
+        });
+
+        if(doSave) {
+            this.save('autoSave', null, callback);
+        } else if (typeof callback === 'function') {
+            callback();
+        }
     },
 
     setAddToHistory: function (addToHistory) {
