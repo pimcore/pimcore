@@ -73,6 +73,9 @@ class Dao extends Model\Dao\AbstractDao
 
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
+        /** @var MarshallerService $marshallerService */
+        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
                 if (!isset($activeGroups[$groupId])) {
@@ -100,9 +103,6 @@ class Dao extends Model\Dao\AbstractDao
                             'object' => $object,
                             'fieldDefinition' => $fd,
                         ]);
-
-                        /** @var MarshallerService $marshallerService */
-                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
 
                         if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                             $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
