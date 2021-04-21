@@ -1262,8 +1262,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $result[$groupConfig->getName()] = [];
 
                     $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                    $relation->setCondition('groupId = ' . $relation->quote($groupId));
-                    $relation = $relation->load();
+                    $relation->setCondition('groupId = ?', $groupId);
 
                     foreach ($validLanguages as $validLanguage) {
                         foreach ($relation->getList() as $key) {
