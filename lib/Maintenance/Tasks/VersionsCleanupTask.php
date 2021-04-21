@@ -54,27 +54,27 @@ final class VersionsCleanupTask implements TaskInterface
     public function execute()
     {
         $this->doVersionCleanup();
-        $this->doDraftCleanup();
+        $this->doAutoSaveVersionCleanup();
     }
 
-    protected function doDraftCleanup(){
+    private function doAutoSaveVersionCleanup(){
         $date = \Carbon\Carbon::now();
         $date->subHours(72);
 
         $list = new Version\Listing();
         $ids = $list->setLoadAutoSave(true)
-            ->setCondition(' `draft` = 1 AND `date` < ' . $date->getTimestamp())
+            ->setCondition(' `autoSave` = 1 AND `date` < ' . $date->getTimestamp())
             ->loadIdList();
 
-        $this->logger->debug('Drafts to delete: ' . count($ids));
+        $this->logger->debug('Auto-save versions to delete: ' . count($ids));
         foreach($ids as $i => $id){
-            $this->logger->debug('Deleting draft: ' . $id);
+            $this->logger->debug('Deleting auto-save version: ' . $id);
             $version = Version::getById($id);
             $version->delete();
         }
     }
 
-    protected function doVersionCleanup(){
+    private function doVersionCleanup(){
 
         $conf['document'] = $this->config['documents']['versions'] ?? null;
         $conf['asset'] = $this->config['assets']['versions'] ?? null;
@@ -105,7 +105,7 @@ final class VersionsCleanupTask implements TaskInterface
         }
 
         $list = new Version\Listing();
-        $ignoredIds = $list->setLoadAutoSave(true)->setCondition(' draft = 1 ')->loadIdList();
+        $ignoredIds = $list->setLoadAutoSave(true)->setCondition(' autoSave = 1 ')->loadIdList();
 
 
 
