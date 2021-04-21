@@ -204,9 +204,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         foreach ($validLanguages as $language) {
             foreach ($activeGroupIds as $groupId => $enabled) {
                 $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                $relation->setCondition("type = 'calculatedValue' and groupId = " . $relation->quote($groupId));
-                $relation = $relation->load();
-                foreach ($relation as $key) {
+                $relation->setCondition("type = 'calculatedValue' and groupId = ?", $groupId);
+                foreach ($relation->getList() as $key) {
                     $keyId = $key->getKeyId();
                     $childDef = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
@@ -285,8 +284,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     foreach ($activeGroupIds as $groupId => $enabled) {
                         $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
                         $relation->setCondition('groupId = ' . $relation->quote($groupId));
-                        $relation = $relation->load();
-                        foreach ($relation as $key) {
+                        foreach ($relation->getList() as $key) {
                             $keyId = $key->getKeyId();
                             $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
@@ -552,9 +550,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore = new DataObject\Classificationstore();
         $classificationStore->setObject($object);
         $classificationStore->setFieldname($this->getName());
-        $classificationStore->load();
 
-        return $classificationStore;
+        return $classificationStore->load();
     }
 
     /**
@@ -1040,16 +1037,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $groupList->setOrderKey(['id']);
         $groupList->setOrder(['ASC']);
 
-        foreach ($groupList->load() as $group) {
+        foreach ($groupList->getList() as $group) {
             $keyList = [];
 
             $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
             $relation->setCondition('`groupId` = ?', $group->getId());
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
-            $relation = $relation->load();
             /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
-            foreach ($relation as $keyGroupRelation) {
+            foreach ($relation->getList() as $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
                 }
@@ -1105,7 +1101,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation->setCondition('`colId` IN (?)', implode(',', $collectionIds));
 
             $sorting = [];
-            foreach ($relation->load() as $item) {
+            foreach ($relation->getList() as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }
 
@@ -1270,7 +1266,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $relation = $relation->load();
 
                     foreach ($validLanguages as $validLanguage) {
-                        foreach ($relation as $key) {
+                        foreach ($relation->getList() as $key) {
                             $keyId = $key->getKeyId();
 
                             $csValue = $value->getLocalizedKeyValue($groupId, $keyId, $validLanguage, true, true);
