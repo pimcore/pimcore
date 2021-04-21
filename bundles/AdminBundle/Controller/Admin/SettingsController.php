@@ -73,7 +73,7 @@ class SettingsController extends AdminController
             $customLogoFile = $customLogoPath . $format;
             if (file_exists($customLogoFile)) {
                 try {
-                    $mime = MimeTypeGuesser::getInstance()->guess($customLogoFile);
+                    $mime = Tool\Mime::detect($customLogoFile);
                     $logo = $customLogoFile;
                     break;
                 } catch (\Exception $e) {
