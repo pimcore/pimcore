@@ -334,17 +334,22 @@ final class SettingsController extends AdminController
      * @Route("/get-system", name="pimcore_admin_settings_getsystem", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function getSystemAction(Request $request)
+    public function getSystemAction(Request $request, Config $config)
     {
         $this->checkPermission('system_settings');
 
-        //TODO use Pimcore\Config service when legacy mapping is removed
-        $values = Config::getSystemConfig();
-
-        $timezones = \DateTimeZone::listIdentifiers();
+        $valueArray = [
+            'general' => $config['general'],
+            'documents' => $config['documents'],
+            'assets' => $config['assets'],
+            'objects' => $config['objects'],
+            'branding' => $config['branding'],
+            'email' => $config['email'],
+        ];
 
         $locales = Tool::getSupportedLocales();
         $languageOptions = [];
@@ -359,12 +364,11 @@ final class SettingsController extends AdminController
             }
         }
 
-        $valueArray = $values->toArray();
-        $valueArray['general']['validLanguage'] = explode(',', $valueArray['general']['validLanguages']);
+        $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
 
         //for "wrong" legacy values
-        if (is_array($valueArray['general']['validLanguage'])) {
-            foreach ($valueArray['general']['validLanguage'] as $existingValue) {
+        if (is_array($valueArray['general']['valid_language'])) {
+            foreach ($valueArray['general']['valid_language'] as $existingValue) {
                 if (!in_array($existingValue, $validLanguages)) {
                     $languageOptions[] = [
                         'language' => $existingValue,

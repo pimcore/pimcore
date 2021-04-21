@@ -201,7 +201,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
                                 name: "general.loginscreencustomimage",
-                                value: this.getValue("general.loginscreencustomimage")
+                                value: this.getValue("general.login_screen_custom_image")
                             }]
                         }]
                     }
@@ -271,12 +271,12 @@ pimcore.settings.system = Class.create({
                                 xtype: "hidden",
                                 id: "system_settings_general_validLanguages",
                                 name: 'general.validLanguages',
-                                value: this.getValue("general.validLanguages")
+                                value: this.getValue("general.valid_languages")
                             }, {
                                 xtype: "hidden",
                                 id: "system_settings_general_defaultLanguage",
                                 name: "general.defaultLanguage",
-                                value: this.getValue("general.defaultLanguage")
+                                value: this.getValue("general.default_language")
                             }, {
                                 xtype: "container",
                                 width: 450,
@@ -286,7 +286,7 @@ pimcore.settings.system = Class.create({
                                 listeners: {
                                     beforerender: function () {
                                         // add existing language entries
-                                        var locales = this.getValue("general.validLanguages").split(",");
+                                        var locales = this.getValue("general.valid_languages").split(",");
                                         if (locales && locales.length > 0) {
                                             Ext.each(locales, this.addLanguage.bind(this));
                                         }
@@ -313,7 +313,7 @@ pimcore.settings.system = Class.create({
                             width: 650,
                             fieldLabel: t("email_debug_addresses") + "(CSV)" + ' <span style="color:red;">*</span>',
                             name: 'email.debug.emailAddresses',
-                            value: this.getValue("email.debug.emailaddresses"),
+                            value: this.getValue("email.debug.email_addresses"),
                             emptyText: "john@doe.com,jane@doe.com"
                         }]
                     },
@@ -665,12 +665,12 @@ pimcore.settings.system = Class.create({
                     width: 450,
                     fieldLabel: t("fallback_languages"),
                     name: "general.fallbackLanguages." + language,
-                    value: this.getValue("general.fallbackLanguages." + language)
+                    value: this.getValue("general.fallback_languages." + language)
                 }, {
                     xtype: "radio",
                     name: "general.defaultLanguageRadio",
                     boxLabel: t("default_language"),
-                    checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
+                    checked: this.getValue("general.default_language") == language || (!this.getValue("general.default_language") && container.items.length == 0 ),
                     listeners: {
                         change: function (el, checked) {
                             if (checked) {
