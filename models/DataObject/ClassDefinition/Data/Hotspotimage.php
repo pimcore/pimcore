@@ -696,7 +696,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             $image->setHotspots($value['hotspots']);
             $image->setMarker($value['marker']);
             $image->setCrop($value['crop']);
-            if ($value['image']) {
+            if ($value['image'] ?? false) {
                 $type = $value['image']['type'];
                 $id = $value['image']['id'];
                 $asset = Element\Service::getElementById($type, $id);
