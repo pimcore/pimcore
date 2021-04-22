@@ -32,10 +32,7 @@ class AdminExtension extends AbstractExtension
             new TwigFunction('pimcore_minimize_scripts', [$this, 'minimize']),
         ];
     }
-
-    /**
-     * @deprecated
-     */
+    
     public function minimize(array $paths): array
     {
         $scriptContents = '';
