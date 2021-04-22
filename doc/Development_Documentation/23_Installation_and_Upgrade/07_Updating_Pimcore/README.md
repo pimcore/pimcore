@@ -9,7 +9,7 @@ Composer update runs Pimcore migrations automatically.
 If you do not want to run Pimcore migrations automatically please remove `"Pimcore\\Composer::executeMigrationsUp"` from the `post-update-cmd` scripts in your `composer.json`.
 
 To run core migrations manually (e.g. when using composer install), 
-use: `bin/console doctrine:migrations:list --prefix=Pimcore\\Bundle\\CoreBundle\\Migrations`
+use: `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle`
 
 ## Upgrading to Version X from earlier Versions
 - [Upgrade from Version 6 to Version X](./10_V6_to_V10.md)

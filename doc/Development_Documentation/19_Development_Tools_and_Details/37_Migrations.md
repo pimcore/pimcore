@@ -21,13 +21,13 @@ more comfortable.
 ### Example Commands
 ```bash
 # just run migrations of the Pimcore core
-bin/console doctrine:migrations:list --prefix=Pimcore\\Bundle\\CoreBundle\\Migrations
+bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle
 
 # run migrations of a certain bundle
-./bin/console doctrine:migrations:list --prefix=Vendor\\PimcoreExampleBundle\\Migrations
+./bin/console doctrine:migrations:migrate --prefix=Vendor\\PimcoreExampleBundle
 
 # run project specific migrations
-./bin/console doctrine:migrations:list --prefix=App\\Migrations
+./bin/console doctrine:migrations:migrate --prefix=App\\Migrations
 ```
 
 
