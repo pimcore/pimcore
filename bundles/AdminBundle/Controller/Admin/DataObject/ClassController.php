@@ -679,8 +679,7 @@ final class ClassController extends AdminController implements KernelControllerE
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
         $isWriteable = $fc->isWritable();
-        $fc = json_encode($fc);
-        $fc = json_decode($fc, true);
+        $fc = $fc->getObjectVars();
         $fc['isWriteable'] = $isWriteable;
 
         return $this->adminJson($fc);
@@ -1058,8 +1057,7 @@ final class ClassController extends AdminController implements KernelControllerE
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
         $isWriteable = $fc->isWritable();
-        $fc = json_encode($fc);
-        $fc = json_decode($fc, true);
+        $fc = $fc->getObjectVars();
         $fc['isWriteable'] = $isWriteable;
 
         return $this->adminJson($fc);
