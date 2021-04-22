@@ -133,11 +133,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
             $renderer = $this->getRenderingClass();
         }
 
-        if (!$renderer instanceof DynamicTextLabelInterface) {
-            @trigger_error('Using a text renderer class which does not implement ' . DynamicTextLabelInterface::class.' is deprecated', \E_USER_DEPRECATED);
-        }
-
-        if (method_exists($renderer, 'renderLayoutText') && $object) {
+        if ($object) {
             $context['fieldname'] = $this->getName();
             $context['layout'] = $this;
             $result = call_user_func([$renderer, 'renderLayoutText'], $this->renderingData, $object, $context);

@@ -16,6 +16,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
+use Pimcore\Model\Listing\Dao\AbstractDao;
 
 /**
  * @method void beginTransaction()

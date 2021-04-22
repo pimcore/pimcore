@@ -513,17 +513,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     public function getData()
     {
         if ($this->data === null) {
+            /** @var AbstractDao $dao */
             $dao = $this->getDao();
-            if (\method_exists($dao, 'load')) {
-                /** @var AbstractDao $dao */
-                $dao = $this->getDao();
-                $dao->load();
-            } else {
-                @trigger_error(
-                    'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 10.',
-                    \E_USER_DEPRECATED
-                );
-            }
+            $dao->load();
         }
 
         return $this->data;
@@ -592,13 +584,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function count()
     {
+        /** @var AbstractDao $dao */
         $dao = $this->getDao();
-        if (!\method_exists($dao, 'getTotalCount')) {
-            @trigger_error('Listings should implement Countable interface', E_USER_DEPRECATED);
-
-            return 0;
-        }
-
         return $dao->getTotalCount();
     }
 }
