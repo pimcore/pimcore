@@ -371,7 +371,7 @@ final class NewsletterController extends DocumentControllerBase
 
         Console::runPhpScriptInBackground(
             realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'),
-            'internal:newsletter-document-send ' . escapeshellarg($document->getTmpStoreId()) . ' ' . escapeshellarg(\Pimcore\Tool::getHostUrl()),
+            ['internal:newsletter-document-send', $document->getTmpStoreId(), \Pimcore\Tool::getHostUrl()],
             PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log'
         );
 
