@@ -20,7 +20,7 @@ As with Pimcore configurations also Pimcore class definitions are saved as PHP c
 be added to version control systems and be deployed to different deployment stages. 
 
 The PHP configuration files will be written to the `var/classes` directory by default. However, you can create a copy
-at `/config/pimcore/classes` which is then read-only.
+at `/config/pimcore/classes` which is then read-only. The generated classes, e.g. `Pimcore\Model\DataObject\Example` can be placed in the `src/` folder. 
 
 > **Note**: Changes on Pimcore class definitions not only have influence to configuration files but also on the database. 
 > If deploying changes between different deployment stages also database changes need to be deployed. This can be done
