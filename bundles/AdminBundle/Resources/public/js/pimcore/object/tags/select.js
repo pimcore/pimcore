@@ -232,20 +232,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             storeData.push({'value': '', 'key': "(" + t("empty") + ")"});
         }
 
-        var restrictTo = null;
-        if (this.fieldConfig.restrictTo && this.fieldConfig.restrictTo.length > 0) {
-            restrictTo = this.fieldConfig.restrictTo.split(",");
-        }
-
         if (this.fieldConfig.options) {
             for (var i = 0; i < this.fieldConfig.options.length; i++) {
                 var value = this.fieldConfig.options[i].value;
-                if (restrictTo) {
-                    if (!in_array(value, restrictTo)) {
-                        continue;
-                    }
-                }
-
                 var label = t(this.fieldConfig.options[i].key);
                 if(label.indexOf('<') >= 0) {
                     hasHTMLContent = true;

@@ -3,6 +3,8 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Country;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect;
 
 class CountryOptionsProvider implements SelectOptionsProviderInterface
 {
@@ -19,9 +21,20 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
         $countries = $this->localeService->getDisplayRegions();
         asort($countries);
         $options = [];
+        $restrictTo = null;
+
+        if ($fieldDefinition instanceof Country || $fieldDefinition instanceof Countrymultiselect) {
+            $restrictTo = $fieldDefinition->getRestrictTo();
+            if ($restrictTo) {
+                $restrictTo = explode(',', $restrictTo);
+            }
+        }
 
         foreach ($countries as $short => $translation) {
             if (strlen($short) === 2) {
+                if ($restrictTo && !in_array($short, $restrictTo)) {
+                    continue;
+                }
                 $options[] = [
                     'key' => $translation,
                     'value' => $short,

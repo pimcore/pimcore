@@ -90,21 +90,10 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     prepareStoreDataAndFilterLabels: function(fieldConfig) {
 
         var storeData = [];
-        var restrictTo = null;
-
-        if (fieldConfig.restrictTo) {
-            restrictTo = fieldConfig.restrictTo.split(",");
-        }
 
         if (fieldConfig.options) {
             for (var i = 0; i < fieldConfig.options.length; i++) {
                 var value = fieldConfig.options[i].value;
-                if (restrictTo) {
-                    if (!in_array(value, restrictTo)) {
-                        continue;
-                    }
-                }
-
                 var label = t(fieldConfig.options[i].key);
                 if(label.indexOf('<') >= 0) {
                     label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
