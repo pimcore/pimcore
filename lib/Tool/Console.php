@@ -250,11 +250,11 @@ class Console
 
     /**
      * @param string $script
-     * @param string|array $arguments
+     * @param array $arguments
      *
      * @return array
      */
-    protected static function buildPhpScriptCmd($script, $arguments)
+    protected static function buildPhpScriptCmd(string $script, array $arguments = [])
     {
         $phpCli = self::getPhpCli();
 
@@ -265,10 +265,6 @@ class Console
         }
 
         if (!empty($arguments)) {
-            if (is_string($arguments)) {
-                @trigger_error(sprintf('Passing string arguments to %s is deprecated since v6.9 and will throw exception in Pimcore 10. Pass array arguments instead.', __METHOD__), E_USER_DEPRECATED);
-                $arguments = explode(' ', $arguments);
-            }
             $cmd = array_merge($cmd, $arguments);
         }
 
@@ -277,13 +273,13 @@ class Console
 
     /**
      * @param string $script
-     * @param string|array $arguments
+     * @param array $arguments
      * @param string|null $outputFile
      * @param int|null $timeout
      *
      * @return string
      */
-    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
+    public static function runPhpScript($script, $arguments = [], $outputFile = null, $timeout = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -310,12 +306,12 @@ class Console
      * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      *
      * @param string $script
-     * @param string|array $arguments
+     * @param array $arguments
      * @param string|null $outputFile
      *
      * @return int
      */
-    public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
+    public static function runPhpScriptInBackground($script, $arguments = [], $outputFile = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $process = new Process($cmd);
