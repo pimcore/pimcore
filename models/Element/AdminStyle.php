@@ -20,6 +20,8 @@ namespace Pimcore\Model\Element;
 use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -52,12 +54,12 @@ class AdminStyle
     public function __construct($element)
     {
         if ($element instanceof AbstractObject) {
-            if ($element->getType() == 'folder') {
+            if ($element instanceof Folder) {
                 $this->elementIconClass = 'pimcore_icon_folder';
                 $this->elementQtipConfig = [
                     'title' => 'ID: ' . $element->getId(),
                 ];
-            } else {
+            } elseif($element instanceof Concrete) {
                 if ($element->getClass()->getIcon()) {
                     $this->elementIcon = $element->getClass()->getIcon();
                 } else {
