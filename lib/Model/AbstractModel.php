@@ -45,7 +45,7 @@ abstract class AbstractModel implements ModelInterface
     private static $daoClassMap = null;
 
     /**
-     * @return \Pimcore\Model\Dao\AbstractDao|AbstractDao
+     * @return \Pimcore\Model\Dao\AbstractDao
      */
     public function getDao()
     {
