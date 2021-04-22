@@ -250,7 +250,7 @@ class Console
 
     /**
      * @param string $script
-     * @param string|array $arguments
+     * @param array $arguments
      *
      * @return array
      */
