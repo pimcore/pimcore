@@ -106,7 +106,7 @@ class Pimcore
     public static function isInstalled()
     {
         try {
-            \Pimcore\Db::get()->fetchOne('SELECT VERSION()');
+            \Pimcore\Db::get()->fetchOne('SELECT id FROM assets LIMIT 1');
 
             return true;
         } catch (\Exception $e) {
