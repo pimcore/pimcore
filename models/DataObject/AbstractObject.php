@@ -1227,20 +1227,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @deprecated since 6.4.1, use AdminEvents.RESOLVE_ELEMENT_ADMIN_STYLE event instead
-     *
-     * @return Model\Element\AdminStyle
-     */
-    public function getElementAdminStyle()
-    {
-        if (empty($this->o_elementAdminStyle)) {
-            $this->o_elementAdminStyle = new Model\Element\AdminStyle($this);
-        }
-
-        return $this->o_elementAdminStyle;
-    }
-
-    /**
      * @return string
      */
     public function getChildrenSortBy()
