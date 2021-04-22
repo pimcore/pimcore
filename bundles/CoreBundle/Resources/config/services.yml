@@ -176,6 +176,9 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
         public: true
 
+    Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
+        public: true
+
     Pimcore\Mail\Plugins\RedirectingPlugin: ~
 
     # Decorates Symfony Mailer
