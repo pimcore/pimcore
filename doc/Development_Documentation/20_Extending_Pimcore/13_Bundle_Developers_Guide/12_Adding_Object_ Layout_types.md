@@ -30,7 +30,7 @@ Following steps are necessary to do so:
    [github](https://github.com/pimcore/pimcore/tree/master/bundles/AdminBundle/Resources/public/js/pimcore/object/layout)
     
 4) Register a layout type in Pimcore by extending the `pimcore.objects.class_definitions.data.layout` configuration. 
-   This can be done in any config file which is loaded (e.g. `app/config/config.yml`), but if you provide the layout type 
+   This can be done in any config file which is loaded (e.g. `config/config.yaml`), but if you provide the layout type 
    with a bundle you should define it in a configuration file which is [automatically loaded](./03_Auto_Loading_Config_And_Routing_Definitions.md). 
 
    Example:

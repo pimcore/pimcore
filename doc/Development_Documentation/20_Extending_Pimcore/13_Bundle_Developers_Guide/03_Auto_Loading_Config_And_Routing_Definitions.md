@@ -1,9 +1,9 @@
 ## Auto loading config and routing definitions
 
 By default, Symfony does not load configuration and/or routing definitions from bundles but expects you to define everything
-in `app/config` (optionally importing config files from bundles or other locations). Pimcore extends the config loading
-by trying to automatically load `config.yml` and `routing.yml` (`php`, and `xml` types are also supported) from every active
-bundle if they are defined in the directory `Resources/config/pimcore`. By making use of this auto-loading mechanism,
+in `config/` (optionally importing config files from bundles or other locations). Pimcore extends the config loading
+by trying to automatically load `config.yaml` and `routing.yaml` (`php`, and `xml` types are also supported) from every active
+bundle if they are defined in the directory `config/pimcore`. By making use of this auto-loading mechanism,
 you can provide routing and config from within your bundle.
 
 When loading the configuration, Pimcore will first try to load an environment specific config file (e.g. `config_dev.yml`)

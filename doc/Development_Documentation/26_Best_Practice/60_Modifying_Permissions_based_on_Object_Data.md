@@ -28,7 +28,7 @@ To do so create a [Event Listener](../20_Extending_Pimcore/11_Event_API_and_Even
 with following content: 
 
 
-`app/config/services.yml`
+`config/services.yaml`
 ```yml
 services:
     app.event_listener.my_event_listner:

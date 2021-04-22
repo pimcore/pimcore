@@ -1,6 +1,6 @@
 # Loading service definitions from within a bundle
  
-If you want to load services from your bundle instead of having to define them in `app/config/services.yml` you need to 
+If you want to load services from your bundle instead of having to define them in `config/services.yaml` you need to 
 create a dependency injection extension which is able to load your service definitions. You can find detailed documentation
 on this topic here: [Extensions Documentation](http://symfony.com/doc/3.4/bundles/extension.html).
 

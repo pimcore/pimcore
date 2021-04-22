@@ -21,7 +21,7 @@ This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEME
 
 Example:
 
-In `app/config/services.yaml` add
+In `config/services.yaml` add
 
 ```yaml
   App\EventListener\AdminStyleListener:

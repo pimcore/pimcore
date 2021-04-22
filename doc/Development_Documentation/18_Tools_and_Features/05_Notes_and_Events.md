@@ -55,7 +55,7 @@ Via Pimcore configuration, the selectable types for notes and events can be spec
 data object), see sample config below:
 
 ```yml
-# app/config/config.yml or any other Symfony config file
+# config/config.yaml or any other Symfony config file
 
 pimcore_admin:
     documents:
