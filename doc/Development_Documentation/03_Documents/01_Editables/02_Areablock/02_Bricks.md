@@ -74,7 +74,7 @@ as registered on the areabrick manager (see below).
 
 | Location | Path                                           |
 |----------|------------------------------------------------|
-| global   | `app/Resources/views/Areas/<brickId>`          |
+| global   | `templates/Areas/<brickId>`          |
 | bundle   | `<bundlePath>/Resources/views/Areas/<brickId>` |
 
 
@@ -98,8 +98,8 @@ Given our `iframe` brick defined before, the following paths will be used.
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `app/Resources/views/Areas/iframe/view.html.twig` |
-| icon path     | `web/bundles/app/areas/iframe/icon.png`                 |
+| view template | `templates/Areas/iframe/view.html.twig` |
+| icon path     | `public/bundles/app/areas/iframe/icon.png`                 |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
 
 ### `bundle` template location
@@ -114,7 +114,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
  
 Let's suppose, that our iframe brick defined above is responsible for generating an `<iframe>` containing contents 
 from a specified URL in the editmode. First of all, let's update the class to add metadata for the extension manager, to
-make use of template auto-discovery and to load the view template from `app/Resources/views` instead of the bundle
+make use of template auto-discovery and to load the view template from `templates` instead of the bundle
 directory:
 
 ```php
@@ -158,7 +158,7 @@ variable on the view which gives you access to the brick instance. A `info` vari
 brick metadata.
 
 ```twig
-/* app/Resources/views/Areas/iframe/view.html.twig */
+/* templates/Areas/iframe/view.html.twig */
 
 {% set urlField = pimcore_input('iframe_url') %}
 {% set widthField = pimcore_numeric('iframe_width') %}

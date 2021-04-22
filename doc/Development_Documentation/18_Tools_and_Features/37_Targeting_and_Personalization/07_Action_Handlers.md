@@ -113,7 +113,7 @@ for examples.
 Start by adding a new JS file implementing the admin UI panel for your action:
 
 ```javascript
-// src/App/Resources/public/js/targeting/actions.js
+// public/js/targeting/actions.js
 
 (function () {
     'use strict';

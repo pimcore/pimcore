@@ -35,7 +35,7 @@ Following steps are necessary to do so:
 
    Example:
     ```yaml
-    # src/App/Resources/config/pimcore/config.yml
+    # config/config.yaml
     
     pimcore:
         objects:
@@ -50,7 +50,7 @@ Following steps are necessary to do so:
 
    Here is an example:
    ```javascript
-   // src/App/Resources/public/js/MyTestBundle.js
+   // public/js/MyTestBundle.js
    
    pimcore.registerNS("pimcore.plugin.MyTestBundle");
    

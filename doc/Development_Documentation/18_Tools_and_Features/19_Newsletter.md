@@ -156,7 +156,7 @@ class NewsletterController extends FrontendController
 
 ### Views
 
-The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.twig`
+The subscribe action view: `templates/Newsletter/subscribe.html.twig`
 
 ```twig
 {% extends 'layout.html.twig' %}
@@ -213,7 +213,7 @@ The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.twig`
 {% endif %}
 ```
 
-The confirm action view: `app/Resources/views/Newsletter/confirm.html.twig`
+The confirm action view: `templates/Newsletter/confirm.html.twig`
 
 ```twig
 {% extends 'layout.html.twig' %}
@@ -229,7 +229,7 @@ The confirm action view: `app/Resources/views/Newsletter/confirm.html.twig`
 {% endif %}
 ```
 
-The unsubscribe action view: `app/Resources/views/Newsletter/unsubscribe.html.twig`
+The unsubscribe action view: `templates/Newsletter/unsubscribe.html.twig`
 
 ```twig
 {% extends 'layout.html.twig' %}

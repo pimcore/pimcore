@@ -109,7 +109,7 @@ pimcore_ecommerce_framework:
   in filter definition objects (see next chapter). 
 - `class`: Backend implementation of the filter type. 
 - `script`: Default view script of the filter type, can be overwritten in the filter definition objects. 
-  You can find some script filter examples in the Demo [here](https://github.com/pimcore/demo/tree/master/app/Resources/views/product/filters). 
+  You can find some script filter examples in the Demo [here](https://github.com/pimcore/demo/tree/master/templates/product/filters). 
 
 
 - `Helper`: Is a helper implementation that gets available values for pre select settings in the filter definition objects 

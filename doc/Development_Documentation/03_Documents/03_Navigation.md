@@ -184,7 +184,7 @@ For example, inside your view:
 {{ menuRenderer.render(mainNavigation) | raw }}
 ```
 
-`app/Resources/views/includes/navigation.html.twig`
+`templates/includes/navigation.html.twig`
 
 ```twig
 {% for page in pages %}
