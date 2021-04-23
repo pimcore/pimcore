@@ -32,6 +32,7 @@ use Pimcore\Model\DataObject;
 class ClassDefinition extends Model\AbstractModel
 {
     use DataObject\ClassDefinition\Helper\VarExport;
+    use DataObject\Traits\LocateFileTrait;
 
     /**
      * @var string
@@ -369,6 +370,9 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         $isUpdate = $this->exists();
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception("definitions in config/pimcore folder cannot be overwritten");
+        }
 
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
@@ -411,11 +415,6 @@ class ClassDefinition extends Model\AbstractModel
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
             $extendClass = '\\'.ltrim($extendClass, '\\');
-        }
-
-        // create directory if not exists
-        if (!is_dir(PIMCORE_CLASS_DIRECTORY.'/DataObject')) {
-            File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject');
         }
 
         $cd = '<?php ';
@@ -519,11 +518,9 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "}\n";
         $cd .= "\n";
 
-        $classFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php';
-        if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
-            throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
+        if(File::put($this->getPhpClassFile(), $cd) === false) {
+            throw new \Exception(sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpClassFile()));
         }
-        File::put($classFile, $cd);
 
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';
@@ -571,15 +568,11 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "}\n";
 
-        File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
-
-        $classListFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php';
-        if (!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {
+        if(File::put($this->getPhpListingClassFile(), $cd) === false) {
             throw new \Exception(
-                'Cannot write class file in '.$classListFile.' please check the rights on this directory'
+                sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpListingClassFile())
             );
         }
-        File::put($classListFile, $cd);
 
         if ($generateDefinitionFile) {
             // save definition as a php file
@@ -725,10 +718,20 @@ class ClassDefinition extends Model\AbstractModel
     protected function deletePhpClasses()
     {
         // delete the class files
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php');
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php');
-        @rmdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
+        @unlink($this->getPhpClassFile());
+        @unlink($this->getPhpListingClassFile());
+        @rmdir(dirname($this->getPhpListingClassFile()));
         @unlink($this->getDefinitionFile());
+    }
+
+
+    public function isWritable(): bool
+    {
+        if(getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
@@ -738,13 +741,17 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function getDefinitionFile($name = null)
     {
-        if (!$name) {
-            $name = $this->getName();
-        }
+        return $this->locateFile($name ?? $this->getName(), 'definition_%s.php');
+    }
 
-        $file = PIMCORE_CLASS_DIRECTORY.'/definition_'.$name.'.php';
+    private function getPhpClassFile(): string
+    {
+        return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s.php');
+    }
 
-        return $file;
+    private function getPhpListingClassFile(): string
+    {
+        return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s/Listing.php');
     }
 
     /**

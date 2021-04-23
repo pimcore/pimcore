@@ -30,7 +30,7 @@ use Pimcore\Model\DataObject;
 class Definition extends Model\AbstractModel
 {
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
-
+    use DataObject\Traits\LocateFileTrait;
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
@@ -89,8 +89,9 @@ class Definition extends Model\AbstractModel
                 throw new \Exception('FieldCollection in registry is not valid');
             }
         } catch (\Exception $e) {
-            $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
-            $fieldFile = $fieldCollectionFolder . '/' . $key . '.php';
+            $def = new Definition();
+            $def->setKey($key);
+            $fieldFile = $def->getDefinitionFile();
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
@@ -112,6 +113,7 @@ class Definition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
+
         if (!$this->getKey()) {
             throw new \Exception('A field-collection needs a key to be saved!');
         }
@@ -151,6 +153,13 @@ class Definition extends Model\AbstractModel
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
+        $existingDefinition = Definition::getByKey($this->getKey());
+        $isUpdate = $existingDefinition != null;
+
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception("fieldcollection updates in config folder not allowed");
+        }
+
         $infoDocBlock = $this->getInfoDocBlock();
 
         $definitionFile = $this->getDefinitionFile();
@@ -255,15 +264,23 @@ class Definition extends Model\AbstractModel
         }
     }
 
+    public function isWritable(): bool
+    {
+        if(getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+    }
+
     /**
+     * @param string|null $key
+     *
      * @return string
      */
-    protected function getDefinitionFile()
+    public function getDefinitionFile($key = null)
     {
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
-        $definitionFile = $fieldClassFolder . '/' . $this->getKey() . '.php';
-
-        return $definitionFile;
+        return $this->locateFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
 
     /**
@@ -271,10 +288,7 @@ class Definition extends Model\AbstractModel
      */
     protected function getPhpClassFile()
     {
-        $classFolder = PIMCORE_CLASS_DIRECTORY . '/DataObject/Fieldcollection/Data';
-        $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
-
-        return $classFile;
+        return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Fieldcollection/Data/%s.php');
     }
 
     /**
@@ -315,4 +329,5 @@ class Definition extends Model\AbstractModel
 
         return $text;
     }
+
 }
