@@ -279,11 +279,14 @@ pimcore.document.settings_abstract = Class.create({
                     displayField: 'path',
                     valueField: 'path',
                     name: "template",
-                    disableKeyFilter: true,
-                    queryMode: "remote",
+                    typeAhead: true,
+                    queryMode: "local",
+                    anyMatch: true,
+                    editable: true,
+                    forceSelection: false,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: false,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
                             url: Routing.generate('pimcore_admin_misc_getavailabletemplates'),
