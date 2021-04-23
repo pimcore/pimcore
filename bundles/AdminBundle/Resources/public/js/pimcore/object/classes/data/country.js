@@ -117,7 +117,13 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
                 hideLabel: true,
                 value: t('width_explanation')
             },
-            possibleOptions
+            possibleOptions,
+            {
+                xtype: "textfield",
+                fieldLabel: t("default_value"),
+                name: "defaultValue",
+                value: datax.defaultValue
+            }
         ];
     },
 

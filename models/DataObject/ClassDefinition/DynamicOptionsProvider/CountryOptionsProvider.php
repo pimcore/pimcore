@@ -52,6 +52,10 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
 
     public function getDefaultValue($context, $fieldDefinition)
     {
+        if ($fieldDefinition instanceof Country) {
+            return $fieldDefinition->getDefaultValue();
+        }
+
         return null;
     }
 }
