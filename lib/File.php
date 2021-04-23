@@ -138,7 +138,7 @@ class File
     /**
      * @param string $path
      * @param string $data
-     * @return int
+     * @return int|false
      */
     public static function putPhpFile($path, $data)
     {
