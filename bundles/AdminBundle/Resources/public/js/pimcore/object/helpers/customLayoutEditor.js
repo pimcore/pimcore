@@ -979,8 +979,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     enableButtons: function() {
-        this.saveButton.enable();
-        this.importButton.enable();
+
+        this.saveButton.setDisabled(!this.data.isWriteable);
+        this.importButton.setDisabled(!this.data.isWriteable);
         this.exportButton.enable();
     }
 

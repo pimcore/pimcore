@@ -143,6 +143,13 @@ pimcore.document.versions = Class.create({
                         editable: false
                     },
                     {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField(), renderer: Ext.util.Format.htmlEncode},
+                    {
+                        xtype: "checkcolumn",
+                        text: t("auto_save"),
+                        disabled : true,
+                        dataIndex: "autoSave",
+                        width: 50
+                    },
                     checkPublic,
                     {text: t("public_url"), width: 300, sortable: false, dataIndex: 'publicurl', editable: false}
                 ],

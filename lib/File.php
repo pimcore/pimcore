@@ -121,7 +121,7 @@ class File
      * @param string $path
      * @param mixed $data
      *
-     * @return int
+     * @return int|false
      */
     public static function put($path, $data)
     {
@@ -137,15 +137,18 @@ class File
 
     /**
      * @param string $path
-     * @param mixed $data
+     * @param string $data
+     * @return int|false
      */
     public static function putPhpFile($path, $data)
     {
-        self::put($path, $data);
+        $return = self::put($path, $data);
 
         if (function_exists('opcache_reset')) {
             opcache_reset();
         }
+
+        return $return;
     }
 
     /**

@@ -583,6 +583,7 @@ final class ElementController extends AdminController
         return $this->adminJson(['success' => true, 'data' => $result]);
     }
 
+
     /**
      * @Route("/element/get-versions", name="pimcore_admin_element_getversions", methods={"GET"})
      *
@@ -610,7 +611,20 @@ final class ElementController extends AdminController
                         }
                     }
 
-                    $versions = $element->getVersions();
+                    //only load auto-save versions from current user
+                    $list = new Version\Listing();
+                    $list->setLoadAutoSave(true);
+                    $list->setCondition("cid = ? AND ctype = ? AND (autoSave=0 OR (autoSave=1 AND userId = ?)) ",[
+                        $element->getId(),
+                        Element\Service::getType($element),
+                        $this->getUser()->getId()
+                    ])
+                        ->setOrderKey('date')
+                        ->setOrder('ASC');
+
+
+                    $versions = $list->load();
+
                     $versions = Model\Element\Service::getSafeVersionInfo($versions);
                     $versions = array_reverse($versions); //reverse array to sort by ID DESC
                     foreach ($versions as &$version) {
@@ -630,6 +644,23 @@ final class ElementController extends AdminController
         }
 
         throw $this->createNotFoundException('Element type not found');
+    }
+
+    /**
+     * @Route("/element/delete-draft", name="pimcore_admin_element_deletedraft", methods={"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteDraftAction(Request $request)
+    {
+        $version = Version::getById($request->get('id'));
+        if($version){
+            $version->delete();
+        }
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**

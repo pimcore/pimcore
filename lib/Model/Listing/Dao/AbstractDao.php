@@ -30,6 +30,11 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     abstract public function load();
 
     /**
+     * @return int
+     */
+    abstract public function getTotalCount();
+
+    /**
      * @return string
      */
     protected function getOrder()

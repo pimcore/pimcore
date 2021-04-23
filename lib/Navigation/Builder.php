@@ -329,7 +329,7 @@ class Builder
 
                 $page->setClass($page->getClass() . $classes);
 
-                if ($child->hasChildren() && (!$maxDepth || $maxDepth > $this->currentLevel)) {
+                if ($child->hasChildren() && (!$maxDepth || $maxDepth >= $this->currentLevel)) {
                     $childPages = $this->buildNextLevel($child, false, $pageCallback, $parents, $maxDepth);
                     $page->setPages($childPages);
                 }

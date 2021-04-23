@@ -95,8 +95,8 @@ final class NewsletterController extends DocumentControllerBase
         }
 
         $email = clone $email;
-        $isLatestVersion = true;
-        $email = $this->getLatestVersion($email, $isLatestVersion);
+        $draftVersion = null;
+        $email = $this->getLatestVersion($email, $draftVersion);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
@@ -113,10 +113,8 @@ final class NewsletterController extends DocumentControllerBase
         $this->minimizeProperties($email, $data);
 
         $data['url'] = $email->getUrl();
-        // this used for the "this is not a published version" hint
-        $data['documentFromVersion'] = !$isLatestVersion;
 
-        $this->preSendDataActions($data, $email);
+        $this->preSendDataActions($data, $email, $draftVersion);
 
         if ($email->isAllowed('view')) {
             return $this->adminJson($data);
@@ -172,10 +170,15 @@ final class NewsletterController extends DocumentControllerBase
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
-            $page->saveVersion();
+            $version = $page->saveVersion();
             $this->saveToSession($page);
 
-            return $this->adminJson(['success' => true]);
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate()
+            ];
+
+            return $this->adminJson(['success' => true, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }
@@ -368,7 +371,7 @@ final class NewsletterController extends DocumentControllerBase
 
         Console::runPhpScriptInBackground(
             realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'),
-            'internal:newsletter-document-send ' . escapeshellarg($document->getTmpStoreId()) . ' ' . escapeshellarg(\Pimcore\Tool::getHostUrl()),
+            ['internal:newsletter-document-send', $document->getTmpStoreId(), \Pimcore\Tool::getHostUrl()],
             PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log'
         );
 

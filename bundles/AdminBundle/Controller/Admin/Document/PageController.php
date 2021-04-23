@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Version;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -92,8 +93,8 @@ final class PageController extends DocumentControllerBase
         }
 
         $page = clone $page;
-        $isLatestVersion = true;
-        $page = $this->getLatestVersion($page, $isLatestVersion);
+        $draftVersion = null;
+        $page = $this->getLatestVersion($page, $draftVersion);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
@@ -115,9 +116,8 @@ final class PageController extends DocumentControllerBase
         }
 
         $data['url'] = $page->getUrl();
-        $data['documentFromVersion'] = !$isLatestVersion;
 
-        $this->preSendDataActions($data, $page);
+        $this->preSendDataActions($data, $page, $draftVersion);
 
         if ($page->isAllowed('view')) {
             return $this->adminJson($data);
@@ -193,6 +193,7 @@ final class PageController extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($page);
 
+            $this->handleTask($request->get('task'),$page);
             return $this->adminJson([
                 'success' => true,
                 'treeData' => $treeData,
@@ -204,12 +205,17 @@ final class PageController extends DocumentControllerBase
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
 
-            $page->saveVersion();
+            $version = $page->saveVersion(true,true,null,$request->get('task') == "autoSave");
             $this->saveToSession($page);
 
-            $treeData = $this->getTreeNodeConfig($page);
+            $draftData = [
+                'id' => $version->getId(),
+                'modificationDate' => $version->getDate()
+            ];
 
-            return $this->adminJson(['success' => true, 'treeData' => $treeData]);
+            $treeData = $this->getTreeNodeConfig($page);
+            $this->handleTask($request->get('task'),$page);
+            return $this->adminJson(['success' => true, 'treeData' => $treeData, 'draft' => $draftData]);
         } else {
             throw $this->createAccessDeniedHttpException();
         }

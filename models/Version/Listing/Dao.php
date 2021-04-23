@@ -26,6 +26,21 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+
+    public function getCondition()
+    {
+        $condition = parent::getCondition();
+        if($this->model->isLoadAutoSave() == false){
+            if(trim($condition)){
+                $condition .=' AND autoSave = 0';
+            }else{
+                $condition = ' WHERE autoSave = 0';
+            }
+        }
+
+        return $condition;
+    }
+
     /**
      * Loads a list of versions for the specicified parameters, returns an array of Version elements
      *
@@ -34,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $versions = [];
-        $data = $this->db->fetchCol('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->loadIdList();
 
         foreach ($data as $id) {
             $versions[] = Model\Version::getById($id);
@@ -43,6 +58,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setVersions($versions);
 
         return $versions;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function loadIdList(){
+        return (array)$this->db->fetchCol('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
     }
 
     /**

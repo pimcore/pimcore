@@ -327,7 +327,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             });
 
             var exportButtons = this.getExportButtons();
-            var firstButton = exportButtons.pop();
+            var firstButton = exportButtons.shift();
 
             this.exportButton = new Ext.SplitButton({
                 text: firstButton.text,

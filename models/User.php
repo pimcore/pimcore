@@ -159,9 +159,6 @@ class User extends User\UserRole
 
     /**
      * Alias for getName()
-     *
-     * @deprecated
-     *
      * @return string
      */
     public function getUsername()

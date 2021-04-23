@@ -64,12 +64,4 @@ class ClientFactory
 
         return $client;
     }
-
-    /**
-     * @deprecated Use the ClientFactory service instead of the static method, to be remove in Pimcore 10
-     */
-    public static function createHttpClient()
-    {
-        return \Pimcore::getContainer()->get(ClientFactory::class)->createClient();
-    }
 }

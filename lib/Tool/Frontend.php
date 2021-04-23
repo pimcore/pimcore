@@ -21,18 +21,6 @@ use Pimcore\Model\Site;
 class Frontend
 {
     /**
-     * Returns the Website-Config
-     *
-     * @return \Pimcore\Config\Config
-     *
-     * @deprecated
-     */
-    public static function getWebsiteConfig()
-    {
-        return \Pimcore\Config::getWebsiteConfig();
-    }
-
-    /**
      * @param Site $site
      *
      * @return string

@@ -28,7 +28,7 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion()
+ * @method \Pimcore\Model\Version getLatestVersion($userId = null)
  */
 abstract class PageSnippet extends Model\Document
 {
@@ -125,18 +125,20 @@ abstract class PageSnippet extends Model\Document
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
      * @param string $versionNote
+     * @param bool $isAutoSave
      *
      * @return null|Model\Version
      *
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isAutoSave = false)
     {
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
             }
@@ -160,13 +162,14 @@ abstract class PageSnippet extends Model\Document
                 || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $postUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
             }
@@ -176,6 +179,7 @@ abstract class PageSnippet extends Model\Document
             $postUpdateFailureEvent = new DocumentEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
+                'isAutoSave' => $isAutoSave
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
 

@@ -70,7 +70,7 @@ class PackageInfo
             // try to read vendor/composer/installed.json as fallback
             $json = $this->readComposerFile(PIMCORE_COMPOSER_PATH . '/composer/installed.json');
             if ($json && is_array($json)) {
-                $this->installedPackages = $json;
+                $this->installedPackages = $json['packages'] ?? $json;
             }
         }
 

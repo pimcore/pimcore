@@ -1,6 +1,11 @@
 ## Server Requirements 
 
-For production we highly recommend a *nix based system. 
+For production, we highly recommend a *nix based system.
+
+> Also have a look at our official [Docker images](https://hub.docker.com/r/pimcore/pimcore) and the
+> docker-compose files in our [skeleton](https://github.com/pimcore/skeleton/blob/master/docker-compose.yml) 
+> and [demo application](https://github.com/pimcore/demo/blob/master/docker-compose.yml).  
+
 
 ### Webserver 
 - Apache >= 2.4
@@ -29,7 +34,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [opcache](http://php.net/opcache)
 - [curl](http://php.net/curl)
 - CLI SAPI (for Cron Jobs)
-- [Composer](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
+- [Composer 2](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
 #### Recommended Modules & Extensions 
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)

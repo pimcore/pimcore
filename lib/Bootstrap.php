@@ -210,25 +210,13 @@ class Bootstrap
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
     }
 
-    public static function autoload()
+    private static function autoload()
     {
         $loader = \Pimcore::getAutoloader();
 
         // tell the autoloader where to find Pimcore's generated class stubs
         // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
         $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
-
-        // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
-        $apiDocAnnotations = [
-            'api', 'apiDefine',
-            'apiDeprecated', 'apiDescription', 'apiError',  'apiErrorExample', 'apiExample', 'apiGroup', 'apiHeader',
-            'apiHeaderExample', 'apiIgnore', 'apiName', 'apiParam', 'apiParamExample', 'apiPermission', 'apiSampleRequest',
-            'apiSuccess', 'apiSuccessExample', 'apiUse', 'apiVersion',
-        ];
-
-        foreach ($apiDocAnnotations as $apiDocAnnotation) {
-            AnnotationReader::addGlobalIgnoredName($apiDocAnnotation);
-        }
 
         if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
             require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
