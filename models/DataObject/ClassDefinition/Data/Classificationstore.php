@@ -1238,7 +1238,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
 
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
-        $groupList->setCondition('`id` in (?)', implode(',', $filteredGroupIds));
         $groupList->setCondition('`id` in (' . implode(',', array_map(function ($id) { return '?'; }, $filteredGroupIds)) . ')', $filteredGroupIds);
 
         $groupList->setOrderKey(['id']);
