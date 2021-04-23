@@ -255,7 +255,7 @@ pimcore.document.settings_abstract = Class.create({
                     forceSelection: false,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
@@ -266,6 +266,11 @@ pimcore.document.settings_abstract = Class.create({
                         },
                         fields: ["name"]
                     }),
+                    listeners: {
+                        afterrender: function (el) {
+                            el.getStore().load();
+                        }
+                    },
                     triggerAction: "all",
                     value: this.document.data.controller,
                     matchFieldWidth: false,
@@ -286,7 +291,7 @@ pimcore.document.settings_abstract = Class.create({
                     forceSelection: false,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: Routing.generate('pimcore_admin_misc_getavailabletemplates'),
@@ -297,6 +302,11 @@ pimcore.document.settings_abstract = Class.create({
                         },
                         fields: ["path"]
                     }),
+                    listeners: {
+                        afterrender: function (el) {
+                            el.getStore().load();
+                        }
+                    },
                     triggerAction: "all",
                     value: this.document.data.template,
                     matchFieldWidth: false,
