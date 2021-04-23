@@ -195,12 +195,12 @@ pimcore.helpers.updateTreeElementStyle = function (type, id, treeData) {
         if (pimcore.globalmanager.exists(key)) {
             var editMask = pimcore.globalmanager.get(key);
             if (editMask.tab) {
-                if (typeof treeData.icon !== "undefined") {
-                    editMask.tab.setIcon(treeData.icon);
-                }
-
                 if (typeof treeData.iconCls !== "undefined") {
                     editMask.tab.setIconCls(treeData.iconCls);
+                }
+
+                if (typeof treeData.icon !== "undefined") {
+                    editMask.tab.setIcon(treeData.icon);
                 }
             }
         }
