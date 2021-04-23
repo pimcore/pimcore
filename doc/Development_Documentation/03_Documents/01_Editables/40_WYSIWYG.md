@@ -130,15 +130,15 @@ class AppAdminBundle extends AbstractPimcoreBundle
 ###### Registering global configuration via events
 
 You can also add the file which should be loaded in editmode through an event listener to avoid having to implement a 
-`PimcoreBundle` just for the sake of adding a file. Given you already have an `AppBundle` and put the JS config from above
-to `src/AppBundle/Resources/public/js/editmode.js` you can create an event listener to add the path to the list of loaded
+`PimcoreBundle` just for the sake of adding a file. Given you already have an `App` bundle and put the JS config from above
+to `public/js/editmode.js` you can create an event listener to add the path to the list of loaded
 files in editmode (please see [Events](../../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md) for details on how
 to implement and register event listeners):
 
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;

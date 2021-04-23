@@ -29,7 +29,7 @@ Next, I added four custom layouts which later I will assign to the specific stat
 
 ## The workflow declaration
 
-Now create the base configuration in `/app/config/config.yml`
+Now create the base configuration in `config/config.yaml`
 
 ```yml
 pimcore:

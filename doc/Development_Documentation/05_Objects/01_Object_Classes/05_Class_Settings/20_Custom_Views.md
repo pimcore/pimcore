@@ -25,7 +25,7 @@ The main idea for this configuration is to
 
 ```php
 <?php
-// /app/config/pimcore/customviews.example.php
+// config/pimcore/customviews.php
  
 return [
     "views" => [

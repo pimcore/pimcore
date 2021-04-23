@@ -48,7 +48,7 @@ All Twig extension functions are described below in detail, the following tables
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
 {# using 'instaceof' checks if object is instanceof provided classname #}
-{% if (product is instanceof('AppBundle\\Model\\Product\\Car')) %}
+{% if (product is instanceof('App\\Model\\Product\\Car')) %}
     ...
 {% endif %}
 

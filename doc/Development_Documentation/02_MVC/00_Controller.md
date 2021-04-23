@@ -16,12 +16,12 @@ The naming of the file and the class is just the same as in Symfony.
 
 | Controller Name | File Name                   | Class Name        | Default View Directory               |
 |-----------------|-----------------------------|-------------------|--------------------------------------|
-| Content         | `src/AppBundle/Controller/ContentController.php` | `AppBundle\Controller\ContentController` | `/app/Resources/views/content` |
-| News            | `src/AppBundle/Controller/NewsController.php`    | `AppBundle\Controller\NewsController`    | `/app/Resources/views/news`    |
+| Content         | `src/Controller/ContentController.php` | `App\Controller\ContentController` | `/templates/content` |
+| News            | `src/Controller/NewsController.php`    | `App\Controller\NewsController`    | `/templates/news`    |
 
 In controllers, for every action there exists a separate method ending with the `Action` suffix. 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
-the `defaultAction` in the `DefaultController` which uses the view `/app/Resources/views/default/default.html.twig`. 
+the `defaultAction` in the `DefaultController` which uses the view `/templates/default/default.html.twig`. 
 
 You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `@Template()` [annotation](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/view.html). 
 
@@ -31,7 +31,7 @@ You can render templates just the [standard Symfony way](https://symfony.com/doc
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;

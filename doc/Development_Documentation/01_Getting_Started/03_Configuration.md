@@ -10,15 +10,15 @@ Pimcore's configuration can be found in several places:
 ## Symfony Configuration
 
 Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/3.4/bundles/configuration.html)
-tree defined under the `pimcore` and `pimcore_admin` extension. These values can be changed through config files in `app/config` (e.g. `app/config/config.yml)`).
+tree defined under the `pimcore` and `pimcore_admin` extension. These values can be changed through config files in `config` (e.g. `config/config.yaml)`).
 
 Pimcore additionally includes a set of standard configuration files which, in contrast to a standard Symfony project, are
-not located in `app/config`, but in the [PimcoreCoreBundle](https://github.com/pimcore/pimcore/tree/master/bundles/CoreBundle/Resources/config/pimcore).
-This allows us to ship and update default configurations without affecting project code in `app/`. See
+not located in `config/`, but in the [PimcoreCoreBundle](https://github.com/pimcore/pimcore/tree/master/bundles/CoreBundle/Resources/config/pimcore).
+This allows us to ship and update default configurations without affecting project code in `config/`. See
 [Auto loading config and routing definitions](../20_Extending_Pimcore/13_Bundle_Developers_Guide/03_Auto_Loading_Config_And_Routing_Definitions.md)
 for details how this works.
 
-Standard configs will be merged with your custom config in `app/config` to build the final config tree. You can debug the
+Standard configs will be merged with your custom config in `config/` to build the final config tree. You can debug the
 values stored in the tree through the following command:
 
 ```bash
@@ -42,7 +42,7 @@ defined in [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/master/
 If you need to overwrite these constants (e.g. for using a special directory for assets or versions at an object storage
 at AWS S3), you have multiple ways to do so:
 
-* Create a file in `/app/constants.php` setting the constants you need. Pimcore will skip setting any constants which are 
+* Create a file in `/config/pimcore/constants.php` setting the constants you need. Pimcore will skip setting any constants which are 
   already defined.
 * Define an environment variable named after the constant. When defining a constant, Pimcore will look if an env variable
   with the same name is defined and use that instead of the default value.
@@ -51,7 +51,7 @@ at AWS S3), you have multiple ways to do so:
 
 
 The [Pimcore Skeleton](https://github.com/pimcore/skeleton) repository contains an example file,
-[`constants.example.php`](https://github.com/pimcore/skeleton/blob/master/app/constants.example.php).
+[`constants.example.php`](https://github.com/pimcore/skeleton/blob/master/config/pimcore/constants.example.php).
 The following file is an example of how you can overwrite some paths:
 
 ```php

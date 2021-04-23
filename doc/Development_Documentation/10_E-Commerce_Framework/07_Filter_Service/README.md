@@ -109,7 +109,7 @@ pimcore_ecommerce_framework:
   in filter definition objects (see next chapter). 
 - `class`: Backend implementation of the filter type. 
 - `script`: Default view script of the filter type, can be overwritten in the filter definition objects. 
-  You can find some script filter examples in the Demo [here](https://github.com/pimcore/demo/tree/master/app/Resources/views/product/filters). 
+  You can find some script filter examples in the Demo [here](https://github.com/pimcore/demo/tree/master/templates/product/filters). 
 
 
 - `Helper`: Is a helper implementation that gets available values for pre select settings in the filter definition objects 
@@ -184,7 +184,7 @@ $templateParams['paginationVariables'] = $paginator->getPaginationData();
 return $this->render('Path/template.html.twig', $templateParams);
 ```
 
-For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/master/src/AppBundle/Controller/ProductController.php#L118). 
+For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/master/src/Controller/ProductController.php#L118). 
 
 ### View
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 

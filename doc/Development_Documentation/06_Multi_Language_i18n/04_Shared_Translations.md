@@ -42,7 +42,7 @@ Parameters in translations can be wrapped in double curly braces (`{{` and `}}`)
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Pimcore\Controller\FrontendController;

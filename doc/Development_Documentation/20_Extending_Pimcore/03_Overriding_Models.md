@@ -18,15 +18,15 @@ But you cannot override `Pimcore\Model\Asset` (or the other abstract model class
 
 ## Configure an Override 
 
-The configuration is a simple key / value map in your `app/config/config.yml` using the key 
+The configuration is a simple key / value map in your `config/config.yaml` using the key 
 `pimcore.models.class_overrides`, for example: 
 
 ```yaml
 pimcore:
     models:
         class_overrides:
-            'Pimcore\Model\DataObject\News': 'AppBundle\Model\DataObject\News'
-            'Pimcore\Model\DataObject\News\Listing': 'AppBundle\Model\DataObject\News\Listing'
+            'Pimcore\Model\DataObject\News': 'App\Model\DataObject\News'
+            'Pimcore\Model\DataObject\News\Listing': 'App\Model\DataObject\News\Listing'
 ```
 
 **It is crucial that your override class extends the origin class, if not you'll break the entire system.**
@@ -36,21 +36,21 @@ pimcore:
 
 ## Example 
 
-In your `app/config/config.yml`: 
+In your `config/config.yaml`: 
 
 ```yaml
 pimcore:
     models:
         class_overrides:
-            'Pimcore\Model\DataObject\News': 'AppBundle\Model\DataObject\News'
+            'Pimcore\Model\DataObject\News': 'App\Model\DataObject\News'
 ```
 
-Your `AppBundle\Model\DataObject\News`: 
+Your `App\Model\DataObject\News`: 
 
 ```php
 <?php 
 
-namespace AppBundle\Model\DataObject; 
+namespace App\Model\DataObject; 
 
 class News extends \Pimcore\Model\DataObject\News {
 

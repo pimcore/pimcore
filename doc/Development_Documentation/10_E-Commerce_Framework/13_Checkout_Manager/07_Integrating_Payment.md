@@ -46,7 +46,7 @@ payment provider, also other data structures can be created:
 {{ form(form) }}
 ```
 
-For more samples see [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/app/Resources/views/Payment/paymentFrame.html.php)
+For more samples see [our demo](https://github.com/pimcore/demo/blob/master/templates/payment/payment_frame.html.twig)
 
 
 ## Handle Payment Response

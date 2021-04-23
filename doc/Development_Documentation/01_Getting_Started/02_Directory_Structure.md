@@ -19,7 +19,12 @@ In general the directory structure follows the [best practice for Symfony projec
 
 The web root directory is the home of all public and static files like images, stylesheets and 
 JavaScript files. It is also the place where each front controller (the file that handles all requests 
-to your application) lives, such as the [production controller](https://github.com/pimcore/skeleton/blob/master/public/index.php)
+to your application) lives, such as the [production controller](https://github.com/pimcore/skeleton/blob/master/web/app.php)
+
+
+### The `src/` Directory
+The Kernel class is the main entry point of the Symfony application configuration and as such, 
+it is stored in the `src/` directory.
   
   
 For more information about the folder structure and the architecture in general, please have a look at the 

@@ -25,18 +25,18 @@ As example:
 
 ```yml
 services:
-    AppBundle\Installer:
+    App\Installer:
         public: true
 ```
 
 ```php
 <?php
 
-namespace AppBundle;
+namespace App;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
-class AppBundle extends AbstractPimcoreBundle
+class App extends AbstractPimcoreBundle
 {
     public function getInstaller()
     {

@@ -26,7 +26,7 @@ implicitely auto-create a service `app.area.brick.iframe` and register it on the
 ```php
 <?php
 
-namespace AppBundle\Document\Areabrick;
+namespace App\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 
@@ -46,7 +46,7 @@ defined in the special namespace. Let's define our brick as above, but assume it
 ```yaml
 # a service.yml file defining services
 services:
-    AppBundle\Document\Areabrick\Iframe:
+    App\Document\Areabrick\Iframe:
         arguments: ['@logger']
         tags:
             - { name: pimcore.area.brick, id: iframe }
@@ -74,7 +74,7 @@ as registered on the areabrick manager (see below).
 
 | Location | Path                                           |
 |----------|------------------------------------------------|
-| global   | `app/Resources/views/Areas/<brickId>`          |
+| global   | `templates/Areas/<brickId>`          |
 | bundle   | `<bundlePath>/Resources/views/Areas/<brickId>` |
 
 
@@ -98,8 +98,8 @@ Given our `iframe` brick defined before, the following paths will be used.
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `app/Resources/views/Areas/iframe/view.html.twig` |
-| icon path     | `web/bundles/app/areas/iframe/icon.png`                 |
+| view template | `templates/Areas/iframe/view.html.twig` |
+| icon path     | `public/bundles/app/areas/iframe/icon.png`                 |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
 
 ### `bundle` template location
@@ -108,20 +108,20 @@ The icon path and URL are the same as above, but the view scripts are expected i
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `src/AppBundle/Resources/views/Areas/iframe/view.html.twig` |
+| view template | `templates/Areas/iframe/view.html.twig` |
 
 ## How to Create a Brick
  
 Let's suppose, that our iframe brick defined above is responsible for generating an `<iframe>` containing contents 
 from a specified URL in the editmode. First of all, let's update the class to add metadata for the extension manager, to
-make use of template auto-discovery and to load the view template from `app/Resources/views` instead of the bundle
+make use of template auto-discovery and to load the view template from `templates` instead of the bundle
 directory:
 
 ```php
 <?php
-// src/AppBundle/Document/Areabrick/Iframe.php
+// src/Document/Areabrick/Iframe.php
 
-namespace AppBundle\Document\Areabrick;
+namespace App\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 
@@ -158,7 +158,7 @@ variable on the view which gives you access to the brick instance. A `info` vari
 brick metadata.
 
 ```twig
-/* app/Resources/views/Areas/iframe/view.html.twig */
+/* templates/Areas/iframe/view.html.twig */
 
 {% set urlField = pimcore_input('iframe_url') %}
 {% set widthField = pimcore_numeric('iframe_width') %}
@@ -246,7 +246,7 @@ a simple config array.
 ```php
 <?php
 
-namespace AppBundle\Document\Areabrick;
+namespace App\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
@@ -296,7 +296,7 @@ It is also possible to use tab panels in your configuration.
 ```php
 <?php
 
-namespace AppBundle\Document\Areabrick;
+namespace App\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
@@ -463,7 +463,7 @@ If you need to influence the HTML open and close tag, you can do so by customizi
 ```php
 <?php
 
-namespace AppBundle\Document\Areabrick;
+namespace App\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Editable\Area\Info;
@@ -509,4 +509,4 @@ class Iframe extends AbstractTemplateAreabrick
 
 ## Examples
 
-You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/master/src/AppBundle/Document/Areabrick).
+You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/master/src/Document/Areabrick).

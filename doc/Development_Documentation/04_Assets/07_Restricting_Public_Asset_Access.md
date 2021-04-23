@@ -105,10 +105,10 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
-In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
+In the application, there has to be a route in (config/routing.yaml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
-# app/config/routing.yml
+# config/routing.yaml
 
 # important this has to be the first route in the file!
 asset_protect:
@@ -121,7 +121,7 @@ asset_protect:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;

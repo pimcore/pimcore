@@ -15,7 +15,7 @@ Here is an example for a rendering class.
 ```php
 <?php
 
-namespace AppBundle\Helpers;
+namespace App\Helpers;
 
 use Pimcore\Model\DataObject\Concrete;
 

@@ -44,7 +44,7 @@ As an example, a sample service working with the `VisitorInfo`:
 ```php
 <?php
 
-namespace AppBundle\Targeting;
+namespace App\Targeting;
 
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 
@@ -86,10 +86,10 @@ services:
 
     # if using autowiring you're already set by just defining your service - the
     # type hint against the VisitorInfoStorageInterface is enough to enable autowiring
-    AppBundle\Targeting\MyService: ~
+    App\Targeting\MyService: ~
 
     # if you don't use autowiring you need to manually wire your dependency
-    AppBundle\Targeting\MyService:
+    App\Targeting\MyService:
         arguments:
             $visitorInfoStorage: '@Pimcore\Targeting\VisitorInfoStorageInterface'
 ``` 
@@ -99,7 +99,7 @@ If your controllers are defined as services, you can make use of argument inject
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
