@@ -1305,7 +1305,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $collectionIds = array_values($groupCollectionMapping);
 
             $relation = new DataObject\Classificationstore\CollectionGroupRelation\Listing();
-            $relation->setCondition('`colId` in (' . implode(',', array_map(function ($id) { return '?'; }, $collectionIds)) . ')', $collectionIds);
+            $relation->setCondition('`colId` in (' . implode(',', array_fill(0, count($collectionIds), '?')) . ')', $collectionIds);
 
             $sorting = [];
             /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
