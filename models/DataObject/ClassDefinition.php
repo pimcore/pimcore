@@ -518,11 +518,9 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "}\n";
         $cd .= "\n";
 
-        $classFile = $this->getPhpClassFile();
-        if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
-            throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
+        if(File::put($this->getPhpClassFile(), $cd) === false) {
+            throw new \Exception(sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpClassFile()));
         }
-        File::put($classFile, $cd);
 
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';
@@ -570,13 +568,11 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "}\n";
 
-        $classListFile = $this->getPhpListingClassFile();
-        if (!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {
+        if(File::put($this->getPhpListingClassFile(), $cd) === false) {
             throw new \Exception(
-                'Cannot write class file in '.$classListFile.' please check the rights on this directory'
+                sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpListingClassFile())
             );
         }
-        File::put($classListFile, $cd);
 
         if ($generateDefinitionFile) {
             // save definition as a php file
