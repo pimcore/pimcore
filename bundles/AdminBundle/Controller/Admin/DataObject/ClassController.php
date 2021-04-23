@@ -235,8 +235,7 @@ final class ClassController extends AdminController implements KernelControllerE
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         $isWriteable = $customLayout->isWritable();
-        $customLayout = json_encode($customLayout->getObjectVars());
-        $customLayout = json_decode($customLayout, true);
+        $customLayout = $customLayout->getObjectVars();
         $customLayout['isWriteable'] = $isWriteable;
 
         return $this->adminJson(['success' => true, 'data' => $customLayout]);

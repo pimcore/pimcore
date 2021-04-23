@@ -32,7 +32,7 @@ use Pimcore\Tool;
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
-
+    use DataObject\Traits\LocateFileTrait;
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
     /**
@@ -681,6 +681,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     public function isWritable(): bool
     {
+        if(getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
         return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
@@ -691,28 +695,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function getDefinitionFile($key = null)
     {
-        if (!$key) {
-            $key = $this->getKey();
-        }
-
-        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/objectbricks/'. $key . '.php';
-        if (is_file($customFile)) {
-            return $customFile;
-        } else {
-            return PIMCORE_CLASS_DIRECTORY.'/objectbricks/' . $key . '.php';
-        }
+        return $this->locateFile($key ?? $this->getKey(), 'objectbricks/%s.php');
     }
-
-
 
     /**
      * @return string
      */
     protected function getPhpClassFile()
     {
-        $classFolder = PIMCORE_CLASS_DIRECTORY . '/DataObject/Objectbrick/Data';
-        $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
-
-        return $classFile;
+        return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Objectbrick/Data/%s.php');
     }
 }

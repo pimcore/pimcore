@@ -32,6 +32,7 @@ use Pimcore\Model\DataObject;
 class ClassDefinition extends Model\AbstractModel
 {
     use DataObject\ClassDefinition\Helper\VarExport;
+    use DataObject\Traits\LocateFileTrait;
 
     /**
      * @var string
@@ -416,11 +417,6 @@ class ClassDefinition extends Model\AbstractModel
             $extendClass = '\\'.ltrim($extendClass, '\\');
         }
 
-        // create directory if not exists
-        if (!is_dir(PIMCORE_CLASS_DIRECTORY.'/DataObject')) {
-            File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject');
-        }
-
         $cd = '<?php ';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
@@ -522,7 +518,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "}\n";
         $cd .= "\n";
 
-        $classFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php';
+        $classFile = $this->getPhpClassFile();
         if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
             throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
         }
@@ -574,9 +570,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "}\n";
 
-        File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
-
-        $classListFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php';
+        $classListFile = $this->getPhpListingClassFile();
         if (!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {
             throw new \Exception(
                 'Cannot write class file in '.$classListFile.' please check the rights on this directory'
@@ -728,15 +722,19 @@ class ClassDefinition extends Model\AbstractModel
     protected function deletePhpClasses()
     {
         // delete the class files
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php');
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php');
-        @rmdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
+        @unlink($this->getPhpClassFile());
+        @unlink($this->getPhpListingClassFile());
+        @rmdir(dirname($this->getPhpListingClassFile()));
         @unlink($this->getDefinitionFile());
     }
 
 
-    public function isWritable()
+    public function isWritable(): bool
     {
+        if(getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
         return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
@@ -747,16 +745,17 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function getDefinitionFile($name = null)
     {
-        if (!$name) {
-            $name = $this->getName();
-        }
+        return $this->locateFile($name ?? $this->getName(), 'definition_%s.php');
+    }
 
-        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/definition_'.$name.'.php';
-        if (is_file($customFile)) {
-            return $customFile;
-        } else {
-            return PIMCORE_CLASS_DIRECTORY . '/definition_'.$name.'.php';
-        }
+    private function getPhpClassFile(): string
+    {
+        return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s.php');
+    }
+
+    private function getPhpListingClassFile(): string
+    {
+        return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s/Listing.php');
     }
 
     /**

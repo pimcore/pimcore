@@ -256,6 +256,10 @@ class CustomLayout extends Model\AbstractModel
 
     public function isWritable(): bool
     {
+        if(getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
         return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
