@@ -37,8 +37,8 @@ don't need any custom code in our controller, so the action stays empty for the 
 
 ### Create a Template
 Now we create a template for our page:
-* Create a new folder in `/templates` and name it like the controller (lowercase) (in this case `content`). 
-* Put a new Twig template into this folder and name it like our action in lowercase (`default.html.twig`).
+* Create a new folder in `/templates` and name it like the controller (snake_case) (in this case `content`). 
+* Put a new Twig template into this folder and name it like our action in snake_case (`default.html.twig`).
 
 Then we can put some template code into it, for example:
 ```twig
