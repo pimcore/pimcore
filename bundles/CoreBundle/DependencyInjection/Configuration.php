@@ -567,7 +567,7 @@ final class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('ignoreLocalizedQueryFallback')
+                        ->booleanNode('ignore_localized_query_fallback')
                             ->beforeNormalization()
                             ->ifString()
                                 ->then(function ($v) {
