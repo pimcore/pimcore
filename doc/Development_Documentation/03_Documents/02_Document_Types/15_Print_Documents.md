@@ -50,9 +50,10 @@ If you updated an existing Pimcore installation, please get the default implemen
 
 ## PDF Rendering
 
-Both web-to-print documents have an additional tab that is the place for rendering documents to print-ready PDFs. 
+Both web-to-print documents have an additional tab that is the place for rendering documents to print-ready PDFs.
 When rendering, the print is first rendererd to HTML, then rendered as a Twig template (yes, you can use Twig expressions in the document) and then rendered to an PDF. PDF rendering itself is done by an
-third party renderer. Currently we support [wkhtmltopdf](http://wkhtmltopdf.org/) and [pdfreactor](http://www.pdfreactor.com/). 
+third party renderer. Currently we support [wkhtmltopdf](http://wkhtmltopdf.org/), [pdfreactor](http://www.pdfreactor.com/) 
+and [Headless Chrome](https://developers.google.com/web/tools/puppeteer). 
 Please see their documentation for details concerning template possibilities.
 
 ![Web2Print - Container editmode](../../img/printdocuments_editmode_preview.png)
@@ -90,6 +91,13 @@ For example: `example.mydevdomain.local`
 
 To test and debug the PDF rendering, open a Print document, go to the tab "Generate & Preview PDF", click the "Generate PDF" 
 button and observe the message field for any errors.
+
+## Settings for Headless Chrome
+
+To enable this feature node.js 10.18.1+ is required. Options can be found in either the used [library](https://github.com/spiritix/php-chrome-html2pdf) or the actual [Puppeteer](https://pptr.dev/#?product=Puppeteer&version=v5.0.0&show=api-pagepdfoptions) documentation.
+Additionally, two settings can be used to add header and footer by the content of an URL.
+* header: URL for header content
+* footer: URL for footer content
 
 ## Relevant Log Files
 

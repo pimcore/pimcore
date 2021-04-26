@@ -648,5 +648,11 @@
   "invitation_sent": "Login Invitation sent",
   "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
   "classificationstore_group_by_key": "Group by key",
-  "allow_to_create_new_object":  "Allow to create a new object in relation field"
+  "allow_to_create_new_object":  "Allow to create a new object in relation field",
+  "puppeteer_documentation": "Puppeteer",
+  "web2print_headlesschrome_documentation": "Option Documentation",
+  "web2print_headlesschrome_documentation_additions": "Additional Options",
+  "web2print_headlesschrome_documentation_additions_text": "There are two additional options: \"header\" and \"footer\". This options need a URL, which returns the header or footer template.",
+  "json_converter": "Formatting the Options",
+  "json_converter_link": "JSON Formatter"
 }
