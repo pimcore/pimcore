@@ -84,8 +84,6 @@ $config = $this->config;
     KEEP IN MIND THAT REMOVING THE COPYRIGHT NOTICE IS VIOLATING OUR LICENSING TERMS!
 </div>
 
-<script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
-
 <?php $view->slots()->output('below_footer') ?>
 
 </body>
