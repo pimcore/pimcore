@@ -97,9 +97,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                         value: ""
                     };
 
-                    var selectedRow = this.selectionModel.getSelected();
+                    let selection = this.selectionModel.getSelection();
                     var idx;
-                    if (selectedRow) {
+                    if (selection.length > 0) {
+                        let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
                         idx = valueStore.getCount();
