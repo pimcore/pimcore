@@ -703,6 +703,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $fieldDefinition;
     }
 
+    /**
+     * @internal
+     * @return bool
+     */
     public function isWritable(): bool
     {
         if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
@@ -713,6 +717,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @internal
      * @param string|null $key
      *
      * @return string
@@ -723,6 +728,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @internal
      * @return string
      */
     protected function getPhpClassFile()

@@ -261,6 +261,10 @@ class Definition extends Model\AbstractModel
         }
     }
 
+    /**
+     * @internal
+     * @return bool
+     */
     public function isWritable(): bool
     {
         if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
@@ -271,6 +275,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param string|null $key
      *
      * @return string
@@ -281,6 +286,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @return string
      */
     protected function getPhpClassFile()
@@ -289,6 +295,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @return string
      */
     protected function getInfoDocBlock()

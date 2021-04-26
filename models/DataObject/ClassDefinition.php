@@ -727,6 +727,10 @@ class ClassDefinition extends Model\AbstractModel
         @unlink($this->getDefinitionFile());
     }
 
+    /**
+     * @internal
+     * @return bool
+     */
     public function isWritable(): bool
     {
         if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
@@ -737,6 +741,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param string|null $name
      *
      * @return string

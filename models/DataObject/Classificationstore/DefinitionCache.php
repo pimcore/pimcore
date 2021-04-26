@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+/**
+ * @internal
+ */
 class DefinitionCache
 {
     /**
