@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface;
 
+/**
+ * @internal
+ */
 class PreviewGeneratorResolver extends ClassResolver
 {
     /**

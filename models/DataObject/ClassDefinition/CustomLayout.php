@@ -188,8 +188,6 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @todo: $isUpdate is not needed
-     *
      * @param bool $saveDefinitionFile
      */
     public function save($saveDefinitionFile = true)
