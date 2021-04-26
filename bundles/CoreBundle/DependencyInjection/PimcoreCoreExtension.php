@@ -65,7 +65,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         if (!$container->hasParameter('container.dumper.inline_class_loader')) {
             $container->setParameter('container.dumper.inline_class_loader', true);
         }
-        $container->setParameter("pimcore.objects.ignore_localized_query_fallback", $config["objects"]["ignore_localized_query_fallback"]);
+        $container->setParameter("pimcore.objects.ignore_localized_query_fallback", $config["objects"]["ignore_localized_query_fallback"] ?? false);
 
         // bundle manager/locator config
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
