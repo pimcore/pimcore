@@ -33,152 +33,177 @@ class ClassDefinition extends Model\AbstractModel
     use DataObject\Traits\LocateFileTrait;
 
     /**
+     * @internal
      * @var string
      */
     public $id;
 
     /**
+     * @internal
      * @var string
      */
     public $name;
 
     /**
+     * @internal
      * @var string
      */
     public $description;
 
     /**
+     * @internal
      * @var int
      */
     public $creationDate;
 
     /**
+     * @internal
      * @var int
      */
     public $modificationDate;
 
     /**
+     * @internal
      * @var int
      */
     public $userOwner;
 
     /**
+     * @internal
      * @var int
      */
     public $userModification;
 
     /**
-     * Name of the parent class if set
-     *
+     * @internal
      * @var string
      */
     public $parentClass;
 
     /**
      * Comma separated list of interfaces
-     *
+     * @internal
      * @var string|null
      */
     public $implementsInterfaces;
 
     /**
      * Name of the listing parent class if set
-     *
+     * @internal
      * @var string
      */
     public $listingParentClass = '';
 
     /**
+     * @internal
      * @var string
      */
     public $useTraits = '';
 
     /**
+     * @internal
      * @var string
      */
     public $listingUseTraits = '';
 
     /**
+     * @internal
      * @var bool
      */
     protected $encryption = false;
 
     /**
+     * @internal
      * @var array
      */
     protected $encryptedTables = [];
 
     /**
+     * @internal
      * @var bool
      */
     public $allowInherit = false;
 
     /**
+     * @internal
      * @var bool
      */
     public $allowVariants = false;
 
     /**
+     * @internal
      * @var bool
      */
     public $showVariants = false;
 
     /**
+     * @internal
      * @var DataObject\ClassDefinition\Data[]
      */
     public $fieldDefinitions = [];
 
     /**
+     * @internal
      * @var DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
     /**
+     * @internal
      * @var string
      */
     public $icon;
 
     /**
+     * @internal
      * @var string
      */
     public $previewUrl;
 
     /**
+     * @internal
      * @var string
      */
     public $group;
 
     /**
+     * @internal
      * @var bool
      */
     public $showAppLoggerTab = false;
 
     /**
+     * @internal
      * @var string
      */
     public $linkGeneratorReference;
 
     /**
+     * @internal
      * @var string|null
      */
     public $previewGeneratorReference;
 
     /**
+     * @internal
      * @var array
      */
     public $compositeIndices = [];
 
     /**
+     * @internal
      * @var bool
      */
     public $generateTypeDeclarations = true;
 
     /**
+     * @internal
      * @var bool
      */
     public $showFieldLookup = false;
 
     /**
+     * @internal
      * @var array
      */
     public $propertyVisibility = [
@@ -199,6 +224,7 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
+     * @internal
      * @var bool
      */
     public $enableGridLocking = false;
@@ -284,6 +310,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param string $name
      */
     public function rename($name)
@@ -336,7 +363,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function exists()
+    private function exists()
     {
         $name = $this->getDao()->getNameById($this->getId());
 
@@ -406,10 +433,8 @@ class ClassDefinition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
-     *
-     * @internal
      */
-    public function generateClassFiles($generateDefinitionFile = true)
+    private function generateClassFiles($generateDefinitionFile = true)
     {
         $infoDocBlock = $this->getInfoDocBlock();
 
@@ -637,6 +662,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param ClassDefinition|ClassDefinition\Data $definition
      * @param string $text
      * @param int $level
@@ -715,10 +741,7 @@ class ClassDefinition extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_DELETE);
     }
 
-    /**
-     * Deletes PHP files from Filesystem
-     */
-    protected function deletePhpClasses()
+    private function deletePhpClasses()
     {
         // delete the class files
         @unlink($this->getPhpClassFile());
@@ -987,7 +1010,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
-    public function extractDataDefinitions($def)
+    private function extractDataDefinitions($def)
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {
@@ -1132,6 +1155,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param array $tables
      */
     public function addEncryptedTables(array $tables)
@@ -1140,6 +1164,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param array $tables
      */
     public function removeEncryptedTables(array $tables)
@@ -1152,6 +1177,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param string $table
      *
      * @return bool
@@ -1170,6 +1196,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param array $encryptedTables
      *
      * @return $this

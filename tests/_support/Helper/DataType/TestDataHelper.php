@@ -632,7 +632,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertNotNull($link);
         $this->assertInstanceOf(DataObject\Data\Link::class, $link);
 
-        $document = Document::getByPath($link->getObject());
+        $document = Document::getByPath($link->getElement());
         $expected = Document::getByPath('/' . static::DOCUMENT . $seed);
 
         foreach (['expected' => $expected, 'value' => $document] as $desc => $item) {

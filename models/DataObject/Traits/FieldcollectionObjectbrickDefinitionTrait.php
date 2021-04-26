@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\Traits;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 
+/**
+ * @internal
+ */
 trait FieldcollectionObjectbrickDefinitionTrait
 {
     /**
@@ -281,4 +284,12 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
         return $this;
     }
+
+    /**
+     * @internal
+     * @param $fieldDefinition
+     * @param array $context
+     * @return mixed
+     */
+    abstract protected function doEnrichFieldDefinition($fieldDefinition, $context = []);
 }

@@ -31,6 +31,9 @@ class Definition extends Model\AbstractModel
     use DataObject\Traits\LocateFileTrait;
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
@@ -43,9 +46,10 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
-    public function extractDataDefinitions($def)
+    protected function extractDataDefinitions($def)
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {
@@ -144,11 +148,12 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
      */
-    public function generateClassFiles($generateDefinitionFile = true)
+    protected function generateClassFiles($generateDefinitionFile = true)
     {
         $existingDefinition = Definition::getByKey($this->getKey());
         $isUpdate = $existingDefinition != null;
@@ -314,6 +319,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param Definition|DataObject\ClassDefinition\Data $definition
      * @param string $text
      * @param int $level

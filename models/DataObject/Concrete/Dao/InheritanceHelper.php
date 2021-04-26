@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\Concrete\Dao;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 class InheritanceHelper
 {
     const STORE_TABLE = 'object_store_';

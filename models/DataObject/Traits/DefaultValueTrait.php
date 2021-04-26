@@ -22,6 +22,9 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 
+/**
+ * @internal
+ */
 trait DefaultValueTrait
 {
     /** @var string */

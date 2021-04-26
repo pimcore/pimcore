@@ -67,6 +67,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     private static $getInheritedValues = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected static $disableDirtyDetection = false;
@@ -159,11 +160,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var string
      */
     protected $o_locked;
-
-    /**
-     * @var Model\Element\AdminStyle
-     */
-    protected $o_elementAdminStyle;
 
     /**
      * @var string
@@ -383,6 +379,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
      * @param array $config
      *
      * @return int total count
@@ -396,6 +393,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
      * @param AbstractObject $object
      *
      * @return bool
@@ -520,6 +518,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
      * @throws \Exception
      */
     protected function doDelete()
@@ -731,7 +730,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
     }
 
-    public function correctPath()
+    /**
+     * @internal
+     * @throws \Exception
+     */
+    protected function correctPath()
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -824,7 +827,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $additionalTags
+     * {@inheritdoc}
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -854,6 +857,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
      * @param int $index
      */
     public function saveIndex($index)
@@ -1268,36 +1272,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->setInDumpState(false);
     }
 
-    public function removeInheritedProperties()
-    {
-        $myProperties = $this->getProperties();
-
-        if ($myProperties) {
-            foreach ($this->getProperties() as $name => $property) {
-                if ($property->getInherited()) {
-                    unset($myProperties[$name]);
-                }
-            }
-        }
-
-        $this->setProperties($myProperties);
-    }
-
-    public function renewInheritedProperties()
-    {
-        $this->removeInheritedProperties();
-
-        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = self::getCacheKey($this->getId());
-        if (!Runtime::isRegistered($cacheKey)) {
-            Runtime::set($cacheKey, $this);
-        }
-
-        $myProperties = $this->getProperties();
-        $inheritedProperties = $this->getDao()->getProperties(true);
-        $this->setProperties(array_merge($inheritedProperties, $myProperties));
-    }
-
     /**
      * @param string $method
      * @param array $args
@@ -1374,6 +1348,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
      * @return bool
      */
     public static function isDirtyDetectionDisabled()
@@ -1382,6 +1357,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @internal
      * @param bool $disableDirtyDetection
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection)
@@ -1390,7 +1366,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Disables the dirty detection
+     * @internal
      */
     public static function disableDirtyDetection()
     {
@@ -1398,7 +1374,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Enables the dirty detection
+     * @internal
      */
     public static function enableDirtyDetection()
     {
@@ -1425,6 +1401,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
+    /**
+     * @internal
+     * @param array $args
+     * @return string
+     */
     protected function getListingCacheKey(array $args = [])
     {
         $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];

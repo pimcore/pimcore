@@ -43,8 +43,6 @@ class EncryptedField implements OwnerAwareFieldInterface
     protected $encrypted;
 
     /**
-     * EncryptedField constructor.
-     *
      * @param mixed $plain
      * @param Data $delegate
      */

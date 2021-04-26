@@ -302,15 +302,13 @@ class KeyConfig extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD);
         }
 
-        $model = $this->getDao()->save();
+        $this->getDao()->save();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_POST_UPDATE);
         } else {
             \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_POST_ADD);
         }
-
-        return $model;
     }
 
     /**

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
@@ -418,5 +419,41 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         foreach ($list->load() as $version) {
             $version->delete();
         }
+    }
+
+    /**
+     * @internal
+     */
+    protected function removeInheritedProperties()
+    {
+        $myProperties = $this->getProperties();
+
+        if ($myProperties) {
+            foreach ($this->getProperties() as $name => $property) {
+                if ($property->getInherited()) {
+                    unset($myProperties[$name]);
+                }
+            }
+        }
+
+        $this->setProperties($myProperties);
+    }
+
+    /**
+     * @internal
+     */
+    protected function renewInheritedProperties()
+    {
+        $this->removeInheritedProperties();
+
+        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
+        $cacheKey = self::getCacheKey($this->getId());
+        if (!Runtime::isRegistered($cacheKey)) {
+            Runtime::set($cacheKey, $this);
+        }
+
+        $myProperties = $this->getProperties();
+        $inheritedProperties = $this->getDao()->getProperties(true);
+        $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 }

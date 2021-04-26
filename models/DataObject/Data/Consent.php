@@ -38,8 +38,6 @@ class Consent implements OwnerAwareFieldInterface
     protected $note;
 
     /**
-     * Consent constructor.
-     *
      * @param bool $consent
      * @param int $noteId
      */

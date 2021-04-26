@@ -751,7 +751,9 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * @internal
+     * @return array
+     * @throws \Exception
      */
     protected function getLazyLoadedFieldNames(): array
     {

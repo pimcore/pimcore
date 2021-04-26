@@ -606,9 +606,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Clear the cache related to the document.
-     *
-     * @param array $additionalTags
+     * {@inheritdoc}
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -1405,41 +1403,6 @@ class Document extends Element\AbstractElement
         }
 
         $this->setInDumpState(false);
-    }
-
-    /**
-     *  Removes all inherited properties.
-     */
-    public function removeInheritedProperties()
-    {
-        $myProperties = [];
-        if ($this->properties !== null) {
-            foreach ($this->properties as $name => $property) {
-                if (!$property->getInherited()) {
-                    $myProperties[$name] = $property;
-                }
-            }
-        }
-
-        $this->setProperties($myProperties);
-    }
-
-    /**
-     * Renews all inherited properties.
-     */
-    public function renewInheritedProperties()
-    {
-        $this->removeInheritedProperties();
-
-        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = self::getCacheKey($this->getId());
-        if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            \Pimcore\Cache\Runtime::set($cacheKey, $this);
-        }
-
-        $myProperties = $this->getProperties();
-        $inheritedProperties = $this->getDao()->getProperties(true);
-        $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
     /**

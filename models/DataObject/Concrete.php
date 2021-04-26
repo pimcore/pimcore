@@ -761,7 +761,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     * {@inheritdoc}
+     * @return array
      */
     public function getLazyLoadedFieldNames(): array
     {

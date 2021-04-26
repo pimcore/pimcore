@@ -1064,7 +1064,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $additionalTags
+     * {@inheritdoc}
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -1901,36 +1901,6 @@ class Asset extends Element\AbstractElement
         }
 
         $this->setInDumpState(false);
-    }
-
-    public function removeInheritedProperties()
-    {
-        $myProperties = $this->getProperties();
-
-        if ($myProperties) {
-            foreach ($this->getProperties() as $name => $property) {
-                if ($property->getInherited()) {
-                    unset($myProperties[$name]);
-                }
-            }
-        }
-
-        $this->setProperties($myProperties);
-    }
-
-    public function renewInheritedProperties()
-    {
-        $this->removeInheritedProperties();
-
-        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = self::getCacheKey($this->getId());
-        if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            \Pimcore\Cache\Runtime::set($cacheKey, $this);
-        }
-
-        $myProperties = $this->getProperties();
-        $inheritedProperties = $this->getDao()->getProperties(true);
-        $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
     public function __destruct()

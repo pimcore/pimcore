@@ -260,6 +260,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
+     * @internal
      * @return bool
      */
     public function addDistinct()

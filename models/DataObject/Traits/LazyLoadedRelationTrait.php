@@ -17,6 +17,9 @@ namespace Pimcore\Model\DataObject\Traits;
 
 use Pimcore\Model\DataObject\LazyLoadedFieldsInterface;
 
+/**
+ * @internal
+ */
 trait LazyLoadedRelationTrait
 {
     /**

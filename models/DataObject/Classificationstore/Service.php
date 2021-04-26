@@ -17,6 +17,9 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 class Service
 {
     /**

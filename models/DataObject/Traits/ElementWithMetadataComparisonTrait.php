@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\Traits;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\Element\ElementInterface;
 
+/**
+ * @internal
+ */
 trait ElementWithMetadataComparisonTrait
 {
     /**
