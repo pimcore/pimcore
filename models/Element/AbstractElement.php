@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element;
@@ -323,17 +321,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $version = null;
 
-        if($isAutoSave){
+        if ($isAutoSave) {
             $list = new Model\Version\Listing();
             $list->setLoadAutoSave(true);
-            $list->setCondition('autoSave = 1 AND cid = ? AND cType = ? AND userId = ? ',[$this->getId(),Service::getElementType($this),$this->getUserModification()]);
+            $list->setCondition('autoSave = 1 AND cid = ? AND cType = ? AND userId = ? ', [$this->getId(), Service::getElementType($this), $this->getUserModification()]);
             $version = $list->current();
         }
 
         /**
          * @var Model\Version $version
          */
-        if(!$version){
+        if (!$version) {
             $version = self::getModelFactory()->build(Model\Version::class);
         }
 
@@ -407,16 +405,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @param int $userId
      */
-    public function deleteAutoSaveVersions($userId = null){
+    public function deleteAutoSaveVersions($userId = null)
+    {
         $list = new Model\Version\Listing();
         $list->setLoadAutoSave(true);
-        if($userId){
-            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1 AND userId = ?',[Service::getType($this),$this->getId(),$userId]);
-        }else{
-            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1',[Service::getType($this),$this->getId()]);
+        if ($userId) {
+            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1 AND userId = ?', [Service::getType($this), $this->getId(), $userId]);
+        } else {
+            $list->setCondition('`ctype` = ? AND cid = ? AND `autoSave` = 1', [Service::getType($this), $this->getId()]);
         }
 
-        foreach($list->load() as $version){
+        foreach ($list->load() as $version) {
             $version->delete();
         }
     }

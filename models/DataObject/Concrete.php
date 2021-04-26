@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -276,7 +274,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
             }
@@ -301,7 +299,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             if ($saveOnlyVersion) {
                 $postUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
             }
@@ -311,7 +309,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             $postUpdateFailureEvent = new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
-                'isAutoSave' => $isAutoSave
+                'isAutoSave' => $isAutoSave,
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
 

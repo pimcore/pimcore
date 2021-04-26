@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -376,7 +374,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $isUpdate = $this->exists();
         if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception("definitions in config/pimcore folder cannot be overwritten");
+            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
         }
 
         if (!$isUpdate) {
@@ -523,7 +521,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "}\n";
         $cd .= "\n";
 
-        if(File::put($this->getPhpClassFile(), $cd) === false) {
+        if (File::put($this->getPhpClassFile(), $cd) === false) {
             throw new \Exception(sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpClassFile()));
         }
 
@@ -573,7 +571,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "}\n";
 
-        if(File::put($this->getPhpListingClassFile(), $cd) === false) {
+        if (File::put($this->getPhpListingClassFile(), $cd) === false) {
             throw new \Exception(
                 sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpListingClassFile())
             );
@@ -729,10 +727,9 @@ class ClassDefinition extends Model\AbstractModel
         @unlink($this->getDefinitionFile());
     }
 
-
     public function isWritable(): bool
     {
-        if(getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
             return true;
         }
 
@@ -1416,7 +1413,6 @@ class ClassDefinition extends Model\AbstractModel
     {
         return DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
     }
-
 
     /**
      * @return bool

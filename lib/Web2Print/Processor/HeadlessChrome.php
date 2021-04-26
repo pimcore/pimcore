@@ -1,33 +1,47 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Web2Print\Processor;
 
 use Pimcore\Config;
+use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\PrintConfigEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
-use Pimcore\Event\DocumentEvents;
 use Spiritix\Html2Pdf\Converter;
 use Spiritix\Html2Pdf\Input\StringInput;
-use Spiritix\Html2Pdf\Input\UrlInput;
 use Spiritix\Html2Pdf\Output\FileOutput;
 use Spiritix\Html2Pdf\Output\StringOutput;
 
 class HeadlessChrome extends Processor
 {
-    private $nodePath = "";
+    private $nodePath = '';
 
     /**
      * @param Document\PrintAbstract $document
      * @param object $config
+     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $web2printConfig = Config::getWeb2PrintConfig();
-        $web2printConfig = $web2printConfig["headlessChromeSettings"];
+        $web2printConfig = $web2printConfig['headlessChromeSettings'];
         $web2printConfig = json_decode($web2printConfig, true);
 
         $params = ['document' => $document];
@@ -37,11 +51,11 @@ class HeadlessChrome extends Processor
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        if($web2printConfig){
-            foreach (["header", "footer"] as $item){
-                if(key_exists($item, $web2printConfig) && $web2printConfig[$item] &&
-                    $content = file_get_contents($web2printConfig[$item])){
-                    $web2printConfig[$item . "Template"] = $content;
+        if ($web2printConfig) {
+            foreach (['header', 'footer'] as $item) {
+                if (key_exists($item, $web2printConfig) && $web2printConfig[$item] &&
+                    $content = file_get_contents($web2printConfig[$item])) {
+                    $web2printConfig[$item . 'Template'] = $content;
                 }
                 unset($web2printConfig[$item]);
             }
@@ -58,6 +72,7 @@ class HeadlessChrome extends Processor
         }
 
         $document->setLastGenerateMessage('');
+
         return $pdf;
     }
 
@@ -70,6 +85,7 @@ class HeadlessChrome extends Processor
             'options' => [],
         ]);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+
         return (array)$event->getArgument('options');
     }
 
@@ -77,6 +93,7 @@ class HeadlessChrome extends Processor
      * @param string $html
      * @param array $params
      * @param bool $returnFilePath
+     *
      * @return string
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
@@ -87,16 +104,17 @@ class HeadlessChrome extends Processor
 
         $output = $returnFilePath ? new FileOutput() : new StringOutput();
         $converter = new Converter($input, $output);
-        if($this->nodePath){
+        if ($this->nodePath) {
             $converter->setNodePath($this->nodePath);
         }
         $converter->setOptions($params);
 
         $output = $converter->convert();
 
-        if($returnFilePath) {
+        if ($returnFilePath) {
             /** @var FileOutput $output */
             $output->store($path);
+
             return $path;
         }
         /** @var StringOutput $output */
@@ -106,16 +124,17 @@ class HeadlessChrome extends Processor
     /**
      * @return array
      */
-    private function getDefaultOptions() : array {
+    private function getDefaultOptions(): array
+    {
         return [
             'landscape' => false,
             'printBackground' => false,
-            'format' => "A4",
+            'format' => 'A4',
             'margin' => [
-                'top' => "16 mm",
-                'bottom' => "30 mm",
-                'right' => "8 mm",
-                'left' => "8 mm",
+                'top' => '16 mm',
+                'bottom' => '30 mm',
+                'right' => '8 mm',
+                'left' => '8 mm',
             ],
             'displayHeaderFooter' => false,
         ];
@@ -123,10 +142,13 @@ class HeadlessChrome extends Processor
 
     /**
      * @param string $nodePath
+     *
      * @return $this
      */
-    public function setNodePath(string $nodePath) : self{
+    public function setNodePath(string $nodePath): self
+    {
         $this->nodePath = $nodePath;
+
         return $this;
     }
 }
