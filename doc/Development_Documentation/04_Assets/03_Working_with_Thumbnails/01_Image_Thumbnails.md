@@ -152,8 +152,8 @@ $thumbnail = $asset->getThumbnail("myThumbnail");
 $width = $thumbnail->getWidth();
 $height = $thumbnail->getHeight();
  
-// get the html "img" tag for the thumbnail incl. custom class:
-echo $thumbnail->getHtml(["class" => "custom-class"]);
+// get the html "<picture>" tag for the thumbnail incl. custom class on the containing `<img>` tag:
+echo $thumbnail->getHtml(['imgAttributes' => ["class" => "custom-class"]]);
  
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
@@ -199,7 +199,9 @@ $thumbnail->getHtml([
     'height': 180,
     'cover': true,
 }).html({
-    'class': 'thumbnail-class',
+    'imgAttributes': {
+        'class': 'thumbnail-class',
+    },
     'data-my-name': 'my value',
     'attributes': {
         'non-standard': 'HTML attributes',
@@ -209,7 +211,9 @@ $thumbnail->getHtml([
   
 /* same with a thumbnail definition */
 {{ image.thumbnail('exampleScaleWidth').html({
-    'class': 'thumbnail-class',
+    'pictureAttributes': {
+        'class': 'thumbnail-class',
+    },
     'data-my-name': 'my value',
 }) }}
   
