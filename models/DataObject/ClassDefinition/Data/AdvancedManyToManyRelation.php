@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -341,7 +342,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
                 foreach ($this->getColumns() as $c) {
                     $getter = 'get' . ucfirst($c['key']);
-                    $itemData[$c['key']] = $metaObject->$getter();
+
+                    try {
+                        $itemData[$c['key']] = $metaObject->$getter();
+                    } catch(Exception $e) {
+                        Logger::debug('Meta column '.$c['key'].' does not exist');
+                    }
                 }
 
                 $itemData['rowId'] = $itemData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $itemData['type'];

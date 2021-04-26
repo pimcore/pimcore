@@ -1046,7 +1046,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
 
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
-        $groupList->setCondition('`id` in (?)', implode(',', $filteredGroupIds));
+        $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($filteredGroupIds), '?')) . ')', $filteredGroupIds);
+
         $groupList->setOrderKey(['id']);
         $groupList->setOrder(['ASC']);
 
@@ -1112,7 +1113,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $collectionIds = array_values($groupCollectionMapping);
 
             $relation = new DataObject\Classificationstore\CollectionGroupRelation\Listing();
-            $relation->setCondition('`colId` IN (?)', implode(',', $collectionIds));
+            $relation->setCondition('`colId` in (' . implode(',', array_fill(0, count($collectionIds), '?')) . ')', $collectionIds);
 
             $sorting = [];
             foreach ($relation->load() as $item) {
