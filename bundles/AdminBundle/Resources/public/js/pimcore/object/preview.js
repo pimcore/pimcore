@@ -29,7 +29,7 @@ pimcore.object.preview = Class.create({
             this.frameId = 'object_preview_iframe_' + this.object.id;
 
             let toolbar = [];
-            if(this.object.data.general.previewParams) {
+            if(this.object.data.general.previewConfig) {
                 let paramPanel = this.getParamsPanel();
                 toolbar.push(paramPanel);
             }
@@ -83,14 +83,14 @@ pimcore.object.preview = Class.create({
         if(this.paramSelects && this.paramSelects.length) {
             for(let i = 0; i < this.paramSelects.length; i++) {
                 if(this.paramSelects[i].getValue()) {
-                    params[this.paramSelects[i].fieldLabel] = this.paramSelects[i].getValue();
+                    params[this.paramSelects[i].name] = this.paramSelects[i].getValue();
                 }
             }
         }
 
         var date = new Date();
         params['id'] = this.object.data.general.o_id;
-        params['time'] = date.getTime();
+        params['_dc'] = date.getTime();
 
         var url = Routing.generate('pimcore_admin_dataobject_dataobject_preview', params);
 
@@ -117,15 +117,15 @@ pimcore.object.preview = Class.create({
         var that = this;
         this.paramSelects = [];
 
-        let params = this.object.data.general.previewParams;
+        let params = this.object.data.general.previewConfig;
         for(let i=0; i<params.length; i++) {
-            let paramStore = Ext.create('Ext.data.Store', {
-                data: params[i].values
-            });
+            let selectOptions = Object.entries(params[i].values);
+            selectOptions.forEach(el => el.reverse());
 
             let paramSelect = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: params[i].label ? params[i].label : params[i].name,
-                store: paramStore,
+                name: params[i].name,
+                store: selectOptions,
                 queryMode: 'local',
                 displayField: 'name',
                 valueField: 'abbr',

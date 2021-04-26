@@ -1,12 +1,13 @@
 # Preview Generator
 
 ### Summary
-Preview Generators provide Services to get more control over the preview Tab. They provide a UI to pass additional parameters to a URL-Generator.
+Preview Generators provide a services to get more control over the preview tab. 
+They provide a UI component to pass additional parameters to a URL-generator.
 
 Providers need to implement: `\Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface`
 
-Parameters returned in the `getParams` method will be rendered as ext-js ComboBoxes. Whatever the User chooses will be passed to the `generatePreviewUrl` method.
-
+Parameters returned in the `getParams` method will be rendered as a select box. 
+Whatever the user chooses will be passed to the `generatePreviewUrl` method.
 
 Provide a Preview Generator within the Class settings:
 ![Preview Generator Setup](../../../img/preview_generator_1.png)
@@ -32,7 +33,7 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
      */
     public function generatePreviewUrl(\Pimcore\Model\DataObject\Concrete $object, array $params): string {
         $additionalParams = [];
-        foreach($this->getParams($object) as $paramStore) {
+        foreach($this->getPreviewConfig($object) as $paramStore) {
             $paramName = $paramStore['name'];
             if($paramValue = $params[$paramName]) {
                 $additionalParams[$paramName] = $paramValue;
@@ -47,22 +48,23 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
      * 
      * @return array
      */
-    public function getParams(\Pimcore\Model\DataObject\Concrete $object): array {
+    public function getPreviewConfig(\Pimcore\Model\DataObject\Concrete $object): array {
         return [
             [
                 'name' => '_locale',
                 'label' => 'Locale',
                 'values' => [
-                    ['abbr' => 'en', 'name' => 'en'],
-                    ['abbr' => 'de', 'name' => 'de']
+                    'English' => 'en',
+                    'German' => 'de'
                 ]
             ],
             [
                 'name' => 'otherParam',
                 'label' => 'Other',
                 'values' => [
-                    ['abbr' => 'aa', 'name' => 'aa'],
-                    ['abbr' => 'bb', 'name' => 'bb']
+                    'Label Text' => 'value',
+                    'Option #2' => 2,
+                    'Custom Option' => 'custom'
                 ]
             ]
         ];

@@ -460,7 +460,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             if ($objectFromDatabase instanceof DataObject\Concrete) {
                 $objectData['general']['linkGeneratorReference'] = $linkGeneratorReference;
                 if($previewGenerator) {
-                    $objectData['general']['previewParams'] = $previewGenerator->getParams($objectFromDatabase);
+                    $objectData['general']['previewConfig'] = $previewGenerator->getPreviewConfig($objectFromDatabase);
                 }
             }
 
