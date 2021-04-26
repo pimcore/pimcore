@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Objectbrick
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick;
@@ -225,7 +223,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $isUpdate = $existingDefinition != null;
 
         if ($isUpdate && !$this->isWritable()) {
-            throw new \Exception("brick updates in config folder not allowed");
+            throw new \Exception('brick updates in config folder not allowed');
         }
 
         $definitionFile = $this->getDefinitionFile();
@@ -707,7 +705,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     public function isWritable(): bool
     {
-        if(getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
             return true;
         }
 

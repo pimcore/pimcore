@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
@@ -138,7 +136,7 @@ abstract class PageSnippet extends Model\Document
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
             }
@@ -169,7 +167,7 @@ abstract class PageSnippet extends Model\Document
             if ($saveOnlyVersion) {
                 $postUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
             }
@@ -179,7 +177,7 @@ abstract class PageSnippet extends Model\Document
             $postUpdateFailureEvent = new DocumentEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
-                'isAutoSave' => $isAutoSave
+                'isAutoSave' => $isAutoSave,
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
 

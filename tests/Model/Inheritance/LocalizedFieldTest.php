@@ -1,8 +1,20 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Tests\Model\Inheritance;
 
-use Pimcore\Config\Config;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
@@ -12,7 +24,7 @@ use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    /** @var array  */
+    /** @var array */
     protected $originalConfig;
 
     public function setUp(): void
@@ -23,17 +35,16 @@ class LocalizedFieldTest extends ModelTestCase
         $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
     }
 
-    public function tearDown() : void {
+    public function tearDown(): void
+    {
         \Pimcore\Config::setSystemConfiguration($this->originalConfig);
         parent::tearDown();
-
     }
-
 
     public function testFallback()
     {
         $configuration = $this->originalConfig;
-        $configuration["general"]["fallback_languages"]["de"] = "en";
+        $configuration['general']['fallback_languages']['de'] = 'en';
         \Pimcore\Config::setSystemConfiguration($configuration);
 
         // create root -> one -> two -> three
@@ -49,26 +60,25 @@ class LocalizedFieldTest extends ModelTestCase
         $two->setPublished(true);
         $two->save();
 
-        $one->setInput("abc", "en");
+        $one->setInput('abc', 'en');
         $one->save();
 
         $one->save();
 
         $db = Db::get();
 
-        $query = "SELECT * FROM object_localized_query_" . $two->getClassId() . "_de where ooo_id = " . $two->getId();
+        $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_de where ooo_id = ' . $two->getId();
         $result = $db->fetchRow($query);
-        $this->assertEquals($result["input"], "abc");
+        $this->assertEquals($result['input'], 'abc');
 
-        $query = "SELECT * FROM object_localized_query_" . $two->getClassId() . "_en where ooo_id = " . $two->getId();
+        $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_en where ooo_id = ' . $two->getId();
         $result = $db->fetchRow($query);
-        $this->assertEquals($result["input"], "abc");
+        $this->assertEquals($result['input'], 'abc');
 
-        $query = "SELECT * FROM object_localized_query_" . $two->getClassId() . "_fr where ooo_id = " . $two->getId();
+        $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_fr where ooo_id = ' . $two->getId();
         $result = $db->fetchRow($query);
-        $this->assertNull($result["input"]);
+        $this->assertNull($result['input']);
     }
-
 
     /**
      * Tests the following scenario:
