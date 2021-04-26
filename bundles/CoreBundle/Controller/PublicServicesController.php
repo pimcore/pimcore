@@ -58,7 +58,6 @@ final class PublicServicesController extends Controller
             try {
                 $imageThumbnail = null;
                 $thumbnailStream = null;
-                $thumbnailConfig = null;
 
                 // just check if the thumbnail exists -> throws exception otherwise
                 $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
@@ -156,6 +155,8 @@ final class PublicServicesController extends Controller
                     return new StreamedResponse(function () use ($thumbnailStream) {
                         fpassthru($thumbnailStream);
                     }, 200, $headers);
+                } else {
+                    throw new \Exception('Unable to generate thumbnail, see logs for details.');
                 }
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
