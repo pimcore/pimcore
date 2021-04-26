@@ -129,14 +129,10 @@ class Text extends Model\DataObject\ClassDefinition\Layout
             $this->getRenderingClass()
         );
 
-        if ($renderer === null) {
-            $renderer = $this->getRenderingClass();
-        }
-
-        if ($object) {
+        if ($renderer instanceof DynamicTextLabelInterface) {
             $context['fieldname'] = $this->getName();
             $context['layout'] = $this;
-            $result = call_user_func([$renderer, 'renderLayoutText'], $this->renderingData, $object, $context);
+            $result = $renderer->renderLayoutText($this->renderingData, $object, $context);
             $this->html = $result;
         }
 
