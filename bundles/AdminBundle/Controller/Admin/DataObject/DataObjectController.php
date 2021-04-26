@@ -423,8 +423,11 @@ final class DataObjectController extends ElementControllerBase implements Kernel
              *  ------------------------------------------------------------- */
             $objectData['idPath'] = Element\Service::getIdPath($objectFromDatabase);
 
+            $previewGenerator = $objectFromDatabase->getClass()->getPreviewGenerator();
+            $linkGeneratorReference = $objectFromDatabase->getClass()->getLinkGeneratorReference();
+
             $objectData['hasPreview'] = false;
-            if ($objectFromDatabase->getClass()->getPreviewUrl() || $objectFromDatabase->getClass()->getLinkGeneratorReference()) {
+            if ($objectFromDatabase->getClass()->getPreviewUrl() || $linkGeneratorReference || $previewGenerator) {
                 $objectData['hasPreview'] = true;
             }
 
@@ -455,7 +458,10 @@ final class DataObjectController extends ElementControllerBase implements Kernel
             $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();
             $objectData['general']['showFieldLookup'] = $objectFromDatabase->getClass()->getShowFieldLookup();
             if ($objectFromDatabase instanceof DataObject\Concrete) {
-                $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
+                $objectData['general']['linkGeneratorReference'] = $linkGeneratorReference;
+                if($previewGenerator) {
+                    $objectData['general']['previewConfig'] = $previewGenerator->getPreviewConfig($objectFromDatabase);
+                }
             }
 
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
@@ -2069,8 +2075,11 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                     }
                 }
                 $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
+            } elseif($previewService = $object->getClass()->getPreviewGenerator()) {
+                $url = $previewService->generatePreviewUrl($object, array_merge(['preview' => true, 'context' => $this], $request->query->all()));
             } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
+
             }
 
             if (!$url) {

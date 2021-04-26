@@ -821,6 +821,13 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
+                    fieldLabel: t("preview_generator_reference"),
+                    name: "previewGeneratorReference",
+                    width: 600,
+                    value: this.data.previewGeneratorReference
+                },
+                {
+                    xtype: "textfield",
                     fieldLabel: t("preview_url"),
                     name: "previewUrl",
                     width: 600,
