@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 $base = [
   0x00 => 'poss', 'pong', 'poj', 'poc', 'pok', 'pot', 'pop', 'poh', 'pwa', 'pwag', 'pwagg', 'pwags', 'pwan', 'pwanj', 'pwanh', 'pwad',
   0x10 => 'pwal', 'pwalg', 'pwalm', 'pwalb', 'pwals', 'pwalt', 'pwalp', 'pwalh', 'pwam', 'pwab', 'pwabs', 'pwas', 'pwass', 'pwang', 'pwaj', 'pwac',
