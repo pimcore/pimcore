@@ -34,6 +34,7 @@
 
 - `Pimcore\Model\Tool\Tracking\Event` has been removed.
 - `Pimcore\Tool\Archive` has been removed.
+- The object query table will now consider the fallback language. If you want to keep the old behavior set `pimcore.objects.ignore_localized_query_fallback` in your configuration.  
 - Removed QR Codes.
 - Remove Linfo Integration.
 - [Ecommerce][IndexService] Removed FactFinder integration.

@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Pimcore\Config\Config;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
@@ -11,12 +12,63 @@ use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase
 {
+    /** @var array  */
+    protected $originalConfig;
+
     public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
         \Pimcore::setAdminMode();
+        $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
     }
+
+    public function tearDown() : void {
+        \Pimcore\Config::setSystemConfiguration($this->originalConfig);
+        parent::tearDown();
+
+    }
+
+
+    public function testFallback()
+    {
+        $configuration = $this->originalConfig;
+        $configuration["general"]["fallback_languages"]["de"] = "en";
+        \Pimcore\Config::setSystemConfiguration($configuration);
+
+        // create root -> one -> two -> three
+        $one = new Inheritance();
+        $one->setKey('one');
+        $one->setParentId(1);
+        $one->setPublished(true);
+        $one->save();
+
+        $two = new Inheritance();
+        $two->setKey('two');
+        $two->setParentId($one->getId());
+        $two->setPublished(true);
+        $two->save();
+
+        $one->setInput("abc", "en");
+        $one->save();
+
+        $one->save();
+
+        $db = Db::get();
+
+        $query = "SELECT * FROM object_localized_query_" . $two->getClassId() . "_de where ooo_id = " . $two->getId();
+        $result = $db->fetchRow($query);
+        $this->assertEquals($result["input"], "abc");
+
+        $query = "SELECT * FROM object_localized_query_" . $two->getClassId() . "_en where ooo_id = " . $two->getId();
+        $result = $db->fetchRow($query);
+        $this->assertEquals($result["input"], "abc");
+
+        $query = "SELECT * FROM object_localized_query_" . $two->getClassId() . "_fr where ooo_id = " . $two->getId();
+        $result = $db->fetchRow($query);
+        $this->assertNull($result["input"]);
+    }
+
 
     /**
      * Tests the following scenario:

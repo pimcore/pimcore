@@ -567,6 +567,15 @@ final class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->booleanNode('ignore_localized_query_fallback')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                    })
+                                ->end()
+                            ->defaultFalse()
+                        ->end()
                         ->integerNode('tree_paging_limit')
                             ->defaultValue(30)
                         ->end()
