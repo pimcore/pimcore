@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 $base = [
   0x00 => 'hyeo', 'hyeog', 'hyeogg', 'hyeogs', 'hyeon', 'hyeonj', 'hyeonh', 'hyeod', 'hyeol', 'hyeolg', 'hyeolm', 'hyeolb', 'hyeols', 'hyeolt', 'hyeolp', 'hyeolh',
   0x10 => 'hyeom', 'hyeob', 'hyeobs', 'hyeos', 'hyeoss', 'hyeong', 'hyeoj', 'hyeoc', 'hyeok', 'hyeot', 'hyeop', 'hyeoh', 'hye', 'hyeg', 'hyegg', 'hyegs',
