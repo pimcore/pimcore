@@ -23,7 +23,7 @@ interface DynamicTextLabelInterface
 {
     /**
      * @param string $data as provided in the class definition
-     * @param Concrete|null $object
+     * @param Concrete $object
      * @param mixed $params
      *
      * @return string
