@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 
+/**
+ * @internal
+ */
 class ImportClassResolver extends ClassResolver
 {
     /**

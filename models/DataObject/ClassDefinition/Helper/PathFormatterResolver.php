@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject\ClassDefinition\PathFormatterInterface;
 
+/**
+ * @internal
+ */
 class PathFormatterResolver extends ClassResolver
 {
     public static $formatterCache = [];

@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+/**
+ * @internal
+ */
 trait VarExport
 {
     /**

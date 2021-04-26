@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 
+/**
+ * @internal
+ */
 class OptionsProviderResolver extends ClassResolver
 {
     const MODE_SELECT = 1;

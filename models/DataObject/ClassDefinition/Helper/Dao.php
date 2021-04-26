@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 trait Dao
 {
     /**

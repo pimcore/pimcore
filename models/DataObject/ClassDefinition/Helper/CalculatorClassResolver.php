@@ -18,7 +18,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
 
-class CalculatorClassResolver extends ClassResolver
+/**
+ * @internal
+ */
+final class CalculatorClassResolver extends ClassResolver
 {
     public static function resolveCalculatorClass($calculatorClass)
     {

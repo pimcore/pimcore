@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout\Traits;
 
+/**
+ * @internal
+ */
 trait IconTrait
 {
     /**

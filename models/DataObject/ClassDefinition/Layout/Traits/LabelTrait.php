@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pimcore
  *
@@ -17,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout\Traits;
 
+/**
+ * @internal
+ */
 trait LabelTrait
 {
     /**
