@@ -140,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
 
-        $ignoreLocalizedQueryFallback = \Pimcore::getContainer()->getParameter("pimcore.objects.ignore_localized_query_fallback");
+        $ignoreLocalizedQueryFallback = \Pimcore\Config::getSystemConfiguration('objects')['ignore_localized_query_fallback'];
         if (!$ignoreLocalizedQueryFallback) {
             foreach ($validLanguages as $validLanguage) {
                 $fallbackLanguages = Tool::getFallbackLanguagesFor($validLanguage);
