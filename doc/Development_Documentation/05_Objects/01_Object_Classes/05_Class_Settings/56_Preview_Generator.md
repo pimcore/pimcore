@@ -1,7 +1,7 @@
 # Preview Generator
 
 ### Summary
-Preview Generators provide a Service to get more control over the preview Tab. They provide an UI to pass additional parameters to a URL-Generator.
+Preview Generators provide Services to get more control over the preview Tab. They provide a UI to pass additional parameters to a URL-Generator.
 
 Providers need to implement: `\Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface`
 
