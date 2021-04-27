@@ -260,6 +260,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if (is_array($slugs) && !empty($slugs)) {
             /** @var Model\DataObject\Data\UrlSlug $slug */
             foreach ($slugs as $slug) {
+                if (!$slug['slug']) {
+                    continue;
+                }
+
                 $this->enrichDataRow($object, $params, $classId, $slug, 'objectId');
 
                 /* relation needs to be an array with src_id, dest_id, type, fieldname*/
