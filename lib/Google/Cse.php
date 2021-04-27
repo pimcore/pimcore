@@ -210,9 +210,7 @@ class Cse implements PaginateListingInterface
                                 }
                             }
 
-                            if (!array_key_exists('image', $item)) {
-                                $pimcoreResultItem->setImage($item['pagemap']['cse_image'][0]['src']);
-                            }
+                            $pimcoreResultItem->setImage($item['pagemap']['cse_image'][0]['src']);
                         }
                     }
                 }

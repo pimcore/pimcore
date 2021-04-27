@@ -69,20 +69,15 @@ final class Sql extends AbstractAdapter
             $sql = $this->buildQueryString($configuration);
         }
 
-        $res = null;
-        $errorMessage = null;
-        $columns = null;
-
         if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchRow($sql);
-            $columns = array_keys($res);
-        } else {
-            throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+
+            return array_keys($res);
         }
 
-        return $columns;
+        throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
     /**

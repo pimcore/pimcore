@@ -96,13 +96,11 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
         $price = $this->getPriceClassInstance($amount);
         $totalPrice = $this->getPriceClassInstance($amount->mul($quantityScale));
 
-        if ($taxClass) {
-            $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $price->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+        $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+        $price->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
-            $totalPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
-        }
+        $totalPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+        $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
         $taxCalculationService = $this->getTaxCalculationService();
         $taxCalculationService->updateTaxes($price, $this->priceType);

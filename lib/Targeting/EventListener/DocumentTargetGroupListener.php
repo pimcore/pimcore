@@ -80,7 +80,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo)
     {
-        if (!$document || !$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

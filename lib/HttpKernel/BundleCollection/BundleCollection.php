@@ -147,8 +147,6 @@ class BundleCollection
      */
     public function addBundle($bundle, int $priority = 0, array $environments = []): self
     {
-        $item = null;
-
         if ($bundle instanceof BundleInterface) {
             $item = new Item($bundle, $priority, $environments);
         } elseif (is_string($bundle) || !empty($bundle)) {

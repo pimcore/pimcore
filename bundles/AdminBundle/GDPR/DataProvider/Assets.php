@@ -67,10 +67,7 @@ class Assets extends Elements implements DataProviderInterface
     public function doExportData(Asset $asset)
     {
         $this->exportIds = [];
-
-        $this->fillIds($asset);
-
-        $exportResult = [];
+        $this->exportIds[$asset->getId()] = true;
 
         // Prepare File
         $file = tempnam('/tmp', 'zip');
@@ -102,14 +99,6 @@ class Assets extends Elements implements DataProviderInterface
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $asset->getFilename() . '.zip"');
 
         return $response;
-    }
-
-    /**
-     * @param ElementInterface $element
-     */
-    protected function fillIds(ElementInterface $element)
-    {
-        $this->exportIds[$element->getId()] = true;
     }
 
     /**

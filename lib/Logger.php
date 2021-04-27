@@ -22,19 +22,15 @@ class Logger
      * @param string $level
      * @param array $context
      *
-     * @internal param string $code
+     * @internal
      */
     public static function log($message, $level = 'info', $context = [])
     {
-        if (\Pimcore::hasContainer() && \Pimcore::getContainer()->has('monolog.logger.pimcore')) {
+        if (\Pimcore::hasContainer()) {
             $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore');
             $logger->$level($message, $context);
         }
     }
-
-    /**
-     * $l is for backward compatibility
-     **/
 
     /**
      * @param string $m

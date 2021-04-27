@@ -128,16 +128,11 @@ final class Session
     /**
      * @param string $namespace
      *
-     * @return AttributeBagInterface|null
+     * @return AttributeBagInterface
      */
-    public static function getReadOnly(string $namespace = 'pimcore_admin')
+    public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
     {
-        $bag = static::getHandler()->getReadOnlyAttributeBag($namespace);
-        if ($bag instanceof AttributeBagInterface) {
-            return $bag;
-        }
-
-        return null;
+        return static::getHandler()->getReadOnlyAttributeBag($namespace);
     }
 
     /**

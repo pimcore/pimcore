@@ -753,7 +753,7 @@ class Service extends Model\AbstractModel
             }
 
             // if this is the initial element set the correct path and key
-            if ($data instanceof ElementInterface && $initial && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
+            if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
                 $originalElement = self::getElementById(self::getElementType($data), $data->getId());
 
                 if ($originalElement) {

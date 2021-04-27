@@ -48,25 +48,23 @@ final class Service
 
     /**
      * @param \stdClass[] $jsonConfigs
-     * @param mixed|null $context
+     * @param array $context
      *
      * @return array
      */
-    public function buildOutputDataConfig(array $jsonConfigs, $context = null): array
+    public function buildOutputDataConfig(array $jsonConfigs, array $context = []): array
     {
-        $config = $this->doBuildConfig($jsonConfigs, [], $context);
-
-        return $config;
+        return $this->doBuildConfig($jsonConfigs, [], $context);
     }
 
     /**
      * @param \stdClass[] $jsonConfigs
      * @param array $config
-     * @param mixed|null $context
+     * @param array $context
      *
      * @return ConfigElementInterface[]
      */
-    private function doBuildConfig(array $jsonConfigs, array $config, $context = null): array
+    private function doBuildConfig(array $jsonConfigs, array $config, array $context = []): array
     {
         if (empty($jsonConfigs)) {
             return $config;
@@ -93,11 +91,11 @@ final class Service
     /**
      * @param string $name
      * @param \stdClass $configElement
-     * @param null $context
+     * @param array $context
      *
      * @return OperatorInterface|null
      */
-    private function buildOperator(string $name, \stdClass $configElement, $context = null)
+    private function buildOperator(string $name, \stdClass $configElement, array $context = [])
     {
         if (!$this->operatorFactories->has($name)) {
             throw new \InvalidArgumentException(sprintf('Operator "%s" is not supported', $name));

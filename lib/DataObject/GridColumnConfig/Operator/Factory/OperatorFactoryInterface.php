@@ -23,9 +23,9 @@ interface OperatorFactoryInterface
 {
     /**
      * @param \stdClass $configElement
-     * @param null $context
+     * @param array $context
      *
      * @return OperatorInterface|null
      */
-    public function build(\stdClass $configElement, $context = null);
+    public function build(\stdClass $configElement, array $context = []);
 }

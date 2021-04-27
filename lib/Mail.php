@@ -907,7 +907,7 @@ class Mail extends Email
      *
      * @param string|array $addresses
      *
-     * @return Address|array
+     * @return array
      */
     private function formatAddress(...$addresses)
     {
