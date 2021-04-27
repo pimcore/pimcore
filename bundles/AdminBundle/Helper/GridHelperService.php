@@ -174,7 +174,7 @@ class GridHelperService
      *
      * @return string
      */
-    public function getFilterCondition($filterJson, ClassDefinition $class): string
+    public function getFilterCondition($filterJson, ClassDefinition $class, $tablePrefix = null): string
     {
         $systemFields = Model\DataObject\Service::getSystemFields();
 
@@ -310,14 +310,14 @@ class GridHelperService
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator);
+                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator, ['brickPrefix' => ($tablePrefix?$tablePrefix.'.':null)]);
                         }
 
                         if (!empty($fieldConditions)) {
                             $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                         }
                     } else {
-                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator);
+                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
                     }
                 } elseif (in_array('o_' . $filterField, $systemFields)) {
                     // system field
@@ -594,7 +594,7 @@ class GridHelperService
 
         // create filter condition
         if (!empty($requestParams['filter'])) {
-            $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class);
+            $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class, $list->getDao()->getTableName());
             $featureAndSlugFilters = $this->getFeatureAndSlugFilters($requestParams['filter'], $class, $requestedLanguage);
             if ($featureAndSlugFilters) {
                 $featureJoins = array_merge($featureJoins, $featureAndSlugFilters['featureJoins']);
