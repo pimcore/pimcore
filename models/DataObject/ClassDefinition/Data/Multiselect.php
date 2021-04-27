@@ -627,6 +627,20 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * {@inheritdoc}
      */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+
+        if ($this->getOptionsProviderClass()) {
+            $blockedVars[] = 'options';
+        }
+
+        return $blockedVars;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';

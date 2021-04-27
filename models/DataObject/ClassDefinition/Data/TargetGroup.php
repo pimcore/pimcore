@@ -142,4 +142,15 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+        $blockedVars[] = 'options';
+
+        return $blockedVars;
+    }
 }

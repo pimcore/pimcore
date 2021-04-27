@@ -591,6 +591,20 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * {@inheritdoc}
      */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+
+        if ($this->getOptionsProviderClass()) {
+            $blockedVars[] = 'options';
+        }
+
+        return $blockedVars;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
