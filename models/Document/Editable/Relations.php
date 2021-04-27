@@ -309,9 +309,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     public function next()
     {
         $this->setElements();
-        $var = next($this->elements);
-
-        return $var;
+        next($this->elements);
     }
 
     /**

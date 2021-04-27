@@ -240,7 +240,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      * @param null|Document\Editable\Area\Info $info
      * @param array $templateParams
      * @param bool $return
-     * @return string
+     * @return string|void
      */
     public function content($info = null, $templateParams = [], $return = false)
     {
