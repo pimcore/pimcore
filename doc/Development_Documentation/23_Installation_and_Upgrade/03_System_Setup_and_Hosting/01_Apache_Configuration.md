@@ -13,7 +13,7 @@ see [https://github.com/pimcore/skeleton/blob/master/public/.htaccess](https://g
         DocumentRoot  /var/www/public
 
         <FilesMatch \.php$>
-            SetHandler "proxy:unix:/run/php/php-fpm.bernie.sock|fcgi://localhost"
+            SetHandler "proxy:unix:/var/run/php/pimcore.sock|fcgi://localhost"
         </FilesMatch>
 
         <Directory /var/www/public>
