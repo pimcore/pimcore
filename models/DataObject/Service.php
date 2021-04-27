@@ -1460,13 +1460,6 @@ class Service extends Model\Element\Service
                     }
                 }
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    /*
-                    $layout->{'permissionView'} = AdminTool::reorderWebsiteLanguages(
-                        AdminTool::getCurrentUser(),
-                        array_keys($allowedView),
-                        true
-                    );
-                    */
                     $layout->setPermissionView(AdminTool::reorderWebsiteLanguages(
                         AdminTool::getCurrentUser(),
                         array_keys($allowedView),
@@ -1484,13 +1477,6 @@ class Service extends Model\Element\Service
                 }
 
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    /*
-                    $layout->{'permissionEdit'} = AdminTool::reorderWebsiteLanguages(
-                        AdminTool::getCurrentUser(),
-                        array_keys($allowedEdit),
-                        true
-                    );
-                     */
                     $layout->setPermissionEdit(AdminTool::reorderWebsiteLanguages(
                         AdminTool::getCurrentUser(),
                         array_keys($allowedEdit),

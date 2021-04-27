@@ -1161,9 +1161,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $permissionView
+     * @param string|array $permissionView
      */
-    public function setPermissionView(array $permissionView): void
+    public function setPermissionView($permissionView): void
     {
         $this->permissionView = $permissionView;
     }
@@ -1177,9 +1177,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $permissionEdit
+     * @param string|array $permissionEdit
      */
-    public function setPermissionEdit(array $permissionEdit): void
+    public function setPermissionEdit($permissionEdit): void
     {
         $this->permissionEdit = $permissionEdit;
     }
