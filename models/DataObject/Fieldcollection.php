@@ -253,9 +253,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function next()
     {
-        $var = next($this->items);
-
-        return $var;
+        next($this->items);
     }
 
     /**
