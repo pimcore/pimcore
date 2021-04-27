@@ -31,7 +31,7 @@ use Pimcore\Tool\HtmlUtils;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Areablock extends Model\Document\Editable implements BlockInterface
+class Areablock extends Model\Document\Editable implements BlockInterface, \Countable
 {
     /**
      * Contains an array of indices, which represent the order of the elements in the block
@@ -617,6 +617,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     public function getCount()
     {
         return count($this->indices);
+    }
+
+    public function count()
+    {
+        return $this->getCount();
     }
 
     /**
