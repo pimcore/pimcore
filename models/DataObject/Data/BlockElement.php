@@ -49,6 +49,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     protected $data;
 
     /**
+     * @internal
      * @var bool
      */
     protected $needsRenewReferences = false;
@@ -184,6 +185,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     }
 
     /**
+     * @internal
      * @return bool
      */
     public function getNeedsRenewReferences(): bool
@@ -192,6 +194,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     }
 
     /**
+     * @internal
      * @param bool $needsRenewReferences
      */
     public function setNeedsRenewReferences(bool $needsRenewReferences)

@@ -31,36 +31,34 @@ class Renderlet extends Model\Document\Editable
 {
     /**
      * Contains the ID of the linked object
-     *
+     * @internal
      * @var int|null
      */
     protected $id;
 
     /**
      * Contains the object
-     *
+     * @internal
      * @var Document|Asset|DataObject|null
      */
     protected $o;
 
     /**
      * Contains the type
-     *
+     * @internal
      * @var string|null
      */
     protected $type;
 
     /**
      * Contains the subtype
-     *
+     * @internal
      * @var string|null
      */
     protected $subtype;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -68,9 +66,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -100,9 +96,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -163,11 +157,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -183,11 +173,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -215,7 +201,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -245,7 +231,7 @@ class Renderlet extends Model\Document\Editable
      *
      * @internal param mixed $data
      */
-    public function getObjectType($object = null)
+    private function getObjectType($object = null)
     {
         $this->load();
 
@@ -260,7 +246,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -274,7 +260,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -295,7 +281,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {

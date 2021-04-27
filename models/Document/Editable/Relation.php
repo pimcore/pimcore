@@ -28,36 +28,34 @@ class Relation extends Model\Document\Editable
 {
     /**
      * ID of the source object
-     *
+     * @internal
      * @var int|null
      */
     protected $id;
 
     /**
      * Type of the source object (document, asset, object)
-     *
+     * @internal
      * @var string|null
      */
     protected $type;
 
     /**
      * Subtype of the source object (eg. page, link, video, news, ...)
-     *
+     * @internal
      * @var string|null
      */
     protected $subtype;
 
     /**
      * Contains the source object
-     *
+     * @internal
      * @var mixed
      */
     protected $element;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -66,9 +64,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -101,9 +97,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -122,11 +116,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -144,11 +134,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -166,7 +152,7 @@ class Relation extends Model\Document\Editable
      *
      * @return $this
      */
-    protected function setElement()
+    private function setElement()
     {
         if (!$this->element) {
             $this->element = Element\Service::getElementById($this->type, $this->id);
@@ -213,7 +199,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -227,7 +213,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -247,7 +233,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -268,7 +254,7 @@ class Relation extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {

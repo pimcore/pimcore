@@ -111,7 +111,7 @@ class Area extends Model\Document\Editable
         }
     }
 
-    protected function buildInfoObject(): Area\Info
+    private function buildInfoObject(): Area\Info
     {
         $config = $this->getConfig();
         // create info object and assign it to the view

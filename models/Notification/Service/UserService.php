@@ -19,6 +19,9 @@ namespace Pimcore\Model\Notification\Service;
 
 use Pimcore\Model\User;
 
+/**
+ * @internal
+ */
 class UserService
 {
     /**

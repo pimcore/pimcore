@@ -550,7 +550,7 @@ final class AssetController extends ElementControllerBase implements KernelContr
         $currentFileExt = File::getFileExtension($asset->getFilename());
         if ($newFileExt != $currentFileExt) {
             $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.' . $newFileExt, $asset->getFilename());
-            $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
+            $newFilename = Element\Service::getSafeCopyName('asset', $newFilename, $asset->getParent());
             $asset->setFilename($newFilename);
         }
 

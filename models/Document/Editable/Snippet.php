@@ -31,22 +31,20 @@ class Snippet extends Model\Document\Editable
 {
     /**
      * Contains the ID of the linked snippet
-     *
+     * @internal
      * @var int|null
      */
     protected ?int $id = null;
 
     /**
      * Contains the object for the snippet
-     *
+     * @internal
      * @var Document\Snippet|null
      */
     protected ?Document\Snippet $snippet = null;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -54,9 +52,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -97,9 +93,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -164,11 +158,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -181,11 +171,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -198,7 +184,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -212,7 +198,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -231,7 +217,7 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {

@@ -27,15 +27,14 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
+
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'video';
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -75,7 +74,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @param bool $force
+     * {@inheritdoc}
      */
     public function clearThumbnails($force = false)
     {

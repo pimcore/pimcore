@@ -29,15 +29,19 @@ use Pimcore\Model\Element;
 class Service extends Model\Element\Service
 {
     /**
+     * @internal
      * @var array
      */
-    public static $gridSystemColumns = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
+    public const GRID_SYSTEM_COLUMNS = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
 
     /**
+     * @internal
      * @var Model\User|null
      */
     protected $_user;
+
     /**
+     * @internal
      * @var array
      */
     protected $_copyRecursiveIds;
@@ -78,7 +82,7 @@ class Service extends Model\Element\Service
             $new->setChildren(null);
         }
 
-        $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSafeCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -127,7 +131,7 @@ class Service extends Model\Element\Service
         if ($new instanceof Asset\Folder) {
             $new->setChildren(null);
         }
-        $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSafeCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);

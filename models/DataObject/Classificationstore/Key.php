@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 
-class Key
+final class Key
 {
     /**
      * @var KeyConfig

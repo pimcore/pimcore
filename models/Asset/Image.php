@@ -32,14 +32,12 @@ class Image extends Model\Asset
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'image';
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -88,6 +86,9 @@ class Image extends Model\Asset
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function postPersistData()
     {
         if ($this->getDataChanged()) {
@@ -449,10 +450,7 @@ EOT;
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return Model\Asset
+     * {@inheritdoc}
      */
     public function setCustomSetting($key, $value)
     {

@@ -65,7 +65,7 @@ class Processor
      *
      * @return string
      */
-    public static function getAllowedFormat($format, $allowed = [], $fallback = 'png')
+    private static function getAllowedFormat($format, $allowed = [], $fallback = 'png')
     {
         $typeMappings = [
             'jpg' => 'jpeg',
@@ -433,7 +433,7 @@ class Processor
      *
      * @return bool
      */
-    protected static function containsTransformationType(Config $config, string $transformationType): bool
+    private static function containsTransformationType(Config $config, string $transformationType): bool
     {
         $transformations = $config->getItems();
         if (is_array($transformations) && count($transformations) > 0) {

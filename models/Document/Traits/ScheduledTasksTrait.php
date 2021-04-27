@@ -20,6 +20,9 @@ namespace Pimcore\Model\Document\Traits;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Schedule\Task\Listing;
 
+/**
+ * @internal
+ */
 trait ScheduledTasksTrait
 {
     /**

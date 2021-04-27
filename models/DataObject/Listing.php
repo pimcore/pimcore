@@ -139,7 +139,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      */
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -147,10 +147,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     }
 
     /**
-     * @param int $offset
-     * @param int $itemCountPerPage
-     *
-     * @return Model\DataObject[]
+     * {@inheritdoc}
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -161,6 +158,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     }
 
     /**
+     * @internal
      * @return bool
      */
     public function addDistinct()

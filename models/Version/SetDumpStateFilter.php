@@ -18,6 +18,9 @@ namespace Pimcore\Model\Version;
 use DeepCopy\Filter\Filter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 
+/**
+ * @internal
+ */
 final class SetDumpStateFilter implements Filter
 {
     protected $state;

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element\Traits;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 
+/**
+ * @internal
+ */
 trait VersionDaoTrait
 {
     /**

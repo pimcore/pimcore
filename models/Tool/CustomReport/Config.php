@@ -18,6 +18,7 @@ namespace Pimcore\Model\Tool\CustomReport;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
  * @method void delete()
  * @method void save()

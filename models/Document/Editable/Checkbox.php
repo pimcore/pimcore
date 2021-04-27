@@ -24,15 +24,13 @@ class Checkbox extends Model\Document\Editable
 {
     /**
      * Contains the checkbox value
-     *
+     * @internal
      * @var bool
      */
     protected $value = false;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -40,9 +38,7 @@ class Checkbox extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -50,9 +46,7 @@ class Checkbox extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function getValue()
     {
@@ -60,9 +54,7 @@ class Checkbox extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -70,11 +62,7 @@ class Checkbox extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -84,11 +72,7 @@ class Checkbox extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -98,7 +82,7 @@ class Checkbox extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {

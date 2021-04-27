@@ -18,6 +18,7 @@ namespace Pimcore\Model\Tool\UUID;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method \Pimcore\Model\Tool\UUID\Listing\Dao getDao()
  * @method Model\Tool\UUID[] load()
  */

@@ -29,11 +29,13 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
+     * @internal
      * @var Model\DataObject\Fieldcollection\Data\AbstractData[]
      */
     protected $items = [];
 
     /**
+     * @internal
      * @var string
      */
     protected $fieldname;
@@ -96,6 +98,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
+     * @internal
      * @return Fieldcollection\Definition[]
      */
     public function getItemDefinitions()
@@ -188,7 +191,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return Fieldcollection\Data\AbstractData|null
      */
-    public function getByOriginalIndex($index)
+    private function getByOriginalIndex($index)
     {
         if ($index === null) {
             return null;
@@ -217,8 +220,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * Methods for Iterator
      */
 
-    /*
-     *
+    /**
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -226,7 +229,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -236,7 +239,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -246,17 +249,15 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function next()
     {
-        $var = next($this->items);
-
-        return $var;
+        next($this->items);
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function valid()
     {

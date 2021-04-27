@@ -15,20 +15,10 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
-class Analytics extends AbstractAdapter
+final class Analytics extends AbstractAdapter
 {
     /**
-     * @param array|null $filters
-     * @param string|null $sort
-     * @param string|null $dir
-     * @param int|null $offset
-     * @param int|null $limit
-     * @param array|null $fields
-     * @param array|null $drillDownFilters
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
     {
@@ -54,11 +44,7 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param \stdClass $configuration
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getColumns($configuration)
     {
@@ -303,13 +289,7 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param array $filters
-     * @param string $field
-     * @param array $drillDownFilters
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {

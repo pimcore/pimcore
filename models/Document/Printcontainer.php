@@ -23,18 +23,18 @@ use Pimcore\Model\Document;
 class Printcontainer extends Document\PrintAbstract
 {
     /**
-     * Static type of the document
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected string $type = 'printcontainer';
 
     /**
+     * @internal
      * @var string
      */
     protected $action = 'container';
 
     /**
+     * @internal
      * @var array
      */
     private $allChildren = [];

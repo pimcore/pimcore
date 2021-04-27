@@ -22,34 +22,40 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
  */
-class Tag extends Model\AbstractModel
+final class Tag extends Model\AbstractModel
 {
     /**
+     * @internal
      * @var int|null
      */
     protected ?int $id = null;
 
     /**
+     * @internal
      * @var string
      */
     protected $name;
 
     /**
+     * @internal
      * @var int
      */
     protected int $parentId = 0;
 
     /**
+     * @internal
      * @var string
      */
     protected $idPath;
 
     /**
+     * @internal
      * @var Tag[]
      */
     protected $children;
 
     /**
+     * @internal
      * @var Tag|null
      */
     protected $parent;

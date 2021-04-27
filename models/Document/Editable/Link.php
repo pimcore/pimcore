@@ -27,15 +27,13 @@ class Link extends Model\Document\Editable
 {
     /**
      * Contains the data for the link
-     *
+     * @internal
      * @var array|null
      */
     protected $data;
 
     /**
-     * @see Pimcore\Model\Document\Editable;::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -43,9 +41,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -84,9 +80,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -192,7 +186,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -260,7 +254,7 @@ class Link extends Model\Document\Editable
      * @param bool $realPath
      * @param bool $editmode
      */
-    protected function updatePathFromInternal($realPath = false, $editmode = false)
+    private function updatePathFromInternal($realPath = false, $editmode = false)
     {
         $method = 'getFullPath';
         if ($realPath) {
@@ -401,11 +395,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -418,11 +408,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -475,7 +461,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -483,7 +469,7 @@ class Link extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {

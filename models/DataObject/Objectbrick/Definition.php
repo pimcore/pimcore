@@ -101,7 +101,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws \Exception
      */
-    public function checkTablenames()
+    private function checkTablenames()
     {
         $tables = [];
         $key = $this->getKey();
@@ -187,7 +187,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->updateDatabase();
     }
 
-    public function enforceBlockRules($fds, $found = [])
+    private function enforceBlockRules($fds, $found = [])
     {
         if (($found['block'] ?? false) && ($found['localizedfield'] ?? false)) {
             throw new \Exception('A localizedfield cannot be nested inside a block and vice versa');
@@ -206,18 +206,16 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
-    public function checkContainerRestrictions()
+    private function checkContainerRestrictions()
     {
         $fds = $this->getFieldDefinitions();
         $this->enforceBlockRules($fds);
     }
 
     /**
-     * @param bool $generateDefinitionFile
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function generateClassFiles($generateDefinitionFile = true)
+    protected function generateClassFiles($generateDefinitionFile = true)
     {
         $existingDefinition = Definition::getByKey($this->getKey());
         $isUpdate = $existingDefinition != null;
@@ -333,7 +331,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return array
      */
-    protected function buildClassList($definitions)
+    private function buildClassList($definitions)
     {
         $result = [];
         foreach ($definitions as $definition) {
@@ -350,7 +348,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return array
      */
-    protected function getClassesToCleanup($oldObject)
+    private function getClassesToCleanup($oldObject)
     {
         $oldDefinitions = $oldObject->getClassDefinitions() ? $oldObject->getClassDefinitions() : [];
         $newDefinitions = $this->getClassDefinitions() ? $this->getClassDefinitions() : [];
@@ -692,6 +690,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
@@ -703,6 +704,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $fieldDefinition;
     }
 
+    /**
+     * @internal
+     * @return bool
+     */
     public function isWritable(): bool
     {
         if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
@@ -713,6 +718,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @internal
      * @param string|null $key
      *
      * @return string
@@ -723,6 +729,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @internal
      * @return string
      */
     protected function getPhpClassFile()

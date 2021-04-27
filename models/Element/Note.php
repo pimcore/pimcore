@@ -22,49 +22,58 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
  */
-class Note extends Model\AbstractModel
+final class Note extends Model\AbstractModel
 {
     /**
+     * @internal
      * @var int
      */
     protected $id;
 
     /**
+     * @internal
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
      * @var int
      */
     protected $cid;
 
     /**
+     * @internal
      * @var string
      */
     protected $ctype;
 
     /**
+     * @internal
      * @var int
      */
     protected $date;
 
     /**
+     * @internal
      * @var int
      */
     protected $user;
 
     /**
+     * @internal
      * @var string
      */
     protected $title;
 
     /**
+     * @internal
      * @var string
      */
     protected $description;
 
     /**
+     * @internal
      * @var array
      */
     protected $data = [];
@@ -118,6 +127,9 @@ class Note extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
 

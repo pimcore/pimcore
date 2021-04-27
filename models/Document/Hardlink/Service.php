@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Serialize;
 
+/**
+ * @internal
+ */
 class Service
 {
     /**

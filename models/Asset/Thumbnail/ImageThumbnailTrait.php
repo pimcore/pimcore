@@ -26,46 +26,55 @@ trait ImageThumbnailTrait
     use TemporaryFileHelperTrait;
 
     /**
+     * @internal
      * @var Asset|null
      */
     protected $asset;
 
     /**
+     * @internal
      * @var Image\Thumbnail\Config|null
      */
     protected $config;
 
     /**
+     * @internal
      * @var array
      */
     protected array $pathReference = [];
 
     /**
+     * @internal
      * @var int|null
      */
     protected $width;
 
     /**
+     * @internal
      * @var int|null
      */
     protected $height;
 
     /**
+     * @internal
      * @var int|null
      */
     protected $realWidth;
 
     /**
+     * @internal
      * @var int|null
      */
     protected $realHeight;
 
     /**
+     * @internal
      * @var string
      */
     protected $mimetype;
 
     /**
+     * @internal
      * @var bool
      */
     protected $deferred = true;

@@ -23,14 +23,13 @@ use Pimcore\Model;
 class Embed extends Model\Document\Editable
 {
     /**
+     * @internal
      * @var string
      */
     protected $url;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -38,9 +37,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -50,9 +47,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * @return string
      */
     public function getUrl()
     {
@@ -60,7 +55,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -70,9 +65,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -104,7 +97,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function admin()
     {
@@ -118,11 +111,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -136,11 +125,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -152,7 +137,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {

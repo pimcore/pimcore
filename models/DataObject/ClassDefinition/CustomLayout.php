@@ -250,6 +250,10 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
+    /**
+     * @internal
+     * @return bool
+     */
     public function isWritable(): bool
     {
         if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
@@ -260,6 +264,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param string|null $id
      *
      * @return string
@@ -281,7 +286,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @param Data|Layout|null $data
      */
-    public static function cleanupForExport(&$data)
+    private static function cleanupForExport(&$data)
     {
         if (is_null($data)) {
             return;
@@ -311,6 +316,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @return string
      */
     protected function getInfoDocBlock()
@@ -332,6 +338,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @param string $classId
      *
      * @return int|null

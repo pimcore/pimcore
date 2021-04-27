@@ -27,23 +27,24 @@ class Hardlink extends Document
     use Document\Traits\ScheduledTasksTrait;
 
     /**
-     * static type of this object
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected string $type = 'hardlink';
 
     /**
+     * @internal
      * @var int
      */
     protected $sourceId;
 
     /**
+     * @internal
      * @var bool
      */
     protected $propertiesFromSource;
 
     /**
+     * @internal
      * @var bool
      */
     protected $childrenFromSource;
@@ -61,11 +62,9 @@ class Hardlink extends Document
     }
 
     /**
-     * @see Document::resolveDependencies
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
         $sourceDocument = $this->getSourceDocument();
@@ -83,11 +82,7 @@ class Hardlink extends Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
-     *
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags(array $tags = []): array
     {
@@ -163,7 +158,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @return array|null|Model\Property[]
+     * {@inheritdoc}
      */
     public function getProperties()
     {
@@ -196,9 +191,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param bool $includingUnpublished
-     *
-     * @return Document[]
+     * {@inheritdoc}
      */
     public function getChildren($includingUnpublished = false)
     {
@@ -249,9 +242,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {

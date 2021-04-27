@@ -18,6 +18,7 @@ namespace Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document;
 
 /**
+ * @internal
  * @method Document\Dao getDao()
  */
 trait Wrapper

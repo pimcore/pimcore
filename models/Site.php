@@ -23,7 +23,7 @@ use Pimcore\Logger;
  * @method void delete()
  * @method void save()
  */
-class Site extends AbstractModel
+final class Site extends AbstractModel
 {
     /**
      * @var Site|null
@@ -198,8 +198,6 @@ class Site extends AbstractModel
 
     /**
      * returns true if the current process/request is inside a site
-     *
-     * @static
      *
      * @return bool
      */
@@ -394,6 +392,9 @@ class Site extends AbstractModel
         return $this->redirectToMainDomain;
     }
 
+    /**
+     * @internal
+     */
     public function clearDependentCache()
     {
 

@@ -23,7 +23,7 @@ use Pimcore\Model;
 class Audio extends Model\Asset
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'audio';
 }

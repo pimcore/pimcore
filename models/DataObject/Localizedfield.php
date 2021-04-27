@@ -29,7 +29,7 @@ use Pimcore\Tool;
  * @method void save($params = [])
  * @method void createUpdateTable($params = [])
  */
-class Localizedfield extends Model\AbstractModel implements
+final class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
@@ -40,8 +40,14 @@ class Localizedfield extends Model\AbstractModel implements
     use Model\Element\Traits\DirtyIndicatorTrait;
     use Model\Element\ElementDumpStateTrait;
 
+    /**
+     * @internal
+     */
     const STRICT_DISABLED = 0;
 
+    /**
+     * @internal
+     */
     const STRICT_ENABLED = 1;
 
     /**
@@ -50,24 +56,33 @@ class Localizedfield extends Model\AbstractModel implements
     private static bool $getFallbackValues = false;
 
     /**
+     * @internal
      * @var array
      */
     protected array $items = [];
 
     /**
+     * @internal
      * @var Concrete|null
      */
     protected ?Concrete $object = null;
 
     /**
+     * @internal
      * @var ClassDefinition|null
      */
     protected ?ClassDefinition $class = null;
 
-    /** @var array */
+    /**
+     * @internal
+     * @var array
+     */
     protected array $context = [];
 
-    /** @var int|null */
+    /**
+     * @internal
+     * @var int|null
+     */
     protected ?int $objectId = null;
 
     /**
@@ -77,12 +92,13 @@ class Localizedfield extends Model\AbstractModel implements
 
     /**
      * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
-     *
+     * @internal
      * @var array|null
      */
     protected ?array $o_dirtyLanguages = null;
 
     /**
+     * @internal
      * @var bool
      */
     protected bool $_loadedAllLazyData = false;
@@ -663,6 +679,7 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
+     * @internal
      * @return bool
      */
     public function hasDirtyLanguages(): bool
@@ -675,6 +692,7 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
+     * @internal
      * @param string $language
      *
      * @return bool
@@ -697,12 +715,16 @@ class Localizedfield extends Model\AbstractModel implements
         return false;
     }
 
+    /**
+     * @internal
+     */
     public function resetLanguageDirtyMap(): void
     {
         $this->o_dirtyLanguages = null;
     }
 
     /**
+     * @internal
      * @return array|null
      */
     public function getDirtyLanguages(): ?array
@@ -710,11 +732,18 @@ class Localizedfield extends Model\AbstractModel implements
         return $this->o_dirtyLanguages;
     }
 
+    /**
+     * @internal
+     */
     public function markAllLanguagesAsDirty(): void
     {
         $this->o_dirtyLanguages = [];
     }
 
+    /**
+     * @internal
+     * @return bool
+     */
     public function allLanguagesAreDirty(): bool
     {
         if (DataObject::isDirtyDetectionDisabled()) {
@@ -725,6 +754,7 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
+     * @internal
      * @param string $language
      * @param bool $dirty
      */
@@ -748,7 +778,9 @@ class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * @internal
+     * @return array
+     * @throws \Exception
      */
     protected function getLazyLoadedFieldNames(): array
     {

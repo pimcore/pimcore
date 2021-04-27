@@ -26,26 +26,16 @@ class Folder extends Model\User\AbstractUser
     use Model\Element\ChildsCompatibilityTrait;
 
     /**
+     * @internal
      * @var array
      */
     protected $children = [];
 
     /**
+     * @internal
      * @var bool
      */
     protected $hasChilds;
-
-    /**
-     * @param bool $state
-     *
-     * @return $this
-     */
-    public function setHasChilds($state)
-    {
-        $this->hasChilds = $state;
-
-        return $this;
-    }
 
     /**
      * Returns true if the document has at least one child

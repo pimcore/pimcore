@@ -22,21 +22,20 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\CollectionConfig\Dao getDao()
  */
-class CollectionConfig extends Model\AbstractModel
+final class CollectionConfig extends Model\AbstractModel
 {
-    /** Group id.
+    /**
+     * Group id.
      * @var int
      */
     protected $id;
 
     /**
-     * Store ID
-     *
      * @var int
      */
     protected $storeId = 1;
 
-    /** The collection name.
+    /**
      * @var string
      */
     protected $name;

@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Pimcore\Model\Redirect\Dao getDao()
  */
-class Redirect extends AbstractModel
+final class Redirect extends AbstractModel
 {
     const TYPE_ENTIRE_URI = 'entire_uri';
     const TYPE_PATH_QUERY = 'path_query';
@@ -150,6 +150,7 @@ class Redirect extends AbstractModel
     }
 
     /**
+     * @internal
      * @param Request $request
      * @param Site|null $site
      * @param bool $override

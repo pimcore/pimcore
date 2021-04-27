@@ -18,11 +18,12 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method Predefined\Dao getDao()
  * @method void save()
  * @method void delete()
  */
-class Predefined extends Model\AbstractModel
+final class Predefined extends Model\AbstractModel
 {
     /**
      * @var int

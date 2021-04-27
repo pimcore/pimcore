@@ -244,6 +244,9 @@ interface ElementInterface extends ModelInterface
      */
     public function save();
 
+    /**
+     *
+     */
     public function delete();
 
     /**

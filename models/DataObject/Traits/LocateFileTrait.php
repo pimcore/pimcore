@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
+/**
+ * @internal
+ */
 trait LocateFileTrait
 {
     protected function locateFile(string $key, string $pathTemplate): string

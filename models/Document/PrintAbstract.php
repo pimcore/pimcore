@@ -25,16 +25,19 @@ use Pimcore\Web2Print\Processor;
 abstract class PrintAbstract extends Document\PageSnippet
 {
     /**
+     * @internal
      * @var int
      */
     protected $lastGenerated;
 
     /**
+     * @internal
      * @var string
      */
     protected $lastGenerateMessage;
 
     /**
+     * @internal
      * @var string
      */
     protected $controller = 'web2print';
@@ -141,6 +144,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     }
 
     /**
+     * @internal
      * @return string
      */
     public function getLockKey()

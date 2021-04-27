@@ -33,18 +33,20 @@ abstract class PageSnippet extends Model\Document
     use Document\Traits\ScheduledTasksTrait;
 
     /**
+     * @internal
      * @var string
      */
     protected $controller;
 
     /**
+     * @internal
      * @var string
      */
     protected $template;
 
     /**
      * Contains all content-editables of the document
-     *
+     * @internal
      * @var array|null
      *
      */
@@ -52,12 +54,13 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * Contains all versions of the document
-     *
+     * @internal
      * @var array
      */
     protected $versions = null;
 
     /**
+     * @internal
      * @var null|int
      */
     protected $contentMasterDocumentId;
@@ -70,19 +73,19 @@ abstract class PageSnippet extends Model\Document
     protected bool $supportsContentMaster = true;
 
     /**
+     * @internal
      * @var null|bool
      */
     protected $missingRequiredEditable = null;
 
     /**
+     * @internal
      * @var array
      */
     protected $inheritedEditables = [];
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -202,11 +205,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
-     *
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags(array $tags = []): array
     {
@@ -220,9 +219,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 
@@ -289,7 +288,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * Set raw data of an editable (eg. for editmode)
-     *
+     * @internal
      * @param string $name
      * @param string $type
      * @param mixed $data
@@ -517,6 +516,9 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __sleep()
     {
         $finalVars = [];

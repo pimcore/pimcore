@@ -26,7 +26,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
  */
-class Translation extends AbstractModel
+final class Translation extends AbstractModel
 {
     const DOMAIN_DEFAULT = 'messages';
     const DOMAIN_ADMIN = 'admin';
@@ -194,6 +194,7 @@ class Translation extends AbstractModel
     }
 
     /**
+     * @internal
      * @param string $domain
      *
      * @return array
@@ -236,6 +237,9 @@ class Translation extends AbstractModel
         return isset($this->translations[$language]);
     }
 
+    /**
+     * @internal
+     */
     public static function clearDependentCache()
     {
         Cache::clearTags(['translator', 'translate']);
@@ -361,6 +365,9 @@ class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
+    /**
+     *
+     */
     public function save()
     {
         \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
@@ -380,6 +387,9 @@ class Translation extends AbstractModel
         self::clearDependentCache();
     }
 
+    /**
+     *
+     */
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
@@ -394,7 +404,7 @@ class Translation extends AbstractModel
      * Imports translations from a csv file
      * The CSV file has to have the same format as an Pimcore translation-export-file
      *
-     * @static
+     * @internal
      *
      * @param string $file - path to the csv file
      * @param string $domain

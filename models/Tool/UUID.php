@@ -23,29 +23,34 @@ use Symfony\Component\Uid\Uuid as Uid;
  * @method void delete()
  * @method void save()
  */
-class UUID extends Model\AbstractModel
+final class UUID extends Model\AbstractModel
 {
     /**
+     * @internal
      * @var int
      */
     protected $itemId;
 
     /**
+     * @internal
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
      * @var string
      */
     protected $uuid;
 
     /**
+     * @internal
      * @var string
      */
     protected $instanceIdentifier;
 
     /**
+     * @internal
      * @var mixed
      */
     protected $item;
@@ -71,6 +76,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @return $this
      *
      * @throws \Exception
@@ -127,6 +133,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
+     * @internal
      * @return mixed
      *
      * @throws \Exception

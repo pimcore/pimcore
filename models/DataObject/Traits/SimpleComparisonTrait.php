@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
+/**
+ * @internal
+ */
 trait SimpleComparisonTrait
 {
     /**

@@ -26,22 +26,20 @@ class Block extends Model\Document\Editable implements BlockInterface
 {
     /**
      * Contains an array of indices, which represent the order of the elements in the block
-     *
+     * @internal
      * @var array
      */
     protected $indices = [];
 
     /**
      * Current step of the block while iteration
-     *
+     * @internal
      * @var int
      */
     protected $current = 0;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -49,9 +47,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -59,7 +55,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::admin
+     * {@inheritdoc}
      */
     public function admin()
     {
@@ -68,7 +64,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::frontend
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -77,11 +73,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -91,11 +83,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -105,9 +93,10 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @internal
      * @return $this
      */
-    public function setDefault()
+    protected function setDefault()
     {
         if (empty($this->indices) && isset($this->config['default']) && $this->config['default']) {
             for ($i = 0; $i < (int)$this->config['default']; $i++) {
@@ -119,7 +108,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @return \Generator
+     * {@inheritdoc}
      */
     public function getIterator()
     {
@@ -162,8 +151,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Loops through the block
-     *
+     * @internal
      * @return bool
      */
     public function loop()
@@ -218,9 +206,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is executed at the beginning of the loop and setup some general settings
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function start()
     {
@@ -236,7 +222,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is executed at the end of the loop and removes the settings set in start()
+     * {@inheritdoc}
      */
     public function end()
     {
@@ -249,7 +235,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Called before the block is rendered
+     * {@inheritdoc}
      */
     public function blockConstruct()
     {
@@ -259,7 +245,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Called when the block was rendered
+     * {@inheritdoc}
      */
     public function blockDestruct()
     {
@@ -267,10 +253,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is called evertime a new iteration starts (new entry of the block while looping)
-     *
-     * @param bool $showControls
-     * @param bool $return
+     * {@inheritdoc}
      */
     public function blockStart($showControls = true, $return = false)
     {
@@ -299,7 +282,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @param bool $return
      */
-    public function blockControls($return = false)
+    private function blockControls($return = false)
     {
         $attr = $this->getBlockAttributes();
 
@@ -324,9 +307,7 @@ EOT;
     }
 
     /**
-     * Is called evertime a new iteration ends (new entry of the block while looping)
-     *
-     * @param bool $return
+     * {@inheritdoc}
      */
     public function blockEnd($return = false)
     {
@@ -341,9 +322,7 @@ EOT;
     }
 
     /**
-     * @param array $config
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setConfig($config)
     {
@@ -361,9 +340,7 @@ EOT;
     }
 
     /**
-     * Return the amount of block elements
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCount()
     {
@@ -371,9 +348,7 @@ EOT;
     }
 
     /**
-     * Return current iteration step
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCurrent()
     {
@@ -381,9 +356,7 @@ EOT;
     }
 
     /**
-     * Return current index
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCurrentIndex()
     {
@@ -407,7 +380,7 @@ EOT;
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {

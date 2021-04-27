@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\Traits;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 
+/**
+ * @internal
+ */
 trait ObjectVarTrait
 {
     /**

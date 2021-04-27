@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\Traits;
 use Pimcore\Db\ConnectionInterface;
 
 /**
+ * @internal
  * @property ConnectionInterface $db
  */
 trait CompositeIndexTrait

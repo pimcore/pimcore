@@ -34,52 +34,63 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
-    /** @var array|null */
+    /**
+     * @internal
+     * @var array|null
+     */
     protected $__rawRelationData = null;
 
     /**
+     * @internal
      * @var array
      */
-    public static $systemColumnNames = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
+    public const SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
     /**
+     * @internal
      * @var bool
      */
     protected $o_published;
 
     /**
+     * @internal
      * @var ClassDefinition|null
      */
     protected ?ClassDefinition $o_class = null;
 
     /**
+     * @internal
      * @var string
      */
     protected $o_classId;
 
     /**
+     * @internal
      * @var string
      */
     protected $o_className;
 
     /**
+     * @internal
      * @var array|null
      */
     protected $o_versions = null;
 
     /**
      * Contains all scheduled tasks
-     *
+     * @internal
      * @var array|null
      */
     protected $scheduledTasks = null;
 
     /**
+     * @internal
      * @var bool|null
      */
     protected $omitMandatoryCheck;
 
     /**
+     * @internal
      * @var bool
      */
     protected $allLazyKeysMarkedAsLoaded = false;
@@ -96,16 +107,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $v['o_classId'];
     }
 
-    public function __construct()
-    {
-        // nothing to do here
-    }
-
     /**
-     * @param bool|null $isUpdate
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($isUpdate = null, $params = [])
     {
@@ -213,14 +216,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
     }
 
-    protected function saveChildData()
+    private function saveChildData(): void
     {
         if ($this->getClass()->getAllowInherit()) {
             $this->getDao()->saveChildData();
         }
     }
 
-    public function saveScheduledTasks()
+    /**
+     * @internal
+     */
+    public function saveScheduledTasks(): void
     {
         // update scheduled tasks
         $this->getScheduledTasks();
@@ -383,9 +389,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 
@@ -566,6 +572,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
      * @return AbstractObject|null
      */
     public function getNextParentForInheritance()
@@ -576,9 +583,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @param string $classId
      *
-     * @return Concrete|null
+     * @return self|null
      */
-    public function getClosestParentOfClass(string $classId)
+    private function getClosestParentOfClass(string $classId): ?self
     {
         $parent = $this->getParent();
         if ($parent instanceof AbstractObject) {
@@ -600,6 +607,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * get object relation data as array for a specific field
      *
+     * @internal
      * @param string $fieldName
      * @param bool $forOwner
      * @param string $remoteClassId
@@ -759,7 +767,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     * {@inheritdoc}
+     * @return array
      */
     public function getLazyLoadedFieldNames(): array
     {

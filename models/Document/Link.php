@@ -29,57 +29,55 @@ class Link extends Model\Document
 
     /**
      * Contains the ID of the internal ID
-     *
+     * @internal
      * @var int|null
      */
     protected $internal;
 
     /**
      * Contains the type of the internal ID
-     *
+     * @internal
      * @var string
      */
     protected $internalType;
 
     /**
      * Contains object of linked Document|Asset|DataObject
-     *
-     * @var Document|Asset|Model\DataObject\Concrete|null
+     * @internal
+     * @var Model\Element\ElementInterface|null
      */
     protected $object;
 
     /**
      * Contains the direct link as plain text
-     *
+     * @internal
      * @var string
      */
     protected string $direct = '';
 
     /**
      * Type of the link (internal/direct)
-     *
+     * @internal
      * @var string
      */
     protected string $linktype = 'internal';
 
     /**
-     * static type of this object
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected string $type = 'link';
 
     /**
      * path of the link
-     *
+     * @internal
      * @var string
      */
     protected string $href = '';
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
 
@@ -100,11 +98,7 @@ class Link extends Model\Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
-     *
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags(array $tags = []): array
     {
@@ -289,11 +283,11 @@ class Link extends Model\Document
     }
 
     /**
-     * @return Document|Asset|Model\DataObject\Concrete|null
+     * @return Model\Element\ElementInterface|null
      */
-    public function getObject()
+    public function getElement()
     {
-        if ($this->object instanceof Document || $this->object instanceof Asset || $this->object instanceof Model\DataObject\Concrete) {
+        if ($this->object instanceof Model\Element\ElementInterface) {
             return $this->object;
         }
         if ($this->setObjectFromId()) {
@@ -304,21 +298,41 @@ class Link extends Model\Document
     }
 
     /**
-     * @param Document|Asset|Model\DataObject\Concrete $object
+     * @param Model\Element\ElementInterface $element
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setElement($element)
     {
-        $this->object = $object;
+        $this->object = $element;
 
         return $this;
     }
 
     /**
-     * @return Asset|Document|Model\DataObject\Concrete|null
+     * @deprecated use getElement() instead, will be removed in Pimcore 11
+     * @return Model\Element\ElementInterface|null
      */
-    public function setObjectFromId()
+    public function getObject()
+    {
+        return $this->getElement();
+    }
+
+    /**
+     * @deprecated use getElement() instead, will be removed in Pimcore 11
+     * @param Model\Element\ElementInterface $object
+     *
+     * @return $this
+     */
+    public function setObject($object)
+    {
+        return $this->setElement($object);
+    }
+
+    /**
+     * @return Model\Element\ElementInterface|null
+     */
+    private function setObjectFromId()
     {
         try {
             if ($this->internal) {

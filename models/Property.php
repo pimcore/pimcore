@@ -22,7 +22,7 @@ use Pimcore\Model\Element\Service;
  * @method \Pimcore\Model\Property\Dao getDao()
  * @method void save()
  */
-class Property extends AbstractModel
+final class Property extends AbstractModel
 {
     /**
      * @var string
@@ -65,8 +65,7 @@ class Property extends AbstractModel
     protected $inherited = false;
 
     /**
-     * Takes data from editmode and convert it to internal objects
-     *
+     * @internal
      * @param mixed $data
      *
      * @return $this
@@ -95,8 +94,7 @@ class Property extends AbstractModel
     }
 
     /**
-     * Takes data from resource and convert it to internal objects
-     *
+     * @internal
      * @param mixed $data
      *
      * @return static
@@ -302,6 +300,7 @@ class Property extends AbstractModel
     }
 
     /**
+     * @internal
      * @return array
      */
     public function resolveDependencies()
@@ -331,6 +330,7 @@ class Property extends AbstractModel
      *  "asset" => array(...)
      * )
      *
+     * @internal
      * @param array $idMapping
      */
     public function rewriteIds($idMapping)

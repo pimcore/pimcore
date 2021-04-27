@@ -99,13 +99,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $visibleSearch = true;
 
     /**
-     * If set to true then null values will not be exported.
-     *
-     * @var bool
-     */
-    protected static $dropNullValues;
-
-    /**
      * @var array
      */
     public static $validFilterOperators = [
@@ -1229,22 +1222,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $result[] = $diffdata;
 
         return $result;
-    }
-
-    /**
-     * @param bool $dropNullValues
-     */
-    public static function setDropNullValues($dropNullValues)
-    {
-        self::$dropNullValues = $dropNullValues;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function getDropNullValues()
-    {
-        return self::$dropNullValues;
     }
 
     /**

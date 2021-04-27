@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\StoreConfig\Dao getDao()
  */
-class StoreConfig extends Model\AbstractModel
+final class StoreConfig extends Model\AbstractModel
 {
     /**
      * @var int

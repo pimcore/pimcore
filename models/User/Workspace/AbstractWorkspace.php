@@ -18,67 +18,80 @@ namespace Pimcore\Model\User\Workspace;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method \Pimcore\Model\User\Workspace\Dao getDao()
  * @method void save()
  */
-class AbstractWorkspace extends Model\AbstractModel
+abstract class AbstractWorkspace extends Model\AbstractModel
 {
     /**
+     * @internal
      * @var int
      */
     protected $userId;
 
     /**
+     * @internal
      * @var int
      */
     protected $cid;
 
     /**
+     * @internal
      * @var string
      */
     protected $cpath;
 
     /**
+     * @internal
      * @var bool
      */
     protected $list = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $view = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $publish = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $delete = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $rename = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $create = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $settings = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $versions = false;
 
     /**
+     * @internal
      * @var bool
      */
     protected $properties = false;

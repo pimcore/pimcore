@@ -147,6 +147,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
+     * @internal
      * Flushes the already collected items of the container object
      */
     protected function flushContainer()
@@ -252,7 +253,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * {@inheritdoc}
+     * @internal
+     * @return array
      */
     protected function getLazyLoadedFieldNames(): array
     {

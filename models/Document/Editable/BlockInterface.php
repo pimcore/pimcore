@@ -19,6 +19,9 @@ namespace Pimcore\Model\Document\Editable;
 
 interface BlockInterface
 {
+    /**
+     * @return \Generator
+     */
     public function getIterator();
 
     /**

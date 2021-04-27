@@ -27,19 +27,19 @@ use Pimcore\Model\Element;
 class Relations extends Model\Document\Editable implements \Iterator
 {
     /**
+     * @internal
      * @var array
      */
     protected $elements = [];
 
     /**
+     * @internal
      * @var array
      */
     protected $elementIds = [];
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -73,9 +73,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -85,7 +83,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -120,9 +118,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -139,11 +135,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -155,11 +147,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -194,7 +182,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -204,7 +192,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -259,7 +247,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function __sleep()
     {
@@ -283,6 +271,10 @@ class Relations extends Model\Document\Editable implements \Iterator
     /**
      * Methods for Iterator
      */
+
+    /**
+     * {@inheritdoc}
+     */
     public function rewind()
     {
         $this->setElements();
@@ -290,7 +282,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -301,7 +293,7 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -312,18 +304,16 @@ class Relations extends Model\Document\Editable implements \Iterator
     }
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
     public function next()
     {
         $this->setElements();
-        $var = next($this->elements);
-
-        return $var;
+        next($this->elements);
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function valid()
     {

@@ -30,11 +30,13 @@ final class ImageThumbnail
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
+     * @internal
      * @var int
      */
     protected $timeOffset;
 
     /**
+     * @internal
      * @var Image|null
      */
     protected $imageAsset;
@@ -194,7 +196,7 @@ final class ImageThumbnail
      *
      * @throws Model\Exception\NotFoundException
      */
-    protected function createConfig($selector)
+    private function createConfig($selector)
     {
         $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
 

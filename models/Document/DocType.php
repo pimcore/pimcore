@@ -26,57 +26,60 @@ class DocType extends Model\AbstractModel
 {
     /**
      * ID of the document-type
-     *
+     * @internal
      * @var int
      */
     protected $id;
 
     /**
      * Name of the document-type
-     *
+     * @internal
      * @var string
      */
     protected $name;
 
     /**
      * Group of document-types
-     *
+     * @internal
      * @var string
      */
     protected $group;
 
     /**
      * The specified controller
-     *
+     * @internal
      * @var string
      */
     protected $controller;
 
     /**
      * The specified template
-     *
+     * @internal
      * @var string
      */
     protected $template;
 
     /**
      * Type, must be one of the following: page,snippet,email
-     *
+     * @internal
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
      * @var int
      */
     protected $priority = 0;
 
     /**
+     * @internal
      * @var int
      */
     protected $creationDate;
 
     /**
+     * @internal
      * @var int
      */
     protected $modificationDate;

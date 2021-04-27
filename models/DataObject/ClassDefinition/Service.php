@@ -20,19 +20,15 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 
-/**
- * Class Service
- *
- * @package Pimcore\Model\DataObject\ClassDefinition
- */
 class Service
 {
     /**
      * @var bool
      */
-    public static $doRemoveDynamicOptions = false;
+    private static $doRemoveDynamicOptions = false;
 
     /**
+     * @internal
      * @return bool
      */
     public static function doRemoveDynamicOptions(): bool
@@ -41,6 +37,7 @@ class Service
     }
 
     /**
+     * @internal
      * @param bool $doRemoveDynamicOptions
      */
     public static function setDoRemoveDynamicOptions(bool $doRemoveDynamicOptions): void
@@ -49,7 +46,6 @@ class Service
     }
 
     /**
-     * @static
      *
      * @param  DataObject\ClassDefinition $class
      *
@@ -72,7 +68,7 @@ class Service
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
+    private static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
         if (method_exists($layout, 'resolveBlockedVars')) {
             $blockedVars = $layout->resolveBlockedVars();
@@ -271,6 +267,7 @@ class Service
     }
 
     /**
+     * @internal
      * @param array $array
      * @param bool $throwException
      * @param bool $insideLocalizedField
@@ -342,7 +339,7 @@ class Service
      * @param mixed $data
      * @param array $blockedVars
      */
-    public static function removeDynamicOptionsFromArray(&$data, $blockedVars)
+    private static function removeDynamicOptionsFromArray(&$data, $blockedVars)
     {
         foreach ($blockedVars as $blockedVar) {
             if (isset($data[$blockedVar])) {
@@ -352,6 +349,7 @@ class Service
     }
 
     /**
+     * @internal
      * @param array $tableDefinitions
      * @param array $tableNames
      */
@@ -381,6 +379,7 @@ class Service
     }
 
     /**
+     * @internal
      * @param array $tableDefinitions
      * @param string $table
      * @param string $colName
@@ -412,6 +411,7 @@ class Service
     }
 
     /**
+     * @internal
      * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
      *
@@ -441,6 +441,7 @@ class Service
     }
 
     /**
+     * @internal
      * @param array $useParts
      * @param string|null $newTraits
      *
@@ -470,6 +471,7 @@ class Service
     }
 
     /**
+     * @internal
      * @param array $useParts
      *
      * @return string

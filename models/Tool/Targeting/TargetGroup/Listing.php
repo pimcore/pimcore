@@ -19,6 +19,7 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
+ * @internal
  * @method Listing\Dao getDao()
  * @method TargetGroup[] load()
  * @method TargetGroup current()

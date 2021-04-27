@@ -21,9 +21,7 @@ namespace Pimcore\Model\Document;
 class Snippet extends TargetingDocument
 {
     /**
-     * Static type of the document
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected string $type = 'snippet';
 }

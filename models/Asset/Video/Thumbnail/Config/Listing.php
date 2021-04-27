@@ -24,6 +24,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
+     * @internal
      * @var \Pimcore\Model\Asset\Video\Thumbnail\Config[]|null
      */
     protected $thumbnails = null;

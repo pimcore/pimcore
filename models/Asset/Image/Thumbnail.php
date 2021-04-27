@@ -30,6 +30,7 @@ final class Thumbnail
     use ImageThumbnailTrait;
 
     /**
+     * @internal
      * @var bool[]
      */
     protected static $hasListenersCache = [];
@@ -204,7 +205,7 @@ final class Thumbnail
      *
      * @return string
      */
-    protected function addCacheBuster(string $path, array $options, Asset $asset): string
+    private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
             $path = '/cache-buster-' . $asset->getVersionCount() . $path;
@@ -451,7 +452,7 @@ final class Thumbnail
      *
      * @throws NotFoundException
      */
-    protected function createConfig($selector)
+    private function createConfig($selector)
     {
         $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
 
