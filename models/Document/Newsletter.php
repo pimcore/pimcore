@@ -23,56 +23,58 @@ use Pimcore\Model;
 class Newsletter extends Model\Document\PageSnippet
 {
     /**
-     * Static type of the document
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected string $type = 'newsletter';
 
     /**
      * Contains the email subject
-     *
+     * @internal
      * @var string
      */
     protected string $subject = '';
 
     /**
      * Contains the plain text part of the email
-     *
+     * @internal
      * @var string
      */
     protected string $plaintext = '';
 
     /**
      * Contains the from email address
-     *
+     * @internal
      * @var string
      */
     protected string $from = '';
 
     /**
      * enables adding tracking parameters to all links
-     *
+     * @internal
      * @var bool
      */
     protected bool $enableTrackingParameters = false;
 
     /**
+     * @internal
      * @var string
      */
     protected string $trackingParameterSource = 'newsletter';
 
     /**
+     * @internal
      * @var string
      */
     protected string $trackingParameterMedium = 'email';
 
     /**
+     * @internal
      * @var string|null
      */
     protected ?string $trackingParameterName = null;
 
     /**
+     * @internal
      * @var string
      */
     protected string $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
@@ -241,6 +243,7 @@ class Newsletter extends Model\Document\PageSnippet
     }
 
     /**
+     * @internal
      * @return string
      */
     public function getTmpStoreId()

@@ -19,6 +19,9 @@ namespace Pimcore\Model\Document\Targeting;
 
 use Pimcore\Model\Document\PageSnippet;
 
+/**
+ * @internal
+ */
 trait TargetingDocumentDaoTrait
 {
     public function hasTargetGroupSpecificEditables(): bool

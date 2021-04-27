@@ -147,12 +147,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * Get the cache tags for the element, resolve all dependencies to tag the cache entries
-     * This is necessary to update the cache if there is a change in an depended object
-     *
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags(array $tags = []): array
     {

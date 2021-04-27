@@ -537,6 +537,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * @internal
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception

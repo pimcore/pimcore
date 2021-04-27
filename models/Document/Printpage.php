@@ -23,9 +23,7 @@ use Pimcore\Model\Document;
 class Printpage extends Document\PrintAbstract
 {
     /**
-     * Static type of the document
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected string $type = 'printpage';
 }

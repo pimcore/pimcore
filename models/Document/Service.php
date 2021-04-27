@@ -97,7 +97,7 @@ class Service extends Model\Element\Service
      *
      * @throws \Exception
      */
-    public static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
+    private static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
     {
         if ($document instanceof Document) {
             $document->save();
@@ -316,7 +316,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @static
+     * @internal
      *
      * @param Document $doc
      *
@@ -384,6 +384,8 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
+     * @internal
+     *
      * @param Document $document
      * @param array $rewriteConfig
      * @param array $params
@@ -447,6 +449,8 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * @internal
+     *
      * @param string $url
      *
      * @return Document|null
@@ -519,6 +523,7 @@ class Service extends Model\Element\Service
     /**
      * Get the nearest document by path. Used to match nearest document for a static route.
      *
+     * @internal
      * @param string|Request $path
      * @param bool $ignoreHardlinks
      * @param array $types

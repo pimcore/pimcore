@@ -25,6 +25,7 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 abstract class TargetingDocument extends PageSnippet implements TargetingDocumentInterface
 {
     /**
+     * @internal
      * @var int
      */
     private $useTargetGroup;
@@ -148,6 +149,9 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
         return parent::getEditable($name);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __sleep()
     {
         $finalVars = [];
