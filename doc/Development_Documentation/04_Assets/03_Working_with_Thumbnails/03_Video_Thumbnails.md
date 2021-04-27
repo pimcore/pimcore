@@ -32,8 +32,8 @@ if($asset instanceof Asset\Video) {
       /*
          OUTPUTS:
          Array(
-             "mp4" => "/website/var/tmp/video.....mp4",
-             "webm" => "/website/var/tmp/video.....webm"
+             "mp4" => "/public/var/tmp/video.....mp4",
+             "webm" => "/public/var/tmp/video.....webm"
          )
       */
    } else if ($thumbnail["status"] == "inprogress")  {
