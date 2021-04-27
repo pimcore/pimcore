@@ -21,7 +21,7 @@ $this->get("translate")->setDomain("admin");
     </div>
 <?php } ?>
 
-<form method="post" action="<?=$this->url('pimcore_admin_2fa-verify')?>">
+<form method="post" action="<?=$view->router()->path('pimcore_admin_2fa-verify')?>">
     <input name="_auth_code" id="_auth_code" autocomplete="one-time-code" type="password" placeholder="<?= $this->translate("2fa_code"); ?>" required autofocus>
     <input type="hidden" name="csrfToken" value="<?= $this->csrfToken ?>">
 
