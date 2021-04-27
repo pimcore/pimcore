@@ -499,6 +499,7 @@
   "delete_error": "The item cannot be deleted. Reason:",
   "no_further_objectbricks_allowed": "No further objectbricks allowed",
   "grid_current_language": "Current language",
+  "selected_grid_columns": "Selected grid columns",
   "object_columns": "Object columns",
   "system_columns": "System columns",
   "columns": "Columns",
