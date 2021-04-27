@@ -25,6 +25,20 @@ possibilities. These bundles provide a similar API as plugins did in previous ve
 
 See the [Pimcore Bundles](./05_Pimcore_Bundles) documentation to getting started with Pimcore bundles.
 
+### Generating Pimcore Bundles
+
+With the [Pimcore Bundle Generator](https://github.com/pimcore/bundle-generator) we provide a tool for generating bundle
+skeletons. You can install and activate this bundle in your development instance and so simplify starting Pimcore bundle 
+development.  
+
+```
+# generate bundle interactively
+$ bin/console pimcore:generate:bundle
+
+# generate bundle with a given name and don't ask questions
+$ bin/console pimcore:generate:bundle --namespace=Acme/FooBundle --no-interaction
+```
+
 ## Common tasks
 
 Below is a list of common tasks and how to achieve them inside your bundles. 
