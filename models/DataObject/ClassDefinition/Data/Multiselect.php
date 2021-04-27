@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -228,7 +227,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -282,7 +281,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see Data::getDataForEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -528,7 +527,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * Override point for enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $context additional contextual data
      *
      * @return $this

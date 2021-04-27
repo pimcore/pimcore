@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Objectbrick
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick;
@@ -32,7 +30,7 @@ use Pimcore\Tool;
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
-
+    use DataObject\Traits\LocateFileTrait;
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
     /**
@@ -83,8 +81,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 throw new \Exception('ObjectBrick in Registry is not valid');
             }
         } catch (\Exception $e) {
-            $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
-            $fieldFile = $objectBrickFolder . '/' . $key . '.php';
+            $def = new Definition();
+            $def->setKey($key);
+            $fieldFile = $def->getDefinitionFile();
 
             if (is_file($fieldFile)) {
                 $brick = include $fieldFile;
@@ -220,6 +219,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
+        $existingDefinition = Definition::getByKey($this->getKey());
+        $isUpdate = $existingDefinition != null;
+
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception('brick updates in config folder not allowed');
+        }
+
         $definitionFile = $this->getDefinitionFile();
 
         $infoDocBlock = $this->getInfoDocBlock();
@@ -413,7 +419,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
-                if (!isset($processedClasses[$cl['classname']]) || !$processedClasses[$cl['classname']]) {
+                if (empty($processedClasses[$cl['classname']])) {
                     $class = DataObject\ClassDefinition::getByName($cl['classname']);
                     $this->getDao()->createUpdateTable($class);
                     $processedClasses[$cl['classname']] = true;
@@ -697,15 +703,23 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $fieldDefinition;
     }
 
+    public function isWritable(): bool
+    {
+        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+    }
+
     /**
+     * @param string|null $key
+     *
      * @return string
      */
-    protected function getDefinitionFile()
+    public function getDefinitionFile($key = null)
     {
-        $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
-        $definitionFile = $objectBrickFolder . '/' . $this->getKey() . '.php';
-
-        return $definitionFile;
+        return $this->locateFile($key ?? $this->getKey(), 'objectbricks/%s.php');
     }
 
     /**
@@ -713,9 +727,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     protected function getPhpClassFile()
     {
-        $classFolder = PIMCORE_CLASS_DIRECTORY . '/DataObject/Objectbrick/Data';
-        $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
-
-        return $classFile;
+        return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Objectbrick/Data/%s.php');
     }
 }

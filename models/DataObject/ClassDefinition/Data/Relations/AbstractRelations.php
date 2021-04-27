@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
@@ -190,7 +189,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return mixed
      */
-    abstract protected function loadData($data, $object = null, $params = []);
+    abstract protected function loadData(array $data, $object = null, $params = []);
 
     /**
      * @internal
@@ -393,7 +392,7 @@ abstract class AbstractRelations extends Data implements
     protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Fieldcollection $container */
+            /** @var DataObject\Fieldcollection|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
@@ -414,7 +413,7 @@ abstract class AbstractRelations extends Data implements
     protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Objectbrick $container */
+            /** @var DataObject\Objectbrick|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Cache\Core;
@@ -498,11 +499,6 @@ class CoreCacheHandler implements LoggerAwareInterface
             );
         }
 
-        // normalize tags to array
-        if (!empty($tags) && !is_array($tags)) {
-            $tags = [$tags];
-        }
-
         // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
         $tags = array_values($tags);
         $tags = array_unique($tags);
@@ -538,7 +534,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param mixed $data
      * @param array $tags
      * @param null $lifetime
-     * @param false $force
+     * @param bool $force
      *
      * @return bool
      */
@@ -682,7 +678,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return bool
      */
-    public function clearTags(array $tags)
+    public function clearTags(array $tags): bool
     {
         $this->writeLock->lock();
 

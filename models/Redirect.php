@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Redirect
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -112,9 +110,9 @@ class Redirect extends AbstractModel
     /**
      * ID of the owner user
      *
-     * @var int
+     * @var int|null
      */
-    protected $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * ID of the user who make the latest changes
@@ -510,17 +508,17 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getUserOwner()
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
     /**
-     * @param int $userOwner
+     * @param int|null $userOwner
      */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(?int $userOwner)
     {
         $this->userOwner = $userOwner;
     }

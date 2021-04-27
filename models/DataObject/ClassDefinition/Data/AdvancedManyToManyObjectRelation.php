@@ -1,22 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Db;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
@@ -122,14 +122,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    protected function loadData($data, $container = null, $params = [])
+    protected function loadData(array $data, $container = null, $params = [])
     {
         $list = [
             'dirty' => false,
             'data' => [],
         ];
 
-        if (is_array($data) && count($data) > 0) {
+        if (count($data) > 0) {
             $db = Db::get();
             $targets = [];
 
@@ -191,7 +191,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param array $data
+     * @param mixed $data
      * @param Model\DataObject\AbstractObject|null $object
      * @param array $params
      *
@@ -208,7 +208,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
         $ids = [];
 
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
@@ -217,11 +217,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             }
 
             return ',' . implode(',', $ids) . ',';
-        } elseif (is_array($data) && count($data) === 0) {
-            return '';
-        } else {
-            throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
         }
+
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -250,7 +248,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
-                        $columnData[$c['key']] = $metaObject->$getter();
+
+                        try {
+                            $columnData[$c['key']] = $metaObject->$getter();
+                        } catch (\Exception $e) {
+                            Logger::debug('Meta column '.$c['key'].' does not exist');
+                        }
                     }
 
                     $columnData['rowId'] = $columnData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $columnData['type'];
@@ -266,7 +269,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -275,7 +278,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         //if not set, return null
-        if ($data === null or $data === false) {
+        if ($data === null || $data === false) {
             return null;
         }
 
@@ -608,31 +611,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 throw new \Exception('deletemeta not implemented');
             }
             $containerName = $context['fieldname'] ?? null;
-
-            if ($context['containerType'] == 'fieldcollection') {
-                $index = $context['index'];
-                $db->deleteWhere(
-                    'object_metadata_' . $object->getClassId(),
-                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
-                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-                );
-            } elseif ($context['containerType'] === 'objectbrick') {
-                $index = $context['index'];
-                $db->deleteWhere(
-                    'object_metadata_' . $object->getClassId(),
-                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
-                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-                );
-            } else {
-                $db->deleteWhere(
-                    'object_metadata_' . $object->getClassId(),
-                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
-                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-                );
-            }
+            $index = $context['index'];
+            $db->deleteWhere(
+                'object_metadata_' . $object->getClassId(),
+                $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+            );
         } else {
             $deleteConditions = [
                 'o_id' => $object->getId(),

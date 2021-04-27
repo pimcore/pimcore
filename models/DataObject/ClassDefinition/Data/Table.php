@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -322,7 +321,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -346,7 +345,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -387,7 +386,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param string|array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -414,11 +413,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -822,7 +821,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
 

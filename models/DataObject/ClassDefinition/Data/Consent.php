@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -76,7 +75,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -126,7 +125,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -144,7 +143,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -244,7 +243,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
                 $noteId = $note->getId();
             }
-        } elseif ($originalNote) {
+        } else {
             $noteId = $originalNote->getId();
         }
 
@@ -278,7 +277,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\Consent $data
+     * @param DataObject\Data\Consent|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *

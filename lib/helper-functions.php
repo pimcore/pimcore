@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -70,7 +71,7 @@ function gzcompressfile($source, $level = null, $target = null)
 }
 
 /**
- * @param string $string
+ * @param mixed $string
  *
  * @return bool
  */
@@ -80,9 +81,9 @@ function is_json($string)
         json_decode($string);
 
         return json_last_error() == JSON_ERROR_NONE;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
@@ -315,12 +316,10 @@ function formatBytes($bytes, $precision = 2)
 /**
  * @param string $str
  *
- * @return float|int
+ * @return int
  */
 function filesize2bytes($str)
 {
-    $bytes = 0;
-
     $bytes_array = [
         'K' => 1024,
         'M' => 1024 * 1024,

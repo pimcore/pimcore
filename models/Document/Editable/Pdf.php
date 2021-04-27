@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -84,12 +82,10 @@ class Pdf extends Model\Document\Editable
      * @param Model\Document\PageSnippet $ownerDocument
      * @param array $tags
      *
-     * @return array|mixed
+     * @return array
      */
-    public function getCacheTags($ownerDocument, $tags = [])
+    public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $asset = Asset::getById($this->id);
         if ($asset instanceof Asset) {
             if (!array_key_exists($asset->getCacheTag(), $tags)) {

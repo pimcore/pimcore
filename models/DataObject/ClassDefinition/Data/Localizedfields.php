@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -546,7 +545,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         if ($localizedFields instanceof DataObject\Localizedfield) {
             $localizedFields->setObject($object);
-            $context = isset($params['context']) ? $params['context'] : null;
+            $context = $params['context'] ?? [];
             $localizedFields->setContext($context);
             $localizedFields->delete(true, false);
         }
@@ -563,7 +562,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         // create a dummy instance just for updating the tables
         $localizedFields = new DataObject\Localizedfield();
         $localizedFields->setClass($class);
-        $context = isset($params['context']) ? $params['context'] : null;
+        $context = $params['context'] ?? [];
         $localizedFields->setContext($context);
         $localizedFields->createUpdateTable($params);
 
@@ -575,7 +574,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
+     * @param mixed $container
      * @param array $params
      *
      * @return DataObject\Localizedfield
@@ -584,8 +583,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function preGetData($container, $params = [])
     {
-        if (!$container instanceof DataObject\Concrete && !$container instanceof DataObject\Fieldcollection\Data\AbstractData
-            && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
+        if (
+            !$container instanceof DataObject\Concrete &&
+            !$container instanceof DataObject\Fieldcollection\Data\AbstractData &&
+            !$container instanceof DataObject\Objectbrick\Data\AbstractData
+        ) {
             throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
@@ -630,7 +632,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getGetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= parent::getGetterCode($class);
         }
 
@@ -652,7 +654,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getSetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= parent::getSetterCode($class);
         }
 
@@ -734,7 +736,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param null $def
+     * @param mixed $def
      * @param array $fields
      *
      * @return array
@@ -769,10 +771,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if (!$data instanceof DataObject\Localizedfield) {
             return $tags;
         }

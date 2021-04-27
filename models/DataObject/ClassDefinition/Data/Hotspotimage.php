@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -184,10 +183,8 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             $md = json_decode($metaData, true);
             if (!$md) {
                 $md = Serialize::unserialize($metaData);
-            } else {
-                if (is_array($md) && count($md)) {
-                    $md['hotspots'] = $md;
-                }
+            } elseif (is_array($md)) {
+                $md['hotspots'] = $md;
             }
 
             $hotspots = empty($md['hotspots']) ? null : $md['hotspots'];
@@ -247,7 +244,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param DataObject\Data\Hotspotimage|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -392,10 +389,8 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             if (!array_key_exists($data->getImage()->getCacheTag(), $tags)) {
                 $tags = $data->getImage()->getCacheTags($tags);

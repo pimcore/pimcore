@@ -11,7 +11,7 @@ A typical use-case would be to render product objects within a document.
 
 | Name           | Type      | Description                                                                        | Mandatory   |
 |----------------|-----------|------------------------------------------------------------------------------------|-------------|
-| `controller`   | string    | Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction`  | X           |
+| `controller`   | string    | Specify controller reference, e.g. `App\Controller\FooController::myAction`  | X           |
 | `template`     | string    | Specify template                                                                   |             |
 | `className`    | string or string[] | Specify class name (if type **object** chosen) as single string or as string array |    |
 | `height`       | integer or string   | Height of the renderlet in pixel or 'auto'                               |             |
@@ -52,7 +52,7 @@ The code below shows how to use renderlet to create gallery based on it.
 <section id="renderlet-gallery">
     {{
         pimcore_renderlet('myGallery', {
-            "controller" : "AppBundle\\Controller\\ContentController::myGallery",
+            "controller" : "App\\Controller\\ContentController::myGallery",
             "title" : "Drag an asset folder here to get a gallery",
             "height" : 400
         })

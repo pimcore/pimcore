@@ -11,7 +11,7 @@ Note that you can provide a freely selectable string that will be added to the c
 ```
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Model\DataObject\Service;
 use Symfony\Component\HttpFoundation\Request;

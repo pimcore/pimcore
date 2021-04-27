@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -480,18 +481,24 @@ final class ElementController extends AdminController
         $type = $request->get('type');
         $data = [];
 
-        if ($type == 'asset') {
+        if ($type === 'asset') {
             $element = Asset::getById($id);
-        } elseif ($type == 'document') {
+        } elseif ($type === 'document') {
             $element = Document::getById($id);
-            $data['index'] = $element->getIndex();
         } else {
             $element = DataObject::getById($id);
-            $data['index'] = $element->getIndex();
         }
+
+        if (!$element) {
+            $data['success'] = false;
+
+            return $this->adminJson($data);
+        }
+
         $typePath = Element\Service::getTypePath($element);
 
         $data['success'] = true;
+        $data['index'] = method_exists($element, 'getIndex') ? (int) $element->getIndex() : 0;
         $data['idPath'] = Element\Service::getIdPath($element);
         $data['typePath'] = $typePath;
         $data['fullpath'] = $element->getRealFullPath();
@@ -583,7 +590,6 @@ final class ElementController extends AdminController
         return $this->adminJson(['success' => true, 'data' => $result]);
     }
 
-
     /**
      * @Route("/element/get-versions", name="pimcore_admin_element_getversions", methods={"GET"})
      *
@@ -614,14 +620,13 @@ final class ElementController extends AdminController
                     //only load auto-save versions from current user
                     $list = new Version\Listing();
                     $list->setLoadAutoSave(true);
-                    $list->setCondition("cid = ? AND ctype = ? AND (autoSave=0 OR (autoSave=1 AND userId = ?)) ",[
+                    $list->setCondition('cid = ? AND ctype = ? AND (autoSave=0 OR (autoSave=1 AND userId = ?)) ', [
                         $element->getId(),
                         Element\Service::getType($element),
-                        $this->getUser()->getId()
+                        $this->getUser()->getId(),
                     ])
                         ->setOrderKey('date')
                         ->setOrder('ASC');
-
 
                     $versions = $list->load();
 
@@ -656,7 +661,7 @@ final class ElementController extends AdminController
     public function deleteDraftAction(Request $request)
     {
         $version = Version::getById($request->get('id'));
-        if($version){
+        if ($version) {
             $version->delete();
         }
 

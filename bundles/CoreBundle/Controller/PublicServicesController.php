@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
@@ -58,7 +59,6 @@ final class PublicServicesController extends Controller
             try {
                 $imageThumbnail = null;
                 $thumbnailStream = null;
-                $thumbnailConfig = null;
 
                 // just check if the thumbnail exists -> throws exception otherwise
                 $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
@@ -156,6 +156,8 @@ final class PublicServicesController extends Controller
                     return new StreamedResponse(function () use ($thumbnailStream) {
                         fpassthru($thumbnailStream);
                     }, 200, $headers);
+                } else {
+                    throw new \Exception('Unable to generate thumbnail, see logs for details.');
                 }
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";

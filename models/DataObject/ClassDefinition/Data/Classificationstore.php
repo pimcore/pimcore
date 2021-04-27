@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -168,7 +167,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Classificationstore|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -587,9 +586,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function classSaved($class, $params = [])
     {
-        $clasificationStore = new DataObject\Classificationstore();
-        $clasificationStore->setClass($class);
-        $clasificationStore->createUpdateTable();
+        $classificationStore = new DataObject\Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->createUpdateTable();
     }
 
     /**
@@ -991,12 +990,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $activeGroups
      *
      * @return array|null
-     *
-     * @todo: Method returns void/null, should be boolean or null
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = [])
     {
@@ -1046,7 +1043,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
 
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
-        $groupList->setCondition('`id` in (?)', implode(',', $filteredGroupIds));
+        $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($filteredGroupIds), '?')) . ')', $filteredGroupIds);
+
         $groupList->setOrderKey(['id']);
         $groupList->setOrder(['ASC']);
 
@@ -1077,18 +1075,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $definition->__wakeup();
                 }
 
-                if ($definition) {
-                    $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
-                    if (method_exists($definition, 'enrichLayoutDefinition')) {
-                        $context['object'] = $object;
-                        $context['class'] = $object->getClass();
-                        $context['ownerType'] = 'classificationstore';
-                        $context['ownerName'] = $this->getName();
-                        $context['keyId'] = $keyGroupRelation->getKeyId();
-                        $context['groupId'] = $keyGroupRelation->getGroupId();
-                        $context['keyDefinition'] = $definition;
-                        $definition = $definition->enrichLayoutDefinition($object, $context);
-                    }
+                $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
+                if (method_exists($definition, 'enrichLayoutDefinition')) {
+                    $context['object'] = $object;
+                    $context['class'] = $object->getClass();
+                    $context['ownerType'] = 'classificationstore';
+                    $context['ownerName'] = $this->getName();
+                    $context['keyId'] = $keyGroupRelation->getKeyId();
+                    $context['groupId'] = $keyGroupRelation->getGroupId();
+                    $context['keyDefinition'] = $definition;
+                    $definition = $definition->enrichLayoutDefinition($object, $context);
                 }
 
                 $keyList[] = [
@@ -1112,7 +1108,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $collectionIds = array_values($groupCollectionMapping);
 
             $relation = new DataObject\Classificationstore\CollectionGroupRelation\Listing();
-            $relation->setCondition('`colId` IN (?)', implode(',', $collectionIds));
+            $relation->setCondition('`colId` in (' . implode(',', array_fill(0, count($collectionIds), '?')) . ')', $collectionIds);
 
             $sorting = [];
             foreach ($relation->load() as $item) {
@@ -1137,9 +1133,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $allowedGroupIds
-     *
-     * @todo: $parts is not definied here, should it be definied as empty array or null
+     * @param array|string $allowedGroupIds
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {

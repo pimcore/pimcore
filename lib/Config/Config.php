@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -121,7 +122,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * Only allow setting of a property if $allowModifications  was set to true
      * on construction. Otherwise, throw an exception.
      *
-     * @param  string $name
+     * @param  string|null $name
      * @param  mixed  $value
      *
      * @return void
@@ -176,7 +177,6 @@ class Config implements Countable, Iterator, ArrayAccess
         $array = [];
         $data = $this->data;
 
-        /** @var self $value */
         foreach ($data as $key => $value) {
             if ($value instanceof self) {
                 $array[$key] = $value->toArray();

@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -94,7 +93,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param Asset $data
+     * @param Asset|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -211,10 +210,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof Asset\Image) {
             if (!array_key_exists($data->getCacheTag(), $tags)) {
                 $tags = $data->getCacheTags($tags);

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -28,13 +28,18 @@ pimcore.object.preview = Class.create({
 
             this.frameId = 'object_preview_iframe_' + this.object.id;
 
+            let toolbar = [];
+            if(this.object.data.general.previewConfig) {
+                let paramPanel = this.getParamsPanel();
+                toolbar.push(paramPanel);
+            }
             this.layout = Ext.create('Ext.panel.Panel', {
                 title: t('preview'),
                 border: false,
-                autoScroll: true,
+                autoScroll: false,
                 closable: false,
                 iconCls: "pimcore_material_icon_devices pimcore_material_icon",
-                bodyCls: "pimcore_overflow_scrolling",
+                tbar: toolbar,
                 html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
                     + '" frameborder="0" id="' + this.frameId + '"></iframe>'
             });
@@ -73,8 +78,21 @@ pimcore.object.preview = Class.create({
     },
 
     loadCurrentPreview: function () {
+
+        let params = {};
+        if(this.paramSelects && this.paramSelects.length) {
+            for(let i = 0; i < this.paramSelects.length; i++) {
+                if(this.paramSelects[i].getValue()) {
+                    params[this.paramSelects[i].name] = this.paramSelects[i].getValue();
+                }
+            }
+        }
+
         var date = new Date();
-        var url = Routing.generate('pimcore_admin_dataobject_dataobject_preview', {id: this.object.data.general.o_id, time: date.getTime()});
+        params['id'] = this.object.data.general.o_id;
+        params['_dc'] = date.getTime();
+
+        var url = Routing.generate('pimcore_admin_dataobject_dataobject_preview', params);
 
         try {
             Ext.get(this.frameId).dom.src = url;
@@ -92,5 +110,43 @@ pimcore.object.preview = Class.create({
                 this.preview.loadCurrentPreview();
             }
         }.bind(this.object));
+    },
+
+    getParamsPanel: function() {
+
+        var that = this;
+        this.paramSelects = [];
+
+        let params = this.object.data.general.previewConfig;
+        for(let i=0; i<params.length; i++) {
+            let selectOptions = Object.entries(params[i].values);
+            selectOptions.forEach(el => el.reverse());
+
+            let paramSelect = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: params[i].label ? params[i].label : params[i].name,
+                name: params[i].name,
+                store: selectOptions,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'abbr',
+                margin: "10 10 10 10",
+                labelWidth: '',
+                listeners: {
+                    select: function(combo, records, eOpts) {
+                        that.loadCurrentPreview();
+                    }
+                },
+            });
+
+            this.paramSelects.push(paramSelect);
+        }
+
+        return Ext.create('Ext.panel.Panel', {
+            layout: {
+                type: 'hbox',
+                align: 'stretch',
+            },
+            items: this.paramSelects,
+        });
     }
 });

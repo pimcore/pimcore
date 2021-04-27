@@ -112,12 +112,14 @@
     "phpstan/phpstan": "^0.12.56",
     "phpstan/phpstan-symfony": "^0.12.11",
     "phpunit/phpunit": "^9",
+    "spiritix/php-chrome-html2pdf": "^1.5",
     "elasticsearch/elasticsearch": "^7.11",
     "composer/composer": "*"
   },
   "suggest": {
     "ext-imagick": "^3.4.0",
     "ext-redis": "*",
+    "spiritix/php-chrome-html2pdf": "Required for the Headless Chrome Web2Print Extension",
     "elasticsearch/elasticsearch": "Required for Elastic Search service"
   },
   "autoload": {

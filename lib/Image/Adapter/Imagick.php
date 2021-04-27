@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Image\Adapter;
@@ -46,7 +47,7 @@ class Imagick extends Adapter
      * @param string $imagePath
      * @param array $options
      *
-     * @return $this|bool|self
+     * @return self|false
      */
     public function load($imagePath, $options = [])
     {
@@ -766,7 +767,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param string $image
+     * @param string|\Imagick|null $image
      * @param int $x Amount of horizontal pixels the overlay should be offset from the origin
      * @param int $y Amount of vertical pixels the overlay should be offset from the origin
      * @param int $alpha Opacity in a scale of 0 (transparent) to 100 (opaque)
@@ -803,14 +804,14 @@ class Imagick extends Adapter
         }
 
         if ($newImage) {
-            if ($origin == 'top-right') {
+            if ($origin === 'top-right') {
                 $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
-            } elseif ($origin == 'bottom-left') {
+            } elseif ($origin === 'bottom-left') {
                 $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin == 'bottom-right') {
+            } elseif ($origin === 'bottom-right') {
                 $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
                 $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin == 'center') {
+            } elseif ($origin === 'center') {
                 $x = round($this->resource->getImageWidth() / 2) - round($newImage->getImageWidth() / 2) + $x;
                 $y = round($this->resource->getImageHeight() / 2) - round($newImage->getImageHeight() / 2) + $y;
             }

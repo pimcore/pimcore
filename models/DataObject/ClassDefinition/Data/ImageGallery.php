@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -205,7 +204,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\ImageGallery $data
+     * @param DataObject\Data\ImageGallery|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -352,7 +351,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param DataObject\Data\ImageGallery $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -370,9 +369,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             }
         }
 
-        $result = new DataObject\Data\ImageGallery($resultItems);
-
-        return $result;
+        return new DataObject\Data\ImageGallery($resultItems);
     }
 
     /**
@@ -429,10 +426,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof DataObject\Data\ImageGallery) {
             $fd = new Hotspotimage();
             foreach ($data as $item) {

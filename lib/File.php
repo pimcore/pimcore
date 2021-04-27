@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore;
@@ -121,7 +122,7 @@ class File
      * @param string $path
      * @param mixed $data
      *
-     * @return int
+     * @return int|false
      */
     public static function put($path, $data)
     {
@@ -137,15 +138,19 @@ class File
 
     /**
      * @param string $path
-     * @param mixed $data
+     * @param string $data
+     *
+     * @return int|false
      */
     public static function putPhpFile($path, $data)
     {
-        self::put($path, $data);
+        $return = self::put($path, $data);
 
         if (function_exists('opcache_reset')) {
             opcache_reset();
         }
+
+        return $return;
     }
 
     /**

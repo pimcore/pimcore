@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
@@ -44,7 +45,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class OrderAgent implements OrderAgentInterface
 {
-    const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
+    public const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
     /**
      * @var AbstractOrder
@@ -62,7 +63,7 @@ class OrderAgent implements OrderAgentInterface
     protected $paymentManager;
 
     /**
-     * @var PaymentInterface
+     * @var PaymentInterface|null
      */
     protected $paymentProvider;
 
@@ -72,7 +73,7 @@ class OrderAgent implements OrderAgentInterface
     protected $eventDispatcher;
 
     /**
-     * @var Note[]
+     * @var Note[]|null
      */
     protected $fullChangeLog;
 

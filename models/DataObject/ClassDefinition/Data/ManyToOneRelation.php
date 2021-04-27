@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -238,10 +237,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    protected function loadData($data, $object = null, $params = [])
+    protected function loadData(array $data, $object = null, $params = [])
     {
         // data from relation table
-        $data = is_array($data) ? $data : [];
         $data = current($data);
 
         $result = [
@@ -608,8 +606,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\ElementInterface $value1
-     * @param Element\ElementInterface $value2
+     * @param Element\ElementInterface|null $value1
+     * @param Element\ElementInterface|null $value2
      *
      * @return bool
      */
@@ -618,7 +616,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $value1 = $value1 ? $value1->getType() . $value1->getId() : null;
         $value2 = $value2 ? $value2->getType() . $value2->getId() : null;
 
-        return $value1 == $value2;
+        return $value1 === $value2;
     }
 
     /**

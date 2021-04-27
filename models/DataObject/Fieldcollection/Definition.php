@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Fieldcollection
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
@@ -30,7 +28,7 @@ use Pimcore\Model\DataObject;
 class Definition extends Model\AbstractModel
 {
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
-
+    use DataObject\Traits\LocateFileTrait;
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
@@ -89,8 +87,9 @@ class Definition extends Model\AbstractModel
                 throw new \Exception('FieldCollection in registry is not valid');
             }
         } catch (\Exception $e) {
-            $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
-            $fieldFile = $fieldCollectionFolder . '/' . $key . '.php';
+            $def = new Definition();
+            $def->setKey($key);
+            $fieldFile = $def->getDefinitionFile();
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
@@ -151,6 +150,13 @@ class Definition extends Model\AbstractModel
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
+        $existingDefinition = Definition::getByKey($this->getKey());
+        $isUpdate = $existingDefinition != null;
+
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception('fieldcollection updates in config folder not allowed');
+        }
+
         $infoDocBlock = $this->getInfoDocBlock();
 
         $definitionFile = $this->getDefinitionFile();
@@ -255,15 +261,23 @@ class Definition extends Model\AbstractModel
         }
     }
 
+    public function isWritable(): bool
+    {
+        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+    }
+
     /**
+     * @param string|null $key
+     *
      * @return string
      */
-    protected function getDefinitionFile()
+    public function getDefinitionFile($key = null)
     {
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
-        $definitionFile = $fieldClassFolder . '/' . $this->getKey() . '.php';
-
-        return $definitionFile;
+        return $this->locateFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
 
     /**
@@ -271,10 +285,7 @@ class Definition extends Model\AbstractModel
      */
     protected function getPhpClassFile()
     {
-        $classFolder = PIMCORE_CLASS_DIRECTORY . '/DataObject/Fieldcollection/Data';
-        $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
-
-        return $classFile;
+        return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Fieldcollection/Data/%s.php');
     }
 
     /**

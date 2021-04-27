@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
@@ -33,7 +31,7 @@ class Hardlink extends Document
      *
      * @var string
      */
-    protected $type = 'hardlink';
+    protected string $type = 'hardlink';
 
     /**
      * @var int
@@ -53,7 +51,7 @@ class Hardlink extends Document
     /**
      * @return Document|null
      */
-    public function getSourceDocument()
+    public function getSourceDocument(): ?Document
     {
         if ($this->getSourceId()) {
             return Document::getById($this->getSourceId());
@@ -91,10 +89,8 @@ class Hardlink extends Document
      *
      * @return array
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
         if ($this->getSourceDocument()) {

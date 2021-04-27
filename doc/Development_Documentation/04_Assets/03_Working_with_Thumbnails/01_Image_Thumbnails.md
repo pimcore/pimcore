@@ -152,8 +152,8 @@ $thumbnail = $asset->getThumbnail("myThumbnail");
 $width = $thumbnail->getWidth();
 $height = $thumbnail->getHeight();
  
-// get the html "img" tag for the thumbnail incl. custom class:
-echo $thumbnail->getHtml(["class" => "custom-class"]);
+// get the html "<picture>" tag for the thumbnail incl. custom class on the containing `<img>` tag:
+echo $thumbnail->getHtml(['imgAttributes' => ["class" => "custom-class"]]);
  
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
@@ -199,7 +199,9 @@ $thumbnail->getHtml([
     'height': 180,
     'cover': true,
 }).html({
-    'class': 'thumbnail-class',
+    'imgAttributes': {
+        'class': 'thumbnail-class',
+    },
     'data-my-name': 'my value',
     'attributes': {
         'non-standard': 'HTML attributes',
@@ -209,7 +211,9 @@ $thumbnail->getHtml([
   
 /* same with a thumbnail definition */
 {{ image.thumbnail('exampleScaleWidth').html({
-    'class': 'thumbnail-class',
+    'pictureAttributes': {
+        'class': 'thumbnail-class',
+    },
     'data-my-name': 'my value',
 }) }}
   
@@ -233,7 +237,7 @@ Due licensing issues Pimcore doesn't include the color profiles (*.icc files) in
 you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075) 
 or here: [ICC (color.org)](http://www.color.org/profiles.xalter). 
 
-After downloading the profiles put them into your `/website` folder or anywhere else on your sever 
+After downloading the profiles put them into your project folder or anywhere else on your sever 
 (eg. `/usr/share/color/icc`). Then go to the Pimcore system settings, open the assets section and configure the 
 path to your favorite color profile.
 

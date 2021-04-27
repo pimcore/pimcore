@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Version
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -60,9 +58,9 @@ class Version extends AbstractModel
     protected $userId;
 
     /**
-     * @var User
+     * @var User|null
      */
-    protected $user;
+    protected ?User $user = null;
 
     /**
      * @var string
@@ -604,19 +602,19 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getUser()
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      *
      * @return $this
      */
-    public function setUser($user)
+    public function setUser(?User $user)
     {
         $this->user = $user;
 
@@ -745,6 +743,7 @@ class Version extends AbstractModel
     public function setAutoSave(bool $autoSave): self
     {
         $this->autoSave = $autoSave;
+
         return $this;
     }
 }

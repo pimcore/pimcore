@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -129,7 +128,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -336,7 +335,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param null|Model\DataObject\Data\UrlSlug[] $data
+     * @param mixed $data
      * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Localizedfield $object
      * @param array $params
      *
@@ -357,8 +356,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         if (is_array($data) && count($data) > 0) {
-
-            /** @var Model\DataObject\Data\UrlSlug $slugItem */
             foreach ($data as $slugItem) {
                 if ($slugItem instanceof Model\DataObject\Data\UrlSlug) {
                     $return[] = [
@@ -655,9 +652,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $data = $params['data'];
         } elseif ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
             if ($this->getLazyLoading() && $object->getObject()) {
-                /** @var Model\DataObject\Fieldcollection $container */
                 $container = $object->getObject()->getObjectVar($object->getFieldname());
-                if ($container) {
+                if ($container instanceof Model\DataObject\Fieldcollection) {
                     $container->loadLazyField($object->getObject(), $object->getType(), $object->getFieldname(), $object->getIndex(), $this->getName());
                 } else {
                     // if container is not available we assume that it is a newly set item
@@ -669,9 +665,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         } elseif ($object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
             if ($this->getLazyLoading() && $object->getObject()) {
                 $brickGetter = 'get' . ucfirst($object->getFieldname());
-                /** @var Model\DataObject\Objectbrick $container */
                 $container = $object->getObject()->$brickGetter();
-                if ($container) {
+                if ($container instanceof Model\DataObject\Objectbrick) {
                     $container->loadLazyField($object->getType(), $object->getFieldname(), $this->getName());
                 } else {
                     $object->markLazyKeyAsLoaded($this->getName());

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -119,19 +117,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     protected $o_modificationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $o_userOwner;
+    protected ?int $o_userOwner = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $o_userModification;
+    protected ?int $o_userModification = null;
 
     /**
-     * @var array
+     * @var array|null
      */
-    protected $o_properties = null;
+    protected ?array $o_properties = null;
 
     /**
      * @var bool[]
@@ -960,7 +958,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -1142,7 +1140,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return self
+     * @return self|null
      */
     public function getParent()
     {
@@ -1154,7 +1152,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param self $o_parent
+     * @param self|null $o_parent
      *
      * @return $this
      */

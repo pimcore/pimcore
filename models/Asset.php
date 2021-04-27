@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -70,7 +68,7 @@ class Asset extends Element\AbstractElement
     protected $parentId;
 
     /**
-     * @var Asset|null
+     * @var self|null
      */
     protected $parent;
 
@@ -124,16 +122,16 @@ class Asset extends Element\AbstractElement
     /**
      * ID of the owner user
      *
-     * @var int
+     * @var int|null
      */
-    protected $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * ID of the user who make the latest changes
      *
-     * @var int
+     * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification = null;
 
     /**
      * List of properties
@@ -809,7 +807,7 @@ class Asset extends Element\AbstractElement
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
             $assetsConfig = \Pimcore\Config::getSystemConfiguration('assets');
-            if ((is_null($assetsConfig['versions']['days']) && is_null($assetsConfig['versions']['steps']))
+            if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
                 || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
@@ -1273,7 +1271,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return resource
+     * @return resource|null
      */
     public function getStream()
     {
@@ -1414,7 +1412,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -1551,7 +1549,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $customSettings
+     * @param mixed $customSettings
      *
      * @return $this
      */
@@ -1845,7 +1843,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return Asset
+     * @return self|null
      */
     public function getParent()
     {

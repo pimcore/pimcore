@@ -1,7 +1,7 @@
 # Configuration
 
 The E-Commerce Framework is implemented as semantic bundle configuration which means that you can configure the framework
-in any of the loaded config files (e.g. `app/config/config.yml` or `src/AppBundle/Resources/config/pimcore/config.yml`) by
+in any of the loaded config files (e.g. `/config/config.yaml` or `*Bundle/Resources/config/pimcore/config.yml`) by
 adding configuration to the `pimcore_ecommerce_framework` node.
 
 The configuration is built upon the [Symfony Config Component](https://symfony.com/doc/3.4/components/config.html) and

@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -443,7 +442,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $context additional contextual data
      *
      * @return self
@@ -521,7 +520,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string $value
+     * @param string|array $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -534,7 +533,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
         if ($operator === '=') {
             return '`'.$name.'` = '."\"$value\"".' ';
-        } elseif ($operator === 'LIKE') {
+        }
+        if ($operator === 'LIKE') {
             return '`'.$name.'` LIKE '."\"%$value%\"".' ';
         }
 
@@ -554,7 +554,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     protected function doGetDefaultValue($object, $context = [])
     {
-        /** @var DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface $optionsProvider */
+        /** @var DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface|null $optionsProvider */
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT

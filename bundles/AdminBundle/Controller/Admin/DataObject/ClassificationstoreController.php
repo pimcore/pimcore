@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -178,7 +179,6 @@ final class ClassificationstoreController extends AdminController implements Ker
     {
         $name = $request->get('name');
         $storeId = $request->get('storeId');
-        $alreadyExist = false;
         $config = Classificationstore\CollectionConfig::getByName($name, $storeId);
 
         if (!$config) {
@@ -188,7 +188,7 @@ final class ClassificationstoreController extends AdminController implements Ker
             $config->save();
         }
 
-        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
+        return $this->adminJson(['success' => true, 'id' => $config->getName()]);
     }
 
     /**
@@ -974,7 +974,7 @@ final class ClassificationstoreController extends AdminController implements Ker
 
             foreach ($groupsData as $groupItem) {
                 $groupId = $groupItem['groupId'];
-                if (!$allowedGroupIds || ($allowedGroupIds && in_array($groupId, $allowedGroupIds))) {
+                if (!$allowedGroupIds || in_array($groupId, $allowedGroupIds)) {
                     $groupIdList[] = $groupId;
                 }
             }
@@ -1158,9 +1158,7 @@ final class ClassificationstoreController extends AdminController implements Ker
                             $keyIds[] = $keyEntry->getKeyId();
                         }
 
-                        if ($keyIds) {
-                            $keyCriteria = ' id in (' . implode(',', $keyIds) . ')';
-                        }
+                        $keyCriteria = ' id in (' . implode(',', $keyIds) . ')';
                     }
                 }
             }
@@ -1350,27 +1348,24 @@ final class ClassificationstoreController extends AdminController implements Ker
     public function addPropertyAction(Request $request)
     {
         $name = $request->get('name');
-        $alreadyExist = false;
         $storeId = $request->get('storeId');
 
-        if (!$alreadyExist) {
-            $definition = [
-                'fieldtype' => 'input',
-                'name' => $name,
-                'title' => $name,
-                'datatype' => 'data',
-            ];
-            $config = new Classificationstore\KeyConfig();
-            $config->setName($name);
-            $config->setTitle($name);
-            $config->setType('input');
-            $config->setStoreId($storeId);
-            $config->setEnabled(1);
-            $config->setDefinition(json_encode($definition));
-            $config->save();
-        }
+        $definition = [
+            'fieldtype' => 'input',
+            'name' => $name,
+            'title' => $name,
+            'datatype' => 'data',
+        ];
+        $config = new Classificationstore\KeyConfig();
+        $config->setName($name);
+        $config->setTitle($name);
+        $config->setType('input');
+        $config->setStoreId($storeId);
+        $config->setEnabled(1);
+        $config->setDefinition(json_encode($definition));
+        $config->save();
 
-        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
+        return $this->adminJson(['success' => true, 'id' => $config->getName()]);
     }
 
     /**

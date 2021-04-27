@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -66,7 +67,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User $user
+     * @param User|User\Folder $user
      *
      * @return array
      */
@@ -675,7 +676,7 @@ final class UserController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @param User\Role $role
+     * @param User\Role|User\Role\Folder $role
      *
      * @return array
      */
@@ -727,14 +728,17 @@ final class UserController extends AdminController implements KernelControllerEv
         $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
             $workspaces = $role->{'getWorkspaces' . ucfirst($type)}();
-            foreach ($workspaces as $workspace) {
+            foreach ($workspaces as $wKey => $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getRealFullPath();
+                    $workspaces[$wKey] = $workspace->getObjectVars();
                 }
             }
+            $role->{'setWorkspaces' . ucfirst($type)}($workspaces);
         }
+
 
         $replaceFn = function ($value) {
             return $value->getObjectVars();
@@ -928,7 +932,6 @@ final class UserController extends AdminController implements KernelControllerEv
      */
     public function getTokenLoginLinkAction(Request $request)
     {
-        /** @var User $user */
         $user = User::getById($request->get('id'));
 
         if (!$user) {
@@ -1143,7 +1146,6 @@ final class UserController extends AdminController implements KernelControllerEv
         $message = '';
 
         if ($username = $request->get('username')) {
-            /** @var User $user */
             $user = User::getByName($username);
             if ($user instanceof User) {
                 if (!$user->isActive()) {

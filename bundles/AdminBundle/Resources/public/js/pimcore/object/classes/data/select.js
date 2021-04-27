@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -97,9 +97,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                         value: ""
                     };
 
-                    var selectedRow = this.selectionModel.getSelected();
+                    let selection = this.selectionModel.getSelection();
                     var idx;
-                    if (selectedRow) {
+                    if (selection.length > 0) {
+                        let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
                         idx = valueStore.getCount();

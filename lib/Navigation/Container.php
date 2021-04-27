@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -493,7 +494,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $pages = [];
 
@@ -519,14 +520,13 @@ class Container implements \RecursiveIterator, \Countable
     public function current()
     {
         $this->_sort();
-        current($this->_index);
         $hash = key($this->_index);
 
         if (isset($this->_pages[$hash])) {
             return $this->_pages[$hash];
-        } else {
-            throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
         }
+
+        throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
     }
 
     /**

@@ -12,12 +12,12 @@ In the first part you'll learn the basics for creating CMS pages with Pimcore Do
 ### New Controller
 First of all, we need a controller. 
 Let's call it `ContentController.php`. 
-You have to put the file into the `/src/AppBundle/Controller` directory.
+You have to put the file into the `/src/Controller` directory.
 
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,8 +37,8 @@ don't need any custom code in our controller, so the action stays empty for the 
 
 ### Create a Template
 Now we create a template for our page:
-* Create a new folder in `/app/Resources/views` and name it like the controller (in this case `Content`). 
-* Put a new PHP template into this folder and name it like our action in lowercase (`default.html.php`).
+* Create a new folder in `/templates` and name it like the controller (snake_case) (in this case `content`). 
+* Put a new Twig template into this folder and name it like our action in snake_case (`default.html.twig`).
 
 Then we can put some template code into it, for example:
 ```twig
@@ -70,7 +70,7 @@ to wrap our content page with another template which contains the main navigatio
 ```
 We tell the engine that we want to use the layout `layout.html.twig`. 
   
-Now create a new Twig template in the folder `/app/Resources/views` and name it `layout.html.twig`.
+Now create a new Twig template in the folder `/templates` and name it `layout.html.twig`.
 Then we can also put some HTML and template code into it:
 
 ```twig
@@ -207,7 +207,7 @@ Therefore create another action in the controller (ContentController) called `pr
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
@@ -230,7 +230,7 @@ class ContentController extends FrontendController
 }
 ```
 
-Then we also need a new template for our product action: `app/Resources/views/content/product.html.twig` 
+Then we also need a new template for our product action: `templates/content/product.html.twig` 
 
 ```twig
 {% extends 'layout.html.twig' %}
@@ -272,7 +272,7 @@ Go to the product page. In my case, let's say `http://pimcore.local/tshirt` wher
 
 We haven't implemented frontend features yet, therefore the page doesn't contain any product information.
 
-Add a few lines in the template file (`app/Resources/views/content/product.html.php`):
+Add a few lines in the template file (`templates/content/product.html.twig`):
 
 ```twig
 {% extends 'layout.html.twig' %}

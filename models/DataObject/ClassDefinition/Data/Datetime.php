@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -139,7 +138,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataForEditmode
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -202,7 +201,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
@@ -220,7 +219,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getVersionPreview
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *

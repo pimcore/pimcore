@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool;
@@ -48,14 +46,14 @@ class SettingsStore extends Model\AbstractModel
     protected $data;
 
     /**
-     * @var SettingsStore
+     * @var self|null
      */
-    protected static $instance;
+    protected static ?self $instance = null;
 
     /**
-     * @return SettingsStore
+     * @return self
      */
-    protected static function getInstance()
+    protected static function getInstance(): self
     {
         if (!self::$instance) {
             self::$instance = new self();

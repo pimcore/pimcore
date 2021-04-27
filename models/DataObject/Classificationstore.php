@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -37,14 +35,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     protected $items = [];
 
     /**
-     * @var Model\DataObject\Concrete
+     * @var Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object = null;
 
     /**
-     * @var Model\DataObject\ClassDefinition
+     * @var ClassDefinition|null
      */
-    protected $class;
+    protected ?ClassDefinition $class = null;
 
     /** @var string */
     protected $fieldname;
@@ -53,7 +51,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     protected $activeGroups = [];
 
     /** @var array */
-    protected $groupCollectionMapping;
+    protected $groupCollectionMapping = [];
 
     /**
      * @param array $items
@@ -101,11 +99,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(Concrete $object)
     {
-        if (!$object instanceof Concrete) {
-            throw new \Exception('not instance of Concrete');
-        }
         if ($this->object) {
             if ($this->object->getId() != $object->getId()) {
                 $this->markFieldDirty('_self');
@@ -117,15 +112,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @return Concrete
+     * @return Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?Concrete
     {
         return $this->object;
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition $class
+     * @param ClassDefinition|null $class
      *
      * @return $this
      */
@@ -137,9 +132,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @return Model\DataObject\ClassDefinition
+     * @return Model\DataObject\ClassDefinition|null
      */
-    public function getClass()
+    public function getClass(): ?ClassDefinition
     {
         if (!$this->class && $this->getObject()) {
             $this->class = $this->getObject()->getClass();
@@ -321,7 +316,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             if (
                 array_key_exists($groupId, $this->items)
                 && array_key_exists($keyId, $this->items[$groupId])
-                && array_key_exists($l, $this->items[$groupId][$keyId])) {
+                && array_key_exists($l, $this->items[$groupId][$keyId])
+            ) {
                 $data = $this->items[$groupId][$keyId][$l];
                 if (!$fielddefinition->isEmpty($data)) {
                     return $data;
@@ -412,7 +408,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             }
         }
 
-        if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
+        if (method_exists($fieldDefinition, 'preGetData')) {
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,
@@ -434,7 +430,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @return array
      */
-    public function getGroupCollectionMappings()
+    public function getGroupCollectionMappings(): array
     {
         return $this->groupCollectionMapping;
     }
@@ -442,18 +438,18 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @param array $groupCollectionMapping
      */
-    public function setGroupCollectionMappings($groupCollectionMapping)
+    public function setGroupCollectionMappings(array $groupCollectionMapping): void
     {
         $this->groupCollectionMapping = $groupCollectionMapping;
     }
 
     /**
-     * @param int $groupId
-     * @param int $collectionId
+     * @param int|null $groupId
+     * @param int|null $collectionId
      */
-    public function setGroupCollectionMapping($groupId = null, $collectionId = null)
+    public function setGroupCollectionMapping($groupId = null, $collectionId = null): void
     {
-        if (!is_array($this->groupCollectionMapping) && $groupId) {
+        if ($groupId && $collectionId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;
         }
     }
@@ -465,11 +461,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroupCollectionMapping($groupId)
     {
-        if ($this->groupCollectionMapping) {
-            return $this->groupCollectionMapping[$groupId];
-        }
-
-        return null;
+        return $this->groupCollectionMapping[$groupId] ?? null;
     }
 
     /**
