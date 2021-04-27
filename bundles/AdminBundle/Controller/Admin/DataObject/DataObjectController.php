@@ -159,10 +159,7 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                     }
 
                     $cvConditions[] = "objects.o_type = 'folder'";
-
-                    if (count($cvConditions) > 0) {
-                        $condition .= ' AND (' . implode(' OR ', $cvConditions) . ')';
-                    }
+                    $condition .= ' AND (' . implode(' OR ', $cvConditions) . ')';
                 }
             }
             // custom views end
@@ -989,7 +986,6 @@ final class DataObjectController extends ElementControllerBase implements Kernel
     public function updateAction(Request $request)
     {
         $success = false;
-        $allowUpdate = true;
 
         $object = DataObject::getById($request->get('id'));
         if ($object instanceof DataObject\Concrete) {
@@ -1026,8 +1022,6 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                     $objectWithSamePath = DataObject::getByPath($parent->getRealFullPath() . '/' . $object->getKey());
 
                     if ($objectWithSamePath != null) {
-                        $allowUpdate = false;
-
                         return $this->adminJson(['success' => false, 'message' => 'prevented creating object because object with same path+key already exists']);
                     }
 
@@ -1043,32 +1037,28 @@ final class DataObjectController extends ElementControllerBase implements Kernel
                 $object->setLocked($values['locked']);
             }
 
-            if ($allowUpdate) {
-                $object->setModificationDate(time());
-                $object->setUserModification($this->getAdminUser()->getId());
+            $object->setModificationDate(time());
+            $object->setUserModification($this->getAdminUser()->getId());
 
-                try {
-                    $isIndexUpdate = isset($values['index']) && is_int($values['index']);
+            try {
+                $isIndexUpdate = isset($values['index']) && is_int($values['index']);
 
-                    if ($isIndexUpdate) {
-                        // Ensure the update sort index is already available in the postUpdate eventListener
-                        $object->setIndex($values['index']);
-                    }
-
-                    $object->save();
-
-                    if ($isIndexUpdate) {
-                        $this->updateIndexesOfObjectSiblings($object, $values['index']);
-                    }
-
-                    $success = true;
-                } catch (\Exception $e) {
-                    Logger::error($e);
-
-                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                if ($isIndexUpdate) {
+                    // Ensure the update sort index is already available in the postUpdate eventListener
+                    $object->setIndex($values['index']);
                 }
-            } else {
-                Logger::debug('prevented move of object, object with same path+key already exists in this location.');
+
+                $object->save();
+
+                if ($isIndexUpdate) {
+                    $this->updateIndexesOfObjectSiblings($object, $values['index']);
+                }
+
+                $success = true;
+            } catch (\Exception $e) {
+                Logger::error($e);
+
+                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
         } elseif ($object->isAllowed('rename') && $values['key']) {
             //just rename

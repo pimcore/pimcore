@@ -72,11 +72,7 @@ final class StringContains extends AbstractOperator
                 $newChildsResult[] = $newValue;
             }
 
-            if (count($childs) > 0) {
-                $result->value = $newChildsResult;
-            } else {
-                $result->value = $newChildsResult[0];
-            }
+            $result->value = $newChildsResult;
         }
 
         return $result;

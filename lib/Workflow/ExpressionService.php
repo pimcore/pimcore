@@ -76,7 +76,7 @@ class ExpressionService
     {
         $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
 
-        $roles = $token ? $token->getRoleNames() : [];
+        $roles = $token->getRoleNames();
         if (null !== $this->roleHierarchy) {
             $roles = $this->roleHierarchy->getReachableRoleNames($roles);
         }

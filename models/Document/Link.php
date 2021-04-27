@@ -53,28 +53,28 @@ class Link extends Model\Document
      *
      * @var string
      */
-    protected $direct = '';
+    protected string $direct = '';
 
     /**
      * Type of the link (internal/direct)
      *
      * @var string
      */
-    protected $linktype = 'internal';
+    protected string $linktype = 'internal';
 
     /**
      * static type of this object
      *
      * @var string
      */
-    protected $type = 'link';
+    protected string $type = 'link';
 
     /**
      * path of the link
      *
      * @var string
      */
-    protected $href = '';
+    protected string $href = '';
 
     /**
      * @return array
@@ -106,13 +106,11 @@ class Link extends Model\Document
      *
      * @return array
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
-        if ($this->getLinktype() == 'internal') {
+        if ($this->getLinktype() === 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 if ($this->getObject()->getId() != $this->getId() and !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
                     $tags = $this->getObject()->getCacheTags($tags);
@@ -297,10 +295,9 @@ class Link extends Model\Document
     {
         if ($this->object instanceof Document || $this->object instanceof Asset || $this->object instanceof Model\DataObject\Concrete) {
             return $this->object;
-        } else {
-            if ($this->setObjectFromId()) {
-                return $this->object;
-            }
+        }
+        if ($this->setObjectFromId()) {
+            return $this->object;
         }
 
         return null;
@@ -319,7 +316,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return Asset|Document|Model\DataObject\Concrete
+     * @return Asset|Document|Model\DataObject\Concrete|null
      */
     public function setObjectFromId()
     {

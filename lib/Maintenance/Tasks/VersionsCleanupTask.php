@@ -97,12 +97,10 @@ final class VersionsCleanupTask implements TaskInterface
                 $value = (int)$tConf['days'];
             }
 
-            if ($versioningType) {
-                $elementTypes[] = [
-                    'elementType' => $elementType,
-                    $versioningType => $value,
-                ];
-            }
+            $elementTypes[] = [
+                'elementType' => $elementType,
+                $versioningType => $value,
+            ];
         }
 
         $list = new Version\Listing();

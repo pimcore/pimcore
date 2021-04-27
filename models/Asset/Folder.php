@@ -40,7 +40,7 @@ class Folder extends Model\Asset
     /**
      * Indicator if there are children
      *
-     * @var bool
+     * @var bool|null
      */
     protected $hasChildren;
 
@@ -86,11 +86,11 @@ class Folder extends Model\Asset
     public function hasChildren()
     {
         if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren and empty($this->children)) or (!$this->hasChildren and !empty($this->children))) {
+            if (($this->hasChildren && empty($this->children)) || (!$this->hasChildren && !empty($this->children))) {
                 return $this->getDao()->hasChildren();
-            } else {
-                return $this->hasChildren;
             }
+
+            return $this->hasChildren;
         }
 
         return $this->getDao()->hasChildren();

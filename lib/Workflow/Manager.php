@@ -325,9 +325,7 @@ class Manager
      */
     public function getTransitionByName(string $workflowName, string $transitionName): ?\Symfony\Component\Workflow\Transition
     {
-        if (!$workflow = $this->getWorkflowByName($workflowName)) {
-            throw new \Exception(sprintf('workflow %s not found', $workflowName));
-        }
+        $workflow = $this->getWorkflowByName($workflowName);
 
         foreach ($workflow->getDefinition()->getTransitions() as $transition) {
             if ($transition->getName() === $transitionName) {
@@ -345,7 +343,8 @@ class Manager
      * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
      * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
      *
-     * @param Asset|Concrete|PageSnippet $subject
+     * @param string $workflowName
+     * @param object $subject
      *
      * @return bool true if initial state was applied
      *
@@ -393,17 +392,8 @@ class Manager
 
     public function getInitialPlacesForWorkflow(Workflow $workflow): array
     {
-        $initialPlaces = [];
         $definition = $workflow->getDefinition();
 
-        if (method_exists($definition, 'getInitialPlaces')) {
-            // Symfony >= 4.3
-            $initialPlaces = $definition->getInitialPlaces();
-        } elseif (method_exists($definition, 'getInitialPlace')) {
-            // Symfony < 4.3
-            $initialPlaces = [$definition->getInitialPlace()];
-        }
-
-        return $initialPlaces;
+        return $definition->getInitialPlaces();
     }
 }

@@ -359,7 +359,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @param string $message
      * @param \Throwable $exceptionObject
-     * @param string $priority
+     * @param string|null $priority
      * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param string|null $component
      */

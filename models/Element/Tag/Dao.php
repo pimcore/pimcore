@@ -74,7 +74,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
-                $this->model->setId($lastInsertId);
+                $this->model->setId((int) $lastInsertId);
             }
 
             //check for id-path and update it, if path has changed -> update all other tags that have idPath == idPath/id

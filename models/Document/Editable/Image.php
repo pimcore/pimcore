@@ -518,14 +518,10 @@ class Image extends Model\Document\Editable
      * @param Model\Document\PageSnippet $ownerDocument
      * @param array $tags
      *
-     * @return array|mixed
-     *
-     * @internal param array $blockedTags
+     * @return array
      */
-    public function getCacheTags($ownerDocument, $tags = [])
+    public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $image = $this->getImage();
 
         if ($image instanceof Asset) {

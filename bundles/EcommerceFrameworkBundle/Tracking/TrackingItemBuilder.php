@@ -174,7 +174,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
         }
 
         foreach ($cart->getItems() as $cartItem) {
-            /** @var ProductInterface $product */
+            /** @var ProductInterface|null $product */
             $product = $cartItem->getProduct();
             if (!$product) {
                 continue;
@@ -242,7 +242,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     protected function getProductCategories(ProductInterface $product, $first = false)
     {
         $categories = [];
-        if ($product && method_exists($product, 'getCategories')) {
+        if (method_exists($product, 'getCategories')) {
             if ($product->getCategories()) {
                 foreach ($product->getCategories() as $category) {
                     if ($category && method_exists($category, 'getName')) {
@@ -269,9 +269,9 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     protected function getProductBrand(ProductInterface $product)
     {
         $brandName = null;
-        if ($product && method_exists($product, 'getBrand')) {
+        if (method_exists($product, 'getBrand')) {
             if ($brand = $product->getBrand()) {
-                if ($brand && method_exists($brand, 'getName')) {
+                if (method_exists($brand, 'getName')) {
                     $brandName = $brand->getName();
                 }
             }

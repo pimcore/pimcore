@@ -24,18 +24,25 @@ use Pimcore\Model\AbstractModel;
  */
 class Reservation extends AbstractModel
 {
+    /** @var int|null */
     public $id;
+
+    /** @var string|null */
     public $token;
+
+    /** @var int|null */
     public $timestamp;
+
+    /** @var string|null */
     public $cart_id;
 
     /**
      * @param string $code
-     * @param CartInterface $cart
+     * @param CartInterface|null $cart
      *
-     * @return bool|Reservation
+     * @return self|null
      */
-    public static function get($code, CartInterface $cart = null)
+    public static function get($code, CartInterface $cart = null): ?self
     {
         try {
             $config = new self();
@@ -44,7 +51,7 @@ class Reservation extends AbstractModel
             return $config;
         } catch (\Exception $ex) {
             //            Logger::debug($ex->getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -56,6 +63,8 @@ class Reservation extends AbstractModel
     /**
      * Check whether the reservation object contains a reservations.
      *
+     * @param int $cart_id
+     *
      * @return bool
      */
     public function check($cart_id)
@@ -63,7 +72,7 @@ class Reservation extends AbstractModel
         return $cart_id == $this->getCartId();
     }
 
-    public static function create($code, $cart_id)
+    public static function create($code, $cart_id): ?self
     {
         try {
             $config = new self();
@@ -72,17 +81,17 @@ class Reservation extends AbstractModel
             return $config;
         } catch (\Exception $ex) {
             //            Logger::debug($ex->getMessage());
-            return false;
+            return null;
         }
     }
 
     /**
      * @param string $code
-     * @param CartInterface $cart
+     * @param CartInterface|null $cart
      *
      * @return bool
      */
-    public static function releaseToken($code, CartInterface $cart = null)
+    public static function releaseToken($code, CartInterface $cart = null): bool
     {
         $db = \Pimcore\Db::get();
 
@@ -104,9 +113,9 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function remove()
+    public function remove(): bool
     {
         return $this->getDao()->remove();
     }
@@ -117,7 +126,7 @@ class Reservation extends AbstractModel
      *
      * @return bool
      */
-    public static function cleanUpReservations($duration, $seriesId = null)
+    public static function cleanUpReservations($duration, $seriesId = null): bool
     {
         $query = 'DELETE FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' WHERE MINUTE(TIMEDIFF(timestamp, NOW())) >= ?';
         $params[] = $duration;
@@ -137,7 +146,7 @@ class Reservation extends AbstractModel
         }
     }
 
-    public static function reservationExists($code, $cart)
+    public static function reservationExists($code, $cart): bool
     {
         $db = \Pimcore\Db::get();
         $query = 'SELECT EXISTS(SELECT id FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' WHERE token = ? and cart_id = ?)';
@@ -169,7 +178,7 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getToken()
     {
@@ -177,15 +186,15 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @param mixed $token
+     * @param string|null $token
      */
-    public function setToken($token)
+    public function setToken($token): void
     {
         $this->token = $token;
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getCartId()
     {
@@ -193,7 +202,7 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @param mixed $cart_id
+     * @param string|null $cart_id
      */
     public function setCartId($cart_id)
     {
@@ -201,7 +210,7 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
     public function getId()
     {
@@ -209,7 +218,7 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @param int|null $id
      */
     public function setId($id)
     {
@@ -217,7 +226,7 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
     public function getTimestamp()
     {
@@ -225,9 +234,9 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @param mixed $timestamp
+     * @param int|null $timestamp
      */
-    public function setTimestamp($timestamp)
+    public function setTimestamp($timestamp): void
     {
         $this->timestamp = $timestamp;
     }

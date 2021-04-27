@@ -37,9 +37,9 @@ class Pimcore
     private static $shutdownEnabled = true;
 
     /**
-     * @var KernelInterface
+     * @var KernelInterface|null
      */
-    private static $kernel;
+    private static ?KernelInterface $kernel = null;
 
     /**
      * @var \Composer\Autoload\ClassLoader
@@ -158,7 +158,7 @@ class Pimcore
      *
      * @internal
      *
-     * @return ContainerInterface
+     * @return ContainerInterface|null
      */
     public static function getContainer()
     {

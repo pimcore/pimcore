@@ -27,5 +27,5 @@ class Folder extends Model\Document
      *
      * @var string
      */
-    protected $type = 'folder';
+    protected string $type = 'folder';
 }

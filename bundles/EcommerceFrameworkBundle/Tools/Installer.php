@@ -287,18 +287,16 @@ class Installer extends AbstractInstaller
 
         foreach ($fieldCollections as $key => $path) {
             if ($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
-                if ($fieldCollection) {
-                    $this->output->write(sprintf(
-                        '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
-                        $key
-                    ));
+                $this->output->write(sprintf(
+                    '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
+                    $key
+                ));
 
-                    continue;
-                }
-            } else {
-                $fieldCollection = new Fieldcollection\Definition();
-                $fieldCollection->setKey($key);
+                continue;
             }
+
+            $fieldCollection = new Fieldcollection\Definition();
+            $fieldCollection->setKey($key);
 
             $data = file_get_contents($path);
             $success = Service::importFieldCollectionFromJson($fieldCollection, $data);

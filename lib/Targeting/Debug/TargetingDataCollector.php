@@ -43,11 +43,6 @@ class TargetingDataCollector
     private $targetingConfigurator;
 
     /**
-     * @var Stopwatch|null
-     */
-    private $stopwatch;
-
-    /**
      * @var array
      */
     private $filteredVisitorInfoDataObjecKeys = [

@@ -22,30 +22,26 @@ class Id
     /**
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @param Element\ElementInterface $webResource
      */
-    public function __construct($webResource)
+    public function __construct(Element\ElementInterface $webResource)
     {
         $this->id = $webResource->getId();
-        if ($webResource instanceof Element\ElementInterface) {
-            $this->type = Element\Service::getType($webResource);
-        } else {
-            $this->type = 'unknown';
-        }
+        $this->type = Element\Service::getType($webResource) ?: 'unknown';
     }
 
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -53,7 +49,7 @@ class Id
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

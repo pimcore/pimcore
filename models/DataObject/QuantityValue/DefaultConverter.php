@@ -54,7 +54,7 @@ class DefaultConverter implements QuantityValueConverterInterface
             $toUnit->setConversionOffset(0);
         }
 
-        if ($fromBaseUnit === null || $toBaseUnit === null || $fromBaseUnit->getId() !== $toBaseUnit->getId()) {
+        if ($fromBaseUnit->getId() !== $toBaseUnit->getId()) {
             throw new \Exception($fromUnit.' must have same base unit as '.$toUnit.' to be able to convert values');
         }
 

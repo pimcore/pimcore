@@ -407,7 +407,7 @@ class GridHelperService
                 foreach ($featureJoins as $featureJoin) {
                     $fieldname = $featureJoin['fieldname'];
                     $mappedKey = 'cskey_' . $fieldname . '_' . $featureJoin['groupId'] . '_' . $featureJoin['keyId'];
-                    if (isset($alreadyJoined[$mappedKey]) && $alreadyJoined[$mappedKey]) {
+                    if (isset($alreadyJoined[$mappedKey])) {
                         continue;
                     }
                     $alreadyJoined[$mappedKey] = 1;

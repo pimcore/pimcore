@@ -58,7 +58,7 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
     }
 
     /**
-     * @param string|null $restrictTo
+     * @param string|array|null $restrictTo
      */
     public function setRestrictTo($restrictTo)
     {

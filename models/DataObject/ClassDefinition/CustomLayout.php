@@ -30,7 +30,7 @@ class CustomLayout extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $id;
 
@@ -284,7 +284,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param Data|Layout $data
+     * @param Data|Layout|null $data
      */
     private static function cleanupForExport(&$data)
     {
@@ -388,7 +388,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {

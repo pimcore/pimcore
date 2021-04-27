@@ -111,7 +111,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Fieldcollection|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -125,10 +125,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         if ($data instanceof DataObject\Fieldcollection) {
             foreach ($data as $item) {
                 $idx++;
-
-                if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
-                    continue;
-                }
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     $collectionData = [];
@@ -168,7 +164,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -184,7 +180,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionData = [];
                 $collectionKey = $collectionRaw['type'];
 
-                $oIndex = isset($collectionRaw['oIndex']) ? $collectionRaw['oIndex'] : null;
+                $oIndex = $collectionRaw['oIndex'] ?? null;
 
                 $collectionDef = DataObject\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
@@ -403,10 +399,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data instanceof DataObject\Fieldcollection) {
             foreach ($data as $item) {
                 if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {

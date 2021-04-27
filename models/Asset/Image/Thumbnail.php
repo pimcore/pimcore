@@ -233,29 +233,25 @@ final class Thumbnail
             }
         }
 
-        if ($thumb) {
-            $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-            if ($mediaQuery) {
-                $sourceTagAttributes['media'] = $mediaQuery;
-                $thumb->reset();
-            }
-
-            if (isset($options['previewDataUri'])) {
-                $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                $sourceTagAttributes['srcset'] = 'data:,1w';
-            }
-
-            $sourceTagAttributes['type'] = $thumb->getMimeType();
-
-            $sourceCallback = $options['sourceCallback'] ?? null;
-            if ($sourceCallback) {
-                $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
-            }
-
-            return '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+        $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+        if ($mediaQuery) {
+            $sourceTagAttributes['media'] = $mediaQuery;
+            $thumb->reset();
         }
 
-        return '';
+        if (isset($options['previewDataUri'])) {
+            $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+            $sourceTagAttributes['srcset'] = 'data:,1w';
+        }
+
+        $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+        $sourceCallback = $options['sourceCallback'] ?? null;
+        if ($sourceCallback) {
+            $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
+        }
+
+        return '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
     }
 
     /**

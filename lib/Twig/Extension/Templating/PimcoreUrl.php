@@ -66,8 +66,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
     /**
      * Generate URL with support to only pass parameters ZF1 style (defaults to current route).
      *
-     * @param string|null $name
-     * @param array $parameters
+     * @param string|array|null $name
+     * @param array|null $parameters
      * @param int $referenceType
      * @param bool $encode
      *

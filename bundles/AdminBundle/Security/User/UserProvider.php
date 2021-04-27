@@ -28,13 +28,10 @@ class UserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-        /** @var PimcoreUser $pimcoreUser */
         $pimcoreUser = PimcoreUser::getByName($username);
 
         if ($pimcoreUser) {
-            $user = new User($pimcoreUser);
-
-            return $user;
+            return new User($pimcoreUser);
         }
 
         throw new UsernameNotFoundException(sprintf('User %s was not found', $username));

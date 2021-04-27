@@ -56,24 +56,18 @@ class Service extends Model\AbstractModel
      *
      * @return string
      */
-    public static function getIdPath($element)
+    public static function getIdPath(ElementInterface $element): string
     {
         $path = '';
-        $parentElement = null;
-
-        if ($element instanceof ElementInterface) {
-            $elementType = self::getElementType($element);
-            $parentId = $element->getParentId();
-            $parentElement = self::getElementById($elementType, $parentId);
-        }
+        $elementType = self::getElementType($element);
+        $parentId = $element->getParentId();
+        $parentElement = self::getElementById($elementType, $parentId);
 
         if ($parentElement) {
             $path = self::getIdPath($parentElement);
         }
 
-        if ($element) {
-            $path .= '/' . $element->getId();
-        }
+        $path .= '/' . $element->getId();
 
         return $path;
     }
@@ -87,36 +81,30 @@ class Service extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getTypePath($element)
+    public static function getTypePath(ElementInterface $element): string
     {
         $path = '';
-        $parentElement = null;
-
-        if ($element instanceof ElementInterface) {
-            $elementType = self::getElementType($element);
-            $parentId = $element->getParentId();
-            $parentElement = self::getElementById($elementType, $parentId);
-        }
+        $elementType = self::getElementType($element);
+        $parentId = $element->getParentId();
+        $parentElement = self::getElementById($elementType, $parentId);
 
         if ($parentElement) {
             $path = self::getTypePath($parentElement);
         }
 
-        if ($element) {
-            $type = $element->getType();
-            if ($type !== DataObject::OBJECT_TYPE_FOLDER) {
-                if ($element instanceof Document) {
-                    $type = 'document';
-                } elseif ($element instanceof DataObject\AbstractObject) {
-                    $type = 'object';
-                } elseif ($element instanceof Asset) {
-                    $type = 'asset';
-                } else {
-                    throw new \Exception('unknown type');
-                }
+        $type = $element->getType();
+        if ($type !== DataObject::OBJECT_TYPE_FOLDER) {
+            if ($element instanceof Document) {
+                $type = 'document';
+            } elseif ($element instanceof DataObject\AbstractObject) {
+                $type = 'object';
+            } elseif ($element instanceof Asset) {
+                $type = 'asset';
+            } else {
+                throw new \Exception('unknown type');
             }
-            $path .= '/' . $type;
         }
+        $path .= '/' . $type;
 
         return $path;
     }
@@ -126,31 +114,25 @@ class Service extends Model\AbstractModel
      *
      * @internal
      *
-     * @param AbstractObject|Document $element
+     * @param ElementInterface $element
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function getSortIndexPath($element)
+    public static function getSortIndexPath(ElementInterface $element): string
     {
         $path = '';
-        $parentElement = null;
-
-        if ($element instanceof ElementInterface) {
-            $elementType = self::getElementType($element);
-            $parentId = $element->getParentId();
-            $parentElement = self::getElementById($elementType, $parentId);
-        }
+        $elementType = self::getElementType($element);
+        $parentId = $element->getParentId();
+        $parentElement = self::getElementById($elementType, $parentId);
 
         if ($parentElement) {
             $path = self::getSortIndexPath($parentElement);
         }
 
-        if ($element) {
-            $sortIndex = $element->getIndex() ? $element->getIndex() : 0;
-            $path .= '/' . $sortIndex;
-        }
+        $sortIndex = method_exists($element, 'getIndex') ? (int) $element->getIndex() : 0;
+        $path .= '/' . $sortIndex;
 
         return $path;
     }
@@ -301,13 +283,13 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param array $data
+     * @param array|null $data
      *
      * @return array
      *
      * @throws \Exception
      */
-    public static function filterUnpublishedAdvancedElements($data)
+    public static function filterUnpublishedAdvancedElements($data): array
     {
         if (DataObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
@@ -521,7 +503,7 @@ class Service extends Model\AbstractModel
      *
      * @return string|null
      */
-    public static function getElementType($element)
+    public static function getElementType($element): ?string
     {
         if ($element instanceof DataObject\AbstractObject) {
             return 'object';
@@ -548,9 +530,11 @@ class Service extends Model\AbstractModel
         $className = trim($className, '\\');
         if (is_a($className, AbstractObject::class, true)) {
             return 'object';
-        } elseif (is_a($className, Asset::class, true)) {
+        }
+        if (is_a($className, Asset::class, true)) {
             return 'asset';
-        } elseif (is_a($className, Document::class, true)) {
+        }
+        if (is_a($className, Document::class, true)) {
             return 'document';
         }
 
@@ -565,7 +549,7 @@ class Service extends Model\AbstractModel
     public static function getElementHash(ElementInterface $element): ?string
     {
         $elementType = self::getElementType($element);
-        if ($element->getId() === null || $elementType === null) {
+        if ($elementType === null) {
             return null;
         }
 
@@ -650,23 +634,19 @@ class Service extends Model\AbstractModel
      */
     protected function updateChildren($target, $new)
     {
-        if (is_array($target->getChildren())) {
-            //check in case of recursion
-            $found = false;
-            foreach ($target->getChildren() as $child) {
-                /**
-                 * @var ElementInterface $child
-                 */
-                if ($child->getId() == $new->getId()) {
-                    $found = true;
-                    break;
-                }
+        //check in case of recursion
+        $found = false;
+        foreach ($target->getChildren() as $child) {
+            /**
+             * @var ElementInterface $child
+             */
+            if ($child->getId() == $new->getId()) {
+                $found = true;
+                break;
             }
-            if (!$found) {
-                $target->setChildren(array_merge($target->getChildren(), [$new]));
-            }
-        } else {
-            $target->setChildren([$new]);
+        }
+        if (!$found) {
+            $target->setChildren(array_merge($target->getChildren(), [$new]));
         }
     }
 
@@ -750,7 +730,7 @@ class Service extends Model\AbstractModel
     /**
      * renews all references, for example after unserializing an ElementInterface
      *
-     * @param Document|Asset|DataObject\AbstractObject $data
+     * @param mixed $data
      * @param bool $initial
      * @param string $key
      *
@@ -770,49 +750,49 @@ class Service extends Model\AbstractModel
             }
 
             return $data;
-        } elseif (is_object($data)) {
+        }
+        if (is_object($data)) {
             if ($data instanceof ElementInterface && !$initial) {
                 return self::getElementById(self::getElementType($data), $data->getId());
-            } else {
-
-                // if this is the initial element set the correct path and key
-                if ($data instanceof ElementInterface && $initial && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
-                    $originalElement = self::getElementById(self::getElementType($data), $data->getId());
-
-                    if ($originalElement) {
-                        if ($data instanceof Asset) {
-                            /** @var Asset $originalElement */
-                            $data->setFilename($originalElement->getFilename());
-                        } elseif ($data instanceof Document) {
-                            /** @var Document $originalElement */
-                            $data->setKey($originalElement->getKey());
-                        } elseif ($data instanceof DataObject\AbstractObject) {
-                            /** @var AbstractObject $originalElement */
-                            $data->setKey($originalElement->getKey());
-                        }
-
-                        $data->setPath($originalElement->getRealPath());
-                    }
-                }
-
-                if ($data instanceof Model\AbstractModel) {
-                    $properties = $data->getObjectVars();
-                    foreach ($properties as $name => $value) {
-                        $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                    }
-                } else {
-                    $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
-                    foreach ($properties as $name => $value) {
-                        if (method_exists($data, 'setObjectVar')) {
-                            $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                        } else {
-                            $data->$name = self::renewReferences($value, false, $name);
-                        }
-                    }
-                }
-
-                return $data;
             }
+
+            // if this is the initial element set the correct path and key
+            if ($data instanceof ElementInterface && $initial && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
+                $originalElement = self::getElementById(self::getElementType($data), $data->getId());
+
+                if ($originalElement) {
+                    if ($data instanceof Asset) {
+                        /** @var Asset $originalElement */
+                        $data->setFilename($originalElement->getFilename());
+                    } elseif ($data instanceof Document) {
+                        /** @var Document $originalElement */
+                        $data->setKey($originalElement->getKey());
+                    } elseif ($data instanceof DataObject\AbstractObject) {
+                        /** @var AbstractObject $originalElement */
+                        $data->setKey($originalElement->getKey());
+                    }
+
+                    $data->setPath($originalElement->getRealPath());
+                }
+            }
+
+            if ($data instanceof Model\AbstractModel) {
+                $properties = $data->getObjectVars();
+                foreach ($properties as $name => $value) {
+                    $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+                }
+            } else {
+                $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
+                foreach ($properties as $name => $value) {
+                    if (method_exists($data, 'setObjectVar')) {
+                        $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+                    } else {
+                        $data->$name = self::renewReferences($value, false, $name);
+                    }
+                }
+            }
+
+            return $data;
         }
 
         return $data;
@@ -825,17 +805,17 @@ class Service extends Model\AbstractModel
      *
      * @return string
      */
-    public static function correctPath($path)
+    public static function correctPath(string $path): string
     {
         // remove trailing slash
-        if ($path != '/') {
+        if ($path !== '/') {
             $path = rtrim($path, '/ ');
         }
 
         // correct wrong path (root-node problem)
         $path = str_replace('//', '/', $path);
 
-        if (strpos($path, '%') !== false) {
+        if (str_contains($path, '%')) {
             $path = rawurldecode($path);
         }
 
@@ -849,7 +829,7 @@ class Service extends Model\AbstractModel
      *
      * @return ElementInterface
      */
-    public static function loadAllFields(ElementInterface $element)
+    public static function loadAllFields(ElementInterface $element): ElementInterface
     {
         if ($element instanceof Document) {
             Document\Service::loadAllDocumentFields($element);
@@ -1132,7 +1112,7 @@ class Service extends Model\AbstractModel
                                     $newList[$key][$itemKey] = $itemValue;
                                 }
                             }
-                        } elseif ($item) {
+                        } else {
                             $newList[$key] = $item;
                         }
                     }
@@ -1169,10 +1149,10 @@ class Service extends Model\AbstractModel
                 ];
 
                 $version['user'] = ['name' => '', 'id' => ''];
-                if ($versionObj->getUser()) {
+                if ($user = $versionObj->getUser()) {
                     $version['user'] = [
-                        'name' => $versionObj->getUser()->getName(),
-                        'id' => $versionObj->getUser()->getId(),
+                        'name' => $user->getName(),
+                        'id' => $user->getId(),
                     ];
                 }
 

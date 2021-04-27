@@ -81,7 +81,7 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var GeoLocationModel $location */
+        /** @var GeoLocationModel|null $location */
         $location = $visitorInfo->get(GeoLocation::PROVIDER_KEY);
 
         if (!$location) {

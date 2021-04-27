@@ -71,7 +71,7 @@ function gzcompressfile($source, $level = null, $target = null)
 }
 
 /**
- * @param string $string
+ * @param mixed $string
  *
  * @return bool
  */
@@ -81,9 +81,9 @@ function is_json($string)
         json_decode($string);
 
         return json_last_error() == JSON_ERROR_NONE;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
@@ -316,12 +316,10 @@ function formatBytes($bytes, $precision = 2)
 /**
  * @param string $str
  *
- * @return float|int
+ * @return int
  */
 function filesize2bytes($str)
 {
-    $bytes = 0;
-
     $bytes_array = [
         'K' => 1024,
         'M' => 1024 * 1024,

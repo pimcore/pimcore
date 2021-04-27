@@ -129,9 +129,6 @@ final class ClassController extends AdminController implements KernelControllerE
         // build groups
         $groups = [];
         foreach ($classes as $class) {
-            if (!$class) {
-                continue;
-            }
             $groupName = null;
 
             if ($class->getGroup()) {

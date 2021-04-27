@@ -110,9 +110,9 @@ class Redirect extends AbstractModel
     /**
      * ID of the owner user
      *
-     * @var int
+     * @var int|null
      */
-    protected $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * ID of the user who make the latest changes
@@ -508,17 +508,17 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getUserOwner()
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
     /**
-     * @param int $userOwner
+     * @param int|null $userOwner
      */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(?int $userOwner)
     {
         $this->userOwner = $userOwner;
     }

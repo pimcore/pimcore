@@ -76,9 +76,9 @@ class Rule extends AbstractModel implements RuleInterface
     protected $description = [];
 
     /**
-     * @var ConditionInterface
+     * @var ConditionInterface|null
      */
-    protected $condition;
+    protected ?ConditionInterface $condition = null;
 
     /**
      * @var array|ActionInterface
@@ -281,9 +281,9 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return ConditionInterface
+     * @return ConditionInterface|null
      */
-    public function getCondition()
+    public function getCondition(): ?ConditionInterface
     {
         return $this->condition;
     }

@@ -119,7 +119,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Video $data
+     * @param DataObject\Data\Video|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -211,7 +211,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\Video $data
+     * @param DataObject\Data\Video|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -287,7 +287,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param DataObject\Data\Video $data
+     * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -363,10 +363,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if ($data && $data->getData() instanceof Asset) {
             if (!array_key_exists($data->getData()->getCacheTag(), $tags)) {
                 $tags = $data->getData()->getCacheTags($tags);

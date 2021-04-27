@@ -239,7 +239,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         foreach ($fieldDefinitions as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
 
-                /** @var DataObject\ClassDefinition\Data\Localizedfields $blockLocalizedFieldDefinition */
+                /** @var DataObject\ClassDefinition\Data\Localizedfields|null $blockLocalizedFieldDefinition */
                 $blockLocalizedFieldDefinition = $fd->getFieldDefinition('localizedfields');
                 if ($blockLocalizedFieldDefinition) {
                     $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
@@ -424,7 +424,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 foreach ($items as $item) {
                     $type = $item->getType();
 
-                    $definition = $itemFieldDefinitions[$type] ?: null;
+                    $definition = $itemFieldDefinitions[$type] ?? null;
                     if (!$definition instanceof DataObject\Fieldcollection\Definition) {
                         continue;
                     }

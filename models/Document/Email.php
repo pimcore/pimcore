@@ -29,54 +29,54 @@ class Email extends Model\Document\PageSnippet
      *
      * @var string
      */
-    protected $type = 'email';
+    protected string $type = 'email';
 
     /**
      * Contains the email subject
      *
      * @var string
      */
-    protected $subject = '';
+    protected string $subject = '';
 
     /**
      * Contains the from email address
      *
      * @var string
      */
-    protected $from = '';
+    protected string $from = '';
 
     /**
      * Contains the reply to email addresses
      *
      * @var string
      */
-    protected $replyTo = '';
+    protected string $replyTo = '';
 
     /**
      * Contains the email addresses of the recipients
      *
      * @var string
      */
-    protected $to = '';
+    protected string $to = '';
 
     /**
      * Contains the carbon copy recipients
      *
      * @var string
      */
-    protected $cc = '';
+    protected string $cc = '';
 
     /**
      * Contains the blind carbon copy recipients
      *
      * @var string
      */
-    protected $bcc = '';
+    protected string $bcc = '';
 
     /**
      * {@inheritdoc}
      */
-    protected $supportsContentMaster = false;
+    protected bool $supportsContentMaster = false;
 
     /**
      * Contains the email subject

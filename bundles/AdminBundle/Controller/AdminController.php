@@ -63,7 +63,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
      *
-     * @return UserProxy|User
+     * @return UserProxy|User|null
      */
     protected function getAdminUser($proxyUser = false)
     {
@@ -71,9 +71,9 @@ abstract class AdminController extends Controller implements AdminControllerInte
 
         if ($proxyUser) {
             return $resolver->getUserProxy();
-        } else {
-            return $resolver->getUser();
         }
+
+        return $resolver->getUser();
     }
 
     /**

@@ -129,9 +129,9 @@ final class FolderController extends DocumentControllerBase
             $treeData = $this->getTreeNodeConfig($folder);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData]);
-        } else {
-            throw $this->createAccessDeniedHttpException();
         }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**

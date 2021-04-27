@@ -494,7 +494,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $pages = [];
 
@@ -520,14 +520,13 @@ class Container implements \RecursiveIterator, \Countable
     public function current()
     {
         $this->_sort();
-        current($this->_index);
         $hash = key($this->_index);
 
         if (isset($this->_pages[$hash])) {
             return $this->_pages[$hash];
-        } else {
-            throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
         }
+
+        throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
     }
 
     /**

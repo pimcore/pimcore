@@ -211,7 +211,7 @@ abstract class Adapter
     /**
      * @param int $width
      * @param int $height
-     * @param string $orientation
+     * @param string|array $orientation
      * @param bool $forceResize
      *
      * @return self
@@ -229,31 +229,31 @@ abstract class Adapter
             $this->scaleByHeight($height, $forceResize);
         }
 
-        if ($orientation == 'center') {
+        if ($orientation === 'center') {
             $cropX = ($this->getWidth() - $width) / 2;
             $cropY = ($this->getHeight() - $height) / 2;
-        } elseif ($orientation == 'topleft') {
+        } elseif ($orientation === 'topleft') {
             $cropX = 0;
             $cropY = 0;
-        } elseif ($orientation == 'topright') {
+        } elseif ($orientation === 'topright') {
             $cropX = $this->getWidth() - $width;
             $cropY = 0;
-        } elseif ($orientation == 'bottomleft') {
+        } elseif ($orientation === 'bottomleft') {
             $cropX = 0;
             $cropY = $this->getHeight() - $height;
-        } elseif ($orientation == 'bottomright') {
+        } elseif ($orientation === 'bottomright') {
             $cropX = $this->getWidth() - $width;
             $cropY = $this->getHeight() - $height;
-        } elseif ($orientation == 'centerleft') {
+        } elseif ($orientation === 'centerleft') {
             $cropX = 0;
             $cropY = ($this->getHeight() - $height) / 2;
-        } elseif ($orientation == 'centerright') {
+        } elseif ($orientation === 'centerright') {
             $cropX = $this->getWidth() - $width;
             $cropY = ($this->getHeight() - $height) / 2;
-        } elseif ($orientation == 'topcenter') {
+        } elseif ($orientation === 'topcenter') {
             $cropX = ($this->getWidth() - $width) / 2;
             $cropY = 0;
-        } elseif ($orientation == 'bottomcenter') {
+        } elseif ($orientation === 'bottomcenter') {
             $cropX = ($this->getWidth() - $width) / 2;
             $cropY = $this->getHeight() - $height;
         } elseif (is_array($orientation) && isset($orientation['x'])) {
@@ -484,7 +484,7 @@ abstract class Adapter
      * @param string $imagePath
      * @param array $options
      *
-     * @return self
+     * @return self|false
      */
     abstract public function load($imagePath, $options = []);
 

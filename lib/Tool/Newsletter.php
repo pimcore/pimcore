@@ -456,18 +456,14 @@ class Newsletter
      */
     public function unsubscribe(DataObject\Concrete $object): bool
     {
-        if ($object) {
-            if (method_exists($object, 'setNewsletterActive')) {
-                $object->setNewsletterActive(false);
-            }
-            $object->save();
-
-            $this->addNoteOnObject($object, 'unsubscribe');
-
-            return true;
+        if (method_exists($object, 'setNewsletterActive')) {
+            $object->setNewsletterActive(false);
         }
+        $object->save();
 
-        return false;
+        $this->addNoteOnObject($object, 'unsubscribe');
+
+        return true;
     }
 
     /**

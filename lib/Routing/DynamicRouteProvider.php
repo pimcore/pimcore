@@ -107,9 +107,7 @@ class DynamicRouteProvider implements RouteProviderInterface
             foreach ($names as $name) {
                 try {
                     $route = $this->getRouteByName($name);
-                    if ($route) {
-                        $routes[] = $route;
-                    }
+                    $routes[] = $route;
                 } catch (RouteNotFoundException $e) {
                     // noop
                 }

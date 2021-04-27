@@ -319,7 +319,7 @@ class Service extends Model\Element\Service
      *
      * @return Element\ElementInterface
      */
-    public static function loadAllFields(Element\ElementInterface $element)
+    public static function loadAllFields(Element\ElementInterface $element): Element\ElementInterface
     {
         $element->getProperties();
 

@@ -83,9 +83,6 @@ final class RedirectingPlugin
             $this->appendDebugInformation($message);
             // Add each hard coded recipient
             $to = $message->getTo();
-            if (null === $to) {
-                $to = [];
-            }
 
             foreach ((array) $this->recipient as $recipient) {
                 if (!array_key_exists($recipient, $to)) {

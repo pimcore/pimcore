@@ -31,7 +31,7 @@ class LocaleService implements LocaleServiceInterface
     protected $requestStack;
 
     /**
-     * @var Translator
+     * @var Translator|null
      */
     protected $translator;
 

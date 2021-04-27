@@ -100,7 +100,7 @@ class DataObjectImporter extends AbstractElementImporter
         if ($attribute->getType() === Attribute::TYPE_FIELD_COLLECTION_LOCALIZED_FIELD) {
             list($fieldCollectionField, $index, $field) = explode(DataObjectDataExtractor::FIELD_COLLECTIONS_DELIMITER, $attribute->getName());
 
-            /** @var DataObject\Fieldcollection $fieldCollection */
+            /** @var DataObject\Fieldcollection|null $fieldCollection */
             $fieldCollection = $element->{'get' . $fieldCollectionField}();
             if ($fieldCollection) {
                 $item = $fieldCollection->get($index);

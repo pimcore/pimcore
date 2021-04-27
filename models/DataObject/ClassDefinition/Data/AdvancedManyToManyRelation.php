@@ -116,14 +116,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * {@inheritdoc}
      */
-    protected function loadData($data, $object = null, $params = [])
+    protected function loadData(array $data, $object = null, $params = [])
     {
         $list = [
             'dirty' => false,
             'data' => [],
         ];
 
-        if (is_array($data) && count($data) > 0) {
+        if (count($data) > 0) {
             $targets = [];
             $existingTargets = [];
 
@@ -135,7 +135,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             $db = Db::get();
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType == 'object' ? 'o_id' : 'id';
+                $identifier = $targetType === 'object' ? 'o_id' : 'id';
 
                 $result = $db->fetchCol(
                     'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
@@ -202,7 +202,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Data\ElementMetadata[]|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -219,7 +219,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
         $d = [];
 
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
             foreach ($data as $metaObject) {
                 $element = $metaObject->getElement();
                 if ($element instanceof Element\ElementInterface) {
@@ -229,11 +229,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             return ',' . implode(',', $d) . ',';
-        } elseif (is_array($d) && count($data) === 0) {
-            return '';
-        } else {
-            throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
         }
+
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -366,7 +364,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -375,7 +373,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         //if not set, return null
-        if ($data === null or $data === false) {
+        if ($data === null || $data === false) {
             return null;
         }
 
@@ -383,11 +381,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 $e = null;
-                if ($element['type'] == 'object') {
+                if ($element['type'] === 'object') {
                     $e = DataObject::getById($element['id']);
-                } elseif ($element['type'] == 'asset') {
+                } elseif ($element['type'] === 'asset') {
                     $e = Asset::getById($element['id']);
-                } elseif ($element['type'] == 'document') {
+                } elseif ($element['type'] === 'document') {
                     $e = Document::getById($element['id']);
                 }
 
@@ -411,7 +409,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         $setter = 'set' . ucfirst($key);
                         $value = $element[$key] ?? null;
 
-                        if ($columnConfig['type'] == 'multiselect') {
+                        if ($columnConfig['type'] === 'multiselect') {
                             if (is_array($value) && count($value)) {
                                 $value = implode(',', $value);
                             }
