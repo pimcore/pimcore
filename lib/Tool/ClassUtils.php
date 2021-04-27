@@ -77,7 +77,7 @@ class ClassUtils
             }
 
             if ($gettingNamespace) {
-                if (is_array($token) && $token[0] === T_NAME_QUALIFIED) {
+                if (is_array($token) && ($token[0] === T_NAME_QUALIFIED || $token[0] === T_STRING)) {
                     // append to namespace
                     $namespace .= $token[1];
                 } elseif ($token === ';') {
