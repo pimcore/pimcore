@@ -25,14 +25,13 @@ use Pimcore\Model\Asset;
 class Pdf extends Model\Document\Editable
 {
     /**
+     * @internal
      * @var int|null
      */
     protected $id;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -40,9 +39,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -52,7 +49,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -79,10 +76,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @param Model\Document\PageSnippet $ownerDocument
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
@@ -97,7 +91,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {
@@ -116,7 +110,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkValidity()
     {
@@ -134,11 +128,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -152,19 +142,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @return bool
-     */
-    public function getEditmode()
-    {
-        return parent::getEditmode();
-    }
-
-    /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -177,7 +155,7 @@ class Pdf extends Model\Document\Editable
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -211,7 +189,7 @@ HTML;
      *
      * @return string
      */
-    public function getErrorCode($message = '')
+    private function getErrorCode($message = '')
     {
         // only display error message in debug mode
         if (!\Pimcore::inDebugMode()) {
@@ -229,7 +207,7 @@ HTML;
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {

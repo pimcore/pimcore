@@ -24,15 +24,13 @@ class Date extends Model\Document\Editable
 {
     /**
      * Contains the date
-     *
+     * @internal
      * @var \Carbon\Carbon|null
      */
     protected $date;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -40,15 +38,16 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
         return $this->date;
     }
 
+    /**
+     * @return \Carbon\Carbon|null
+     */
     public function getDate()
     {
         return $this->getData();
@@ -69,7 +68,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -80,7 +79,7 @@ class Date extends Model\Document\Editable
         } elseif (isset($this->config['format']) && $this->config['format']) {
             $format = $this->config['format'];
         } else {
-            $format = \DateTime::ISO8601;
+            $format = 'Y-m-d\TH:i:sO'; // ISO8601
         }
 
         if ($this->date instanceof \DateTimeInterface) {
@@ -89,9 +88,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see Model\Document\Editable::getDataForResource
-     *
-     * @return int|null
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -103,11 +100,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -119,11 +112,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -136,7 +125,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -150,7 +139,7 @@ class Date extends Model\Document\Editable
     /**
      * @param int $timestamp
      */
-    protected function setDateFromTimestamp($timestamp)
+    private function setDateFromTimestamp($timestamp)
     {
         $this->date = new \Carbon\Carbon();
         $this->date->setTimestamp($timestamp);

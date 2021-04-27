@@ -27,64 +27,69 @@ class Image extends Model\Document\Editable
 {
     /**
      * ID of the referenced image
-     *
+     * @internal
      * @var int
      */
     protected $id;
 
     /**
      * The ALT text of the image
-     *
+     * @internal
      * @var string
      */
     protected $alt;
 
     /**
      * Contains the imageobject itself
-     *
+     * @internal
      * @var Asset\Image|null
      */
     protected $image;
 
     /**
+     * @internal
      * @var bool
      */
     protected $cropPercent = false;
 
     /**
+     * @internal
      * @var float
      */
     protected $cropWidth;
 
     /**
+     * @internal
      * @var float
      */
     protected $cropHeight;
 
     /**
+     * @internal
      * @var float
      */
     protected $cropTop;
 
     /**
+     * @internal
      * @var float
      */
     protected $cropLeft;
 
     /**
+     * @internal
      * @var array
      */
     protected $hotspots = [];
 
     /**
+     * @internal
      * @var array
      */
     protected $marker = [];
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -92,9 +97,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -112,7 +115,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
@@ -182,7 +185,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getConfig()
     {
@@ -204,9 +207,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -271,9 +272,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -322,9 +321,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -482,7 +479,7 @@ class Image extends Model\Document\Editable
     /**
      * @param Asset\Image\Thumbnail\Config $thumbConfig
      */
-    protected function applyCustomCropping($thumbConfig)
+    private function applyCustomCropping($thumbConfig)
     {
         $cropConfig = [
             'width' => $this->cropWidth,
@@ -502,7 +499,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -515,10 +512,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @param Model\Document\PageSnippet $ownerDocument
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
@@ -557,7 +551,7 @@ class Image extends Model\Document\Editable
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveDependencies()
     {

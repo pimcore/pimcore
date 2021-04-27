@@ -24,15 +24,13 @@ class Multiselect extends Model\Document\Editable
 {
     /**
      * Contains the current selected values
-     *
+     * @internal
      * @var array
      */
     protected $values = [];
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -40,9 +38,7 @@ class Multiselect extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -58,9 +54,7 @@ class Multiselect extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -76,11 +70,7 @@ class Multiselect extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param string $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -90,11 +80,7 @@ class Multiselect extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -110,7 +96,7 @@ class Multiselect extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
