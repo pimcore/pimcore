@@ -557,6 +557,9 @@ class GridHelperService
                         $orderKey = $orderKeyParts[0].'.'.$orderKeyParts[1];
                         $doNotQuote = true;
                     }
+                } else {
+                    $orderKey = $list->getDao()->getTableName().'.'.$orderKey;
+                    $doNotQuote = true;
                 }
             }
         }
