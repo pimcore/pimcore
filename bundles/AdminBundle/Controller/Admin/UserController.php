@@ -728,14 +728,17 @@ final class UserController extends AdminController implements KernelControllerEv
         $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
             $workspaces = $role->{'getWorkspaces' . ucfirst($type)}();
-            foreach ($workspaces as $workspace) {
+            foreach ($workspaces as $wKey => $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
                     $workspace->path = $el->getRealFullPath();
+                    $workspaces[$wKey] = $workspace->getObjectVars();
                 }
             }
+            $role->{'setWorkspaces' . ucfirst($type)}($workspaces);
         }
+
 
         $replaceFn = function ($value) {
             return $value->getObjectVars();
