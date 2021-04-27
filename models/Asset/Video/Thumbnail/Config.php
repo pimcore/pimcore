@@ -39,51 +39,61 @@ final class Config extends Model\AbstractModel
      )
      * )
      *
+     * @internal
      * @var array
      */
     protected $items = [];
 
     /**
+     * @internal
      * @var array
      */
     public $medias = [];
 
     /**
+     * @internal
      * @var string
      */
     protected $name = '';
 
     /**
+     * @internal
      * @var string
      */
     protected $description = '';
 
     /**
+     * @internal
      * @var string
      */
     protected $group = '';
 
     /**
+     * @internal
      * @var int
      */
     protected $videoBitrate;
 
     /**
+     * @internal
      * @var int
      */
     protected $audioBitrate;
 
     /**
+     * @internal
      * @var int
      */
     protected $modificationDate;
 
     /**
+     * @internal
      * @var int
      */
     protected $creationDate;
 
     /**
+     * @internal
      * @var string
      */
     public $filenameSuffix;
@@ -145,7 +155,7 @@ final class Config extends Model\AbstractModel
     /**
      * @param string $name
      */
-    protected function createMediaIfNotExists($name)
+    private function createMediaIfNotExists($name)
     {
         if (!array_key_exists($name, $this->medias)) {
             $this->medias[$name] = [];

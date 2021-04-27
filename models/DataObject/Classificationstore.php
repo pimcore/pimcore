@@ -23,34 +23,47 @@ use Pimcore\Tool;
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao createUpdateTable()
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao getDao()
  * @method void delete()
- * @method Classifictionstore load()
+ * @method Classificationstore load()
  * @method void save()
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
     use Model\Element\Traits\DirtyIndicatorTrait;
+
     /**
+     * @internal
      * @var array
      */
     protected $items = [];
 
     /**
+     * @internal
      * @var Concrete|null
      */
     protected ?Concrete $object = null;
 
     /**
+     * @internal
      * @var ClassDefinition|null
      */
     protected ?ClassDefinition $class = null;
 
-    /** @var string */
+    /**
+     * @internal
+     * @var string
+     */
     protected $fieldname;
 
-    /** @var array */
+    /**
+     * @internal
+     * @var array
+     */
     protected $activeGroups = [];
 
-    /** @var array */
+    /**
+     * @internal
+     * @var array
+     */
     protected $groupCollectionMapping = [];
 
     /**
@@ -107,7 +120,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             }
         }
         $this->object = $object;
-        //$this->setClass($this->getObject()->getClass());
         return $this;
     }
 
@@ -270,7 +282,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->activeGroups;
     }
 
-    protected function sanitizeActiveGroups($activeGroups)
+    private function sanitizeActiveGroups($activeGroups)
     {
         $newList = [];
 
@@ -307,7 +319,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return mixed
      */
-    protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
+    private function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);
         $data = null;
@@ -345,8 +357,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = 'default', $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
     {
-        $oid = $this->object->getId();
-
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
 
         if ($keyConfig->getType() == 'calculatedValue') {
@@ -497,7 +507,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return Classificationstore\GroupConfig|null
      */
-    protected function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
+    private function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
     {
         return Classificationstore\GroupConfig::getById($groupId);
     }

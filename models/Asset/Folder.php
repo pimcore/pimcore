@@ -26,20 +26,18 @@ use Pimcore\Tool\Storage;
 class Folder extends Model\Asset
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'folder';
 
     /**
-     * Contains the child elements
-     *
+     * @internal
      * @var Asset[]
      */
     protected $children;
 
     /**
-     * Indicator if there are children
-     *
+     * @internal
      * @var bool|null
      */
     protected $hasChildren;

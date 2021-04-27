@@ -61,11 +61,9 @@ class Hardlink extends Document
     }
 
     /**
-     * @see Document::resolveDependencies
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
         $sourceDocument = $this->getSourceDocument();

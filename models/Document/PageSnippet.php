@@ -220,9 +220,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 

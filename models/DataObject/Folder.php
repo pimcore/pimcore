@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject;
 class Folder extends DataObject
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $o_type = 'folder';
 
@@ -44,10 +44,7 @@ class Folder extends DataObject
     }
 
     /**
-     * @param bool|null $isUpdate
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($isUpdate = null, $params = [])
     {

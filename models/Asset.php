@@ -653,6 +653,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @internal
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -768,6 +769,9 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
+    /**
+     * @internal
+     */
     protected function postPersistData()
     {
         // hook for the save process, can be overwritten in implementations, such as Image
@@ -1932,7 +1936,7 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 

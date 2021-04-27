@@ -374,7 +374,7 @@ final class AssetHelperController extends AdminController
         $availableFields = [];
 
         if (!$noSystemColumns) {
-            foreach (Asset\Service::$gridSystemColumns as $sc) {
+            foreach (Asset\Service::GRID_SYSTEM_COLUMNS as $sc) {
                 if (empty($types)) {
                     $availableFields[] = [
                         'key' => $sc . '~system',
@@ -897,7 +897,7 @@ final class AssetHelperController extends AdminController
         $result['metadataColumns']['nodeType'] = 'metadata';
 
         //system columns
-        $systemColumnNames = Asset\Service::$gridSystemColumns;
+        $systemColumnNames = Asset\Service::GRID_SYSTEM_COLUMNS;
         $systemColumns = [];
         foreach ($systemColumnNames as $systemColumn) {
             $systemColumns[] = ['title' => $systemColumn, 'name' => $systemColumn, 'datatype' => 'data', 'fieldtype' => 'system'];

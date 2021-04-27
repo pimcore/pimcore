@@ -29,26 +29,31 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
+     * @internal
      * @var array
      */
     protected array $items = [];
 
     /**
+     * @internal
      * @var string
      */
     protected $fieldname;
 
     /**
+     * @internal
      * @var Model\DataObject\Concrete|null
      */
     protected ?Concrete $object = null;
 
     /**
+     * @internal
      * @var int|null
      */
     protected ?int $objectId = null;
 
     /**
+     * @internal
      * @var array
      */
     protected $brickGetters = [];

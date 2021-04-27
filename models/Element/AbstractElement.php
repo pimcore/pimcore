@@ -163,10 +163,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * Resolves the dependencies of the element and returns an array of them - Used by update()
-     *
+     * @internal
      * @return array
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [[]];
 

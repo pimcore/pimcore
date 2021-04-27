@@ -23,7 +23,7 @@ use Pimcore\Model;
 class Archive extends Model\Asset
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'archive';
 }

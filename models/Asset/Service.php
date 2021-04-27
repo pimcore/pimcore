@@ -29,15 +29,19 @@ use Pimcore\Model\Element;
 class Service extends Model\Element\Service
 {
     /**
+     * @internal
      * @var array
      */
-    public static $gridSystemColumns = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
+    public const GRID_SYSTEM_COLUMNS = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
 
     /**
+     * @internal
      * @var Model\User|null
      */
     protected $_user;
+
     /**
+     * @internal
      * @var array
      */
     protected $_copyRecursiveIds;

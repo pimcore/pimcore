@@ -33,6 +33,7 @@ final class ImageThumbnail
     use TemporaryFileHelperTrait;
 
     /**
+     * @internal
      * @var int
      */
     protected $page = 1;
