@@ -15,6 +15,9 @@
 
 namespace Pimcore\Cache\Core;
 
+/**
+ * @internal
+ */
 class CacheQueueItem
 {
     /**

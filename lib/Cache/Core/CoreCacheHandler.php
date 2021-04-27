@@ -35,7 +35,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * explicitely does not expose a PSR-6 API but is intended for internal use from Pimcore\Cache or directly. Actual
  * cache calls are forwarded to a PSR-6 cache implementation though.
  */
-class CoreCacheHandler implements LoggerAwareInterface
+final class CoreCacheHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -156,6 +156,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param TagAwareAdapterInterface $pool
      */
     public function setPool(TagAwareAdapterInterface $pool): void
@@ -164,7 +165,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return WriteLock
      */
     public function getWriteLock()
     {
@@ -784,7 +785,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
-     *
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -800,6 +801,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -813,6 +815,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -827,6 +830,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -840,6 +844,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -855,7 +860,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Writes save queue to the cache
-     *
+     * @internal
      * @return bool
      */
     public function writeSaveQueue()
@@ -905,6 +910,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Shut down pimcore - write cache entries and clean up
      *
+     * @internal
      * @param bool $forceWrite
      *
      * @return $this
