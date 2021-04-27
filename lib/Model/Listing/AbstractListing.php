@@ -363,7 +363,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     /**
      * @param string $condition
-     * @param array|null $conditionVariables
+     * @param array|string|null $conditionVariables
      *
      * @return $this
      */

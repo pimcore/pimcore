@@ -49,7 +49,7 @@ class AdminStyle
     /**
      * @param AbstractObject|Asset|Document|ElementInterface $element
      */
-    public function __construct($element)
+    public function __construct(ElementInterface $element)
     {
         if ($element instanceof AbstractObject) {
             if ($element instanceof Folder) {
@@ -61,7 +61,7 @@ class AdminStyle
                 if ($element->getClass()->getIcon()) {
                     $this->elementIcon = $element->getClass()->getIcon();
                 } else {
-                    $this->elementIconClass = $element->getType() == 'variant' ? 'pimcore_icon_variant' : 'pimcore_icon_object';
+                    $this->elementIconClass = $element->getType() === 'variant' ? 'pimcore_icon_variant' : 'pimcore_icon_object';
                 }
 
                 $this->elementQtipConfig = [
@@ -74,7 +74,7 @@ class AdminStyle
                 'title' => 'ID: ' . $element->getId(),
             ];
 
-            if ($element->getType() == 'folder') {
+            if ($element->getType() === 'folder') {
                 $this->elementIconClass = 'pimcore_icon_folder';
             } else {
                 $this->elementIconClass = 'pimcore_icon_asset_default';
@@ -93,7 +93,7 @@ class AdminStyle
             $this->elementIconClass = 'pimcore_icon_' . $element->getType();
 
             // set type specific settings
-            if ($element->getType() == 'page') {
+            if ($element->getType() === 'page') {
                 $site = Site::getByRootId($element->getId());
 
                 if ($site instanceof Site) {
@@ -107,7 +107,7 @@ class AdminStyle
                 if ($site = Site::getByRootId($element->getId())) {
                     $this->elementIconClass = 'pimcore_icon_site';
                 }
-            } elseif ($element->getType() == 'folder' || $element->getType() == 'link' || $element->getType() == 'hardlink') {
+            } elseif ($element->getType() === 'folder' || $element->getType() === 'link' || $element->getType() === 'hardlink') {
                 if (!$element->hasChildren() && $element->getType() == 'folder') {
                     $this->elementIconClass = 'pimcore_icon_folder';
                 }

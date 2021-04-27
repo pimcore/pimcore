@@ -26,7 +26,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    /** @var DataObject\AbstractObject */
+    /** @var DataObject\AbstractObject|null */
     protected $object;
 
     /**
@@ -62,11 +62,11 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(?DataObject\Concrete $object)
     {
         $this->markMeDirty();
 

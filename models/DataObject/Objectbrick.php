@@ -31,7 +31,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @var array
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * @var string
@@ -39,14 +39,14 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     protected $fieldname;
 
     /**
-     * @var Model\DataObject\Concrete
+     * @var Model\DataObject\Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $objectId;
+    protected ?int $objectId = null;
 
     /**
      * @var array
@@ -83,17 +83,17 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             }
 
             return $values;
-        } else {
-            if (empty($this->items)) {
-                foreach ($this->getObjectVars() as $var) {
-                    if ($var instanceof Objectbrick\Data\AbstractData) {
-                        $this->items[] = $var;
-                    }
+        }
+
+        if (empty($this->items)) {
+            foreach ($this->getObjectVars() as $var) {
+                if ($var instanceof Objectbrick\Data\AbstractData) {
+                    $this->items[] = $var;
                 }
             }
-
-            return $this->items;
         }
+
+        return $this->items;
     }
 
     /**
@@ -101,7 +101,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return $this
      */
-    public function setItems($items)
+    public function setItems(array $items)
     {
         $this->items = $items;
         $this->markFieldDirty('_self', true);
@@ -132,7 +132,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @return array
      */
-    public function getBrickGetters()
+    public function getBrickGetters(): array
     {
         $getters = [];
         foreach ($this->brickGetters as $bg) {
@@ -145,15 +145,15 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @return array
      */
-    public function getAllowedBrickTypes()
+    public function getAllowedBrickTypes(): array
     {
-        return is_array($this->brickGetters) ? $this->brickGetters : [];
+        return $this->brickGetters;
     }
 
     /**
      * @return array
      */
-    public function getItemDefinitions()
+    public function getItemDefinitions(): array
     {
         $definitions = [];
         foreach ($this->getItems() as $item) {
@@ -167,7 +167,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      * @param Concrete $object
      * @param array $params
      */
-    public function save($object, $params = [])
+    public function save(Concrete $object, $params = []): void
     {
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
@@ -240,9 +240,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @return Concrete
+     * @return Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
             $this->setObject(Concrete::getById($this->objectId));
@@ -252,11 +252,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param Concrete $object
+     * @param Concrete|null $object
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(?Concrete $object)
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -276,7 +276,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @param Concrete $object
      */
-    public function delete(Concrete $object)
+    public function delete(Concrete $object): void
     {
         if (is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
@@ -292,7 +292,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $blockedVars = ['object'];
@@ -312,19 +312,16 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $brickGetter = null;
 
         // for backwards compatibility
-        if (isset($this->object) && $this->object) {
+        if ($this->object) {
             $this->objectId = $this->object->getId();
         }
 
         // sanity check, remove data requiring non-existing (deleted) brick definitions
-
-        if (is_array($this->brickGetters)) {
-            foreach ($this->brickGetters as $key => $brickGetter) {
-                if (!property_exists($this, $brickGetter)) {
-                    unset($this->brickGetters[$key]);
-                    $this->$brickGetter = null;
-                    Logger::error('brick ' . $brickGetter . ' does not exist anymore');
-                }
+        foreach ($this->brickGetters as $key => $brickGetter) {
+            if (!property_exists($this, $brickGetter)) {
+                unset($this->brickGetters[$key]);
+                $this->$brickGetter = null;
+                Logger::error('brick ' . $brickGetter . ' does not exist anymore');
             }
         }
 

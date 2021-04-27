@@ -72,7 +72,7 @@ class Document extends Element\AbstractElement
     /**
      * The parent document.
      *
-     * @var Document|null
+     * @var self|null
      */
     protected $parent;
 
@@ -82,7 +82,7 @@ class Document extends Element\AbstractElement
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * Filename/Key of the document
@@ -101,16 +101,16 @@ class Document extends Element\AbstractElement
     /**
      * Sorter index in the tree, can also be used for generating a navigation and so on
      *
-     * @var int
+     * @var int|null
      */
-    protected $index;
+    protected ?int $index = null;
 
     /**
      * published or not
      *
      * @var bool
      */
-    protected $published = true;
+    protected bool $published = true;
 
     /**
      * timestamp of creationdate
@@ -129,16 +129,16 @@ class Document extends Element\AbstractElement
     /**
      * User-ID of the owner
      *
-     * @var int
+     * @var int|null
      */
-    protected $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * User-ID of the user last modified the document
      *
-     * @var int
+     * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification = null;
 
     /**
      * List of Property, concerning the folder
@@ -340,17 +340,13 @@ class Document extends Element\AbstractElement
      *
      * @throws \Exception
      */
-    public static function getList($config = [])
+    public static function getList(array $config = []): Listing
     {
-        if (is_array($config)) {
-            /** @var Listing $list */
-            $list = self::getModelFactory()->build(Listing::class);
-            $list->setValues($config);
+        /** @var Listing $list */
+        $list = self::getModelFactory()->build(Listing::class);
+        $list->setValues($config);
 
-            return $list;
-        }
-
-        throw new \Exception('Unable to initiate list class - please provide valid configuration array');
+        return $list;
     }
 
     /**
@@ -360,12 +356,11 @@ class Document extends Element\AbstractElement
      *
      * @return int count
      */
-    public static function getTotalCount($config = [])
+    public static function getTotalCount(array $config = []): int
     {
         $list = static::getList($config);
-        $count = $list->getTotalCount();
 
-        return $count;
+        return $list->getTotalCount();
     }
 
     /**
@@ -813,7 +808,7 @@ class Document extends Element\AbstractElement
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
             if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
-                /** @var Document $parent * */
+                /** @var Document $parent */
                 $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
@@ -972,7 +967,7 @@ class Document extends Element\AbstractElement
      *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return (int) $this->id;
     }
@@ -1150,9 +1145,9 @@ class Document extends Element\AbstractElement
     /**
      * Returns the document index.
      *
-     * @return int
+     * @return int|null
      */
-    public function getIndex()
+    public function getIndex(): ?int
     {
         return $this->index;
     }
@@ -1208,7 +1203,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns the id of the owner user.
      *
-     * @return int
+     * @return int|null
      */
     public function getUserOwner()
     {
@@ -1345,7 +1340,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns the parent document instance.
      *
-     * @return Document
+     * @return self|null
      */
     public function getParent()
     {

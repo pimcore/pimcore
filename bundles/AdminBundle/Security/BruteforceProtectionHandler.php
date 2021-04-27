@@ -164,7 +164,7 @@ final class BruteforceProtectionHandler implements LoggerAwareInterface
         $lines = explode("\n", $data);
         $entries = [];
 
-        if (is_array($lines) && count($lines) > 0) {
+        if (is_array($lines)) {
             foreach ($lines as $line) {
                 $entries[] = explode(',', $line);
             }

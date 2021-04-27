@@ -122,7 +122,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * Only allow setting of a property if $allowModifications  was set to true
      * on construction. Otherwise, throw an exception.
      *
-     * @param  string $name
+     * @param  string|null $name
      * @param  mixed  $value
      *
      * @return void
@@ -177,7 +177,6 @@ class Config implements Countable, Iterator, ArrayAccess
         $array = [];
         $data = $this->data;
 
-        /** @var self $value */
         foreach ($data as $key => $value) {
             if ($value instanceof self) {
                 $array[$key] = $value->toArray();

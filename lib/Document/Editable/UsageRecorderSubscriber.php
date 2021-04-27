@@ -40,14 +40,9 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
 
     /**
      * @param EditableNameEvent $event
-     *
      */
     public function onBuildEditableName(EditableNameEvent $event)
     {
-        if (null === $document = $event->getDocument()) {
-            throw new \RuntimeException('Need a document to record editable usage.');
-        }
-
         $this->recordedEditableNames[] = $event->getEditableName();
     }
 

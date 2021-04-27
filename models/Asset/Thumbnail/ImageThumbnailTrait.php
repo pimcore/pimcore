@@ -26,7 +26,7 @@ trait ImageThumbnailTrait
     use TemporaryFileHelperTrait;
 
     /**
-     * @var Asset
+     * @var Asset|null
      */
     protected $asset;
 
@@ -38,7 +38,7 @@ trait ImageThumbnailTrait
     /**
      * @var array
      */
-    protected $pathReference = [];
+    protected array $pathReference = [];
 
     /**
      * @var int|null

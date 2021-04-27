@@ -150,13 +150,6 @@ trait EmbeddedMetaDataTrait
 
         if (is_file($filePath)) {
             $chunkSize = 1024;
-            if (!is_int($chunkSize)) {
-                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
-            }
-
-            if ($chunkSize < 12) {
-                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
-            }
 
             if (($file_pointer = fopen($filePath, 'rb')) === false) {
                 throw new \RuntimeException('Could not open file for reading');

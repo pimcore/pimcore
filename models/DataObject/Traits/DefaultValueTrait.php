@@ -62,16 +62,8 @@ trait DefaultValueTrait
             $class = null;
             $owner = isset($params['owner']) ? $params['owner'] : null;
             if ($owner instanceof Concrete) {
-                if ($isUpdate) {
-                    // only consider default value for new objects
-                    return $data;
-                }
                 $class = $owner->getClass();
             } elseif ($owner instanceof AbstractData) {
-                if ($isUpdate) {
-                    // only consider default value for new bricks
-                    return $data;
-                }
                 $class = $owner->getObject()->getClass();
             }
 

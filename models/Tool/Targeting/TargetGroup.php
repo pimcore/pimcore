@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @method TargetGroup\Dao getDao()
+ * @method void delete()
  */
 class TargetGroup extends Model\AbstractModel
 {

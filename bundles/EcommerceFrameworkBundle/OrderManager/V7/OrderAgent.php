@@ -45,7 +45,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class OrderAgent implements OrderAgentInterface
 {
-    const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
+    public const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
     /**
      * @var AbstractOrder
@@ -63,7 +63,7 @@ class OrderAgent implements OrderAgentInterface
     protected $paymentManager;
 
     /**
-     * @var PaymentInterface
+     * @var PaymentInterface|null
      */
     protected $paymentProvider;
 
@@ -73,7 +73,7 @@ class OrderAgent implements OrderAgentInterface
     protected $eventDispatcher;
 
     /**
-     * @var Note[]
+     * @var Note[]|null
      */
     protected $fullChangeLog;
 

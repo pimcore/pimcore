@@ -64,12 +64,7 @@ trait AllowObjectRelationTrait
             //don't check if no allowed classes set
         }
 
-        if ($object instanceof DataObject\AbstractObject) {
-            Logger::debug('checked object relation to target object [' . $object->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
-        } else {
-            Logger::debug('checked object relation to target in field [' . $this->getName() . '], not allowed, target ist not an object');
-            Logger::debug($object);
-        }
+        Logger::debug('checked object relation to target object [' . $object->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
 
         return $allowed;
     }

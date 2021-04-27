@@ -87,7 +87,7 @@ final class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, Logge
         // clear open edit locks for this session
         Editlock::clearSession(Session::getSessionId());
 
-        /** @var LogoutEvent $event */
+        /** @var LogoutEvent|null $event */
         $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
             $event = null;
 

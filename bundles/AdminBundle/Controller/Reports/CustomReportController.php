@@ -401,10 +401,6 @@ final class CustomReportController extends ReportsControllerBase
         }
 
         $configuration = $config->getDataSourceConfig();
-        //if many rows returned as an array than use the first row. Fixes: #782
-        $configuration = is_array($configuration)
-            ? $configuration[0]
-            : $configuration;
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 

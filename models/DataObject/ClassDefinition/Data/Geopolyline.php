@@ -136,7 +136,7 @@ class Geopolyline extends AbstractGeo implements
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

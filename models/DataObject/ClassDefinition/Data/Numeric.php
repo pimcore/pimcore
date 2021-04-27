@@ -584,7 +584,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param float|int|string $data
+     * @param float|int|string|null $data
      * @param array $params
      *
      * @return float|int|string|null

@@ -58,12 +58,12 @@ class Unit extends Model\AbstractModel
     protected $reference;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $factor;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conversionOffset;
 
@@ -259,7 +259,7 @@ class Unit extends Model\AbstractModel
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getFactor()
     {
@@ -347,7 +347,7 @@ class Unit extends Model\AbstractModel
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getConversionOffset()
     {

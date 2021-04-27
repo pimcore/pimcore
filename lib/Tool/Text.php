@@ -276,10 +276,8 @@ class Text
      *
      * @return array
      */
-    public static function getCacheTagsOfWysiwygText($text, $tags = [])
+    public static function getCacheTagsOfWysiwygText($text, array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {

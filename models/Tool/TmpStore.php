@@ -54,14 +54,14 @@ class TmpStore extends Model\AbstractModel
     protected $serialized = false;
 
     /**
-     * @var TmpStore|null
+     * @var self|null
      */
-    protected static $instance;
+    protected static ?self $instance = null;
 
     /**
-     * @return TmpStore
+     * @return self
      */
-    protected static function getInstance()
+    protected static function getInstance(): self
     {
         if (!self::$instance) {
             self::$instance = new self();

@@ -174,6 +174,7 @@ class Cse implements PaginateListingInterface
         }
         $this->setTotal($total);
 
+        /** @var \Google_Service_Customsearch_Result[] $results */
         $results = $googleResponse->getItems();
         if (is_array($results)) {
             foreach ($results as $item) {

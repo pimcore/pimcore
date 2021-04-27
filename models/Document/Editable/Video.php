@@ -365,7 +365,7 @@ class Video extends Model\Document\Editable
             return $this->getErrorCode('Asset is not a video, or missing thumbnail configuration');
         }
 
-        if ($asset instanceof Asset\Video && $thumbnailConfig) {
+        if ($asset instanceof Asset\Video) {
             $thumbnail = $asset->getThumbnail($thumbnailConfig);
             if ($thumbnail) {
                 $image = $this->getPosterThumbnailImage($asset);
@@ -402,7 +402,7 @@ class Video extends Model\Document\Editable
     /**
      * @param Asset\Video $asset
      *
-     * @return Asset\Image\Thumbnail|null
+     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail
      */
     private function getPosterThumbnailImage(Asset\Video $asset)
     {
@@ -424,19 +424,17 @@ class Video extends Model\Document\Editable
             $imageThumbnailConf['format'] = 'JPEG';
         }
 
-        $image = null;
         if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
-            $image = $poster->getThumbnail($imageThumbnailConf);
-        } else {
-            if ($asset->getCustomSetting('image_thumbnail_asset')
-                && ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
-                $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
-            } else {
-                $image = $asset->getImageThumbnail($imageThumbnailConf);
-            }
+            return $poster->getThumbnail($imageThumbnailConf);
+        }
+        if (
+            $asset->getCustomSetting('image_thumbnail_asset') &&
+            ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))
+        ) {
+            return $customPreviewAsset->getThumbnail($imageThumbnailConf);
         }
 
-        return $image;
+        return $asset->getImageThumbnail($imageThumbnailConf);
     }
 
     /**

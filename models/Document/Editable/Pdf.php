@@ -82,12 +82,10 @@ class Pdf extends Model\Document\Editable
      * @param Model\Document\PageSnippet $ownerDocument
      * @param array $tags
      *
-     * @return array|mixed
+     * @return array
      */
-    public function getCacheTags($ownerDocument, $tags = [])
+    public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $asset = Asset::getById($this->id);
         if ($asset instanceof Asset) {
             if (!array_key_exists($asset->getCacheTag(), $tags)) {

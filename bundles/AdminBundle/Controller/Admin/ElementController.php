@@ -481,18 +481,24 @@ final class ElementController extends AdminController
         $type = $request->get('type');
         $data = [];
 
-        if ($type == 'asset') {
+        if ($type === 'asset') {
             $element = Asset::getById($id);
-        } elseif ($type == 'document') {
+        } elseif ($type === 'document') {
             $element = Document::getById($id);
-            $data['index'] = $element->getIndex();
         } else {
             $element = DataObject::getById($id);
-            $data['index'] = $element->getIndex();
         }
+
+        if (!$element) {
+            $data['success'] = false;
+
+            return $this->adminJson($data);
+        }
+
         $typePath = Element\Service::getTypePath($element);
 
         $data['success'] = true;
+        $data['index'] = method_exists($element, 'getIndex') ? (int) $element->getIndex() : 0;
         $data['idPath'] = Element\Service::getIdPath($element);
         $data['typePath'] = $typePath;
         $data['fullpath'] = $element->getRealFullPath();

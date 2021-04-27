@@ -189,7 +189,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return mixed
      */
-    abstract protected function loadData($data, $object = null, $params = []);
+    abstract protected function loadData(array $data, $object = null, $params = []);
 
     /**
      * @internal
@@ -392,7 +392,7 @@ abstract class AbstractRelations extends Data implements
     protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Fieldcollection $container */
+            /** @var DataObject\Fieldcollection|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
@@ -413,7 +413,7 @@ abstract class AbstractRelations extends Data implements
     protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Objectbrick $container */
+            /** @var DataObject\Objectbrick|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());

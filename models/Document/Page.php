@@ -48,7 +48,7 @@ class Page extends TargetingDocument
      *
      * @var string
      */
-    protected $type = 'page';
+    protected string $type = 'page';
 
     /**
      * @var string|null

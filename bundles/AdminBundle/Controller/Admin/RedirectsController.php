@@ -217,7 +217,7 @@ final class RedirectsController extends AdminController
     {
         $this->checkPermission('redirects');
 
-        /** @var UploadedFile $file */
+        /** @var UploadedFile|null $file */
         $file = $request->files->get('redirects');
 
         if (!$file) {

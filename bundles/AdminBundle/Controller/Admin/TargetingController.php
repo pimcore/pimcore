@@ -154,12 +154,11 @@ final class TargetingController extends AdminController implements KernelControl
         /** @var Targeting\Rule[] $changedRules */
         $changedRules = [];
         foreach ($rules as $id => $prio) {
-            /** @var Targeting\Rule $rule */
             $rule = Targeting\Rule::getById((int)$id);
             $prio = (int)$prio;
 
             if ($rule) {
-                if ((int)$rule->getPrio() !== $prio) {
+                if ($rule->getPrio() !== $prio) {
                     $rule->setPrio((int)$prio);
                     $changedRules[] = $rule;
                 }
@@ -254,7 +253,6 @@ final class TargetingController extends AdminController implements KernelControl
     {
         $success = false;
 
-        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
         if ($targetGroup) {
             $event = new TargetGroupEvent($targetGroup);

@@ -28,7 +28,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion($userId = null)
+ * @method \Pimcore\Model\Version|null getLatestVersion($userId = null)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
@@ -50,7 +50,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @var ClassDefinition|null
      */
-    protected $o_class;
+    protected ?ClassDefinition $o_class = null;
 
     /**
      * @var string
@@ -367,10 +367,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
         $tags['class_' . $this->getClassId()] = 'class_' . $this->getClassId();
@@ -403,11 +401,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param ClassDefinition $o_class
+     * @param ClassDefinition|null $o_class
      *
      * @return self
      */
-    public function setClass($o_class)
+    public function setClass(?ClassDefinition $o_class)
     {
         $this->o_class = $o_class;
 
@@ -415,9 +413,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return ClassDefinition
+     * @return ClassDefinition|null
      */
-    public function getClass()
+    public function getClass(): ?ClassDefinition
     {
         if (!$this->o_class) {
             $this->setClass(ClassDefinition::getById($this->getClassId()));

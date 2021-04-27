@@ -148,7 +148,6 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 
             return trim($this->configuration->getToken());
         } catch (\Exception $e) {
-            return false;
         }
 
         return false;

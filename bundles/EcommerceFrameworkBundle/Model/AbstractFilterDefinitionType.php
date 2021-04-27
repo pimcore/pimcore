@@ -48,7 +48,7 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fi
     abstract public function getLabel(): ?string;
 
     /**
-     * @return string
+     * @return mixed
      */
     abstract public function getField();
 

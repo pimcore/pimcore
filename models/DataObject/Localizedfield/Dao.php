@@ -636,37 +636,35 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($localizedfields->getFieldDefinitions(
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {
-                if ($fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
-                        // datafield has it's own loader
-                        $params['language'] = $row['language'];
-                        $params['object'] = $object;
-                        if (!isset($params['context'])) {
-                            $params['context'] = [];
-                        }
-                        $params['context']['object'] = $object;
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    // datafield has it's own loader
+                    $params['language'] = $row['language'];
+                    $params['object'] = $object;
+                    if (!isset($params['context'])) {
+                        $params['context'] = [];
+                    }
+                    $params['context']['object'] = $object;
 
-                        if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
-                            $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
-                        } else {
-                            $value = $fd->load($this->model, $params);
-                            if ($value === 0 || !empty($value)) {
-                                $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                            }
+                    if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                        $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
+                    } else {
+                        $value = $fd->load($this->model, $params);
+                        if ($value === 0 || !empty($value)) {
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface) {
-                        if (is_array($fd->getColumnType())) {
-                            $multidata = [];
-                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
-                            }
-                            $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                        } else {
-                            $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                }
+                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                    if (is_array($fd->getColumnType())) {
+                        $multidata = [];
+                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
+                            $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
                         }
+                        $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
+                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                    } else {
+                        $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
+                        $this->model->setLocalizedValue($key, $value, $row['language'], false);
                     }
                 }
             }

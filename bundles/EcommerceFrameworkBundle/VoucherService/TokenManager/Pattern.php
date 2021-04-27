@@ -115,9 +115,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         if ($token = Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
                 return true;
-            } else {
-                throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
             }
+            throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
         }
         throw new VoucherServiceException('No Token for this code exists.', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
     }
@@ -246,7 +245,6 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
             return $codeSets;
         } catch (\Exception $e) {
-            return false;
         }
 
         return false;
@@ -540,20 +538,16 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
-        if ($tokens) {
-            /** @var PaginatorInterface $paginator */
-            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
-            $paginator = $paginator->paginate(
-                $tokens,
-                $params['page'] ?? 1,
-                $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
-            );
+        /** @var PaginatorInterface $paginator */
+        $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+        $paginator = $paginator->paginate(
+            $tokens,
+            $params['page'] ?? 1,
+            $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
+        );
 
-            $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = count($tokens);
-        } else {
-            $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
-        }
+        $viewParamsBag['paginator'] = $paginator;
+        $viewParamsBag['count'] = count($tokens);
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? '';
         $viewParamsBag['msg']['success'] = $params['success'] ?? '';

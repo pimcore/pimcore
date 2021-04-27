@@ -26,7 +26,7 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion($userId = null)
+ * @method \Pimcore\Model\Version|null getLatestVersion($userId = null)
  */
 abstract class PageSnippet extends Model\Document
 {
@@ -67,7 +67,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @var bool
      */
-    protected $supportsContentMaster = true;
+    protected bool $supportsContentMaster = true;
 
     /**
      * @var null|bool
@@ -208,10 +208,8 @@ abstract class PageSnippet extends Model\Document
      *
      * @return array
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
         foreach ($this->getEditables() as $editable) {

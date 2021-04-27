@@ -47,7 +47,7 @@ class Imagick extends Adapter
      * @param string $imagePath
      * @param array $options
      *
-     * @return $this|bool|self
+     * @return self|false
      */
     public function load($imagePath, $options = [])
     {
@@ -767,7 +767,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param string $image
+     * @param string|\Imagick|null $image
      * @param int $x Amount of horizontal pixels the overlay should be offset from the origin
      * @param int $y Amount of vertical pixels the overlay should be offset from the origin
      * @param int $alpha Opacity in a scale of 0 (transparent) to 100 (opaque)
@@ -804,14 +804,14 @@ class Imagick extends Adapter
         }
 
         if ($newImage) {
-            if ($origin == 'top-right') {
+            if ($origin === 'top-right') {
                 $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
-            } elseif ($origin == 'bottom-left') {
+            } elseif ($origin === 'bottom-left') {
                 $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin == 'bottom-right') {
+            } elseif ($origin === 'bottom-right') {
                 $x = $this->resource->getImageWidth() - $newImage->getImageWidth() - $x;
                 $y = $this->resource->getImageHeight() - $newImage->getImageHeight() - $y;
-            } elseif ($origin == 'center') {
+            } elseif ($origin === 'center') {
                 $x = round($this->resource->getImageWidth() / 2) - round($newImage->getImageWidth() / 2) + $x;
                 $y = round($this->resource->getImageHeight() / 2) - round($newImage->getImageHeight() / 2) + $y;
             }

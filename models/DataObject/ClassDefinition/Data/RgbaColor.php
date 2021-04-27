@@ -90,7 +90,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param Model\DataObject\Data\RgbaColor $data
+     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -357,7 +357,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array $value
+     * @param string|array|object $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -371,13 +371,13 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
             . $db->quoteIdentifier($name  . '__a') .')';
 
         if ($value === 'NULL') {
-            if ($operator == '=') {
+            if ($operator === '=') {
                 $operator = 'IS';
-            } elseif ($operator == '!=') {
+            } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
         } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator == 'LIKE') {
+            if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
                 $value = $db->quote($value);

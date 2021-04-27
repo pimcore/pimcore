@@ -359,9 +359,6 @@ final class FullPageCacheListener
         }
 
         $response = $event->getResponse();
-        if (!$response) {
-            return;
-        }
 
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');

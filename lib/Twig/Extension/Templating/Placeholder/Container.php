@@ -275,7 +275,7 @@ class Container extends \ArrayObject
      * Start capturing content to push into placeholder
      *
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
-     * @param null       $key
+     * @param mixed $key
      *
      * @throws Exception
      *

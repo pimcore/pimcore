@@ -318,14 +318,6 @@ class Video extends Model\Asset
 
         if (in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
             $chunkSize = 1024;
-            if (!is_int($chunkSize)) {
-                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
-            }
-
-            if ($chunkSize < 12) {
-                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
-            }
-
             $file_pointer = $this->getStream();
 
             $tag = '<rdf:SphericalVideo';

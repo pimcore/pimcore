@@ -174,13 +174,11 @@ abstract class Processor
     /**
      * @param int $documentId
      *
-     * @return \stdClass
+     * @return \stdClass|null
      */
     protected function loadJobConfigObject($documentId)
     {
-        $jobConfig = json_decode(file_get_contents($this->getJobConfigFile($documentId)));
-
-        return $jobConfig;
+        return json_decode(file_get_contents($this->getJobConfigFile($documentId)));
     }
 
     /**
@@ -231,7 +229,7 @@ abstract class Processor
     /**
      * @param int $documentId
      *
-     * @return array
+     * @return array|null
      */
     public function getStatusUpdate($documentId)
     {
@@ -242,6 +240,8 @@ abstract class Processor
                 'statusUpdate' => $jobConfig->statusUpdate,
             ];
         }
+
+        return null;
     }
 
     /**

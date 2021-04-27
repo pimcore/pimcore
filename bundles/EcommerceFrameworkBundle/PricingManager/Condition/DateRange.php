@@ -21,12 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class DateRange implements DateRangeInterface
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $starting;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $ending;
 
@@ -69,7 +69,7 @@ class DateRange implements DateRangeInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getStarting()
     {
@@ -77,7 +77,7 @@ class DateRange implements DateRangeInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getEnding()
     {

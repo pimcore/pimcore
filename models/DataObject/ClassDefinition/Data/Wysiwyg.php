@@ -77,7 +77,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @var string
      */
-    public $toolbarConfig = '';
+    public string $toolbarConfig = '';
 
     /**
      * @internal
@@ -135,19 +135,15 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @param string $toolbarConfig
      */
-    public function setToolbarConfig($toolbarConfig)
+    public function setToolbarConfig(string $toolbarConfig)
     {
-        if (is_string($toolbarConfig)) {
-            $this->toolbarConfig = $toolbarConfig;
-        } else {
-            $this->toolbarConfig = '';
-        }
+        $this->toolbarConfig = $toolbarConfig;
     }
 
     /**
      * @return string
      */
-    public function getToolbarConfig()
+    public function getToolbarConfig(): string
     {
         return $this->toolbarConfig;
     }
@@ -301,7 +297,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData  $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Classificationstore|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return string

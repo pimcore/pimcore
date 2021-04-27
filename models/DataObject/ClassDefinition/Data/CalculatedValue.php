@@ -304,7 +304,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             $code .= "\t" . '$object = $this;'  . "\n";
         }
 
-        if ($class instanceof DataObject\Fieldcollection\Definition || $class instanceof DataObject\Objectbrick\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition) {
             $code .= "\t" . '$fieldDefinition = $this->getDefinition()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
         } else {
             $code .= "\t" . '$fieldDefinition = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";

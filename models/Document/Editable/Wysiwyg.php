@@ -135,13 +135,13 @@ class Wysiwyg extends Model\Document\Editable
 
     /**
      * @param Model\Document\PageSnippet $ownerDocument
-     * @param array $blockedTags
+     * @param array $tags
      *
      * @return array
      */
-    public function getCacheTags($ownerDocument, $blockedTags = [])
+    public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
-        return Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
+        return Text::getCacheTagsOfWysiwygText($this->text, $tags);
     }
 
     /**

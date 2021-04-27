@@ -139,7 +139,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataForEditmode
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -220,7 +220,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getVersionPreview
      *
-     * @param \DateTime $data
+     * @param \DateTime|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *

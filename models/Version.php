@@ -58,9 +58,9 @@ class Version extends AbstractModel
     protected $userId;
 
     /**
-     * @var User
+     * @var User|null
      */
-    protected $user;
+    protected ?User $user = null;
 
     /**
      * @var string
@@ -602,19 +602,19 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getUser()
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      *
      * @return $this
      */
-    public function setUser($user)
+    public function setUser(?User $user)
     {
         $this->user = $user;
 

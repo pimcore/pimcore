@@ -36,18 +36,12 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
 
     /**
      * @param AbstractVoucherTokenType $configuration
-     *
-     * @throws InvalidConfigException
      */
     public function __construct(AbstractVoucherTokenType $configuration)
     {
-        if ($configuration instanceof AbstractVoucherTokenType) {
-            $this->configuration = $configuration;
-            $this->seriesId = $configuration->getObject()->getId();
-            $this->series = $configuration->getObject();
-        } else {
-            throw new InvalidConfigException('Invalid Configuration Class.');
-        }
+        $this->configuration = $configuration;
+        $this->seriesId = $configuration->getObject()->getId();
+        $this->series = $configuration->getObject();
     }
 
     /**
@@ -86,12 +80,11 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      */
     protected function checkVoucherSeriesIsPublished($code)
     {
-        /** @var Token $token */
         $token = Token::getByCode($code);
         if (!$token) {
             throw new VoucherServiceException("No token found for code '" . $code . "'", VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
         }
-        /** @var OnlineShopVoucherSeries $series */
+        /** @var OnlineShopVoucherSeries|null $series */
         $series = OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
         if (!$series) {
             throw new VoucherServiceException("No voucher series found for token '" . $token->getToken() . "' (ID " . $token->getId() . ')', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);

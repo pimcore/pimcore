@@ -167,7 +167,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Classificationstore|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -586,9 +586,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function classSaved($class, $params = [])
     {
-        $clasificationStore = new DataObject\Classificationstore();
-        $clasificationStore->setClass($class);
-        $clasificationStore->createUpdateTable();
+        $classificationStore = new DataObject\Classificationstore();
+        $classificationStore->setClass($class);
+        $classificationStore->createUpdateTable();
     }
 
     /**
@@ -990,12 +990,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $activeGroups
      *
      * @return array|null
-     *
-     * @todo: Method returns void/null, should be boolean or null
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = [])
     {
@@ -1077,18 +1075,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $definition->__wakeup();
                 }
 
-                if ($definition) {
-                    $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
-                    if (method_exists($definition, 'enrichLayoutDefinition')) {
-                        $context['object'] = $object;
-                        $context['class'] = $object->getClass();
-                        $context['ownerType'] = 'classificationstore';
-                        $context['ownerName'] = $this->getName();
-                        $context['keyId'] = $keyGroupRelation->getKeyId();
-                        $context['groupId'] = $keyGroupRelation->getGroupId();
-                        $context['keyDefinition'] = $definition;
-                        $definition = $definition->enrichLayoutDefinition($object, $context);
-                    }
+                $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
+                if (method_exists($definition, 'enrichLayoutDefinition')) {
+                    $context['object'] = $object;
+                    $context['class'] = $object->getClass();
+                    $context['ownerType'] = 'classificationstore';
+                    $context['ownerName'] = $this->getName();
+                    $context['keyId'] = $keyGroupRelation->getKeyId();
+                    $context['groupId'] = $keyGroupRelation->getGroupId();
+                    $context['keyDefinition'] = $definition;
+                    $definition = $definition->enrichLayoutDefinition($object, $context);
                 }
 
                 $keyList[] = [
@@ -1137,9 +1133,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param array $allowedGroupIds
-     *
-     * @todo: $parts is not definied here, should it be definied as empty array or null
+     * @param array|string $allowedGroupIds
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {

@@ -37,7 +37,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
      *
-     * @var array
+     * @var array|null
      */
     protected $config;
 
@@ -525,7 +525,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return array
      */
-    public function getCacheTags($ownerDocument, $tags = [])
+    public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         return $tags;
     }

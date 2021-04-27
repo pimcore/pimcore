@@ -536,7 +536,7 @@ class Service extends Model\Element\Service
      * @param string $key
      * @param array $context
      *
-     * @return \stdClass|null
+     * @return \stdClass|array|null
      */
     public static function calculateCellValue($object, $helperDefinitions, $key, $context = [])
     {
@@ -580,7 +580,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $object
+     * @param AbstractObject|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
      * @param Model\User $user
      * @param string $type
      *
@@ -640,10 +640,6 @@ class Service extends Model\Element\Service
                 foreach ($permission as $p) {
                     if (preg_match(sprintf('#^(%s)_(.*)#', $classId), $p, $setting)) {
                         $l = $setting[2];
-
-                        if ($layoutPermissions === null) {
-                            $layoutPermissions = [];
-                        }
                         $layoutPermissions[$l] = $l;
                     }
                 }
@@ -856,9 +852,6 @@ class Service extends Model\Element\Service
 
         if ($class) {
             if (is_string($definition)) {
-                /**
-                 * @var ClassDefinition\Data\Select $definition
-                 */
                 $definition = $class->getFieldDefinition($definition);
             }
 
@@ -1090,7 +1083,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param ClassDefinition\Data[] $masterDefinition
-     * @param ClassDefinition\Data|ClassDefinition\Layout $layout
+     * @param ClassDefinition\Data|ClassDefinition\Layout|null $layout
      *
      * @return bool
      */
@@ -1102,7 +1095,7 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof ClassDefinition\Data) {
             $fieldname = $layout->name;
-            if (!$masterDefinition[$fieldname]) {
+            if (empty($masterDefinition[$fieldname])) {
                 return false;
             }
 
@@ -1230,7 +1223,7 @@ class Service extends Model\Element\Service
             $customFieldDefinitions = $dummyClass->getFieldDefinitions();
 
             foreach ($mergedFieldDefinition as $key => $value) {
-                if (!$customFieldDefinitions[$key]) {
+                if (empty($customFieldDefinitions[$key])) {
                     unset($mergedFieldDefinition[$key]);
                 }
             }
@@ -1310,7 +1303,7 @@ class Service extends Model\Element\Service
     {
         if ($layout instanceof ClassDefinition\Data) {
             $name = $layout->getName();
-            if (!$fieldDefinitions[$name] || $fieldDefinitions[$name]->getInvisible()) {
+            if (empty($fieldDefinitions[$name]) || $fieldDefinitions[$name]->getInvisible()) {
                 return false;
             }
 
@@ -1526,7 +1519,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      * @param array $params
-     * @param Model\DataObject\Data\CalculatedValue $data
+     * @param Model\DataObject\Data\CalculatedValue|null $data
      *
      * @return string|null
      *
@@ -1572,8 +1565,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
-     * @param Model\DataObject\Data\CalculatedValue $data
+     * @param Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
+     * @param Model\DataObject\Data\CalculatedValue|null $data
      *
      * @return mixed|null
      */

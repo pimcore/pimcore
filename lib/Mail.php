@@ -57,7 +57,7 @@ class Mail extends Email
     /**
      * Contains the email document
      *
-     * @var Model\Document\Email
+     * @var Model\Document\Email|Model\Document\Newsletter|null
      */
     protected $document;
 
@@ -375,7 +375,7 @@ class Mail extends Email
     /**
      * Sets a single parameter to the request object
      *
-     * @param string | int $key
+     * @param string|int $key
      * @param mixed $value
      *
      * @return \Pimcore\Mail Provides fluent interface
@@ -404,7 +404,7 @@ class Mail extends Email
     /**
      * Returns a parameter which was set with "setParams" or "setParam"
      *
-     * @param string | integer $key
+     * @param string|int $key
      *
      * @return mixed
      */
@@ -442,7 +442,7 @@ class Mail extends Email
     /**
      * Deletes a single parameter which was set with "setParams" or "setParam"
      *
-     * @param string | integer $key
+     * @param string|int $key
      *
      * @return \Pimcore\Mail Provides fluent interface
      */
@@ -570,7 +570,7 @@ class Mail extends Email
 
             if ($addresses) {
                 $addresses = $this->filterLogAddresses($addresses);
-                /** @var MailboxListHeader $header */
+                /** @var MailboxListHeader|null $header */
                 $header = $this->getHeaders()->get(strtolower($key));
                 if ($header) {
                     $header->setAddresses($addresses);
@@ -767,9 +767,9 @@ class Mail extends Email
                 $html = new DomCrawler($htmlContent);
 
                 $body = $html->filter('body')->eq(0);
-                if ($body) {
+                if ($body->count()) {
                     $style = $body->filter('style')->eq(0);
-                    if ($style) {
+                    if ($style->count()) {
                         $style->clear();
                     }
                     $htmlContent = $body->html();
@@ -818,7 +818,7 @@ class Mail extends Email
     /**
      * Returns the Document
      *
-     * @return Model\Document\Email | null
+     * @return Model\Document\Email|Model\Document\Newsletter|null
      */
     public function getDocument()
     {

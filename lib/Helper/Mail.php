@@ -125,7 +125,7 @@ CSS;
     /**
      * Helper to format the receivers for the debug email and logging
      *
-     * @param array|Address[] $receivers
+     * @param array $receivers
      *
      * @return string
      */

@@ -146,20 +146,18 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    protected function loadData($data, $object = null, $params = [])
+    protected function loadData(array $data, $object = null, $params = [])
     {
         $objects = [
             'dirty' => false,
             'data' => [],
         ];
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                $o = DataObject::getById($object['dest_id']);
-                if ($o instanceof DataObject\Concrete) {
-                    $objects['data'][] = $o;
-                } else {
-                    $objects['dirty'] = true;
-                }
+        foreach ($data as $relation) {
+            $o = DataObject::getById($relation['dest_id']);
+            if ($o instanceof DataObject\Concrete) {
+                $objects['data'][] = $o;
+            } else {
+                $objects['dirty'] = true;
             }
         }
         //must return array - otherwise this means data is not loaded
@@ -169,7 +167,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -186,19 +184,17 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $ids = [];
 
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                if ($object instanceof DataObject\Concrete) {
-                    $ids[] = $object->getId();
+        if (is_array($data)) {
+            foreach ($data as $relation) {
+                if ($relation instanceof DataObject\Concrete) {
+                    $ids[] = $relation->getId();
                 }
             }
 
             return ',' . implode(',', $ids) . ',';
-        } elseif (is_array($data) && count($data) === 0) {
-            return '';
-        } else {
-            throw new \Exception('invalid data passed to getDataForQueryResource - must be array and it is: ' . print_r($data, true));
         }
+
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array and it is: ' . print_r($data, true));
     }
 
     /**
@@ -233,7 +229,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param array|null|false $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -242,7 +238,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         //if not set, return null
-        if ($data === null or $data === false) {
+        if ($data === null || $data === false) {
             return null;
         }
 

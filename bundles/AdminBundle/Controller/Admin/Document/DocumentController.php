@@ -535,12 +535,9 @@ final class DocumentController extends ElementControllerBase implements KernelCo
         if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
             if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
                 if ($oldPath && $oldPath != $document->getRealFullPath()) {
-                    $sourceSite = null;
-                    if ($oldDocument) {
-                        $sourceSite = Frontend::getSiteForDocument($oldDocument);
-                        if ($sourceSite) {
-                            $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
-                        }
+                    $sourceSite = Frontend::getSiteForDocument($oldDocument);
+                    if ($sourceSite) {
+                        $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
                     }
 
                     $targetSite = Frontend::getSiteForDocument($document);

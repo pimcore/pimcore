@@ -46,7 +46,7 @@ use Symfony\Component\Workflow\Workflow;
 final class WorkflowController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @var Document|Asset|ConcreteObject $element
+     * @var Document|Asset|ConcreteObject|null $element
      */
     private $element;
 
@@ -379,9 +379,9 @@ final class WorkflowController extends AdminController implements KernelControll
     }
 
     /**
-     * @param  Document|Asset|ConcreteObject $element
+     * @param Document|Asset|DataObject $element
      *
-     * @return Document|Asset|ConcreteObject
+     * @return Document|Asset|DataObject
      */
     protected function getLatestVersion($element)
     {

@@ -32,16 +32,16 @@ class Snippet extends Model\Document\Editable
     /**
      * Contains the ID of the linked snippet
      *
-     * @var int
+     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * Contains the object for the snippet
      *
-     * @var Document\Snippet
+     * @var Document\Snippet|null
      */
-    protected $snippet;
+    protected ?Document\Snippet $snippet = null;
 
     /**
      * @see EditableInterface::getType

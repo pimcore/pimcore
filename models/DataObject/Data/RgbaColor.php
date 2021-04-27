@@ -23,24 +23,24 @@ class RgbaColor implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
 
     /** @var int */
-    protected $r;
+    protected int $r;
 
     /** @var int */
-    protected $g;
+    protected int $g;
 
     /** @var int */
-    protected $b;
+    protected int $b;
 
     /** @var int */
-    protected $a;
+    protected int $a;
 
     /**
      * RgbaColor constructor.
      *
-     * @param int $r
-     * @param int $g
-     * @param int $b
-     * @param int $a
+     * @param int|null $r
+     * @param int|null $g
+     * @param int|null $b
+     * @param int|null $a
      */
     public function __construct($r = null, $g = null, $b = null, $a = null)
     {
@@ -54,15 +54,15 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      * @return int
      */
-    public function getR()
+    public function getR(): int
     {
         return $this->r;
     }
 
     /**
-     * @param int $r
+     * @param int|null $r
      */
-    public function setR($r)
+    public function setR(?int $r): void
     {
         $this->r = is_null($r) ? 0 : $r;
         $this->markMeDirty();
@@ -77,9 +77,9 @@ class RgbaColor implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $g
+     * @param int|null $g
      */
-    public function setG($g)
+    public function setG($g): void
     {
         $this->g = is_null($g) ? 0 : $g;
         $this->markMeDirty();
@@ -88,15 +88,15 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      * @return int
      */
-    public function getB()
+    public function getB(): int
     {
         return $this->b;
     }
 
     /**
-     * @param int $b
+     * @param int|null $b
      */
-    public function setB($b)
+    public function setB(?int $b): void
     {
         $this->b = is_null($b) ? 0 : $b;
         $this->markMeDirty();
@@ -105,15 +105,15 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      * @return int
      */
-    public function getA()
+    public function getA(): int
     {
         return $this->a;
     }
 
     /**
-     * @param int $a
+     * @param int|null $a
      */
-    public function setA($a)
+    public function setA(?int $a): void
     {
         $this->a = is_null($a) ? 255 : $a;
         $this->markMeDirty();
@@ -122,7 +122,7 @@ class RgbaColor implements OwnerAwareFieldInterface
     /**
      * @return array
      */
-    public function getRgb()
+    public function getRgb(): array
     {
         return [$this->r, $this->g, $this->b];
     }
@@ -132,7 +132,7 @@ class RgbaColor implements OwnerAwareFieldInterface
      *
      * @return array
      */
-    public function getRgba()
+    public function getRgba(): array
     {
         return [$this->r, $this->g, $this->b, $this->a];
     }
@@ -142,7 +142,7 @@ class RgbaColor implements OwnerAwareFieldInterface
      *
      * @return array
      */
-    public function getCssRgba()
+    public function getCssRgba(): array
     {
         return [$this->r, $this->g, $this->b, round($this->a / 255, 3)];
     }
@@ -153,7 +153,7 @@ class RgbaColor implements OwnerAwareFieldInterface
      *
      * @return string
      */
-    public function getHex($withAlpha = false, $withHash = true)
+    public function getHex($withAlpha = false, $withHash = true): string
     {
         if ($withAlpha) {
             $result = sprintf('%02x%02x%02x%02x', $this->r, $this->g, $this->b, $this->a);

@@ -153,10 +153,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @return array
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags[$this->getCacheTag()] = $this->getCacheTag();
 
         return $tags;

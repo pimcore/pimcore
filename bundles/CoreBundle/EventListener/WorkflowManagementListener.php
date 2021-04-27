@@ -209,7 +209,7 @@ final class WorkflowManagementListener implements EventSubscriberInterface
                             if (!empty($validLayouts)) {
 
                                 // check user permissions again
-                                if ($validLayouts && $validLayouts[$workflowLayoutId]) {
+                                if ($validLayouts[$workflowLayoutId]) {
                                     $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                                     $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                                     DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getArgument('object'));

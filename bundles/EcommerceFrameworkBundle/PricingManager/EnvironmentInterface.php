@@ -24,8 +24,8 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 interface EnvironmentInterface
 {
-    const EXECUTION_MODE_PRODUCT = 'product';
-    const EXECUTION_MODE_CART = 'cart';
+    public const EXECUTION_MODE_PRODUCT = 'product';
+    public const EXECUTION_MODE_CART = 'cart';
 
     /**
      * @param CartInterface $cart
@@ -35,7 +35,7 @@ interface EnvironmentInterface
     public function setCart(CartInterface $cart);
 
     /**
-     * @return CartInterface
+     * @return CartInterface|null
      */
     public function getCart();
 
@@ -47,7 +47,7 @@ interface EnvironmentInterface
     public function setCartItem(CartItemInterface $cartItem);
 
     /**
-     * @return CartItemInterface
+     * @return CartItemInterface|null
      */
     public function getCartItem();
 
@@ -59,7 +59,7 @@ interface EnvironmentInterface
     public function setProduct(CheckoutableInterface $product);
 
     /**
-     * @return CheckoutableInterface
+     * @return CheckoutableInterface|null
      */
     public function getProduct();
 
@@ -71,7 +71,7 @@ interface EnvironmentInterface
     public function setVisitorInfo(VisitorInfo $visitorInfo);
 
     /**
-     * @return VisitorInfo
+     * @return VisitorInfo|null
      */
     public function getVisitorInfo();
 
@@ -83,7 +83,7 @@ interface EnvironmentInterface
     public function setRule($rule);
 
     /**
-     * @return RuleInterface
+     * @return RuleInterface|null
      */
     public function getRule();
 
@@ -95,7 +95,7 @@ interface EnvironmentInterface
     public function setPriceInfo(PriceInfoInterface $priceInfo);
 
     /**
-     * @return PriceInfoInterface
+     * @return PriceInfoInterface|null
      */
     public function getPriceInfo();
 
@@ -119,7 +119,7 @@ interface EnvironmentInterface
     public function setSession(AttributeBagInterface $namespace);
 
     /**
-     * @return AttributeBagInterface
+     * @return AttributeBagInterface|null
      */
     public function getSession();
 

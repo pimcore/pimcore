@@ -104,7 +104,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param bool $data
+     * @param bool|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

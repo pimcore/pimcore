@@ -419,7 +419,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
-                if (!isset($processedClasses[$cl['classname']]) || !$processedClasses[$cl['classname']]) {
+                if (empty($processedClasses[$cl['classname']])) {
                     $class = DataObject\ClassDefinition::getByName($cl['classname']);
                     $this->getDao()->createUpdateTable($class);
                     $processedClasses[$cl['classname']] = true;

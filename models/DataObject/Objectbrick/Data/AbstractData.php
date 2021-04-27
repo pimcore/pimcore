@@ -49,22 +49,22 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var bool
      */
-    protected $doDelete;
+    protected bool $doDelete = false;
 
     /**
-     * @var Model\DataObject\Concrete
+     * @var Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $objectId;
+    protected ?int $objectId = null;
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Concrete $object
      */
-    public function __construct(DataObject\Concrete $object)
+    public function __construct(Concrete $object)
     {
         $this->setObject($object);
     }
@@ -190,11 +190,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Concrete|null $object
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(?Concrete $object)
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -203,9 +203,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
             $this->setObject(Concrete::getById($this->objectId));

@@ -43,7 +43,7 @@ trait AllowAssetRelationTrait
         $allowed = true;
         if (!$this->getAssetsAllowed()) {
             $allowed = false;
-        } elseif ($this->getAssetsAllowed() and is_array($allowedAssetTypes) and count($allowedAssetTypes) > 0) {
+        } elseif ($this->getAssetsAllowed() && is_array($allowedAssetTypes) && count($allowedAssetTypes) > 0) {
             //check for allowed asset types
             foreach ($allowedAssetTypes as $t) {
                 if (is_array($t) && array_key_exists('assetTypes', $t)) {
@@ -53,7 +53,7 @@ trait AllowAssetRelationTrait
                 if ($t) {
                     if (is_string($t)) {
                         $allowedTypes[] = $t;
-                    } elseif (is_array($t) && count($t) > 0) {
+                    } elseif (is_array($t)) {
                         if (isset($t['assetTypes'])) {
                             $allowedTypes[] = $t['assetTypes'];
                         } else {

@@ -76,25 +76,25 @@ class Analytics extends AbstractAdapter
      * @param array $filters
      * @param array $drillDownFilters
      */
-    protected function setFilters($filters, $drillDownFilters = [])
+    protected function setFilters(array $filters, $drillDownFilters = []): void
     {
         $gaFilters = [ $this->config->filters ];
         if (count($filters)) {
             foreach ($filters as $filter) {
-                if ($filter['type'] == 'string') {
+                if ($filter['type'] === 'string') {
                     $value = str_replace(';', '', addslashes($filter['value']));
                     $gaFilters[] = "{$filter['field']}=~{$value}";
-                } elseif ($filter['type'] == 'numeric') {
+                } elseif ($filter['type'] === 'numeric') {
                     $value = (float)$filter['value'];
                     $compMapping = [
                         'lt' => '<',
                         'gt' => '>',
                         'eq' => '==',
                     ];
-                    if ($compMapping[$filter['comparison']]) {
+                    if (isset($compMapping[$filter['comparison']])) {
                         $gaFilters[] = "{$filter['field']}{$compMapping[$filter['comparison']]}{$value}";
                     }
-                } elseif ($filter['type'] == 'boolean') {
+                } elseif ($filter['type'] === 'boolean') {
                     $value = $filter['value'] ? 'Yes' : 'No';
                     $gaFilters[] = "{$filter['field']}=={$value}";
                 }

@@ -178,25 +178,17 @@ abstract class AbstractOffer extends Concrete
 
             $item->setAmount($amount);
             $item->setProduct($product);
-            if ($product) {
-                $item->setProductName($product->getOSName());
-                $item->setProductNumber($product->getOSProductNumber());
-            }
+            $item->setProductName($product->getOSName());
+            $item->setProductNumber($product->getOSProductNumber());
 
-            $price = Decimal::zero();
-            if ($product->getOSPriceInfo($amount)->getTotalPrice()) {
-                $price = $product->getOSPriceInfo($amount)->getTotalPrice()->getAmount();
-            }
+            $price = $product->getOSPriceInfo($amount)->getTotalPrice()->getAmount();
 
             $item->setOriginalTotalPrice($price->asString());
             $item->setFinalTotalPrice($price->asString());
         } else {
             $item->setAmount($item->getAmount() + $amount);
 
-            $price = Decimal::zero();
-            if ($product->getOSPriceInfo($item->getAmount())->getTotalPrice()) {
-                $price = $product->getOSPriceInfo($item->getAmount())->getTotalPrice()->getAmount();
-            }
+            $price = $product->getOSPriceInfo($item->getAmount())->getTotalPrice()->getAmount();
 
             $item->setOriginalTotalPrice($price->asString());
             $item->setFinalTotalPrice($price->asString());

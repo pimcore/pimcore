@@ -505,7 +505,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return array
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
         return $tags;
     }
@@ -544,7 +544,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array $value
+     * @param string|array|object $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -557,13 +557,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $key = $db->quoteIdentifier($name);
 
         if ($value === 'NULL') {
-            if ($operator == '=') {
+            if ($operator === '=') {
                 $operator = 'IS';
-            } elseif ($operator == '!=') {
+            } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
         } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator == 'LIKE') {
+            if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
                 $value = $db->quote($value);
@@ -572,9 +572,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**
@@ -982,7 +982,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
 
@@ -1317,16 +1317,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                                     } else {
                                         $getter = 'get' . ucfirst($this->getName());
                                         $data = $item->$getter();
-
-                                        if ($object instanceof DataObject\Localizedfield) {
-                                            $data = $data->getLocalizedValue($this->getName(), $params['language'], true);
-                                        }
                                     }
 
                                     return $data;
-                                } else {
-                                    throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                                 }
+
+                                throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                             } else {
                                 return null;
                             }

@@ -89,9 +89,9 @@ class Config implements \ArrayAccess
     /**
      * @param string $name - name of configuration file. slash is allowed for subdirectories.
      *
-     * @return mixed
+     * @return string
      */
-    public static function locateConfigFile($name)
+    public static function locateConfigFile(string $name): string
     {
         if (!isset(self::$configFileCache[$name])) {
             $pathsToCheck = [
@@ -226,7 +226,7 @@ class Config implements \ArrayAccess
                 $cacheKey = $cacheKey . '_site_' . $siteId;
             }
 
-            /** @var \Pimcore\Config\Config $config */
+            /** @var \Pimcore\Config\Config|null $config */
             $config = Cache::load($cacheKey);
             if (!$config) {
                 $settingsArray = [];
@@ -733,7 +733,7 @@ class Config implements \ArrayAccess
     /**
      * @internal
      *
-     * @param Model\User $user
+     * @param Model\User|null $user
      *
      * @return array
      */
