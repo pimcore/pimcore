@@ -121,6 +121,16 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $fieldDefinitionsCache;
 
     /**
+     * @var array
+     */
+    public $permissionView;
+
+    /**
+     * @var array
+     */
+    public $permissionEdit;
+
+    /**
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Localizedfield $localizedField
@@ -1434,6 +1444,38 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionView(): array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param array $permissionView
+     */
+    public function setPermissionView(array $permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param array $permissionEdit
+     */
+    public function setPermissionEdit(array $permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
     }
 
     /**
