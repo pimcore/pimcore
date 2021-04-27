@@ -16,7 +16,7 @@ services:
 
     pimcore.cache.adapter.null_tag_aware:
         class: Symfony\Component\Cache\Adapter\TagAwareAdapter
-        arguments: ['@pimcore.cache.adapter.null']
+        arguments: ['@pimcore.cache.adapter.null', null]
 
     pimcore.cache.adapter.pdo:
         class: Symfony\Component\Cache\Adapter\PdoAdapter
