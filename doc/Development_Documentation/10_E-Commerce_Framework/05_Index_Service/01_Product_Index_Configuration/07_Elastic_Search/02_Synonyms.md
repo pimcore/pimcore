@@ -34,7 +34,7 @@ pimcore_ecommerce_framework:
                             provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\FileSynonymProvider
                             # additional options for synonym provider (are applied to a child-service instance of given synonym provider
                             options:
-                                synonymFile: '%kernel.project_dir%/web/var/assets/system/synonyms.txt'
+                                synonymFile: '%kernel.project_dir%/public/var/assets/system/synonyms.txt'
 
 ```
 
@@ -63,7 +63,7 @@ pimcore_ecommerce_framework:
                             provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\FileSynonymProvider
                             # additional options for synonym provider (are applied to a child-service instance of given synonym provider
                             options:
-                                synonymFile: '%kernel.project_dir%/web/var/assets/system/synonyms.txt'
+                                synonymFile: '%kernel.project_dir%/public/var/assets/system/synonyms.txt'
 
                     index_settings:
                         analysis:

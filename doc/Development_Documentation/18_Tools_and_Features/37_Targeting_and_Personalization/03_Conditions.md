@@ -159,7 +159,7 @@ To make your condition configurable, you need to create a JS class defining the 
 so, create a class extending `pimcore.settings.targeting.condition.abstract` and register it to the system by calling
 `pimcore.settings.targeting.conditions.register()`. 
 
-Have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/master/web/bundles/pimcoreadmin/js/pimcore/settings/targeting/conditions.js)
+Have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/conditions.js)
 and the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
 for examples.
 
