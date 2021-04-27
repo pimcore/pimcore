@@ -34,8 +34,12 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
  * explicitely does not expose a PSR-6 API but is intended for internal use from Pimcore\Cache or directly. Actual
  * cache calls are forwarded to a PSR-6 cache implementation though.
+ *
+ * Use Pimcore\Cache static interface, do not use this handler directly
+ *
+ * @internal
  */
-final class CoreCacheHandler implements LoggerAwareInterface
+class CoreCacheHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
