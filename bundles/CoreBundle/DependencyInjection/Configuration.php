@@ -785,7 +785,8 @@ final class Configuration implements ConfigurationInterface
     private function addContextNode(ArrayNodeDefinition $rootNode)
     {
         $contextNode = $rootNode->children()
-            ->arrayNode('context');
+            ->arrayNode('context')
+            ->useAttributeAsKey('name');
 
         /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
