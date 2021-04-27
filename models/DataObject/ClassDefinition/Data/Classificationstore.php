@@ -133,11 +133,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $maxItems;
 
     /**
+     * @internal
      * @var array
      */
     public $permissionView;
 
     /**
+     * @internal
      * @var array
      */
     public $permissionEdit;

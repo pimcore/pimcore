@@ -121,11 +121,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $fieldDefinitionsCache;
 
     /**
+     * @internal
      * @var array
      */
     public $permissionView;
 
     /**
+     * @internal 
      * @var array
      */
     public $permissionEdit;
