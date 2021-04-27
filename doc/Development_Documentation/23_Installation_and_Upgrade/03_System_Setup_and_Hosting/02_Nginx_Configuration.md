@@ -60,7 +60,7 @@ server {
     #
     ### 2. Option - Checking permissions before delivery
     #
-    # rewrite ^(/protected/.*) /app.php$is_args$args last;
+    # rewrite ^(/protected/.*) /index.php$is_args$args last;
     #
     # location ~ ^/var/.*/protected(.*) {
     #   return 403;
@@ -96,12 +96,12 @@ server {
     # Some Admin Modules need this:
     # Database Admin, Server Info
     location ~* ^/admin/(adminer|external) {
-        rewrite .* /app.php$is_args$args last;
+        rewrite .* /index.php$is_args$args last;
     }
     
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/thumbnails$uri /app.php;
+        try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
@@ -119,14 +119,14 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /app.php$is_args$args;
+        try_files $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
-    # location ~ /(app|install)\.php(/|$) {
+    # location ~ /(index|install)\.php(/|$) {
     #
     # Use this after initial install is done:
-    location ~ ^/app\.php(/|$) {
+    location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
         # regex to split $uri to $fastcgi_script_name and $fastcgi_path
@@ -146,7 +146,7 @@ server {
 
         fastcgi_pass php-pimcore10;
         # Prevents URIs that include the front controller. This will 404:
-        # http://domain.tld/app.php/some-path
+        # http://domain.tld/index.php/some-path
         # Remove the internal directive to allow URIs like this
         internal;
     }
@@ -335,7 +335,7 @@ server {
     # }
     #
     ### 2. Option - Checking permissions before delivery
-    # rewrite ^(/protected/.*) /app.php$is_args$args last;
+    # rewrite ^(/protected/.*) /index.php$is_args$args last;
     # 
     # location ~ ^/var/.*/protected(.*) {
     #  return 403;
@@ -371,12 +371,12 @@ server {
     # Some Admin Modules need this:
     # Database Admin, Server Info
     location ~* ^/admin/(adminer|external) {
-        rewrite .* /app.php$is_args$args last;
+        rewrite .* /index.php$is_args$args last;
     }
     
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$uri /app.php;
+        try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
@@ -394,14 +394,14 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /app.php$is_args$args;
+        try_files $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
-    # location ~ /(app|install)\.php(/|$) {
+    # location ~ /(index|install)\.php(/|$) {
     #
     # Use this after initial install is done:
-    location ~ ^/app\.php(/|$) {
+    location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
         # regex to split $uri to $fastcgi_script_name and $fastcgi_path
@@ -421,7 +421,7 @@ server {
 
         fastcgi_pass php-pimcore10;
         # Prevents URIs that include the front controller. This will 404:
-        # http://domain.tld/app.php/some-path
+        # http://domain.tld/index.php/some-path
         # Remove the internal directive to allow URIs like this
         internal;
     }
@@ -474,14 +474,14 @@ __Step 2: Replace the location that handles on-demand thumbnail generation__
     # Pimcore On-Demand Thumbnail generation
     # with Rate-Limit.
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$uri @imggen;
+        try_files /var/tmp/thumbnails$uri @imggen;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
     }
     location @imggen {
         limit_req zone=imggen burst=15;
-        try_files /var/tmp/$1-thumbnails$uri /app.php;
+        try_files /var/tmp/thumbnails$uri /index.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
