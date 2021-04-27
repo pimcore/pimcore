@@ -44,7 +44,7 @@ class Link extends Model\Document
     /**
      * Contains object of linked Document|Asset|DataObject
      * @internal
-     * @var Document|Asset|Model\DataObject\Concrete|null
+     * @var Model\Element\ElementInterface|null
      */
     protected $object;
 

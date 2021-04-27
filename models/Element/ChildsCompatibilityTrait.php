@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\Element;
 
+/**
+ * @internal
+ */
 trait ChildsCompatibilityTrait
 {
     /**

@@ -82,7 +82,7 @@ class Service extends Model\Element\Service
             $new->setChildren(null);
         }
 
-        $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSafeCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -131,7 +131,7 @@ class Service extends Model\Element\Service
         if ($new instanceof Asset\Folder) {
             $new->setChildren(null);
         }
-        $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSafeCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);

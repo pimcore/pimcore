@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\Element\Traits;
 
+/**
+ * @internal
+ */
 trait DirtyIndicatorTrait
 {
     /**

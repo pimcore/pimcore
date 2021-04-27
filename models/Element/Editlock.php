@@ -19,6 +19,8 @@ use Pimcore\Model;
 use Pimcore\Tool\Session;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\Element\Editlock\Dao getDao()
  * @method void delete()
  * @method void save()
