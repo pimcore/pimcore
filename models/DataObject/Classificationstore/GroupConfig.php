@@ -23,11 +23,11 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\GroupConfig\Dao getDao()
  */
-class GroupConfig extends Model\AbstractModel
+final class GroupConfig extends Model\AbstractModel
 {
     use Model\Element\ChildsCompatibilityTrait;
 
-    /** Group id.
+    /**
      * @var int
      */
     protected $id;
@@ -39,19 +39,20 @@ class GroupConfig extends Model\AbstractModel
      */
     protected $storeId = 1;
 
-    /** Parent id
+    /**
+     * Parent id
      * @var int
      */
     protected $parentId;
 
-    /** The group name.
+    /**
+     * The group name.
      * @var string
      */
     protected $name;
 
     /**
      * The group description.
-     *
      * @var string
      */
     protected $description;

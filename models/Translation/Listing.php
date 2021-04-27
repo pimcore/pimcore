@@ -31,10 +31,14 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /** @var int maximum number of cacheable items */
+    /**
+     * @internal
+     * @var int maximum number of cacheable items
+     */
     protected static $cacheLimit = 5000;
 
     /**
+     * @internal
      * @var string
      */
     protected $domain = Model\Translation::DOMAIN_DEFAULT;

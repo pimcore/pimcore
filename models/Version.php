@@ -35,7 +35,7 @@ use Pimcore\Tool\Storage;
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
  */
-class Version extends AbstractModel
+final class Version extends AbstractModel
 {
     /**
      * @var int
@@ -260,7 +260,7 @@ class Version extends AbstractModel
      *
      * @return mixed
      */
-    public function marshalData($data)
+    private function marshalData($data)
     {
         $context = [
             'source' => __METHOD__,
@@ -296,7 +296,7 @@ class Version extends AbstractModel
      *
      * @return mixed
      */
-    public function unmarshalData($data)
+    private function unmarshalData($data)
     {
         $context = [
             'source' => __METHOD__,
@@ -345,8 +345,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * Object
-     *
+     * @internal
      * @param bool $renewReferences
      *
      * @return mixed
@@ -396,6 +395,10 @@ class Version extends AbstractModel
         return $data;
     }
 
+    /**
+     * @param int|null $id
+     * @return string
+     */
     private function getStoragePath(?int $id = null): string
     {
         if (!$id) {
@@ -417,6 +420,9 @@ class Version extends AbstractModel
         return Storage::get('version')->readStream($this->getStoragePath());
     }
 
+    /**
+     * @return string
+     */
     private function getBinaryStoragePath(): string
     {
         return $this->getStoragePath($this->getBinaryFileId()) . '.bin';

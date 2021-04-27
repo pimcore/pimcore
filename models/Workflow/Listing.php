@@ -24,6 +24,7 @@ use Pimcore\Model\Workflow;
 class Listing extends Model\Listing\JsonListing
 {
     /**
+     * @internal
      * @var array|null
      */
     protected $workflows = null;

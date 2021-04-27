@@ -21,39 +21,46 @@ use Pimcore\Model;
  * @method bool getById(string $id)
  * @method \Pimcore\Model\Tool\TmpStore\Dao getDao()
  */
-class TmpStore extends Model\AbstractModel
+final class TmpStore extends Model\AbstractModel
 {
     /**
+     * @internal
      * @var string
      */
     protected $id;
 
     /**
+     * @internal
      * @var string
      */
     protected $tag;
 
     /**
+     * @internal
      * @var mixed
      */
     protected $data;
 
     /**
+     * @internal
      * @var int
      */
     protected $date;
 
     /**
+     * @internal
      * @var int
      */
     protected $expiryDate;
 
     /**
+     * @internal
      * @var bool
      */
     protected $serialized = false;
 
     /**
+     * @internal
      * @var self|null
      */
     protected static ?self $instance = null;
@@ -61,7 +68,7 @@ class TmpStore extends Model\AbstractModel
     /**
      * @return self
      */
-    protected static function getInstance(): self
+    private static function getInstance(): self
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -73,7 +80,7 @@ class TmpStore extends Model\AbstractModel
     /**
      * @return int
      */
-    protected static function getDefaultLifetime()
+    private static function getDefaultLifetime()
     {
         return 86400 * 7;
     }
@@ -123,13 +130,12 @@ class TmpStore extends Model\AbstractModel
     /**
      * @param string $id
      *
-     * @return mixed
+     * @return void
      */
     public static function delete($id)
     {
         $instance = self::getInstance();
-
-        return $instance->getDao()->delete($id);
+        $instance->getDao()->delete($id);
     }
 
     /**

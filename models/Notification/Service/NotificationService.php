@@ -24,6 +24,9 @@ use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ * @internal
+ */
 class NotificationService
 {
     /** @var UserService */

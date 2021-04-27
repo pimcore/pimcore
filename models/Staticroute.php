@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method void save()
  * @method void delete()
  */
-class Staticroute extends AbstractModel
+final class Staticroute extends AbstractModel
 {
     /**
      * @var int
@@ -209,7 +209,7 @@ class Staticroute extends AbstractModel
      *
      * @return array
      */
-    public function getDefaultsArray()
+    private function getDefaultsArray()
     {
         $defaults = [];
 
@@ -429,6 +429,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
      * @param array $urlOptions
      * @param bool $encode
      *
@@ -525,6 +526,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
      * @param string $path
      * @param array $params
      *

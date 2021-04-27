@@ -25,6 +25,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @internal
      * @var array|null
      */
     protected $settings = null;

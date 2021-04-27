@@ -24,7 +24,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\User\Dao getDao()
  */
-class User extends User\UserRole
+final class User extends User\UserRole
 {
     use TemporaryFileHelperTrait;
 
@@ -504,11 +504,19 @@ class User extends User\UserRole
         return $this->allowDirtyClose;
     }
 
+    /**
+     * @internal
+     * @return string
+     */
     protected function getOriginalImageStoragePath(): string
     {
         return sprintf('/user-image/user-%s.png', $this->getId());
     }
 
+    /***
+     * @internal
+     * @return string
+     */
     protected function getThumbnailImageStoragePath(): string
     {
         return sprintf('/user-image/user-thumbnail-%s.png', $this->getId());
@@ -622,7 +630,7 @@ class User extends User\UserRole
      *
      * @return array|string[]
      */
-    public function getMergedPerspectives()
+    private function getMergedPerspectives()
     {
         if (null === $this->mergedPerspectives) {
             $this->mergedPerspectives = $this->getPerspectives();
@@ -647,6 +655,7 @@ class User extends User\UserRole
     /**
      * Returns the first perspective name
      *
+     * @internal
      * @return string
      */
     public function getFirstAllowedPerspective()
@@ -667,7 +676,7 @@ class User extends User\UserRole
      *
      * @return array|null
      */
-    public function getMergedWebsiteTranslationLanguagesEdit()
+    private function getMergedWebsiteTranslationLanguagesEdit()
     {
         if (null === $this->mergedWebsiteTranslationLanguagesEdit) {
             $this->mergedWebsiteTranslationLanguagesEdit = $this->getWebsiteTranslationLanguagesEdit();
@@ -686,6 +695,7 @@ class User extends User\UserRole
      * Returns array of languages allowed for editing. If edit and view languages are empty all languages are allowed.
      * If only edit languages are empty (but view languages not) empty array is returned.
      *
+     * @internal
      * @return array|null
      */
     public function getAllowedLanguagesForEditingWebsiteTranslations()
@@ -708,7 +718,7 @@ class User extends User\UserRole
      *
      * @return array|null
      */
-    public function getMergedWebsiteTranslationLanguagesView()
+    private function getMergedWebsiteTranslationLanguagesView()
     {
         if (null === $this->mergedWebsiteTranslationLanguagesView) {
             $this->mergedWebsiteTranslationLanguagesView = $this->getWebsiteTranslationLanguagesView();
@@ -726,6 +736,7 @@ class User extends User\UserRole
     /**
      * Returns array of languages allowed for viewing. If view languages are empty all languages are allowed.
      *
+     * @internal
      * @return array|null
      */
     public function getAllowedLanguagesForViewingWebsiteTranslations()
@@ -759,6 +770,7 @@ class User extends User\UserRole
     }
 
     /**
+     * @internal
      * @return string
      */
     public static function getDefaultKeyBindings()
@@ -1041,6 +1053,10 @@ class User extends User\UserRole
         return Tool\Storage::get('admin')->fileExists($this->getOriginalImageStoragePath());
     }
 
+    /**
+     * @internal
+     * @return string
+     */
     protected function getFallbackImage()
     {
         return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';

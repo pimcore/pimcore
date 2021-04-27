@@ -16,6 +16,7 @@
 namespace Pimcore\Model;
 
 /**
+ * @internal
  * @method Dependency\Dao getDao()
  * @method void save()
  */

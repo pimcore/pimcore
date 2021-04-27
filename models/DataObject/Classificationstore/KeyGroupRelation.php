@@ -22,7 +22,7 @@ use Pimcore\Model;
  * @method void save()
  * @method void delete()
  */
-class KeyGroupRelation extends Model\AbstractModel
+final class KeyGroupRelation extends Model\AbstractModel
 {
     /**
      * @var int

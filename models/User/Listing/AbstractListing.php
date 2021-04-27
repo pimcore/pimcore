@@ -18,11 +18,12 @@ namespace Pimcore\Model\User\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method \Pimcore\Model\User\Listing\AbstractListing\Dao getDao()
  * @method Model\User[] load()
  * @method Model\User current()
  */
-class AbstractListing extends Model\Listing\AbstractListing
+abstract class AbstractListing extends Model\Listing\AbstractListing
 {
     /**
      * @var string

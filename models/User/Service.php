@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\User;
 
+/**
+ * @internal
+ */
 class Service
 {
     /**

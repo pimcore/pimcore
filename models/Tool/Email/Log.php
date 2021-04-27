@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method \Pimcore\Model\Tool\Email\Log\Dao getDao()
  */
 class Log extends Model\AbstractModel

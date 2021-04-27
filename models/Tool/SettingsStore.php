@@ -21,31 +21,36 @@ use Pimcore\Model\Tool\SettingsStore\Dao;
 /**
  * @method Dao getDao()
  */
-class SettingsStore extends Model\AbstractModel
+final class SettingsStore extends Model\AbstractModel
 {
     protected static $allowedTypes = ['bool', 'int', 'float', 'string'];
 
     /**
+     * @internal
      * @var string
      */
     protected $id;
 
     /**
+     * @internal
      * @var string
      */
     protected $scope;
 
     /**
+     * @internal
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
      * @var mixed
      */
     protected $data;
 
     /**
+     * @internal
      * @var self|null
      */
     protected static ?self $instance = null;
@@ -53,7 +58,7 @@ class SettingsStore extends Model\AbstractModel
     /**
      * @return self
      */
-    protected static function getInstance(): self
+    private static function getInstance(): self
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -69,7 +74,7 @@ class SettingsStore extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    protected static function validateType(string $type): bool
+    private static function validateType(string $type): bool
     {
         if (!in_array($type, self::$allowedTypes)) {
             throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::$allowedTypes)));

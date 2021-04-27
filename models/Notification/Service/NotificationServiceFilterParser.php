@@ -20,7 +20,7 @@ namespace Pimcore\Model\Notification\Service;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class ExtJSFilterParser
+ * @internal
  */
 class NotificationServiceFilterParser
 {

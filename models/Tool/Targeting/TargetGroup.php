@@ -18,6 +18,7 @@ namespace Pimcore\Model\Tool\Targeting;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method TargetGroup\Dao getDao()
  * @method void delete()
  */

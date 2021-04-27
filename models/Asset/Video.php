@@ -74,7 +74,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @param bool $force
+     * {@inheritdoc}
      */
     public function clearThumbnails($force = false)
     {

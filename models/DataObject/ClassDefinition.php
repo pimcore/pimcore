@@ -27,7 +27,7 @@ use Pimcore\Model\DataObject;
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-class ClassDefinition extends Model\AbstractModel
+final class ClassDefinition extends Model\AbstractModel
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;

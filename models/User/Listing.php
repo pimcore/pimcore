@@ -24,7 +24,7 @@ use Pimcore\Model\User;
 class Listing extends Listing\AbstractListing
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'user';
 

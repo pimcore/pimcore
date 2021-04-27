@@ -18,6 +18,7 @@ namespace Pimcore\Model\Tool\Targeting;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method Rule\Dao getDao()
  * @method void save()
  * @method void update()

@@ -450,10 +450,7 @@ EOT;
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return Model\Asset
+     * {@inheritdoc}
      */
     public function setCustomSetting($key, $value)
     {

@@ -17,6 +17,9 @@ namespace Pimcore\Model\Search\Backend\Data;
 
 use Pimcore\Model\Element;
 
+/**
+ * @internal
+ */
 class Id
 {
     /**

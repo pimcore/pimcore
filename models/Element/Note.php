@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
  */
-class Note extends Model\AbstractModel
+final class Note extends Model\AbstractModel
 {
     /**
      * @internal

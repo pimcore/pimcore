@@ -21,12 +21,12 @@ namespace Pimcore\Model\User;
 class Folder extends UserRole\Folder
 {
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'userfolder';
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getChildren()
     {

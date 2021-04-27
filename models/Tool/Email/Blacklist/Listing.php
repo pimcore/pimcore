@@ -18,6 +18,7 @@ namespace Pimcore\Model\Tool\Email\Blacklist;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @method \Pimcore\Model\Tool\Email\Blacklist\Listing\Dao getDao()
  * @method void delete()*
  * @method Model\Tool\Email\Blacklist[] load()

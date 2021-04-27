@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Translation\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

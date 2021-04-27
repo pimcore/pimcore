@@ -23,7 +23,7 @@ use Pimcore\Model\Exception\NotFoundException;
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
  */
-class WebsiteSetting extends AbstractModel
+final class WebsiteSetting extends AbstractModel
 {
     /**
      * @var int
@@ -322,11 +322,17 @@ class WebsiteSetting extends AbstractModel
         $this->language = $language;
     }
 
+    /**
+     * @internal
+     */
     public function clearDependentCache()
     {
         \Pimcore\Cache::clearTag('website_config');
     }
 
+    /**
+     *
+     */
     public function delete(): void
     {
         $nameCacheKey = static::getCacheKey($this->getName(), $this->getSiteId(), $this->getLanguage());
