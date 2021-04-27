@@ -147,9 +147,6 @@ class PriceInfo implements PriceInfoInterface
     public function getPrice(): PriceInterface
     {
         $price = clone $this->priceInfo->getPrice();
-        if ($price == null) {
-            return null;
-        }
 
         if (!$this->rulesApplied || $this->environmentHashChanged()) {
             $this->setAmount($price->getAmount());
