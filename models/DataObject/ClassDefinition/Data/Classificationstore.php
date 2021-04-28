@@ -166,12 +166,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
+     *
      * @var array
      */
     public $permissionView;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $permissionEdit;
