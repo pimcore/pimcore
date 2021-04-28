@@ -21,15 +21,17 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class MarshallerService
 {
-    /** @var ContainerInterface */
+    /**
+     * @var ContainerInterface
+     */
     private $container;
 
-    /** @var ServiceLocator */
+    /**
+     * @var ServiceLocator
+     */
     private $marshallerLocator;
 
     /**
-     * MarshallerService constructor.
-     *
      * @param ContainerInterface $container
      */
     public function __construct($container, ServiceLocator $marshallerLocator)

@@ -67,7 +67,7 @@ abstract class AbstractCommand extends Command
      */
     protected function dump($data)
     {
-        dump($data);
+        $this->doDump($data);
     }
 
     /**
@@ -76,7 +76,16 @@ abstract class AbstractCommand extends Command
     protected function dumpVerbose($data)
     {
         if ($this->output->isVerbose()) {
+            $this->doDump($data);
+        }
+    }
+
+    private function doDump($data)
+    {
+        if(function_exists('dump')) {
             dump($data);
+        } else {
+            var_dump($data);
         }
     }
 
