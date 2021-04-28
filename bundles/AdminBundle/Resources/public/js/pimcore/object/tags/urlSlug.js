@@ -303,20 +303,17 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function () {
-        if (this.dirty) {
-            return true;
-        }
+        var dirty = this.dirty;
 
         for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
                 if (textfield.isDirty()) {
-                    this.dirty = true;
                     return true;
                 }
             }
         }
 
-        return false;
+        return dirty;
     }
 });
