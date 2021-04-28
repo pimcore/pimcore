@@ -27,63 +27,76 @@ class Image extends Model\Document\Editable
 {
     /**
      * ID of the referenced image
+     *
      * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
      * The ALT text of the image
+     *
      * @internal
+     *
      * @var string
      */
     protected $alt;
 
     /**
      * Contains the imageobject itself
+     *
      * @internal
+     *
      * @var Asset\Image|null
      */
     protected $image;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $cropPercent = false;
 
     /**
      * @internal
+     *
      * @var float
      */
     protected $cropWidth;
 
     /**
      * @internal
+     *
      * @var float
      */
     protected $cropHeight;
 
     /**
      * @internal
+     *
      * @var float
      */
     protected $cropTop;
 
     /**
      * @internal
+     *
      * @var float
      */
     protected $cropLeft;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $hotspots = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $marker = [];

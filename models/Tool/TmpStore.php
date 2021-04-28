@@ -25,42 +25,49 @@ final class TmpStore extends Model\AbstractModel
 {
     /**
      * @internal
+     *
      * @var string
      */
     protected $id;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $tag;
 
     /**
      * @internal
+     *
      * @var mixed
      */
     protected $data;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $date;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $expiryDate;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $serialized = false;
 
     /**
      * @internal
+     *
      * @var self|null
      */
     protected static ?self $instance = null;

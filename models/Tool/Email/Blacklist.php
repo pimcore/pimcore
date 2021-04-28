@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Tool\Email\Blacklist\Dao getDao()
  * @method \Pimcore\Model\Tool\Email\Blacklist\Dao delete()
  * @method \Pimcore\Model\Tool\Email\Blacklist\Dao save()

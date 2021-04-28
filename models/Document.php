@@ -42,6 +42,7 @@ class Document extends Element\AbstractElement
      * all possible types of documents
      *
      * @internal
+     *
      * @var array
      */
     public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
@@ -53,108 +54,126 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @var string|null
      */
     protected $fullPathCache;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $parentId;
 
     /**
      * @internal
+     *
      * @var self|null
      */
     protected $parent;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected string $type;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $key;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $path;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $index = null;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected bool $published = true;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $modificationDate;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $userOwner = null;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $userModification = null;
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected $properties = null;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $children = [];
 
     /**
      * @internal
+     *
      * @var bool[]
      */
     protected $hasChildren = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $siblings = [];
 
     /**
      * @internal
+     *
      * @var bool[]
      */
     protected $hasSiblings = [];
@@ -163,12 +182,14 @@ class Document extends Element\AbstractElement
      * enum('self','propagate') nullable
      *
      * @internal
+     *
      * @var string|null
      */
     protected $locked = null;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $versionCount;
@@ -215,6 +236,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param Document $document
      *
      * @return bool
@@ -332,6 +354,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param array $config
      *
      * @return int count
@@ -339,6 +362,7 @@ class Document extends Element\AbstractElement
     public static function getTotalCount(array $config = []): int
     {
         $list = static::getList($config);
+
         return $list->getTotalCount();
     }
 
@@ -511,6 +535,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -565,6 +590,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param int $index
      */
     public function saveIndex($index)
@@ -720,6 +746,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @throws \Exception
      */
     protected function doDelete()
@@ -1175,6 +1202,7 @@ class Document extends Element\AbstractElement
     public function setPublished($published)
     {
         $this->published = (bool) $published;
+
         return $this;
     }
 
@@ -1296,6 +1324,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param string $type
      */
     public static function addDocumentType($type)
@@ -1345,7 +1374,9 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param array $args
+     *
      * @return string
      */
     protected function getListingCacheKey(array $args = [])

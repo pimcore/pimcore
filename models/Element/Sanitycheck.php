@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Element\Sanitycheck\Dao getDao()
  */
 final class Sanitycheck extends Model\AbstractModel

@@ -32,12 +32,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
      * @var Model\Dependency|null
      */
     protected $dependencies;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $__dataVersionTimestamp = null;
@@ -122,11 +124,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function getCacheTag()
     {
         $elementType = Service::getElementType($this);
+
         return $elementType . '_' . $this->getId();
     }
 
     /**
      * @internal
+     *
      * @param string|int $id
      *
      * @return string
@@ -134,6 +138,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected static function getCacheKey($id): string
     {
         $elementType = Service::getElementTypeByClassName(static::class);
+
         return $elementType . '_' . $id;
     }
 
@@ -149,7 +154,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * Resolves the dependencies of the element and returns an array of them - Used by update()
+     *
      * @internal
+     *
      * @return array
      */
     protected function resolveDependencies(): array
@@ -181,6 +188,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
      * @return array
      */
     public function getUserPermissions()
@@ -252,6 +260,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
      * @throws \Exception
      */
     protected function validatePathLength()
@@ -395,6 +404,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
      * @param int $userId
      */
     public function deleteAutoSaveVersions($userId = null)

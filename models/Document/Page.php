@@ -26,20 +26,25 @@ class Page extends TargetingDocument
 {
     /**
      * Contains the title of the page (meta-title)
+     *
      * @internal
+     *
      * @var string
      */
     protected $title = '';
 
     /**
      * Contains the description of the page (meta-description)
+     *
      * @internal
+     *
      * @var string
      */
     protected $description = '';
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $metaData = [];
@@ -51,13 +56,16 @@ class Page extends TargetingDocument
 
     /**
      * @internal
+     *
      * @var string|null
      */
     protected $prettyUrl;
 
     /**
      * Comma separated IDs of target groups
+     *
      * @internal
+     *
      * @var string
      */
     protected $targetGroupIds = '';

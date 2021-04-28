@@ -26,54 +26,63 @@ class UserRole extends AbstractUser
 {
     /**
      * @internal
+     *
      * @var array
      */
     protected $permissions = [];
 
     /**
      * @internal
+     *
      * @var Asset[]
      */
     protected $workspacesAsset = [];
 
     /**
      * @internal
+     *
      * @var DataObject[]
      */
     protected $workspacesObject = [];
 
     /**
      * @internal
+     *
      * @var Document[]
      */
     protected $workspacesDocument = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $classes = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $docTypes = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $perspectives = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $websiteTranslationLanguagesView = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $websiteTranslationLanguagesEdit = [];
@@ -104,6 +113,7 @@ class UserRole extends AbstractUser
 
     /**
      * @internal
+     *
      * @return $this
      */
     public function setAllAclToFalse()
@@ -157,6 +167,7 @@ class UserRole extends AbstractUser
      * Generates the permission list required for frontend display
      *
      * @internal
+     *
      * @return array
      *
      * @todo: $permissionInfo should be array, but is declared as null
@@ -366,6 +377,7 @@ class UserRole extends AbstractUser
      * returns empty array if empty parameter is given
      *
      * @internal
+     *
      * @param array|string $array
      *
      * @return array

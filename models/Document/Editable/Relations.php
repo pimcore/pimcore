@@ -28,12 +28,14 @@ class Relations extends Model\Document\Editable implements \Iterator
 {
     /**
      * @internal
+     *
      * @var array
      */
     protected $elements = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $elementIds = [];

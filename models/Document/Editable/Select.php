@@ -24,7 +24,9 @@ class Select extends Model\Document\Editable
 {
     /**
      * Contains the current selected value
+     *
      * @internal
+     *
      * @var string
      */
     protected $text;

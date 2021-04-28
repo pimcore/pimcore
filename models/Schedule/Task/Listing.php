@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Schedule\Task\Listing\Dao getDao()
  * @method Model\Schedule\Task[] load()
  * @method Model\Schedule\Task current()

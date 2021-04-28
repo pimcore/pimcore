@@ -26,6 +26,7 @@ final class CollectionConfig extends Model\AbstractModel
 {
     /**
      * Group id.
+     *
      * @var int
      */
     protected $id;

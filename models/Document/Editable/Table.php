@@ -24,7 +24,9 @@ class Table extends Model\Document\Editable
 {
     /**
      * Contains the text for this element
+     *
      * @internal
+     *
      * @var array
      */
     protected $data;

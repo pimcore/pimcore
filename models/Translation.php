@@ -195,6 +195,7 @@ final class Translation extends AbstractModel
 
     /**
      * @internal
+     *
      * @param string $domain
      *
      * @return array
@@ -365,9 +366,6 @@ final class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
-    /**
-     *
-     */
     public function save()
     {
         \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
@@ -387,9 +385,6 @@ final class Translation extends AbstractModel
         self::clearDependentCache();
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(new TranslationEvent($this), TranslationEvents::PRE_DELETE);

@@ -166,6 +166,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param Dependency $d
      *
      * @return array
@@ -191,6 +192,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param Dependency $d
      *
      * @return array
@@ -284,6 +286,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param array|null $data
      *
      * @return array
@@ -391,6 +394,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string|ElementInterface $element
      *
      * @return string
@@ -518,6 +522,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $className
      *
      * @return string|null
@@ -540,6 +545,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param ElementInterface $element
      *
      * @return string|null
@@ -628,6 +634,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      */
@@ -651,6 +658,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param  ElementInterface $element
      *
      * @return array
@@ -678,7 +686,9 @@ class Service extends Model\AbstractModel
 
     /**
      * find all elements which the user may not list and therefore may never be shown to the user
+     *
      * @internal
+     *
      * @param string $type asset|object|document
      * @param Model\User $user
      *
@@ -713,7 +723,9 @@ class Service extends Model\AbstractModel
 
     /**
      * renews all references, for example after unserializing an ElementInterface
+     *
      * @internal
+     *
      * @param mixed $data
      * @param bool $initial
      * @param string $key
@@ -961,6 +973,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $id
      *
      * @return array|null
@@ -1076,6 +1089,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param array $data
      * @param string $type
      *
@@ -1117,6 +1131,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param Model\Version[] $versions
      *
      * @return array
@@ -1237,6 +1252,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param Note $note
      *
      * @return array
@@ -1438,6 +1454,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param mixed|null $element
      * @param array|null $context
      *

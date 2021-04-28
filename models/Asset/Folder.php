@@ -32,12 +32,14 @@ class Folder extends Model\Asset
 
     /**
      * @internal
+     *
      * @var Asset[]
      */
     protected $children;
 
     /**
      * @internal
+     *
      * @var bool|null
      */
     protected $hasChildren;

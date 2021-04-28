@@ -515,17 +515,21 @@ class Link implements OwnerAwareFieldInterface
 
     /**
      * @deprecated use getElement() instead - will be removed in Pimcore 11
+     *
      * @return Asset|DataObject|Document|null
      */
-    public function getObject() {
+    public function getObject()
+    {
         return $this->getElement();
     }
 
     /**
      * @deprecated use setElement() instead - will be removed in Pimcore 11
+     *
      * @param ElementInterface $object
      */
-    public function setObject($object) {
+    public function setObject($object)
+    {
         return $this->setElement($object);
     }
 

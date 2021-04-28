@@ -151,6 +151,7 @@ final class Redirect extends AbstractModel
 
     /**
      * @internal
+     *
      * @param Request $request
      * @param Site|null $site
      * @param bool $override

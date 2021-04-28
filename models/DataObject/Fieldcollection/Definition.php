@@ -47,6 +47,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     protected function extractDataDefinitions($def)
@@ -149,6 +150,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
@@ -268,6 +270,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function isWritable(): bool
@@ -281,6 +284,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string|null $key
      *
      * @return string
@@ -292,6 +296,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return string
      */
     protected function getPhpClassFile()
@@ -301,6 +306,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return string
      */
     protected function getInfoDocBlock()
@@ -320,6 +326,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param Definition|DataObject\ClassDefinition\Data $definition
      * @param string $text
      * @param int $level

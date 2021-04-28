@@ -28,28 +28,36 @@ class Relation extends Model\Document\Editable
 {
     /**
      * ID of the source object
+     *
      * @internal
+     *
      * @var int|null
      */
     protected $id;
 
     /**
      * Type of the source object (document, asset, object)
+     *
      * @internal
+     *
      * @var string|null
      */
     protected $type;
 
     /**
      * Subtype of the source object (eg. page, link, video, news, ...)
+     *
      * @internal
+     *
      * @var string|null
      */
     protected $subtype;
 
     /**
      * Contains the source object
+     *
      * @internal
+     *
      * @var mixed
      */
     protected $element;

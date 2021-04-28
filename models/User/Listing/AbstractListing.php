@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\User\Listing\AbstractListing\Dao getDao()
  * @method Model\User[] load()
  * @method Model\User current()

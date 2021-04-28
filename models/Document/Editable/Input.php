@@ -24,7 +24,9 @@ class Input extends Model\Document\Editable
 {
     /**
      * Contains the text for this element
+     *
      * @internal
+     *
      * @var string
      */
     protected $text = '';

@@ -143,14 +143,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var array
      */
-    public $permissionView = [];
+    public $permissionView;
 
     /**
      * @internal
      *
      * @var array
      */
-    public $permissionEdit = [];
+    public $permissionEdit;
 
     /**
      * @see Data::getDataForEditmode
@@ -1241,6 +1241,54 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
+     * @param int $labelWidth
+     */
+    public function setLabelWidth($labelWidth)
+    {
+        $this->labelWidth = $labelWidth;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLabelWidth()
+    {
+        return $this->labelWidth;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionView(): ?array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param string|array|null $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): ?array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param string|array|null $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
+    }
+
+    /**
      * @return bool
      */
     public function getProvideSplitView()
@@ -1318,38 +1366,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Localizedfield::class . '|null';
-    }
-
-    /**
-     * @return array
-     */
-    public function getPermissionView(): array
-    {
-        return $this->permissionView;
-    }
-
-    /**
-     * @param array $permissionView
-     */
-    public function setPermissionView($permissionView): void
-    {
-        $this->permissionView = $permissionView;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPermissionEdit(): array
-    {
-        return $this->permissionEdit;
-    }
-
-    /**
-     * @param array $permissionEdit
-     */
-    public function setPermissionEdit($permissionEdit): void
-    {
-        $this->permissionEdit = $permissionEdit;
     }
 
     /**

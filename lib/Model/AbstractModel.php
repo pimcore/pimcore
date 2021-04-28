@@ -253,9 +253,6 @@ abstract class AbstractModel implements ModelInterface
         }
     }
 
-    /**
-     *
-     */
     public function __clone()
     {
         $this->dao = null;

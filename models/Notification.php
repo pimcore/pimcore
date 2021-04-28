@@ -28,66 +28,77 @@ class Notification extends AbstractModel
 {
     /**
      * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $creationDate;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $modificationDate;
 
     /**
      * @internal
+     *
      * @var User
      */
     protected $sender;
 
     /**
      * @internal
+     *
      * @var User
      */
     protected $recipient;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $title;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $message;
 
     /**
      * @internal
+     *
      * @var Element\ElementInterface|null
      */
     protected $linkedElement;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $linkedElementType;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $read = false;

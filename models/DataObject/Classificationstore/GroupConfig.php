@@ -41,18 +41,21 @@ final class GroupConfig extends Model\AbstractModel
 
     /**
      * Parent id
+     *
      * @var int
      */
     protected $parentId;
 
     /**
      * The group name.
+     *
      * @var string
      */
     protected $name;
 
     /**
      * The group description.
+     *
      * @var string
      */
     protected $description;

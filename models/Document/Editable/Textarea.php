@@ -24,7 +24,9 @@ class Textarea extends Model\Document\Editable
 {
     /**
      * Contains the text
+     *
      * @internal
+     *
      * @var string
      */
     protected $text;

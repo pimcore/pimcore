@@ -30,7 +30,8 @@ class ClassUtilsTest extends TestCase
         $this->assertEquals($className, self::class);
     }
 
-    public function testFindNamespaceClassName() {
+    public function testFindNamespaceClassName()
+    {
 
         //find classname for DummyNamespace/ClassX
         $file = new \SplFileInfo(__DIR__ . '/../../_support/Resources/dummyfiles/ClassX.php');
@@ -44,5 +45,4 @@ class ClassUtilsTest extends TestCase
 
         $this->assertEquals('Pimcore\\DummyNamespace\\ClassY', $className);
     }
-
 }

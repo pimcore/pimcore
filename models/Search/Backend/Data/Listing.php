@@ -19,6 +19,7 @@ use Pimcore\Model\Search\Backend\Data;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Search\Backend\Data\Listing\Dao getDao()
  * @method Data[] load()
  * @method Data current()

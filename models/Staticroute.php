@@ -430,6 +430,7 @@ final class Staticroute extends AbstractModel
 
     /**
      * @internal
+     *
      * @param array $urlOptions
      * @param bool $encode
      *
@@ -527,6 +528,7 @@ final class Staticroute extends AbstractModel
 
     /**
      * @internal
+     *
      * @param string $path
      * @param array $params
      *

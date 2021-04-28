@@ -47,96 +47,112 @@ final class Config extends Model\AbstractModel
      * )
      *
      * @internal
+     *
      * @var array
      */
     protected $items = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $medias = [];
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $name = '';
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $description = '';
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $group = '';
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $format = 'SOURCE';
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $quality = 85;
 
     /**
      * @internal
+     *
      * @var float
      */
     protected $highResolution;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $preserveColor = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $preserveMetaData = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $rasterizeSVG = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $downloadable = false;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $modificationDate;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $filenameSuffix;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $preserveAnimation = false;

@@ -29,12 +29,14 @@ class Printcontainer extends Document\PrintAbstract
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $action = 'container';
 
     /**
      * @internal
+     *
      * @var array
      */
     private $allChildren = [];

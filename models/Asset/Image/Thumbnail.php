@@ -31,6 +31,7 @@ final class Thumbnail
 
     /**
      * @internal
+     *
      * @var bool[]
      */
     protected static $hasListenersCache = [];

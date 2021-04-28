@@ -36,13 +36,16 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 {
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
+     *
      * @internal
+     *
      * @var array|null
      */
     protected $config;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $name;
@@ -50,7 +53,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Contains the real name of the editable without the prefixes and suffixes
      * which are generated automatically by blocks and areablocks
+     *
      * @internal
+     *
      * @var string
      */
     protected $realName;
@@ -64,33 +69,41 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Element belongs to the ID of the document
+     *
      * @internal
+     *
      * @var int
      */
     protected $documentId;
 
     /**
      * Element belongs to the document
+     *
      * @internal
+     *
      * @var Document\PageSnippet|null
      */
     protected $document;
 
     /**
      * In Editmode or not
+     *
      * @internal
+     *
      * @var bool
      */
     protected $editmode;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $inherited = false;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $inDialogBox = null;
@@ -567,6 +580,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @internal
+     *
      * @return BlockState
      */
     protected function getBlockState(): BlockState
@@ -576,6 +590,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @internal
+     *
      * @return BlockStateStack
      */
     protected function getBlockStateStack(): BlockStateStack
@@ -588,6 +603,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * block state (block, index) and targeting into account.
      *
      * @internal
+     *
      * @param string $type
      * @param string $name
      * @param Document|null $document
@@ -647,6 +663,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @param string $type
      * @param BlockState $blockState
      * @param string|null $targetGroupElementName
+     *
      * @return string
      */
     private static function doBuildName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string

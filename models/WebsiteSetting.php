@@ -330,9 +330,6 @@ final class WebsiteSetting extends AbstractModel
         \Pimcore\Cache::clearTag('website_config');
     }
 
-    /**
-     *
-     */
     public function delete(): void
     {
         $nameCacheKey = static::getCacheKey($this->getName(), $this->getSiteId(), $this->getLanguage());

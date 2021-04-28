@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Translation $model
  */
 class Dao extends Model\Dao\AbstractDao

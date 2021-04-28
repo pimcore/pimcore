@@ -21,18 +21,21 @@ abstract class AbstractBlockItem
 {
     /**
      * @internal
+     *
      * @var Document\PageSnippet
      */
     protected $document;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $parentBlockNames;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $index;

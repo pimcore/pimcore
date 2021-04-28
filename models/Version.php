@@ -346,6 +346,7 @@ final class Version extends AbstractModel
 
     /**
      * @internal
+     *
      * @param bool $renewReferences
      *
      * @return mixed
@@ -397,6 +398,7 @@ final class Version extends AbstractModel
 
     /**
      * @param int|null $id
+     *
      * @return string
      */
     private function getStoragePath(?int $id = null): string

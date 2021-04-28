@@ -24,60 +24,70 @@ class Glossary extends AbstractModel
 {
     /**
      * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $text;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $link;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $abbr;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $language;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $casesensitive;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $exactmatch;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $site;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $modificationDate;

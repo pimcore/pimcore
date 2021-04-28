@@ -159,6 +159,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function addDistinct()

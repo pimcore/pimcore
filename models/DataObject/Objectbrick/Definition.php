@@ -706,6 +706,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function isWritable(): bool
@@ -719,6 +720,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
+     *
      * @param string|null $key
      *
      * @return string
@@ -730,6 +732,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
+     *
      * @return string
      */
     protected function getPhpClassFile()

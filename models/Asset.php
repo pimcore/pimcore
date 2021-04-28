@@ -50,96 +50,112 @@ class Asset extends Element\AbstractElement
      * all possible types of assets
      *
      * @internal
+     *
      * @var array
      */
     public static $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $parentId;
 
     /**
      * @internal
+     *
      * @var self|null
      */
     protected $parent;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $filename;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $path;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $mimetype;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $modificationDate;
 
     /**
      * @internal
+     *
      * @var resource|null
      */
     protected $stream;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $userOwner = null;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $userModification = null;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $properties = null;
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected $versions = null;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $metadata = [];
@@ -158,42 +174,49 @@ class Asset extends Element\AbstractElement
      * Here there can be stored some data, eg. the video thumbnail files, ...  of the asset, ...
      *
      * @internal
+     *
      * @var array
      */
     protected $customSettings = [];
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $hasMetaData = false;
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected $siblings;
 
     /**
      * @internal
+     *
      * @var bool|null
      */
     protected $hasSiblings;
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected $scheduledTasks = null;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $_dataChanged = false;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $versionCount;
@@ -231,6 +254,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param Asset $asset
      *
      * @return bool
@@ -390,6 +414,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param array $config
      *
      * @return int total count
@@ -404,6 +429,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param string $mimeType
      * @param string $filename
      *
@@ -640,6 +666,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -1286,9 +1313,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     *
-     */
     private function closeStream()
     {
         if (is_resource($this->stream)) {
@@ -1758,9 +1782,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     *
-     */
     private function saveScheduledTasks()
     {
         $this->getScheduledTasks();

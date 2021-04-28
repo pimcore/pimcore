@@ -32,36 +32,42 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $items = [];
 
     /**
      * @internal
+     *
      * @var Concrete|null
      */
     protected ?Concrete $object = null;
 
     /**
      * @internal
+     *
      * @var ClassDefinition|null
      */
     protected ?ClassDefinition $class = null;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $fieldname;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $activeGroups = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $groupCollectionMapping = [];
@@ -120,6 +126,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             }
         }
         $this->object = $object;
+
         return $this;
     }
 

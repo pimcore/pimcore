@@ -24,7 +24,9 @@ class Date extends Model\Document\Editable
 {
     /**
      * Contains the date
+     *
      * @internal
+     *
      * @var \Carbon\Carbon|null
      */
     protected $date;

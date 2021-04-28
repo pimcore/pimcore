@@ -34,6 +34,7 @@ final class ImageThumbnail
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $page = 1;

@@ -34,13 +34,16 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
+     *
      * @internal
+     *
      * @var bool
      */
     protected $objectTypeDocument = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $unpublished = false;

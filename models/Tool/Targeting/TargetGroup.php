@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method TargetGroup\Dao getDao()
  * @method void delete()
  */

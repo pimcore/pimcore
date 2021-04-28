@@ -252,6 +252,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function isWritable(): bool
@@ -265,6 +266,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string|null $id
      *
      * @return string
@@ -317,6 +319,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return string
      */
     protected function getInfoDocBlock()
@@ -339,6 +342,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $classId
      *
      * @return int|null

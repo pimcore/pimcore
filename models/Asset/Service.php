@@ -30,18 +30,21 @@ class Service extends Model\Element\Service
 {
     /**
      * @internal
+     *
      * @var array
      */
     public const GRID_SYSTEM_COLUMNS = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
 
     /**
      * @internal
+     *
      * @var Model\User|null
      */
     protected $_user;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $_copyRecursiveIds;

@@ -31,28 +31,36 @@ class Renderlet extends Model\Document\Editable
 {
     /**
      * Contains the ID of the linked object
+     *
      * @internal
+     *
      * @var int|null
      */
     protected $id;
 
     /**
      * Contains the object
+     *
      * @internal
+     *
      * @var Document|Asset|DataObject|null
      */
     protected $o;
 
     /**
      * Contains the type
+     *
      * @internal
+     *
      * @var string|null
      */
     protected $type;
 
     /**
      * Contains the subtype
+     *
      * @internal
+     *
      * @var string|null
      */
     protected $subtype;

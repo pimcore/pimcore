@@ -46,6 +46,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @var bool
      */
     public static $doNotRestoreKeyAndPath = false;
@@ -69,128 +70,151 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected static $disableDirtyDetection = false;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $o_id = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $o_parentId;
 
     /**
      * @internal
+     *
      * @var self|null
      */
     protected $o_parent;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_type = 'object';
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_key;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_path;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $o_index;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $o_creationDate;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $o_modificationDate;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $o_userOwner = null;
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $o_userModification = null;
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected ?array $o_properties = null;
 
     /**
      * @internal
+     *
      * @var bool[]
      */
     protected $o_hasChildren = [];
 
     /**
      * Contains a list of sibling documents
+     *
      * @internal
+     *
      * @var array
      */
     protected $o_siblings = [];
 
     /**
      * Indicator if object has siblings or not
+     *
      * @internal
+     *
      * @var bool[]
      */
     protected $o_hasSiblings = [];
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $o_children = [];
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_locked;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_childrenSortBy;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_childrenSortOrder;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $o_versionCount = 0;
@@ -399,6 +423,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @deprecated will be removed in Pimcore 11
+     *
      * @param array $config
      *
      * @return int total count
@@ -413,6 +438,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param AbstractObject $object
      *
      * @return bool
@@ -538,6 +564,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @throws \Exception
      */
     protected function doDelete()
@@ -751,6 +778,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @throws \Exception
      */
     protected function correctPath()
@@ -801,6 +829,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param bool|null $isUpdate
      * @param array $params
      *
@@ -878,6 +907,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param int $index
      */
     public function saveIndex($index)
@@ -1369,6 +1399,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @return bool
      */
     public static function isDirtyDetectionDisabled()
@@ -1378,6 +1409,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param bool $disableDirtyDetection
      */
     public static function setDisableDirtyDetection(bool $disableDirtyDetection)
@@ -1423,7 +1455,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
      * @param array $args
+     *
      * @return string
      */
     protected function getListingCacheKey(array $args = [])

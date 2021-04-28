@@ -29,35 +29,45 @@ class Link extends Model\Document
 
     /**
      * Contains the ID of the internal ID
+     *
      * @internal
+     *
      * @var int|null
      */
     protected $internal;
 
     /**
      * Contains the type of the internal ID
+     *
      * @internal
+     *
      * @var string
      */
     protected $internalType;
 
     /**
      * Contains object of linked Document|Asset|DataObject
+     *
      * @internal
+     *
      * @var Model\Element\ElementInterface|null
      */
     protected $object;
 
     /**
      * Contains the direct link as plain text
+     *
      * @internal
+     *
      * @var string
      */
     protected string $direct = '';
 
     /**
      * Type of the link (internal/direct)
+     *
      * @internal
+     *
      * @var string
      */
     protected string $linktype = 'internal';
@@ -69,7 +79,9 @@ class Link extends Model\Document
 
     /**
      * path of the link
+     *
      * @internal
+     *
      * @var string
      */
     protected string $href = '';
@@ -311,6 +323,7 @@ class Link extends Model\Document
 
     /**
      * @deprecated use getElement() instead, will be removed in Pimcore 11
+     *
      * @return Model\Element\ElementInterface|null
      */
     public function getObject()
@@ -320,6 +333,7 @@ class Link extends Model\Document
 
     /**
      * @deprecated use getElement() instead, will be removed in Pimcore 11
+     *
      * @param Model\Element\ElementInterface $object
      *
      * @return $this

@@ -23,36 +23,42 @@ class Info
 {
     /**
      * @internal
+     *
      * @var string
      */
     protected $id;
 
     /**
      * @internal
+     *
      * @var Editable|Editable\Area|Editable\Areablock
      */
     protected $editable;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $params = [];
 
     /**
      * @internal
+     *
      * @var Request
      */
     protected $request;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $index;

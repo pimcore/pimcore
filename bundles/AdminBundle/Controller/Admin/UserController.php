@@ -739,7 +739,6 @@ final class UserController extends AdminController implements KernelControllerEv
             $role->{'setWorkspaces' . ucfirst($type)}($workspaces);
         }
 
-
         $replaceFn = function ($value) {
             return $value->getObjectVars();
         };
