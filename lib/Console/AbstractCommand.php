@@ -64,7 +64,6 @@ abstract class AbstractCommand extends Command
 
     /**
      * @param mixed $data
-     * @param null|int $flags
      */
     protected function dump($data)
     {
@@ -73,9 +72,8 @@ abstract class AbstractCommand extends Command
 
     /**
      * @param mixed $data
-     * @param null|int $flags
      */
-    protected function dumpVerbose($data, $flags = null)
+    protected function dumpVerbose($data)
     {
         if ($this->output->isVerbose()) {
             dump($data);

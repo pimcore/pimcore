@@ -37,7 +37,7 @@ final class DefaultValue extends AbstractValue
     /**
      * {@inheritdoc}
      */
-    public function __construct($config, $context = null, LocaleServiceInterface $localeService = null)
+    public function __construct(\stdClass $config, $context = null, LocaleServiceInterface $localeService = null)
     {
         parent::__construct($config, $context);
         $this->localeService = $localeService;
