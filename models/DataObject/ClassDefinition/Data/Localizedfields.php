@@ -126,7 +126,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $permissionView;
 
     /**
-     * @internal 
+     * @internal
      * @var array
      */
     public $permissionEdit;
@@ -1450,13 +1450,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @return array
      */
-    public function getPermissionView(): array
+    public function getPermissionView(): ?array
     {
         return $this->permissionView;
     }
 
     /**
-     * @param string|array $permissionView
+     * @param string|array|null $permissionView
      */
     public function setPermissionView($permissionView): void
     {
@@ -1466,13 +1466,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @return array
      */
-    public function getPermissionEdit(): array
+    public function getPermissionEdit(): ?array
     {
         return $this->permissionEdit;
     }
 
     /**
-     * @param string|array $permissionEdit
+     * @param string|array|null $permissionEdit
      */
     public function setPermissionEdit($permissionEdit): void
     {

@@ -135,13 +135,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @internal
      * @var array
      */
-    public $permissionView = [];
+    public $permissionView;
 
     /**
      * @internal
      * @var array
      */
-    public $permissionEdit = [];
+    public $permissionEdit;
 
     /**
      * @see Data::getDataForEditmode
@@ -1156,13 +1156,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return array
      */
-    public function getPermissionView(): array
+    public function getPermissionView(): ?array
     {
         return $this->permissionView;
     }
 
     /**
-     * @param string|array $permissionView
+     * @param string|array|null $permissionView
      */
     public function setPermissionView($permissionView): void
     {
@@ -1172,13 +1172,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return array
      */
-    public function getPermissionEdit(): array
+    public function getPermissionEdit(): ?array
     {
         return $this->permissionEdit;
     }
 
     /**
-     * @param string|array $permissionEdit
+     * @param string|array|null $permissionEdit
      */
     public function setPermissionEdit($permissionEdit): void
     {
