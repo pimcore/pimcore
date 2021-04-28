@@ -135,13 +135,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @internal
      * @var array
      */
-    public $permissionView;
+    public $permissionView = [];
 
     /**
      * @internal
      * @var array
      */
-    public $permissionEdit;
+    public $permissionEdit = [];
 
     /**
      * @see Data::getDataForEditmode
