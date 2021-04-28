@@ -85,8 +85,8 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
         }
 
         // documents
-        $documents = new Document\Listing();
-        $documents->setUnpublished(1);
+        $documentListing = new Document\Listing();
+        $documentListing->setUnpublished(1);
         $condition = 'type NOT IN (:types)';
 
         if ($input->getOption('documentId')) {
@@ -97,18 +97,24 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
             }
         }
 
-        $documents->setCondition($condition, ['types' => [
+        $documentListing->setCondition($condition, ['types' => [
             'link',
             'hardlink',
             'folder',
             'printcontainer',
         ]]);
+        $bulkCount = 10;
+        $documentListing->setLimit($bulkCount);
 
-        foreach ($documents as $document) {
-            if ($document instanceof Document\PageSnippet) {
-                $this->migrate($document);
+        do {
+            $documents = $documentListing->getDocuments();
+            foreach ($documents as $document) {
+                if ($document instanceof Document\PageSnippet) {
+                    $this->migrate($document);
+                }
             }
-        }
+            $documentListing->setOffset($documentListing->getOffset() + $bulkCount);
+        } while (count($documents));
 
         if ($this->errors) {
             $output->writeln("\n\n");
