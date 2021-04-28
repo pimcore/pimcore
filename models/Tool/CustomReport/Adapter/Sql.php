@@ -38,7 +38,7 @@ class Sql extends AbstractAdapter
             $columns = $this->fullConfig->getColumnConfiguration();
             $fields = [];
             foreach ($columns as $column) {
-                if ($column['export']) {
+                if ($column['export'] || $column['display'] || $column['order'] || ($column['columnAction'] ?? null)) {
                     $fields[] = $column['name'];
                 }
             }
