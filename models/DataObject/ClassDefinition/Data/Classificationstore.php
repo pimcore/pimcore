@@ -165,6 +165,18 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $maxItems;
 
     /**
+     * @internal
+     * @var array
+     */
+    public $permissionView;
+
+    /**
+     * @internal
+     * @var array
+     */
+    public $permissionEdit;
+
+    /**
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Classificationstore|null $data
@@ -945,6 +957,38 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function setLocalized($localized)
     {
         $this->localized = $localized;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionView(): array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param string|array $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param string|array $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
     }
 
     /**

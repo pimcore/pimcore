@@ -548,6 +548,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $db = \Pimcore\Db::get();
         $name = $params['name'] ? $params['name'] : $this->name;
         $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
 
         if ($value === 'NULL') {
             if ($operator === '=') {

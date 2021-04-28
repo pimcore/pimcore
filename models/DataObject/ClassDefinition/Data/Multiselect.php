@@ -411,11 +411,18 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
-        if ($operator == '=') {
+        if ($operator === '=') {
             $name = $params['name'] ? $params['name'] : $this->name;
+
+            $db = \Pimcore\Db::get();
+            $key = $db->quoteIdentifier($name);
+            if (!empty($params['brickPrefix'])) {
+                $key = $params['brickPrefix'].$key;
+            }
+
             $value = "'%,".$value.",%'";
 
-            return '`'.$name.'` LIKE '.$value.' ';
+            return $key.' LIKE '.$value.' ';
         }
 
         return null;

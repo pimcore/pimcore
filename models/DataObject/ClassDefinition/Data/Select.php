@@ -531,11 +531,17 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $value = is_array($value) ? current($value) : $value;
         $name = $params['name'] ?: $this->name;
 
+        $db = \Pimcore\Db::get();
+        $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
+
         if ($operator === '=') {
-            return '`'.$name.'` = '."\"$value\"".' ';
+            return $key.' = '."\"$value\"".' ';
         }
         if ($operator === 'LIKE') {
-            return '`'.$name.'` LIKE '."\"%$value%\"".' ';
+            return $key.' LIKE '."\"%$value%\"".' ';
         }
 
         return null;

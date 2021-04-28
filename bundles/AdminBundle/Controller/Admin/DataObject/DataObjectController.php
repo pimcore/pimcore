@@ -1181,12 +1181,14 @@ final class DataObjectController extends ElementControllerBase implements Kernel
      */
     public function saveAction(Request $request)
     {
-        $object = DataObject\Concrete::getById($request->get('id'));
-        $originalModificationDate = $object->getModificationDate();
+        $objectFromDatabase = DataObject\Concrete::getById($request->get('id'));
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($object);
+        $object = $this->getLatestVersion($objectFromDatabase);
         $object->setUserModification($this->getAdminUser()->getId());
+
+        $objectFromVersion = $object !== $objectFromDatabase;
+        $originalModificationDate = $objectFromVersion ? $object->getModificationDate() : $objectFromDatabase->getModificationDate();
 
         // data
         $data = [];
