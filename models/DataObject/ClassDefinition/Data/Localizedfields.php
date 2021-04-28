@@ -1368,38 +1368,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @return array
-     */
-    public function getPermissionView(): array
-    {
-        return $this->permissionView;
-    }
-
-    /**
-     * @param array $permissionView
-     */
-    public function setPermissionView($permissionView): void
-    {
-        $this->permissionView = $permissionView;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPermissionEdit(): array
-    {
-        return $this->permissionEdit;
-    }
-
-    /**
-     * @param array $permissionEdit
-     */
-    public function setPermissionEdit($permissionEdit): void
-    {
-        $this->permissionEdit = $permissionEdit;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function normalize($value, $params = [])
