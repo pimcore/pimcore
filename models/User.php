@@ -506,6 +506,7 @@ final class User extends User\UserRole
 
     /**
      * @internal
+     *
      * @return string
      */
     protected function getOriginalImageStoragePath(): string
@@ -656,6 +657,7 @@ final class User extends User\UserRole
      * Returns the first perspective name
      *
      * @internal
+     *
      * @return string
      */
     public function getFirstAllowedPerspective()
@@ -696,6 +698,7 @@ final class User extends User\UserRole
      * If only edit languages are empty (but view languages not) empty array is returned.
      *
      * @internal
+     *
      * @return array|null
      */
     public function getAllowedLanguagesForEditingWebsiteTranslations()
@@ -737,6 +740,7 @@ final class User extends User\UserRole
      * Returns array of languages allowed for viewing. If view languages are empty all languages are allowed.
      *
      * @internal
+     *
      * @return array|null
      */
     public function getAllowedLanguagesForViewingWebsiteTranslations()
@@ -771,6 +775,7 @@ final class User extends User\UserRole
 
     /**
      * @internal
+     *
      * @return string
      */
     public static function getDefaultKeyBindings()
@@ -1055,6 +1060,7 @@ final class User extends User\UserRole
 
     /**
      * @internal
+     *
      * @return string
      */
     protected function getFallbackImage()

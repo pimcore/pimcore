@@ -28,6 +28,7 @@ use Pimcore\Model\Search\Backend\Data\Dao;
 
 /**
  * @internal
+ *
  * @method Dao getDao()
  */
 class Data extends \Pimcore\Model\AbstractModel

@@ -25,7 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 
 /**
  * Abstract base class for pimcore objects who should be used as custom products in the offer tool

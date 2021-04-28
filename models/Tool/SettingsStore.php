@@ -27,30 +27,35 @@ final class SettingsStore extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $id;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $scope;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
      * @internal
+     *
      * @var mixed
      */
     protected $data;
 
     /**
      * @internal
+     *
      * @var self|null
      */
     protected static ?self $instance = null;

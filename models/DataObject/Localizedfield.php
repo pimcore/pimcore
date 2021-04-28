@@ -57,30 +57,35 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
+     *
      * @var array
      */
     protected array $items = [];
 
     /**
      * @internal
+     *
      * @var Concrete|null
      */
     protected ?Concrete $object = null;
 
     /**
      * @internal
+     *
      * @var ClassDefinition|null
      */
     protected ?ClassDefinition $class = null;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected array $context = [];
 
     /**
      * @internal
+     *
      * @var int|null
      */
     protected ?int $objectId = null;
@@ -92,13 +97,16 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
+     *
      * @internal
+     *
      * @var array|null
      */
     protected ?array $o_dirtyLanguages = null;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected bool $_loadedAllLazyData = false;
@@ -680,6 +688,7 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function hasDirtyLanguages(): bool
@@ -693,6 +702,7 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
+     *
      * @param string $language
      *
      * @return bool
@@ -725,6 +735,7 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
+     *
      * @return array|null
      */
     public function getDirtyLanguages(): ?array
@@ -742,6 +753,7 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function allLanguagesAreDirty(): bool
@@ -755,6 +767,7 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
+     *
      * @param string $language
      * @param bool $dirty
      */
@@ -779,7 +792,9 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
+     *
      * @return array
+     *
      * @throws \Exception
      */
     protected function getLazyLoadedFieldNames(): array

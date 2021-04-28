@@ -26,14 +26,18 @@ class Block extends Model\Document\Editable implements BlockInterface
 {
     /**
      * Contains an array of indices, which represent the order of the elements in the block
+     *
      * @internal
+     *
      * @var array
      */
     protected $indices = [];
 
     /**
      * Current step of the block while iteration
+     *
      * @internal
+     *
      * @var int
      */
     protected $current = 0;
@@ -94,6 +98,7 @@ class Block extends Model\Document\Editable implements BlockInterface
 
     /**
      * @internal
+     *
      * @return $this
      */
     protected function setDefault()
@@ -152,6 +157,7 @@ class Block extends Model\Document\Editable implements BlockInterface
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function loop()

@@ -26,6 +26,7 @@ class Pdf extends Model\Document\Editable
 {
     /**
      * @internal
+     *
      * @var int|null
      */
     protected $id;

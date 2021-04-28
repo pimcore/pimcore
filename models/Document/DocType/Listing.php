@@ -26,6 +26,7 @@ class Listing extends Model\Listing\JsonListing
 {
     /**
      * @internal
+     *
      * @var array|null
      */
     protected $docTypes = null;

@@ -254,6 +254,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @internal
+     *
      * @return array
      */
     protected function getLazyLoadedFieldNames(): array

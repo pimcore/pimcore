@@ -287,8 +287,10 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
     /**
      * @internal
+     *
      * @param $fieldDefinition
      * @param array $context
+     *
      * @return mixed
      */
     abstract protected function doEnrichFieldDefinition($fieldDefinition, $context = []);

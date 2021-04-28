@@ -36,61 +36,72 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected $__rawRelationData = null;
 
     /**
      * @internal
+     *
      * @var array
      */
     public const SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $o_published;
 
     /**
      * @internal
+     *
      * @var ClassDefinition|null
      */
     protected ?ClassDefinition $o_class = null;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_classId;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $o_className;
 
     /**
      * @internal
+     *
      * @var array|null
      */
     protected $o_versions = null;
 
     /**
      * Contains all scheduled tasks
+     *
      * @internal
+     *
      * @var array|null
      */
     protected $scheduledTasks = null;
 
     /**
      * @internal
+     *
      * @var bool|null
      */
     protected $omitMandatoryCheck;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $allLazyKeysMarkedAsLoaded = false;
@@ -573,6 +584,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
+     *
      * @return AbstractObject|null
      */
     public function getNextParentForInheritance()
@@ -608,6 +620,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * get object relation data as array for a specific field
      *
      * @internal
+     *
      * @param string $fieldName
      * @param bool $forOwner
      * @param string $remoteClassId
@@ -767,6 +780,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
+     *
      * @return array
      */
     public function getLazyLoadedFieldNames(): array

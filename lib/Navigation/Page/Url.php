@@ -87,6 +87,7 @@ class Url extends Page
             if ('#' === substr($uri, -1)) {
                 return $uri . $fragment;
             }
+
             return $uri . '#' . $fragment;
         }
 

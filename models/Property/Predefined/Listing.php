@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Property\Predefined\Listing\Dao getDao()
  * @method \Pimcore\Model\Property\Predefined[] load()
  * @method int getTotalCount()

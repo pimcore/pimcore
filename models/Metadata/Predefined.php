@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Metadata\Predefined\Dao getDao()
  * @method void save()
  * @method void delete()

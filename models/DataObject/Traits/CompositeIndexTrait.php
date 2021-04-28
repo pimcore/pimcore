@@ -19,6 +19,7 @@ use Pimcore\Db\ConnectionInterface;
 
 /**
  * @internal
+ *
  * @property ConnectionInterface $db
  */
 trait CompositeIndexTrait

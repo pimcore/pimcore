@@ -34,176 +34,207 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @var string|null
      */
     public $id;
 
     /**
      * @internal
+     *
      * @var string|null
      */
     public $name;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $description = '';
 
     /**
      * @internal
+     *
      * @var int
      */
     public $creationDate = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $modificationDate = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $userOwner = 0;
 
     /**
      * @internal
+     *
      * @var int
      */
     public $userModification = 0;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $parentClass = '';
 
     /**
      * Comma separated list of interfaces
+     *
      * @internal
+     *
      * @var string|null
      */
     public $implementsInterfaces;
 
     /**
      * Name of the listing parent class if set
+     *
      * @internal
+     *
      * @var string
      */
     public $listingParentClass = '';
 
     /**
      * @internal
+     *
      * @var string
      */
     public $useTraits = '';
 
     /**
      * @internal
+     *
      * @var string
      */
     public $listingUseTraits = '';
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $encryption = false;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $encryptedTables = [];
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $allowInherit = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $allowVariants = false;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $showVariants = false;
 
     /**
      * @internal
+     *
      * @var DataObject\ClassDefinition\Data[]
      */
     public array $fieldDefinitions = [];
 
     /**
      * @internal
+     *
      * @var DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $icon;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $previewUrl;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $group;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $showAppLoggerTab = false;
 
     /**
      * @internal
+     *
      * @var string
      */
     public $linkGeneratorReference;
 
     /**
      * @internal
+     *
      * @var string|null
      */
     public $previewGeneratorReference;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $compositeIndices = [];
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $generateTypeDeclarations = true;
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $showFieldLookup = false;
 
     /**
      * @internal
+     *
      * @var array
      */
     public $propertyVisibility = [
@@ -225,6 +256,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @var bool
      */
     public $enableGridLocking = false;
@@ -307,6 +339,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $name
      */
     public function rename($name)
@@ -655,6 +688,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param ClassDefinition|ClassDefinition\Data $definition
      * @param string $text
      * @param int $level
@@ -744,6 +778,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function isWritable(): bool
@@ -757,6 +792,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string|null $name
      *
      * @return string
@@ -1146,6 +1182,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param array $tables
      */
     public function addEncryptedTables(array $tables)
@@ -1155,6 +1192,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param array $tables
      */
     public function removeEncryptedTables(array $tables)
@@ -1168,6 +1206,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $table
      *
      * @return bool
@@ -1187,6 +1226,7 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param array $encryptedTables
      *
      * @return $this

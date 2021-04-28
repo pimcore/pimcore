@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Tool\CustomReport\Config\Listing\Dao getDao()
  */
 class Listing extends Model\Listing\JsonListing

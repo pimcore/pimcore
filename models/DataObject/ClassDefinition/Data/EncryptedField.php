@@ -333,6 +333,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         if ($fd) {
             if (method_exists($fd, 'getDataForGrid')) {
                 $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
+
                 return $fd->getDataForGrid($data, $object, $params);
             }
         }

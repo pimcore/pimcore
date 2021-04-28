@@ -27,30 +27,35 @@ final class UUID extends Model\AbstractModel
 {
     /**
      * @internal
+     *
      * @var int
      */
     protected $itemId;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $uuid;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $instanceIdentifier;
 
     /**
      * @internal
+     *
      * @var mixed
      */
     protected $item;
@@ -77,6 +82,7 @@ final class UUID extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return $this
      *
      * @throws \Exception
@@ -134,6 +140,7 @@ final class UUID extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @return mixed
      *
      * @throws \Exception

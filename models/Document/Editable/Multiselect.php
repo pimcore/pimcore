@@ -24,7 +24,9 @@ class Multiselect extends Model\Document\Editable
 {
     /**
      * Contains the current selected values
+     *
      * @internal
+     *
      * @var array
      */
     protected $values = [];

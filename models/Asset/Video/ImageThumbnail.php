@@ -31,12 +31,14 @@ final class ImageThumbnail
 
     /**
      * @internal
+     *
      * @var int
      */
     protected $timeOffset;
 
     /**
      * @internal
+     *
      * @var Image|null
      */
     protected $imageAsset;

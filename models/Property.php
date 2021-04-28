@@ -66,6 +66,7 @@ final class Property extends AbstractModel
 
     /**
      * @internal
+     *
      * @param mixed $data
      *
      * @return $this
@@ -95,6 +96,7 @@ final class Property extends AbstractModel
 
     /**
      * @internal
+     *
      * @param mixed $data
      *
      * @return static
@@ -301,6 +303,7 @@ final class Property extends AbstractModel
 
     /**
      * @internal
+     *
      * @return array
      */
     public function resolveDependencies()
@@ -331,6 +334,7 @@ final class Property extends AbstractModel
      * )
      *
      * @internal
+     *
      * @param array $idMapping
      */
     public function rewriteIds($idMapping)

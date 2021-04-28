@@ -34,19 +34,23 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $controller;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $template;
 
     /**
      * Contains all content-editables of the document
+     *
      * @internal
+     *
      * @var array|null
      *
      */
@@ -54,13 +58,16 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * Contains all versions of the document
+     *
      * @internal
+     *
      * @var array
      */
     protected $versions = null;
 
     /**
      * @internal
+     *
      * @var null|int
      */
     protected $contentMasterDocumentId;
@@ -74,12 +81,14 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
+     *
      * @var null|bool
      */
     protected $missingRequiredEditable = null;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $inheritedEditables = [];
@@ -288,7 +297,9 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * Set raw data of an editable (eg. for editmode)
+     *
      * @internal
+     *
      * @param string $name
      * @param string $type
      * @param mixed $data

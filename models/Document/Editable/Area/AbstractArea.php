@@ -19,18 +19,21 @@ abstract class AbstractArea
 {
     /**
      * @internal
+     *
      * @var \Pimcore\Config\Config
      */
     protected $config;
 
     /**
      * @internal
+     *
      * @var Info
      */
     protected $brick;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $params = [];

@@ -61,6 +61,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
 
     /**
      * @internal
+     *
      * @param string $ownerType
      * @param string $ownerName
      * @param int $index

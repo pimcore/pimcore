@@ -31,14 +31,18 @@ class Snippet extends Model\Document\Editable
 {
     /**
      * Contains the ID of the linked snippet
+     *
      * @internal
+     *
      * @var int|null
      */
     protected ?int $id = null;
 
     /**
      * Contains the object for the snippet
+     *
      * @internal
+     *
      * @var Document\Snippet|null
      */
     protected ?Document\Snippet $snippet = null;

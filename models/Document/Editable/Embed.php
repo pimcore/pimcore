@@ -24,6 +24,7 @@ class Embed extends Model\Document\Editable
 {
     /**
      * @internal
+     *
      * @var string
      */
     protected $url;

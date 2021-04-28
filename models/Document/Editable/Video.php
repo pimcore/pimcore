@@ -28,33 +28,41 @@ class Video extends Model\Document\Editable
 {
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
+     *
      * @internal
+     *
      * @var int|string|null
      */
     protected $id;
 
     /**
      * one of asset, youtube, vimeo, dailymotion
+     *
      * @internal
+     *
      * @var string|null
      */
     protected $type = 'asset';
 
     /**
      * asset ID of poster image
+     *
      * @internal
+     *
      * @var int|null
      */
     protected $poster;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $title = '';
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $description = '';

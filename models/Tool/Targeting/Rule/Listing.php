@@ -20,6 +20,7 @@ use Pimcore\Model\Tool\Targeting\Rule;
 
 /**
  * @internal
+ *
  * @method Listing\Dao getDao()
  * @method Rule[] load()
  * @method Rule current()

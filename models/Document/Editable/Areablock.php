@@ -33,32 +33,39 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 {
     /**
      * Contains an array of indices, which represent the order of the elements in the block
+     *
      * @internal
+     *
      * @var array
      */
     protected $indices = [];
 
     /**
      * Current step of the block while iteration
+     *
      * @internal
+     *
      * @var int
      */
     protected $current = 0;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $currentIndex;
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $blockStarted;
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $brickTypeUsageCounter = [];
@@ -101,6 +108,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * @internal
+     *
      * @param int $index
      * @param bool $return
      */
@@ -140,6 +148,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function loop()
@@ -240,6 +249,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      * @param null|Document\Editable\Area\Info $info
      * @param array $templateParams
      * @param bool $return
+     *
      * @return string|void
      */
     public function content($info = null, $templateParams = [], $return = false)

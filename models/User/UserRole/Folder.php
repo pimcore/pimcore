@@ -27,12 +27,14 @@ class Folder extends Model\User\AbstractUser
 
     /**
      * @internal
+     *
      * @var array
      */
     protected $children = [];
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $hasChilds;

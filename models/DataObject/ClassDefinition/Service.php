@@ -29,6 +29,7 @@ class Service
 
     /**
      * @internal
+     *
      * @return bool
      */
     public static function doRemoveDynamicOptions(): bool
@@ -38,6 +39,7 @@ class Service
 
     /**
      * @internal
+     *
      * @param bool $doRemoveDynamicOptions
      */
     public static function setDoRemoveDynamicOptions(bool $doRemoveDynamicOptions): void
@@ -268,6 +270,7 @@ class Service
 
     /**
      * @internal
+     *
      * @param array $array
      * @param bool $throwException
      * @param bool $insideLocalizedField
@@ -350,6 +353,7 @@ class Service
 
     /**
      * @internal
+     *
      * @param array $tableDefinitions
      * @param array $tableNames
      */
@@ -380,6 +384,7 @@ class Service
 
     /**
      * @internal
+     *
      * @param array $tableDefinitions
      * @param string $table
      * @param string $colName
@@ -412,6 +417,7 @@ class Service
 
     /**
      * @internal
+     *
      * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
      *
@@ -442,6 +448,7 @@ class Service
 
     /**
      * @internal
+     *
      * @param array $useParts
      * @param string|null $newTraits
      *
@@ -472,6 +479,7 @@ class Service
 
     /**
      * @internal
+     *
      * @param array $useParts
      *
      * @return string

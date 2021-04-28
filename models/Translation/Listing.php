@@ -33,12 +33,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @internal
+     *
      * @var int maximum number of cacheable items
      */
     protected static $cacheLimit = 5000;
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $domain = Model\Translation::DOMAIN_DEFAULT;

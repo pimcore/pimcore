@@ -20,6 +20,7 @@ use Pimcore\Model\Tool\SettingsStore;
 
 /**
  * @internal
+ *
  * @property SettingsStore $model
  */
 class Dao extends Model\Dao\AbstractDao

@@ -17,6 +17,7 @@ namespace Pimcore\Model\Metadata\Predefined;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Metadata\Predefined\Listing\Dao getDao()
  * @method \Pimcore\Model\Metadata\Predefined[] load()
  * @method int getTotalCount()

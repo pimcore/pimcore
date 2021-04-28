@@ -24,7 +24,9 @@ class Checkbox extends Model\Document\Editable
 {
     /**
      * Contains the checkbox value
+     *
      * @internal
+     *
      * @var bool
      */
     protected $value = false;

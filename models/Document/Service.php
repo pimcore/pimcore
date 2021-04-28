@@ -524,6 +524,7 @@ class Service extends Model\Element\Service
      * Get the nearest document by path. Used to match nearest document for a static route.
      *
      * @internal
+     *
      * @param string|Request $path
      * @param bool $ignoreHardlinks
      * @param array $types

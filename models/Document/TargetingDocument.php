@@ -26,6 +26,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
 {
     /**
      * @internal
+     *
      * @var int
      */
     private $useTargetGroup;

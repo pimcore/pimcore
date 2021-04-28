@@ -30,12 +30,14 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @internal
+     *
      * @var Model\DataObject\Fieldcollection\Data\AbstractData[]
      */
     protected $items = [];
 
     /**
      * @internal
+     *
      * @var string
      */
     protected $fieldname;
@@ -99,6 +101,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @internal
+     *
      * @return Fieldcollection\Definition[]
      */
     public function getItemDefinitions()

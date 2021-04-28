@@ -19,6 +19,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @method \Pimcore\Model\Schedule\Task\Dao getDao()
  * @method void save()
  */

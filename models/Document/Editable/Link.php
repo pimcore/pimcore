@@ -27,7 +27,9 @@ class Link extends Model\Document\Editable
 {
     /**
      * Contains the data for the link
+     *
      * @internal
+     *
      * @var array|null
      */
     protected $data;

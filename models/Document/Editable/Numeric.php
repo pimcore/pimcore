@@ -24,7 +24,9 @@ class Numeric extends Model\Document\Editable
 {
     /**
      * Contains the current number, or an empty string if not set
+     *
      * @internal
+     *
      * @var string
      */
     protected $number = '';
