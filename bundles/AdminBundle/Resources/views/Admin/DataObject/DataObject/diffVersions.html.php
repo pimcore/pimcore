@@ -198,7 +198,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
                             <?php foreach ($lfd->getFieldDefinitions() as $localizedFieldDefinition) { ?>
                                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                                    <td><?= $this->translate($localizedFieldDefinition->getTitle()) ?> (<?= $language; ?>)</td>
+                                    <td><?= ucfirst($asAllowedType)." - ".$this->translate($localizedFieldDefinition->getTitle()) ?> (<?= $language; ?>)</td>
                                     <td><?= $localizedFieldDefinition->getName() ?></td>
 
                                     <?php
