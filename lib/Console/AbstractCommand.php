@@ -20,6 +20,9 @@ use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 /**
  * Base command class setting up some defaults (e.g. the ignore-maintenance-mode switch and the VarDumper component).
@@ -43,6 +46,16 @@ abstract class AbstractCommand extends Command
      * @var OutputInterface
      */
     protected $output;
+
+    /**
+     * @var null|CliDumper
+     */
+    private $cliDumper;
+
+    /**
+     * @var VarCloner|null
+     */
+    private $varCloner;
 
     /**
      * @param InputInterface $input
@@ -82,11 +95,18 @@ abstract class AbstractCommand extends Command
 
     private function doDump($data)
     {
-        if(function_exists('dump')) {
-            dump($data);
-        } else {
-            var_dump($data);
+        if (null === $this->cliDumper) {
+            $this->cliDumper = new CliDumper();
+            $output = $this->output instanceof StreamOutput ? $this->output->getStream() : function ($line, $depth, $indentPad) {
+                if (-1 !== $depth) {
+                    $this->output->writeln(str_repeat($indentPad, $depth) . $line);
+                }
+            };
+            $this->cliDumper->setOutput($output);
+            $this->varCloner = new VarCloner();
         }
+
+        $this->cliDumper->dump($this->varCloner->cloneVar($data));
     }
 
     /**

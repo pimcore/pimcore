@@ -28,6 +28,9 @@ use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @internal
+ */
 class PimcoreBundleManager
 {
     /**
