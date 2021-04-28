@@ -80,4 +80,15 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+        $blockedVars[] = 'options';
+
+        return $blockedVars;
+    }
 }

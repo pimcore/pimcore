@@ -108,4 +108,15 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+        $blockedVars[] = 'options';
+
+        return $blockedVars;
+    }
 }

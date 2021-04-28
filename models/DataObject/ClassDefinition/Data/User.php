@@ -186,6 +186,17 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+        $blockedVars[] = 'options';
+
+        return $blockedVars;
+    }
+
+    /**
      * @return bool
      */
     public function getUnique()

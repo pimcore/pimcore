@@ -110,6 +110,17 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
+    public function resolveBlockedVars(): array
+    {
+        $blockedVars = parent::resolveBlockedVars();
+        $blockedVars[] = 'options';
+
+        return $blockedVars;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;

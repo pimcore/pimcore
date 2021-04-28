@@ -117,7 +117,19 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
                 hideLabel: true,
                 value: t('width_explanation')
             },
-            possibleOptions
+            possibleOptions,
+            {
+                xtype: 'combobox',
+                name: 'defaultValue',
+                triggerAction: "all",
+                selectOnFocus: true,
+                fieldLabel: t('default_value'),
+                store: countryStore,
+                value: datax.defaultValue,
+                displayField: 'key',
+                valueField: 'value',
+                width: 300
+            }
         ];
     },
 
