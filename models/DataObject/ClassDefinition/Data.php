@@ -619,6 +619,9 @@ abstract class Data
         $db = \Pimcore\Db::get();
         $name = $params['name'] ? $params['name'] : $this->name;
         $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
 
         if ($value === 'NULL') {
             if ($operator == '=') {
@@ -636,9 +639,9 @@ abstract class Data
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**
