@@ -41,7 +41,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.availablePanels = [];
         this.dropdownLayout = false;
 
-        if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
+        if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined || fieldConfig.permissionView === null) {
             this.frontendLanguages = pimcore.settings.websiteLanguages;
         } else {
             this.frontendLanguages = fieldConfig.permissionView;
@@ -180,7 +180,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                         this.languageElements[currentLanguage] = [];
 
                         var editable = (pimcore.currentuser.admin ||
-                            this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
+                            this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit === null || this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
 
                         var runtimeContext = Ext.clone(this.context);
                         runtimeContext.language = Ext.clone(currentLanguage);
@@ -295,7 +295,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     this.languageElements[currentLanguage] = [];
 
                     var editable = !showMode && (pimcore.currentuser.admin ||
-                        this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
+                        this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit === null || this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
 
                     var runtimeContext = Ext.clone(this.context);
                     runtimeContext.language = Ext.clone(currentLanguage);
@@ -355,7 +355,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     this.languageElements[currentLanguage] = [];
 
                     var editable = !showMode && (pimcore.currentuser.admin ||
-                        this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
+                        this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit === null || this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
 
                     var runtimeContext = Ext.clone(this.context);
                     runtimeContext.language = Ext.clone(currentLanguage);

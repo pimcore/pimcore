@@ -1413,7 +1413,7 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             $user = AdminTool::getCurrentUser();
             if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
@@ -1448,7 +1448,7 @@ class Service extends Model\Element\Service
      */
     public static function enrichLayoutPermissions(&$layout, $allowedView, $allowedEdit)
     {
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             if (is_array($allowedView) && count($allowedView) > 0) {
                 $haveAllowedViewDefault = null;
                 if ($layout->{'fieldtype'} === 'localizedfields') {
@@ -1458,11 +1458,11 @@ class Service extends Model\Element\Service
                     }
                 }
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    $layout->{'permissionView'} = AdminTool::reorderWebsiteLanguages(
+                    $layout->setPermissionView(AdminTool::reorderWebsiteLanguages(
                         AdminTool::getCurrentUser(),
                         array_keys($allowedView),
                         true
-                    );
+                    ));
                 }
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
@@ -1475,11 +1475,11 @@ class Service extends Model\Element\Service
                 }
 
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    $layout->{'permissionEdit'} = AdminTool::reorderWebsiteLanguages(
+                    $layout->setPermissionEdit(AdminTool::reorderWebsiteLanguages(
                         AdminTool::getCurrentUser(),
                         array_keys($allowedEdit),
                         true
-                    );
+                    ));
                 }
             }
         } else {
