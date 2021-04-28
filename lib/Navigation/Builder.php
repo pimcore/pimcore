@@ -43,6 +43,8 @@ class Builder
      */
     private $currentLevel = 0;
 
+    private $navCacheTags = [];
+
     /**
      * @param RequestHelper $requestHelper
      * @param string|null $pageClass
@@ -105,6 +107,8 @@ class Builder
         if (!$navigation || !$cacheEnabled) {
             $navigation = new \Pimcore\Navigation\Container();
 
+            $this->navCacheTags = ['output', 'navigation'];
+
             if ($navigationRootDocument->hasChildren()) {
                 $this->currentLevel = 0;
                 $rootPage = $this->buildNextLevel($navigationRootDocument, true, $pageCallback, [], $maxDepth);
@@ -114,7 +118,7 @@ class Builder
             // we need to force caching here, otherwise the active classes and other settings will be set and later
             // also written into cache (pass-by-reference) ... when serializing the data directly here, we don't have this problem
             if ($cacheEnabled) {
-                CacheManager::save($navigation, $cacheKey, ['output', 'navigation'], $cacheLifetime, 999, true);
+                CacheManager::save($navigation, $cacheKey, $this->navCacheTags, $cacheLifetime, 999, true);
             }
         }
 
@@ -340,6 +344,8 @@ class Builder
                 if ($pageCallback instanceof \Closure) {
                     $pageCallback($page, $child);
                 }
+
+                $this->navCacheTags[] = $page->getDocument()->getCacheTag();
 
                 $pages[] = $page;
             }
