@@ -27,16 +27,16 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
      */
     private $className;
 
+    /**
+     * @param string $className
+     */
     public function __construct(string $className)
     {
         $this->className = $className;
     }
 
     /**
-     * @param \stdClass $configElement
-     * @param null $context
-     *
-     * @return OperatorInterface|null
+     * {@inheritdoc}
      */
     public function build(\stdClass $configElement, $context = null)
     {

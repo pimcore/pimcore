@@ -18,13 +18,15 @@ declare(strict_types=1);
 namespace Pimcore\Document\Editable\Block;
 
 /**
+ * @internal
+ *
  * Keeps track of the current block nesting level and index (will be used from
  * editables to build their hierarchical editable name).
  *
  * On sub requests, a new BlockState is added to the state stack which is valid
  * for the sub request.
  */
-class BlockState implements \JsonSerializable
+final class BlockState implements \JsonSerializable
 {
     /**
      * @var BlockName[]

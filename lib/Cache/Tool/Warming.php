@@ -23,6 +23,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Listing\AbstractListing;
 
+/**
+ * @internal
+ */
 class Warming
 {
     /**

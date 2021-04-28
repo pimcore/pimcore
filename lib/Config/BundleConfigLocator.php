@@ -21,6 +21,8 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
+ * @internal
+ *
  * Locates configs from bundles if Resources/config/pimcore exists.
  *
  * Will first try to locate <name>_<environment>.<suffix> and fall back to <name>.<suffix> if the

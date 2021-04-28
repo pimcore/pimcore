@@ -23,6 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command class setting up some defaults (e.g. the ignore-maintenance-mode switch and the VarDumper component).
+ * @internal
  *
  * @method Application getApplication()
  */
@@ -44,11 +45,6 @@ abstract class AbstractCommand extends Command
     protected $output;
 
     /**
-     * @var Dumper
-     */
-    protected $dumper;
-
-    /**
      * @param InputInterface $input
      * @param OutputInterface $output
      */
@@ -60,9 +56,6 @@ abstract class AbstractCommand extends Command
         $this->input = $input;
         $this->output = $output;
 
-        // use Console\Dumper for nice debug output
-        $this->dumper = new Dumper($this->output);
-
         // skip if maintenance mode is on and the flag is not set
         if (Admin::isInMaintenanceMode() && !$input->getOption('ignore-maintenance-mode')) {
             throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
@@ -73,9 +66,9 @@ abstract class AbstractCommand extends Command
      * @param mixed $data
      * @param null|int $flags
      */
-    protected function dump($data, $flags = null)
+    protected function dump($data)
     {
-        $this->dumper->dump($data, $flags);
+        dump($data);
     }
 
     /**
@@ -85,7 +78,7 @@ abstract class AbstractCommand extends Command
     protected function dumpVerbose($data, $flags = null)
     {
         if ($this->output->isVerbose()) {
-            $this->dump($data, $flags);
+            dump($data);
         }
     }
 

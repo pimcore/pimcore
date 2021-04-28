@@ -18,6 +18,9 @@ namespace Pimcore\DataObject\BlockDataMarshaller;
 use Pimcore\DataObject\FielddefinitionMarshaller\Traits\RgbaColorTrait;
 use Pimcore\Marshaller\MarshallerInterface;
 
+/**
+ * @internal
+ */
 class RgbaColor implements MarshallerInterface
 {
     use RgbaColorTrait;

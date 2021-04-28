@@ -20,12 +20,19 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class Merge extends AbstractOperator
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $flatten;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $unique;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -34,6 +41,9 @@ final class Merge extends AbstractOperator
         $this->unique = $config->unique ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

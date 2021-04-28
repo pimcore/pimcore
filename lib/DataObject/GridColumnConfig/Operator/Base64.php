@@ -25,6 +25,9 @@ final class Base64 extends AbstractOperator
      */
     private $mode;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -32,6 +35,9 @@ final class Base64 extends AbstractOperator
         $this->mode = $config->mode ?? '';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

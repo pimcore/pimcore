@@ -18,11 +18,13 @@ namespace Pimcore\Document\Newsletter;
 class SendingParamContainer
 {
     /**
+     * @internal
      * @var string
      */
     protected $email;
 
     /**
+     * @internal
      * @var array
      */
     protected $params;

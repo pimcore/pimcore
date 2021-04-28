@@ -18,6 +18,9 @@ namespace Pimcore\DataObject\BlockDataMarshaller;
 use Carbon\Carbon;
 use Pimcore\Marshaller\MarshallerInterface;
 
+/**
+ * @internal
+ */
 class Date implements MarshallerInterface
 {
     /**

@@ -35,7 +35,6 @@ Better `var_dump` through [`VarDumper`](http://symfony.com/doc/3.4/components/va
 namespace App\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Console\Dumper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -54,10 +53,10 @@ class AwesomeCommand extends AbstractCommand
         $this->dump("Isn't that awesome?");
 
         // add newlines through flags
-        $this->dump("Dump #2", Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
+        $this->dump("Dump #2");
 
         // only dump in verbose mode
-        $this->dumpVerbose("Dump verbose", Dumper::NEWLINE_BEFORE);
+        $this->dumpVerbose("Dump verbose");
         
         // Output as white text on red background.
         $this->writeError('oh noes!');

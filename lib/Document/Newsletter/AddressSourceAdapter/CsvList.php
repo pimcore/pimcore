@@ -18,7 +18,10 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 
-class CsvList implements AddressSourceAdapterInterface
+/**
+ * @internal
+ */
+final class CsvList implements AddressSourceAdapterInterface
 {
     /**
      * @var string[]
@@ -36,9 +39,7 @@ class CsvList implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns array of email addresses for batch sending
-     *
-     * @return SendingParamContainer[]
+     * {@inheritdoc}
      */
     public function getMailAddressesForBatchSending()
     {
@@ -51,11 +52,7 @@ class CsvList implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns params to be set on mail for test sending
-     *
-     * @param string $emailAddress
-     *
-     * @return SendingParamContainer
+     * {@inheritdoc}
      */
     public function getParamsForTestSending($emailAddress)
     {
@@ -65,9 +62,7 @@ class CsvList implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns total number of newsletter recipients
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getTotalRecordCount()
     {
@@ -75,12 +70,7 @@ class CsvList implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns array of params to be set on mail for single sending
-     *
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getParamsForSingleSending($limit, $offset)
     {

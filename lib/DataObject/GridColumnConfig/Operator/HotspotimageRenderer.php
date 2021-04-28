@@ -20,5 +20,8 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class HotspotimageRenderer extends AbstractRenderer
 {
+    /**
+     * @var string
+     */
     public $renderer = 'hotspotimage';
 }

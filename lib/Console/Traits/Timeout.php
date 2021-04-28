@@ -21,6 +21,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
+ * @internal
+ *
  * Trait Timeout
  * Use this trait to implement a simple timeout mechanism in your command or service.
  */

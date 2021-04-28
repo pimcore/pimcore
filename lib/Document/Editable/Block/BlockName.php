@@ -20,10 +20,12 @@ namespace Pimcore\Document\Editable\Block;
 use Pimcore\Model\Document\Editable;
 
 /**
+ * @internal
+ *
  * Simple value object containing both name and real name of
  * a block.
  */
-class BlockName implements \JsonSerializable
+final class BlockName implements \JsonSerializable
 {
     /**
      * @var string

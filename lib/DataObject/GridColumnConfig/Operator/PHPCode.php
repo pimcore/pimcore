@@ -35,6 +35,9 @@ final class PHPCode extends AbstractOperator
      */
     private $instance;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -43,22 +46,34 @@ final class PHPCode extends AbstractOperator
         $this->phpClass = $config->phpClass ?? '';
     }
 
+    /**
+     * @return string
+     */
     public function getPhpClass(): string
     {
         return $this->phpClass;
     }
 
+    /**
+     * @param string $phpClass
+     */
     public function setPhpClass(string $phpClass)
     {
         $this->phpClass = $phpClass;
         $this->instance = null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabel()
     {
         return $this->getInstance()->getLabel();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         try {
@@ -68,6 +83,10 @@ final class PHPCode extends AbstractOperator
         }
     }
 
+    /**
+     * @return OperatorInterface
+     * @throws \Exception
+     */
     private function getInstance(): OperatorInterface
     {
         if (null === $this->instance) {
@@ -77,6 +96,10 @@ final class PHPCode extends AbstractOperator
         return $this->instance;
     }
 
+    /**
+     * @return OperatorInterface
+     * @throws \Exception
+     */
     private function buildInstance(): OperatorInterface
     {
         $phpClass = $this->getPhpClass();

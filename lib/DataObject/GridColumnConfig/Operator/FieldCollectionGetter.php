@@ -22,15 +22,24 @@ use Pimcore\Model\DataObject\Fieldcollection;
  */
 final class FieldCollectionGetter extends AbstractOperator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $attr;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $idx;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $colAttr;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -40,6 +49,9 @@ final class FieldCollectionGetter extends AbstractOperator
         $this->colAttr = $config->colAttr ?? '';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

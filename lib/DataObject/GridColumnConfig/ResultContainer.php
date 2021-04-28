@@ -15,10 +15,15 @@
 
 namespace Pimcore\DataObject\GridColumnConfig;
 
-class ResultContainer
+/**
+ * @internal
+ */
+final class ResultContainer
 {
     public $label;
+
     public $value;
+
     public $isEmpty;
 
     public function getLabel()

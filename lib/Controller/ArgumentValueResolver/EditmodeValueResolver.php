@@ -20,7 +20,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class EditmodeValueResolver implements ArgumentValueResolverInterface
+/**
+ * @internal
+ */
+final class EditmodeValueResolver implements ArgumentValueResolverInterface
 {
     /**
      * @var EditmodeResolver

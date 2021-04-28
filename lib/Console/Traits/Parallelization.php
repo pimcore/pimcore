@@ -34,6 +34,9 @@ trait Parallelization
 
     protected static function configureParallelization(Command $command): void
     {
+        // we need to override WebmozartParallelization::configureParallelization here
+        // because some existing commands are already using the `p` option, and would therefore
+        // causes collisions
         $command
             ->addArgument(
                 'item',
@@ -58,7 +61,7 @@ trait Parallelization
     }
 
     /**
-     * Default behavior in commands: only allow one command of a type at the same time.
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -69,10 +72,7 @@ trait Parallelization
     }
 
     /**
-     * Default behavior in commands: clean up garbage after each batch run, if there is only
-     * one master process in place.
-     *
-     * @param array $items
+     * {@inheritdoc}
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
@@ -85,7 +85,7 @@ trait Parallelization
     }
 
     /**
-     * Default behavior in commands: release lock on termination.
+     * {@inheritdoc}
      */
     protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -106,13 +106,5 @@ trait Parallelization
     protected function getContainer()
     {
         return \Pimcore::getKernel()->getContainer();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConsolePath(): string
-    {
-        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }

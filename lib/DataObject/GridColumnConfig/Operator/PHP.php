@@ -22,9 +22,14 @@ use Pimcore\Tool\Serialize;
  */
 final class PHP extends AbstractOperator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $mode;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -32,6 +37,9 @@ final class PHP extends AbstractOperator
         $this->mode = $config->mode ?? '';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

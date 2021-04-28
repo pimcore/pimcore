@@ -17,6 +17,9 @@ namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Pimcore\Marshaller\MarshallerInterface;
 
+/**
+ * @internal
+ */
 class ExternalImage implements MarshallerInterface
 {
     /**

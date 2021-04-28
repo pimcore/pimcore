@@ -31,6 +31,9 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
      */
     private $ids;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct($factories)
     {
         $this->ids = array_keys($factories);
@@ -45,6 +48,9 @@ class CollectionServiceLocator extends ServiceLocator implements \IteratorAggreg
         }, $this->ids);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getIterator()
     {
         foreach ($this->ids as $id) {

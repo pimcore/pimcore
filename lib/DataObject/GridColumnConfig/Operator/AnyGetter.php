@@ -23,24 +23,39 @@ use Pimcore\Tool\Admin;
  */
 final class AnyGetter extends AbstractOperator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $attribute;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $param1;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $isArrayType;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $forwardAttribute;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $forwardParam1;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $returnLastResult;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         if (!Admin::getCurrentUser()->isAdmin()) {
@@ -59,6 +74,9 @@ final class AnyGetter extends AbstractOperator
         $this->returnLastResult = $config->returnLastResult ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

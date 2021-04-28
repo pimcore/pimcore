@@ -17,7 +17,10 @@ namespace Pimcore\Db;
 
 use Pimcore\File;
 
-class PhpArrayFileTable
+/**
+ * @internal
+ */
+final class PhpArrayFileTable
 {
     /**
      * @var array

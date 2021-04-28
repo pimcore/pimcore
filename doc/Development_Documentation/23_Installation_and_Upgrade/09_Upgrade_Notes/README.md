@@ -71,6 +71,10 @@
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`.
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.
+- Removed `\Pimcore\Console\Log\Formatter\ConsoleColorFormatter`
+- Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.  
+- Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
+- Removed `\Pimcore\DataObject\GridColumnConfig\AbstractConfigElement` just implement `\Pimcore\DataObject\GridColumnConfig\ConfigElementInterface` instead.   
 - [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `App\Controller\FooController::myAction`
 - Bumped `codeception/codeception` to "^4.1.12".
 - Pimcore Bundle Migrations: Extending the functionality of `DoctrineMigrationsBundle` is not any longer possible the way we did it in the past. Therefore we're switching to standard Doctrine migrations, this means also that migration sets are not supported anymore and that the available migrations have to be configured manually or by using flex.
