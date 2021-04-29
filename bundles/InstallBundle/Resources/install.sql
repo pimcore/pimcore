@@ -183,7 +183,7 @@ CREATE TABLE `documents_page` (
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(383) DEFAULT NULL,
   `metaData` text,
-  `prettyUrl` varchar(190) DEFAULT NULL,
+  `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
