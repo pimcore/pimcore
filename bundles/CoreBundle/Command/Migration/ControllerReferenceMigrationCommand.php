@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command\Migration;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Db;
@@ -49,6 +50,7 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
     public function __construct(ConfigNormalizer $configNormalizer, ControllerNameParser $controllerNameParser)
     {
         parent::__construct();
+
         $this->configNormalizer = $configNormalizer;
         $this->controllerNameParser = $controllerNameParser;
     }
@@ -84,29 +86,76 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
             $this->migrate($route);
         }
 
-        // documents
-        $documents = new Document\Listing();
-        $documents->setUnpublished(1);
-        $condition = 'type NOT IN (:types)';
+        $tables = [
+            'documents_page',
+            'documents_snippet',
+            'documents_email',
+            'documents_newsletter',
+            'documents_printpage'
+        ];
+        $queryBuilders = [
+//            'documents_page' => $queryBuilder
+        ];
 
-        if ($input->getOption('documentId')) {
-            $document = Document::getById($input->getOption('documentId'));
+        $db = Db::get();
 
-            if ($document) {
-                $condition .= ' AND (id = ' . Db::get()->quote($document->getId()) . ' OR parentId =  ' . Db::get()->quote($document->getId()) . ')';
+        foreach ($tables as $table) {
+            $queryBuilder = $db->createQueryBuilder();
+            $queryBuilder
+                ->select('*')
+                ->from($table);
+
+            if ($input->getOption('documentId')) {
+                $document = Document::getById($input->getOption('documentId'));
+
+                if ($document) {
+                    $queryBuilder->where('(id = :id or parentId = :id)')
+                        ->setParameter('id', $document->getId());
+                }
+            }
+
+            $queryBuilders[$table] = $queryBuilder;
+        }
+
+        $updates = [];
+
+        foreach ($queryBuilders as $table => $queryBuilder) {
+            foreach ($queryBuilder->execute()->fetchAll() as $page) {
+                $module = $page['module'];
+                $controller = $page['controller'];
+                $action = $page['action'];
+
+                if (!strpos($controller, '::')) {
+                    if ($action || $controller || $module) {
+                        $controllerReference = $this->migrateFromString($module, $controller, $action);
+
+//                        $updates[] = 'UPDATE TABLE '.$type.' SET controller=\''.$controllerReference.'\', `action`=\'\', `module`=\'\' WHERE ';
+
+                        $updates[] = [
+                            'id' => $page['id'],
+                            'table' => $table,
+                            'values' => [
+                                'controller' => $controllerReference,
+                                'action' => '',
+                                'module' => ''
+                            ],
+                        ];
+                    }
+                }
             }
         }
 
-        $documents->setCondition($condition, ['types' => [
-            'link',
-            'hardlink',
-            'folder',
-            'printcontainer',
-        ]]);
-
-        foreach ($documents as $document) {
-            if ($document instanceof Document\PageSnippet) {
-                $this->migrate($document);
+        foreach ($updates as $update) {
+            try {
+                $db->update(
+                    $update['table'],
+                    $update['values'],
+                    ['id' => $update['id']]
+                );
+            }
+            catch (\Exception $ex) {
+                $this->output->writeln(sprintf('<error>%s [ID: %s]: %s</error>', $update['table'], $update['id'], $ex->getMessage()));
+                $this->errors++;
             }
         }
 
@@ -122,15 +171,12 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
     private function migrate($entity)
     {
         /**
-         * @var Document\PageSnippet|DocType|Staticroute $entity
+         * @var DocType|Staticroute $entity
          */
         if (!strpos($entity->getController(), '::')) {
             if ($entity->getAction() || $entity->getController() || $entity->getModule()) {
                 try {
-                    $controllerReference = $this->configNormalizer->formatControllerReference($entity->getModule(), $entity->getController(), $entity->getAction());
-                    if (!strpos($controllerReference, '::')) {
-                        $controllerReference = $this->controllerNameParser->parse($controllerReference);
-                    }
+                    $controllerReference = $this->migrateFromString($entity->getModule(), $entity->getController(), $entity->getAction());
 
                     $entity->setAction(null);
                     $entity->setModule(null);
@@ -142,5 +188,15 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
                 }
             }
         }
+    }
+
+    private function migrateFromString(?string $module = null, ?string $controller = null, ?string $action = null)
+    {
+        $controllerReference = $this->configNormalizer->formatControllerReference($module, $controller, $action);
+        if (!strpos($controllerReference, '::')) {
+            $controllerReference = $this->controllerNameParser->parse($controllerReference);
+        }
+
+        return $controllerReference;
     }
 }
