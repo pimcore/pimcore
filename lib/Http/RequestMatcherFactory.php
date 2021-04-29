@@ -18,6 +18,9 @@ namespace Pimcore\Http;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
+/**
+ * @internal
+ */
 class RequestMatcherFactory
 {
     /**

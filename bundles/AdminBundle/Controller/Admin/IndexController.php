@@ -260,7 +260,6 @@ final class IndexController extends AdminController implements KernelResponseEve
 
             // google analytics
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
-            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
         ];
 
         $this

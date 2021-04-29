@@ -23,12 +23,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CodeInjector
 {
-    const SELECTOR_BODY = 'body';
-    const SELECTOR_HEAD = 'head';
+    public const SELECTOR_BODY = 'body';
+    public const SELECTOR_HEAD = 'head';
 
-    const POSITION_BEGINNING = 'beginning';
-    const POSITION_END = 'end';
-    const REPLACE = 'replace';
+    public const POSITION_BEGINNING = 'beginning';
+    public const POSITION_END = 'end';
+    public const REPLACE = 'replace';
 
     private static $presetSelectors = [
         self::SELECTOR_HEAD,
@@ -46,11 +46,20 @@ class CodeInjector
      */
     private $responseHelper;
 
+    /**
+     * @param ResponseHelper $responseHelper
+     */
     public function __construct(ResponseHelper $responseHelper)
     {
         $this->responseHelper = $responseHelper;
     }
 
+    /**
+     * @param Response $response
+     * @param string $code
+     * @param string $selector
+     * @param string $position
+     */
     public function inject(Response $response, string $code, string $selector = self::SELECTOR_BODY, string $position = self::POSITION_END)
     {
         if (empty($code)) {
@@ -67,6 +76,15 @@ class CodeInjector
         $response->setContent($result);
     }
 
+    /**
+     * @internal
+     * @param string $html
+     * @param string $code
+     * @param string $selector
+     * @param string $position
+     * @param string $charset
+     * @return string
+     */
     public function injectIntoHtml(string $html, string $code, string $selector, string $position, string $charset = 'UTF-8'): string
     {
         if (!in_array($position, self::$validPositions)) {

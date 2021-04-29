@@ -74,6 +74,8 @@
 - Removed `\Pimcore\Console\Log\Formatter\ConsoleColorFormatter`
 - Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.  
 - Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
+- Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('webmastertools'')` instead.
+- Removed `\Pimcore\Helper\JsonFormatter`, use `json_encode($data, JSON_PRETTY_PRINT)` instead.  
 - Removed `\Pimcore\DataObject\GridColumnConfig\AbstractConfigElement` just implement `\Pimcore\DataObject\GridColumnConfig\ConfigElementInterface` instead.   
 - [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `App\Controller\FooController::myAction`
 - Bumped `codeception/codeception` to "^4.1.12".

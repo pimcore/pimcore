@@ -15,6 +15,9 @@
 
 namespace Pimcore\Helper;
 
+/**
+ * @internal
+ */
 class ContrastColor
 {
     /**

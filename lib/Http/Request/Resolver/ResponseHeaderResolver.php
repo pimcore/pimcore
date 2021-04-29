@@ -20,6 +20,9 @@ namespace Pimcore\Http\Request\Resolver;
 use Pimcore\Controller\Configuration\ResponseHeader;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @internal
+ */
 class ResponseHeaderResolver extends AbstractRequestResolver
 {
     const ATTRIBUTE_RESPONSE_HEADER = '_response_header';

@@ -18,6 +18,9 @@ namespace Pimcore\Http\Request\Resolver;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @internal
+ */
 class TemplateResolver extends AbstractRequestResolver
 {
     /**
