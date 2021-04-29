@@ -1161,7 +1161,7 @@ final class UserController extends AdminController implements KernelControllerEv
             if (empty($message)) {
                 //generate random password if user has no password
                 if (!$user->getPassword()) {
-                    $user->setPassword(md5(uniqid()));
+                    $user->setPassword(bin2hex(random_bytes(16)));
                     $user->save();
                 }
 
