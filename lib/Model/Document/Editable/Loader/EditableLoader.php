@@ -20,7 +20,10 @@ namespace Pimcore\Model\Document\Editable\Loader;
 use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Model\Document\Editable;
 
-class EditableLoader extends ImplementationLoader implements EditableLoaderInterface
+/**
+ * @internal
+ */
+final class EditableLoader extends ImplementationLoader implements EditableLoaderInterface
 {
     /**
      * {@inheritdoc}

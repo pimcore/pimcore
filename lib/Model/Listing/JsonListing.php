@@ -17,11 +17,6 @@ namespace Pimcore\Model\Listing;
 
 use Pimcore\Model\AbstractModel;
 
-/**
- * Class AbstractListing
- *
- * @package Pimcore\Model\Listing
- */
 abstract class JsonListing extends AbstractModel
 {
     /**

@@ -19,6 +19,9 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 trait QueryBuilderHelperTrait
 {
     /**

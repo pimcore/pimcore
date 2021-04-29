@@ -23,12 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 interface DataLoaderInterface extends LoaderInterface
 {
     /**
-     * Builds a classdefinition data instance
-     *
-     * @param string $name
-     * @param array $params
-     *
-     * @return Data
+     * {@inheritdoc}
      */
     public function build(string $name, array $params = []): Data;
 }

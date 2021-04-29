@@ -48,11 +48,17 @@ abstract class AbstractClassNameLoader implements LoaderInterface, ClassNameLoad
         return $instance;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supportsClassName(string $name): bool
     {
         return $this->supports($name);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getClassNameFor(string $name): string
     {
         if (!$this->supports($name)) {

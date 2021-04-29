@@ -19,7 +19,10 @@ namespace Pimcore\Model\Factory;
 
 use Pimcore\Loader\ImplementationLoader\AbstractClassNameLoader;
 
-class FallbackBuilder extends AbstractClassNameLoader
+/**
+ * @internal
+ */
+final class FallbackBuilder extends AbstractClassNameLoader
 {
     /**
      * {@inheritdoc}

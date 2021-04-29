@@ -29,21 +29,33 @@ abstract class AbstractDao implements DaoInterface
      */
     public $db;
 
+    /**
+     * {@inheritdoc}
+     */
     public function configure()
     {
         $this->db = Db::get();
     }
 
+    /**
+     *
+     */
     public function beginTransaction()
     {
         $this->db->beginTransaction();
     }
 
+    /**
+     *
+     */
     public function commit()
     {
         $this->db->commit();
     }
 
+    /**
+     *
+     */
     public function rollBack()
     {
         $this->db->rollBack();

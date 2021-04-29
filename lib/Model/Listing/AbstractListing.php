@@ -22,10 +22,6 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 
 /**
- * Class AbstractListing
- *
- * @package Pimcore\Model\Listing
- *
  * @method QueryBuilder getQueryBuilder()
  */
 abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable

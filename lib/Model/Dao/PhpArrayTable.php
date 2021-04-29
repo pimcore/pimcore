@@ -18,6 +18,9 @@ namespace Pimcore\Model\Dao;
 use Pimcore\Config;
 use Pimcore\Db\PhpArrayFileTable;
 
+/**
+ * @internal
+ */
 abstract class PhpArrayTable implements DaoInterface
 {
     use DaoTrait;
@@ -27,6 +30,9 @@ abstract class PhpArrayTable implements DaoInterface
      */
     protected $db;
 
+    /**
+     * {@inheritdoc}
+     */
     public function configure()
     {
     }
