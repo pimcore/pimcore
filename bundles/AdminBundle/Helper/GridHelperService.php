@@ -563,8 +563,8 @@ class GridHelperService
 
         $conditionFilters = [];
 
-        if ($requestParams['specificId'] ?? false) {
-            $conditionFilters[] = 'oo_id = ' . $requestParams['specificId'];
+        if (($requestParams['specificId'] ?? false) && is_numeric($requestParams['specificId'])) {
+            $conditionFilters[] = 'oo_id = ' . (int) $requestParams['specificId'];
         }
 
         if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {
