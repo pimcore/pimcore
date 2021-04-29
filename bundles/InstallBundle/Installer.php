@@ -633,7 +633,7 @@ class Installer
     {
         $defaultConfig = [
             'username' => 'admin',
-            'password' => random_bytes(16),
+            'password' => bin2hex(random_bytes(16)),
         ];
 
         $settings = array_replace_recursive($defaultConfig, $config);
