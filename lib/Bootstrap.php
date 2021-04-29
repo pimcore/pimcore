@@ -145,7 +145,7 @@ class Bootstrap
         }
     }
 
-    protected static function prepareEnvVariables()
+    private static function prepareEnvVariables()
     {
         (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
     }

@@ -22,7 +22,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class SubrequestExtension extends AbstractExtension
+class SubrequestExtension extends AbstractExtension
 {
     /**
      * @var Inc

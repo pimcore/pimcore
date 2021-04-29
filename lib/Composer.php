@@ -21,6 +21,9 @@ use Composer\Script\Event;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
+/**
+ * {@internal}
+ */
 class Composer
 {
     protected static $options = [

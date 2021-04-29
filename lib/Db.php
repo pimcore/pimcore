@@ -21,8 +21,6 @@ use Psr\Log\LoggerInterface;
 class Db
 {
     /**
-     * @static
-     *
      * @return \Pimcore\Db\ConnectionInterface
      */
     public static function getConnection()
@@ -41,8 +39,6 @@ class Db
     }
 
     /**
-     * @static
-     *
      * @return \Pimcore\Db\ConnectionInterface|Connection
      */
     public static function get()
@@ -56,7 +52,7 @@ class Db
     }
 
     /**
-     * @static
+     * @internal
      *
      * @return LoggerInterface
      *
@@ -68,7 +64,7 @@ class Db
     }
 
     /**
-     * @static
+     *
      */
     public static function close()
     {

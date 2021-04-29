@@ -76,7 +76,8 @@
 - Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
 - Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('webmastertools'')` instead.
 - Removed `\Pimcore\Helper\JsonFormatter`, use `json_encode($data, JSON_PRETTY_PRINT)` instead.
-- Removed `\Pimcore\Log\Handler\Mail`, there's no replacement for this internal class.  
+- Removed `\Pimcore\Log\Handler\Mail`, there's no replacement for this internal class.
+- Removed `\Pimcore\File::isIncludeable()` method, there's no replacement.
 - Removed `\Pimcore\DataObject\GridColumnConfig\AbstractConfigElement` just implement `\Pimcore\DataObject\GridColumnConfig\ConfigElementInterface` instead.   
 - [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `App\Controller\FooController::myAction`
 - Bumped `codeception/codeception` to "^4.1.12".

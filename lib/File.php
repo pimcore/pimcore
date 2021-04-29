@@ -22,10 +22,6 @@ class File
      */
     public static $defaultMode = 0664;
 
-    /**
-     * @var array
-     */
-    private static $isIncludeableCache = [];
 
     /**
      * @var null|resource
@@ -55,6 +51,7 @@ class File
     /**
      * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
+     * @internal
      * @param string $tmpFilename
      * @param string|null $language
      * @param string $replacement
@@ -72,34 +69,6 @@ class File
         $tmpFilename = trim($tmpFilename, '. ');
 
         return $tmpFilename;
-    }
-
-    /**
-     * @param string $filename
-     *
-     * @return bool
-     */
-    public static function isIncludeable($filename)
-    {
-        if (array_key_exists($filename, self::$isIncludeableCache)) {
-            return self::$isIncludeableCache[$filename];
-        }
-
-        $isIncludeAble = false;
-
-        // use stream_resolve_include_path if PHP is >= 5.3.2 because the performance is better
-        if (function_exists('stream_resolve_include_path')) {
-            if ($include = stream_resolve_include_path($filename)) {
-                if (@is_readable($include)) {
-                    $isIncludeAble = true;
-                }
-            }
-        }
-
-        // add to store
-        self::$isIncludeableCache[$filename] = $isIncludeAble;
-
-        return $isIncludeAble;
     }
 
     /**
@@ -137,6 +106,7 @@ class File
     }
 
     /**
+     * @internal
      * @param string $path
      * @param string $data
      *
