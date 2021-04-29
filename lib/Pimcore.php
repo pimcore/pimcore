@@ -24,7 +24,7 @@ class Pimcore
     /**
      * @var bool|null
      */
-    public static $adminMode;
+    private static $adminMode;
 
     /**
      * @var bool
@@ -64,9 +64,6 @@ class Pimcore
 
     /**
      * switches pimcore into the admin mode - there you can access also unpublished elements, ....
-     *
-     * @static
-     *
      * @internal
      */
     public static function setAdminMode()
@@ -76,9 +73,6 @@ class Pimcore
 
     /**
      * switches back to the non admin mode, where unpublished elements are invisible
-     *
-     * @static
-     *
      * @internal
      */
     public static function unsetAdminMode()
@@ -88,9 +82,6 @@ class Pimcore
 
     /**
      * check if the process is currently in admin mode or not
-     *
-     * @static
-     *
      * @return bool
      */
     public static function inAdmin()
@@ -117,6 +108,7 @@ class Pimcore
     }
 
     /**
+     * @internal
      * @return EventDispatcherInterface
      */
     public static function getEventDispatcher()
@@ -125,6 +117,7 @@ class Pimcore
     }
 
     /**
+     * @internal
      * @return KernelInterface
      */
     public static function getKernel()
@@ -133,6 +126,7 @@ class Pimcore
     }
 
     /**
+     * @internal
      * @return bool
      */
     public static function hasKernel()
@@ -145,6 +139,7 @@ class Pimcore
     }
 
     /**
+     * @internal
      * @param KernelInterface $kernel
      */
     public static function setKernel(KernelInterface $kernel)
@@ -221,8 +216,7 @@ class Pimcore
 
     /**
      * this method is called with register_shutdown_function() and writes all data queued into the cache
-     *
-     * @static
+     * @internal
      */
     public static function shutdown()
     {
@@ -255,6 +249,10 @@ class Pimcore
         self::$shutdownEnabled = true;
     }
 
+    /**
+     * @internal
+     * @return bool
+     */
     public static function disableMinifyJs(): bool
     {
         if (self::inDevMode()) {
@@ -269,6 +267,10 @@ class Pimcore
         return false;
     }
 
+    /**
+     * @internal
+     * @throws Exception
+     */
     public static function initLogger()
     {
         // special request log -> if parameter pimcore_log is set
