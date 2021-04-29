@@ -570,7 +570,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return Page|\RecursiveIterator|null
      */
     public function getChildren()
     {
