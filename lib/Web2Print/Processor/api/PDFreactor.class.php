@@ -15,6 +15,9 @@
 
 namespace com\realobjects\pdfreactor\webservice\client;
 
+/**
+ * @internal
+ */
 class PDFreactor
 {
     public $url;

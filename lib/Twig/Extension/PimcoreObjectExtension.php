@@ -25,7 +25,10 @@ use Pimcore\Model\User;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class PimcoreObjectExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class PimcoreObjectExtension extends AbstractExtension
 {
     public function getFunctions()
     {

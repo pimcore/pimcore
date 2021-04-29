@@ -21,7 +21,10 @@ use Pimcore\Tool\DeviceDetector;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class PimcoreToolExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class PimcoreToolExtension extends AbstractExtension
 {
     public function getFunctions()
     {

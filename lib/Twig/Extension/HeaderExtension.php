@@ -27,7 +27,10 @@ use Pimcore\Twig\Extension\Templating\Placeholder;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class HeaderExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class HeaderExtension extends AbstractExtension
 {
     /**
      * @var HeadLink

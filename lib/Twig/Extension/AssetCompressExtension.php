@@ -20,6 +20,9 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Twig\TokenParser\AssetCompressParser;
 use Twig\Extension\AbstractExtension;
 
+/**
+ * @internal
+ */
 class AssetCompressExtension extends AbstractExtension
 {
     public function getTokenParsers(): array

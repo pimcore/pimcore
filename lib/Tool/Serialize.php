@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tool;
 
-class Serialize
+final class Serialize
 {
     /**
      * @var array
@@ -23,8 +23,6 @@ class Serialize
     protected static $loopFilterProcessedObjects = [];
 
     /**
-     * @static
-     *
      * @param mixed $data
      *
      * @return string
@@ -35,8 +33,6 @@ class Serialize
     }
 
     /**
-     * @static
-     *
      * @param string $data
      *
      * @return mixed
@@ -51,6 +47,8 @@ class Serialize
     }
 
     /**
+     * @internal
+     *
      * Shortcut to access the admin serializer
      *
      * @return \Symfony\Component\Serializer\Serializer
@@ -61,6 +59,8 @@ class Serialize
     }
 
     /**
+     * @internal
+     *
      * this is a special json encoder that avoids recursion errors
      * especially for pimcore models that contain massive self referencing objects
      *

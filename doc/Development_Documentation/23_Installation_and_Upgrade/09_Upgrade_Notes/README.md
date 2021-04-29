@@ -167,6 +167,7 @@
 - `\Pimcore\Model\DataObject\Listing::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
 - `\Pimcore\Google\Cse::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
 - `\Pimcore\Helper\RobotsTxt` has been removed
+- `\Pimcore\Tool\Frontend::getSiteKey()` method has been removed.  
 - `\Pimcore\Model\User::getUsername()` has been removed, use `User::getName()` instead.
 - `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead.
 - [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.

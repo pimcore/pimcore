@@ -24,7 +24,10 @@ use Pimcore\Twig\Extension\Templating\Navigation;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class NavigationExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class NavigationExtension extends AbstractExtension
 {
     /**
      * @var Navigation

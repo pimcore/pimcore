@@ -20,6 +20,9 @@ namespace Pimcore\Twig\Node;
 use Twig\Compiler;
 use Twig\Node\Node;
 
+/**
+ * @internal
+ */
 class AssetCompressNode extends Node
 {
     public function __construct(Node $body, $lineno, $tag = 'pimcoreassetcompress')

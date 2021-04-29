@@ -27,9 +27,9 @@ use Twig\TwigFunction;
 use Twig\TwigTest;
 
 /**
- * Simple helpers that do not need a dedicated extension
+ * @internal
  */
-class HelpersExtension extends AbstractExtension
+final class HelpersExtension extends AbstractExtension
 {
     /**
      * @var PimcoreUrl

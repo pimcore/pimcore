@@ -21,6 +21,9 @@ use Pimcore\Model\Asset;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigTest;
 
+/**
+ * @internal
+ */
 final class AssetHelperExtensions extends AbstractExtension
 {
     public function getTests(): array

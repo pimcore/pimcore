@@ -22,6 +22,9 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
+/**
+ * @internal
+ */
 final class ImageThumbnailExtension extends AbstractExtension
 {
     /**

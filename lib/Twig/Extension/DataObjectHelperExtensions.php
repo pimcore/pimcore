@@ -22,6 +22,9 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Twig\TwigTest;
 
+/**
+ * @internal
+ */
 final class DataObjectHelperExtensions extends AbstractExtension
 {
     /**

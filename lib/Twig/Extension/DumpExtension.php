@@ -23,7 +23,10 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class DumpExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class DumpExtension extends AbstractExtension
 {
     public function getFunctions()
     {

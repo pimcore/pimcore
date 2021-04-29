@@ -19,7 +19,10 @@ use Pimcore\Twig\Extension\Templating\Inc;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class SubrequestExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class SubrequestExtension extends AbstractExtension
 {
     /**
      * @var Inc
