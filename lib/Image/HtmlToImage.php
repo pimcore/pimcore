@@ -20,6 +20,9 @@ use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class HtmlToImage
 {
     /**

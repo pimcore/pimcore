@@ -118,7 +118,7 @@ final class RedirectingPlugin
      *
      * @param Mail $message
      */
-    protected function appendDebugInformation(Mail $message)
+    private function appendDebugInformation(Mail $message)
     {
         if ($message->isPreventingDebugInformationAppending() != true) {
             $originalData = [];
@@ -167,7 +167,7 @@ final class RedirectingPlugin
      *
      * @param Mail $message
      */
-    protected function setSenderAndReceiversParams($message)
+    private function setSenderAndReceiversParams($message)
     {
         $originalData = $message->getOriginalData();
 
@@ -183,7 +183,7 @@ final class RedirectingPlugin
      *
      * @param Mail $message
      */
-    protected function removeDebugInformation(Mail $message)
+    private function removeDebugInformation(Mail $message)
     {
         $originalData = $message->getOriginalData();
 

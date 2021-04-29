@@ -565,7 +565,7 @@ abstract class Adapter
     /**
      * @return array
      */
-    public function getVectorRasterDimensions()
+    protected function getVectorRasterDimensions()
     {
         $targetWidth = 5000;
         $factor = $targetWidth / $this->getWidth();
