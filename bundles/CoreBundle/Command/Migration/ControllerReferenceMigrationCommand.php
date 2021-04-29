@@ -93,9 +93,7 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
             'documents_newsletter',
             'documents_printpage'
         ];
-        $queryBuilders = [
-//            'documents_page' => $queryBuilder
-        ];
+        $queryBuilders = [];
 
         $db = Db::get();
 
