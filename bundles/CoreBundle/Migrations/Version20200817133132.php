@@ -39,11 +39,10 @@ class Version20200817133132 extends AbstractPimcoreMigration
             foreach ($relationTables as $table) {
                 $relationTable = current($table);
 
-                if ($schema->getTable($relationTable)->hasPrimaryKey()) {
-                    $this->addSql('ALTER TABLE `'.$relationTable.'` DROP PRIMARY KEY;');
-                }
-
                 if (!$schema->getTable($relationTable)->hasColumn('id')) {
+                    if ($schema->getTable($relationTable)->hasPrimaryKey()) {
+                        $this->addSql('ALTER TABLE `'.$relationTable.'` DROP PRIMARY KEY;');
+                    }
                     $this->addSql('ALTER TABLE `'.$relationTable.'` ADD COLUMN `id` BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST');
                 }
             }
