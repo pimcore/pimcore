@@ -35,6 +35,11 @@ final class Version20210323110055 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $file = Config::locateConfigFile('robots.php');
+
+        if (!file_exists($file)) {
+            return;
+        }
+
         $config = Config::getConfigInstance($file);
         $config = $config->toArray();
 
