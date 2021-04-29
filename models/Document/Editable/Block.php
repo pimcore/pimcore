@@ -288,7 +288,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @param bool $return
      */
-    private function blockControls($return = false)
+    public function blockControls($return = false)
     {
         $attr = $this->getBlockAttributes();
 
