@@ -35,7 +35,7 @@ class WkHtmlToPdf extends Processor
     private $options = '';
 
     /**
-     * @var array
+     * @var \stdClass
      */
     protected $config = [];
 
