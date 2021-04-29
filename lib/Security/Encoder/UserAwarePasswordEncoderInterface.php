@@ -19,6 +19,9 @@ use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @internal
+ */
 interface UserAwarePasswordEncoderInterface extends PasswordEncoderInterface
 {
     /**

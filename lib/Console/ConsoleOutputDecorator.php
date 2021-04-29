@@ -25,6 +25,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Implements a ConsoleOutput with configurable output. Useful when needing to catch both output
  * and error output in a buffered output.
+ *
+ * @internal
  */
 class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
 {

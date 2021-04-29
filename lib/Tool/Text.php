@@ -176,13 +176,11 @@ class Text
     }
 
     /**
-     * @static
-     *
      * @param string $text
      *
      * @return array
      */
-    public static function getElementsTagsInWysiwyg($text)
+    private static function getElementsTagsInWysiwyg($text)
     {
         if (!is_string($text) || strlen($text) < 1) {
             return [];
@@ -202,13 +200,11 @@ class Text
     }
 
     /**
-     * @static
-     *
      * @param string $text
      *
      * @return array
      */
-    public static function getElementsInWysiwyg($text)
+    private static function getElementsInWysiwyg($text)
     {
         $hash = 'elements_wysiwyg_text_' . md5($text);
         if (\Pimcore\Cache\Runtime::isRegistered($hash)) {
@@ -245,8 +241,6 @@ class Text
 
     /**
      * extracts all dependencies to other elements from wysiwyg text
-     *
-     * @static
      *
      * @param  string $text
      *
@@ -375,7 +369,7 @@ class Text
             if (false !== ($length = strrpos($text, ' '))) {
                 $text = substr($text, 0, $length);
             }
-            $string = $text.'...';
+            $string = $text . '…';
         }
 
         return $string;

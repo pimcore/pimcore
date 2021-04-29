@@ -74,9 +74,7 @@ class Url extends Page
     }
 
     /**
-     * Returns href for this page
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getHref()
     {
@@ -97,9 +95,7 @@ class Url extends Page
     // Public methods:
 
     /**
-     * Returns an array representation of the page
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function toArray(): array
     {

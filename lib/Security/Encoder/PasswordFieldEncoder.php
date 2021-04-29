@@ -21,6 +21,7 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 
 /**
+ * @internal
  * @method Concrete getUser()
  */
 class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder

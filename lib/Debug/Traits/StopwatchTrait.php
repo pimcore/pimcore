@@ -20,6 +20,8 @@ namespace Pimcore\Debug\Traits;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
+ * @internal
+ *
  * Simple integration into the profiler timeline by adding events to
  * the debug stopwatch. Usage:
  *

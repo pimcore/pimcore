@@ -21,6 +21,8 @@ use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
+ * @internal
+ *
  * Encoder factory keeping a dedicated encoder instance per user object. This is needed as Pimcore Users and user
  * objects containing Password field definitions handle their encoding logic by themself. The user aware encoder
  * delegates encoding and verification to the user object.

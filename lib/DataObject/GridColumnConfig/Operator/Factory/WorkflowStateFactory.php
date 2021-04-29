@@ -21,18 +21,27 @@ use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\WorkflowState;
 use Pimcore\Workflow\Place\StatusInfo;
 
-class WorkflowStateFactory implements OperatorFactoryInterface
+/**
+ * @internal
+ */
+final class WorkflowStateFactory implements OperatorFactoryInterface
 {
     /**
      * @var StatusInfo
      */
     private $workflowStatusInfo;
 
+    /**
+     * @param StatusInfo $workflowStatusInfo
+     */
     public function __construct(StatusInfo $workflowStatusInfo)
     {
         $this->workflowStatusInfo = $workflowStatusInfo;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
         $operator = new WorkflowState($configElement, $context);

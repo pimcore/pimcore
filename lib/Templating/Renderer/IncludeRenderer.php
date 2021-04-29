@@ -25,6 +25,9 @@ use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
 
+/**
+ * @internal
+ */
 class IncludeRenderer
 {
     /**

@@ -23,6 +23,9 @@ use Pimcore\Model\Document\PageSnippet;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
+/**
+ * @internal
+ */
 class EditableRenderer implements LoggerAwareInterface
 {
     use LoggerAwareTrait;

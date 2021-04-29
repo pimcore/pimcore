@@ -22,9 +22,9 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 /**
- * Runs the assets:install command with the settings configured in composer.json
+ * @internal
  *
- * @package Pimcore\Tool
+ * Runs the assets:install command with the settings configured in composer.json
  */
 class AssetsInstaller
 {

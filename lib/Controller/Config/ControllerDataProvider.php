@@ -25,6 +25,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 /**
  * Provides bundle/controller/action/template selection options which can be
  * used to configure controller + template for documents or static routes.
+ *
+ * @internal
  */
 class ControllerDataProvider
 {

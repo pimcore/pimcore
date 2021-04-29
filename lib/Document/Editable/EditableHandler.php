@@ -40,7 +40,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-class EditableHandler implements LoggerAwareInterface
+final class EditableHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

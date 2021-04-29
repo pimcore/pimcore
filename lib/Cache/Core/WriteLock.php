@@ -19,6 +19,9 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
+/**
+ * @internal
+ */
 class WriteLock implements LoggerAwareInterface
 {
     use LoggerAwareTrait;

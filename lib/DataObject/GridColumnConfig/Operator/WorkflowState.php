@@ -27,6 +27,9 @@ final class WorkflowState extends AbstractOperator
      */
     private $statusInfo;
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

@@ -22,6 +22,8 @@ use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 
 /**
+ * @internal
+ *
  * The spaceless tag only removes spaces between HTML elements. This removes all newlines in a block and is suited
  * for a simple minification of CSS/JS assets.
  */

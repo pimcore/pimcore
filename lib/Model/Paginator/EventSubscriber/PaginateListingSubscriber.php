@@ -38,6 +38,9 @@ class PaginateListingSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * {@internal}
+     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -20,6 +20,9 @@ namespace Pimcore\Twig\Node;
 use Twig\Compiler;
 use Twig\Node\Node;
 
+/**
+ * @internal
+ */
 class GlossaryNode extends Node
 {
     public function compile(Compiler $compiler)

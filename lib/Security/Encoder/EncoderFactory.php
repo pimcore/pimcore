@@ -20,6 +20,8 @@ use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
+ * @internal
+ *
  * Password encoding and verification for Pimcore objects and admin users is implemented on the user object itself.
  * Therefore the encoder needs the user object when encoding or verifying a password. This factory decorates the core
  * factory and allows to delegate building the encoder to a type specific factory which then is able to create a

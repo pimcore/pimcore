@@ -20,15 +20,24 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class StringReplace extends AbstractOperator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $search;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $replace;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $insensitive;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -38,6 +47,9 @@ final class StringReplace extends AbstractOperator
         $this->insensitive = $config->insensitive ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

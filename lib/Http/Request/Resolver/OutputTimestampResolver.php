@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
+ * @internal
+ *
  * Gets/sets the timestamp for which output should be delivered. Default is current timestamp, but timestamp
  * might be set to a date in future for preview purposes
  */

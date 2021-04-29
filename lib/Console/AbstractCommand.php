@@ -20,9 +20,13 @@ use Pimcore\Tool\Admin;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 /**
  * Base command class setting up some defaults (e.g. the ignore-maintenance-mode switch and the VarDumper component).
+ * @internal
  *
  * @method Application getApplication()
  */
@@ -44,9 +48,14 @@ abstract class AbstractCommand extends Command
     protected $output;
 
     /**
-     * @var Dumper
+     * @var null|CliDumper
      */
-    protected $dumper;
+    private $cliDumper;
+
+    /**
+     * @var VarCloner|null
+     */
+    private $varCloner;
 
     /**
      * @param InputInterface $input
@@ -60,9 +69,6 @@ abstract class AbstractCommand extends Command
         $this->input = $input;
         $this->output = $output;
 
-        // use Console\Dumper for nice debug output
-        $this->dumper = new Dumper($this->output);
-
         // skip if maintenance mode is on and the flag is not set
         if (Admin::isInMaintenanceMode() && !$input->getOption('ignore-maintenance-mode')) {
             throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
@@ -71,22 +77,36 @@ abstract class AbstractCommand extends Command
 
     /**
      * @param mixed $data
-     * @param null|int $flags
      */
-    protected function dump($data, $flags = null)
+    protected function dump($data)
     {
-        $this->dumper->dump($data, $flags);
+        $this->doDump($data);
     }
 
     /**
      * @param mixed $data
-     * @param null|int $flags
      */
-    protected function dumpVerbose($data, $flags = null)
+    protected function dumpVerbose($data)
     {
         if ($this->output->isVerbose()) {
-            $this->dump($data, $flags);
+            $this->doDump($data);
         }
+    }
+
+    private function doDump($data)
+    {
+        if (null === $this->cliDumper) {
+            $this->cliDumper = new CliDumper();
+            $output = $this->output instanceof StreamOutput ? $this->output->getStream() : function ($line, $depth, $indentPad) {
+                if (-1 !== $depth) {
+                    $this->output->writeln(str_repeat($indentPad, $depth) . $line);
+                }
+            };
+            $this->cliDumper->setOutput($output);
+            $this->varCloner = new VarCloner();
+        }
+
+        $this->cliDumper->dump($this->varCloner->cloneVar($data));
     }
 
     /**

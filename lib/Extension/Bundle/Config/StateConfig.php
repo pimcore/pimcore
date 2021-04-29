@@ -22,6 +22,9 @@ use Pimcore\Extension\Config;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @internal
+ */
 final class StateConfig
 {
     /**

@@ -22,7 +22,7 @@ use Pimcore\Model\User\UserRole;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
 
-class Config implements \ArrayAccess
+final class Config implements \ArrayAccess
 {
     /**
      * @var array
@@ -87,6 +87,7 @@ class Config implements \ArrayAccess
     }
 
     /**
+     * @internal
      * @param string $name - name of configuration file. slash is allowed for subdirectories.
      *
      * @return string

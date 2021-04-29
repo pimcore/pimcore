@@ -22,6 +22,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class CacheClearer
 {
     /**

@@ -1101,9 +1101,7 @@ abstract class Page extends Container
     }
 
     /**
-     * Returns an array representation of the page
-     *
-     * @return array  associative array containing all page properties
+     * {@inheritdoc}
      */
     public function toArray(): array
     {

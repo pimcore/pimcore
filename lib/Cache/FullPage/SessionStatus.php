@@ -25,6 +25,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * Determines if the full page cache should be disabled due to
  * session (started session containing data).
+ *
+ * @internal
  */
 class SessionStatus
 {

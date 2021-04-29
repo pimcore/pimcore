@@ -34,7 +34,10 @@ class WkHtmlToPdf extends Processor
      */
     private $options = '';
 
-    protected $config = [];
+    /**
+     * @var \stdClass|null
+     */
+    protected $config;
 
     /**
      * @param string $wkhtmltopdfBin
@@ -71,12 +74,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * @param Document\PrintAbstract $document
-     * @param object $config
-     *
-     * @return string
-     *
-     * @throws \Exception
+     * {@internal}
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
@@ -105,7 +103,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * @return array
+     * {@internal}
      */
     public function getProcessingOptions()
     {
@@ -135,13 +133,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * returns the path to the generated pdf file
-     *
-     * @param string $html
-     * @param array $params
-     * @param bool $returnFilePath return the path to the pdf file or the content
-     *
-     * @return string
+     * {@internal}
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {

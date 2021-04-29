@@ -18,6 +18,9 @@ namespace Pimcore\Http\Request\Resolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @internal
+ */
 abstract class AbstractRequestResolver
 {
     /**

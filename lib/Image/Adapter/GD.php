@@ -25,17 +25,12 @@ class GD extends Adapter
     protected $path;
 
     /**
-     * contains imageresource
-     *
-     * @var mixed
+     * @var resource|\GdImage|false
      */
     protected $resource;
 
     /**
-     * @param string $imagePath
-     * @param array $options
-     *
-     * @return self|false
+     * {@inheritdoc}
      */
     public function load($imagePath, $options = [])
     {
@@ -64,7 +59,7 @@ class GD extends Adapter
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getContentOptimizedFormat()
     {
@@ -77,11 +72,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $path
-     * @param string|null $format
-     * @param int|null $quality
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function save($path, $format = null, $quality = null)
     {
@@ -127,7 +118,7 @@ class GD extends Adapter
     /**
      * @return bool
      */
-    protected function hasAlphaChannel()
+    private function hasAlphaChannel()
     {
         if ($this->isAlphaPossible) {
             $width = imagesx($this->resource); // Get the width of the image
@@ -148,6 +139,9 @@ class GD extends Adapter
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function destroy()
     {
         if ($this->resource) {
@@ -161,7 +155,7 @@ class GD extends Adapter
      *
      * @return resource|\GdImage|false
      */
-    protected function createImage($width, $height)
+    private function createImage($width, $height)
     {
         $newImg = imagecreatetruecolor($width, $height);
 
@@ -174,10 +168,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function resize($width, $height)
     {
@@ -196,12 +187,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $x
-     * @param int $y
-     * @param int $width
-     * @param int $height
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function crop($x, $y, $width, $height)
     {
@@ -226,11 +212,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $width
-     * @param int $height
-     * @param bool $forceResize
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function frame($width, $height, $forceResize = false)
     {
@@ -256,9 +238,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $color
-     *
-     * @return Adapter
+     * {@inheritdoc}
      */
     public function setBackgroundColor($color)
     {
@@ -283,10 +263,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $image
-     * @param null|string $mode
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setBackgroundImage($image, $mode = null)
     {
@@ -323,7 +300,7 @@ class GD extends Adapter
     }
 
     /**
-     * @return self
+     * {@inheritdoc}
      */
     public function grayscale()
     {
@@ -337,7 +314,7 @@ class GD extends Adapter
     }
 
     /**
-     * @return self
+     * {@inheritdoc}
      */
     public function sepia()
     {
@@ -352,14 +329,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $image
-     * @param int $x
-     * @param int $y
-     * @param int $alpha
-     * @param string $composite
-     * @param string $origin
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
     {
@@ -400,9 +370,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param string $mode
-     *
-     * @return $this|self
+     * {@inheritdoc}
      */
     public function mirror($mode)
     {
@@ -420,9 +388,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param int $angle
-     *
-     * @return $this|self
+     * {@inheritdoc}
      */
     public function rotate($angle)
     {

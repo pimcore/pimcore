@@ -18,6 +18,9 @@ namespace Pimcore\Http;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @internal
+ */
 class ResponseHelper
 {
     /**

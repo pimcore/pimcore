@@ -18,6 +18,9 @@ namespace Pimcore\Security\Encoder\Factory;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
+/**
+ * @internal
+ */
 abstract class AbstractEncoderFactory implements EncoderFactoryInterface
 {
     /**

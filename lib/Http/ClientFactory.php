@@ -20,6 +20,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Config;
 
+/**
+ * @internal
+ */
 class ClientFactory
 {
     /**

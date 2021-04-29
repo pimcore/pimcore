@@ -29,12 +29,19 @@ final class LFExpander extends AbstractOperator
      */
     private $localeService;
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     private $locales;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $asArray;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -45,6 +52,9 @@ final class LFExpander extends AbstractOperator
         $this->asArray = $config->asArray ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $childs = $this->getChilds();

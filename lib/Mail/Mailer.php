@@ -42,6 +42,9 @@ class Mailer implements MailerInterface
         $this->redirectPlugin = $redirectPlugin;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function send(RawMessage $message, Envelope $envelope = null): void
     {
         if ($message instanceof Mail) {

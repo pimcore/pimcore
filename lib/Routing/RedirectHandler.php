@@ -32,7 +32,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
-class RedirectHandler implements LoggerAwareInterface
+/**
+ * @internal
+ */
+final class RedirectHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

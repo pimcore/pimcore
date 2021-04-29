@@ -88,13 +88,7 @@ class PdfReactor extends Processor
     }
 
     /**
-     * returns the path to the generated pdf file
-     *
-     * @param string $html
-     * @param array $params
-     * @param bool $returnFilePath return the path to the pdf file or the content
-     *
-     * @return string
+     * {@internal}
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
@@ -123,12 +117,7 @@ class PdfReactor extends Processor
     }
 
     /**
-     * @param Document\PrintAbstract $document
-     * @param object $config
-     *
-     * @return string
-     *
-     * @throws \Exception
+     * {@internal}
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
@@ -175,6 +164,9 @@ class PdfReactor extends Processor
         return base64_decode($result->document);
     }
 
+    /**
+     * {@internal}
+     */
     public function getProcessingOptions()
     {
         $this->includeApi();

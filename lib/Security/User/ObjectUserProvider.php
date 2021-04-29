@@ -23,6 +23,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
+ * @internal
+ *
  * User provider loading users from pimcore objects. To load users, the provider needs
  * to know which kind of users to load (className) and which field to query for the
  * username (usernameField).

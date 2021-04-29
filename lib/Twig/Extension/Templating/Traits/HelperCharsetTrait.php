@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Traits;
 
+/**
+ * @internal
+ */
 trait HelperCharsetTrait
 {
     protected $charset = 'UTF-8';

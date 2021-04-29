@@ -21,18 +21,27 @@ use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\TranslateValue;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TranslateValueFactory implements OperatorFactoryInterface
+/**
+ * @internal
+ */
+final class TranslateValueFactory implements OperatorFactoryInterface
 {
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
+    /**
+     * @param TranslatorInterface $translator
+     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
         return new TranslateValue($this->translator, $configElement, $context);

@@ -23,6 +23,9 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @internal
+ */
 class EditableUsageResolver
 {
     /**

@@ -31,7 +31,7 @@ class Cache
 
     /**
      * Get the cache handler implementation
-     *
+     * @internal
      * @return CoreCacheHandler
      */
     public static function getHandler()
@@ -188,7 +188,7 @@ class Cache
 
     /**
      * Write and clean up cache
-     *
+     * @internal
      * @param bool $forceWrite
      */
     public static function shutdown($forceWrite = false)

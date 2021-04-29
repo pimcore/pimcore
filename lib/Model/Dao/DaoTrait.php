@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\Dao;
 
+/**
+ * @internal
+ */
 trait DaoTrait
 {
     /**

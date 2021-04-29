@@ -20,7 +20,10 @@ use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface;
 use Pimcore\Model\Tool\CustomReport\Config;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-class ReportAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
+/**
+ * @internal
+ */
+final class ReportAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
 {
     /**
      * @var ServiceLocator

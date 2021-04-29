@@ -32,6 +32,9 @@ final class LocaleSwitcher extends AbstractOperator
      */
     private $locale;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -40,6 +43,9 @@ final class LocaleSwitcher extends AbstractOperator
         $this->locale = $config->locale ?? null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

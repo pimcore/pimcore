@@ -20,9 +20,14 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class Text extends AbstractOperator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $textValue;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -30,6 +35,9 @@ final class Text extends AbstractOperator
         $this->textValue = $config->textValue ?? '';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

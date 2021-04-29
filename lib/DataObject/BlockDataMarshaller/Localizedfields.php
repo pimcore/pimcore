@@ -18,9 +18,14 @@ namespace Pimcore\DataObject\BlockDataMarshaller;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Marshaller\MarshallerInterface;
 
+/**
+ * @internal
+ */
 class Localizedfields implements MarshallerInterface
 {
-    /** @var MarshallerService */
+    /**
+     * @var MarshallerService
+     */
     protected $marshallerService;
 
     /**

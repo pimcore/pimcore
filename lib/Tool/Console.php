@@ -20,17 +20,12 @@ use Pimcore\Logger;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
-class Console
+final class Console
 {
     /**
      * @var string system environment
      */
     private static $systemEnvironment;
-
-    /**
-     * @var null|bool
-     */
-    protected static $timeoutKillAfterSupport = null;
 
     /**
      * @var array
@@ -137,65 +132,6 @@ class Console
 
         if ($throwException) {
             throw new \Exception("No '$name' executable found, please install the application or add it to the PATH (in system settings or to your PATH environment variable");
-        }
-
-        return false;
-    }
-
-    protected static function setupComposer()
-    {
-        // composer needs either COMPOSER_HOME or HOME to be set
-        // we also populate the $_ENV variable, it is used by symfony/process component
-        if (!getenv('COMPOSER_HOME') && !getenv('HOME')) {
-            $composerHome = PIMCORE_PRIVATE_VAR . '/composer';
-            if (!is_dir($composerHome)) {
-                mkdir($composerHome, 0777, true);
-            }
-            putenv('COMPOSER_HOME=' . $composerHome);
-            $_ENV['COMPOSER_HOME'] = $composerHome;
-        }
-
-        putenv('COMPOSER_DISABLE_XDEBUG_WARN=true');
-        $_ENV['COMPOSER_DISABLE_XDEBUG_WARN'] = 'true';
-    }
-
-    /**
-     * @param string $executablePath
-     *
-     * @return bool
-     */
-    protected static function checkPngout($executablePath)
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), 'bitdepth') !== false) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // noting to do
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $executablePath
-     *
-     * @return bool
-     */
-    protected static function checkCjpeg($executablePath)
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), '-optimize') !== false) {
-                if (strpos($process->getOutput() . $process->getErrorOutput(), 'mozjpeg') !== false) {
-                    return true;
-                }
-            }
-        } catch (\Exception $e) {
-            // noting to do
         }
 
         return false;
@@ -415,66 +351,6 @@ class Console
         Logger::debug('Process started - returning the PID is not supported on Windows Systems');
 
         return 0;
-    }
-
-    /**
-     * Returns a hash with all options passed to a cli script
-     *
-     * @param bool $onlyFullNotationArgs
-     *
-     * @return array
-     */
-    public static function getOptions($onlyFullNotationArgs = false)
-    {
-        global $argv;
-        $options = [];
-        $tmpOptions = $argv;
-        array_shift($tmpOptions);
-
-        foreach ($tmpOptions as $optionString) {
-            if ($onlyFullNotationArgs && substr($optionString, 0, 2) != '--') {
-                continue;
-            }
-            $exploded = explode('=', $optionString, 2);
-            $options[str_replace('-', '', $exploded[0])] = $exploded[1];
-        }
-
-        return $options;
-    }
-
-    /**
-     * @param array $options
-     * @param string $concatenator
-     * @param string $arrayConcatenator
-     *
-     * @return string
-     */
-    public static function getOptionString($options, $concatenator = '=', $arrayConcatenator = ',')
-    {
-        $string = '';
-
-        foreach ($options as $key => $value) {
-            $string .= '--' . $key;
-            if ($value) {
-                if (is_array($value)) {
-                    $value = implode($arrayConcatenator, $value);
-                }
-                $string .= $concatenator . "'" . $value . "'";
-            }
-            $string .= ' ';
-        }
-
-        return $string;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public static function checkCliExecution()
-    {
-        if (php_sapi_name() != 'cli') {
-            throw new \Exception('Script execution is restricted to CLI');
-        }
     }
 
     /**

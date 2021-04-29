@@ -21,8 +21,6 @@ use Symfony\Component\Console\Command\Command;
 
 trait ConsoleCommandPluginTrait
 {
-    use CliTrait;
-
     /**
      * Handle system.console.init event and register console commands to the console application
      */
@@ -40,6 +38,14 @@ trait ConsoleCommandPluginTrait
     {
         $application = $e->getApplication();
         $application->addCommands($this->getConsoleCommands());
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isCli()
+    {
+        return php_sapi_name() === 'cli';
     }
 
     /**

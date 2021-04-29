@@ -21,6 +21,9 @@ use Pimcore\Tool;
 use Symfony\Component\Mime\Address;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
+/**
+ * @internal
+ */
 class Mail
 {
     /**

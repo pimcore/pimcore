@@ -55,9 +55,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param string $fileType
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isFileTypeSupported($fileType)
     {

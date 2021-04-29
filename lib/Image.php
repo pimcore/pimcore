@@ -18,7 +18,7 @@ namespace Pimcore;
 use Pimcore;
 use Pimcore\Image\Adapter;
 
-class Image
+final class Image
 {
     /**
      * @return null|Adapter\GD|Adapter\Imagick

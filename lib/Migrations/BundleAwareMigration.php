@@ -34,12 +34,18 @@ abstract class BundleAwareMigration extends AbstractMigration
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function preUp(Schema $schema): void
     {
         $this->checkBundleInstalled();
         parent::preUp($schema);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function preDown(Schema $schema): void
     {
         $this->checkBundleInstalled();

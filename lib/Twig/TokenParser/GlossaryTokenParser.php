@@ -21,6 +21,9 @@ use Pimcore\Twig\Node\GlossaryNode;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 
+/**
+ * @internal
+ */
 class GlossaryTokenParser extends AbstractTokenParser
 {
     /**

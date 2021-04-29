@@ -34,6 +34,9 @@ trait PackageVersionTrait
      */
     abstract protected function getComposerPackageName(): string;
 
+    /**
+     * {@inheritdoc}
+     */
     public function getVersion()
     {
         $version = Versions::getVersion($this->getComposerPackageName());
@@ -45,6 +48,9 @@ trait PackageVersionTrait
         return $version;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDescription()
     {
         $packageInfo = new PackageInfo();

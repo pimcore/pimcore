@@ -23,8 +23,10 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 /**
  * Adds support for type hinting controller actions against `Document $document` and getting the current document.
+ *
+ * @internal
  */
-class DocumentValueResolver implements ArgumentValueResolverInterface
+final class DocumentValueResolver implements ArgumentValueResolverInterface
 {
     /**
      * @var DocumentResolver

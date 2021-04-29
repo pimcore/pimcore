@@ -20,11 +20,12 @@ use Doctrine\Persistence\ConnectionRegistry;
 use Monolog\Handler\HandlerInterface;
 use Psr\Log\LoggerAwareTrait;
 
-class LongRunningHelper
+final class LongRunningHelper
 {
     use LoggerAwareTrait;
 
     protected $connectionRegistry;
+
     protected $pimcoreRuntimeCacheProtectedItems = [
         'Config_system',
         'pimcore_admin_user',
@@ -118,7 +119,10 @@ class LongRunningHelper
         }
     }
 
-    public function cleanupMonolog()
+    /**
+     *
+     */
+    protected function cleanupMonolog()
     {
         foreach ($this->monologHandlers as $handler) {
             $handler->close();
@@ -126,6 +130,7 @@ class LongRunningHelper
     }
 
     /**
+     * @internal
      * @param HandlerInterface $handler
      */
     public function addMonologHandler(HandlerInterface $handler)

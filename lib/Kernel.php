@@ -98,6 +98,9 @@ abstract class Kernel extends SymfonyKernel
         return PIMCORE_LOG_DIRECTORY;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -113,6 +116,9 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -206,7 +212,7 @@ abstract class Kernel extends SymfonyKernel
             $this->container->get(\Pimcore\Helper\LongRunningHelper::class)->cleanUp();
         }
 
-        return parent::shutdown();
+        parent::shutdown();
     }
 
     /**

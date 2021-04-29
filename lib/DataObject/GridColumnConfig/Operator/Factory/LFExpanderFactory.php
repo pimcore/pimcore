@@ -21,18 +21,27 @@ use Pimcore\DataObject\GridColumnConfig\Operator\LFExpander;
 use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\Localization\LocaleServiceInterface;
 
-class LFExpanderFactory implements OperatorFactoryInterface
+/**
+ * @internal
+ */
+final class LFExpanderFactory implements OperatorFactoryInterface
 {
     /**
      * @var LocaleServiceInterface
      */
     private $localeService;
 
+    /**
+     * @param LocaleServiceInterface $localeService
+     */
     public function __construct(LocaleServiceInterface $localeService)
     {
         $this->localeService = $localeService;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
         return new LFExpander($this->localeService, $configElement, $context);

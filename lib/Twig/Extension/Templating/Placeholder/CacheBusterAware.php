@@ -16,8 +16,6 @@
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
 /**
- * Class CacheBusterAware
- *
  * adds cache buster functionality to placeholder extension
  */
 abstract class CacheBusterAware extends AbstractExtension

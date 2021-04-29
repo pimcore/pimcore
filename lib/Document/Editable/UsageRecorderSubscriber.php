@@ -21,7 +21,10 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class UsageRecorderSubscriber implements EventSubscriberInterface
+/**
+ * @internal
+ */
+final class UsageRecorderSubscriber implements EventSubscriberInterface
 {
     /**
      * @var array

@@ -17,12 +17,16 @@ namespace Pimcore\Cache;
 
 final class Runtime extends \ArrayObject
 {
-    const SERVICE_ID = __CLASS__;
+    private const SERVICE_ID = __CLASS__;
 
-    /** @var self|null */
+    /**
+     * @var self|null
+     */
     protected static $tempInstance;
 
-    /** @var self|null */
+    /**
+     * @var self|null
+     */
     protected static $instance;
 
     /**

@@ -18,6 +18,9 @@ namespace Pimcore\Controller\Traits;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\User;
 
+/**
+ * @internal
+ */
 trait ElementEditLockHelperTrait
 {
     protected function getEditLockResponse(string $id, string $type)

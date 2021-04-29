@@ -19,6 +19,9 @@ use Pimcore\Twig\Extension\Templating\Inc;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * @internal
+ */
 class SubrequestExtension extends AbstractExtension
 {
     /**

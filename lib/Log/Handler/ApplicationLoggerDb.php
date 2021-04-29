@@ -29,8 +29,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     private $db;
 
     /**
-     * ApplicationLoggerDb constructor.
-     *
      * @param Db\ConnectionInterface $db
      * @param string $level
      * @param bool $bubble
@@ -62,8 +60,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     }
 
     /**
-     * @static
-     *
      * @return string[]
      */
     public static function getComponents()
@@ -76,8 +72,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     }
 
     /**
-     * @static
-     *
      * @return string[]
      */
     public static function getPriorities()

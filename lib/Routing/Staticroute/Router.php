@@ -31,9 +31,11 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
+ * @internal
+ *
  * A custom router implementation handling pimcore static routes.
  */
-class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface, LoggerAwareInterface
+final class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -64,6 +66,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $config;
 
+    /**
+     * @param RequestContext $context
+     * @param Config $config
+     */
     public function __construct(RequestContext $context, Config $config)
     {
         $this->context = $context;
@@ -86,11 +92,17 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         return $this->context;
     }
 
+    /**
+     * @return array
+     */
     public function getLocaleParams(): array
     {
         return $this->localeParams;
     }
 
+    /**
+     * @param array $localeParams
+     */
     public function setLocaleParams(array $localeParams)
     {
         $this->localeParams = $localeParams;

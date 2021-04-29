@@ -15,6 +15,9 @@
 
 namespace Pimcore\Tool;
 
+/**
+ * @internal
+ */
 class Cast
 {
     /**

@@ -65,7 +65,7 @@ class Video
     /**
      * @return Video\Adapter|null
      */
-    public static function getDefaultAdapter()
+    private static function getDefaultAdapter()
     {
         $adapters = ['Ffmpeg'];
 

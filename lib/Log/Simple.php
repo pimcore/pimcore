@@ -17,6 +17,9 @@ namespace Pimcore\Log;
 
 use Pimcore\File;
 
+/**
+ * @internal
+ */
 class Simple
 {
     /**
@@ -41,7 +44,7 @@ class Simple
             $date = new \DateTime('now');
 
             $f = fopen($log, 'a+');
-            fwrite($f, $date->format(\DateTime::ISO8601) . ' : ' . $message . "\n");
+            fwrite($f, $date->format('Y-m-d\TH:i:sO') . ' : ' . $message . "\n");
             fclose($f);
         }
     }

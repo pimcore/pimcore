@@ -22,6 +22,9 @@ use Pimcore\Extension\Document\Areabrick\Exception\BrickNotFoundException;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @internal
+ */
 class AreabrickManager implements AreabrickManagerInterface
 {
     /**
@@ -220,10 +223,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * Enables/disables an areabrick
-     *
-     * @param string $id
-     * @param bool $state
+     * {@inheritdoc}
      */
     public function setState(string $id, bool $state)
     {
@@ -243,12 +243,7 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
-     * Determines if an areabrick is enabled. Bricks are enabled by default an can be switched off by setting
-     * the state explicitely to false in the extension config.
-     *
-     * @param string $id
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEnabled(string $id): bool
     {

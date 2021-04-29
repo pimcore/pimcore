@@ -80,7 +80,7 @@ final class SanitizeElementsTask implements TaskInterface
      *
      * @throws \Exception
      */
-    protected function performSanityCheck(ElementInterface $element)
+    private function performSanityCheck(ElementInterface $element)
     {
         $latestNotPublishedVersion = null;
 

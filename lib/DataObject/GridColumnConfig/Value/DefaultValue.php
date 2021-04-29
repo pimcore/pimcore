@@ -24,14 +24,20 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Element\ElementInterface;
 
-class DefaultValue extends AbstractValue
+/**
+ * @internal
+ */
+final class DefaultValue extends AbstractValue
 {
     /**
      * @var LocaleServiceInterface
      */
     protected $localeService;
 
-    public function __construct($config, $context = null, LocaleServiceInterface $localeService = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(\stdClass $config, $context = null, LocaleServiceInterface $localeService = null)
     {
         parent::__construct($config, $context);
         $this->localeService = $localeService;
@@ -174,8 +180,6 @@ class DefaultValue extends AbstractValue
     }
 
     /**
-     * @param ElementInterface|Concrete $element
-     *
      * {@inheritdoc}
      */
     public function getLabeledValue($element)

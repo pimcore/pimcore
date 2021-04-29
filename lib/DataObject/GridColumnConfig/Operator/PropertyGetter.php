@@ -22,14 +22,13 @@ use Pimcore\Model\Element\AbstractElement;
  */
 final class PropertyGetter extends AbstractOperator
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $propertyName;
 
     /**
-     * PropertyGetter constructor.
-     *
-     * @param \stdClass $config
-     * @param array|null $context
+     * {@inheritdoc}
      */
     public function __construct(\stdClass $config, $context = null)
     {
@@ -39,9 +38,7 @@ final class PropertyGetter extends AbstractOperator
     }
 
     /**
-     * @param AbstractElement $element
-     *
-     * @return \stdClass
+     * {@inheritdoc}
      */
     public function getLabeledValue($element)
     {

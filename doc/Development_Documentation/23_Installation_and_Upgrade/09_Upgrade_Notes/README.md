@@ -68,9 +68,19 @@
 - Removed `Pimcore\Model\Element\Reference\Placeholder` class.
 - Removed `pimcore.routing.defaults`. Use `pimcore.documents.default_controller` instead.
 - Removed `\Pimcore\Tool::getRoutingDefaults()`, `PageSnippet::$module|$action|get/setAction()|get/setModule()`, `DocType::$module|$action|get/setAction()|get/setModule()`, `Staticroute::$module|$action|get/setAction()|get/setModule()`.
+- Removed `\Pimcore\Tool::getValidCacheKey/()`, use `preg_replace('/[^a-zA-Z0-9]/', '_', $key)` instead. 
+- Removed `\Pimcore\Tool::isValidPath/()`, use `\Pimcore\Model\Element\Service::isValidPath()` instead. 
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`.
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.
+- Removed `\Pimcore\Console\Log\Formatter\ConsoleColorFormatter`
+- Removed `\Pimcore\Console\CliTrait`, use `php_sapi_name() === 'cli'` instead.  
+- Removed `\Pimcore\Console\Dumper`, use Symfony's `VarDumper` instead.
+- Removed `\Pimcore\Google\Webmastertools`, use `\Pimcore\Config::getReportConfig()->get('webmastertools'')` instead.
+- Removed `\Pimcore\Helper\JsonFormatter`, use `json_encode($data, JSON_PRETTY_PRINT)` instead.
+- Removed `\Pimcore\Log\Handler\Mail`, there's no replacement for this internal class.
+- Removed `\Pimcore\File::isIncludeable()` method, there's no replacement.
+- Removed `\Pimcore\DataObject\GridColumnConfig\AbstractConfigElement` just implement `\Pimcore\DataObject\GridColumnConfig\ConfigElementInterface` instead.   
 - [Documents] Renderlet Editable: removed `action` & `bundle` config. Specify controller reference, e.g. `App\Controller\FooController::myAction`
 - Bumped `codeception/codeception` to "^4.1.12".
 - Pimcore Bundle Migrations: Extending the functionality of `DoctrineMigrationsBundle` is not any longer possible the way we did it in the past. Therefore we're switching to standard Doctrine migrations, this means also that migration sets are not supported anymore and that the available migrations have to be configured manually or by using flex.
@@ -139,6 +149,9 @@
 - Replaced `Ramsey/Uuid` with `Symfony/Uuid`.
 - Matomo Integration has been removed.
 - `Pimcore\Tool\Console::exec()` method has been removed. Use Symfony\Component\Process\Process instead.
+- `\Pimcore\Tool\Console::getOptions()` method has been removed.   
+- `\Pimcore\Tool\Console::getOptionString()` method has been removed.   
+- `\Pimcore\Tool\Console::checkCliExecution()` method has been removed.   
 - `Pimcore\Twig\Extension\Templating\Navigation::buildNavigation()` method has been removed.
 - `Pimcore\Tool\Mime` class has been removed. Use `Symfony\Component\Mime\MimeTypes` instead.
 - [Documents] Areabricks: location changed from `Areas` to `areas` with BC layer.
@@ -157,6 +170,7 @@
 - `\Pimcore\Model\DataObject\Listing::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
 - `\Pimcore\Google\Cse::getPaginatorAdapter` has been removed, use `knplabs/knp-paginator-bundle` instead.
 - `\Pimcore\Helper\RobotsTxt` has been removed
+- `\Pimcore\Tool\Frontend::getSiteKey()` method has been removed.  
 - `\Pimcore\Model\User::getUsername()` has been removed, use `User::getName()` instead.
 - `\Pimcore\Cache\Runtime::get('pimcore_editmode')` isn't supported anymore, use `EditmodeResolver` service instead.
 - [Documents] `Editable::factory()` was removed, use `EditableLoader` service instead.
@@ -289,6 +303,8 @@
       $mail->to(new \Symfony\Component\Mime\Address($emailAddress, $name));
       ...
     ```
+- [Email & Newsletter] `\Pimcore\Mail::setEnableLayoutOnRendering/getEnableLayoutOnRendering()` methods have been removed, with Twig they are just not necessary anymore. 
+- [Email & Newsletter] `\Pimcore\Mail::isValidEmailAddress()` method has been removed, use `EmailValidator` instead.  
 - [Security] BruteforceProtectionHandler & BruteforceProtectionListener has been made final and marked as internal.
 - [JWTCookieSaveHandler] `Pimcore\Targeting\Storage\Cookie\JWT\Decoder` has been removed in favor of `Lcobucci\JWT\Encoding\JoseDecoder`.
 - `simple_html_dom` library has been removed. Use `Symfony\Component\DomCrawler\Crawler` instead.

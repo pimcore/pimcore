@@ -24,15 +24,24 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class TranslateValue extends AbstractOperator
 {
-    /** @var TranslatorInterface|LocaleAwareInterface */
+    /**
+     * @var TranslatorInterface|LocaleAwareInterface
+     */
     private $translator;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $prefix;
 
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     private $locale;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(Translator $translator, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -44,6 +53,9 @@ final class TranslateValue extends AbstractOperator
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $childs = $this->getChilds();

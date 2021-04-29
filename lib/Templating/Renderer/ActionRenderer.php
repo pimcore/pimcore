@@ -21,6 +21,9 @@ use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 
+/**
+ * @internal
+ */
 class ActionRenderer
 {
     /**

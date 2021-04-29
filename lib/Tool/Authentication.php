@@ -47,8 +47,6 @@ class Authentication
     }
 
     /**
-     * @static
-     *
      * @param Request $request
      *
      * @return User|null
@@ -84,15 +82,12 @@ class Authentication
     }
 
     /**
-     * @static
-     *
      * @throws \Exception
      *
      * @return User
      */
     public static function authenticateHttpBasic()
     {
-
         // we're using Sabre\HTTP for basic auth
         $request = \Sabre\HTTP\Sapi::getRequest();
         $response = new \Sabre\HTTP\Response();
@@ -190,6 +185,8 @@ class Authentication
     }
 
     /**
+     * @internal
+     *
      * @param string $username
      * @param string $plainTextPassword
      *
@@ -213,7 +210,7 @@ class Authentication
      *
      * @return string
      */
-    public static function preparePlainTextPassword($username, $plainTextPassword)
+    private static function preparePlainTextPassword($username, $plainTextPassword)
     {
         // plaintext password is prepared as digest A1 hash, this is to be backward compatible because this was
         // the former hashing algorithm in pimcore (< version 2.1.1)
@@ -221,6 +218,7 @@ class Authentication
     }
 
     /**
+     * @internal
      * @param string $username
      *
      * @return string
@@ -240,7 +238,7 @@ class Authentication
      *
      * @return array
      */
-    public static function tokenDecrypt($token)
+    private static function tokenDecrypt($token)
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
         $decrypted = Crypto::decryptWithPassword($token, $secret);

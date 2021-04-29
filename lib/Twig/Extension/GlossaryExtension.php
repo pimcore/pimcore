@@ -21,7 +21,10 @@ use Pimcore\Tool\Glossary\Processor;
 use Pimcore\Twig\TokenParser\GlossaryTokenParser;
 use Twig\Extension\AbstractExtension;
 
-class GlossaryExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class GlossaryExtension extends AbstractExtension
 {
     /**
      * @var \Pimcore\Tool\Glossary\Processor

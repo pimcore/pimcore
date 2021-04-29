@@ -20,7 +20,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Loader;
 use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 
-class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
+/**
+ * @internal
+ */
+final class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
 {
     /**
      * {@inheritdoc}

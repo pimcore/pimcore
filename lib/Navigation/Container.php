@@ -509,13 +509,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns current page
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return Page       current page or null
-     *
-     * @throws \Exception  if the index is invalid
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -530,11 +524,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns hash code of current page
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return string  hash code of current page
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -544,11 +534,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Moves index pointer to next page in the container
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function next()
     {
@@ -557,11 +543,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Sets index pointer to first page in the container
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -570,11 +552,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Checks if container index is valid
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function valid()
     {
@@ -584,11 +562,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Proxy to hasPages()
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return bool  whether container has any pages
+     * {@inheritdoc}
      */
     public function hasChildren()
     {
@@ -596,11 +570,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns the child container.
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return Page|null
+     * @return Page|\RecursiveIterator|null
      */
     public function getChildren()
     {
@@ -614,11 +584,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns number of pages in container
-     *
-     * Implements Countable interface.
-     *
-     * @return int  number of pages in the container
+     * {@inheritdoc}
      */
     public function count()
     {

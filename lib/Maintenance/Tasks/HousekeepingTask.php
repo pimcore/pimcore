@@ -58,7 +58,7 @@ final class HousekeepingTask implements TaskInterface
      * @param string $folder
      * @param int $seconds
      */
-    protected function deleteFilesInFolderOlderThanSeconds($folder, $seconds)
+    private function deleteFilesInFolderOlderThanSeconds($folder, $seconds)
     {
         if (!is_dir($folder)) {
             return;

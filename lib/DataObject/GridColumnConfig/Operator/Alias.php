@@ -20,6 +20,9 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class Alias extends AbstractOperator
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

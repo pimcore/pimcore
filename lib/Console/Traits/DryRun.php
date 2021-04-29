@@ -19,6 +19,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputOption;
 
+/**
+ * @internal
+ */
 trait DryRun
 {
     /**

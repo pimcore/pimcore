@@ -17,7 +17,7 @@ namespace Pimcore\Log;
 
 use Pimcore\File;
 
-class FileObject
+final class FileObject
 {
     /**
      * @var string

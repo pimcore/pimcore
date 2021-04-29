@@ -20,7 +20,10 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class CacheExtension extends AbstractExtension
+/**
+ * @internal
+ */
+final class CacheExtension extends AbstractExtension
 {
     /**
      * @var string

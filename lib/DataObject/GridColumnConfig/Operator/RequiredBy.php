@@ -23,12 +23,19 @@ use Pimcore\Model\Element\Service;
  */
 final class RequiredBy extends AbstractOperator
 {
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     private $elementType;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $onlyCount;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -37,6 +44,9 @@ final class RequiredBy extends AbstractOperator
         $this->onlyCount = $config->onlyCount ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

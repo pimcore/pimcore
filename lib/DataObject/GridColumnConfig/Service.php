@@ -23,7 +23,10 @@ use Pimcore\DataObject\GridColumnConfig\Value\Factory\ValueFactoryInterface;
 use Pimcore\DataObject\GridColumnConfig\Value\ValueInterface;
 use Psr\Container\ContainerInterface;
 
-class Service
+/**
+ * @internal
+ */
+final class Service
 {
     /**
      * @var ContainerInterface

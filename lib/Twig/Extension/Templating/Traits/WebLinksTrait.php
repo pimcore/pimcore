@@ -19,6 +19,9 @@ namespace Pimcore\Twig\Extension\Templating\Traits;
 
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 
+/**
+ * @internal
+ */
 trait WebLinksTrait
 {
     /**

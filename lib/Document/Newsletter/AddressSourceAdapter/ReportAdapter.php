@@ -20,7 +20,10 @@ use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
 
-class ReportAdapter implements AddressSourceAdapterInterface
+/**
+ * @internal
+ */
+final class ReportAdapter implements AddressSourceAdapterInterface
 {
     /**
      * @var string
@@ -78,9 +81,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns array of email addresses for batch sending
-     *
-     * @return SendingParamContainer[]
+     * {@inheritdoc}
      */
     public function getMailAddressesForBatchSending()
     {
@@ -97,11 +98,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns params to be set on mail for test sending
-     *
-     * @param string $emailAddress
-     *
-     * @return SendingParamContainer
+     * {@inheritdoc}
      */
     public function getParamsForTestSending($emailAddress)
     {
@@ -113,9 +110,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns total number of newsletter recipients
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getTotalRecordCount()
     {
@@ -127,12 +122,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns array of params to be set on mail for single sending
-     *
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return SendingParamContainer[]
+     * {@inheritdoc}
      */
     public function getParamsForSingleSending($limit, $offset)
     {

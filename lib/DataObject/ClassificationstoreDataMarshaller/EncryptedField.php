@@ -26,7 +26,9 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class EncryptedField implements MarshallerInterface
 {
-    /** @var MarshallerService */
+    /**
+     * @var MarshallerService
+     */
     protected $marshallerService;
 
     /**

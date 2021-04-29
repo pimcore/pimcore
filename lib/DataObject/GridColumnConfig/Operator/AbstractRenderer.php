@@ -15,8 +15,14 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class AbstractRenderer extends AbstractOperator
+/**
+ * @internal
+ */
+abstract class AbstractRenderer extends AbstractOperator
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

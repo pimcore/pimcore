@@ -19,35 +19,8 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
-class Frontend
+final class Frontend
 {
-    /**
-     * @param Site $site
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public static function getSiteKey(Site $site = null)
-    {
-        // check for site
-        if (!$site) {
-            if (Site::isSiteRequest()) {
-                $site = Site::getCurrentSite();
-            } else {
-                $site = false;
-            }
-        }
-
-        if ($site) {
-            $siteKey = 'site_' . $site->getId();
-        } else {
-            $siteKey = 'default';
-        }
-
-        return $siteKey;
-    }
-
     /**
      * @param Site|null $site
      * @param Document $document

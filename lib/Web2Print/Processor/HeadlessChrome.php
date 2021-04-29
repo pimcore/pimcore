@@ -31,12 +31,7 @@ class HeadlessChrome extends Processor
     private $nodePath = '';
 
     /**
-     * @param Document\PrintAbstract $document
-     * @param object $config
-     *
-     * @return string
-     *
-     * @throws \Exception
+     * {@internal}
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
@@ -77,7 +72,7 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * @return array
+     * {@internal}
      */
     public function getProcessingOptions()
     {
@@ -90,11 +85,7 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * @param string $html
-     * @param array $params
-     * @param bool $returnFilePath
-     *
-     * @return string
+     * {@internal}
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
