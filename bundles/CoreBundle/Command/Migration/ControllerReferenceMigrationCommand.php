@@ -127,8 +127,6 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
                     if ($action || $controller || $module) {
                         $controllerReference = $this->migrateFromString($module, $controller, $action);
 
-//                        $updates[] = 'UPDATE TABLE '.$type.' SET controller=\''.$controllerReference.'\', `action`=\'\', `module`=\'\' WHERE ';
-
                         $updates[] = [
                             'id' => $page['id'],
                             'table' => $table,
