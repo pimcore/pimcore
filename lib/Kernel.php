@@ -212,7 +212,7 @@ abstract class Kernel extends SymfonyKernel
             $this->container->get(\Pimcore\Helper\LongRunningHelper::class)->cleanUp();
         }
 
-        return parent::shutdown();
+        parent::shutdown();
     }
 
     /**

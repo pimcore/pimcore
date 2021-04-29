@@ -35,9 +35,9 @@ class WkHtmlToPdf extends Processor
     private $options = '';
 
     /**
-     * @var \stdClass
+     * @var \stdClass|null
      */
-    protected $config = [];
+    protected $config;
 
     /**
      * @param string $wkhtmltopdfBin
