@@ -448,8 +448,6 @@ final class TranslationController extends AdminController
                         'language' => $orderKey,
                     ];
                     $list->setOrderKey($orderKey);
-                } else {
-                    $list->setOrderKey($tableName . '.' . $sortingSettings['orderKey'], false);
                 }
             }
             if ($sortingSettings['order']) {
