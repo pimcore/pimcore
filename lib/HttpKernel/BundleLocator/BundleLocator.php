@@ -55,7 +55,7 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @param $class
+     * @param object|string $class
      * @return BundleInterface
      * @throws \ReflectionException
      */

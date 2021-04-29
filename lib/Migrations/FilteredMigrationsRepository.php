@@ -21,7 +21,10 @@ use Doctrine\Migrations\Metadata\AvailableMigration;
 use Doctrine\Migrations\Metadata\AvailableMigrationsSet;
 use Doctrine\Migrations\Version\Version;
 
-class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRepository
+/**
+ * @internal
+ */
+final class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRepository
 {
     /**
      * @var FilesystemMigrationsRepository
@@ -33,6 +36,10 @@ class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRep
      */
     private $prefix;
 
+    /**
+     * @param DependencyFactory $dependencyFactory
+     * @return $this
+     */
     public function __invoke(DependencyFactory $dependencyFactory)
     {
         $filesystemRepo = new FilesystemMigrationsRepository(
@@ -47,26 +54,41 @@ class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRep
         return $this;
     }
 
+    /**
+     * @param FilesystemMigrationsRepository $repository
+     */
     private function setFileSystemRepo(FilesystemMigrationsRepository $repository)
     {
         $this->filesystemRepo = $repository;
     }
 
+    /**
+     * @param string|null $prefix
+     */
     public function setPrefix(?string $prefix): void
     {
         $this->prefix = $prefix;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hasMigration(string $version): bool
     {
         return $this->filesystemRepo->hasMigration($version);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMigration(Version $version): AvailableMigration
     {
         return $this->filesystemRepo->getMigration($version);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMigrations(): AvailableMigrationsSet
     {
         $migrations = $this->filesystemRepo->getMigrations();

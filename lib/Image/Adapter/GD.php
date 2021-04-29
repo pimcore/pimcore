@@ -25,7 +25,7 @@ class GD extends Adapter
     protected $path;
 
     /**
-     * @var resource|GdImage|false
+     * @var resource|\GdImage|false
      */
     protected $resource;
 
