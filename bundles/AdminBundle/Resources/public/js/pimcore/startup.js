@@ -907,7 +907,7 @@ Ext.onReady(function () {
             navigationModel: 'quicksearch.boundlist',
             listeners: {
                 "highlightitem": function (view, node, opts) {
-                    var record = quicksearchStore.getAt(node.dataset.recordIndex);
+                    var record = quicksearchStore.getAt(node.dataset.recordindex);
                     var previewHtml = record.get('preview');
                     if(!previewHtml) {
                         previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';
