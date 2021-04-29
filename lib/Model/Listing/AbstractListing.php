@@ -22,6 +22,7 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 
 /**
+ * @method AbstractDao getDao()
  * @method QueryBuilder getQueryBuilder()
  */
 abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
@@ -510,9 +511,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     public function getData()
     {
         if ($this->data === null) {
-            /** @var AbstractDao $dao */
-            $dao = $this->getDao();
-            $dao->load();
+            $this->getDao()->load();
         }
 
         return $this->data;
@@ -581,9 +580,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function count()
     {
-        /** @var AbstractDao $dao */
-        $dao = $this->getDao();
-
-        return $dao->getTotalCount();
+        return $this->getDao()->getTotalCount();
     }
 }
