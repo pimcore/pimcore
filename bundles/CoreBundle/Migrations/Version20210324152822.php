@@ -31,19 +31,15 @@ final class Version20210324152822 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        try {
-            $db = Db::get();
+        $db = Db::get();
 
-            $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
-            foreach ($translationsTables as $table) {
-                $translationsTable = current($table);
+        $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
+        foreach ($translationsTables as $table) {
+            $translationsTable = current($table);
 
-                if (!$schema->getTable($translationsTable)->hasColumn('type')) {
-                    $this->addSql('ALTER TABLE `'.$translationsTable.'` ADD COLUMN `type` varchar(10) DEFAULT NULL AFTER `key`');
-                }
+            if (!$schema->getTable($translationsTable)->hasColumn('type')) {
+                $this->addSql('ALTER TABLE `'.$translationsTable.'` ADD COLUMN `type` varchar(10) DEFAULT NULL AFTER `key`');
             }
-        } catch (\Exception $e) {
-            $this->write('An error occurred while performing migrations: ' . $e->getMessage());
         }
     }
 
@@ -52,19 +48,15 @@ final class Version20210324152822 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        try {
-            $db = Db::get();
+        $db = Db::get();
 
-            $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
-            foreach ($translationsTables as $table) {
-                $translationsTable = current($table);
+        $translationsTables = $db->fetchAll("SHOW TABLES LIKE 'translations\_%'");
+        foreach ($translationsTables as $table) {
+            $translationsTable = current($table);
 
-                if ($schema->getTable($translationsTable)->hasColumn('type')) {
-                    $this->addSql('ALTER TABLE `'.$translationsTable.'` DROP COLUMN `type`');
-                }
+            if ($schema->getTable($translationsTable)->hasColumn('type')) {
+                $this->addSql('ALTER TABLE `'.$translationsTable.'` DROP COLUMN `type`');
             }
-        } catch (\Exception $e) {
-            $this->write('An error occurred while performing migrations: ' . $e->getMessage());
         }
     }
 }
