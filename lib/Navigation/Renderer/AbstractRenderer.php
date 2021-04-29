@@ -225,7 +225,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function getRenderInvisible()
     {
@@ -233,9 +233,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param bool $renderInvisible
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setRenderInvisible(bool $renderInvisible = true)
     {

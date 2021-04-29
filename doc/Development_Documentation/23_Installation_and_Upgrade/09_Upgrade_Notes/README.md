@@ -146,6 +146,9 @@
 - Replaced `Ramsey/Uuid` with `Symfony/Uuid`.
 - Matomo Integration has been removed.
 - `Pimcore\Tool\Console::exec()` method has been removed. Use Symfony\Component\Process\Process instead.
+- `\Pimcore\Tool\Console::getOptions()` method has been removed.   
+- `\Pimcore\Tool\Console::getOptionString()` method has been removed.   
+- `\Pimcore\Tool\Console::checkCliExecution()` method has been removed.   
 - `Pimcore\Twig\Extension\Templating\Navigation::buildNavigation()` method has been removed.
 - `Pimcore\Tool\Mime` class has been removed. Use `Symfony\Component\Mime\MimeTypes` instead.
 - [Documents] Areabricks: location changed from `Areas` to `areas` with BC layer.

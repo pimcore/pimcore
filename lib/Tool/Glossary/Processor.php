@@ -24,6 +24,9 @@ use Pimcore\Model\Glossary;
 use Pimcore\Model\Site;
 use Pimcore\Tool\DomCrawler;
 
+/**
+ * @internal
+ */
 class Processor
 {
     /**

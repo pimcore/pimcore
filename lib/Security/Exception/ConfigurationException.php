@@ -17,6 +17,9 @@ namespace Pimcore\Security\Exception;
 
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 
+/**
+ * @internal
+ */
 class ConfigurationException extends RuntimeException
 {
 }

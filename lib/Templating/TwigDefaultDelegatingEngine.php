@@ -20,6 +20,9 @@ use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 
+/**
+ * @internal
+ */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
     /**

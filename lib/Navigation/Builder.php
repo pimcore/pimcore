@@ -23,7 +23,10 @@ use Pimcore\Model\Site;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
 
-class Builder
+/**
+ * @internal
+ */
+final class Builder
 {
     /**
      * @var RequestHelper
@@ -45,6 +48,9 @@ class Builder
      */
     private $currentLevel = 0;
 
+    /**
+     * @var array
+     */
     private $navCacheTags = [];
 
     /**

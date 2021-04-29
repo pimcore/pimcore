@@ -282,9 +282,7 @@ class Breadcrumbs extends AbstractRenderer
     }
 
     /**
-     * @param Container $container
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function render(Container $container)
     {

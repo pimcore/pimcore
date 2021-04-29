@@ -17,7 +17,10 @@ namespace Pimcore\Routing;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class RouteReference implements RouteReferenceInterface
+/**
+ * @internal
+ */
+final class RouteReference implements RouteReferenceInterface
 {
     /**
      * @var string

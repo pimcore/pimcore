@@ -17,6 +17,9 @@
 
 namespace Pimcore\Tool\Text;
 
+/**
+ * @internal
+ */
 class Csv
 {
     /**

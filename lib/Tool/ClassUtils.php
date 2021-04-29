@@ -19,6 +19,9 @@ namespace Pimcore\Tool;
 
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * @internal
+ */
 class ClassUtils
 {
     /**

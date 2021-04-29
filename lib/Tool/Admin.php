@@ -23,6 +23,9 @@ use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
+/**
+ * @internal
+ */
 class Admin
 {
     /**

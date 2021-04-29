@@ -25,7 +25,10 @@ use Pimcore\Routing\DocumentRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-class DocumentRouteHandler implements DynamicRouteHandlerInterface
+/**
+ * @internal
+ */
+final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
      * @var Document\Service

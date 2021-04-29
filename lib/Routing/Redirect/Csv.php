@@ -28,6 +28,9 @@ use Pimcore\Tool\ArrayNormalizer;
 use Pimcore\Tool\Text;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @internal
+ */
 class Csv
 {
     /**
@@ -58,6 +61,12 @@ class Csv
      */
     private $importResolver;
 
+    /**
+     * @param Redirect\Listing $list
+     * @return Writer
+     * @throws \League\Csv\CannotInsertRecord
+     * @throws \League\Csv\Exception
+     */
     public function createExportWriter(Redirect\Listing $list): Writer
     {
         $writer = Writer::createFromPath('php://temp');
@@ -106,6 +115,11 @@ class Csv
         return $writer;
     }
 
+    /**
+     * @param string $filename
+     * @return array
+     * @throws \League\Csv\Exception
+     */
     public function import(string $filename): array
     {
         if (!file_exists($filename) || !is_readable($filename)) {
@@ -155,6 +169,10 @@ class Csv
         return $stats;
     }
 
+    /**
+     * @param array $record
+     * @return array
+     */
     private function preprocessImportData(array $record): array
     {
         // normalize data to types (string, int, ...) or null
@@ -166,6 +184,11 @@ class Csv
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @param array $stats
+     * @return mixed|Redirect|null
+     */
     private function processImportData(array $data, array &$stats)
     {
         $redirect = null;
@@ -191,6 +214,9 @@ class Csv
         return $redirect;
     }
 
+    /**
+     * @return ArrayNormalizer
+     */
     private function getImportNormalizer(): ArrayNormalizer
     {
         if (null !== $this->importNormalizer) {
@@ -252,6 +278,9 @@ class Csv
         return $this->importNormalizer;
     }
 
+    /**
+     * @return OptionsResolver
+     */
     private function getImportResolver(): OptionsResolver
     {
         if (null !== $this->importResolver) {

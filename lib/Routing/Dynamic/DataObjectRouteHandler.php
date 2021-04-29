@@ -25,7 +25,10 @@ use Pimcore\Routing\DataObjectRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-class DataObjectRouteHandler implements DynamicRouteHandlerInterface
+/**
+ * @internal
+ */
+final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
      * @var Document\Service

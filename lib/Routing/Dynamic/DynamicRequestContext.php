@@ -20,9 +20,11 @@ namespace Pimcore\Routing\Dynamic;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * @internal
+ *
  * Value object containing properties needed while matching document routes.
  */
-class DynamicRequestContext
+final class DynamicRequestContext
 {
     /**
      * @var Request
