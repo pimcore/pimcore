@@ -42,11 +42,7 @@ that then contain the actual print pages.
 
 Even they don't have content for their own, PrintContainers are based on normal Pimcore documents. 
 Therefore, they also need a controller and a view. They have to make sure, that all sub pages are included into one single output view. 
-Pimcore ships with default implementations (Web2PrintController, container-Action) on new installations. 
-If you updated an existing Pimcore installation, please get the default implementations here: 
-
-* Controller: `website_example/controllers/Web2printController.php`
-* View: `website_example/views/scripts/web2print`
+Pimcore ships with default implementations (`Web2PrintController`, `containerAction`) in skeleton and demo installation package. 
 
 ## PDF Rendering
 
