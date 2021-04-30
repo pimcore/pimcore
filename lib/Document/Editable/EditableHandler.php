@@ -32,8 +32,10 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -94,6 +96,16 @@ final class EditableHandler implements LoggerAwareInterface
      */
     protected $httpKernelRuntime;
 
+    /**
+     * @var FragmentRendererInterface
+     */
+    protected $fragmentRenderer;
+
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
     private EditmodeEditableDefinitionCollector $definitionCollector;
@@ -120,7 +132,9 @@ final class EditableHandler implements LoggerAwareInterface
         ResponseStack $responseStack,
         EditmodeResolver $editmodeResolver,
         HttpKernelRuntime $httpKernelRuntime,
-        EditmodeEditableDefinitionCollector $definitionCollector
+        EditmodeEditableDefinitionCollector $definitionCollector,
+        FragmentRendererInterface $fragmentRenderer,
+        RequestStack $requestStack
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
@@ -132,6 +146,8 @@ final class EditableHandler implements LoggerAwareInterface
         $this->editmodeResolver = $editmodeResolver;
         $this->httpKernelRuntime = $httpKernelRuntime;
         $this->definitionCollector = $definitionCollector;
+        $this->fragmentRenderer = $fragmentRenderer;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -390,7 +406,17 @@ final class EditableHandler implements LoggerAwareInterface
 
         $uri = new ControllerReference($controller, $attributes, $query);
 
-        return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+        if($this->requestHelper->hasCurrentRequest()) {
+            return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+        } else {
+            // this case could happen when rendering on CLI, e.g. search-reindex ...
+            $request = $this->requestHelper->createRequestWithContext();
+            $this->requestStack->push($request);
+            $response = $this->fragmentRenderer->render($uri, $request, $attributes);
+            $this->requestStack->pop();
+
+            return $response;
+        }
     }
 
     /**
