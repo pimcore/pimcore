@@ -121,7 +121,8 @@ class Renderlet extends Model\Document\Editable
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
         }
 
-        if (method_exists($this->o, 'isPublished')) {
+        $this->load();
+        if ($this->o instanceof Element\ElementInterface) {
             if (!$this->o->isPublished()) {
                 return '';
             }
