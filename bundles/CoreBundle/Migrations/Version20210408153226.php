@@ -23,7 +23,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20190102153226 extends AbstractMigration
+class Version20210408153226 extends AbstractMigration
 {
     /**
      * @param Schema $schema
