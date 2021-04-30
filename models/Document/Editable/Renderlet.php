@@ -126,7 +126,8 @@ class Renderlet extends Model\Document\Editable
             return '';
         }
 
-        if (method_exists($this->o, 'isPublished')) {
+        $this->load();
+        if ($this->o instanceof Element\ElementInterface) {
             if (!$this->o->isPublished()) {
                 return '';
             }

@@ -528,11 +528,11 @@ final class SearchController extends AdminController
             if (strlen($shortPath) <= 50 || $i === 0) {
                 break;
             }
-            array_splice($parts, $i - 1, 1, '...');
+            array_splice($parts, $i - 1, 1, '…');
         }
 
-        if (strlen($shortPath) > 50) {
-            $shortPath = substr($shortPath, 0, 47) . '...';
+        if (mb_strlen($shortPath) > 50) {
+            $shortPath = mb_strstr($shortPath, 0, 49) . '…';
         }
 
         return $shortPath;
