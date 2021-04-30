@@ -890,10 +890,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        if ($fd && method_exists($fd, 'classSaved')) {
+                        if (method_exists($fd, 'classSaved')) {
                             if (!$fd instanceof Localizedfields) {
                                 // defer creation
-                                if (!$df instanceof DataContainerAwareInterface) {
+                                if (!$fd instanceof DataContainerAwareInterface) {
                                     $fd->classSaved($class);
                                 }
                             }
