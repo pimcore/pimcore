@@ -16,6 +16,8 @@
 namespace Pimcore\Model\DataObject\Traits;
 
 
+use Pimcore\Model\DataObject\ClassDefinition;
+
 /**
  * @internal
  */
@@ -30,7 +32,7 @@ trait ClassSavedTrait
     /** {@inheritdoc } */
     public function postSave($containerDefinition, $params = [])
     {
-        if ($containerDefinition instanceof DataObject\ClassDefinition) {
+        if ($containerDefinition instanceof ClassDefinition) {
             $this->classSaved($containerDefinition);
         }
     }
