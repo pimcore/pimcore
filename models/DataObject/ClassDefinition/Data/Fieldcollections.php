@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
     /**
      * Static type of this element
@@ -691,7 +691,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        if (method_exists($fd, 'classSaved')) {
+                        if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
                             if (!$fd instanceof Localizedfields) {
                                 // defer creation
                                 $fd->classSaved($class);
@@ -700,6 +700,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     }
 
                     $definition->getDao()->classSaved($class);
+
                 } else {
                     Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
                     unset($this->allowedTypes[$i]);
@@ -921,5 +922,19 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         return null;
+    }
+
+    /** {@inheritdoc } */
+    public function preSave($containerDefinition, $params = [])
+    {
+        // nothing to do
+    }
+
+    /** {@inheritdoc } */
+    public function postSave($containerDefinition, $params = [])
+    {
+        if ($containerDefinition instanceof DataObject\ClassDefinition) {
+            $this->classSaved($containerDefinition);
+        }
     }
 }

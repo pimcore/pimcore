@@ -23,8 +23,9 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
+
     /**
      * Static type of this element
      *
@@ -892,7 +893,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                         if (method_exists($fd, 'classSaved')) {
                             if (!$fd instanceof Localizedfields) {
                                 // defer creation
-                                $fd->classSaved($class);
+                                if (!$df instanceof DataContainerAwareInterface) {
+                                    $fd->classSaved($class);
+                                }
                             }
                         }
                     }
@@ -1011,5 +1014,19 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
 
         return null;
+    }
+
+    /** {@inheritdoc } */
+    public function preSave($containerDefinition, $params = [])
+    {
+        // nothing to do
+    }
+
+    /** {@inheritdoc } */
+    public function postSave($containerDefinition, $params = [])
+    {
+        if ($containerDefinition instanceof DataObject\ClassDefinition) {
+            $this->classSaved($containerDefinition);
+        }
     }
 }

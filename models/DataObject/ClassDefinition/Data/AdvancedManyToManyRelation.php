@@ -23,10 +23,11 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyRelation extends ManyToManyRelation
+class AdvancedManyToManyRelation extends ManyToManyRelation implements DataContainerAwareInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
+    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * @internal
