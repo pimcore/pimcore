@@ -153,10 +153,11 @@ class PdfReactor extends Processor
         $progress = new \stdClass();
         $progress->finished = false;
 
-        $processId = $pdfreactor->convertAsync($reactorConfig);
+        $connectionSettings = [];
+        $processId = $pdfreactor->convertAsync($reactorConfig, $connectionSettings);
 
         while (!$progress->finished) {
-            $progress = $pdfreactor->getProgress($processId);
+            $progress = $pdfreactor->getProgress($processId, $connectionSettings);
             $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), 'pdf_conversion');
 
             Logger::info('PDF converting progress: ' . $progress->progress . '%');
@@ -164,7 +165,7 @@ class PdfReactor extends Processor
         }
 
         $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
-        $result = $pdfreactor->getDocument($processId);
+        $result = $pdfreactor->getDocument($processId, $connectionSettings);
         $pdf = base64_decode($result->document);
 
         return $pdf;
