@@ -305,7 +305,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     public function setAddedDate(\DateTime $date = null)
     {
         if ($date) {
-            $this->addedDateTimestamp = $date->getTimestamp();
+            $this->addedDateTimestamp = intval($date->format('Uu'));
         } else {
             $this->addedDateTimestamp = null;
         }
@@ -318,8 +318,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         $datetime = null;
         if ($this->addedDateTimestamp) {
-            $datetime = new \DateTime();
-            $datetime->setTimestamp($this->addedDateTimestamp);
+            $datetime = \DateTime::createFromFormat('U', intval($this->addedDateTimestamp / 1000000));
         }
 
         return $datetime;

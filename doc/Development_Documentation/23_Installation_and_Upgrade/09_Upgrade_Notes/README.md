@@ -257,6 +257,7 @@
   - Removed configuration node `worker_mode` in `index_service` configuration
 - [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is
   implemented in `AbstractConfig` this should not have any consequences.
+- [Ecommerce] Timestamp of CartItems is now in mirco seconds (existing data will be migrated).  
 - [Web2Print]
    - Removed `PdfReactor8`, use `PdfReactor` instead.
    - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib
