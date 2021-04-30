@@ -128,7 +128,7 @@ This can be done by throwing any of the following two exceptions and passing in 
 
 ```
 pimcore.error.ActionCancelledException
-pimcore.error.ValidationCancelledException
+pimcore.error.ValidationException
 ```
 
 
