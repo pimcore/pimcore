@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\CoreBundle\Command\Migration;
 
 use Doctrine\DBAL\Connection;
+use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Db;
@@ -141,6 +142,8 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
             }
         }
 
+        $cacheTags = [];
+
         foreach ($updates as $update) {
             try {
                 $db->update(
@@ -148,12 +151,16 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
                     $update['values'],
                     ['id' => $update['id']]
                 );
+
+                $cacheTags[] = 'document_' . $update['id'];
             }
             catch (\Exception $ex) {
                 $this->output->writeln(sprintf('<error>%s [ID: %s]: %s</error>', $update['table'], $update['id'], $ex->getMessage()));
                 $this->errors++;
             }
         }
+        
+        Cache::clearTags($cacheTags);
 
         if ($this->errors) {
             $output->writeln("\n\n");
