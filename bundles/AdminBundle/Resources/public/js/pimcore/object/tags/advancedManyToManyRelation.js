@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -32,7 +32,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 return false;
             }
             return true;
-        });
+        }.bind(this));
 
         if (data) {
             this.data = data;
@@ -91,7 +91,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     createLayout: function (readOnly) {
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
 
@@ -297,7 +297,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var subtype = data.data.subtype;
-                        if (data.data.type == "object" && data.data.subtype != "folder") {
+                        if (data.data.type === "object" && data.data.subtype !== "folder" && data.data.subtype !== null) {
                             subtype = "object";
                         }
                         pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -703,7 +703,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 item.parentMenu.destroy();
 
                 var subtype = data.data.subtype;
-                if (data.data.type == "object" && data.data.subtype != "folder") {
+                if (data.data.type === "object" && data.data.subtype !== "folder" && data.data.subtype !== null) {
                     subtype = "object";
                 }
                 pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -900,7 +900,8 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         if (isInitialLoad && this.fieldConfig.optimizedAdminLoading && context['containerType'] == 'object') {
             loadEditModeData = true;
         }
-        pimcore.helpers.requestNicePathData(
+
+        var nicePathRequested = pimcore.helpers.requestNicePathData(
             {
                 type: "object",
                 id: this.object.id
@@ -920,6 +921,17 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 fields: this.fieldConfig.columnKeys
             }, this.component.getView())
         );
+
+        // unfortunately we have to use a timeout here to adjust the height of grids configured
+        // with autoHeight: true, there are no other events that would work, see also:
+        // - https://github.com/pimcore/pimcore/pull/4337
+        // - https://github.com/pimcore/pimcore/pull/4909
+        // - https://github.com/pimcore/pimcore/pull/5367
+        if (nicePathRequested) {
+            window.setTimeout(function () {
+                this.component.getView().refresh();
+            }.bind(this), 500);
+        }
     },
 
     getGridColumnConfig: function (field) {
@@ -934,6 +946,3 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         return this.getValue();
     }
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.tags.multihrefMetadata = pimcore.object.tags.advancedManyToManyRelation;

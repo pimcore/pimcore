@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class SessionCartConfigurator implements SessionConfiguratorInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function configure(SessionInterface $session)
     {

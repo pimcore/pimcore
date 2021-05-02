@@ -25,53 +25,74 @@ In addition to the standard Twig extensions, Pimcore adds some additional powerf
 
 All Twig extension functions are described below in detail, the following tables give just a short overview of all available extensions.
 
-| Extension                                | Description                                                     |
-|------------------------------------------|-----------------------------------------------------------------|
-| `pimcore_action()`        | Call an arbitrary action and renders the respective template  |
+| Extension                                | Description                                                       |
+|------------------------------------------|-------------------------------------------------------------------|
 | `pimcore_cache()`         | Simple in-template caching functionality                                         |
-| `pimcore_device()`        | Helps implementing adaptive designs.                                             |
-| `pimcoreglossary()`       | Extension to control the glossary engine                                            |
+| `pimcore_device()`        | Helps implementing adaptive designs                                              |
+| `pimcoreglossary()`       | Extension to control the glossary engine                                         |
 | `pimcore_placeholder()`   | Adding and embedding custom placeholders, e.g. for special header tags, etc.     |
 | `pimcore_head_link()`     | Embeding / managing referenced stylesheets (alternative to `assets()`)           |
-| `pimcore_head_meta()`     | Managing your \<meta\> elements in your HTML document                              |
-| `pimcore_head_script()`   | Managing your <scripts> elements                                                 |
+| `pimcore_head_meta()`     | Managing your \<meta\> elements in your HTML document                            |
+| `pimcore_head_script()`   | Managing your \<scripts\> elements                                               |
 | `pimcore_head_style()`    | Managing inline styles (pendant to `headLink()` for inline styles)               |
 | `pimcore_head_title()`    | Create and store the HTML document's `<title>` for later retrieval and output    |
-| `pimcore_inc()`           | Use this function to directly include a Pimcore document.                               |
-| `pimcore_inline_script`   | Managing inline scripts (pendant to `headScript()` for inline scripts)                  |
+| `pimcore_inc()`           | Use this function to directly include a Pimcore document                         |
+| `pimcore_inline_script`   | Managing inline scripts (pendant to `headScript()` for inline scripts)           |
 | `pimcore_build_nav()`, `pimcore_render_nav()`, `pimcore_nav_renderer()`   | Embed and build navigations based on the document structure                             |
-| `pimcore_url()`           | An alternative to `url()` and `path()` with the building behavior of Pimcore 4          |
+| `pimcore_url()`           | An alternative to `url()` and `path()`                                           |
+| `pimcore_website_config()`| Fetch website settings or specific setting (first param: key) for the current site |
+| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail on image                                   |
+| `pimcore_image_thumbnail_html()` | Returns html for displaying the thumbnail image                           |
+| `pimcore_supported_locales()` | Use this function to get a list of supported locales                         |
 
+Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
+```twig
+{# using 'instaceof' checks if object is instanceof provided classname #}
+{% if (product is instanceof('App\\Model\\Product\\Car')) %}
+    ...
+{% endif %}
+
+{# using 'pimcore_data_object' checks if object is instanceof \Pimcore\Model\DataObject\Concrete #}
+{% if (product is pimcore_data_object) %}
+ ...
+{% endif %}
+```
+
+The following table gives an overview of all available tests:
+
+| Test                      | Description                                                                      |
+|---------------------------|----------------------------------------------------------------------------------|
+| `instanceof(classname)`                | Checks if an object is an instance of a given class                 |
+| `pimcore_asset`                        | Checks if object is instanceof Asset                                |
+| `pimcore_asset_archive`                | Checks if object is instanceof Asset\Archive                        |
+| `pimcore_asset_audio`                  | Checks if object is instanceof Asset\Audio                          |
+| `pimcore_asset_document`               | Checks if object is instanceof Asset\Document                       |
+| `pimcore_asset_folder`                 | Checks if object is instanceof Asset\Folder                         |
+| `pimcore_asset_image`                  | Checks if object is instanceof Asset\Image                          |
+| `pimcore_asset_text`                   | Checks if object is instanceof Asset\Text                           |
+| `pimcore_asset_unknown`                | Checks if object is instanceof Asset\Unknown                        |
+| `pimcore_asset_video`                  | Checks if object is instanceof Asset\Video                          |
+| `pimcore_data_object`                  | Checks if object is instanceof DataObject\Concrete                  |
+| `pimcore_data_object_folder`           | Checks if object is instanceof DataObject\Folder                    |
+| `pimcore_data_object_class(classname)` | Checks if object is instanceof Pimcore\Model\DataObject\{Classname} |
+| `pimcore_data_object_gallery`          | Checks if object is instanceof DataObject\Data\ImageGallery         |
+| `pimcore_data_object_hotspot_image`    | Checks if object is instanceof DataObject\Data\Hotspotimage         |
+| `pimcore_document`                     | Checks if object is instanceof Document                             |
+| `pimcore_document_email`               | Checks if object is instanceof Document\Email                       |
+| `pimcore_document_folder`              | Checks if object is instanceof Document\Folder                      |
+| `pimcore_document_hardlink`            | Checks if object is instanceof Document\Hardlink                    |
+| `pimcore_document_newsletter`          | Checks if object is instanceof Document\Newsletter                  |
+| `pimcore_document_page`                | Checks if object is instanceof Document\Page                        |
+| `pimcore_document_link`                | Checks if object is instanceof Document\Link                        |
+| `pimcore_document_page_snippet`        | Checks if object is instanceof Document\PageSnippet                 |
+| `pimcore_document_print`               | Checks if object is instanceof Document\PrintAbstract               |
+| `pimcore_document_print_container`     | Checks if object is instanceof Document\Printcontainer              |
+| `pimcore_document_print_page`          | Checks if object is instanceof Document\Printpage                   |
+| `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
 
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
 Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)
 your own Twig Extension.
-
-### `pimcore_action`
-
-Use `pimcore_action()` to render an action within views. 
-
-```twig
-{{ pimcore_action(action, controller, bundle, attributes, query) }}
-```
-   
-| Name         | Type         | Description  |
-|--------------|--------------|--------------|
-| `action`     |  string      | Name of the action (eg. `foo`) |
-| `controller` |  string      | Name of the controller (eg. `Bar`) |
-| `module`     |  string      | Optional name of the bundle where the controller/action lives |
-| `attributes` |  array       | Optional params added to the request object for the action |
-| `query`      |  array       | Optional params added to the request query string |
-
-   
-##### Example
-
-```twig
-<section id="foo-bar">
-    {{ pimcore_action('foo', 'Bar', null, { awesome: 'value' }) }}
-</section>
-```
-   
     
 ### `pimcore_cache`
 This is an implementation of an in-template cache. You can use this to cache some parts directly in the template, 
@@ -101,21 +122,19 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 This extension makes it easy to implement "Adaptive Design" in Pimcore. 
 
-```twig
-{{ pimcore_device('a default value') }}
-```
-
+##### Arguments
 | Name         | Type         | Description  |
 |--------------|--------------|--------------|
-| `default`    | string       | Default if no device can be detected |
+| `default`    | string       | *optional* Default if no device can be detected |
 
 ##### Example
 ```twig
-{% if pimcore_device().isPhone() %}
+{% set device = pimcore_device('desktop') %}
+{% if device.isPhone() %}
     This is my phone content
-{% elseif pimcore_device().isTablet() %}
+{% elseif device.isTablet() %}
     This text is shown on a tablet
-{% elseif pimcore_device().isDesktop() %}
+{% elseif device.isDesktop() %}
     This is for default desktop Browser
 {% endif %}
 ```
@@ -160,7 +179,7 @@ This is especially useful for footers, headers, navigations, sidebars, teasers, 
 | Name           | Type         | Description  |
 |----------------|--------------|--------------|
 | `document`     | PageSnippet &#124; int &#124; string  | Document to include, can be either an ID, a path or even the Document object itself |
-| `params`       |  array       | Is optional and should be an array with key value pairs like in `$this->action()` from ZF. |
+| `params`       |  array       | Is optional and should be an array with key value pairs. |
 | `enabledCache` |  bool        | Is true by default, set it to false to disable the cache. Hashing is done across source and parameters to ensure a consistent result. |
  
  ##### Example

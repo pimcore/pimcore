@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
@@ -25,64 +23,78 @@ use Pimcore\Model;
 class Newsletter extends Model\Document\PageSnippet
 {
     /**
-     * Static type of the document
-     *
-     * @var string
+     * {@inheritdoc}
      */
-    protected $type = 'newsletter';
+    protected string $type = 'newsletter';
 
     /**
      * Contains the email subject
      *
+     * @internal
+     *
      * @var string
      */
-    protected $subject = '';
+    protected string $subject = '';
 
     /**
      * Contains the plain text part of the email
      *
+     * @internal
+     *
      * @var string
      */
-    protected $plaintext = '';
+    protected string $plaintext = '';
 
     /**
      * Contains the from email address
      *
+     * @internal
+     *
      * @var string
      */
-    protected $from = '';
+    protected string $from = '';
 
     /**
      * enables adding tracking parameters to all links
      *
+     * @internal
+     *
      * @var bool
      */
-    protected $enableTrackingParameters = false;
+    protected bool $enableTrackingParameters = false;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    protected $trackingParameterSource = 'newsletter';
+    protected string $trackingParameterSource = 'newsletter';
 
     /**
+     * @internal
+     *
      * @var string
      */
-    protected $trackingParameterMedium = 'email';
+    protected string $trackingParameterMedium = 'email';
 
     /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected ?string $trackingParameterName = null;
+
+    /**
+     * @internal
+     *
      * @var string
      */
-    protected $trackingParameterName = null;
+    protected string $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
 
     /**
-     * @var string
+     * {@inheritdoc}
      */
-    protected $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
-
-    /**
-     * @inheritdoc
-     */
-    protected $supportsContentMaster = false;
+    protected bool $supportsContentMaster = false;
 
     /**
      * Contains the email subject
@@ -243,6 +255,8 @@ class Newsletter extends Model\Document\PageSnippet
     }
 
     /**
+     * @internal
+     *
      * @return string
      */
     public function getTmpStoreId()

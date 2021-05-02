@@ -29,15 +29,15 @@ COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton my-project
 COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo my-project
 ```
 
-Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).
+Point the document root of your vhost to the newly created `/public` folder (eg. `/your/project/public`).
 Keep in mind, that Pimcore needs to be installed **outside** of the **document root**.
 Specific configurations and optimizations for your web server are available here:
 [Apache](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md),
 [Nginx](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 
-Pimcore requires write access to the following directories (relative to your project root): `/var`, `/web/var` ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
+Pimcore requires write access to the following directories (relative to your project root): `/var`, `/public/var` ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
 
-If you're running the installation using a [custom environment name](../21_Deployment/03_Multi_Environment.md), ensure you already have the right config files in place, e.g. `app/config/config_[env_name].yml`. 
+If you're running the installation using a [custom environment name](../21_Deployment/03_Configuration_Environments.md), ensure you already have the right config files in place, e.g. `config/packages/[env_name]/config.yaml`. 
 
 ## 3. Create Database
 
@@ -63,7 +63,7 @@ After the installer has finished, you can open the admin interface: `https://you
 
 ##### Debugging installation issues
 
-The installer writes a log in `var/logs` which contains any errors encountered during the installation. Please
+The installer writes a log in `var/log` which contains any errors encountered during the installation. Please
 have a look at the logs as a starting point when debugging installation issues.
 
 

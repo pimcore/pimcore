@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
@@ -100,6 +101,8 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
      * Don't cache the entire category object
      *
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -108,6 +111,8 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
 
     /**
      * Restore categories from serialized ID list
+     *
+     * @internal
      */
     public function __wakeup()
     {
@@ -124,7 +129,6 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
         foreach ($environment->getCategories() as $category) {
             /* @var AbstractCategory $category */
             foreach ($this->getCategories() as $allow) {
-                /* @var AbstractCategory $allow */
                 if (strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }

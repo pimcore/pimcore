@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Fieldcollection
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
@@ -44,14 +42,14 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     protected $fieldname;
 
     /**
-     * @var Model\DataObject\Concrete
+     * @var Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $objectId;
+    protected ?int $objectId = null;
 
     /**
      * @var string
@@ -111,17 +109,15 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     public function getDefinition()
     {
-        $definition = Model\DataObject\Fieldcollection\Definition::getByKey($this->getType());
-
-        return $definition;
+        return Model\DataObject\Fieldcollection\Definition::getByKey($this->getType());
     }
 
     /**
-     * @param Concrete $object
+     * @param Concrete|null $object
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(?Concrete $object)
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -130,9 +126,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return Concrete
+     * @return Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
             $this->setObject(Concrete::getById($this->objectId));
@@ -165,7 +161,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @inheritdoc
+     * @internal
+     *
+     * @return array
      */
     protected function getLazyLoadedFieldNames(): array
     {
@@ -181,7 +179,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {

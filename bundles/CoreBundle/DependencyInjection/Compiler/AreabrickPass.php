@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
@@ -29,7 +30,10 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Finder\Finder;
 
-class AreabrickPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class AreabrickPass implements CompilerPassInterface
 {
     /**
      * @var Inflector
@@ -99,8 +103,8 @@ class AreabrickPass implements CompilerPassInterface
      *
      * Valid examples:
      *
-     *  - AppBundle\Document\Areabrick\Foo
-     *  - AppBundle\Document\Areabrick\Foo\Bar\Baz
+     *  - MyBundle\Document\Areabrick\Foo
+     *  - MyBundle\Document\Areabrick\Foo\Bar\Baz
      *
      * @param ContainerBuilder $container
      * @param Definition $areaManagerDefinition
@@ -116,6 +120,12 @@ class AreabrickPass implements CompilerPassInterface
         array $excludedClasses
     ) {
         $bundles = $container->getParameter('kernel.bundles_metadata');
+        //Find bricks from /src since AppBundle is removed
+        $bundles['App'] = [
+            'path' => PIMCORE_PROJECT_ROOT . '/src',
+            'namespace' => 'App',
+        ];
+
         foreach ($bundles as $bundleName => $bundleMetadata) {
             $bundleAreas = $this->findBundleBricks($container, $bundleName, $bundleMetadata, $excludedClasses);
 
@@ -276,8 +286,8 @@ class AreabrickPass implements CompilerPassInterface
     /**
      * Generate service ID from bundle name and sub-namespace
      *
-     *  - AppBundle\Document\Areabrick\Foo         -> app.area.brick.foo
-     *  - AppBundle\Document\Areabrick\Foo\Bar\Baz -> app.area.brick.foo.bar.baz
+     *  - MyBundle\Document\Areabrick\Foo         -> my.area.brick.foo
+     *  - MyBundle\Document\Areabrick\Foo\Bar\Baz -> my.area.brick.foo.bar.baz
      *
      * @param string $bundleName
      * @param string $subNamespace

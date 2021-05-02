@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\HttpKernel\BundleCollection;
@@ -38,6 +38,13 @@ class LazyLoadedItem extends AbstractItem
      */
     private static $classImplementsCache = [];
 
+    /**
+     * LazyLoadedItem constructor.
+     * @param string $className
+     * @param int $priority
+     * @param array $environments
+     * @param string $source
+     */
     public function __construct(
         string $className,
         int $priority = 0,
@@ -53,11 +60,17 @@ class LazyLoadedItem extends AbstractItem
         parent::__construct($priority, $environments, $source);
     }
 
+    /**
+     * @return string
+     */
     public function getBundleIdentifier(): string
     {
         return $this->className;
     }
 
+    /**
+     * @return BundleInterface
+     */
     public function getBundle(): BundleInterface
     {
         if (null === $this->bundle) {
@@ -69,6 +82,9 @@ class LazyLoadedItem extends AbstractItem
         return $this->bundle;
     }
 
+    /**
+     * @return bool
+     */
     public function isPimcoreBundle(): bool
     {
         if (null !== $this->bundle) {
@@ -79,6 +95,9 @@ class LazyLoadedItem extends AbstractItem
         return static::implementsInterface($this->className, PimcoreBundleInterface::class);
     }
 
+    /**
+     * @param BundleCollection $collection
+     */
     public function registerDependencies(BundleCollection $collection)
     {
         if (static::implementsInterface($this->className, DependentBundleInterface::class)) {
@@ -88,6 +107,11 @@ class LazyLoadedItem extends AbstractItem
         }
     }
 
+    /**
+     * @param string $className
+     * @param string $interfaceName
+     * @return bool
+     */
     private static function implementsInterface(string $className, string $interfaceName): bool
     {
         if (!isset(static::$classImplementsCache[$className])) {

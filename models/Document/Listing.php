@@ -1,26 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Document[] load()
@@ -30,21 +27,26 @@ use Pimcore\Model\Document;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method onCreateQueryBuilder(?callable $callback)
  * @method array loadIdPathList()
  */
-class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
      *
+     * @internal
+     *
      * @var bool
      */
-    public $objectTypeDocument = false;
+    protected $objectTypeDocument = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $unpublished = false;
+    protected $unpublished = false;
 
     /**
      * @return Document[]
@@ -89,9 +91,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * Returns the SQL condition value.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getCondition()
     {
@@ -114,9 +114,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      */
 
     /**
-     * Returns the total items count.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -124,12 +122,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * Returns the listing based on defined offset and limit as parameters.
-     *
-     * @param int $offset
-     * @param int $itemCountPerPage
-     *
-     * @return Document[]
+     * {@inheritdoc}
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -137,13 +130,5 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
         $this->setLimit($itemCountPerPage);
 
         return $this->load();
-    }
-
-    /**
-     * @return Listing
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 }

@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
@@ -36,11 +35,17 @@ abstract class AbstractRelations extends Data implements
     /**
      * Set of allowed classes
      *
+     * @internal
+     *
      * @var array
      */
     public $classes = [];
 
-    /** Optional path formatter class
+    /**
+     * Optional path formatter class
+     *
+     * @internal
+     *
      * @var null|string
      */
     public $pathFormatterClass;
@@ -68,7 +73,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function getLazyLoading()
     {
@@ -76,10 +81,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function save($object, $params = [])
     {
@@ -92,7 +94,7 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+        if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
                     if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
@@ -131,10 +133,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
     public function load($object, $params = [])
     {
@@ -182,26 +181,29 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
+     *
      * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
      */
-    abstract public function loadData($data, $object = null, $params = []);
+    abstract protected function loadData(array $data, $object = null, $params = []);
 
     /**
-     * @param array $data
+     * @internal
+     *
+     * @param array|Element\ElementInterface $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
      */
-    abstract public function prepareDataForPersistence($data, $object = null, $params = []);
+    abstract protected function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
+     * {@inheritdoc}
      */
     public function delete($object, $params = [])
     {
@@ -218,12 +220,14 @@ abstract class AbstractRelations extends Data implements
      *  "asset" => array(...)
      * )
      *
+     * @internal
+     *
      * @param mixed $data
      * @param array $idMapping
      *
      * @return array
      */
-    public function rewriteIdsService($data, $idMapping)
+    protected function rewriteIdsService($data, $idMapping)
     {
         if (is_array($data)) {
             foreach ($data as &$element) {
@@ -240,7 +244,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getPathFormatterClass(): ?string
     {
@@ -256,10 +260,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -267,7 +268,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function appendData($existingData, $additionalData)
     {
@@ -298,7 +299,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeData($existingData, $removeData)
     {
@@ -329,6 +330,8 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
+     *
      * @param Element\ElementInterface $item
      *
      * @return string
@@ -342,10 +345,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param mixed $array1
-     * @param mixed $array2
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEqual($array1, $array2): bool
     {
@@ -375,7 +375,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function supportsDirtyDetection()
     {
@@ -383,14 +383,16 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
+     *
      * @param DataObject\Fieldcollection\Data\AbstractData $item
      *
      * @throws \Exception
      */
-    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
+    protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Fieldcollection $container */
+            /** @var DataObject\Fieldcollection|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
@@ -402,14 +404,16 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
+     * @internal
+     *
      * @param DataObject\Objectbrick\Data\AbstractData $item
      *
      * @throws \Exception
      */
-    public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
+    protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Objectbrick $container */
+            /** @var DataObject\Objectbrick|null $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());
@@ -420,79 +424,52 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     * checks for multiple assignments and throws an exception in case the rules are violated.
      *
-     * @param array|null $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
+     * @internal
      *
-     * @return array
+     * @param array|null $data*
      *
      * @throws \Exception
      */
-    public function filterMultipleAssignments($data, $container, $params)
+    public function performMultipleAssignmentCheck($data)
     {
-        if (
-            (!is_array($data) || count($data) < 2)
-            || !$container instanceof Element\DirtyIndicatorInterface
-            || ($container instanceof DataObject\Concrete && !$container->isFieldDirty($this->getName()))
-            || (($container instanceof DataObject\Fieldcollection\Data\AbstractData
-                || $container instanceof DataObject\Localizedfield
-                || $container instanceof DataObject\Objectbrick\Data\AbstractData)
-                && !$container->isFieldDirty('_self'))
-        ) {
-            return $data;
-        }
+        if (is_array($data)) {
+            if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
+                $relationItems = [];
+                $fieldName = $this->getName();
 
-        if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
-            $relationItems = [];
-            $objectId = null;
-            $fieldName = $this->getName();
-
-            if ($container instanceof DataObject\Concrete) {
-                $objectId = $container->getId();
-            } elseif (
-                    $container instanceof DataObject\Fieldcollection\Data\AbstractData ||
-                    $container instanceof DataObject\Localizedfield ||
-                    $container instanceof DataObject\Objectbrick\Data\AbstractData
-                ) {
-                $objectFromContainer = $container->getObject();
-                if ($objectFromContainer) {
-                    $objectId = $objectFromContainer->getId();
-                }
-            }
-
-            foreach ($data as $item) {
-                $elementHash = null;
-                if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
-                    if ($item->getElement() instanceof Element\ElementInterface) {
-                        $elementHash = Element\Service::getElementHash($item->getElement());
+                foreach ($data as $item) {
+                    $elementHash = null;
+                    if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
+                        if ($item->getElement() instanceof Element\ElementInterface) {
+                            $elementHash = Element\Service::getElementHash($item->getElement());
+                        }
+                    } elseif ($item instanceof Element\ElementInterface) {
+                        $elementHash = Element\Service::getElementHash($item);
                     }
-                } elseif ($item instanceof Element\ElementInterface) {
-                    $elementHash = Element\Service::getElementHash($item);
+
+                    if ($elementHash === null) {
+                        throw new \Exception('Passing relations without ID or type not allowed anymore!');
+                    } elseif (!isset($relationItems[$elementHash])) {
+                        $relationItems[$elementHash] = $item;
+                    } else {
+                        $message = 'Passing relations multiple times not allowed anymore: ' . $elementHash
+                            . ' multiple times in field ' . $fieldName;
+
+                        if (method_exists($this, 'getAllowMultipleAssignments')) {
+                            $message .= ", Reason: 'Allow Multiple Assignments' setting is disabled in class definition. ";
+                        }
+
+                        throw new \Exception($message);
+                    }
                 }
-
-                if ($elementHash === null) {
-                    $relationItems[] = $item; //do not filter if element hash fails
-                } elseif (!isset($relationItems[$elementHash])) {
-                    $relationItems[$elementHash] = $item;
-                } else {
-                    throw new \Exception(sprintf('Passing relations multiple times is not allowed: %s in field %s of object id: %s', $elementHash, $fieldName, $objectId));
-                }
-            }
-
-            if (count($relationItems) !== count($data)) {
-                $this->setDataToObject(array_values($relationItems), $container, $params);
-
-                return array_values($relationItems);
             }
         }
-
-        return $data;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -500,10 +477,41 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @internal
+     *
+     * @return string
+     */
+    abstract protected function getPhpdocType();
 }

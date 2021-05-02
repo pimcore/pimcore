@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Session\Attribute;
@@ -25,7 +26,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     protected $locked = false;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function lock()
     {
@@ -33,7 +34,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function unlock()
     {
@@ -41,7 +42,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isLocked()
     {
@@ -49,7 +50,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function set($name, $value)
     {
@@ -59,7 +60,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function replace(array $attributes)
     {
@@ -69,7 +70,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function remove($name)
     {
@@ -79,7 +80,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function clear()
     {

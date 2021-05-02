@@ -99,7 +99,7 @@
     <script src="{{ path('fos_js_routing_js', {'callback' : 'fos.Router.setData'}) }}"></script>
 </head>
 
-<body class="pimcore_version_6">
+<body class="pimcore_version_10">
 
 <div id="pimcore_loading">
     <div class="spinner">
@@ -173,8 +173,8 @@
         "/bundles/pimcoreadmin/css/icons.css",
         "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
         "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
-        "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-        "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/charts-all" ~ debugSuffix ~ ".css",
+        "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_1.css",
+        "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_2.css",
         "/bundles/pimcoreadmin/css/admin.css"
     ]
 %}
@@ -195,19 +195,15 @@
 
 {% set scriptLibs = [
     "lib/class.js",
-    "lib/ext/ext-all" ~ debugSuffix ~ ".js",
-    "lib/ext/classic/theme-triton/theme-triton" ~ debugSuffix ~ ".js",
-    "lib/ext/packages/charts/classic/charts" ~  debugSuffix ~ ".js",
+    "../extjs/js/ext-all" ~ debugSuffix ~ ".js",
     "lib/ext-plugins/portlet/PortalDropZone.js",
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
-    "lib/ext-plugins/TabMiddleButtonClose.js",
     "lib/ckeditor/ckeditor.js",
     "lib/leaflet/leaflet.js",
     "lib/leaflet.draw/leaflet.draw.js",
-    "lib/vrview/build/vrview.min.js",
-    "lib/ext/classic/locale/locale-" ~ language ~ ".js",
+    "lib/vrview/build/vrview.min.js"
 ] %}
 
 {# PIMCORE SCRIPTS #}
@@ -266,6 +262,7 @@
     "pimcore/settings/translation/translationmerger.js",
     "pimcore/settings/translation/xliff.js",
     "pimcore/settings/translation/word.js",
+    "pimcore/settings/translation/translationSettingsTab.js",
     "pimcore/settings/metadata/predefined.js",
     "pimcore/settings/properties/predefined.js",
     "pimcore/settings/docTypes.js",
@@ -324,13 +321,6 @@
     "pimcore/element/helpers/gridTabAbstract.js",
     "pimcore/object/helpers/grid.js",
     "pimcore/object/helpers/gridConfigDialog.js",
-    "pimcore/object/helpers/import/csvPreviewTab.js",
-    "pimcore/object/helpers/import/columnConfigurationTab.js",
-    "pimcore/object/helpers/import/resolverSettingsTab.js",
-    "pimcore/object/helpers/import/csvSettingsTab.js",
-    "pimcore/object/helpers/import/saveAndShareTab.js",
-    "pimcore/object/helpers/import/configDialog.js",
-    "pimcore/object/helpers/import/reportTab.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
     "pimcore/object/helpers/metadataMultiselectEditor.js",
@@ -417,8 +407,8 @@
     "pimcore/asset/metadata/editor.js",
     "pimcore/asset/tree.js",
     "pimcore/asset/customviews/tree.js",
-    "pimcore/asset/gridexport/xlsx.js",
     "pimcore/asset/gridexport/csv.js",
+    "pimcore/asset/gridexport/xlsx.js",
 
 
     "pimcore/object/helpers/edit.js",
@@ -447,7 +437,7 @@
     "pimcore/object/classes/data/manyToManyObjectRelation.js",
     "pimcore/object/classes/data/advancedManyToManyRelation.js",
     "pimcore/object/classes/data/advancedManyToManyObjectRelation.js",
-    "pimcore/object/classes/data/reverseManyToManyObjectRelation.js",
+    "pimcore/object/classes/data/reverseObjectRelation.js",
     "pimcore/object/classes/data/booleanSelect.js",
     "pimcore/object/classes/data/select.js",
     "pimcore/object/classes/data/urlSlug.js",
@@ -532,8 +522,6 @@
     "pimcore/object/gridcolumn/operator/Trimmer.js",
     "pimcore/object/gridcolumn/operator/Alias.js",
     "pimcore/object/gridcolumn/operator/WorkflowState.js",
-    "pimcore/object/gridcolumn/value/Href.js",
-    "pimcore/object/gridcolumn/value/Objects.js",
     "pimcore/object/gridcolumn/value/DefaultValue.js",
     "pimcore/object/gridcolumn/operator/GeopointRenderer.js",
     "pimcore/object/gridcolumn/operator/ImageRenderer.js",
@@ -573,7 +561,7 @@
     "pimcore/object/gridcolumn/operator/FieldCollectionGetter.js",
     "pimcore/object/gridcolumn/operator/ObjectBrickGetter.js",
     "pimcore/object/tags/advancedManyToManyObjectRelation.js",
-    "pimcore/object/tags/reverseManyToManyObjectRelation.js",
+    "pimcore/object/tags/reverseObjectRelation.js",
     "pimcore/object/tags/urlSlug.js",
     "pimcore/object/tags/booleanSelect.js",
     "pimcore/object/tags/select.js",
@@ -625,8 +613,8 @@
     "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
-    "pimcore/object/gridexport/xlsx.js",
     "pimcore/object/gridexport/csv.js",
+    "pimcore/object/gridexport/xlsx.js",
 
 
     "pimcore/plugin/broker.js",
@@ -666,7 +654,6 @@
     "pimcore/layout/portlets/modifiedAssets.js",
     "pimcore/layout/portlets/modificationStatistic.js",
     "pimcore/layout/portlets/analytics.js",
-    "pimcore/layout/portlets/piwik.js",
     "pimcore/layout/portlets/customreports.js",
 
     "pimcore/layout/toolbar.js",
@@ -687,10 +674,7 @@
 
     "pimcore/workflow/transitionPanel.js",
     "pimcore/workflow/transitions.js",
-
-    "pimcore/analytics/piwik/widget_store_provider.js",
-    "pimcore/report/piwik/settings.js",
-    "pimcore/report/piwik/dashboard_iframe.js",
+    "pimcore/workflow/transitions.js",
 
 
     "pimcore/colorpicker-overrides.js",
@@ -723,15 +707,7 @@
     <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
     {% endfor %}
 {% else %}
-    {% set scriptContents = "" %}
-    {% for scriptUrl in scripts %}
-        {% set scriptContent = source(constant('PIMCORE_WEB_ROOT') ~ "/bundles/pimcoreadmin/js/" ~ scriptUrl, ignore_missing = true) %}
-        {% if scriptContent|length > 0 %}
-            {% set scriptContents = scriptContents ~ scriptContent ~ "\n\n\n" %}
-        {% endif %}
-    {% endfor %}
-    {% set minimizedScriptParams = pimcore_minimize_scripts(scriptContents) %}
-
+    {% set minimizedScriptParams = pimcore_minimize_scripts(scripts) %}
     <script src="{{ path('pimcore_admin_misc_scriptproxy', minimizedScriptParams) }}"></script>
 {% endif %}
 

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset;
@@ -31,12 +29,14 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\Traits\VersionDaoTrait;
+
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
@@ -44,7 +44,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
                 WHERE assets.id = ?", $id);
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {
@@ -54,6 +54,8 @@ class Dao extends Model\Element\Dao
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
                     $transformedData = $md['data'];
+
+                    $md['type'] = $md['type'] ?? 'input';
 
                     try {
                         /** @var Data $instance */
@@ -69,7 +71,7 @@ class Dao extends Model\Element\Dao
                 $this->model->setMetadataRaw($metadata);
             }
         } else {
-            throw new \Exception('Asset with ID ' . $id . " doesn't exists");
+            throw new Model\Exception\NotFoundException('Asset with ID ' . $id . " doesn't exists");
         }
     }
 
@@ -78,7 +80,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -88,7 +90,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('asset with path: ' . $path . " doesn't exist");
+            throw new Model\Exception\NotFoundException('asset with path: ' . $path . " doesn't exist");
         }
     }
 
@@ -278,25 +280,6 @@ class Dao extends Model\Element\Dao
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
     }
 
-    /**
-     * get versions from database, and assign it to object
-     *
-     * @return Model\Version[]
-     */
-    public function getVersions()
-    {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` ASC", [$this->model->getId()]);
-
-        $versions = [];
-        foreach ($versionIds as $versionId) {
-            $versions[] = Model\Version::getById($versionId['id']);
-        }
-
-        $this->model->setVersions($versions);
-
-        return $versions;
-    }
-
     public function deleteAllPermissions()
     {
         $this->db->delete('users_workspaces_asset', ['cid' => $this->model->getId()]);
@@ -417,28 +400,6 @@ class Dao extends Model\Element\Dao
         $this->db->deleteWhere('tree_locks', "type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
-    }
-
-    /**
-     * Get latest available version, using $force always returns a version no matter if it is the same as the published one
-     *
-     * @param bool $force
-     *
-     * @return Model\Version|null
-     */
-    public function getLatestVersion($force = false)
-    {
-        if ($this->model->getType() != 'folder') {
-            $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
-
-            if ($versionData && $versionData['id'] && ($versionData['date'] > $this->model->getModificationDate() || $force)) {
-                $version = Model\Version::getById($versionData['id']);
-
-                return $version;
-            }
-        }
-
-        return null;
     }
 
     /**

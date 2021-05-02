@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
@@ -20,8 +21,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Adds configuration for gdpr data provider
+ *
+ * @internal
  */
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}
@@ -29,6 +32,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('pimcore_admin');
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->buildGdprDataExtractorNode());
@@ -102,7 +106,7 @@ class Configuration implements ConfigurationInterface
                     ->info('Configure which classes should be considered, array key is class name')
                     ->prototype('array')
                         ->info('
-    MY_CLASS_NAME: 
+    MY_CLASS_NAME:
 		include: true
 		allowDelete: false
 		includedRelations:

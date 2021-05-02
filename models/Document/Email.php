@@ -1,24 +1,20 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
 
-use Egulias\EmailValidator\EmailValidator;
-use Egulias\EmailValidator\Validation\RFCValidation;
 use Pimcore\Model;
 
 /**
@@ -27,58 +23,68 @@ use Pimcore\Model;
 class Email extends Model\Document\PageSnippet
 {
     /**
-     * Static type of the document
-     *
-     * @var string
+     * {@inheritdoc}
      */
-    protected $type = 'email';
+    protected string $type = 'email';
 
     /**
      * Contains the email subject
      *
+     * @internal
+     *
      * @var string
      */
-    protected $subject = '';
+    protected string $subject = '';
 
     /**
      * Contains the from email address
      *
+     * @internal
+     *
      * @var string
      */
-    protected $from = '';
+    protected string $from = '';
 
     /**
      * Contains the reply to email addresses
      *
+     * @internal
+     *
      * @var string
      */
-    protected $replyTo = '';
+    protected string $replyTo = '';
 
     /**
      * Contains the email addresses of the recipients
      *
+     * @internal
+     *
      * @var string
      */
-    protected $to = '';
+    protected string $to = '';
 
     /**
      * Contains the carbon copy recipients
      *
+     * @internal
+     *
      * @var string
      */
-    protected $cc = '';
+    protected string $cc = '';
 
     /**
      * Contains the blind carbon copy recipients
      *
+     * @internal
+     *
      * @var string
      */
-    protected $bcc = '';
+    protected string $bcc = '';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    protected $supportsContentMaster = false;
+    protected bool $supportsContentMaster = false;
 
     /**
      * Contains the email subject
@@ -126,27 +132,6 @@ class Email extends Model\Document\PageSnippet
     public function getTo()
     {
         return $this->to;
-    }
-
-    /**
-     * Helper to validate a email address
-     *
-     * @static
-     *
-     * @param string $emailAddress
-     *
-     * @return string | null - returns "null" if the email address is invalid otherwise the email address is returned
-     */
-    public static function validateEmailAddress($emailAddress)
-    {
-        $emailAddress = trim($emailAddress);
-
-        $validator = new EmailValidator();
-        if ($validator->isValid($emailAddress, new RFCValidation())) {
-            return $emailAddress;
-        }
-
-        return null;
     }
 
     /**

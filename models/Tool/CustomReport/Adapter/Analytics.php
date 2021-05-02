@@ -1,33 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
-class Analytics extends AbstractAdapter
+final class Analytics extends AbstractAdapter
 {
     /**
-     * @param array|null $filters
-     * @param string|null $sort
-     * @param string|null $dir
-     * @param int|null $offset
-     * @param int|null $limit
-     * @param array|null $fields
-     * @param array|null $drillDownFilters
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
     {
@@ -53,11 +44,7 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param \stdClass $configuration
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getColumns($configuration)
     {
@@ -75,25 +62,25 @@ class Analytics extends AbstractAdapter
      * @param array $filters
      * @param array $drillDownFilters
      */
-    protected function setFilters($filters, $drillDownFilters = [])
+    protected function setFilters(array $filters, $drillDownFilters = []): void
     {
         $gaFilters = [ $this->config->filters ];
         if (count($filters)) {
             foreach ($filters as $filter) {
-                if ($filter['type'] == 'string') {
+                if ($filter['type'] === 'string') {
                     $value = str_replace(';', '', addslashes($filter['value']));
                     $gaFilters[] = "{$filter['field']}=~{$value}";
-                } elseif ($filter['type'] == 'numeric') {
+                } elseif ($filter['type'] === 'numeric') {
                     $value = (float)$filter['value'];
                     $compMapping = [
                         'lt' => '<',
                         'gt' => '>',
                         'eq' => '==',
                     ];
-                    if ($compMapping[$filter['comparison']]) {
+                    if (isset($compMapping[$filter['comparison']])) {
                         $gaFilters[] = "{$filter['field']}{$compMapping[$filter['comparison']]}{$value}";
                     }
-                } elseif ($filter['type'] == 'boolean') {
+                } elseif ($filter['type'] === 'boolean') {
                     $value = $filter['value'] ? 'Yes' : 'No';
                     $gaFilters[] = "{$filter['field']}=={$value}";
                 }
@@ -244,7 +231,7 @@ class Analytics extends AbstractAdapter
     {
         $dimension = $configuration->dimension;
         if (count($dimension)) {
-            foreach ($this->fullConfig->columnConfiguration as $column) {
+            foreach ($this->fullConfig->getColumnConfiguration() as $column) {
                 if ($column['filter_drilldown'] == 'only_filter') {
                     foreach ($dimension as $key => $dim) {
                         if ($dim == $column['name']) {
@@ -302,13 +289,7 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param array $filters
-     * @param string $field
-     * @param array $drillDownFilters
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {

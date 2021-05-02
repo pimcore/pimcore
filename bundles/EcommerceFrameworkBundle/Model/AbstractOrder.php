@@ -1,26 +1,30 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Logger;
+use Carbon\Carbon;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\OnlineShopOrder;
+use Pimcore\Model\Element\AbstractElement;
 
 /**
  * Abstract base class for order pimcore objects
  */
-class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
+abstract class AbstractOrder extends Concrete
 {
     const ORDER_STATE_COMMITTED = 'committed';
     const ORDER_STATE_CANCELLED = 'cancelled';
@@ -31,689 +35,370 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     const ORDER_PAYMENT_STATE_ABORTED_BUT_RESPONSE = 'abortedButResponseReceived';
 
     /**
-     * @return string
-     *
-     * @throws UnsupportedException
+     * @return string|null
      */
-    public function getOrdernumber()
-    {
-        throw new UnsupportedException('getOrdernumber is not implemented for ' . get_class($this));
-    }
+    abstract public function getOrdernumber(): ?string;
 
     /**
-     * @param string $ordernumber
-     *
-     * @throws UnsupportedException
+     * @param string|null $ordernumber
      */
-    public function setOrdernumber($ordernumber)
-    {
-        throw new UnsupportedException('setOrdernumber is not implemented for ' . get_class($this));
-    }
+    abstract public function setOrdernumber(?string $ordernumber);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return float
+     * @return string|null
      */
-    public function getSubTotalPrice()
-    {
-        throw new UnsupportedException('getSubTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function getSubTotalPrice(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param float $subTotalPrice
+     * @param string|null $subTotalPrice
      */
-    public function setSubTotalPrice($subTotalPrice)
-    {
-        throw new UnsupportedException('setSubTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function setSubTotalPrice(?string $subTotalPrice);
 
     /**
-     * Should return a float
-     *
-     * @return void
+     * @return string|null
      */
-    public function getSubTotalNetPrice()
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getSubTotalNetPrice not implemented for ' . get_class($this));
-    }
+    abstract public function getSubTotalNetPrice(): ?string;
 
     /**
-     * @param float $subTotalPrice
+     * @param string|null $subTotalPrice
      */
-    public function setSubTotalNetPrice($subTotalPrice)
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setSubTotalNetPrice not implemented for ' . get_class($this));
-    }
+    abstract public function setSubTotalNetPrice(?string $subTotalPrice);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return float
+     * @return string|null
      */
-    public function getTotalPrice()
-    {
-        throw new UnsupportedException('getTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function getTotalPrice(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param float $totalPrice
+     * @param string|null $totalPrice
      */
-    public function setTotalPrice($totalPrice)
-    {
-        throw new UnsupportedException('setTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function setTotalPrice(?string $totalPrice);
 
     /**
-     * Should return a float
-     *
-     * @return void
+     * @return string|null
      */
-    public function getTotalNetPrice()
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
-    }
+    abstract public function getTotalNetPrice(): ?string;
 
     /**
-     * @param float $totalPrice
+     * @param string|null $totalPrice
      */
-    public function setTotalNetPrice($totalPrice)
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
-    }
+    abstract public function setTotalNetPrice(?string $totalPrice);
 
     /**
-     * Should return an array
-     *
      * @return array
      */
-    public function getTaxInfo()
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTaxInfo not implemented for ' . get_class($this));
-    }
+    abstract public function getTaxInfo(): array;
 
     /**
-     * @param array $taxInfo
+     * @param array|null $taxInfo
      */
-    public function setTaxInfo($taxInfo)
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTaxInfo not implemented for ' . get_class($this));
-    }
+    abstract public function setTaxInfo(?array $taxInfo);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return \DateTime
+     * @return Carbon|null
      */
-    public function getOrderdate()
-    {
-        throw new UnsupportedException('getOrderdate is not implemented for ' . get_class($this));
-    }
+    abstract public function getOrderdate(): ?Carbon;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param \DateTime $orderdate
+     * @param Carbon|null $orderdate
      */
-    public function setOrderdate($orderdate)
-    {
-        throw new UnsupportedException('setOrderdate is not implemented for ' . get_class($this));
-    }
+    abstract public function setOrderdate(?Carbon $orderdate);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return AbstractOrderItem[]
      */
-    public function getItems()
-    {
-        throw new UnsupportedException('getItems is not implemented for ' . get_class($this));
-    }
+    abstract public function getItems(): array;
 
     /**
      * @param AbstractOrderItem[] $items
-     *
-     * @throws UnsupportedException
      */
-    public function setItems($items)
-    {
-        throw new UnsupportedException('setItems is not implemented for ' . get_class($this));
-    }
+    abstract public function setItems(?array $items);
 
     /**
-     * @throws UnsupportedException
-     *
      * @return AbstractOrderItem[]
      */
-    public function getGiftItems()
-    {
-        throw new UnsupportedException('getGiftItems is not implemented for ' . get_class($this));
-    }
+    abstract public function getGiftItems(): array;
 
     /**
      * @param AbstractOrderItem[] $giftItems
      */
-    public function setGiftItems($giftItems)
-    {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setGiftItems not implemented for ' . get_class($this));
-    }
+    abstract public function setGiftItems(?array $giftItems);
 
     /**
-     * @throws UnsupportedException
-     * committed
-     *
-     * @return mixed
+     * @return AbstractElement|null
      */
-    public function getCustomer()
-    {
-        throw new UnsupportedException('getCustomer is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomer(): ?AbstractElement;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param mixed $customer
+     * @param AbstractElement|null $customer
      */
-    public function setCustomer($customer)
-    {
-        throw new UnsupportedException('setCustomer is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomer(?AbstractElement $customer);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection|null
      */
-    public function getPriceModifications()
-    {
-        throw new UnsupportedException('getPriceModifications is not implemented for ' . get_class($this));
-    }
+    abstract public function getPriceModifications();
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param \Pimcore\Model\DataObject\Fieldcollection $priceModifications
-     *
-     * @return void
+     * @param Fieldcollection|null $priceModifications
      */
-    public function setPriceModifications($priceModifications)
-    {
-        throw new UnsupportedException('setPriceModifications is not implemented for ' . get_class($this));
-    }
+    abstract public function setPriceModifications(?Fieldcollection $priceModifications);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getOrderState()
-    {
-        throw new UnsupportedException('getOrderState is not implemented for ' . get_class($this));
-    }
+    abstract public function getOrderState(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $orderState
+     * @param string|null $orderState
      *
      * @return $this
      */
-    public function setOrderState($orderState)
-    {
-        throw new UnsupportedException('setOrderState is not implemented for ' . get_class($this));
-    }
+    abstract public function setOrderState(?string $orderState);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return int
+     * @return string|null
      */
-    public function getCartId()
-    {
-        throw new UnsupportedException('getCartId is not implemented for ' . get_class($this));
-    }
+    abstract public function getCartId(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param int $cartId
+     * @param string|null $cartId
      *
      * @return void
      */
-    public function setCartId($cartId)
-    {
-        throw new UnsupportedException('setCartId is not implemented for ' . get_class($this));
-    }
+    abstract public function setCartId(?string $cartId);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection|null
      */
-    public function getPaymentInfo()
-    {
-        throw new UnsupportedException('getPaymentInfo is not implemented for ' . get_class($this));
-    }
+    abstract public function getPaymentInfo();
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param \Pimcore\Model\DataObject\Fieldcollection $paymentInfo
-     *
-     * @return void
+     * @param Fieldcollection|null $paymentInfo
      */
-    public function setPaymentInfo($paymentInfo)
-    {
-        throw new UnsupportedException('setPaymentInfo is not implemented for ' . get_class($this));
-    }
+    abstract public function setPaymentInfo(?\Pimcore\Model\DataObject\Fieldcollection $paymentInfo);
+
+    /**
+     * @return \Pimcore\Model\DataObject\Objectbrick|null
+     */
+    abstract public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick;
 
     /**
      * returns latest payment info entry
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
+     * @return AbstractPaymentInformation
      */
-    public function getLastPaymentInfo()
+    public function getLastPaymentInfo(): ?AbstractPaymentInformation
     {
         if ($this->getPaymentInfo()) {
             $items = $this->getPaymentInfo()->getItems();
 
-            return end($items);
-        } else {
-            return null;
+            $item = end($items);
+
+            if ($item instanceof AbstractPaymentInformation) {
+                return $item;
+            }
         }
+
+        return null;
     }
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getComment()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getComment(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return $this
      */
-    public function setComment($comment)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setComment(?string $comment);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getCustomerEMail()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomerEMail(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerEMail
+     * @param string|null $customerEMail
      *
      * @return $this
      */
-    public function setCustomerEMail($customerEMail)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomerEMail(?string $customerEMail);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getCustomerCountry()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomerCountry(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerCountry
+     * @param string|null $customerCountry
      *
      * @return $this
      */
-    public function setCustomerCountry($customerCountry)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomerCountry(?string $customerCountry);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getCustomerCity()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomerCity(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerCity
+     * @param string|null $customerCity
      *
      * @return $this
      */
-    public function setCustomerCity($customerCity)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomerCity(?string $customerCity);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getCustomerZip()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomerZip(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerZip
+     * @param string|null $customerZip
      *
      * @return $this
      */
-    public function setCustomerZip($customerZip)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomerZip(?string $customerZip);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getCustomerStreet()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomerStreet(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerStreet
+     * @param string|null $customerStreet
      *
      * @return $this
      */
-    public function setCustomerStreet($customerStreet)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomerStreet(?string $customerStreet);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return mixed
+     * @return string|null
      */
-    public function getCustomerCompany()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomerCompany(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerCompany
+     * @param string|null $customerCompany
      *
      * @return $this
      */
-    public function setCustomerCompany($customerCompany)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomerCompany(?string $customerCompany);
 
     /**
-     * @throws UnsupportedException
+     * @return string|null
+     */
+    abstract public function getCustomerFirstname(): ?string;
+
+    /**
+     * @param string|null $customerFirstname
      *
+     * @return $this
+     */
+    abstract public function setCustomerFirstname(?string $customerFirstname);
+
+    /**
      * @return string
      */
-    public function getCustomerFirstname()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getCustomerLastname(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerFirstname
+     * @param string|null $customerLastname
      *
      * @return $this
      */
-    public function setCustomerFirstname($customerFirstname)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCustomerLastname(?string $customerLastname);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getCustomerLastname()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getDeliveryCountry(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $customerLastname
+     * @param string|null $deliveryCountry
      *
      * @return $this
      */
-    public function setCustomerLastname($customerLastname)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setDeliveryCountry(?string $deliveryCountry);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getDeliveryEMail()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getDeliveryCity(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryEMail
+     * @param string|null $deliveryCity
      *
      * @return $this
      */
-    public function setDeliveryEMail($deliveryEMail)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setDeliveryCity(?string $deliveryCity);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getDeliveryCountry()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getDeliveryZip(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryCountry
+     * @param string|null $deliveryZip
      *
      * @return $this
      */
-    public function setDeliveryCountry($deliveryCountry)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setDeliveryZip(?string $deliveryZip);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getDeliveryCity()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getDeliveryStreet(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryCity
+     * @param string|null $deliveryStreet
      *
      * @return $this
      */
-    public function setDeliveryCity($deliveryCity)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setDeliveryStreet(?string $deliveryStreet);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getDeliveryZip()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getDeliveryCompany(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryZip
+     * @param string|null $deliveryCompany
      *
      * @return $this
      */
-    public function setDeliveryZip($deliveryZip)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setDeliveryCompany(?string $deliveryCompany);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getDeliveryStreet()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getDeliveryFirstname(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryStreet
+     * @param string|null $deliveryFirstname
      *
      * @return $this
      */
-    public function setDeliveryStreet($deliveryStreet)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setDeliveryFirstname(?string $deliveryFirstname);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getDeliveryCompany()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function getDeliveryLastname(): ?string;
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryCompany
+     * @param string|null $deliveryLastname
      *
      * @return $this
      */
-    public function setDeliveryCompany($deliveryCompany)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
-
-    /**
-     * @throws UnsupportedException
-     *
-     * @return string
-     */
-    public function getDeliveryFirstname()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
-
-    /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryFirstname
-     *
-     * @return $this
-     */
-    public function setDeliveryFirstname($deliveryFirstname)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
-
-    /**
-     * @throws UnsupportedException
-     *
-     * @return string
-     */
-    public function getDeliveryLastname()
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
-
-    /**
-     * @throws UnsupportedException
-     *
-     * @param string $deliveryLastname
-     *
-     * @return $this
-     */
-    public function setDeliveryLastname($deliveryLastname)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setDeliveryLastname(?string $deliveryLastname);
 
     /**
      * @return bool
-     *
-     * @throws UnsupportedException
      */
-    public function hasDeliveryAddress()
+    public function hasDeliveryAddress(): bool
     {
         return
             ($this->getDeliveryFirstname() != '' || $this->getDeliveryLastname())
@@ -724,62 +409,55 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $currency
+     * @param string|null $currency
      *
      * @return $this
      */
-    public function setCurrency($currency)
-    {
-        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
-    }
+    abstract public function setCurrency(?string $currency);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getCurrency()
-    {
-        throw new UnsupportedException('setPaymentInfo is not implemented for ' . get_class($this));
-    }
+    abstract public function getCurrency(): ?string;
 
     /**
      * Get voucherTokens - Voucher Tokens
      *
-     * @throws UnsupportedException
-     *
      * @return array
      */
-    public function getVoucherTokens()
-    {
-        throw new UnsupportedException('getVoucherTokens is not implemented for ' . get_class($this));
-    }
+    abstract public function getVoucherTokens(): array;
 
     /**
      * Set voucherTokens - Voucher Tokens
      *
-     * @throws UnsupportedException
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken[]|null $voucherTokens
      *
-     * @param array $voucherTokens
+     * @return OnlineShopOrder
+     */
+    abstract public function setVoucherTokens(?array $voucherTokens);
+
+    /**
+     * Get cartHash - Cart Hash
+     *
+     * @return int|null
+     */
+    abstract public function getCartHash(): ?int;
+
+    /**
+     * Set cartHash - Cart Hash
+     *
+     * @param int|null $cartHash
+     *
+     * @return $this
+     */
+    abstract public function setCartHash(?int $cartHash);
+
+    /**
+     * Set successorOrder - Successor Order
+     *
+     * @param \Pimcore\Model\DataObject\OnlineShopOrder $successorOrder
      *
      * @return \Pimcore\Model\DataObject\OnlineShopOrder
      */
-    public function setVoucherTokens($voucherTokens)
-    {
-        throw new UnsupportedException('setVoucherTokens is not implemented for ' . get_class($this));
-    }
-
-    /**
-     * return cart modification time stamp
-     *
-     * @throws UnsupportedException
-     *
-     * @return int
-     */
-    public function getCartModificationTimestamp()
-    {
-        throw new UnsupportedException('getCartModificationTimestamp is not implemented for ' . get_class($this));
-    }
+    abstract public function setSuccessorOrder(?\Pimcore\Model\Element\AbstractElement $successorOrder);
 }

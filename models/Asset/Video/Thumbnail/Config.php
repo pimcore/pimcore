@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
@@ -24,7 +22,7 @@ use Pimcore\Model;
  * @method void save()
  * @method void delete()
  */
-class Config extends Model\AbstractModel
+final class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
@@ -41,49 +39,81 @@ class Config extends Model\AbstractModel
      )
      * )
      *
+     * @internal
+     *
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
+     * @internal
+     *
+     * @var array
+     */
+    public $medias = [];
+
+    /**
+     * @internal
+     *
      * @var string
      */
-    public $name = '';
+    protected $name = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $group = '';
+    protected $group = '';
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $videoBitrate;
+    protected $videoBitrate;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $audioBitrate;
+    protected $audioBitrate;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
+    public $filenameSuffix;
 
     /**
      * @param string $name
      *
      * @return null|Config
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -99,7 +129,7 @@ class Config extends Model\AbstractModel
                 $thumbnail = new self();
                 $thumbnail->getDao()->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
-            } catch (\Exception $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         }
@@ -108,6 +138,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return Config
      */
     public static function getPreviewConfig()
@@ -132,30 +164,60 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     */
+    private function createMediaIfNotExists($name)
+    {
+        if (!array_key_exists($name, $this->medias)) {
+            $this->medias[$name] = [];
+        }
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $name
      * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
-    public function addItem($name, $parameters)
+    public function addItem($name, $parameters, $media = null)
     {
-        $this->items[] = [
+        $item = [
             'method' => $name,
             'arguments' => $parameters,
         ];
+
+        // default is added to $this->items for compatibility reasons
+        if (!$media || $media == 'default') {
+            $this->items[] = $item;
+        } else {
+            $this->createMediaIfNotExists($media);
+            $this->medias[$media][] = $item;
+        }
 
         return true;
     }
 
     /**
+     * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
      *
      * @return bool
      */
-    public function addItemAt($position, $name, $parameters)
+    public function addItemAt($position, $name, $parameters, $media = null)
     {
-        array_splice($this->items, $position, 0, [[
+        if (!$media || $media == 'default') {
+            $itemContainer = &$this->items;
+        } else {
+            $this->createMediaIfNotExists($media);
+            $itemContainer = &$this->medias[$media];
+        }
+
+        array_splice($itemContainer, $position, 0, [[
             'method' => $name,
             'arguments' => $parameters,
         ]]);
@@ -163,9 +225,39 @@ class Config extends Model\AbstractModel
         return true;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function selectMedia($name)
+    {
+        if (preg_match('/^[0-9a-f]{8}$/', $name)) {
+            $hash = $name;
+        } else {
+            $hash = hash('crc32b', $name);
+        }
+
+        foreach ($this->medias as $key => $value) {
+            $currentHash = hash('crc32b', $key);
+            if ($key === $name || $currentHash === $hash) {
+                $this->setItems($value);
+                $this->setFilenameSuffix('media--' . $currentHash . '--query');
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @internal
+     */
     public function resetItems()
     {
         $this->items = [];
+        $this->medias = [];
     }
 
     /**
@@ -206,6 +298,46 @@ class Config extends Model\AbstractModel
     public function getItems()
     {
         return $this->items;
+    }
+
+    /**
+     * @param array $medias
+     */
+    public function setMedias($medias)
+    {
+        $this->medias = $medias;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMedias()
+    {
+        return $this->medias;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMedias()
+    {
+        return !empty($this->medias);
+    }
+
+    /**
+     * @param string $filenameSuffix
+     */
+    public function setFilenameSuffix($filenameSuffix)
+    {
+        $this->filenameSuffix = $filenameSuffix;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilenameSuffix()
+    {
+        return $this->filenameSuffix;
     }
 
     /**
@@ -269,6 +401,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return array
      */
     public function getEstimatedDimensions()
@@ -338,10 +472,5 @@ class Config extends Model\AbstractModel
     public function setGroup(string $group): void
     {
         $this->group = $group;
-    }
-
-    public function clearTempFiles()
-    {
-        $this->doClearTempFiles(PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails', $this->getName());
     }
 }

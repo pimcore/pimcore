@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -63,6 +62,8 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $name
      *
      * @return string|null
+     *
+     * @throws \Exception
      */
     public function getIdByName($name)
     {
@@ -72,6 +73,12 @@ class Dao extends Model\Dao\AbstractDao
                 $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
         } catch (\Exception $e) {
+        }
+
+        if (empty($id)) {
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Data object class definition with with name "%s" does not exist.', $name
+            ));
         }
 
         return $id;

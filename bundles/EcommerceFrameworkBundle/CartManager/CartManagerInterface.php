@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -24,7 +25,7 @@ interface CartManagerInterface extends ComponentInterface
      * Returns cart class name configured in the ecommerce framework config
      *
      * Is also responsible for checking if guest cart class should be used or not,
-     * by calling \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment::getUseGuestCart();
+     * by calling \Pimcore\Bundle\EcommerceFrameworkBundle\Environment::getUseGuestCart();
      *
      * @return string
      */
@@ -140,5 +141,3 @@ interface CartManagerInterface extends ComponentInterface
      */
     public function reset();
 }
-
-class_alias(CartManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager');

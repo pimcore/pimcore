@@ -52,15 +52,21 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
                 labelWidth: 140,
                 store: [
                     ['input', t('input')],
-                    ['textarea', t('textarea')]
+                    ['textarea', t('textarea')],
+                    ['html', t('html')]
                 ]
             },
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width,
                 labelWidth: 140
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             },
             {
                 xtype: "numberfield",

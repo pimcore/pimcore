@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Sitemap\Document\Filter;
@@ -61,7 +61,6 @@ class SiteRootFilter implements FilterInterface
     private function isExcludedSiteRoot(Document $document, Site $site = null): bool
     {
         if (null === $this->siteRoots) {
-            /** @var Site[] $sites */
             $sites = (new Site\Listing())->load();
 
             $this->siteRoots = array_map(function (Site $site) {

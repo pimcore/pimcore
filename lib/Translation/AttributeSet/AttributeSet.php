@@ -1,20 +1,20 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Translation\AttributeSet;
 
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
 class AttributeSet
@@ -58,11 +58,11 @@ class AttributeSet
     }
 
     /**
-     * @param ElementInterface $translationItem
+     * @param TranslationItem $translationItem
      *
      * @return AttributeSet
      */
-    public function setTranslationItem(ElementInterface $translationItem): AttributeSet
+    public function setTranslationItem(TranslationItem $translationItem): AttributeSet
     {
         $this->translationItem = $translationItem;
 

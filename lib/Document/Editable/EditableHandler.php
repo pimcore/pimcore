@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Document\Editable;
@@ -27,14 +28,21 @@ use Pimcore\HttpKernel\WebPathResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
+use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class EditableHandler implements LoggerAwareInterface
+/**
+ * @internal
+ */
+final class EditableHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -57,11 +65,6 @@ class EditableHandler implements LoggerAwareInterface
      * @var WebPathResolver
      */
     protected $webPathResolver;
-
-    /**
-     * @var ActionRenderer
-     */
-    protected $actionRenderer;
 
     /**
      * @var RequestHelper
@@ -88,43 +91,67 @@ class EditableHandler implements LoggerAwareInterface
      */
     protected $editmodeResolver;
 
+    /**
+     * @var HttpKernelRuntime
+     */
+    protected $httpKernelRuntime;
+
+    /**
+     * @var FragmentRendererInterface
+     */
+    protected $fragmentRenderer;
+
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
+
+    private EditmodeEditableDefinitionCollector $definitionCollector;
 
     /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
-     * @param ActionRenderer $actionRenderer
      * @param RequestHelper $requestHelper
      * @param TranslatorInterface $translator
      * @param ResponseStack $responseStack
      * @param EditmodeResolver $editmodeResolver
+     * @param HttpKernelRuntime $httpKernelRuntime
+     * @param EditmodeEditableDefinitionCollector $definitionCollector
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
         EngineInterface $templating,
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
-        ActionRenderer $actionRenderer,
         RequestHelper $requestHelper,
         TranslatorInterface $translator,
         ResponseStack $responseStack,
-        EditmodeResolver $editmodeResolver
+        EditmodeResolver $editmodeResolver,
+        HttpKernelRuntime $httpKernelRuntime,
+        EditmodeEditableDefinitionCollector $definitionCollector,
+        FragmentRendererInterface $fragmentRenderer,
+        RequestStack $requestStack
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
         $this->bundleLocator = $bundleLocator;
         $this->webPathResolver = $webPathResolver;
-        $this->actionRenderer = $actionRenderer;
         $this->requestHelper = $requestHelper;
         $this->translator = $translator;
         $this->responseStack = $responseStack;
         $this->editmodeResolver = $editmodeResolver;
+        $this->httpKernelRuntime = $httpKernelRuntime;
+        $this->definitionCollector = $definitionCollector;
+        $this->fragmentRenderer = $fragmentRenderer;
+        $this->requestStack = $requestStack;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isBrickEnabled(Editable $editable, $brick)
     {
@@ -188,6 +215,7 @@ class EditableHandler implements LoggerAwareInterface
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
+                'needsReload' => $brick->needsReload(),
                 'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
             ];
         }
@@ -196,9 +224,12 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Info $info
+     * @param array $templateParams
+     *
+     * @return string
      */
-    public function renderAreaFrontend(Info $info)
+    public function renderAreaFrontend(Info $info, $templateParams = []): string
     {
         $brick = $this->brickManager->getBrick($info->getId());
 
@@ -233,18 +264,22 @@ class EditableHandler implements LoggerAwareInterface
         // general parameters
         $editmode = $this->editmodeResolver->isEditmode();
 
+        if (!isset($templateParams['isAreaBlock'])) {
+            $templateParams['isAreaBlock'] = false;
+        }
+
         // render complete areabrick
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
         // instead of actually parsing the php template
-        echo $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', [
+        $html = $this->templating->render('@PimcoreCore/Areabrick/wrapper.html.twig', array_merge([
             'brick' => $brick,
             'info' => $info,
             'templating' => $this->templating,
             'editmode' => $editmode,
             'viewTemplate' => $viewTemplate,
             'viewParameters' => $params,
-        ]);
+        ], $templateParams));
 
         if ($brickInfoRestoreValue === null) {
             $request->attributes->remove(self::ATTRIBUTE_AREABRICK_INFO);
@@ -254,6 +289,8 @@ class EditableHandler implements LoggerAwareInterface
 
         // call post render
         $this->handleBrickActionResult($brick->postRenderAction($info));
+
+        return $html;
     }
 
     protected function handleBrickActionResult($result)
@@ -322,17 +359,33 @@ class EditableHandler implements LoggerAwareInterface
     {
         if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_BUNDLE) {
             $bundle = $this->bundleLocator->getBundle($brick);
+            $bundleName = $bundle->getName();
+            if (str_ends_with($bundleName, 'Bundle')) {
+                $bundleName = substr($bundleName, 0, -6);
+            }
 
-            return sprintf(
-                '%s:Areas/%s:%s.%s',
-                $bundle->getName(),
-                $brick->getId(),
-                $type,
-                $brick->getTemplateSuffix()
-            );
+            $templateReference = '';
+
+            foreach (['areas', 'Areas'] as $folderName) {
+                $templateReference = sprintf(
+                    '@%s/%s/%s/%s.%s',
+                    $bundleName,
+                    $folderName,
+                    $brick->getId(),
+                    $type,
+                    $brick->getTemplateSuffix()
+                );
+
+                if ($this->templating->exists($templateReference)) {
+                    return $templateReference;
+                }
+            }
+
+            // return the last reference, even we know that it doesn't exist -> let care the templating engine
+            return $templateReference;
         } else {
             return sprintf(
-                'Areas/%s/%s.%s',
+                'areas/%s/%s.%s',
                 $brick->getId(),
                 $type,
                 $brick->getTemplateSuffix()
@@ -343,22 +396,51 @@ class EditableHandler implements LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAction($controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
+    public function renderAction($controller, array $attributes = [], array $query = [])
     {
         $document = $attributes['document'] ?? null;
         if ($document && $document instanceof PageSnippet) {
             unset($attributes['document']);
-            $attributes = $this->actionRenderer->addDocumentAttributes($document, $attributes);
+            $attributes = $this->addDocumentAttributes($document, $attributes);
         }
 
-        $uri = $this->actionRenderer->createControllerReference(
-            $parent,
-            $controller,
-            $action,
-            $attributes,
-            $query
-        );
+        $uri = new ControllerReference($controller, $attributes, $query);
 
-        return $this->actionRenderer->render($uri, $options);
+        if($this->requestHelper->hasCurrentRequest()) {
+            return $this->httpKernelRuntime->renderFragment($uri, $attributes);
+        } else {
+            // this case could happen when rendering on CLI, e.g. search-reindex ...
+            $request = $this->requestHelper->createRequestWithContext();
+            $this->requestStack->push($request);
+            $response = $this->fragmentRenderer->render($uri, $request, $attributes);
+            $this->requestStack->pop();
+
+            return $response;
+        }
+    }
+
+    /**
+     * @param PageSnippet $document
+     * @param array $attributes
+     *
+     * @return array
+     */
+    public function addDocumentAttributes(PageSnippet $document, array $attributes = [])
+    {
+        // The CMF dynamic router sets the 2 attributes contentDocument and contentTemplate to set
+        // a route's document and template. Those attributes are later used by controller listeners to
+        // determine what to render. By injecting those attributes into the sub-request we can rely on
+        // the same rendering logic as in the routed request.
+        $attributes[DynamicRouter::CONTENT_KEY] = $document;
+
+        if ($document->getTemplate()) {
+            $attributes[DynamicRouter::CONTENT_TEMPLATE] = $document->getTemplate();
+        }
+
+        if ($language = $document->getProperty('language')) {
+            $attributes['_locale'] = $language;
+        }
+
+        return $attributes;
     }
 }

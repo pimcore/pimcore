@@ -1,10 +1,11 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
-{% spaceless -%}
-    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css')) %}
-    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.js')) %}
-{%- endspaceless %}
-
+{% block styles %}
+    {% apply spaceless %}
+        {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css')) %}
+        {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.js')) %}
+    {% endapply %}
+{% endblock %}
 
 
 {% set order = orderAgent.getOrder() %}
@@ -211,16 +212,17 @@
                                 </td>
                                 <td width="100">
                                     <small>
-                                        {% set providers = ['qpay', 'datatrans', 'paypal', 'ogone', 'mpay24', 'payu'] %}
                                         {% set amount = null %}
                                         {% set break = false %}
-                                        {% for provider in providers if not break %}
-                                            {% set getter = 'getProvider_%s_amount'|format(provider) %}
-                                            {% if attribute(item, getter) is defined %}
-                                                {#{% set amount = attribute(item, getter) %}#}
-                                                {% if amount %}
-                                                    {{ amount }}
-                                                    {% set break = true %}
+                                        {% for providerKey, providerClass in paymentProviders %}
+                                            {% if not break %}
+                                                {% set getter = 'provider_%s_amount'|format(providerKey) %}
+                                                {% if attribute(item, getter) is defined %}
+                                                    {% set amount = attribute(item, getter) %}
+                                                    {% if amount %}
+                                                        {{ amount }}
+                                                        {% set break = true %}
+                                                    {% endif %}
                                                 {% endif %}
                                             {% endif %}
                                         {% endfor %}

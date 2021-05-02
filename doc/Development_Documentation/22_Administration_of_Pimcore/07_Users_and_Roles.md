@@ -42,7 +42,6 @@ The following list outlines what the different system permissions (available for
 * **Notes & Events**: Notes & Events are visible 
 * **Objects**: objects tree is visible 
 * **Predefined Properties**: User can create and modify predefined properties
-* **QR-Codes**: User can create and modify QR codes
 * **Recycle Bin**: User has access to recycle bin
 * **Redirects**: User can create and modify redirects
 * **Reports**: User has access to reports module

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -93,7 +93,8 @@ pimcore.object.classes.klass = Class.create({
         panelButtons.push({
             text: t("import"),
             iconCls: "pimcore_icon_upload",
-            handler: this.upload.bind(this)
+            handler: this.upload.bind(this),
+            disabled: !this.data.isWriteable
         });
 
         panelButtons.push({
@@ -108,7 +109,8 @@ pimcore.object.classes.klass = Class.create({
         panelButtons.push({
             text: t("save"),
             iconCls: "pimcore_icon_apply",
-            handler: this.save.bind(this)
+            handler: this.save.bind(this),
+            disabled: !this.data.isWriteable
         });
 
 
@@ -267,13 +269,6 @@ pimcore.object.classes.klass = Class.create({
         // get available data types
         var dataMenu = [];
         var dataComps = Object.keys(pimcore.object.classes.data);
-
-        // @TODO: ignoredAliases are there for BC reasons, to be removed in v7
-        var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href','nonownerobjects'];
-        ignoredAliases.forEach(function (item) {
-            dataComps = array_remove_value(dataComps, item);
-        });
-
         var parentRestrictions;
         var groups = [];
         var groupNames = ["text","numeric","date","select","media","relation","geo","crm","structured","other"];
@@ -823,6 +818,13 @@ pimcore.object.classes.klass = Class.create({
                     name: "linkGeneratorReference",
                     width: 600,
                     value: this.data.linkGeneratorReference
+                },
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("preview_generator_reference"),
+                    name: "previewGeneratorReference",
+                    width: 600,
+                    value: this.data.previewGeneratorReference
                 },
                 {
                     xtype: "textfield",
@@ -1476,7 +1478,7 @@ pimcore.object.classes.klass = Class.create({
                 if (res.message) {
                     pimcore.helpers.showNotification(t("error"), res.message, "error");
                 } else {
-                    throw "save was not successful, see log files in /var/logs";
+                    throw "save was not successful, see log files in /var/log";
                 }
             }
         } catch (e) {

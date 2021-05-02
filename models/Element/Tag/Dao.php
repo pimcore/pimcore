@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element\Tag;
@@ -76,7 +74,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
-                $this->model->setId($lastInsertId);
+                $this->model->setId((int) $lastInsertId);
             }
 
             //check for id-path and update it, if path has changed -> update all other tags that have idPath == idPath/id
@@ -248,12 +246,12 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->select()
-                           ->from('tags_assignment', [])
+        $select = $this->db->createQueryBuilder()->select(['*'])
+                           ->from('tags_assignment')
                            ->where('tags_assignment.ctype = ?', $type);
 
         if (true === $considerChildTags) {
-            $select->joinInner('tags', 'tags.id = tags_assignment.tagid', ['tags_id' => 'id']);
+            $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
             $select->where(
                 '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
@@ -264,11 +262,7 @@ class Dao extends Model\Dao\AbstractDao
             $select->where('tags_assignment.tagid = ?', $tag->getId());
         }
 
-        $select->joinInner(
-            ['el' => $map[$type][0]],
-            'tags_assignment.cId = el.' . $map[$type][1],
-            ['el_id' => $map[$type][1]]
-        );
+        $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);
 
         if (! empty($subtypes)) {
             foreach ($subtypes as $subType) {
@@ -284,7 +278,7 @@ class Dao extends Model\Dao\AbstractDao
             $select->where('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
-        $res = $this->db->query($select);
+        $res = $this->db->query((string) $select);
 
         while ($row = $res->fetch()) {
             $el = $map[$type][3]::getById($row['el_id']);

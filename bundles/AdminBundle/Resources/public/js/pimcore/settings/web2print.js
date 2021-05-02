@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -79,21 +79,6 @@ pimcore.settings.web2print = Class.create({
                 defaults: {width: 450},
                 items: [
                     {
-                        fieldLabel: t("web2print_version"),
-                        xtype: "combo",
-                        width: 600,
-                        editable: false,
-                        name: "pdfreactorVersion",
-                        value: this.getValue("pdfreactorVersion"),
-                        store: [
-                            ["8.0", "8.0"],
-                            ["8.1", "8.1"],
-                            ["9.0", "9.0"],
-                            ["10.0", "10.0"]
-                        ],
-                        mode: "local",
-                        triggerAction: "all"
-                    },{
                         fieldLabel: t("web2print_protocol"),
                         xtype: "combo",
                         width: 600,
@@ -208,6 +193,52 @@ pimcore.settings.web2print = Class.create({
                 ]
             });
 
+            this.headlessChromeSettings = Ext.create("Ext.form.FieldSet", {
+                title: t('web2print_headlesschrome_settings'),
+                collapsible: true,
+                collapsed: false,
+                autoHeight: true,
+                hidden: this.getValue("generalTool") != 'headlesschrome',
+                defaultType: 'textfield',
+                defaults: {width: 450},
+                items: [
+                    {
+                        xtype: 'textarea',
+                        width: 850,
+                        height: 200,
+                        fieldLabel: t("web2print_headlesschrome_settings"),
+                        name: 'headlessChromeSettings',
+                        value: this.getValue("headlessChromeSettings")
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_headlesschrome_documentation"),
+                        name: 'documentation',
+                        width: 600,
+                        value: t('web2print_headlesschrome_puppeteer_documentation'),
+                        autoEl:{
+                            tag: 'a',
+                            href: "https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pagepdfoptions",
+                        }
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_headlesschrome_documentation_additions"),
+                        name: 'additions',
+                        width: 850,
+                        value: t('web2print_headlesschrome_documentation_additions_text'),
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_headlesschrome_json_converter"),
+                        name: 'json_converter',
+                        width: 600,
+                        value: t('web2print_headlesschrome_json_converter_link'),
+                        autoEl:{
+                            tag: 'a',
+                            href: "https://jsonformatter.org/",
+                        }
+                    }
+                ]
+            });
+
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
@@ -260,7 +291,8 @@ pimcore.settings.web2print = Class.create({
                                 value: this.getValue("generalTool"),
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
-                                    ["wkhtmltopdf", "WkHtmlToPdf"]
+                                    ["wkhtmltopdf", "WkHtmlToPdf"],
+                                    ["headlesschrome", "Headless Chrome"],
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
@@ -270,9 +302,15 @@ pimcore.settings.web2print = Class.create({
                                         if(combo.getValue() == "pdfreactor") {
                                             this.pdfReactorSettings.show();
                                             this.wkhtmlToPdfSettings.hide();
-                                        } else {
+                                            this.headlessChromeSettings.hide();
+                                        } else if(combo.getValue() == "wkhtmltopdf") {
                                             this.pdfReactorSettings.hide();
                                             this.wkhtmlToPdfSettings.show();
+                                            this.headlessChromeSettings.hide();
+                                        }else{
+                                            this.pdfReactorSettings.hide();
+                                            this.wkhtmlToPdfSettings.hide();
+                                            this.headlessChromeSettings.show();
                                         }
 
                                     }.bind(this)
@@ -299,7 +337,7 @@ pimcore.settings.web2print = Class.create({
                             }
                         ]
                     }
-                    , this.pdfReactorSettings, this.wkhtmlToPdfSettings
+                    , this.pdfReactorSettings, this.wkhtmlToPdfSettings, this.headlessChromeSettings
                 ]
             });
 

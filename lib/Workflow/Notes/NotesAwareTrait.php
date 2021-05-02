@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Workflow\Notes;
@@ -21,9 +22,11 @@ namespace Pimcore\Workflow\Notes;
  */
 trait NotesAwareTrait
 {
+    protected $customHtmlService = null;
+
     public function getNotes(): ?array
     {
-        if ($this->getNotesCommentEnabled()) {
+        if ($this->getNotesCommentEnabled() || $this->getCustomHtmlService()) {
             return $this->options['notes'];
         }
 
@@ -58,5 +61,26 @@ trait NotesAwareTrait
     public function getNotesAdditionalFields(): array
     {
         return $this->options['notes']['additionalFields'] ?? [];
+    }
+
+    /**
+     * Inject service via compiler pass.
+     *
+     * @param CustomHtmlServiceInterface $customHtmlService
+     */
+    public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService)
+    {
+        if ($customHtmlService instanceof AbstractCustomHtmlService) {
+            if ($this->getName() == $customHtmlService->getTransitionName()) {
+                $this->customHtmlService = $customHtmlService;
+            } elseif ($this->getName() == $customHtmlService->getActionName()) {
+                $this->customHtmlService = $customHtmlService;
+            }
+        }
+    }
+
+    public function getCustomHtmlService(): ?CustomHtmlServiceInterface
+    {
+        return $this->customHtmlService;
     }
 }

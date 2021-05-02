@@ -1,9 +1,22 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Db;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -11,11 +24,60 @@ use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function setUp()
+    /** @var array */
+    protected $originalConfig;
+
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
         \Pimcore::setAdminMode();
+        $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
+    }
+
+    public function tearDown(): void
+    {
+        \Pimcore\Config::setSystemConfiguration($this->originalConfig);
+        parent::tearDown();
+    }
+
+    public function testFallback()
+    {
+        $configuration = $this->originalConfig;
+        $configuration['general']['fallback_languages']['de'] = 'en';
+        \Pimcore\Config::setSystemConfiguration($configuration);
+
+        // create root -> one -> two -> three
+        $one = new Inheritance();
+        $one->setKey('one');
+        $one->setParentId(1);
+        $one->setPublished(true);
+        $one->save();
+
+        $two = new Inheritance();
+        $two->setKey('two');
+        $two->setParentId($one->getId());
+        $two->setPublished(true);
+        $two->save();
+
+        $one->setInput('abc', 'en');
+        $one->save();
+
+        $one->save();
+
+        $db = Db::get();
+
+        $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_de where ooo_id = ' . $two->getId();
+        $result = $db->fetchRow($query);
+        $this->assertEquals($result['input'], 'abc');
+
+        $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_en where ooo_id = ' . $two->getId();
+        $result = $db->fetchRow($query);
+        $this->assertEquals($result['input'], 'abc');
+
+        $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_fr where ooo_id = ' . $two->getId();
+        $result = $db->fetchRow($query);
+        $this->assertNull($result['input']);
     }
 
     /**
@@ -31,7 +93,6 @@ class LocalizedFieldTest extends ModelTestCase
     {
         // According to the bootstrap file en and de are valid website languages
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -41,7 +102,6 @@ class LocalizedFieldTest extends ModelTestCase
         $one->setInput('parenttextDE', 'de');
         $one->save();
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
@@ -50,7 +110,6 @@ class LocalizedFieldTest extends ModelTestCase
         $two->setInput('childtextDE', 'de');
         $two->save();
 
-        /** @var Inheritance $three */
         $three = new Inheritance();
         $three->setKey('three');
         $three->setParentId($two->getId());
@@ -61,9 +120,9 @@ class LocalizedFieldTest extends ModelTestCase
         $id2 = $two->getId();
         $id3 = $three->getId();
 
-        $one = AbstractObject::getById($id1);
-        $two = AbstractObject::getById($id2);
-        $three = AbstractObject::getById($id3);
+        $one = DataObject::getById($id1);
+        $two = DataObject::getById($id2);
+        $three = DataObject::getById($id3);
 
         $three->delete();
 
@@ -80,7 +139,7 @@ class LocalizedFieldTest extends ModelTestCase
         $two->setInput(null, 'de');
         $two->save();
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals('parenttextDE', $two->getInput('de'));
 
         $list = new Inheritance\Listing();
@@ -93,7 +152,7 @@ class LocalizedFieldTest extends ModelTestCase
         // set it back
         $two->setInput('childtextDE', 'de');
         $two->save();
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
 
         $list = new Inheritance\Listing();
         $list->setCondition("input LIKE '%parenttext%'");
@@ -109,14 +168,14 @@ class LocalizedFieldTest extends ModelTestCase
         $listItems = $list->load();
         $this->assertEquals(1, count($listItems), 'Expected one list item for de');
 
-        $getInheritedValues = AbstractObject::getGetInheritedValues();
-        AbstractObject::setGetInheritedValues(false);
+        $getInheritedValues = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues(false);
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals(null, $two->getInput('en'));
         $this->assertEquals('childtextDE', $two->getInput('de'));
 
-        AbstractObject::setGetInheritedValues($getInheritedValues);
+        DataObject::setGetInheritedValues($getInheritedValues);
 
         // now move it out
 
@@ -138,7 +197,7 @@ class LocalizedFieldTest extends ModelTestCase
         $one->setInput('parenttextEN2', 'en');
         $one->save();
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals('parenttextEN2', $two->getInput('en'));
 
         // now turn inheritance off
@@ -146,14 +205,14 @@ class LocalizedFieldTest extends ModelTestCase
         $class->setAllowInherit(false);
         $class->save();
 
-        $one = AbstractObject::getById($id2);
-        $two = AbstractObject::getById($id2);
+        $one = DataObject::getById($id2);
+        $two = DataObject::getById($id2);
 
         // save both objects again
         $one->save();
         $two->save();
 
-        $two = AbstractObject::getById($id2);
+        $two = DataObject::getById($id2);
         $this->assertEquals(null, $two->getInput('en'));
 
         $list = new Inheritance\Listing();
@@ -168,11 +227,9 @@ class LocalizedFieldTest extends ModelTestCase
         $class->save();
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testInvalidLocaleList()
     {
+        $this->expectException(\Exception::class);
         $this->markTestSkipped('TODO: the following test should fail, but no exception is thrown');
 
         // invalid locale
@@ -187,21 +244,18 @@ class LocalizedFieldTest extends ModelTestCase
     {
         // create root -> one -> two -> three
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
         $one->setPublished(true);
         $one->save();
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
         $two->setPublished(true);
         $two->save();
 
-        /** @var Inheritance $three */
         $three = new Inheritance();
         $three->setKey('three');
         $three->setParentId($two->getId());

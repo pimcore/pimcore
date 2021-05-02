@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject;
@@ -16,12 +29,11 @@ class ObjectTest extends ModelTestCase
 {
     /**
      * Verifies that a object with the same parent ID cannot be created.
-     *
-     * @expectedException \Exception
-     * @expectedExceptionMessage ParentID and ID is identical, an element can't be the parent of itself.
      */
     public function testParentIdentical()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
         $savedObject = TestHelper::createEmptyObject();
         $this->assertTrue($savedObject->getId() > 0);
 
@@ -31,12 +43,11 @@ class ObjectTest extends ModelTestCase
 
     /**
      * Parent ID of a new object cannot be 0
-     *
-     * @expectedException \Exception
-     * @expectedExceptionMessage ParentID and ID is identical, an element can't be the parent of itself.
      */
     public function testParentIs0()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
         $savedObject = TestHelper::createEmptyObject('', false);
         $this->assertTrue($savedObject->getId() == 0);
 

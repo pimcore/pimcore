@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -30,8 +28,6 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     protected $items;
 
     /**
-     * ImageGallery constructor.
-     *
      * @param Hotspotimage[] $items
      */
     public function __construct($items)
@@ -41,13 +37,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * Return the current element
-     *
-     * @link http://php.net/manual/en/iterator.current.php
-     *
-     * @return mixed Can return any type.
-     *
-     * @since 5.0.0
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -57,13 +47,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
-     *
-     * @since 5.0.0
+     * {@inheritdoc}
      */
     public function next()
     {
@@ -71,13 +55,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * Return the key of the current element
-     *
-     * @link http://php.net/manual/en/iterator.key.php
-     *
-     * @return mixed scalar on success, or null on failure.
-     *
-     * @since 5.0.0
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -87,14 +65,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * Checks if current position is valid
-     *
-     * @link http://php.net/manual/en/iterator.valid.php
-     *
-     * @return bool The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
-     *
-     * @since 5.0.0
+     * {@inheritdoc}
      */
     public function valid()
     {
@@ -104,13 +75,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
-     *
-     * @since 5.0.0
+     * {@inheritdoc}
      */
     public function rewind()
     {

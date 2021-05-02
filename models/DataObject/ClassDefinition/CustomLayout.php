@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -32,54 +30,54 @@ class CustomLayout extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * @var string
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var Layout|null
      */
-    public $layoutDefinitions;
+    protected $layoutDefinitions;
 
     /**
      * @var int
      */
-    public $default;
+    protected $default;
 
     /**
      * @param string $id
@@ -99,7 +97,6 @@ class CustomLayout extends Model\AbstractModel
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
-                DataObject\Service::synchronizeCustomLayout($customLayout);
                 \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
             } catch (\Exception $e) {
                 return null;
@@ -113,16 +110,15 @@ class CustomLayout extends Model\AbstractModel
      * @param string $name
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByName(string $name)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByName($name);
-        if ($id) {
-            return self::getById($id);
-        }
 
-        return null;
+        return self::getById($id);
     }
 
     /**
@@ -130,16 +126,15 @@ class CustomLayout extends Model\AbstractModel
      * @param string $classId
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByNameAndClassId(string $name, $classId)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByNameAndClassId($name, $classId);
-        if ($id) {
-            return self::getById($id);
-        }
 
-        return null;
+        return self::getById($id);
     }
 
     /**
@@ -191,13 +186,15 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @todo: $isUpdate is not needed
-     *
      * @param bool $saveDefinitionFile
      */
     public function save($saveDefinitionFile = true)
     {
         $isUpdate = $this->exists();
+
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
+        }
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new CustomLayoutEvent($this), DataObjectCustomLayoutEvents::PRE_UPDATE);
@@ -254,22 +251,60 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @internal
+     *
+     * @return bool
      */
-    public function getDefinitionFile()
+    public function isWritable(): bool
     {
-        $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $this->getId() .'.php';
+        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
 
-        return $file;
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
-     * @param Data|Layout $data
+     * @internal
+     *
+     * @param string|null $id
+     *
+     * @return string
      */
-    public static function cleanupForExport(&$data)
+    public function getDefinitionFile($id = null)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if (!$id) {
+            $id = $this->getId();
+        }
+
+        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/customlayouts/custom_definition_'. $id .'.php';
+        if (is_file($customFile)) {
+            return $customFile;
+        } else {
+            return PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $id .'.php';
+        }
+    }
+
+    /**
+     * @param Data|Layout|null $data
+     */
+    private static function cleanupForExport(&$data)
+    {
+        if (is_null($data)) {
+            return;
+        }
+
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {
@@ -283,6 +318,8 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return string
      */
     protected function getInfoDocBlock()
@@ -304,6 +341,8 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $classId
      *
      * @return int|null
@@ -353,7 +392,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {

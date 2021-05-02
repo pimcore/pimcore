@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -158,17 +158,28 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                 labelWidth: 100,
                 items :[
                     {
-                        xtype: "numberfield",
+                        xtype: "textfield",
                         fieldLabel: t("width"),
                         name: "width",
                         value: this.datax.width
                     },
                     {
-                        xtype: "numberfield",
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: t('width_explanation')
+                    },
+                    {
+                        xtype: "textfield",
                         fieldLabel: t("height"),
                         name: "height",
                         value: this.datax.height
-                    },{
+                    },
+                    {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: t('height_explanation')
+                    },
+                    {
                         xtype: "numberfield",
                         fieldLabel: t("maximum_items"),
                         name: "maxItems",
@@ -369,6 +380,3 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
     }
 
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.classes.data.multihref = pimcore.object.classes.data.manyToManyRelation;

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\Email;
@@ -22,6 +20,8 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\Tool\Email\Log\Dao getDao()
  */
 class Log extends Model\AbstractModel
@@ -31,112 +31,112 @@ class Log extends Model\AbstractModel
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Id of the email document or null if no document was given
      *
      * @var int | null
      */
-    public $documentId;
+    protected $documentId;
 
     /**
      * Parameters passed for replacement
      *
      * @var array
      */
-    public $params;
+    protected $params;
 
     /**
      * Modification date as timestamp
      *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * The request URI from were the email was sent
      *
      * @var string
      */
-    public $requestUri;
+    protected $requestUri;
 
     /**
      * The "from" email address
      *
      * @var string
      */
-    public $from;
+    protected $from;
 
     /**
      * Contains the reply to email addresses (multiple recipients are separated by a ",")
      *
      * @var string
      */
-    public $replyTo;
+    protected $replyTo;
 
     /**
      * The "to" recipients (multiple recipients are separated by a ",")
      *
      * @var string
      */
-    public $to;
+    protected $to;
 
     /**
      * The carbon copy recipients (multiple recipients are separated by a ",")
      *
      * @var string
      */
-    public $cc;
+    protected $cc;
 
     /**
      * The blind carbon copy recipients (multiple recipients are separated by a ",")
      *
      * @var string
      */
-    public $bcc;
+    protected $bcc;
 
     /**
      * Contains 1 if a html logfile exists and 0 if no html logfile exists
      *
      * @var int
      */
-    public $emailLogExistsHtml;
+    protected $emailLogExistsHtml;
 
     /**
      * Contains 1 if a text logfile exists and 0 if no text logfile exists
      *
      * @var int
      */
-    public $emailLogExistsText;
+    protected $emailLogExistsText;
 
     /**
      * Contains the timestamp when the email was sent
      *
      * @var int
      */
-    public $sentDate;
+    protected $sentDate;
 
     /**
      * Contains the rendered html content of the email
      *
      * @var string
      */
-    public $bodyHtml;
+    protected $bodyHtml;
 
     /**
      * Contains the rendered text content of the email
      *
      * @var string
      */
-    public $bodyText;
+    protected $bodyText;
 
     /**
      * Contains the rendered subject of the email
      *
      * @var string
      */
-    public $subject;
+    protected $subject;
 
     /**
      * @param int $id

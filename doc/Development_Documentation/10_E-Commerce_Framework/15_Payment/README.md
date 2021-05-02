@@ -45,76 +45,6 @@ pimcore_ecommerce_config:
                         use_digital_signature: false
                         mode: live
 
-            qpay:
-                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay
-                profile: sandbox
-                profiles:
-                    sandbox:
-                        secret: B8AKTPWBRMNBV455FG6M2DANE99WU2
-                        customer: D200001
-                        toolkit_password: jcv45z
-                        # define optional properties which can be used in initPayment (see Wirecard documentation)
-                        optional_payment_properties:
-                            - paymentType
-                            - financialInstitution
-
-                        # set hash algorithm to HMAC-SHA512
-                        hash_algorithm:
-                            hmac_sha512
-
-                    live:
-                        secret: secret
-                        customer: customer
-
-            paypal:
-                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPal
-                profile: sandbox
-                profiles:
-                    sandbox:
-                        api_username: paypal-facilitator_api1.i-2xdream.de
-                        api_password: 1375366858
-                        api_signature: AT2PJj7VTo5Rt.wM6enrwOFBoD1fACBe1RbAEMsSshWFRhpvjAuPR8wD
-                    live:
-                        api_username: username
-                        api_password: password
-                        api_signature: signature
-                        mode: live
-
-
-            seamless:
-                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless
-                profile: sandbox
-                profiles:
-                    _defaults:
-                        hash_algorithm: hmac_sha512
-                        paypal_activate_item_level: true
-                        partial: PaymentSeamless/wirecard-seamless/payment-method-selection.html.php
-                        js: /static/js/payment/wirecard-seamless/frontend.js
-                        iframe_css_url: /static/css/payment-iframe.css?elementsclientauth=disabled
-                        payment_methods:
-                            PREPAYMENT:
-                                icon: /static/img/wirecard-seamless/prepayment.png
-                                partial: PaymentSeamless/wirecard-seamless/payment-method/prepayment.html.php
-                            CCARD:
-                                icon: /static/img/wirecard-seamless/ccard.png
-                                partial: PaymentSeamless/wirecard-seamless/payment-method/ccard.html.php
-                            PAYPAL:
-                                icon: /static/img/wirecard-seamless/paypal.png
-                            SOFORTUEBERWEISUNG:
-                                icon: /static/img/wirecard-seamless/sue.png
-                            INVOICE:
-                                icon: /static/img/wirecard-seamless/payolution.png
-                                partial: PaymentSeamless/wirecard-seamless/payment-method/invoice.html.php
-                    sandbox:
-                        customer_id: D200001
-                        shop_id: qmore
-                        secret: B8AKTPWBRMNBV455FG6M2DANE99WU2
-                        password: jcv45z
-                    live:
-                        customer_id: customer_id
-                        shop_id: shop_id
-                        secret: secret
-                        password: password
             ogone:
                 provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\OGone
                 profile: sandbox
@@ -170,18 +100,16 @@ The payment provider name will be referenced from the checkout manager configura
 provider from the payment manager.
 
 ## Payment Providers
-Currently following Payment Providers are integrated into the framework: 
+Following Payment Providers are available as a dedicated bundle to be integrated into the E-commerce framework: 
 
-- [Wirecard QPay](./01_Wirecard_QPay.md)
-- [Wirecard Seamless](./02_Wirecard_Seamless.md)
-- [Datatrans](./03_Datatrans.md)
-- [PayPal](./04_PayPal.md)
-- [Klarna](./05_Klarna.md)
-- [OGone](./06_OGone.md)
-- [MPay24](./07_MPay24.md)
-- [PayU](./08_PayU.md)
-- [Heidelpay](./09_Heidelpay.md)
-- [Hobex](./11_Hobex.md)
+- [Datatrans](https://github.com/pimcore/payment-provider-datatrans)
+- [PayPalSmartButton](https://github.com/pimcore/payment-provider-paypal-smart-payment-button)
+- [Klarna](https://github.com/pimcore/payment-provider-klarna)
+- [OGone](https://github.com/pimcore/payment-provider-ogone)
+- [MPay24](https://github.com/pimcore/payment-provider-mpay24-seamless)
+- [PayU](https://github.com/pimcore/payment-provider-payu)
+- [Unzer (former Heidelpay)](https://github.com/pimcore/payment-provider-unzer)
+- [Hobex](https://github.com/pimcore/payment-provider-hobex)
 
 
 ## Further Payment Aspects

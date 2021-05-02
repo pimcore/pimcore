@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Tests\Test;
 
 use Codeception\TestCase\Test;
@@ -12,7 +25,7 @@ abstract class TestCase extends Test
      */
     protected $cleanupDbInSetup = true;
 
-    protected $backupGlobalsBlacklist = ['IDE_EVAL_CACHE'];     // xdebug
+    protected $backupGlobalsExcludeList = ['IDE_EVAL_CACHE'];     // xdebug
 
     /**
      * Determine if the test needs a DB connection (will be skipped if no DB is present)
@@ -25,9 +38,9 @@ abstract class TestCase extends Test
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -106,7 +106,7 @@ registered as service:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Document;

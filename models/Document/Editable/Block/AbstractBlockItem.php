@@ -5,12 +5,12 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Editable\Block;
@@ -20,16 +20,22 @@ use Pimcore\Model\Document;
 abstract class AbstractBlockItem
 {
     /**
+     * @internal
+     *
      * @var Document\PageSnippet
      */
     protected $document;
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $parentBlockNames;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $index;
@@ -47,22 +53,10 @@ abstract class AbstractBlockItem
      * @param string $name
      *
      * @return Document\Editable|null
-     *
-     * @deprecated and will be removed in Pimcore 7. Use getEditable() instead.
-     */
-    public function getElement(string $name)
-    {
-        return $this->getEditable($name);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return Document\Editable|null
      */
     public function getEditable(string $name)
     {
-        $id = Document\Editable::buildChildElementTagName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
+        $id = Document\Editable::buildChildEditableName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
         $editable = $this->document->getEditable($id);
 
         if ($editable) {

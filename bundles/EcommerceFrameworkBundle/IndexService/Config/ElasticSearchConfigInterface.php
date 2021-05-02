@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
@@ -49,13 +50,33 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      *  - value: the synonym provider
      *
      * @return SynonymProviderInterface[]
-     *
-     * @todo pimcore 7 - add this method to the interface
      */
-//    public function getSynonymProviders(): array
-//    {
-//        return $this->synonymProviders;
-//    }
-}
+    public function getSynonymProviders(): array;
 
-class_alias(ElasticSearchConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig');
+    /**
+     * @param string $property
+     *
+     * @return array|string
+     */
+    public function getClientConfig($property = null);
+
+    /**
+     * returns the full field name
+     *
+     * @param string $fieldName
+     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
+     *
+     * @return string
+     */
+    public function getFieldNameMapped($fieldName, $considerSubFieldNames = false);
+
+    /**
+     * returns short field name based on full field name
+     * also considers subfield names like name.analyzed etc.
+     *
+     * @param string $fullFieldName
+     *
+     * @return false|int|string
+     */
+    public function getReverseMappedFieldName($fullFieldName);
+}

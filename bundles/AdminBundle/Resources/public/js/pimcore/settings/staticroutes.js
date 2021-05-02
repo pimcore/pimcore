@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -63,9 +63,7 @@ pimcore.settings.staticroutes = Class.create({
                 {name:'name'},
                 {name:'pattern', allowBlank:false},
                 {name:'reverse', allowBlank:true},
-                {name:'module'},
                 {name:'controller'},
-                {name:'action'},
                 {name:'variables'},
                 {name:'defaults'},
                 {name:'siteId'},
@@ -103,32 +101,14 @@ pimcore.settings.staticroutes = Class.create({
                 editor:new Ext.form.TextField({})},
             {text:t("reverse"), flex:100, sortable:true, dataIndex:'reverse',
                 editor:new Ext.form.TextField({})},
-            {
-                text: t('bundle') + "(" + t('optional') + ")", flex: 50, sortable: false, dataIndex: 'module',
-                editor: new Ext.form.ComboBox({
-                    store: new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: Routing.generate('pimcore_admin_misc_getavailablemodules'),
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            }
-                        },
-                        fields: ["name"]
-                    }),
-                    triggerAction: "all",
-                    displayField: 'name'
-                })
-            },
-            {text:t("controller"), flex:50, sortable:false, dataIndex:'controller',
+            {text:t("controller"), flex:200, sortable:false, dataIndex:'controller',
                 editor:new Ext.form.ComboBox({
                     store:new Ext.data.JsonStore({
                         autoDestroy:true,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
-                            url:Routing.generate('pimcore_admin_misc_getavailablecontrollers'),
+                            url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -137,55 +117,16 @@ pimcore.settings.staticroutes = Class.create({
                         fields:["name"]
                     }),
                     matchFieldWidth: false,
-                    queryMode: 'local',
+                    typeAhead: true,
+                    queryMode: "local",
+                    anyMatch: true,
+                    editable: true,
+                    forceSelection: false,
                     triggerAction:"all",
                     displayField:'name',
                     valueField:'name',
-                    listeners:{
-                        "focus":function (el) {
-                            var currentRecord = this.grid.getSelection();
-                            el.getStore().reload({
-                                params:{
-                                    moduleName:currentRecord[0].data.module
-                                },
-                                callback: function() {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
-                    }
-                })},
-            {text:t("action"), flex:50, sortable:false, dataIndex:'action',
-                editor:new Ext.form.ComboBox({
-                    store:new Ext.data.Store({
-                        autoDestroy:true,
-                        proxy: {
-                            type: 'ajax',
-                            url:Routing.generate('pimcore_admin_misc_getavailableactions'),
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            }
-                        },
-                        fields:["name"]
-                    }),
-                    queryMode: 'local',
-                    triggerAction:"all",
-                    displayField:'name',
-                    valueField:'name',
-                    listeners:{
-                        "focus":function (el) {
-                            var currentRecord = this.grid.getSelection();
-                            el.getStore().reload({
-                                params:{
-                                    controllerName:currentRecord[0].data.controller,
-                                    moduleName: currentRecord[0].data.module
-                                },
-                                callback: function() {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this),
+                    listConfig: {
+                        maxWidth: 400
                     }
                 })},
             {text:t("variables"), flex:50, sortable:false, dataIndex:'variables',

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
@@ -159,46 +160,4 @@ interface EnvironmentInterface extends ComponentInterface
      * @return null|string
      */
     public function getSystemLocale();
-
-    /**
-     * ===========================================
-     *
-     *  deprecated functions
-     *
-     * ===========================================
-     */
-
-    /**
-     * @deprecated use setCurrentAssortmentTenant instead
-     *
-     * @param string $tenant
-     *
-     * @return mixed
-     */
-    public function setCurrentTenant($tenant);
-
-    /**
-     * @deprecated use getCurrentAssortmentTenant instead
-     *
-     * @return string
-     */
-    public function getCurrentTenant();
-
-    /**
-     * @deprecated use setCurrentAssortmentSubTenant instead
-     *
-     * @param mixed $tenant
-     *
-     * @return mixed
-     */
-    public function setCurrentSubTenant($tenant);
-
-    /**
-     * @deprecated use getCurrentAssortmentSubTenant instead
-     *
-     * @return mixed
-     */
-    public function getCurrentSubTenant();
 }
-
-class_alias(EnvironmentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment');

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -100,7 +101,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @var array
      */
     protected $_optionalAttributes = [
-        'charset', 'defer', 'language', 'src', 'type',
+        'charset', 'defer', 'language', 'src', 'type', 'async',
     ];
 
     /**
@@ -459,6 +460,10 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                 }
                 if ('defer' == $key) {
                     $value = 'defer';
+                }
+
+                if ('async' == $key) {
+                    $value = 'async';
                 }
                 $attrString .= sprintf(' %s="%s"', $key, ($this->_autoEscape) ? $this->_escape($value) : $value);
             }

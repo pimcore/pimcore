@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -23,8 +24,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/variants")
+ *
+ * @internal
  */
-class VariantsController extends AdminController
+final class VariantsController extends AdminController
 {
     /**
      * @Route("/update-key", name="pimcore_admin_dataobject_variants_updatekey", methods={"PUT"})
@@ -213,7 +216,7 @@ class VariantsController extends AdminController
 
                 $list = $gridHelperService->prepareListingForGrid($allParams, $request->getLocale(), $this->getAdminUser());
 
-                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject::OBJECT_TYPE_VARIANT]);
 
                 $list->load();
 

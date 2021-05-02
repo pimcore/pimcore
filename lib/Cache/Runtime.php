@@ -1,24 +1,32 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Cache;
 
 final class Runtime extends \ArrayObject
 {
-    const SERVICE_ID = __CLASS__;
+    private const SERVICE_ID = __CLASS__;
 
+    /**
+     * @var self|null
+     */
     protected static $tempInstance;
+
+    /**
+     * @var self|null
+     */
     protected static $instance;
 
     /**
@@ -38,11 +46,13 @@ final class Runtime extends \ArrayObject
      *
      * @return self
      */
-    public static function getInstance()
+    public static function getInstance(): self
     {
         if (self::$instance) {
             return self::$instance;
-        } elseif (\Pimcore::hasContainer()) {
+        }
+
+        if (\Pimcore::hasContainer()) {
             $container = \Pimcore::getContainer();
 
             /** @var self $instance */
@@ -66,16 +76,16 @@ final class Runtime extends \ArrayObject
             }
 
             return $instance;
-        } else {
-            // create a temp. instance
-            // this is necessary because the runtime cache is sometimes in use before the actual service container
-            // is initialized
-            if (!self::$tempInstance) {
-                self::$tempInstance = new self;
-            }
-
-            return self::$tempInstance;
         }
+
+        // create a temp. instance
+        // this is necessary because the runtime cache is sometimes in use before the actual service container
+        // is initialized
+        if (!self::$tempInstance) {
+            self::$tempInstance = new self;
+        }
+
+        return self::$tempInstance;
     }
 
     /**
@@ -153,7 +163,7 @@ final class Runtime extends \ArrayObject
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function offsetSet($index, $value)
     {
@@ -167,8 +177,6 @@ final class Runtime extends \ArrayObject
      *
      * @param mixed $data
      * @param string $id
-     *
-     * @return mixed
      */
     public static function save($data, $id)
     {

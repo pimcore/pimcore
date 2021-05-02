@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
@@ -28,33 +26,30 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
- * @method \Pimcore\Model\Version getLatestVersion()
+ * @method \Pimcore\Model\Version|null getLatestVersion($userId = null)
  */
 abstract class PageSnippet extends Model\Document
 {
     use Document\Traits\ScheduledTasksTrait;
-    /**
-     * @var string
-     */
-    protected $module;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    protected $controller = 'default';
+    protected $controller;
 
     /**
-     * @var string
-     */
-    protected $action = 'default';
-
-    /**
+     * @internal
+     *
      * @var string
      */
     protected $template;
 
     /**
      * Contains all content-editables of the document
+     *
+     * @internal
      *
      * @var array|null
      *
@@ -64,11 +59,15 @@ abstract class PageSnippet extends Model\Document
     /**
      * Contains all versions of the document
      *
+     * @internal
+     *
      * @var array
      */
     protected $versions = null;
 
     /**
+     * @internal
+     *
      * @var null|int
      */
     protected $contentMasterDocumentId;
@@ -78,22 +77,24 @@ abstract class PageSnippet extends Model\Document
      *
      * @var bool
      */
-    protected $supportsContentMaster = true;
+    protected bool $supportsContentMaster = true;
 
     /**
+     * @internal
+     *
      * @var null|bool
      */
     protected $missingRequiredEditable = null;
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $inheritedEditables = [];
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -134,18 +135,20 @@ abstract class PageSnippet extends Model\Document
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
      * @param string $versionNote
+     * @param bool $isAutoSave
      *
      * @return null|Model\Version
      *
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isAutoSave = false)
     {
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $preUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DocumentEvents::PRE_UPDATE);
             }
@@ -164,17 +167,19 @@ abstract class PageSnippet extends Model\Document
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
             $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
-            if (!empty($documentsConfig['versions']['steps'])
+            if ((is_null($documentsConfig['versions']['days'] ?? null) && is_null($documentsConfig['versions']['steps'] ?? null))
+                || (!empty($documentsConfig['versions']['steps']))
                 || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isAutoSave);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 $postUpdateEvent = new DocumentEvent($this, [
                     'saveVersionOnly' => true,
+                    'isAutoSave' => $isAutoSave,
                 ]);
                 \Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DocumentEvents::POST_UPDATE);
             }
@@ -184,6 +189,7 @@ abstract class PageSnippet extends Model\Document
             $postUpdateFailureEvent = new DocumentEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
+                'isAutoSave' => $isAutoSave,
             ]);
             \Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DocumentEvents::POST_UPDATE_FAILURE);
 
@@ -192,7 +198,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -208,16 +214,10 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
-     *
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
         foreach ($this->getEditables() as $editable) {
@@ -228,9 +228,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 
@@ -254,22 +254,10 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return string
      */
-    public function getAction()
-    {
-        if (empty($this->action)) {
-            return 'default';
-        }
-
-        return $this->action;
-    }
-
-    /**
-     * @return string
-     */
     public function getController()
     {
         if (empty($this->controller)) {
-            return 'default';
+            $this->controller = \Pimcore::getContainer()->getParameter('pimcore.documents.default_controller');
         }
 
         return $this->controller;
@@ -281,18 +269,6 @@ abstract class PageSnippet extends Model\Document
     public function getTemplate()
     {
         return $this->template;
-    }
-
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-
-        return $this;
     }
 
     /**
@@ -320,27 +296,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string $module
-     *
-     * @return $this
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
      * Set raw data of an editable (eg. for editmode)
+     *
+     * @internal
      *
      * @param string $name
      * @param string $type
@@ -569,6 +527,9 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __sleep()
     {
         $finalVars = [];
@@ -660,6 +621,8 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * Validates if there is a missing value for required editable
+     *
+     * @internal
      */
     protected function checkMissingRequiredEditable()
     {

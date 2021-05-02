@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
@@ -30,7 +31,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param int $id
      *
-     * @return RuleInterface
+     * @return RuleInterface|null
      */
     public static function getById($id)
     {
@@ -75,9 +76,9 @@ class Rule extends AbstractModel implements RuleInterface
     protected $description = [];
 
     /**
-     * @var BracketInterface
+     * @var ConditionInterface|null
      */
-    protected $condition;
+    protected ?ConditionInterface $condition = null;
 
     /**
      * @var array|ActionInterface
@@ -106,6 +107,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param mixed $value
      *
      * @return AbstractModel
+     *
+     * @internal
      */
     public function setValue($key, $value)
     {
@@ -278,9 +281,9 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @return ConditionInterface
+     * @return ConditionInterface|null
      */
-    public function getCondition()
+    public function getCondition(): ?ConditionInterface
     {
         return $this->condition;
     }
@@ -412,6 +415,8 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string|null $language
      *
      * @return string
+     *
+     *
      */
     protected function getLanguage($language = null)
     {

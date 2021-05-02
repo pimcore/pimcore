@@ -83,14 +83,14 @@ The following functions need to be implemented:
             autoconfigure: true
             public: false
 
-        AppBundle\GDPR\DataProvider\MyCustomDataProvider: ~
+        App\GDPR\DataProvider\MyCustomDataProvider: ~
 
     # or specify the tag manually if not using autoconfiguration
     services:
         _defaults:
             public: false
 
-        AppBundle\GDPR\DataProvider\MyCustomDataProvider:
+        App\GDPR\DataProvider\MyCustomDataProvider:
             tags:
                 - { name: pimcore.gdpr.data-provider }
     ```

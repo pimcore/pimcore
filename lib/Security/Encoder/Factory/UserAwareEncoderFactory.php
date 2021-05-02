@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Security\Encoder\Factory;
@@ -18,9 +19,10 @@ use Pimcore\Security\Encoder\UserAwarePasswordEncoderInterface;
 use Pimcore\Security\Exception\ConfigurationException;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Encoder\EncoderInterface;
 
 /**
+ * @internal
+ *
  * Encoder factory keeping a dedicated encoder instance per user object. This is needed as Pimcore Users and user
  * objects containing Password field definitions handle their encoding logic by themself. The user aware encoder
  * delegates encoding and verification to the user object.
@@ -36,12 +38,12 @@ use Symfony\Component\Serializer\Encoder\EncoderInterface;
 class UserAwareEncoderFactory extends AbstractEncoderFactory
 {
     /**
-     * @var EncoderInterface[]
+     * @var PasswordEncoderInterface[]
      */
     private $encoders = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getEncoder($user)
     {
@@ -61,7 +63,6 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             throw new ConfigurationException('An encoder built by the UserAwareEncoderFactory must implement UserAwareEncoderInterface');
         }
 
-        /** @var PasswordEncoderInterface $encoder */
         $encoder = $this->buildEncoder($reflector);
 
         if ($encoder instanceof UserAwarePasswordEncoderInterface) {

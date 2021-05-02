@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
@@ -57,17 +58,24 @@ class Bracket implements BracketInterface
         }
 
         // default
-        $state = false;
+        $state = null;
 
         // check all conditions
         foreach ($this->conditions as $num => $condition) {
             /* @var ConditionInterface $condition */
 
+            //The first condition shouldn't have an operator.
+            //https://github.com/pimcore/pimcore/pull/7902
+            $operator = $this->operator[$num];
+            if ($num === 0) {
+                $operator = null;
+            }
+
             // test condition
             $check = $condition->check($environment);
 
             // check
-            switch ($this->operator[$num]) {
+            switch ($operator) {
                 // first condition
                 case null:
                     $state = $check;
@@ -78,7 +86,8 @@ class Bracket implements BracketInterface
                     if ($check === false) {
                         return false;
                     } else {
-                        $state = true;
+                        //consider current state with check, if not default.
+                        $state = ($state === null) ? $check : ($check && $state);
                     }
                     break;
 
@@ -87,7 +96,8 @@ class Bracket implements BracketInterface
                     if ($check === true) {
                         return false;
                     } else {
-                        $state = true;
+                        //consider current state with check, if not default.
+                        $state = ($state === null) ? !$check : (!$check && $state);
                     }
                     break;
 
@@ -100,7 +110,7 @@ class Bracket implements BracketInterface
             }
         }
 
-        return $state;
+        return $state ?? false;
     }
 
     /**

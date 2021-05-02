@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -68,7 +68,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -100,7 +100,6 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
-
         var options = {};
         options.name = this.fieldConfig.name;
         options.border = true;
@@ -110,6 +109,9 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         options.componentCls = "object_field object_field_type_" + this.type;
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
+        }
+        if (this.fieldConfig.height) {
+            options.height = this.fieldConfig.height;
         }
 
         if (!this.component) {

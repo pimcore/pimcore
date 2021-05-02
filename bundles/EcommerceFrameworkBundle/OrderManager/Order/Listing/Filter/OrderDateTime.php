@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
@@ -42,14 +43,14 @@ class OrderDateTime implements OrderListFilterInterface
     public function apply(OrderListInterface $orderList)
     {
         // init
-        $query = $orderList->getQuery();
+        $queryBuilder = $orderList->getQueryBuilder();
 
         if ($this->getFrom()) {
-            $query->where($this->getColumn() . ' >= ?', $this->getFrom()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter(':from_date', $this->getFrom()->getTimestamp());
         }
 
         if ($this->getTill()) {
-            $query->where($this->getColumn() . ' <= ?', $this->getTill()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter(':till_date', $this->getTill()->getTimestamp());
         }
 
         return $this;

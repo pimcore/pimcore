@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore;
 
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Event\CoreCacheEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -24,24 +25,19 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Cache
 {
     /**
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     protected static $handler;
 
-    public static function getInstance()
-    {
-        throw new \RuntimeException('getInstance() is not supported anymore');
-    }
-
     /**
      * Get the cache handler implementation
-     *
-     * @return CoreHandlerInterface
+     * @internal
+     * @return CoreCacheHandler
      */
     public static function getHandler()
     {
         if (null === static::$handler) {
-            static::$handler = \Pimcore::getContainer()->get('pimcore.cache.core.handler');
+            static::$handler = \Pimcore::getContainer()->get(CoreCacheHandler::class);
         }
 
         return static::$handler;
@@ -49,6 +45,8 @@ class Cache
 
     /**
      * Initialize the cache. This acts mainly as integration point with legacy caches.
+     *
+     * @internal
      */
     public static function init()
     {
@@ -58,7 +56,7 @@ class Cache
                 ->dispatch(new GenericEvent(), CoreCacheEvents::INIT);
 
             if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
-                self::getHandler()->disable();
+                self::getHandler()->setPool(\Pimcore::getContainer()->get('pimcore.cache.adapter.null_tag_aware'));
             }
         }
     }
@@ -133,12 +131,8 @@ class Cache
      *
      * @return bool
      */
-    public static function clearTags($tags = [])
+    public static function clearTags(array $tags = []): bool
     {
-        if (!empty($tags) && !is_array($tags)) {
-            $tags = [$tags];
-        }
-
         return static::getHandler()->clearTags($tags);
     }
 
@@ -194,7 +188,7 @@ class Cache
 
     /**
      * Write and clean up cache
-     *
+     * @internal
      * @param bool $forceWrite
      */
     public static function shutdown($forceWrite = false)

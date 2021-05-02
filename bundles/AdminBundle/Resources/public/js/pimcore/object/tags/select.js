@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -67,7 +67,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 try {
                     metaData.tdCls += " grid_value_inherited";
                 } catch (e) {
@@ -232,20 +232,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             storeData.push({'value': '', 'key': "(" + t("empty") + ")"});
         }
 
-        var restrictTo = null;
-        if (this.fieldConfig.restrictTo && this.fieldConfig.restrictTo.length > 0) {
-            restrictTo = this.fieldConfig.restrictTo.split(",");
-        }
-
         if (this.fieldConfig.options) {
             for (var i = 0; i < this.fieldConfig.options.length; i++) {
                 var value = this.fieldConfig.options[i].value;
-                if (restrictTo) {
-                    if (!in_array(value, restrictTo)) {
-                        continue;
-                    }
-                }
-
                 var label = t(this.fieldConfig.options[i].key);
                 if(label.indexOf('<') >= 0) {
                     hasHTMLContent = true;
@@ -303,7 +292,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            options.width += options.labelWidth;
+            options.width = this.sumWidths(options.width, options.labelWidth);
         }
 
         if (typeof this.data == "string" || typeof this.data == "number") {

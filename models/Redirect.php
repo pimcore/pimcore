@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Redirect
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -25,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Pimcore\Model\Redirect\Dao getDao()
  */
-class Redirect extends AbstractModel
+final class Redirect extends AbstractModel
 {
     const TYPE_ENTIRE_URI = 'entire_uri';
     const TYPE_PATH_QUERY = 'path_query';
@@ -42,79 +40,79 @@ class Redirect extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      */
-    public $source;
+    protected $source;
 
     /**
      * @var int|null
      */
-    public $sourceSite;
+    protected $sourceSite;
 
     /**
      * @var bool
      */
-    public $passThroughParameters = false;
+    protected $passThroughParameters = false;
 
     /**
      * @var string
      */
-    public $target;
+    protected $target;
 
     /**
      * @var int|null
      */
-    public $targetSite;
+    protected $targetSite;
 
     /**
      * @var int
      */
-    public $statusCode = 301;
+    protected $statusCode = 301;
 
     /**
      * @var int
      */
-    public $priority = 1;
+    protected $priority = 1;
 
     /**
      * @var bool|null
      */
-    public $regex;
+    protected $regex;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var int
      */
-    public $expiry;
+    protected $expiry;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * ID of the owner user
      *
-     * @var int
+     * @var int|null
      */
-    protected $userOwner;
+    protected ?int $userOwner = null;
 
     /**
      * ID of the user who make the latest changes
@@ -126,7 +124,7 @@ class Redirect extends AbstractModel
     /**
      * StatusCodes
      */
-    public static $statusCodes = [
+    protected static $statusCodes = [
         '300' => 'Multiple Choices',
         '301' => 'Moved Permanently',
         '302' => 'Found',
@@ -152,6 +150,8 @@ class Redirect extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param Request $request
      * @param Site|null $site
      * @param bool $override
@@ -510,17 +510,17 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getUserOwner()
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
     /**
-     * @param int $userOwner
+     * @param int|null $userOwner
      */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(?int $userOwner)
     {
         $this->userOwner = $userOwner;
     }
@@ -555,5 +555,13 @@ class Redirect extends AbstractModel
         $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::POST_DELETE);
         $this->clearDependentCache();
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getStatusCodes(): array
+    {
+        return self::$statusCodes;
     }
 }

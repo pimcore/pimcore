@@ -1,24 +1,23 @@
 {
     "description": null,
     "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractFilterDefinition",
-    "listingParentClass": null,
-    "useTraits": null,
-    "listingUseTraits": null,
+    "implementsInterfaces": "",
+    "listingParentClass": "",
+    "useTraits": "",
+    "listingUseTraits": "",
     "allowInherit": true,
-    "allowVariants": false,
+    "allowVariants": null,
     "showVariants": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
-        "labelWidth": 100,
         "layout": null,
         "border": false,
-        "icon": null,
         "name": "pimcore_root",
         "type": null,
         "region": null,
         "title": null,
-        "width": null,
-        "height": null,
+        "width": 0,
+        "height": 0,
         "collapsible": false,
         "collapsed": false,
         "bodyStyle": null,
@@ -43,10 +42,8 @@
                 "childs": [
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 100,
                         "layout": "",
                         "border": false,
-                        "icon": null,
                         "name": "General",
                         "type": "",
                         "region": "",
@@ -81,7 +78,6 @@
                             },
                             {
                                 "fieldtype": "fieldset",
-                                "labelWidth": 150,
                                 "name": "Default Product List Options",
                                 "type": null,
                                 "region": null,
@@ -120,7 +116,6 @@
                                         "defaultValue": null,
                                         "queryColumnType": "double",
                                         "columnType": "double",
-                                        "phpdocType": "float",
                                         "integer": false,
                                         "unsigned": false,
                                         "minValue": null,
@@ -141,7 +136,8 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "select",
@@ -162,7 +158,6 @@
                                         "queryColumnType": "varchar",
                                         "columnType": "varchar",
                                         "columnLength": 190,
-                                        "phpdocType": "string",
                                         "dynamicOptions": false,
                                         "name": "defaultOrderByInheritance",
                                         "title": "inherit Default OrderBy",
@@ -177,11 +172,11 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "fieldcollections",
-                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
                                         "allowedTypes": [
                                             "OrderByFields"
                                         ],
@@ -208,11 +203,12 @@
                                         "visibleSearch": false
                                     }
                                 ],
-                                "locked": false
+                                "locked": false,
+                                "labelWidth": 150,
+                                "labelAlign": "left"
                             },
                             {
                                 "fieldtype": "fieldset",
-                                "labelWidth": 155,
                                 "name": "Order By Options",
                                 "type": null,
                                 "region": null,
@@ -257,7 +253,6 @@
                                         "excludeFromSearchIndex": false,
                                         "queryColumnType": "longtext",
                                         "columnType": "longtext",
-                                        "phpdocType": "string",
                                         "name": "orderByAsc",
                                         "title": "OrderBy",
                                         "tooltip": "",
@@ -285,7 +280,6 @@
                                         "excludeFromSearchIndex": false,
                                         "queryColumnType": "longtext",
                                         "columnType": "longtext",
-                                        "phpdocType": "string",
                                         "name": "orderByDesc",
                                         "title": "OrderBy Descending",
                                         "tooltip": "",
@@ -302,11 +296,12 @@
                                         "visibleSearch": false
                                     }
                                 ],
-                                "locked": false
+                                "locked": false,
+                                "labelWidth": 155,
+                                "labelAlign": "left"
                             },
                             {
                                 "fieldtype": "fieldset",
-                                "labelWidth": 150,
                                 "name": "Additional Options",
                                 "type": null,
                                 "region": null,
@@ -344,7 +339,6 @@
                                         "defaultValue": 0,
                                         "queryColumnType": "tinyint(1)",
                                         "columnType": "tinyint(1)",
-                                        "phpdocType": "boolean",
                                         "name": "ajaxReload",
                                         "title": "ajaxReload",
                                         "tooltip": "",
@@ -358,14 +352,14 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "checkbox",
                                         "defaultValue": 0,
                                         "queryColumnType": "tinyint(1)",
                                         "columnType": "tinyint(1)",
-                                        "phpdocType": "boolean",
                                         "name": "infiniteScroll",
                                         "title": "Infinite Scroll",
                                         "tooltip": "",
@@ -379,7 +373,8 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "numeric",
@@ -387,7 +382,6 @@
                                         "defaultValue": null,
                                         "queryColumnType": "double",
                                         "columnType": "double",
-                                        "phpdocType": "float",
                                         "integer": false,
                                         "unsigned": false,
                                         "minValue": null,
@@ -408,20 +402,24 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     }
                                 ],
-                                "locked": false
+                                "locked": false,
+                                "labelWidth": 150,
+                                "labelAlign": "left"
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "icon": null,
+                        "labelWidth": 100,
+                        "labelAlign": "left"
                     },
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 150,
                         "layout": "",
                         "border": false,
-                        "icon": null,
                         "name": "Preconditions",
                         "type": "",
                         "region": "",
@@ -473,7 +471,6 @@
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 190,
-                                "phpdocType": "string",
                                 "dynamicOptions": false,
                                 "name": "conditionsInheritance",
                                 "title": "inherit Conditions",
@@ -488,11 +485,11 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "fieldcollections",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
                                 "allowedTypes": [
                                     "FilterSelectFromMultiSelect",
                                     "FilterCategoryMultiselect",
@@ -528,14 +525,15 @@
                                 "visibleSearch": false
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "icon": null,
+                        "labelWidth": 150,
+                        "labelAlign": "left"
                     },
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 150,
                         "layout": "",
                         "border": false,
-                        "icon": null,
                         "name": "Filters",
                         "type": "",
                         "region": "",
@@ -587,7 +585,6 @@
                                 "queryColumnType": "varchar",
                                 "columnType": "varchar",
                                 "columnLength": 190,
-                                "phpdocType": "string",
                                 "dynamicOptions": false,
                                 "name": "filtersInheritance",
                                 "title": "inherit Filters",
@@ -602,11 +599,11 @@
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleSearch": false,
+                                "defaultValueGenerator": ""
                             },
                             {
                                 "fieldtype": "fieldcollections",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
                                 "allowedTypes": [
                                     "FilterCategory",
                                     "FilterMultiRelation",
@@ -642,14 +639,15 @@
                                 "visibleSearch": false
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "icon": null,
+                        "labelWidth": 150,
+                        "labelAlign": "left"
                     },
                     {
                         "fieldtype": "panel",
-                        "labelWidth": 150,
                         "layout": "",
                         "border": false,
-                        "icon": null,
                         "name": "Recommendations",
                         "type": "",
                         "region": "",
@@ -691,13 +689,11 @@
                                     "id": "int(11)",
                                     "type": "enum('document','asset','object')"
                                 },
-                                "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
                                 "objectsAllowed": true,
                                 "assetsAllowed": false,
                                 "assetTypes": [],
                                 "documentsAllowed": false,
                                 "documentTypes": [],
-                                "lazyLoading": false,
                                 "classes": [
                                     {
                                         "classes": "ProductCategory"
@@ -720,7 +716,6 @@
                             },
                             {
                                 "fieldtype": "fieldset",
-                                "labelWidth": 150,
                                 "name": "Layout",
                                 "type": "",
                                 "region": "",
@@ -752,7 +747,6 @@
                                         "queryColumnType": "varchar",
                                         "columnType": "varchar",
                                         "columnLength": 190,
-                                        "phpdocType": "string",
                                         "dynamicOptions": false,
                                         "name": "similarityFieldsInheritance",
                                         "title": "inherit SimilarityFields",
@@ -767,11 +761,11 @@
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
-                                        "visibleSearch": false
+                                        "visibleSearch": false,
+                                        "defaultValueGenerator": ""
                                     },
                                     {
                                         "fieldtype": "fieldcollections",
-                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
                                         "allowedTypes": [
                                             "SimilarityField"
                                         ],
@@ -798,21 +792,33 @@
                                         "visibleSearch": false
                                     }
                                 ],
-                                "locked": false
+                                "locked": false,
+                                "labelWidth": 150,
+                                "labelAlign": "left"
                             }
                         ],
-                        "locked": false
+                        "locked": false,
+                        "icon": null,
+                        "labelWidth": 150,
+                        "labelAlign": "left"
                     }
                 ],
                 "locked": false
             }
         ],
-        "locked": false
+        "locked": false,
+        "icon": null,
+        "labelWidth": 100,
+        "labelAlign": "left"
     },
     "icon": "\/bundles\/pimcoreadmin\/img\/flat-color-icons\/empty_filter.svg",
-    "previewUrl": null,
+    "previewUrl": "",
     "group": "E-Commerce",
-    "linkGeneratorReference": null,
+    "showAppLoggerTab": false,
+    "linkGeneratorReference": "",
+    "compositeIndices": [],
+    "generateTypeDeclarations": true,
+    "showFieldLookup": false,
     "propertyVisibility": {
         "grid": {
             "id": true,
@@ -830,5 +836,6 @@
             "modificationDate": false,
             "creationDate": false
         }
-    }
+    },
+    "enableGridLocking": false
 }

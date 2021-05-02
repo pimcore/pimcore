@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
@@ -19,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Config\Config;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 
 abstract class AbstractConfig implements ConfigInterface
 {
@@ -64,7 +65,7 @@ abstract class AbstractConfig implements ConfigInterface
     protected $tenantWorker;
 
     /**
-     * @var Config
+     * @var array|null
      */
     protected $filterTypeConfig;
 
@@ -108,9 +109,9 @@ abstract class AbstractConfig implements ConfigInterface
 
     /**
      * Sets attribute factory as dependency. This was added as setter for BC reasons and will be added to the constructor
-     * signature in Pimcore 7.
+     * signature in Pimcore 10.
      *
-     * TODO Pimcore 7 add to constructor signature.
+     * TODO Pimcore 10 add to constructor signature.
      *
      * @required
      *
@@ -175,7 +176,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {
@@ -202,7 +203,7 @@ abstract class AbstractConfig implements ConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getTenantWorker()
     {
@@ -229,7 +230,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getAttributes(): array
     {
-        // TODO Pimcore 7 remove as soon as attribute factory was added to the constructor.
+        // TODO Pimcore 10 remove as soon as attribute factory was added to the constructor.
         if (null === $this->attributes) {
             throw new \RuntimeException('Attributes are not built yet. Is the service properly configured to set an attribute factory?');
         }
@@ -244,7 +245,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getSearchAttributes(): array
     {
-        // TODO Pimcore 7 remove as soon as attribute factory was added to the constructor.
+        // TODO Pimcore 10 remove as soon as attribute factory was added to the constructor.
         if (null === $this->attributes) {
             throw new \RuntimeException('Search attributes are not built yet. Is the service properly configured to set an attribute factory?');
         }
@@ -334,7 +335,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getObjectById($objectId, $onlyMainObject = false)
     {
-        return AbstractObject::getById($objectId);
+        return DataObject::getById($objectId);
     }
 
     /**

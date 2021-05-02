@@ -1,246 +1,157 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Model\DataObject\Concrete;
 
 /**
  * Abstract base class for offer item pimcore objects
  */
-class AbstractOfferItem extends Concrete
+abstract class AbstractOfferItem extends Concrete
 {
     /**
-     * @throws UnsupportedException
-     *
      * @return AbstractOfferToolProduct
      */
-    public function getProduct()
-    {
-        throw new UnsupportedException('getProduct is not implemented for ' . get_class($this));
-    }
+    abstract public function getProduct(): ?\Pimcore\Model\Element\AbstractElement;
 
     /**
-     * @param CheckoutableInterface $product
-     *
-     * @throws UnsupportedException
+     * @param \Pimcore\Model\Element\AbstractElement|null $product
      */
-    public function setProduct($product)
-    {
-        throw new UnsupportedException('setProduct is not implemented for ' . get_class($this));
-    }
+    abstract public function setProduct(?\Pimcore\Model\Element\AbstractElement $product);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getProductNumber()
-    {
-        throw new UnsupportedException('getProductNumber is not implemented for ' . get_class($this));
-    }
+    abstract public function getProductNumber(): ?string;
 
     /**
-     * @param string $productNumber
+     * @param string|null $productNumber
      *
-     * @throws UnsupportedException
+     * @return mixed
      */
-    public function setProductNumber($productNumber)
-    {
-        throw new UnsupportedException('setProductNumber is not implemented for ' . get_class($this));
-    }
+    abstract public function setProductNumber(?string $productNumber);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return string
+     * @return string|null
      */
-    public function getProductName()
-    {
-        throw new UnsupportedException('getProductName is not implemented for ' . get_class($this));
-    }
+    abstract public function getProductName(): ?string;
 
     /**
      * @param string $productName
      *
      * @throws UnsupportedException
      */
-    public function setProductName($productName)
-    {
-        throw new UnsupportedException('setProductName is not implemented for ' . get_class($this));
-    }
+    abstract public function setProductName(?string $productName);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @return float
-     */
-    public function getAmount()
-    {
-        throw new UnsupportedException('getAmount is not implemented for ' . get_class($this));
-    }
-
-    /**
-     * @param float $amount
+     * @return float|null
      *
      * @throws UnsupportedException
      */
-    public function setAmount($amount)
-    {
-        throw new UnsupportedException('setAmount is not implemented for ' . get_class($this));
-    }
+    abstract public function getAmount(): ?float;
 
     /**
-     * @throws UnsupportedException
+     * @param float|null $amount
      *
-     * @return string|float|int
+     * @return mixed
      */
-    public function getOriginalTotalPrice()
-    {
-        throw new UnsupportedException('getOriginalTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function setAmount(?float $amount);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string|float|int $originalTotalPrice
+     * @return string|null
      */
-    public function setOriginalTotalPrice($originalTotalPrice)
-    {
-        throw new UnsupportedException('setOriginalTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function getOriginalTotalPrice(): ?string;
 
     /**
-     * @throws UnsupportedException
+     * @param string|null $originalTotalPrice
      *
-     * @return string|float|int
+     * @return mixed
      */
-    public function getFinalTotalPrice()
-    {
-        throw new UnsupportedException('getFinalTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function setOriginalTotalPrice(?string $originalTotalPrice);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string|float|int $finalTotalPrice
+     * @return string|null
      */
-    public function setFinalTotalPrice($finalTotalPrice)
-    {
-        throw new UnsupportedException('setFinalTotalPrice is not implemented for ' . get_class($this));
-    }
+    abstract public function getFinalTotalPrice(): ?string;
 
     /**
-     * @throws UnsupportedException
+     * @param string|null $finalTotalPrice
      *
-     * @return float
+     * @return mixed
      */
-    public function getDiscount()
-    {
-        throw new UnsupportedException('getDiscount is not implemented for ' . get_class($this));
-    }
+    abstract public function setFinalTotalPrice(?string $finalTotalPrice);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param float $discount
+     * @return string|null
      */
-    public function setDiscount($discount)
-    {
-        throw new UnsupportedException('setDiscount is not implemented for ' . get_class($this));
-    }
+    abstract public function getDiscount(): ?string;
 
     /**
-     * @throws UnsupportedException
+     * @param string|null $discount
      *
-     * @return string
+     * @return mixed
      */
-    public function getDiscountType()
-    {
-        throw new UnsupportedException('getDiscountType is not implemented for ' . get_class($this));
-    }
+    abstract public function setDiscount(?string $discount);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $discountType
+     * @return string|null
      */
-    public function setDiscountType($discountType)
-    {
-        throw new UnsupportedException('setDiscountType is not implemented for ' . get_class($this));
-    }
+    abstract public function getDiscountType(): ?string;
 
     /**
-     * @return AbstractOrderItem[]
+     * @param string|null $discountType
      *
-     * @throws UnsupportedException
+     * @return mixed
      */
-    public function getSubItems()
-    {
-        throw new UnsupportedException('getSubItems is not implemented for ' . get_class($this));
-    }
+    abstract public function setDiscountType(?string $discountType);
 
     /**
-     * @param AbstractOrderItem[] $subItems
-     *
-     * @throws UnsupportedException
+     * @return array
      */
-    public function setSubItems($subItems)
-    {
-        throw new UnsupportedException('setSubItems is not implemented for ' . get_class($this));
-    }
+    abstract public function getSubItems(): array;
 
     /**
-     * @throws UnsupportedException
+     * @param array|null $subItems
      *
-     * @return string
+     * @return mixed
      */
-    public function getComment()
-    {
-        throw new UnsupportedException('getComment is not implemented for ' . get_class($this));
-    }
+    abstract public function setSubItems(?array $subItems);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $comment
+     * @return string|null
      */
-    public function setComment($comment)
-    {
-        throw new UnsupportedException('getComment is not implemented for ' . get_class($this));
-    }
+    abstract public function getComment(): ?string;
 
     /**
-     * @throws UnsupportedException
+     * @param string|null $comment
      *
-     * @return string
+     * @return mixed
      */
-    public function getCartItemKey()
-    {
-        throw new UnsupportedException('getCartItemKey is not implemented for ' . get_class($this));
-    }
+    abstract public function setComment(?string $comment);
 
     /**
-     * @throws UnsupportedException
-     *
-     * @param string $cartItemKey
+     * @return string|null
      */
-    public function setCartItemKey($cartItemKey)
-    {
-        throw new UnsupportedException('setCartItemKey is not implemented for ' . get_class($this));
-    }
+    abstract public function getCartItemKey(): ?string;
+
+    /**
+     * @param string|null $cartItemKey
+     *
+     * @return mixed
+     */
+    abstract public function setCartItemKey(?string $cartItemKey);
 }

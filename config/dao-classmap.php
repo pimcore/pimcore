@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 return [
     'Pimcore\\Model\\Redirect\\Listing' => 'Pimcore\\Model\\Redirect\\Listing\\Dao',
     'Pimcore\\Model\\Site' => 'Pimcore\\Model\\Site\\Dao',
@@ -21,11 +34,8 @@ return [
     'Pimcore\\Model\\User\\Role\\Folder' => 'Pimcore\\Model\\User\\Role\\Folder\\Dao',
     'Pimcore\\Model\\Search\\Backend\\Data' => 'Pimcore\\Model\\Search\\Backend\\Data\\Dao',
     'Pimcore\\Model\\Search\\Backend\\Data\\Listing' => 'Pimcore\\Model\\Search\\Backend\\Data\\Listing\\Dao',
-    'Pimcore\\Model\\Translation\\Website\\Listing' => 'Pimcore\\Model\\Translation\\Website\\Listing\\Dao',
-    'Pimcore\\Model\\Translation\\Admin\\Listing' => 'Pimcore\\Model\\Translation\\Admin\\Listing\\Dao',
-    'Pimcore\\Model\\Translation\\AbstractTranslation\\Listing' => 'Pimcore\\Model\\Translation\\AbstractTranslation\\Listing\\Dao',
-    'Pimcore\\Model\\Translation\\Admin' => 'Pimcore\\Model\\Translation\\Admin\\Dao',
-    'Pimcore\\Model\\Translation\\Website' => 'Pimcore\\Model\\Translation\\Website\\Dao',
+    'Pimcore\\Model\\Translation' => 'Pimcore\\Model\\Translation\\Dao',
+    'Pimcore\\Model\\Translation\\Listing' => 'Pimcore\\Model\\Translation\\Listing\\Dao',
     'Pimcore\\Model\\Glossary\\Listing' => 'Pimcore\\Model\\Glossary\\Listing\\Dao',
     'Pimcore\\Model\\Document\\Link' => 'Pimcore\\Model\\Document\\Link\\Dao',
     'Pimcore\\Model\\Document\\Hardlink' => 'Pimcore\\Model\\Document\\Hardlink\\Dao',

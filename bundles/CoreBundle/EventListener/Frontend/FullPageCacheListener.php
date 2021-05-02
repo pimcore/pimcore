@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -25,15 +26,15 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class FullPageCacheListener
+final class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
 
@@ -168,6 +169,10 @@ class FullPageCacheListener
      */
     public function onKernelRequest(RequestEvent $event)
     {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         $request = $event->getRequest();
 
         if (!$event->isMasterRequest()) {
@@ -259,7 +264,7 @@ class FullPageCacheListener
         } catch (\Exception $e) {
             Logger::error($e);
 
-            $this->disable('ERROR: Exception (see log files in /var/logs)');
+            $this->disable('ERROR: Exception (see log files in /var/log)');
 
             return;
         }
@@ -290,10 +295,6 @@ class FullPageCacheListener
             if (is_array($tags)) {
                 $appendKey = '_' . implode('_', $tags);
             }
-        }
-
-        if (Tool\Frontend::hasWebpSupport()) {
-            $appendKey .= 'webp';
         }
 
         if ($request->isXmlHttpRequest()) {
@@ -358,9 +359,6 @@ class FullPageCacheListener
         }
 
         $response = $event->getResponse();
-        if (!$response) {
-            return;
-        }
 
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');

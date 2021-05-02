@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService;
@@ -61,6 +61,11 @@ class IndexService
         }
     }
 
+    /**
+     * @param WorkerInterface $tenantWorker
+     *
+     * @internal
+     */
     protected function registerTenantWorker(WorkerInterface $tenantWorker)
     {
         $this->tenantWorkers[$tenantWorker->getTenantConfig()->getTenantName()] = $tenantWorker;
@@ -109,18 +114,6 @@ class IndexService
     }
 
     /**
-     * @deprecated
-     *
-     * @param string|null $tenant
-     *
-     * @return array
-     */
-    public function getGeneralSearchColumns(string $tenant = null)
-    {
-        return $this->getGeneralSearchAttributes($tenant);
-    }
-
-    /**
      * Returns all attributes marked as general search attributes for full text search
      *
      * @param string $tenant
@@ -138,14 +131,6 @@ class IndexService
         } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    public function createOrUpdateTable()
-    {
-        $this->createOrUpdateIndexStructures();
     }
 
     /**
@@ -204,21 +189,6 @@ class IndexService
     }
 
     /**
-     * @deprecated
-     *
-     * @param bool $considerHideInFieldList
-     * @param string|null $tenant
-     *
-     * @return mixed
-     *
-     * @throws InvalidConfigException
-     */
-    public function getIndexColumns($considerHideInFieldList = false, $tenant = null)
-    {
-        return $this->getIndexAttributes($considerHideInFieldList, $tenant);
-    }
-
-    /**
      * Returns all filter groups
      *
      * @param string $tenant
@@ -257,21 +227,6 @@ class IndexService
         } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $filterType
-     * @param string|null $tenant
-     *
-     * @return mixed
-     *
-     * @throws InvalidConfigException
-     */
-    public function getIndexColumnsByFilterGroup($filterType, $tenant = null)
-    {
-        return $this->getIndexAttributesByFilterGroup($filterType, $tenant);
     }
 
     /**

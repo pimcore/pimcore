@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -186,7 +186,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
         };
 
-        if(this.data && this.data.unit != null && !isNaN(this.data.unit)) {
+        if(this.data && this.data.unit != null) {
             options.value = this.data.unit;
         } else {
             options.value = -1;
@@ -216,7 +216,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 try {
                     metaData.tdCls += " grid_value_inherited";
                 } catch (e) {

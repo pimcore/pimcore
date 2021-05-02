@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -22,6 +23,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ThumbnailsImageCommand extends AbstractCommand
 {
     use Parallelization;
@@ -39,7 +43,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'parent',
                 'p',
                 InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images in this folder (ID)'
+                'only create thumbnails of images in this folder (comma separated IDs e.g. 543,1077)'
             )
             ->addOption(
                 'id',
@@ -84,17 +88,23 @@ class ThumbnailsImageCommand extends AbstractCommand
     {
         $list = new Asset\Listing();
 
+        $parentConditions = [];
+
         // get only images
         $conditions = ["type = 'image'"];
 
         if ($input->getOption('parent')) {
-            $parent = Asset::getById($input->getOption('parent'));
-            if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '" . $list->escapeLike($parent->getRealFullPath()) . "/%'";
-            } else {
-                $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
-                exit(1);
+            $parentIds = explode(',', $input->getOption('parent'));
+            foreach ($parentIds as $parentId) {
+                $parent = Asset::getById($parentId);
+                if ($parent instanceof Asset\Folder) {
+                    $parentConditions[] = "path LIKE '" . $list->escapeLike($parent->getRealFullPath()) . "/%'";
+                } else {
+                    $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
+                    exit(1);
+                }
             }
+            $conditions[] = '('. implode(' OR ', $parentConditions) . ')';
         }
 
         if ($ids = $input->getOption('id')) {
@@ -165,9 +175,6 @@ class ThumbnailsImageCommand extends AbstractCommand
          */
         $thumbnailsToGenerate = [];
 
-        $config = \Pimcore\Config::getSystemConfiguration('assets');
-        $isWebPAutoSupport = $config['image']['thumbnails']['webp_auto_support'] ?? false;
-
         foreach ($thumbnailConfigList as $thumbnailConfig) {
             if (empty($allowedThumbs) || in_array($thumbnailConfig->getName(), $allowedThumbs)) {
                 $medias = array_merge(['default' => 'defaultMedia'], $thumbnailConfig->getMedias() ?: []);
@@ -191,7 +198,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                         $resConfig->setHighResolution($resolution);
                         $thumbnailsToGenerate[] = $resConfig;
 
-                        if ($isWebPAutoSupport && !$input->getOption('skip-webp') && $resConfig->getFormat() === 'SOURCE') {
+                        if (!$input->getOption('skip-webp') && $resConfig->getFormat() === 'SOURCE') {
                             $webpConfig = clone $resConfig;
                             $webpConfig->setFormat('webp');
                             $thumbnailsToGenerate[] = $webpConfig;
@@ -205,9 +212,18 @@ class ThumbnailsImageCommand extends AbstractCommand
             if (!$input->getOption('thumbnails')) {
                 $thumbnailsToGenerate = [];
             }
-            $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
+
+            $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(false);
+
+            if (!$input->getOption('skip-high-res')) {
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(true);
+            }
         } elseif (!$input->getOption('thumbnails')) {
-            $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(false);
+
+            if (!$input->getOption('skip-high-res')) {
+                $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig(true);
+            }
         }
 
         return $thumbnailsToGenerate;

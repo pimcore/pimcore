@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Workflow;
@@ -21,7 +22,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\EventListener\ExpressionLanguage;
-use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class ExpressionService
@@ -68,26 +68,24 @@ class ExpressionService
 
     public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
     {
-        return $this->expressionLanguage->evaluate($expression, $this->getVariables($workflow, $subject));
+        return $this->expressionLanguage->evaluate($expression, $this->getVariables($subject));
     }
 
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
-    private function getVariables(Workflow $workflow, $subject)
+    private function getVariables($subject)
     {
         $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
 
-        $roles = $token ? $token->getRoles() : [];
+        $roles = $token->getRoleNames();
         if (null !== $this->roleHierarchy) {
-            $roles = $this->roleHierarchy->getReachableRoles($roles);
+            $roles = $this->roleHierarchy->getReachableRoleNames($roles);
         }
 
         $variables = [
             'token' => $token,
             'user' => $token->getUser(),
             'subject' => $subject,
-            'roles' => array_map(function ($role) {
-                return $role->getRole();
-            }, $roles),
+            'roles' => $roles,
             // needed for the is_granted expression function
             'auth_checker' => $this->authenticationChecker,
             // needed for the is_* expression function

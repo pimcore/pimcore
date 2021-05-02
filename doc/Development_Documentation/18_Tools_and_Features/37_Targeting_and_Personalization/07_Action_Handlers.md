@@ -28,9 +28,9 @@ check those values before using them!
 ```php
 <?php
 
-// src/AppBundle/Targeting/ActionHandler/Log.php
+// src/Targeting/ActionHandler/Log.php
 
-namespace AppBundle\Targeting\ActionHandler;
+namespace App\Targeting\ActionHandler;
 
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
@@ -76,7 +76,7 @@ services:
         autoconfigure: true
         public: false
 
-    AppBundle\Targeting\ActionHandler\Log: ~
+    App\Targeting\ActionHandler\Log: ~
 ```
 
 As last step, register the action handler to the targeting engine. Make sure the identifier is unique to your provider 
@@ -86,7 +86,7 @@ as you'll need to use it when implementing the admin UI JS part.
 pimcore:
     targeting:
         action_handlers:
-            log: AppBundle\Targeting\ActionHandler\Log
+            log: App\Targeting\ActionHandler\Log
 ```
 
 ### Postponed Actions
@@ -113,7 +113,7 @@ for examples.
 Start by adding a new JS file implementing the admin UI panel for your action:
 
 ```javascript
-// src/AppBundle/Resources/public/js/targeting/actions.js
+// public/js/targeting/actions.js
 
 (function () {
     'use strict';

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Glossary
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -25,54 +23,74 @@ namespace Pimcore\Model;
 class Glossary extends AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $text;
+    protected $text;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $link;
+    protected $link;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $abbr;
+    protected $abbr;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $language;
+    protected $language;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $casesensitive;
+    protected $casesensitive;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $exactmatch;
+    protected $exactmatch;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $site;
+    protected $site;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id

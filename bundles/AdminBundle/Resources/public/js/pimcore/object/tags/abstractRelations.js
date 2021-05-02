@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -197,7 +197,7 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
 
     gridRowDblClickHandler: function(component, record) {
         var subtype = record.get('subtype');
-        if (record.get('type') === "object" && record.get('subtype') !== "folder") {
+        if (record.get('type') === "object" && record.get('subtype') !== "folder" && record.get('subtype') !== null) {
             subtype = "object";
         }
         pimcore.helpers.openElement(record.get('id'), record.get('type'), subtype);

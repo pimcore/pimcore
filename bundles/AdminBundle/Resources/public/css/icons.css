@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -315,16 +315,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/settings.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_matomo {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/matomo.svg) center center no-repeat !important;
-    color: #d4291f;
-}
-
-.pimcore_icon_matomo {
-    background: url(/bundles/pimcoreadmin/img/matomo.svg) center center no-repeat !important;
-    color: #d4291f;
-}
-
 .pimcore_nav_icon_doctypes {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/file-types.svg) center center no-repeat !important;
 }
@@ -402,7 +392,7 @@
 }
 
 .pimcore_nav_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/mind_map.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/globe.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_clear_cache {
@@ -802,7 +792,7 @@
 
 
 .pimcore_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/mind_map.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/globe.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_redirects {
@@ -1040,10 +1030,6 @@
 
 .pimcore_icon_mysql {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/mysql.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_news {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/news.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_videothumbnails {
@@ -1432,8 +1418,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/neutral_trading.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_reverseManyToManyObjectRelation {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/reverse_many_to_many_object_relation.svg) center center no-repeat !important;
+.pimcore_icon_reverseObjectRelation {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/reverse_object_relation.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_manyToManyObjectRelation {
@@ -1585,19 +1571,6 @@
 
 .pimcore_icon_expand_children {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_piwik {
-    background: url(/bundles/pimcoreadmin/img/matomo.svg) center center no-repeat !important;
-    color: #d4291f;
-}
-
-.pimcore_icon_piwik_api_create {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/external.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_piwik_api_update {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_operator_ignore {
@@ -1840,6 +1813,10 @@
 
 .pimcore_material_icon_dependencies {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-turned_in_not-24px.svg) center center no-repeat;
+}
+
+.pimcore_material_icon_reports {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat;
 }
 
 .pimcore_material_icon_notes {

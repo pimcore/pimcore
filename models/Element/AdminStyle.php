@@ -1,24 +1,27 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element;
 
 use Pimcore\File;
-use Pimcore\Model;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminStyle
@@ -44,23 +47,21 @@ class AdminStyle
     protected $elementQtipConfig;
 
     /**
-     * AdminStyle constructor.
-     *
-     * @param Model\DataObject\Concrete $element
+     * @param AbstractObject|Asset|Document|ElementInterface $element
      */
-    public function __construct($element)
+    public function __construct(ElementInterface $element)
     {
-        if ($element instanceof Model\DataObject\AbstractObject) {
-            if ($element->getType() == 'folder') {
+        if ($element instanceof AbstractObject) {
+            if ($element instanceof Folder) {
                 $this->elementIconClass = 'pimcore_icon_folder';
                 $this->elementQtipConfig = [
                     'title' => 'ID: ' . $element->getId(),
                 ];
-            } else {
+            } elseif ($element instanceof Concrete) {
                 if ($element->getClass()->getIcon()) {
                     $this->elementIcon = $element->getClass()->getIcon();
                 } else {
-                    $this->elementIconClass = $element->getType() == 'variant' ? 'pimcore_icon_variant' : 'pimcore_icon_object';
+                    $this->elementIconClass = $element->getType() === 'variant' ? 'pimcore_icon_variant' : 'pimcore_icon_object';
                 }
 
                 $this->elementQtipConfig = [
@@ -68,12 +69,12 @@ class AdminStyle
                     'text' => 'Type: ' . $element->getClass()->getName(),
                 ];
             }
-        } elseif ($element instanceof Model\Asset) {
+        } elseif ($element instanceof Asset) {
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId(),
             ];
 
-            if ($element->getType() == 'folder') {
+            if ($element->getType() === 'folder') {
                 $this->elementIconClass = 'pimcore_icon_folder';
             } else {
                 $this->elementIconClass = 'pimcore_icon_asset_default';
@@ -83,7 +84,7 @@ class AdminStyle
                     $this->elementIconClass = ' pimcore_icon_' . File::getFileExtension($element->getFilename());
                 }
             }
-        } elseif ($element instanceof Model\Document) {
+        } elseif ($element instanceof Document) {
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId(),
                 'text' => 'Type: ' . $element->getType(),
@@ -92,10 +93,10 @@ class AdminStyle
             $this->elementIconClass = 'pimcore_icon_' . $element->getType();
 
             // set type specific settings
-            if ($element->getType() == 'page') {
-                $site = Model\Site::getByRootId($element->getId());
+            if ($element->getType() === 'page') {
+                $site = Site::getByRootId($element->getId());
 
-                if ($site instanceof Model\Site) {
+                if ($site instanceof Site) {
                     $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
                     $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', [], 'admin') . ': ' . $site->getId();
                 }
@@ -103,10 +104,10 @@ class AdminStyle
                 $this->elementIconClass = 'pimcore_icon_page';
 
                 // test for a site
-                if ($site = Model\Site::getByRootId($element->getId())) {
+                if ($site = Site::getByRootId($element->getId())) {
                     $this->elementIconClass = 'pimcore_icon_site';
                 }
-            } elseif ($element->getType() == 'folder' || $element->getType() == 'link' || $element->getType() == 'hardlink') {
+            } elseif ($element->getType() === 'folder' || $element->getType() === 'link' || $element->getType() === 'hardlink') {
                 if (!$element->hasChildren() && $element->getType() == 'folder') {
                     $this->elementIconClass = 'pimcore_icon_folder';
                 }

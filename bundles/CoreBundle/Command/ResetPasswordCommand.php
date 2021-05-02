@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -23,6 +24,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+/**
+ * @internal
+ */
 class ResetPasswordCommand extends AbstractCommand
 {
     protected function configure()
@@ -45,7 +49,7 @@ class ResetPasswordCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -53,7 +57,7 @@ class ResetPasswordCommand extends AbstractCommand
 
         $method = is_numeric($userArgument) ? 'getById' : 'getByName';
 
-        /** @var User $user */
+        /** @var User|null $user */
         $user = User::$method($userArgument);
 
         if (!$user) {

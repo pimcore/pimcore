@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -16,7 +16,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'objectbrick',
     disallowedDataTypes: [
-        "reverseManyToManyObjectRelation",
+        "reverseObjectRelation",
         "user",
         "fieldcollections",
         "localizedfields",
@@ -354,7 +354,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             if (rdata && rdata.message) {
                 pimcore.helpers.showNotification(t("error"), rdata.message, "error");
             } else {
-                throw "save was not successful, see log files in /var/logs";
+                throw "save was not successful, see log files in /var/log";
             }
         }
 

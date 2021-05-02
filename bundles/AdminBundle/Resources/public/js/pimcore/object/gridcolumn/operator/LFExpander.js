@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -85,11 +85,12 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
         this.textfield = new Ext.form.TextField({
             fieldLabel: t('label'),
             length: 255,
-            width: 200,
+            width: 220,
             value: this.node.data.configAttributes.label
         });
 
         var data = [];
+        data.push(["default", t("default")]);
         for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
             var language = pimcore.settings.websiteLanguages[i];
             data.push([language, t(pimcore.available_languages[language])]);
@@ -103,8 +104,6 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
 
         this.asArrayField = new Ext.form.Checkbox({
             fieldLabel: t('as_array'),
-            length: 255,
-            width: 200,
             value: this.node.data.configAttributes.asArray
         });
 
@@ -114,8 +113,10 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             editable: false,
             fieldLabel: t('restrict_to_locales'),
             store: localeStore,
-            componentCls: "object_field",
-            height: 300,
+            listConfig: {
+                width: 238
+            },
+            height: 250,
             displayField: 'value',
             valueField: 'key',
             value: this.node.data.configAttributes.locales
@@ -139,10 +140,10 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
 
         this.window = new Ext.Window({
             width: 400,
-            height: 500,
+            height: 480,
+            layout: "fit",
             modal: true,
             title: this.getDefaultText(),
-            layout: "fit",
             items: [this.configPanel]
         });
 

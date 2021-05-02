@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -49,10 +49,15 @@ pimcore.object.classes.layout.fieldset = Class.create(pimcore.object.classes.lay
             style: "margin: 10px 0 10px 0",
             items: [
                 {
-                    xtype: "numberfield",
+                    xtype: "textfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },
+                {
+                    xtype: "displayfield",
+                    hideLabel: true,
+                    value: t('width_explanation')
                 },
                 {
                     xtype: "combo",

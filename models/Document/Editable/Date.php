@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -27,14 +25,14 @@ class Date extends Model\Document\Editable
     /**
      * Contains the date
      *
+     * @internal
+     *
      * @var \Carbon\Carbon|null
      */
     protected $date;
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -42,15 +40,16 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
         return $this->date;
     }
 
+    /**
+     * @return \Carbon\Carbon|null
+     */
     public function getDate()
     {
         return $this->getData();
@@ -71,7 +70,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -82,24 +81,19 @@ class Date extends Model\Document\Editable
         } elseif (isset($this->config['format']) && $this->config['format']) {
             $format = $this->config['format'];
         } else {
-            $format = \DateTime::ISO8601;
+            $format = 'Y-m-d\TH:i:sO'; // ISO8601
         }
 
         if ($this->date instanceof \DateTimeInterface) {
-            $result = $this->date->formatLocalized($format);
-
-            return $result;
+            return $this->date->formatLocalized($format);
         }
     }
 
     /**
-     * @see Model\Document\Editable::getDataForResource
-     *
-     * @return int|null
+     * {@inheritdoc}
      */
     public function getDataForResource()
     {
-        $this->checkValidity();
         if ($this->date) {
             return $this->date->getTimestamp();
         }
@@ -108,11 +102,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -124,11 +114,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -141,7 +127,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {
@@ -155,7 +141,7 @@ class Date extends Model\Document\Editable
     /**
      * @param int $timestamp
      */
-    protected function setDateFromTimestamp($timestamp)
+    private function setDateFromTimestamp($timestamp)
     {
         $this->date = new \Carbon\Carbon();
         $this->date->setTimestamp($timestamp);

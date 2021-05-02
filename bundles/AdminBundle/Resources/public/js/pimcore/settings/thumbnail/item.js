@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -141,11 +141,6 @@ pimcore.settings.thumbnail.item = Class.create({
                         xtype: "container",
                         html: "<small>(" + t("high_resolution_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
-                    }, {
-                        xtype: "checkbox",
-                        name: "forcePictureTag",
-                        boxLabel: t("force_picture_html_tag"),
-                        checked: this.data.forcePictureTag
                     }, {
                         xtype: "checkbox",
                         name: "preserveColor",

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -24,6 +24,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         }
         this.fieldConfig = fieldConfig;
+    },
+
+    applyDefaultValue: function() {
+        this.defaultValue = null;
+        if ((typeof this.data === "undefined" || !this.data) && this.fieldConfig.defaultValue && this.context.type === "classificationstore") {
+            this.data = this.fieldConfig.defaultValue;
+            this.defaultValue = this.fieldConfig.defaultValue;
+        }
     },
 
     getGridColumnEditor: function(field) {
@@ -79,7 +87,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            input.width += input.labelWidth;
+            input.width = this.sumWidths(input.width, input.labelWidth);
         }
 
         if(this.fieldConfig.columnLength) {

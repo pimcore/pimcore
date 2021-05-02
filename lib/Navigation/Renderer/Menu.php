@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -1052,18 +1053,7 @@ class Menu extends AbstractRenderer
     }
 
     /**
-     * Renders menu
-     *
-     * If a partial view is registered in the helper, the menu will be rendered
-     * using the given partial script. If no partial is registered, the menu
-     * will be rendered as an 'ul' element by the helper's internal method.
-     *
-     * @see renderTemplate()
-     * @see renderMenu()
-     *
-     * @param  Container $container
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function render(Container $container)
     {

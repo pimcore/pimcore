@@ -1,37 +1,31 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange;
 
 class NumberRange extends AbstractFilterType
 {
-    /**
-     * @param FilterNumberRange $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    /** @inheritDoc */
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
               'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
               'label' => $filterDefinition->getLabel(),
               'currentValue' => $currentFilter[$this->getField($filterDefinition)],
@@ -40,7 +34,7 @@ class NumberRange extends AbstractFilterType
               'fieldname' => $this->getField($filterDefinition),
               'metaData' => $filterDefinition->getMetaData(),
               'resultCount' => $productList->count(),
-         ]);
+         ];
     }
 
     /**
@@ -64,19 +58,21 @@ class NumberRange extends AbstractFilterType
 
         $currentFilter[$field] = $value;
 
+        $db = Db::get();
+
         if (!empty($value)) {
             if (!empty($value['from'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $productList->quote($value['from']), 'PRECONDITION_' . $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), 'PRECONDITION_' . $this->getField($filterDefinition));
                 } elseif ($value['from'] != AbstractFilterType::EMPTY_STRING) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $productList->quote($value['from']), $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), $this->getField($filterDefinition));
                 }
             }
             if (!empty($value['to'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
                 } elseif ($value['to'] != AbstractFilterType::EMPTY_STRING) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), $this->getField($filterDefinition));
                 }
             }
         }

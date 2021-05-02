@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Fieldcollection
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
@@ -195,7 +193,7 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
-                    if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                    if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                         if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
                                 '_self'
                             )) {
@@ -232,7 +230,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         }
-        if (!$this->model->isFieldDirty('_self') && !DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+        if (!$this->model->isFieldDirty('_self') && !DataObject::isDirtyDetectionDisabled()) {
             return [];
         }
 
@@ -242,7 +240,7 @@ class Dao extends Model\Dao\AbstractDao
             . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
+            if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 

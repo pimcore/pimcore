@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -73,8 +74,6 @@ class SessionCart extends AbstractCart implements CartInterface
      */
     public function delete()
     {
-        $this->setIgnoreReadonly();
-
         $session = static::getSessionBag();
 
         if (!$this->getId()) {
@@ -104,16 +103,10 @@ class SessionCart extends AbstractCart implements CartInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function modified()
     {
-        // Reset cached values
-        $this->itemCount = null;
-        $this->subItemCount = null;
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-
         return parent::modified();
     }
 
@@ -152,6 +145,8 @@ class SessionCart extends AbstractCart implements CartInterface
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -171,11 +166,11 @@ class SessionCart extends AbstractCart implements CartInterface
 
     /**
      * modified flag needs to be set
+     *
+     * @internal
      */
     public function __wakeup()
     {
-        $this->setIgnoreReadonly();
-
         $timestampBackup = $this->getModificationDate();
 
         // set current cart
@@ -191,6 +186,5 @@ class SessionCart extends AbstractCart implements CartInterface
         $this->modified();
 
         $this->setModificationDate($timestampBackup);
-        $this->unsetIgnoreReadonly();
     }
 }

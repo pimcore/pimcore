@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
@@ -18,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractMockupCa
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 
 /**
@@ -46,7 +46,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @param int $objectId
      *
-     * @return IndexableInterface | array
+     * @return mixed
      */
     public function getObjectMockupById($objectId)
     {
@@ -64,7 +64,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTenantWorker(WorkerInterface $tenantWorker)
     {

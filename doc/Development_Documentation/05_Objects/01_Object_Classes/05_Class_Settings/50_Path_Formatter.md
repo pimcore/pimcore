@@ -23,7 +23,7 @@ Just specify the formatter service in the class editor.
 ```php
 <?php
 
-namespace AppBundle\PathFormatter;
+namespace App\PathFormatter;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\ElementInterface;

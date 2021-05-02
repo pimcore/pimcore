@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -33,7 +33,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 return false;
             }
             return true;
-        });
+        }.bind(this));
 
         if (data) {
             this.data = data;
@@ -101,9 +101,8 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     },
 
     getLayoutEdit: function () {
-
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
         var cls = 'object_field object_field_type_' + this.type;
@@ -160,7 +159,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 handler: function (grid, rowIndex) {
                     var data = grid.getStore().getAt(rowIndex);
                     var subtype = data.data.subtype;
-                    if (data.data.type == "object" && data.data.subtype != "folder") {
+                    if (data.data.type == "object" && data.data.subtype != "folder" && data.data.subtype != null) {
                         subtype = "object";
                     }
                     pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -389,7 +388,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 handler: function (grid, rowIndex) {
                     var data = grid.getStore().getAt(rowIndex);
                     var subtype = data.data.subtype;
-                    if (data.data.type == "object" && data.data.subtype != "folder") {
+                    if (data.data.type == "object" && data.data.subtype != "folder" && data.data.subtype != null) {
                         subtype = "object";
                     }
                     pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -467,7 +466,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 item.parentMenu.destroy();
 
                 var subtype = data.data.subtype;
-                if (data.data.type == "object" && data.data.subtype != "folder") {
+                if (data.data.type == "object" && data.data.subtype != "folder" && data.data.subtype != null) {
                     subtype = "object";
                 }
                 pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -739,6 +738,3 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     }
 
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.tags.multihref = pimcore.object.tags.manyToManyRelation;

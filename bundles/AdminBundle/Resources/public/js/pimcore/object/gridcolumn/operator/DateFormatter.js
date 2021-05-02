@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -37,8 +37,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
                 maxChildCount: 1,
                 expanded: true,
                 leaf: false,
-                expandable: false,
-                isChildAllowed: this.allowChild
+                expandable: false
             };
         } else {
 
@@ -52,8 +51,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
-                leaf: true,
-                isChildAllowed: this.allowChild
+                leaf: true
             };
         }
         node.isOperator = true;
@@ -70,6 +68,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
             expandable: false,
             dataType: source.data.dataType,
             qtip: source.data.key,
+            maxChildCount: 1,
             configAttributes: {
                 label: source.data.text,
                 type: this.type,
@@ -144,9 +143,5 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
         }
 
         return nodeLabel;
-    },
-
-    allowChild: function (targetNode, dropNode) {
-        return true;
     }
 });

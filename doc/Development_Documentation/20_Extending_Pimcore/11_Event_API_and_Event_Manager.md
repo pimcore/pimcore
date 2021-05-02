@@ -7,7 +7,7 @@ used to hook into many Pimcore functions such as saving an object, asset or docu
 the default behavior of Pimcore.
 
 The most common use-case for events is using them in a [bundle/extension](13_Bundle_Developers_Guide/06_Plugin_Backend_UI.md), but 
-of course you can use them also anywhere in your code or in your dependency injection configuration (`app/config/services.yml`). 
+of course you can use them also anywhere in your code or in your dependency injection configuration (`config/services.yaml`). 
 
 Pimcore implements the standard Symfony framework event dispatcher and just adds some pimcore specific events, 
 so you can also subscribe to all Symfony core eventsand events triggered by arbitrary Symfony bundles. 
@@ -26,6 +26,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectClassificationStoreEvents.php)
 - [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectCustomLayoutEvents.php)
 - [Data Object Import](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectImportEvents.php)
+- [Data Object Quantity Value Unit](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectQuantityValueEvents.php)
 - [Users / Roles](https://github.com/pimcore/pimcore/blob/master/lib/Event/UserRoleEvents.php)
 - [Workflows](https://github.com/pimcore/pimcore/blob/master/lib/Event/WorkflowEvents.php)
 - [Elements](https://github.com/pimcore/pimcore/blob/master/lib/Event/ElementEvents.php)
@@ -57,20 +58,20 @@ All Pimcore events are defined and documented as a constant on component specifi
 ### Hook into the pre-update event of assets, documents and objects
 The following example shows how to register events for assets, documents and objects 
 
-in your `app/config/services.yml`: 
+in your `config/services.yaml`: 
 ```yaml
 services:
-    AppBundle\EventListener\TestListener:
+    App\EventListener\TestListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.asset.preUpdate, method: onPreUpdate }
             - { name: kernel.event_listener, event: pimcore.document.preUpdate, method: onPreUpdate }
             - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onPreUpdate }
 ```
 
-in your listener class `src/AppBundle/EventListener/TestListener`
+in your listener class `src/EventListener/TestListener`
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
   
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\Model\DataObjectEvent;

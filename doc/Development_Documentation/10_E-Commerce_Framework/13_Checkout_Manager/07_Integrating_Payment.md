@@ -46,7 +46,7 @@ payment provider, also other data structures can be created:
 {{ form(form) }}
 ```
 
-For more samples see [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/app/Resources/views/Payment/paymentFrame.html.php)
+For more samples see [our demo](https://github.com/pimcore/demo/blob/master/templates/payment/payment_frame.html.twig)
 
 
 ## Handle Payment Response
@@ -111,7 +111,7 @@ A server side handling could look as follows:
         }
 
         $commitOrderProcessor = $factory->getCommitOrderProcessor();
-        $paymentProvider = $factory->getPaymentManager()->getProvider("qpay");
+        $paymentProvider = $factory->getPaymentManager()->getProvider("unzer");
 
         if($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($params, $paymentProvider)) {
             Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());
@@ -124,17 +124,15 @@ A server side handling could look as follows:
     }
 ```
 
-## Dealing with Pending Payments (Starting with Pimcore 6.1)
+## Dealing with Pending Payments
 
 Depending on the shops user journey, it might be possible, that a user starts multiple payments. Typical use cases for
 that can be: 
 * User starts payment → user goes back to shop and changes cart → user starts checkout and payment with modified cart again
 * User has multiple tabs open → user starts payment in first tab → user starts another payment in second tab → user finishes first payment → user finishes second payment
 
-The ecommerce application needs a strategy how to deal with that. Prior to Pimcore 6.1, Pimcore set the cart to read only 
-as soon as a payment was started and did not allow any cart changes. Starting with Pimcore 6.1 and using the V7 checkout
-manager architecture, carts can be configured not to become readonly any more and the checkout manager can be configured
-with one of the following strategies how to handle pending payments when new payment is started 
+The ecommerce application needs a strategy how to deal with that. Tthe checkout manager can be configured
+with one of the following strategies how to handle pending payments when a new payment is started 
 (with `handle_pending_payments_strategy` factory option):  
 
   * **RecreateOrder**: Create new order every time a payment is started and leave old orders untouched. 
@@ -171,7 +169,7 @@ Above mentioned use cases will now result in following behavior:
     * If user finishes both payments, user has two orders. 
 * User has multiple tabs open → user starts payment in first tab → user starts another payment in second tab → user finishes first payment → user finishes second payment: 
   * Depending on configured CancelPaymentOrRecreateOrderStrategy when user starts second payment following things can happen: 
-    * RecreateOrder: Another order Is created and user has two orders when he finishes both payments. 
+    * RecreateOrder: Another order is created and user has two orders when he finishes both payments. 
     * CancelPaymentOrRecreateOrder: First payment would be cancelled, user only has one order. When user finishes both payments, both payment information entries will be in one order. 
     * ThrowException: When starting second payment an exception will be thrown and controller needs to decide what to do. 
 

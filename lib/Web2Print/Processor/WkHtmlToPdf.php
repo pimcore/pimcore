@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Web2Print\Processor;
@@ -33,7 +34,10 @@ class WkHtmlToPdf extends Processor
      */
     private $options = '';
 
-    protected $config = [];
+    /**
+     * @var \stdClass|null
+     */
+    protected $config;
 
     /**
      * @param string $wkhtmltopdfBin
@@ -70,12 +74,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * @param Document\PrintAbstract $document
-     * @param object $config
-     *
-     * @return string
-     *
-     * @throws \Exception
+     * {@internal}
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
@@ -104,7 +103,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * @return array
+     * {@internal}
      */
     public function getProcessingOptions()
     {
@@ -134,17 +133,11 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * returns the path to the generated pdf file
-     *
-     * @param string $html
-     * @param array $params
-     * @param bool $returnFilePath return the path to the pdf file or the content
-     *
-     * @return string
+     * {@internal}
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
-        if ($params['adapterConfig']) {
+        if (!empty($params['adapterConfig'])) {
             $this->setOptions($params['adapterConfig']);
         }
         $html = $this->processHtml($html, $params);

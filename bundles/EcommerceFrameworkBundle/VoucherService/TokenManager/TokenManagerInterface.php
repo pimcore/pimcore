@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
@@ -20,8 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
- * Interface ITokenManager
- *
  * Manager for specific token settings object of type AbstractVoucherTokenType.
  * Provides functionality for generating, checking, removing, applying, reserving tokens.
  * Also prepares the view of the Voucher Code Tab and specifies its template.
@@ -159,5 +158,3 @@ interface TokenManagerInterface
      */
     public function getConfiguration();
 }
-
-class_alias(TokenManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager');

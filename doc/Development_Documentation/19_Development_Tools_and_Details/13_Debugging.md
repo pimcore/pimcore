@@ -3,12 +3,29 @@
 In this chapter, a few insights, tips and tricks for debugging Pimcore are shown. This should give you a
 head start when developing with Pimcore. 
 
+## Debug Mode
+In order to include some specific debugging tools (profiler, toolbar, ...), Pimcore relies on environment variable `APP_ENV` in `.env` file in your project root directory.
+`APP_ENV=dev`
+
+## Dev Mode
+The development mode enables some debugging features. This is useful if you're developing on the core of Pimcore or when 
+creating a bundle. Please don't activate it in production systems!
+
+What exactly does the dev mode:
+* Loading the source javascript files (uncompressed & commented)
+* Disables some caches (Cache, ...)
+* extensive logging into log files
+* ... and some more little things
+
+Add the following line to your `.env` file to enable dev mode.
+`PIMCORE_DEV_MODE=true`
+
 ## Server-Side Debugging
 For server side debugging, standard php and Symfony framework debugging tools like the following can be used.
 
 * Reading log files as described [here](07_Logging.md)
 * Using Symfony profiler console depending on the active environment. 
-  Details see [Symfony docs](http://symfony.com/app.php/doc/3.4/reference/configuration/web_profiler.html)
+  Details see [Symfony docs](https://symfony.com/doc/current/reference/configuration/web_profiler.html)
 * Using Xdebug and a proper IDE for stepwise debugging, more information see [Xdebug docs](https://xdebug.org/)
 
 

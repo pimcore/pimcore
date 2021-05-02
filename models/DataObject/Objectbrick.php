@@ -1,24 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Objectbrick
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
@@ -30,26 +29,36 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
+     * @internal
+     *
      * @var array
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $fieldname;
 
     /**
-     * @var Model\DataObject\Concrete
+     * @internal
+     *
+     * @var Model\DataObject\Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object = null;
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    protected $objectId;
+    protected ?int $objectId = null;
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $brickGetters = [];
@@ -84,17 +93,17 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             }
 
             return $values;
-        } else {
-            if (empty($this->items)) {
-                foreach ($this->getObjectVars() as $var) {
-                    if ($var instanceof Objectbrick\Data\AbstractData) {
-                        $this->items[] = $var;
-                    }
+        }
+
+        if (empty($this->items)) {
+            foreach ($this->getObjectVars() as $var) {
+                if ($var instanceof Objectbrick\Data\AbstractData) {
+                    $this->items[] = $var;
                 }
             }
-
-            return $this->items;
         }
+
+        return $this->items;
     }
 
     /**
@@ -102,7 +111,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return $this
      */
-    public function setItems($items)
+    public function setItems(array $items)
     {
         $this->items = $items;
         $this->markFieldDirty('_self', true);
@@ -133,7 +142,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @return array
      */
-    public function getBrickGetters()
+    public function getBrickGetters(): array
     {
         $getters = [];
         foreach ($this->brickGetters as $bg) {
@@ -146,15 +155,15 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @return array
      */
-    public function getAllowedBrickTypes()
+    public function getAllowedBrickTypes(): array
     {
-        return is_array($this->brickGetters) ? $this->brickGetters : [];
+        return $this->brickGetters;
     }
 
     /**
      * @return array
      */
-    public function getItemDefinitions()
+    public function getItemDefinitions(): array
     {
         $definitions = [];
         foreach ($this->getItems() as $item) {
@@ -168,7 +177,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      * @param Concrete $object
      * @param array $params
      */
-    public function save($object, $params = [])
+    public function save(Concrete $object, $params = []): void
     {
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
@@ -187,9 +196,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
                     //check if parent object has brick, and if so, create an empty brick to enable inheritance
                     $parentBrick = null;
-                    $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
-                    AbstractObject::setGetInheritedValues(true);
-                    if (AbstractObject::doGetInheritedValues($object)) {
+                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
+                    DataObject::setGetInheritedValues(true);
+                    if (DataObject::doGetInheritedValues($object)) {
                         try {
                             $container = $object->getValueFromParent($this->fieldname);
                             if (!empty($container)) {
@@ -199,7 +208,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             // no data from parent available, continue ...
                         }
                     }
-                    AbstractObject::setGetInheritedValues($inheritanceModeBackup);
+                    DataObject::setGetInheritedValues($inheritanceModeBackup);
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
@@ -215,9 +224,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             } else {
                 if ($brick == null) {
                     $parentBrick = null;
-                    $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
-                    AbstractObject::setGetInheritedValues(true);
-                    if (AbstractObject::doGetInheritedValues($object)) {
+                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
+                    DataObject::setGetInheritedValues(true);
+                    if (DataObject::doGetInheritedValues($object)) {
                         try {
                             $container = $object->getValueFromParent($this->fieldname);
                             if (!empty($container)) {
@@ -227,7 +236,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             // no data from parent available, continue ...
                         }
                     }
-                    AbstractObject::setGetInheritedValues($inheritanceModeBackup);
+                    DataObject::setGetInheritedValues($inheritanceModeBackup);
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
@@ -241,9 +250,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @return Concrete
+     * @return Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
             $this->setObject(Concrete::getById($this->objectId));
@@ -253,11 +262,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param Concrete $object
+     * @param Concrete|null $object
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(?Concrete $object)
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -277,7 +286,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @param Concrete $object
      */
-    public function delete(Concrete $object)
+    public function delete(Concrete $object): void
     {
         if (is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
@@ -293,7 +302,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $blockedVars = ['object'];
@@ -313,18 +322,16 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $brickGetter = null;
 
         // for backwards compatibility
-        if (isset($this->object) && $this->object) {
+        if ($this->object) {
             $this->objectId = $this->object->getId();
         }
 
         // sanity check, remove data requiring non-existing (deleted) brick definitions
-
-        if (is_array($this->brickGetters)) {
-            foreach ($this->brickGetters as $brickGetter) {
-                if (isset($this->$brickGetter) && $this->$brickGetter instanceof  \__PHP_Incomplete_Class) {
-                    $this->$brickGetter = null;
-                    Logger::error('brick ' . $brickGetter . ' does not exist anymore');
-                }
+        foreach ($this->brickGetters as $key => $brickGetter) {
+            if (!property_exists($this, $brickGetter)) {
+                unset($this->brickGetters[$key]);
+                $this->$brickGetter = null;
+                Logger::error('brick ' . $brickGetter . ' does not exist anymore');
             }
         }
 
@@ -383,10 +390,10 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             $context['fieldname'] = $field;
             $params['context'] = $context;
 
-            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-            AbstractObject::disableDirtyDetection();
+            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+            DataObject::disableDirtyDetection();
             $data = $fieldDef->load($this->$brick, $params);
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
             $item->setObjectVar($field, $data);
             $item->markLazyKeyAsLoaded($field);

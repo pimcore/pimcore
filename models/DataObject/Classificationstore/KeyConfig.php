@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
@@ -25,7 +23,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyConfig\Dao getDao()
  */
-class KeyConfig extends Model\AbstractModel
+final class KeyConfig extends Model\AbstractModel
 {
     /**
      * @var array
@@ -40,56 +38,56 @@ class KeyConfig extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Store ID
      *
      * @var int
      */
-    public $storeId = 1;
+    protected $storeId = 1;
 
     /** The key
      * @var string
      */
-    public $name;
+    protected $name;
 
     /** Pseudo column for title
      * @var string|null
      */
-    public $title;
+    protected $title;
 
     /**
      * The key description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * The key type ("text", "number", etc...)
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var string
      */
-    public $definition;
+    protected $definition;
 
     /** @var bool */
-    public $enabled;
+    protected $enabled;
 
     /**
      * @param int $id
@@ -148,6 +146,8 @@ class KeyConfig extends Model\AbstractModel
      * @param int $storeId
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $storeId = 1)
     {
@@ -178,7 +178,7 @@ class KeyConfig extends Model\AbstractModel
             Cache::save($config, $cacheKey, [], null, 0, true);
 
             return $config;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -302,15 +302,13 @@ class KeyConfig extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD);
         }
 
-        $model = $this->getDao()->save();
+        $this->getDao()->save();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_POST_UPDATE);
         } else {
             \Pimcore::getEventDispatcher()->dispatch(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_POST_ADD);
         }
-
-        return $model;
     }
 
     /**

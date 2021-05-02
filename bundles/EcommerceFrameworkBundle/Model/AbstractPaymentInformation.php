@@ -1,18 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
+
+use Carbon\Carbon;
 
 /**
  * Abstract base class for payment information field collection
@@ -20,79 +23,79 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
 {
     /**
-     * @return \DateTime
+     * @return Carbon|null
      */
-    abstract public function getPaymentStart();
+    abstract public function getPaymentStart(): ?Carbon;
 
     /**
-     * @param \DateTime $paymentStart
+     * @param Carbon|null $paymentStart
      *
-     * @return void
+     * @return mixed
      */
-    abstract public function setPaymentStart($paymentStart);
+    abstract public function setPaymentStart(?Carbon $paymentStart);
 
     /**
-     * @return \DateTime
+     * @return Carbon|null
      */
-    abstract public function getPaymentFinish();
+    abstract public function getPaymentFinish(): ?Carbon;
 
     /**
-     * @param \DateTime $paymentFinish
+     * @param Carbon|null $paymentFinish
      *
-     * @return void
+     * @return mixed
      */
-    abstract public function setPaymentFinish($paymentFinish);
+    abstract public function setPaymentFinish(?Carbon $paymentFinish);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getPaymentReference();
+    abstract public function getPaymentReference(): ?string;
 
     /**
-     * @param string $paymentReference
+     * @param string|null $paymentReference
      *
-     * @return void
+     * @return mixed
      */
-    abstract public function setPaymentReference($paymentReference);
+    abstract public function setPaymentReference(?string $paymentReference);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getPaymentState();
+    abstract public function getPaymentState(): ?string;
 
     /**
-     * @param string $paymentState
+     * @param string|null $paymentState
      *
-     * @return void
+     * @return mixed
      */
-    abstract public function setPaymentState($paymentState);
+    abstract public function setPaymentState(?string $paymentState);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getMessage();
+    abstract public function getMessage(): ?string;
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getProviderData();
+    abstract public function getProviderData(): ?string;
 
     /**
-     * @param string $message
+     * @param string|null $message
      *
-     * @return void
+     * @return mixed
      */
-    abstract public function setMessage($message);
+    abstract public function setMessage(?string $message);
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract public function getInternalPaymentId();
+    abstract public function getInternalPaymentId(): ?string;
 
     /**
-     * @param string $internalPaymentId
+     * @param string|null $internalPaymentId
      *
-     * @return void
+     * @return mixed
      */
-    abstract public function setInternalPaymentId($internalPaymentId);
+    abstract public function setInternalPaymentId(?string $internalPaymentId);
 }

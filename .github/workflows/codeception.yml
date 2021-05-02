@@ -1,0 +1,102 @@
+
+name: "Codeception Tests"
+
+on:
+    pull_request:
+        branches:
+            - "*.*"
+            - "master"
+    push:
+        branches:
+            - "*.*"
+            - "master"
+            - "*_actions"
+
+env:
+    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
+    APP_ENV: test
+    PIMCORE_TEST: 1
+    PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
+    PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
+    MINIO_ACCESS_KEY: "PIMCORE_OBJECT_STORAGE_ACCESS_KEY"
+    MINIO_SECRET_KEY: "PIMCORE_OBJECT_STORAGE_SECRET_KEY"
+
+jobs:
+    codeception-tests:
+        name: "Codeception tests"
+        runs-on: "ubuntu-20.04"
+        continue-on-error: ${{ matrix.experimental }}
+        strategy:
+            matrix:
+                include:
+                    - { php-version: 8.0, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local }
+                    - { php-version: 8.0, database: "mariadb:10.4", dependencies: lowest, experimental: false, storage: local }
+                    - { php-version: 8.0, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local }
+                    - { php-version: 8.0, database: "mysql:8.0", dependencies: lowest, experimental: false, storage: local }
+                    - { php-version: 8.0, database: "percona:8.0", dependencies: lowest, experimental: false, storage: minio }
+
+        services:
+            minio:
+                image: bitnami/minio:latest
+                ports:
+                    - 9000:9000
+                env:
+                    MINIO_ACCESS_KEY: "${{ env.MINIO_ACCESS_KEY }}"
+                    MINIO_SECRET_KEY: "${{ env.MINIO_SECRET_KEY }}"
+                    MINIO_DEFAULT_BUCKETS: "asset,assetcache,thumbnail,version,recyclebin,admin"
+                options: --name minio-server
+            redis:
+                image: redis
+                ports:
+                    - 63379:6379
+            mariadb:
+                image: "${{ matrix.database }}"
+                ports:
+                    - 33006:3306
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - uses: "actions/setup-node@v2"
+              with:
+                  node-version: '10'
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  extensions: imagick
+                  ini-values: display_errors=On, display_startup_errors=On, error_reporting=32767
+                  php-version: "${{ matrix.php-version }}"
+
+            - name: Verify MariaDB connection
+              run: |
+                  cp .github/ci/files/.my.cnf ~/.my.cnf
+                  while ! mysqladmin ping --silent; do
+                    sleep 1
+                  done
+
+            - name: "Setup Pimcore environment"
+              env:
+                  PIMCORE_STORAGE: "${{ matrix.storage }}"
+              run: |
+                  mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
+                  .github/ci/scripts/setup-pimcore-environment.sh
+
+            - name: "Install dependencies with Composer"
+              uses: "ramsey/composer-install@v1"
+              with:
+                  dependency-versions: "${{ matrix.dependencies }}"
+
+            - name: "Test environment infos"
+              run: |
+                  mysql -e "SELECT VERSION();"
+                  php -i
+                  ./bin/console pimcore:system:requirements:check
+                  ./bin/console debug:config flysystem
+
+            - name: "Run Codeception"
+              run: "vendor/bin/codecept run -c . -vvv --json"

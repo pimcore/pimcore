@@ -7,18 +7,17 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
@@ -26,18 +25,17 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFacto
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor\TenantProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\IndexService\DefaultWorkerConfigMapper;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo;
@@ -48,8 +46,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService as DefaultVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
-use Pimcore\Model\DataObject\OfferToolOffer;
-use Pimcore\Model\DataObject\OfferToolOfferItem;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -57,7 +53,10 @@ use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class Configuration implements ConfigurationInterface
+/**
+ * @internal
+ */
+final class Configuration implements ConfigurationInterface
 {
     /**
      * @var TenantProcessor
@@ -83,12 +82,13 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('pimcore_ecommerce_framework');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
 
@@ -130,6 +130,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $pimcore */
         $pimcore = $builder->getRootNode();
         $pimcore
             ->addDefaultsIfNotSet()
@@ -287,7 +288,6 @@ class Configuration implements ConfigurationInterface
                                     ->append($this->buildOptionsNode('factory_options', [
                                         'cart_class_name' => Cart::class,
                                         'guest_cart_class_name' => SessionCart::class,
-                                        'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT,
                                     ]))
                                 ->end()
                             ->end()
@@ -419,74 +419,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet();
 
         $pricingManager
-            // support deprecated options at the root level of the pricing_manager
-            // values set here will OVERWRITE the value in every tenant, even if the
-            // tenant defines the value!
-            // TODO remove in Pimcore 7
-            ->validate()
-                ->always(function ($v) {
-                    $enabled = null;
-                    if (isset($v['enabled']) && is_bool($v['enabled'])) {
-                        $enabled = $v['enabled'];
-                        unset($v['enabled']);
-                    }
-
-                    $pricingManagerId = null;
-                    if (isset($v['pricing_manager_id'])) {
-                        $pricingManagerId = $v['pricing_manager_id'];
-                        unset($v['pricing_manager_id']);
-                    }
-
-                    $pricingManagerOptions = null;
-                    if (isset($v['pricing_manager_options']) && !empty($v['pricing_manager_options'])) {
-                        $pricingManagerOptions = $v['pricing_manager_options'];
-                        unset($v['pricing_manager_options']);
-                    }
-
-                    if (null === $enabled && null === $pricingManagerId && null === $pricingManagerOptions) {
-                        return $v;
-                    }
-
-                    foreach ($v['tenants'] as $tenant => &$tenantConfig) {
-                        if (null !== $enabled) {
-                            $tenantConfig['enabled'] = $enabled;
-                        }
-
-                        if (null !== $pricingManagerId) {
-                            $tenantConfig['pricing_manager_id'] = $pricingManagerId;
-                        }
-
-                        if (null !== $pricingManagerOptions) {
-                            $tenantConfig['pricing_manager_options'] = array_merge(
-                                $tenantConfig['pricing_manager_options'],
-                                $pricingManagerOptions
-                            );
-                        }
-                    }
-
-                    return $v;
-                })
-            ->end()
             ->children()
-                ->booleanNode('enabled')
-                    ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                ->end()
-                ->scalarNode('pricing_manager_id')
-                    ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                ->end()
-                ->arrayNode('pricing_manager_options')
-                    ->children()
-                        ->scalarNode('rule_class')
-                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                        ->end()
-                        ->scalarNode('price_info_class')
-                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                        ->end()
-                        ->scalarNode('environment_class')
-                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
-                        ->end()
-                    ->end()
-                ->end()
                 ->arrayNode('conditions')
                     ->info('Condition mapping from name to used class')
                     ->useAttributeAsKey('name')
@@ -751,14 +684,6 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue(IndexService::class)
                 ->end()
-                // @TODO Pimcore 7 - remove this
-                ->enumNode('worker_mode')
-                    ->values([ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC, ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY])
-                    ->cannotBeEmpty()
-                    ->setDeprecated('will be removed in Pimcore 7 as then ' . ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC . ' will be default mode.')
-                    ->info('Worker mode for ' . ProductCentricBatchProcessingWorker::class . ' workers.')
-                    ->defaultValue(ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY)
-                ->end()
                 ->scalarNode('default_tenant')
                     ->cannotBeEmpty()
                     ->defaultValue('default')
@@ -912,13 +837,6 @@ class Configuration implements ConfigurationInterface
                                                 'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype',
                                             ]);
 
-                                            // this option was never properly supported
-                                            // and is ignored
-                                            if (isset($v['mapping'])) {
-                                                @trigger_error('The "mapping" config entry on the ecommerce index attribute level is unsupported and will be removed in Pimcore 7. Please set "options.mapping" instead.', E_USER_DEPRECATED);
-                                                unset($v['mapping']);
-                                            }
-
                                             return $v;
                                         })
                                     ->end()
@@ -933,7 +851,6 @@ class Configuration implements ConfigurationInterface
                                         ->append($this->buildOptionsNode('getter_options'))
                                         ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
-                                        ->append($this->buildOptionsNode('mapping')) // TODO Symfony 3.4 set as deprecated. TODO Pimcore 7 remove option completely.
                                         ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
                                     ->end()
                                 ->end()
@@ -1090,12 +1007,12 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('offer_class')
                             ->info('Pimcore object class for offers')
                             ->cannotBeEmpty()
-                            ->defaultValue(OfferToolOffer::class)
+                            ->defaultValue('Pimcore\\Model\\DataObject\\OfferToolOffer')
                         ->end()
                         ->scalarNode('offer_item_class')
                             ->info('Pimcore object class for offer items')
                             ->cannotBeEmpty()
-                            ->defaultValue(OfferToolOfferItem::class)
+                            ->defaultValue('Pimcore\\Model\\DataObject\\OfferToolOfferItem')
                         ->end()
                         ->scalarNode('parent_folder_path')
                             ->info('default path for new offers')

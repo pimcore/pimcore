@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Tests\Service\Element;
 
 use Pimcore\Db;
@@ -78,7 +91,7 @@ class VersionTest extends TestCase
         $this->assertEquals($randomText, $targetObject->getInput(), 'random text does not match');
 
         $latestVersion1 = $this->getNewestVersion($sourceObject->getId());
-        $content = file_get_contents($latestVersion1->getFilePath());
+        $content = stream_get_contents($latestVersion1->getFileStream());
         $this->assertTrue(strpos($content, $randomText) === false, "random text shouldn't be there");
 
         $multihref = $sourceObjectFromDb->getMultihref();
@@ -86,9 +99,9 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -98,7 +111,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function needsDb()
     {

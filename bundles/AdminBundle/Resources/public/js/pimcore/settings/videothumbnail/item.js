@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -19,26 +19,23 @@ pimcore.settings.videothumbnail.item = Class.create({
         this.parentPanel = parentPanel;
         this.data = data;
         this.currentIndex = 0;
+        this.medias = {};
 
         this.addLayout();
 
-        if (this.data.items && this.data.items.length > 0) {
-            for (var i = 0; i < this.data.items.length; i++) {
-                this.addItem("item" + ucfirst(this.data.items[i].method), this.data.items[i].arguments);
-            }
+        // add default panel
+        this.addMediaPanel("default", this.data.items, false, true);
+
+        // add medias
+        if (this.data["medias"]) {
+            Ext.iterate(this.data.medias, function (key, items) {
+                this.addMediaPanel(key, items, true, false);
+            }.bind(this));
         }
     },
 
 
     addLayout: function () {
-
-        /*        this.editpanel = new Ext.Panel({
-                    region: "center",
-                    bodyStyle: "padding: 20px;",
-                    autoScroll: true
-                });
-        */
-
         var panelButtons = [];
         panelButtons.push({
             text: t("save"),
@@ -46,28 +43,32 @@ pimcore.settings.videothumbnail.item = Class.create({
             handler: this.save.bind(this)
         });
 
-
-        var addMenu = [];
-        var itemTypes = Object.keys(pimcore.settings.videothumbnail.items);
-        for (var i = 0; i < itemTypes.length; i++) {
-            if (itemTypes[i].indexOf("item") == 0) {
-                addMenu.push({
-                    iconCls: "pimcore_icon_add",
-                    handler: this.addItem.bind(this, itemTypes[i]),
-                    text: pimcore.settings.videothumbnail.items[itemTypes[i]](null, null, true)
-                });
-            }
-        }
-
-        this.itemContainer = new Ext.Panel({
-            style: "margin: 20px 0 0 0;",
-            tbar: [{
-                iconCls: "pimcore_icon_add",
-                menu: addMenu,
-                text: t("transformations")
-            }],
-            border: false
+        this.mediaPanel = new Ext.TabPanel({
+            autoHeight: true,
+            plugins: [Ext.create('Ext.ux.TabReorderer', {})]
         });
+
+        var addViewPortButton = {
+            xtype: 'panel',
+            style: 'margin-bottom: 15px',
+            items: [{
+                xtype: 'button',
+                style: "float: right",
+                text: t("add_media_segment"),
+                iconCls: "pimcore_icon_add",
+                handler: function () {
+                    Ext.MessageBox.prompt("", t("enter_media_segment"), function (button, value) {
+                        if (button == "ok") {
+                            this.addMediaPanel(value, null, true, true);
+                        }
+                    }.bind(this), null, false, '500K');
+                }.bind(this)
+            }, {
+                xtype: 'component',
+                style: "float: right; padding: 8px 40px 0 0;",
+                html: t('dash_media_message')
+            }]
+        };
 
         this.groupField = new Ext.form.field.Text({
             name: "group",
@@ -76,14 +77,8 @@ pimcore.settings.videothumbnail.item = Class.create({
             width: 450
         });
 
-        this.panel = new Ext.form.FormPanel({
+        this.settings = new Ext.form.FormPanel({
             border: false,
-            closable: true,
-            autoScroll: true,
-
-            bodyStyle: "padding: 20px;",
-            title: this.data.name,
-            id: "pimcore_videothumbnail_panel_" + this.data.name,
             labelWidth: 150,
             defaults: {
                 renderer: Ext.util.Format.htmlEncode
@@ -135,8 +130,8 @@ pimcore.settings.videothumbnail.item = Class.create({
                             ab = 196;
                         }
 
-                        this.panel.getComponent("videoBitrate").setValue(vb);
-                        this.panel.getComponent("audioBitrate").setValue(ab);
+                        this.settings.getComponent("videoBitrate").setValue(vb);
+                        this.settings.getComponent("audioBitrate").setValue(ab);
                     }.bind(this)
                 }
             }, {
@@ -153,7 +148,17 @@ pimcore.settings.videothumbnail.item = Class.create({
                 value: this.data.audioBitrate,
                 fieldLabel: t("audio_bitrate"),
                 width: 250
-            }, this.itemContainer],
+            }]
+        });
+
+        this.panel = new Ext.Panel({
+            border: false,
+            closable: true,
+            autoScroll: true,
+            bodyStyle: "padding: 20px;",
+            title: this.data.name,
+            id: "pimcore_videothumbnail_panel_" + this.data.name,
+            items: [this.settings, addViewPortButton, this.mediaPanel],
             buttons: panelButtons
         });
 
@@ -164,16 +169,100 @@ pimcore.settings.videothumbnail.item = Class.create({
         pimcore.layout.refresh();
     },
 
+    addMediaPanel: function (name, items, closable, activate) {
 
-    addItem: function (type, data) {
+        if (this.medias[name]) {
+            return;
+        }
 
-        var item = pimcore.settings.videothumbnail.items[type](this, data);
-        this.itemContainer.add(item);
-        this.itemContainer.updateLayout();
+        var addMenu = [];
+        var itemTypes = Object.keys(pimcore.settings.videothumbnail.items);
+        for (var i = 0; i < itemTypes.length; i++) {
+            if (itemTypes[i].indexOf("item") == 0) {
+                addMenu.push({
+                    iconCls: "pimcore_icon_add",
+                    handler: this.addItem.bind(this, name, itemTypes[i]),
+                    text: pimcore.settings.videothumbnail.items[itemTypes[i]](null, null, true)
+                });
+            }
+        }
+
+        var title = "";
+        if (name == "default") {
+            title = t("default");
+        } else {
+            title = name;
+        }
+
+        var itemContainer = new Ext.Panel({
+            title: title,
+            tbar: [{
+                text: t("transformations"),
+                iconCls: "pimcore_icon_add",
+                menu: addMenu
+            }],
+            border: false,
+            closable: closable,
+            autoHeight: true,
+            listeners: {
+                close: function (name) {
+                    delete this.medias[name];
+                }.bind(this, name)
+            }
+        });
+
+        this.medias[name] = itemContainer;
+
+        if (items && items.length > 0) {
+            for (var i = 0; i < items.length; i++) {
+                this.addItem(name, "item" + ucfirst(items[i].method), items[i].arguments);
+            }
+        }
+
+
+        this.mediaPanel.add(itemContainer);
+        this.mediaPanel.updateLayout();
+
+        // activate the default panel
+        if (activate) {
+            this.mediaPanel.setActiveTab(itemContainer);
+        }
+
+        return itemContainer;
+    },
+
+
+    addItem: function (name, type, data) {
+
+        var item = pimcore.settings.videothumbnail.items[type](this.medias[name], data);
+        this.medias[name].add(item);
+        this.medias[name].updateLayout();
 
         this.currentIndex++;
     },
 
+    getData: function () {
+
+        var mediaData = {};
+        var mediaOrder = {};
+
+        Ext.iterate(this.medias, function (key, value) {
+            mediaData[key] = [];
+            mediaOrder[key] = this.mediaPanel.tabBar.items.indexOf(value.tab);
+
+            var items = value.items.getRange();
+            for (var i = 0; i < items.length; i++) {
+                mediaData[key].push(items[i].getForm().getFieldValues());
+            }
+        }.bind(this));
+
+        return {
+            settings: Ext.encode(this.settings.getForm().getFieldValues()),
+            medias: Ext.encode(mediaData),
+            mediaOrder: Ext.encode(mediaOrder),
+            name: this.data.name
+        }
+    },
 
     save: function () {
 
@@ -184,15 +273,9 @@ pimcore.settings.videothumbnail.item = Class.create({
             reload = true;
         }
 
-
-        var m = Ext.encode(this.panel.getForm().getFieldValues());
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_videothumbnailupdate'),
-            method: "PUT",
-            params: {
-                configuration: m,
-                name: this.data.name
-            },
+            method: "PUT", params: this.getData(),
             success: this.saveOnComplete.bind(this, reload)
         });
     },
@@ -224,10 +307,28 @@ pimcore.settings.videothumbnail.items = {
         return [{
             xtype: "tbtext",
             text: "<b>" + name + "</b>"
+        }, "-", {
+            iconCls: "pimcore_icon_up",
+            handler: function (blockId, parent) {
+
+                var container = parent;
+                var blockElement = Ext.getCmp(blockId);
+
+                container.moveBefore(blockElement, blockElement.previousSibling());
+            }.bind(window, index, parent)
+        }, {
+            iconCls: "pimcore_icon_down",
+            handler: function (blockId, parent) {
+
+                var container = parent;
+                var blockElement = Ext.getCmp(blockId);
+
+                container.moveAfter(blockElement, blockElement.nextSibling());
+            }.bind(window, index, parent)
         }, "->", {
             iconCls: "pimcore_icon_delete",
             handler: function (index, parent) {
-                parent.itemContainer.remove(Ext.getCmp(index));
+                parent.remove(Ext.getCmp(index));
             }.bind(window, index, parent)
         }];
     },
@@ -244,7 +345,7 @@ pimcore.settings.videothumbnail.items = {
         }
         var myId = Ext.id();
 
-        var item = new Ext.Panel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -258,7 +359,7 @@ pimcore.settings.videothumbnail.items = {
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
-                    name: "item." + myId + ".width",
+                    name: "width",
                     style: "padding-right: 10px",
                     fieldLabel: t("width") + ", " + t("height"),
                     width: 210,
@@ -266,14 +367,14 @@ pimcore.settings.videothumbnail.items = {
                 },
                     {
                         xtype: 'numberfield',
-                        name: "item." + myId + ".height",
+                        name: "height",
                         hideLabel: true,
                         width: 95,
                         value: data.height
                     }]
             }, {
                 xtype: "hidden",
-                name: "item." + myId + ".type",
+                name: "type",
                 value: "resize"
             }, {
                 xtype: "displayfield",
@@ -297,7 +398,7 @@ pimcore.settings.videothumbnail.items = {
         }
         var myId = Ext.id();
 
-        var item = new Ext.Panel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -305,13 +406,13 @@ pimcore.settings.videothumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'numberfield',
-                name: "item." + myId + ".height",
+                name: "height",
                 fieldLabel: t("height"),
                 width: 250,
                 value: data.height
             }, {
                 xtype: "hidden",
-                name: "item." + myId + ".type",
+                name: "type",
                 value: "scaleByHeight"
             }]
         });
@@ -331,7 +432,7 @@ pimcore.settings.videothumbnail.items = {
         }
         var myId = Ext.id();
 
-        var item = new Ext.Panel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -339,13 +440,13 @@ pimcore.settings.videothumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'numberfield',
-                name: "item." + myId + ".width",
+                name: "width",
                 fieldLabel: t("width"),
                 width: 250,
                 value: data.width
             }, {
                 xtype: "hidden",
-                name: "item." + myId + ".type",
+                name: "type",
                 value: "scaleByWidth"
             }]
         });

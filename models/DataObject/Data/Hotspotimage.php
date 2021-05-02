@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -20,12 +18,14 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\Service;
 
 class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
     /**
-     * @var Asset\Image
+     * @var Asset\Image|ElementDescriptor|null
      */
     protected $image;
 
@@ -151,9 +151,9 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Asset\Image
+     * @return Asset\Image|null
      */
-    public function getImage()
+    public function getImage(): ?Asset\Image
     {
         return $this->image;
     }
@@ -218,5 +218,17 @@ class Hotspotimage implements OwnerAwareFieldInterface
         }
 
         return '';
+    }
+
+    public function __wakeup()
+    {
+        if ($this->image instanceof ElementDescriptor) {
+            $image = Service::getElementById($this->image->getType(), $this->image->getId());
+            if ($image instanceof Asset\Image) {
+                $this->image = $image;
+            } else {
+                $this->image = null;
+            }
+        }
     }
 }

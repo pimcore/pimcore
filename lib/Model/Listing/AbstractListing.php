@@ -1,29 +1,29 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Listing;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Listing\Dao\AbstractDao;
 
 /**
- * Class AbstractListing
- *
- * @package Pimcore\Model\Listing
- *
- * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
+ * @method AbstractDao getDao()
+ * @method QueryBuilder getQueryBuilder()
  */
 abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
@@ -169,7 +169,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if ((int)$offset > 0) {
+        if ((int)$offset >= 0) {
             $this->offset = (int)$offset;
         }
 
@@ -360,7 +360,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     /**
      * @param string $condition
-     * @param array|null $conditionVariables
+     * @param array|string|null $conditionVariables
      *
      * @return $this
      */
@@ -511,15 +511,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     public function getData()
     {
         if ($this->data === null) {
-            $dao = $this->getDao();
-            if (\method_exists($dao, 'load')) {
-                $this->getDao()->load();
-            } else {
-                @trigger_error(
-                    'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 7.',
-                    \E_USER_DEPRECATED
-                );
-            }
+            $this->getDao()->load();
         }
 
         return $this->data;
@@ -588,13 +580,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function count()
     {
-        $dao = $this->getDao();
-        if (!\method_exists($dao, 'getTotalCount')) {
-            @trigger_error('Listings should implement Countable interface', E_USER_DEPRECATED);
-
-            return 0;
-        }
-
-        return $dao->getTotalCount();
+        return $this->getDao()->getTotalCount();
     }
 }

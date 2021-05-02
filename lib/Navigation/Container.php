@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -223,7 +224,6 @@ class Container implements \RecursiveIterator, \Countable
         }
 
         if ($recursive) {
-            /** @var Page $childPage */
             foreach ($this->_pages as $childPage) {
                 if ($childPage->hasPage($page, true)) {
                     $childPage->removePage($page, true);
@@ -449,7 +449,7 @@ class Container implements \RecursiveIterator, \Countable
      * @param  bool   $useRegex  [optional] if true PHP's preg_match is used.
      *                           Default is false.
      *
-     * @return Page|Page[]|null  matching page or null
+     * @return Page|array<Page>|null  matching page or null
      */
     public function findBy($property, $value, $all = false, $useRegex = false)
     {
@@ -494,7 +494,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $pages = [];
 
@@ -509,33 +509,22 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns current page
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return Page       current page or null
-     *
-     * @throws \Exception  if the index is invalid
+     * {@inheritdoc}
      */
     public function current()
     {
         $this->_sort();
-        current($this->_index);
         $hash = key($this->_index);
 
         if (isset($this->_pages[$hash])) {
             return $this->_pages[$hash];
-        } else {
-            throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
         }
+
+        throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
     }
 
     /**
-     * Returns hash code of current page
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return string  hash code of current page
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -545,11 +534,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Moves index pointer to next page in the container
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function next()
     {
@@ -558,11 +543,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Sets index pointer to first page in the container
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -571,11 +552,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Checks if container index is valid
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function valid()
     {
@@ -585,11 +562,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Proxy to hasPages()
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return bool  whether container has any pages
+     * {@inheritdoc}
      */
     public function hasChildren()
     {
@@ -597,11 +570,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns the child container.
-     *
-     * Implements RecursiveIterator interface.
-     *
-     * @return Page|null
+     * @return Page|\RecursiveIterator|null
      */
     public function getChildren()
     {
@@ -615,11 +584,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns number of pages in container
-     *
-     * Implements Countable interface.
-     *
-     * @return int  number of pages in the container
+     * {@inheritdoc}
      */
     public function count()
     {

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -25,35 +23,54 @@ use Pimcore\Tool;
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao createUpdateTable()
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao getDao()
  * @method void delete()
- * @method Classifictionstore load()
+ * @method Classificationstore load()
  * @method void save()
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
     use Model\Element\Traits\DirtyIndicatorTrait;
+
     /**
+     * @internal
+     *
      * @var array
      */
     protected $items = [];
 
     /**
-     * @var Model\DataObject\Concrete
+     * @internal
+     *
+     * @var Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object = null;
 
     /**
-     * @var Model\DataObject\ClassDefinition
+     * @internal
+     *
+     * @var ClassDefinition|null
      */
-    protected $class;
+    protected ?ClassDefinition $class = null;
 
-    /** @var string */
+    /**
+     * @internal
+     *
+     * @var string
+     */
     protected $fieldname;
 
-    /** @var array */
+    /**
+     * @internal
+     *
+     * @var array
+     */
     protected $activeGroups = [];
 
-    /** @var array */
-    protected $groupCollectionMapping;
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    protected $groupCollectionMapping = [];
 
     /**
      * @param array $items
@@ -101,31 +118,28 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(Concrete $object)
     {
-        if (!$object instanceof Concrete) {
-            throw new \Exception('not instance of Concrete');
-        }
         if ($this->object) {
             if ($this->object->getId() != $object->getId()) {
                 $this->markFieldDirty('_self');
             }
         }
         $this->object = $object;
-        //$this->setClass($this->getObject()->getClass());
+
         return $this;
     }
 
     /**
-     * @return Concrete
+     * @return Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?Concrete
     {
         return $this->object;
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition $class
+     * @param ClassDefinition|null $class
      *
      * @return $this
      */
@@ -137,9 +151,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @return Model\DataObject\ClassDefinition
+     * @return Model\DataObject\ClassDefinition|null
      */
-    public function getClass()
+    public function getClass(): ?ClassDefinition
     {
         if (!$this->class && $this->getObject()) {
             $this->class = $this->getObject()->getClass();
@@ -275,7 +289,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->activeGroups;
     }
 
-    protected function sanitizeActiveGroups($activeGroups)
+    private function sanitizeActiveGroups($activeGroups)
     {
         $newList = [];
 
@@ -312,7 +326,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return mixed
      */
-    protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
+    private function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);
         $data = null;
@@ -321,7 +335,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             if (
                 array_key_exists($groupId, $this->items)
                 && array_key_exists($keyId, $this->items[$groupId])
-                && array_key_exists($l, $this->items[$groupId][$keyId])) {
+                && array_key_exists($l, $this->items[$groupId][$keyId])
+            ) {
                 $data = $this->items[$groupId][$keyId][$l];
                 if (!$fielddefinition->isEmpty($data)) {
                     return $data;
@@ -349,8 +364,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = 'default', $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
     {
-        $oid = $this->object->getId();
-
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
 
         if ($keyConfig->getType() == 'calculatedValue') {
@@ -383,7 +396,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         // check for inherited value
-        $doGetInheritedValues = AbstractObject::doGetInheritedValues();
+        $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
         if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
             $object = $this->getObject();
             $class = $object->getClass();
@@ -392,11 +405,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             if ($allowInherit) {
                 if ($object->getParent() instanceof AbstractObject) {
                     $parent = $object->getParent();
-                    while ($parent && $parent->getType() == 'folder') {
+                    while ($parent && $parent->getType() == AbstractObject::OBJECT_TYPE_FOLDER) {
                         $parent = $parent->getParent();
                     }
 
-                    if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                    if ($parent && ($parent->getType() == AbstractObject::OBJECT_TYPE_OBJECT || $parent->getType() == AbstractObject::OBJECT_TYPE_VARIANT)) {
                         /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $getter = 'get' . ucfirst($this->fieldname);
@@ -412,7 +425,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             }
         }
 
-        if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
+        if (method_exists($fieldDefinition, 'preGetData')) {
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,
@@ -434,7 +447,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @return array
      */
-    public function getGroupCollectionMappings()
+    public function getGroupCollectionMappings(): array
     {
         return $this->groupCollectionMapping;
     }
@@ -442,18 +455,18 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      * @param array $groupCollectionMapping
      */
-    public function setGroupCollectionMappings($groupCollectionMapping)
+    public function setGroupCollectionMappings(array $groupCollectionMapping): void
     {
         $this->groupCollectionMapping = $groupCollectionMapping;
     }
 
     /**
-     * @param int $groupId
-     * @param int $collectionId
+     * @param int|null $groupId
+     * @param int|null $collectionId
      */
-    public function setGroupCollectionMapping($groupId = null, $collectionId = null)
+    public function setGroupCollectionMapping($groupId = null, $collectionId = null): void
     {
-        if (!is_array($this->groupCollectionMapping) && $groupId) {
+        if ($groupId && $collectionId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;
         }
     }
@@ -465,10 +478,44 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroupCollectionMapping($groupId)
     {
-        if ($this->groupCollectionMapping) {
-            return $this->groupCollectionMapping[$groupId];
+        return $this->groupCollectionMapping[$groupId] ?? null;
+    }
+
+    /**
+     * @return Model\DataObject\Classificationstore\Group[]
+     */
+    public function getGroups(): array
+    {
+        $activeGroups = $this->getActiveGroups();
+        $groups = [];
+        foreach (array_keys($activeGroups) as $groupId) {
+            $groupConfig = $this->getGroupConfigById($groupId);
+            $groups[] = $this->createGroup($this, $groupConfig);
         }
 
-        return null;
+        return $groups;
+    }
+
+    /**
+     * @param Classificationstore $classificationstore
+     * @param Classificationstore\GroupConfig $groupConfig
+     *
+     * @return Model\DataObject\Classificationstore\Group
+     */
+    public function createGroup(
+        Classificationstore $classificationstore,
+        Classificationstore\GroupConfig $groupConfig
+    ): Model\DataObject\Classificationstore\Group {
+        return new Model\DataObject\Classificationstore\Group($classificationstore, $groupConfig);
+    }
+
+    /**
+     * @param int $groupId
+     *
+     * @return Classificationstore\GroupConfig|null
+     */
+    private function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
+    {
+        return Classificationstore\GroupConfig::getById($groupId);
     }
 }

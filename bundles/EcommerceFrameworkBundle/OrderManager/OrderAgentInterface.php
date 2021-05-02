@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
@@ -20,8 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Pimcore\Model\Element\Note;
 
 interface OrderAgentInterface
@@ -89,7 +90,7 @@ interface OrderAgentInterface
      * @param PaymentInterface $paymentProvider
      * @param AbstractOrder|null $sourceOrder
      *
-     * @return Order
+     * @return OrderAgentInterface
      */
     public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null);
 
@@ -152,5 +153,3 @@ interface OrderAgentInterface
      */
     public function getFullChangeLog();
 }
-
-class_alias(OrderAgentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent');

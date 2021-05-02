@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -40,7 +41,7 @@ use Iterator;
  * Implements Countable, Iterator and ArrayAccess
  * to facilitate easy access to the data.
  */
-class Config implements Countable, Iterator, ArrayAccess
+final class Config implements Countable, Iterator, ArrayAccess
 {
     /**
      * Whether modifications to configuration data are allowed.
@@ -121,7 +122,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * Only allow setting of a property if $allowModifications  was set to true
      * on construction. Otherwise, throw an exception.
      *
-     * @param  string $name
+     * @param  string|null $name
      * @param  mixed  $value
      *
      * @return void
@@ -176,7 +177,6 @@ class Config implements Countable, Iterator, ArrayAccess
         $array = [];
         $data = $this->data;
 
-        /** @var self $value */
         foreach ($data as $key => $value) {
             if ($value instanceof self) {
                 $array[$key] = $value->toArray();
@@ -220,11 +220,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * count(): defined by Countable interface.
-     *
-     * @see    Countable::count()
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -232,11 +228,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * current(): defined by Iterator interface.
-     *
-     * @see    Iterator::current()
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -246,11 +238,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * key(): defined by Iterator interface.
-     *
-     * @see    Iterator::key()
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -258,11 +246,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * next(): defined by Iterator interface.
-     *
-     * @see    Iterator::next()
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function next()
     {
@@ -276,11 +260,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * rewind(): defined by Iterator interface.
-     *
-     * @see    Iterator::rewind()
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -289,11 +269,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * valid(): defined by Iterator interface.
-     *
-     * @see    Iterator::valid()
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function valid()
     {
@@ -301,13 +277,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * offsetExists(): defined by ArrayAccess interface.
-     *
-     * @see    ArrayAccess::offsetExists()
-     *
-     * @param  mixed $offset
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function offsetExists($offset)
     {
@@ -315,13 +285,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * offsetGet(): defined by ArrayAccess interface.
-     *
-     * @see    ArrayAccess::offsetGet()
-     *
-     * @param  mixed $offset
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function offsetGet($offset)
     {
@@ -329,14 +293,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * offsetSet(): defined by ArrayAccess interface.
-     *
-     * @see    ArrayAccess::offsetSet()
-     *
-     * @param  mixed $offset
-     * @param  mixed $value
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value)
     {
@@ -344,13 +301,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * offsetUnset(): defined by ArrayAccess interface.
-     *
-     * @see    ArrayAccess::offsetUnset()
-     *
-     * @param  mixed $offset
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetUnset($offset)
     {
@@ -358,6 +309,8 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
+     * @internal
+     *
      * Merge another Config with this one.
      *
      * For duplicate keys, the following will be performed:
@@ -398,6 +351,8 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
+     * @internal
+     *
      * Prevent any more modifications being made to this instance.
      *
      * Useful after merge() has been used to merge multiple Config objects
@@ -418,6 +373,8 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
+     * @internal
+     *
      * Returns whether this Config object is read only or not.
      *
      * @return bool
@@ -428,7 +385,7 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __toString()
     {

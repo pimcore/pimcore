@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -105,7 +105,32 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
         };
 
         possibleOptions = new Ext.ux.form.MultiSelect(options);
-        return [possibleOptions];
+        return [
+            {
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            possibleOptions,
+            {
+                xtype: 'combobox',
+                name: 'defaultValue',
+                triggerAction: "all",
+                selectOnFocus: true,
+                fieldLabel: t('default_value'),
+                store: countryStore,
+                value: datax.defaultValue,
+                displayField: 'key',
+                valueField: 'value',
+                width: 300
+            }
+        ];
     },
 
     applySpecialData: function(source) {

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Property;
@@ -20,66 +18,68 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method Predefined\Dao getDao()
  * @method void save()
  * @method void delete()
  */
-class Predefined extends Model\AbstractModel
+final class Predefined extends Model\AbstractModel
 {
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @var string
      */
-    public $key;
+    protected $key;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      */
-    public $data;
+    protected $data;
 
     /**
      * @var string
      */
-    public $config;
+    protected $config;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var bool
      */
-    public $inheritable = false;
+    protected $inheritable = false;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id

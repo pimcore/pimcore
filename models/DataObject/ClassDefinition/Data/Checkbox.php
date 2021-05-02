@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -19,11 +18,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+    use DataObject\Traits\SimpleNormalizerTrait;
 
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -31,17 +31,23 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'checkbox';
 
     /**
+     * @internal
+     *
      * @var int|null
      */
     public $defaultValue;
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var string
      */
@@ -50,17 +56,11 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Type for the column
      *
-     * @var string
-     */
-    public $columnType = 'tinyint(1)';
-
-    /**
-     * Type for the generated phpdoc. Do not use boolean here because boolean is an alias for bool and
-     * aliases don't work in type declarations.
+     * @internal
      *
      * @var string
      */
-    public $phpdocType = 'bool';
+    public $columnType = 'tinyint(1)';
 
     /**
      * @return int|null
@@ -104,7 +104,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param bool $data
+     * @param bool|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -176,14 +176,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -196,12 +191,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * Converts object data to a simple string value or CSV Export
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -211,26 +201,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * fills object field data values from CSV Import String
-     *
-     * @abstract
-     *
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return (bool)$importValue;
-    }
-
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -287,10 +258,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDataForSearchIndex($object, $params = [])
     {
@@ -298,23 +266,23 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isEmpty($data)
     {
         return $data === null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
     }
 
     /**
-     * @param DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return null|int
+     * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
     {
@@ -330,5 +298,37 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isEqual($oldValue, $newValue): bool
     {
         return $oldValue === $newValue;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        return 'bool|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'bool|null';
     }
 }

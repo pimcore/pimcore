@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -31,7 +31,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     open: function (modal) {
-        var imageUrl = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: this.imageId, width: this.width, height: this.height, contain: true});
+        var validImage = (typeof this.imageId != "undefined" && this.imageId !== null),
+            imageUrl = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: this.imageId, width: this.width, height: this.height, contain: true});
 
         if (this.config.crop) {
             imageUrl = imageUrl + '&' + Ext.urlEncode(this.config.crop);
@@ -54,7 +55,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             closeAction: "destroy",
             autoDestroy: true,
             resizable: false,
-            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat; position:relative; ",
+            bodyStyle: "background: url('/bundles/pimcoreadmin/img/tree-preview-transparent-background.png');",
             tbar: {
                 overflowHandler: 'menu',
                 items:
@@ -123,7 +124,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     }.bind(this)
                 }]
             },
-            html: '<img id="hotspotImage" src="' + imageUrl + '" />'
+            html: validImage ? '<img id="hotspotImage" src="' + imageUrl + '" />' : '<span style="padding:10px;">' + t("no_data_to_display") + '</span>'
         });
 
         this.hotspotWindowInitCount = 0;
@@ -151,7 +152,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                         var paddingHeight = winOuterSize["height"] - winBodyInnerSize["height"];
 
                         this.hotspotWindow.setSize(imageWidth + paddingWidth, imageHeight + paddingHeight);
-                        Ext.get("hotspotImage").remove();
+                        //Ext.get("hotspotImage").remove();
 
                         if (this.data && this.data["hotspots"]) {
                             for (i = 0; i < this.data.hotspots.length; i++) {

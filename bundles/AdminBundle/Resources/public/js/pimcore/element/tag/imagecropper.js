@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -32,7 +32,7 @@ pimcore.element.tag.imagecropper = Class.create({
     },
 
     open: function (modal) {
-        var validImage = this.imageId !== null,
+        var validImage = (typeof this.imageId != "undefined" && this.imageId !== null),
             imageUrl = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: this.imageId, width: 500, height: 400, contain: true}),
             button = {};
 
@@ -79,7 +79,7 @@ pimcore.element.tag.imagecropper = Class.create({
             height: 400,
             modal: this.modal,
             resizable: false,
-            bodyStyle: validImage ? "background: url(" + imageUrl + ") center center no-repeat;position:relative;" : "",
+            bodyStyle: "background: url('/bundles/pimcoreadmin/img/tree-preview-transparent-background.png');",
             bbar: ["->", button],
             html: validImage ? '<img id="selectorImage" src="' + imageUrl + '" />' : '<span style="padding:10px;">' + t("no_data_to_display") + '</span>'
         });
@@ -187,7 +187,7 @@ pimcore.element.tag.imagecropper = Class.create({
 
                         this.editWindow.setSize(imageWidth + paddingWidth, imageHeight + paddingHeight);
 
-                        Ext.get("selectorImage").remove();
+                        //Ext.get("selectorImage").remove();
 
                         if(this.data && this.data["cropPercent"]) {
                             Ext.get("selector").applyStyles({

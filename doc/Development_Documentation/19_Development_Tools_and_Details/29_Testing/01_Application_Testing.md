@@ -57,18 +57,18 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
 </phpunit>
 ``` 
 
-Now we're ready to write a first test. Assuming we have an `AppBundle\Calculator` class which has an `add(int $a, int $b): int`
-method, add a test in `tests/AppBundle/CalculatorTest.php`. It is not necessary but recommended to resemble the directory
+Now we're ready to write a first test. Assuming we have an `App\Calculator` class which has an `add(int $a, int $b): int`
+method, add a test in `tests/App/CalculatorTest.php`. It is not necessary but recommended to resemble the directory
 structure from your application code in your test directory.
 
 ```php
 <?php
 
-// tests/AppBundle/CalculatorTest.php
+// tests/App/CalculatorTest.php
 
-namespace Tests\AppBundle;
+namespace Tests\App;
 
-use AppBundle\Calculator;
+use App\Calculator;
 use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase
@@ -184,11 +184,11 @@ below assumes an installation running the `demo-basic` install profile.
 ```php
 <?php
 
-// tests/AppBundle/Controller/ContentControllerTest.php
+// tests/App/Controller/ContentControllerTest.php
 
 declare(strict_types=1);
 
-namespace Tests\AppBundle\Controller;
+namespace Tests\App\Controller;
 
 use Pimcore\Test\WebTestCase;
 
@@ -230,7 +230,7 @@ class ContentControllerTest extends WebTestCase
 
 If you would run the test suite now, it would fail with a list of errors as the test can't connect to the database. This 
 is because the tests run in the `test` environment and that environment is set up to use a different database connection
-which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/skeleton/blob/master/app/config/config_test.yml)).
+which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/skeleton/blob/master/config/packages/test/config.yaml)).
 
 You can either define the database DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
 recommended) or remove/alter the customized `doctrine` section from `config_test.yml` completely. What to use depends highly on your environment and your tests - if you have
@@ -302,7 +302,7 @@ settings:
     memory_limit: 1024M
     colors: true
 paths:
-    log: var/logs
+    log: var/log
 include:
   - tests
 ```
@@ -331,7 +331,7 @@ use Pimcore\Tests\Util\Autoloader;
 define('PIMCORE_PROJECT_ROOT', realpath(__DIR__ . '/..'));
 
 // set the used pimcore/symfony environment
-putenv('PIMCORE_ENVIRONMENT=test');
+putenv('APP_ENV=test');
 
 
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
@@ -378,7 +378,7 @@ Let's start writing tests by adding a simple unit test:
 
 // tests/unit/ExampleTest.php
 
-namespace Tests\Unit\AppBundle;
+namespace Tests\Unit\App;
 
 use Codeception\Test\Unit;
 
@@ -461,9 +461,9 @@ can directly use Symfony tests such as `$I->amOnRoute()`.
 ```php
 <?php
 
-// tests/functional/AppBundle/IndexPageCest.php
+// tests/functional/App/IndexPageCest.php
 
-namespace Tests\Functional\AppBundle;
+namespace Tests\Functional\App;
 
 use Tests\FunctionalTester;
 

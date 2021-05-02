@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -46,23 +47,17 @@ class Url extends Page
      *
      * @var string|null
      */
-    protected $_uri = null;
+    protected ?string $_uri = null;
 
     /**
      * Sets page URI
      *
-     * @param  string $uri                page URI, must a string or null
+     * @param string|null $uri page URI, must a string or null
      *
-     * @return Url   fluent interface, returns self
-     *
-     * @throws \Exception  if $uri is invalid
+     * @return Url fluent interface, returns self
      */
-    public function setUri($uri)
+    public function setUri(?string $uri)
     {
-        if (null !== $uri && !is_string($uri)) {
-            throw new \Exception('Invalid argument: $uri must be a string or null');
-        }
-
         $this->_uri = $uri;
 
         return $this;
@@ -71,17 +66,15 @@ class Url extends Page
     /**
      * Returns URI
      *
-     * @return string
+     * @return string|null
      */
-    public function getUri()
+    public function getUri(): ?string
     {
         return $this->_uri;
     }
 
     /**
-     * Returns href for this page
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getHref()
     {
@@ -89,11 +82,11 @@ class Url extends Page
 
         $fragment = $this->getFragment();
         if (null !== $fragment) {
-            if ('#' == substr($uri, -1)) {
+            if ('#' === substr($uri, -1)) {
                 return $uri . $fragment;
-            } else {
-                return $uri . '#' . $fragment;
             }
+
+            return $uri . '#' . $fragment;
         }
 
         return $uri;
@@ -102,11 +95,9 @@ class Url extends Page
     // Public methods:
 
     /**
-     * Returns an array representation of the page
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

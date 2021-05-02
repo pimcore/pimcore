@@ -1,36 +1,42 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect;
 
-class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
+class MultiSelectFromMultiSelect extends SelectFromMultiSelect
 {
-    /**
-     * @param AbstractFilterDefinitionType $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     *
-     * @return string
-     */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
-        $rawValues = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
+
+        $useAndCondition = false;
+
+        if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+            throw new InvalidConfigException('invalid configuration');
+        }
+
+        $useAndCondition = $filterDefinition->getUseAndCondition();
+
+        $rawValues = $productList->getGroupByValues($field, true, !$useAndCondition);
 
         $values = [];
         foreach ($rawValues as $v) {
@@ -46,7 +52,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
             }
         }
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
@@ -54,7 +60,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     /**
@@ -96,12 +102,18 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 
         if (!empty($value)) {
             $quotedValues = [];
+            $db = Db::get();
             foreach ($value as $v) {
                 $v = '%' . WorkerInterface::MULTISELECT_DELIMITER  . $v .  WorkerInterface::MULTISELECT_DELIMITER . '%' ;
-                $quotedValues[] = $field . ' like '.$productList->quote($v);
+                $quotedValues[] = $field . ' like '.$db->quote($v);
             }
 
-            if ($filterDefinition->getUseAndCondition()) {
+            $useAndCondition = false;
+            if (method_exists($filterDefinition, 'getUseAndCondition')) {
+                $useAndCondition = $filterDefinition->getUseAndCondition();
+            }
+
+            if ($useAndCondition) {
                 $quotedValues = implode(' and ', $quotedValues);
             } else {
                 $quotedValues = implode(' or ', $quotedValues);

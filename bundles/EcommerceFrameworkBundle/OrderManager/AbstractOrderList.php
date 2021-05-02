@@ -1,20 +1,20 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 abstract class AbstractOrderList implements OrderListInterface
@@ -45,7 +45,7 @@ abstract class AbstractOrderList implements OrderListInterface
     protected $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator|null
      */
     protected $list;
 
@@ -126,16 +126,14 @@ abstract class AbstractOrderList implements OrderListInterface
         return $this;
     }
 
-    /**
-     * @return OrderListItemInterface[]
-     */
+    /** @inheritDoc */
     public function load()
     {
         if ($this->list === null) {
             // load
             $conn = \Pimcore\Db::getConnection();
-
-            $this->list = new \ArrayIterator($conn->fetchAll($this->getQuery()));
+            $queryBuilder = $this->getQueryBuilder();
+            $this->list = new \ArrayIterator($conn->fetchAll((string) $queryBuilder, $queryBuilder->getParameters(), $queryBuilder->getParameterTypes()));
             $this->rowCount = (int)$conn->fetchCol('SELECT FOUND_ROWS() as "cnt"')[0];
         }
 
@@ -143,17 +141,7 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
-     * Returns an collection of items for a page.
+     * Returns a collection of items for a page.
      *
      * @param  int $offset           Page offset
      * @param  int $itemCountPerPage Number of items per page
@@ -163,9 +151,9 @@ abstract class AbstractOrderList implements OrderListInterface
     public function getItems($offset, $itemCountPerPage)
     {
         // load
-        return $this
-            ->setLimit($itemCountPerPage, $offset)
-            ->load();
+        $this->setLimit($itemCountPerPage, $offset)->load();
+
+        return $this->list->getArrayCopy();
     }
 
     /**

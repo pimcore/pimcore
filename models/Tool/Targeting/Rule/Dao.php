@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\Targeting\Rule;
@@ -41,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM targeting_rules WHERE id = ?', $this->model->getId());
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $data['conditions'] = (isset($data['conditions']) ? Serialize::unserialize($data['conditions']) : []);
             $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
@@ -67,7 +65,10 @@ class Dao extends Model\Dao\AbstractDao
         if (count($data) === 1) {
             $this->getById($data[0]['id']);
         } else {
-            throw new \Exception('target with name ' . $this->model->getId() . " doesn't exist or isn't unique");
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Targeting rule with name "%s" does not exist.',
+                $this->model->getName()
+            ));
         }
     }
 

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -125,7 +125,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 detailsData[t("height")] = this.data.customSettings.videoHeight;
             }
             if(this.data.customSettings['duration']) {
-                detailsData[t("duration")] = this.data.customSettings.duration;
+                detailsData[t("duration")] = pimcore.helpers.formatTimeDuration(this.data.customSettings.duration);
             }
 
             var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {

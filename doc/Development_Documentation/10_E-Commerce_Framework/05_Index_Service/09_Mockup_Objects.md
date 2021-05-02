@@ -28,5 +28,5 @@ available in the product index.
 ## Using Custom Mockup Object Implementation
 Of course, it might be necessary to use custom Mockup implementations. To do you, overwrite the 
 `createMockupObject($objectId, $data, $relations)` method in your `Config` implementation. For an example see 
-[`MyOptimizedMysql`](https://github.com/pimcore/demo-ecommerce/blob/master/src/AppBundle/Ecommerce/IndexService/Tenant/Config/MyOptimizedMysql.php#L37) 
+[`MyOptimizedMysql`](https://github.com/pimcore/demo/blob/master/src/Ecommerce/IndexService/Tenant/Config/MyOptimizedMysql.php#L37) 
 in the Demo. 

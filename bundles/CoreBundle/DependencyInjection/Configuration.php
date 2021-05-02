@@ -1,22 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Cache\Pool\Redis;
-use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Targeting\Storage\CookieStorage;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -27,7 +26,10 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class Configuration implements ConfigurationInterface
+/**
+ * @internal
+ */
+final class Configuration implements ConfigurationInterface
 {
     /**
      * @var PlaceholderProcessor
@@ -51,9 +53,9 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore');
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
-        $rootNode->ignoreExtraKeys();
 
         $rootNode
             ->children()
@@ -90,17 +92,6 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('translations')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('case_insensitive')
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                            ->info('Force Pimcore translations to NOT be case sensitive. This only applies to translations set via Pimcore\'s translator (e.g. website translations)')
-                            ->defaultFalse()
-                        ->end()
-
                         ->arrayNode('admin_translation_mapping')
                             ->useAttributeAsKey('locale')
                             ->prototype('scalar')->end()
@@ -173,10 +164,8 @@ class Configuration implements ConfigurationInterface
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
-        $this->addMigrationsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
-        $this->addMimeNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -218,17 +207,17 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('general')
-            ->ignoreExtraKeys()
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('timezone')
-                    ->defaultValue('Europe/Berlin')
+                    ->defaultValue('')
                 ->end()
                 ->scalarNode('path_variable')
+                    ->info('Additional $PATH variable (: separated) (/x/y:/foo/bar):')
                     ->defaultNull()
                 ->end()
                 ->scalarNode('domain')
-                    ->defaultNull()
+                    ->defaultValue('')
                 ->end()
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()
@@ -269,6 +258,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
                 ->booleanNode('debug_admin_translations')
+                    ->info('Debug Admin-Translations (displayed wrapped in +)')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -278,7 +268,9 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
                 ->scalarNode('instance_identifier')
-                    ->defaultNull()->end()
+                    ->defaultNull()
+                    ->info('UUID instance identifier. Has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)')
+                    ->end()
                 ->end()
             ->end();
     }
@@ -291,19 +283,25 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('services')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('google')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('client_id')
+                            ->info('This is required for the Google API integrations. Only use a `Service Account´ from the Google Cloud Console.')
                             ->defaultNull()
                         ->end()
                         ->scalarNode('email')
+                            ->info('Email address of the Google service account')
                             ->defaultNull()
                         ->end()
                         ->scalarNode('simple_api_key')
+                            ->info('Server API key')
                             ->defaultNull()
                         ->end()
                         ->scalarNode('browser_api_key')
+                            ->info('Browser API key')
                             ->defaultNull()
                         ->end()
                     ->end()
@@ -338,6 +336,7 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('adapter')
+                            ->info('Set to `Proxy` if proxy server should be used')
                             ->defaultValue('Socket')
                         ->end()
                         ->scalarNode('proxy_host')
@@ -370,6 +369,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('mail_notification')
                             ->children()
                                 ->booleanNode('send_log_summary')
+                                    ->info('Send log summary via email')
                                     ->beforeNormalization()
                                         ->ifString()
                                         ->then(function ($v) {
@@ -379,19 +379,24 @@ class Configuration implements ConfigurationInterface
                                     ->defaultFalse()
                                 ->end()
                                 ->scalarNode('filter_priority')
+                                    ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
                                     ->defaultNull()
                                 ->end()
                                 ->scalarNode('mail_receiver')
+                                ->info('Log summary receivers. Separate multiple email receivers by using ;')
                                 ->end()
                             ->end()
                         ->end()
                         ->scalarNode('archive_treshold')
+                            ->info('Archive threshold in days')
                             ->defaultValue('')
                         ->end()
                         ->scalarNode('archive_alternative_database')
+                            ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
                             ->defaultValue('')
                         ->end()
                         ->scalarNode('delete_archive_threshold')
+                            ->info('Threshold for deleting application log archive tables (in months)')
                             ->defaultValue('6')
                         ->end()
                     ->end()
@@ -408,9 +413,22 @@ class Configuration implements ConfigurationInterface
         $assetsNode = $rootNode
             ->children()
                 ->arrayNode('assets')
-                ->ignoreExtraKeys()
                 ->addDefaultsIfNotSet()
                 ->children()
+                    ->arrayNode('frontend_prefixes')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('source')
+                                ->defaultValue('')
+                                ->end()
+                            ->scalarNode('thumbnail')
+                                ->defaultValue('')
+                                ->end()
+                            ->scalarNode('thumbnail_deferred')
+                                ->defaultValue('')
+                                ->end()
+                        ->end()
+                    ->end()
                     ->scalarNode('preview_image_thumbnail')
                         ->defaultNull()
                         ->end()
@@ -426,11 +444,6 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('low_quality_image_preview')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('generator')
-                                    ->defaultNull()
-                                    ->end()
-                                ->end()
                             ->end()
                             ->arrayNode('focal_point_detection')
                                 ->addDefaultsIfNotSet()
@@ -439,15 +452,6 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('thumbnails')
                                 ->addDefaultsIfNotSet()
                                 ->children()
-                                    ->booleanNode('webp_auto_support')
-                                        ->beforeNormalization()
-                                            ->ifString()
-                                            ->then(function ($v) {
-                                                return (bool)$v;
-                                            })
-                                        ->end()
-                                        ->defaultTrue()
-                                    ->end()
                                     ->booleanNode('clip_auto_support')
                                         ->beforeNormalization()
                                             ->ifString()
@@ -513,9 +517,11 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                     ->scalarNode('icc_rgb_profile')
+                        ->info('Absolute path to default ICC RGB profile (if no embedded profile is given)')
                         ->defaultNull()
                     ->end()
                     ->scalarNode('icc_cmyk_profile')
+                        ->info('Absolute path to default ICC CMYK profile (if no embedded profile is given)')
                         ->defaultNull()
                     ->end()
                     ->booleanNode('hide_edit_image')
@@ -562,8 +568,20 @@ class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->booleanNode('ignore_localized_query_fallback')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                                ->end()
+                            ->defaultFalse()
+                        ->end()
                         ->integerNode('tree_paging_limit')
                             ->defaultValue(30)
+                        ->end()
+                        ->integerNode('auto_save_interval')
+                            ->defaultValue(60)
                         ->end()
                         ->arrayNode('versions')
                             ->children()
@@ -640,6 +658,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('default_controller')
+                    ->defaultValue('App\\Controller\\DefaultController::defaultAction')
+                ->end()
                 ->arrayNode('error_pages')
                     ->children()
                         ->scalarNode('default')
@@ -704,6 +725,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->integerNode('auto_save_interval')
+                    ->defaultValue(60)
+                ->end()
             ->end();
     }
 
@@ -739,20 +763,6 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('defaults')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('bundle')
-                                    ->defaultValue('AppBundle')
-                                ->end()
-                                ->scalarNode('controller')
-                                    ->defaultValue('Default')
-                                ->end()
-                                ->scalarNode('action')
-                                    ->defaultValue('default')
-                                ->end()
-                            ->end()
-                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -775,7 +785,8 @@ class Configuration implements ConfigurationInterface
     private function addContextNode(ArrayNodeDefinition $rootNode)
     {
         $contextNode = $rootNode->children()
-            ->arrayNode('context');
+            ->arrayNode('context')
+            ->useAttributeAsKey('name');
 
         /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
@@ -922,10 +933,10 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('encoder_factories')
                             ->info('Encoder factories to use as className => factory service ID mapping')
                             ->example([
-                                'AppBundle\Model\DataObject\User1' => [
+                                'App\Model\DataObject\User1' => [
                                     'id' => 'website_demo.security.encoder_factory2',
                                 ],
-                                'AppBundle\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
+                                'App\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
                             ])
                             ->useAttributeAsKey('class')
                             ->prototype('array')
@@ -977,7 +988,7 @@ class Configuration implements ConfigurationInterface
     {
         $node = $parent->children()->arrayNode($name);
 
-        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
+        /** @var ArrayNodeDefinition $prototype */
         $prototype = $node->prototype('array');
         $prototype
             ->beforeNormalization()
@@ -1002,8 +1013,6 @@ class Configuration implements ConfigurationInterface
      */
     private function addCacheNode(ArrayNodeDefinition $rootNode)
     {
-        $defaultOptions = ConnectionFactory::getDefaultOptions();
-
         $rootNode->children()
             ->arrayNode('full_page_cache')
                 ->ignoreExtraKeys()
@@ -1011,83 +1020,17 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('lifetime')
+                        ->info('Optional output-cache lifetime (in seconds) after the cache expires, if not defined the cache will be cleaned on every action inside the CMS, otherwise not (for high traffic sites)')
                         ->defaultNull()
                     ->end()
-                    ->scalarNode('exclude_patterns')->end()
-                    ->scalarNode('exclude_cookie')->end()
+                    ->scalarNode('exclude_patterns')
+                        ->info('Regular Expressions like: /^\/dir\/toexclude/')
+                    ->end()
+                    ->scalarNode('exclude_cookie')
+                        ->info('Comma separated list of cookie names, that will automatically disable the full-page cache')
+                    ->end()
                 ->end()
-            ->end()
-            ->arrayNode('cache')
-                ->ignoreExtraKeys()
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->scalarNode('pool_service_id')
-                        ->defaultValue(null)
-                    ->end()
-                    ->integerNode('default_lifetime')
-                        ->defaultValue(2419200) // 28 days
-                    ->end()
-                    ->arrayNode('pools')
-                        ->addDefaultsIfNotSet()
-                        ->children()
-                            ->arrayNode('doctrine')
-                                ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('connection')
-                                        ->defaultValue('default')
-                                    ->end()
-                                ->end()
-                            ->end()
-                            ->arrayNode('redis')
-                                ->canBeEnabled()
-                                ->children()
-                                    ->arrayNode('connection')
-                                        ->info('Redis connection options. See ' . ConnectionFactory::class)
-                                        ->children()
-                                            ->scalarNode('server')->end()
-                                            ->integerNode('port')
-                                                ->defaultValue($defaultOptions['port'])
-                                            ->end()
-                                            ->scalarNode('database')
-                                                ->defaultValue($defaultOptions['database'])
-                                            ->end()
-                                            ->scalarNode('password')
-                                                ->defaultValue($defaultOptions['password'])
-                                            ->end()
-                                            ->scalarNode('persistent')
-                                                ->defaultValue($defaultOptions['persistent'])
-                                            ->end()
-                                            ->booleanNode('force_standalone')
-                                                ->defaultValue($defaultOptions['force_standalone'])
-                                            ->end()
-                                            ->integerNode('connect_retries')
-                                                ->defaultValue($defaultOptions['connect_retries'])
-                                            ->end()
-                                            ->floatNode('timeout')
-                                                ->defaultValue($defaultOptions['timeout'])
-                                            ->end()
-                                            ->floatNode('read_timeout')
-                                                ->defaultValue($defaultOptions['read_timeout'])
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                    ->arrayNode('options')
-                                        ->info('Redis cache pool options. See ' . Redis::class)
-                                        ->children()
-                                            ->booleanNode('notMatchingTags')->end()
-                                            ->integerNode('compress_tags')->end()
-                                            ->integerNode('compress_data')->end()
-                                            ->integerNode('compress_threshold')->end()
-                                            ->scalarNode('compression_lib')->end()
-                                            ->booleanNode('use_lua')->end()
-                                            ->integerNode('lua_max_c_stack')->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end();
+            ->end();
     }
 
     /**
@@ -1103,21 +1046,29 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('sender')
+                            ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
+                                ->scalarNode('name')
+                                    ->defaultValue('')
+                                ->end()
+                                ->scalarNode('email')
+                                    ->defaultValue('')
+                                ->end()
                             ->end()
                         ->end()
                         ->arrayNode('return')
+                            ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
+                                ->scalarNode('name')
+                                    ->defaultValue('')
+                                ->end()
+                                ->scalarNode('email')
+                                    ->defaultValue('')
+                                ->end()
                             ->end()
                         ->end()
-                        ->scalarNode('method')
-                            ->defaultNull()
-                        ->end()
                         ->arrayNode('debug')
+                            ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('email_addresses')
                                     ->defaultValue('')
@@ -1125,6 +1076,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->scalarNode('usespecific')
+                            ->defaultFalse()
                         ->end()
                     ->end()
                 ->end()
@@ -1205,72 +1157,6 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * Adds configuration tree node for migrations
-     *
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addMigrationsNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('migrations')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('sets')
-                            ->useAttributeAsKey('identifier')
-                            ->defaultValue([])
-                            ->info('Migration sets which can be used apart from bundle migrations. Use the -s option in migration commands to select a specific set.')
-                            ->example([
-                                [
-                                    'custom_set' => [
-                                        'name' => 'Custom Migrations',
-                                        'namespace' => 'App\\Migrations\\Custom',
-                                        'directory' => 'src/App/Migrations/Custom',
-                                    ],
-                                    'custom_set_2' => [
-                                        'name' => 'Custom Migrations 2',
-                                        'namespace' => 'App\\Migrations\\Custom2',
-                                        'directory' => 'src/App/Migrations/Custom2',
-                                        'connection' => 'custom_connection',
-                                    ],
-                                ],
-                            ])
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('identifier')->end()
-                                    ->scalarNode('name')
-                                        ->isRequired()
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->scalarNode('namespace')
-                                        ->isRequired()
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->scalarNode('directory')
-                                        ->isRequired()
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->scalarNode('connection')
-                                        ->info('If defined, the DBAL connection defined here will be used')
-                                        ->defaultNull()
-                                        ->beforeNormalization()
-                                            ->ifTrue(function ($v) {
-                                                return empty(trim($v));
-                                            })
-                                            ->then(function () {
-                                                return null;
-                                            })
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
     private function addTargetingNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode
@@ -1339,23 +1225,6 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    private function addMimeNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('mime')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('extensions')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()
@@ -1669,6 +1538,19 @@ class Configuration implements ConfigurationInterface
                                                                 ->end()
                                                                 ->info('Add additional field to the transition detail window.')
                                                             ->end()
+                                                            ->arrayNode('customHtml')
+                                                                ->children()
+                                                                    ->enumNode('position')
+                                                                        ->values(['top', 'center', 'bottom'])
+                                                                        ->defaultValue('top')
+                                                                        ->info('Set position of custom HTML inside modal (top, center, bottom).')
+                                                                    ->end()
+                                                                    ->scalarNode('service')
+                                                                        ->cannotBeEmpty()
+                                                                        ->info('Define a custom service for rendering custom HTML within the note modal.')
+                                                                    ->end()
+                                                                ->end()
+                                                            ->end()
                                                         ->end()
                                                     ->end()
                                                     ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
@@ -1805,9 +1687,23 @@ class Configuration implements ConfigurationInterface
                                                                      ->prototype('variable')->end()
                                                                 ->end()
                                                             ->end()
-
                                                         ->end()
                                                     ->end()
+
+                                                    ->arrayNode('customHtml')
+                                                        ->children()
+                                                            ->enumNode('position')
+                                                                ->values(['top', 'center', 'bottom'])
+                                                                ->defaultValue('top')
+                                                                ->info('Set position of custom HTML inside modal (top, center, bottom).')
+                                                            ->end()
+                                                            ->scalarNode('service')
+                                                                ->cannotBeEmpty()
+                                                                ->info('Define a custom service for rendering custom HTML within the note modal.')
+                                                            ->end()
+                                                        ->end()
+                                                    ->end()
+
                                                 ->end()
                                                 ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()

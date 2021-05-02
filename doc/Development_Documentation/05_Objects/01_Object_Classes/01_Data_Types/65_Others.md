@@ -51,7 +51,7 @@ In the frontend (template) you can use the following code to the the html for th
 <?php
 $object = DataObject::getById(234);
 ?>
- 
+
 <ul>
   <li><?= $object->getMyLink()->getHtml(); ?></li>
 </ul>
@@ -66,7 +66,7 @@ Allows to store RGBA Values. RGB and Alpha values are stored as hex values in tw
 
 ![Color Picker](../../../img/rgba_color_picker.png)
 
-  
+
 API Examples:
 
 ```php
@@ -93,7 +93,7 @@ Offers data encryption for certain data types.
 
 ![Encrypted Field](../../../img/encrypted_field.png)
 
-> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to app/config/config.yml
+> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to config/config.yaml
 
 Example:
 ```
@@ -115,9 +115,7 @@ You can switch this off by calling
 Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(false)
 ```
 
-## URL Slug (experimental)
-> **This feature is experimental!**  
-> Subject to change with short notice in upgrade notes
+## URL Slug
 
 A slug is the part of a URL which identifies a particular page on a website in an easy 
 to read form. In other words, it’s the part of the URL that explains the page’s content.
@@ -125,7 +123,7 @@ For example, the URL is https://demo.pimcore.fun/slug, and the slug simply is �
 
 ![URL Slug](../../../img/classes-datatypes-urlslug.png)
 
-> Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md).
+> Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md) & [Classification Store](./15_Classification_Store.md).
 
 This data-type can be used to manage custom URL slugs for data objects, you can add as many fields of this type to a class as you want. 
 Pimcore then cares automatically about the routing and calls the configured controller/action if a slug matches.
@@ -135,7 +133,7 @@ Pimcore then cares automatically about the routing and calls the configured cont
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\DataObject;

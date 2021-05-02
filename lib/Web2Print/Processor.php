@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Web2Print;
@@ -21,7 +22,8 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
-use Pimcore\Web2Print\Processor\PdfReactor8;
+use Pimcore\Web2Print\Processor\HeadlessChrome;
+use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
@@ -34,7 +36,7 @@ abstract class Processor
     private static $lock = null;
 
     /**
-     * @return PdfReactor8|WkHtmlToPdf
+     * @return HeadlessChrome|PdfReactor|WkHtmlToPdf
      *
      * @throws \Exception
      */
@@ -43,11 +45,13 @@ abstract class Processor
         $config = Config::getWeb2PrintConfig();
 
         if ($config->get('generalTool') === 'pdfreactor') {
-            return new PdfReactor8();
+            return new PdfReactor();
         } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
+        } elseif ($config->get('generalTool') === 'headlesschrome') {
+            return new HeadlessChrome();
         } else {
-            throw new \Exception('Invalid Configuation - ' . $config->get('generalTool'));
+            throw new \Exception('Invalid Configuration - ' . $config->get('generalTool'));
         }
     }
 
@@ -63,7 +67,7 @@ abstract class Processor
     {
         $document = $this->getPrintDocument($documentId);
         if (Model\Tool\TmpStore::get($document->getLockKey())) {
-            throw new \Exception('Process with given document alredy running.');
+            throw new \Exception('Process with given document already running.');
         }
         Model\Tool\TmpStore::add($document->getLockKey(), true);
 
@@ -170,13 +174,11 @@ abstract class Processor
     /**
      * @param int $documentId
      *
-     * @return \stdClass
+     * @return \stdClass|null
      */
     protected function loadJobConfigObject($documentId)
     {
-        $jobConfig = json_decode(file_get_contents($this->getJobConfigFile($documentId)));
-
-        return $jobConfig;
+        return json_decode(file_get_contents($this->getJobConfigFile($documentId)));
     }
 
     /**
@@ -227,7 +229,7 @@ abstract class Processor
     /**
      * @param int $documentId
      *
-     * @return array
+     * @return array|null
      */
     public function getStatusUpdate($documentId)
     {
@@ -238,6 +240,8 @@ abstract class Processor
                 'statusUpdate' => $jobConfig->statusUpdate,
             ];
         }
+
+        return null;
     }
 
     /**

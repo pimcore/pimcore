@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
@@ -34,7 +35,7 @@ class Environment implements EnvironmentInterface
     protected $defaultCurrency;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $customItems = [];
 
@@ -49,17 +50,17 @@ class Environment implements EnvironmentInterface
     protected $useGuestCart = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentAssortmentTenant;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentAssortmentSubTenant;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentCheckoutTenant;
 
@@ -69,7 +70,7 @@ class Environment implements EnvironmentInterface
      * This value will not be stored into the session and is only valid for current process
      * set with setCurrentCheckoutTenant('tenant', false');
      *
-     * @var string
+     * @var string|null
      */
     protected $currentTransientCheckoutTenant;
 
@@ -180,66 +181,6 @@ class Environment implements EnvironmentInterface
         $this->currentCheckoutTenant = null;
         $this->currentTransientCheckoutTenant = null;
         $this->useGuestCart = false;
-    }
-
-    /**
-     * @deprecated
-     *
-     * use setCurrentAssortmentTenant instead
-     *
-     * @param string $currentTenant
-     *
-     * @return mixed|void
-     */
-    public function setCurrentTenant($currentTenant)
-    {
-        $this->load();
-
-        $this->setCurrentAssortmentTenant($currentTenant);
-    }
-
-    /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentTenant instead
-     *
-     * @return string
-     */
-    public function getCurrentTenant()
-    {
-        $this->load();
-
-        return $this->getCurrentAssortmentTenant();
-    }
-
-    /**
-     * @deprecated
-     *
-     * use setCurrentAssortmentSubTenant instead
-     *
-     * @param mixed $currentSubTenant
-     *
-     * @return mixed|void
-     */
-    public function setCurrentSubTenant($currentSubTenant)
-    {
-        $this->load();
-
-        $this->setCurrentAssortmentSubTenant($currentSubTenant);
-    }
-
-    /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentSubTenant instead
-     *
-     * @return mixed
-     */
-    public function getCurrentSubTenant()
-    {
-        $this->load();
-
-        return $this->getCurrentAssortmentSubTenant();
     }
 
     /**

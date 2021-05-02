@@ -73,16 +73,15 @@ services:
 
     Pimcore\Targeting\DataProvider\GeoIp:
         calls:
-            - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
+            - [setCache, ['@Pimcore\Cache\Core\CoreCacheHandler']]
 
     Pimcore\Targeting\DataProvider\GeoLocation: ~
 
     Pimcore\Targeting\DataProvider\Device:
         calls:
-            - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
-            - [setCachePool, ['@Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface']]
+            - [setCache, ['@Pimcore\Cache\Core\CoreCacheHandler']]
+            - [setCachePool, ['@pimcore.cache.pool']]
 
-    Pimcore\Targeting\DataProvider\Piwik: ~
     Pimcore\Targeting\DataProvider\TargetingStorage: ~
 
     Pimcore\Targeting\Service\VisitedPagesCounter: ~
@@ -101,7 +100,7 @@ services:
     pimcore.targeting.condition_matcher.expression_language:
         class: Symfony\Component\ExpressionLanguage\ExpressionLanguage
         arguments:
-            $cache: '@pimcore.cache.core.pool'
+            $cache: '@pimcore.cache.pool'
 
     Pimcore\Targeting\ConditionMatcherInterface: '@Pimcore\Targeting\ConditionMatcher'
     Pimcore\Targeting\ConditionMatcher:

@@ -1,24 +1,28 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Cache\Core;
 
-use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-class WriteLock implements WriteLockInterface, LoggerAwareInterface
+/**
+ * @internal
+ */
+class WriteLock implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -28,7 +32,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     protected $enabled = true;
 
     /**
-     * @var PimcoreCacheItemPoolInterface
+     * @var TagAwareAdapterInterface
      */
     protected $itemPool;
 
@@ -58,15 +62,15 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     protected $lockInitialized = false;
 
     /**
-     * @param PimcoreCacheItemPoolInterface $itemPool
+     * @param TagAwareAdapterInterface $itemPool
      */
-    public function __construct(PimcoreCacheItemPoolInterface $itemPool)
+    public function __construct(TagAwareAdapterInterface $itemPool)
     {
         $this->itemPool = $itemPool;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function enable()
     {
@@ -74,7 +78,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function disable()
     {
@@ -82,7 +86,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isEnabled()
     {

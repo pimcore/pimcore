@@ -5,7 +5,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -46,6 +46,14 @@ define('PIMCORE_PROJECT_ROOT', $projectRoot);
 Bootstrap::defineConstants();
 
 Debug::enable();
+
+// Load a startup file if it exists - this is a good place to preconfigure the system
+// before the kernel is loaded - e.g. to set trusted proxies on the request object
+$startupFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/startup.php';
+if (file_exists($startupFile)) {
+    include_once $startupFile;
+}
+
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 Pimcore::setKernel($kernel);

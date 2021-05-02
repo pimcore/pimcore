@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -40,7 +40,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -104,11 +104,10 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         var itemWidth = this.fieldConfig.width ? this.fieldConfig.width : 150;
         var itemHeight = this.fieldConfig.height ? this.fieldConfig.height : 150;
 
-        var fieldConfig = {
+        let fieldConfig = Object.assign({}, this.fieldConfig, {
             width: itemWidth,
             height: itemHeight,
-            uploadPath: this.fieldConfig.uploadPath,
-        };
+        });
 
         return fieldConfig;
     },

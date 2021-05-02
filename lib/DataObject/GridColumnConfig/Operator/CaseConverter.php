@@ -1,27 +1,33 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-class CaseConverter extends AbstractOperator
+/**
+ * @internal
+ */
+final class CaseConverter extends AbstractOperator
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     private $capitalization;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -29,6 +35,9 @@ class CaseConverter extends AbstractOperator
         $this->capitalization = $config->capitalization ?? 0;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -45,14 +54,13 @@ class CaseConverter extends AbstractOperator
 
             $childResult = $c->getLabeledValue($element);
 
-            $childValues = $childResult->value;
+            $childValues = $childResult->value ?? null;
             $isArrayType = is_array($childValues);
 
             if ($childValues && !is_array($childValues)) {
                 $childValues = [$childValues];
             }
 
-            /** @var array $childValues */
             if (is_array($childValues)) {
                 foreach ($childValues as $childValue) {
                     if ($this->capitalization == 1) {
@@ -71,7 +79,6 @@ class CaseConverter extends AbstractOperator
             } else {
                 $result->value = $valueArray[0];
             }
-            $result->$valueArray;
         }
 
         return $result;

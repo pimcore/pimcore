@@ -1,21 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class AbstractTokenManager implements TokenManagerInterface
+abstract class AbstractTokenManager implements TokenManagerInterface, ExportableTokenManagerInterface
 {
     /* @var AbstractVoucherTokenType */
     public $configuration;
@@ -35,18 +35,12 @@ abstract class AbstractTokenManager implements TokenManagerInterface
 
     /**
      * @param AbstractVoucherTokenType $configuration
-     *
-     * @throws InvalidConfigException
      */
     public function __construct(AbstractVoucherTokenType $configuration)
     {
-        if ($configuration instanceof AbstractVoucherTokenType) {
-            $this->configuration = $configuration;
-            $this->seriesId = $configuration->getObject()->getId();
-            $this->series = $configuration->getObject();
-        } else {
-            throw new InvalidConfigException('Invalid Configuration Class.');
-        }
+        $this->configuration = $configuration;
+        $this->seriesId = $configuration->getObject()->getId();
+        $this->series = $configuration->getObject();
     }
 
     /**
@@ -85,12 +79,11 @@ abstract class AbstractTokenManager implements TokenManagerInterface
      */
     protected function checkVoucherSeriesIsPublished($code)
     {
-        /** @var Token $token */
         $token = Token::getByCode($code);
         if (!$token) {
             throw new VoucherServiceException("No token found for code '" . $code . "'", VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
         }
-        /** @var OnlineShopVoucherSeries $series */
+        /** @var OnlineShopVoucherSeries|null $series */
         $series = OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
         if (!$series) {
             throw new VoucherServiceException("No voucher series found for token '" . $token->getToken() . "' (ID " . $token->getId() . ')', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
@@ -155,7 +148,6 @@ abstract class AbstractTokenManager implements TokenManagerInterface
      * @param array $params
      *
      * @return mixed
-     * @implements IExportableTokenManager
      */
     public function exportCsv(array $params)
     {
@@ -202,7 +194,6 @@ abstract class AbstractTokenManager implements TokenManagerInterface
      * @param array $params
      *
      * @return mixed
-     * @implements IExportableTokenManager
      */
     public function exportPlain(array $params)
     {

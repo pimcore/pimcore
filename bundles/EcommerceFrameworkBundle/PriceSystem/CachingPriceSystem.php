@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
@@ -23,12 +24,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 abstract class CachingPriceSystem extends AbstractPriceSystem implements CachingPriceSystemInterface
 {
     /**
-     * @var PriceInfoInterface[] $priceInfos
+     * @var PriceInfoInterface[][] $priceInfos
      */
     protected $priceInfos = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPriceInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null): PriceInfoInterface
     {
@@ -48,7 +49,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadPriceInfos($productEntries, $options)
     {
@@ -56,7 +57,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clearPriceInfos($productEntries, $options)
     {
@@ -64,7 +65,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
     {

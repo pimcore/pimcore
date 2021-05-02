@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Targeting\EventListener;
@@ -148,9 +148,12 @@ class TargetingListener implements EventSubscriberInterface
     {
         $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
 
-        /** @var AssignTargetGroup $assignTargetGroupHandler */
-        $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
-        $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
+        if (method_exists($this->actionHandler, 'getActionHandler')) {
+            /** @var AssignTargetGroup $assignTargetGroupHandler */
+            $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
+
+            $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
+        }
 
         $this->stopStopwatch('Targeting:loadStoredAssignments');
     }
@@ -210,7 +213,11 @@ class TargetingListener implements EventSubscriberInterface
         }
 
         foreach ($actions as $type => $typeActions) {
-            $handler = $this->actionHandler->getActionHandler($type);
+            $handler = null;
+            if (method_exists($this->actionHandler, 'getActionHandler')) {
+                $handler = $this->actionHandler->getActionHandler($type);
+            }
+
             if (!$handler instanceof ResponseTransformingActionHandlerInterface) {
                 throw new \RuntimeException(sprintf(
                     'The "%s" action handler does not implement ResponseTransformingActionHandlerInterface',

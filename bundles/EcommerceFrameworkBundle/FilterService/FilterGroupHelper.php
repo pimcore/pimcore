@@ -1,22 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 
 /**
  * Helper for getting possible group by values based on different column groups
@@ -65,7 +66,7 @@ class FilterGroupHelper
             $values = $productList->getGroupByRelationValues($field);
 
             foreach ($values as $v) {
-                $obj = AbstractObject::getById($v);
+                $obj = DataObject::getById($v);
                 if ($obj) {
                     $name = $obj->getKey();
                     //give the possibility to add a nice name with HTML-icons etc. to the filter definition output fields
@@ -94,7 +95,7 @@ class FilterGroupHelper
             foreach ($values as $v) {
                 $helper = explode(',', $v);
                 foreach ($helper as $h) {
-                    $obj = AbstractObject::getById($h);
+                    $obj = DataObject::getById($h);
                     if ($obj) {
                         $name = $obj->getKey();
                         if (method_exists($obj, 'getName')) {

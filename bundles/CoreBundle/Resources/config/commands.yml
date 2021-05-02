@@ -67,13 +67,6 @@ services:
         tags:
             - { name: console.command, command: 'pimcore:bundle:uninstall' }
 
-    Pimcore\Bundle\CoreBundle\Command\Bundle\UpdateCommand:
-        arguments:
-            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
-            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
-        tags:
-            - { name: console.command, command: 'pimcore:bundle:update' }
-
     Pimcore\Bundle\CoreBundle\Command\ClassesRebuildCommand:
         calls:
             - [setClassDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager']]

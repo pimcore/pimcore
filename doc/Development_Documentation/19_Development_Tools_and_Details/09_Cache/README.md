@@ -12,55 +12,30 @@ The third cache is used for add-ons like the glossary, translations, database sc
 The behavior of the caches is controlled by the add-on itself.
 
 All of the described caches are utilizing the `Pimcore\Cache` interface to store their objects. `Pimcore\Cache` utilizes
-a `Pimcore\Cache\Core\CoreHandlerInterface` to apply Pimcore's caching logic on top of a [`PSR-6`](http://www.php-fig.org/psr/psr-6/)
+a `Pimcore\Cache\Core\CoreCacheHandler` to apply Pimcore's caching logic on top of a [`PSR-6`](http://www.php-fig.org/psr/psr-6/)
 cache implementation which needs to implement [cache tagging](https://github.com/php-cache/tag-interop).
-
-By default, Pimcore ships with default cache pools (backends) for `Doctrine` and `Redis`, but you can implement custom
-cache pools by implementing `Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface`. See [Custom Cache Pools](./01_Custom_Cache_Pools.md)
-for details.
 
 ## Configuring the cache
 
-The `PimcoreCoreBundle` defines a default cache configuration which you can override in your config files:
+Pimcore uses the `pimcore.cache.pool` Symfony cache pool, you can configure it according to your needs, but it's crucial 
+that the pool supports tags.
 
 ```yaml
-# pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/config.yml
-
-pimcore:
+# config/cache.yaml
+framework:
     cache:
-        pool_service_id:      null
-        default_lifetime:     2419200
         pools:
-            doctrine:
-                enabled:              true
-                connection:           default
-            redis:
-                enabled:              false
-
-                # Redis connection options. See Pimcore\Cache\Pool\Redis\ConnectionFactory
-                connection:
-                    server:               ~
-                    port:                 6379
-                    database:             0
-                    password:             null
-                    persistent:           ''
-                    force_standalone:     false
-                    connect_retries:      1
-                    timeout:              2.5
-                    read_timeout:         0
-
-                # Redis cache pool options. See Pimcore\Cache\Pool\Redis
-                options:
-                    notMatchingTags:      ~
-                    compress_tags:        ~
-                    compress_data:        ~
-                    compress_threshold:   ~
-                    compression_lib:      ~
-                    use_lua:              ~
-                    lua_max_c_stack:      ~
+            pimcore.cache.pool:
+                public: true
+                tags: true
+                default_lifetime: 31536000  # 1 year
+                #adapter: cache.adapter.pdo
+                #provider: 'doctrine.dbal.default_connection'
+                adapter: pimcore.cache.adapter.redis_tag_aware
+                provider: 'redis://localhost'
 ```
 
-By default, the cache will reuse the Doctrine connection and write to your DB's `cache` and `cache_tags` tables. You can override
+By default, the cache will reuse the Doctrine connection and write to your DB's `cache_items` tables. You can override
 the used connection by setting `connection` setting to a known Doctrine connection (see
 [DoctrineBundle Reference](http://symfony.com/doc/3.4/reference/configuration/doctrine.html#doctrine-dbal-configuration)
 for further information).
@@ -68,13 +43,6 @@ for further information).
 If you enable the `redis` cache configuration, the Redis cache will be used instead of the Doctrine one, even if Doctrine
 is enabled as well. 
 > **IMPORTANT!** It is crucial to test and verify your Redis configuration, if Pimcore is unable to connect to Redis, the entire system will stop working.
-
-If you want to use a custom cache pool, ignore the `pools` section (or disable both predefined pools) and set the `pool_service_id`
-entry to the service ID of your custom pool (needs to be defined as service on the service container). There are a couple
-of cache pools predefined in [cache.yml](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/config/cache.yml)
-but those (array, filesystem) are mainly used for testing. 
-
-> If all of the predefined cache pools are disabled, the cache will fall back to a filesystem cache which is rather slow.
 
 
 ### Recommended Redis Configuration (`redis.conf`)
@@ -99,7 +67,7 @@ save ""
 
 ## Using the Cache for your Application
 
-Use the `Pimcore\Cache` facade to interact with the core cache or directly use the `pimcore.cache.core.handler` service.
+Use the `Pimcore\Cache` facade to interact with the core cache or directly use the `Pimcore\Cache\Core\CoreCacheHandler` service.
 
 You can use this functionality for your own application, and also to control the behavior of the Pimcore cache (but be
 careful!).
@@ -167,5 +135,4 @@ It is also possible to just disable the output-cache in your code, read more [he
 
 ## Further Reading
 
-* Setup a custom caching-backend - see [Custom Cache Pools](./01_Custom_Cache_Pools.md).
 * Details about output-cache - see [Output Cache](./03_Full_Page_Cache.md).

@@ -7,25 +7,24 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
 
-use Pimcore\Process\PartsBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 /**
- * Runs the assets:install command with the settings configured in composer.json
+ * @internal
  *
- * @package Pimcore\Tool
+ * Runs the assets:install command with the settings configured in composer.json
  */
 class AssetsInstaller
 {
@@ -66,21 +65,28 @@ class AssetsInstaller
      *
      * @return Process
      */
-    public function buildProcess(array $options = []): Process
+    protected function buildProcess(array $options = []): Process
     {
         $arguments = [
             Console::getPhpCli(),
             PIMCORE_PROJECT_ROOT . '/bin/console',
             'assets:install',
-            'web',
         ];
 
-        $options = $this->resolveOptions($options);
+        $preparedOptions = [];
+        foreach ($this->resolveOptions($options) as $optionKey => $optionValue) {
+            if ($optionValue === false || $optionValue === null) {
+                continue;
+            }
 
-        $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts = $partsBuilder->getParts();
+            $preparedOptions[] = '--' . $optionKey . (($optionValue === true) ? '' : '=' . $optionValue);
+        }
 
-        $process = new Process($parts);
+        $arguments = array_merge($arguments, $preparedOptions);
+
+        $arguments[] = PIMCORE_WEB_ROOT;
+
+        $process = new Process($arguments);
         $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
 
         return $process;

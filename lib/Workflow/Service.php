@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Workflow;
@@ -45,6 +46,7 @@ class Service
                 $dateTime->setTimestamp($value);
             }
             $data['value'] = $dateTime;
+        /**
         } elseif (false) { //TODO
 
             $data['type'] = 'document';
@@ -57,6 +59,7 @@ class Service
 
             $data['type'] = 'object';
             $data['value'] = $value;
+        */
         } else {
             $data['type'] = 'text';
             $data['value'] = $value;

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
@@ -24,8 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutStepInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionAdd;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionRemove;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
@@ -39,8 +38,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     ProductViewInterface,
     ProductImpressionInterface,
-    IProductActionAdd,
-    IProductActionRemove,
     CartProductActionAddInterface,
     CartProductActionRemoveInterface,
     CheckoutInterface,
@@ -117,7 +114,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
@@ -137,7 +134,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {

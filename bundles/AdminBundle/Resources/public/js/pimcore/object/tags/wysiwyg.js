@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -164,7 +164,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             entities: false,
             entities_greek: false,
             entities_latin: false,
-            extraAllowedContent: "*[pimcore_type,pimcore_id]",
+            extraAllowedContent: "*[pimcore_type,pimcore_id,pimcore_disable_thumbnail]",
             baseFloatZIndex: 40000 // prevent that the editor gets displayed behind the grid cell editor window
         };
 
@@ -184,13 +184,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig.removePlugins += ",tableresize";
         else
             eConfig.removePlugins = "tableresize";
-
-        if (intval(this.fieldConfig.width) > 1) {
-            eConfig.width = this.fieldConfig.width;
-        }
-        if (intval(this.fieldConfig.height) > 1) {
-            eConfig.height = this.fieldConfig.height;
-        }
 
         if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
             eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);

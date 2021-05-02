@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Traits;
@@ -20,6 +18,9 @@ namespace Pimcore\Model\DataObject\Traits;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
+/**
+ * @internal
+ */
 trait OwnerAwareFieldTrait
 {
     /**
@@ -41,14 +42,66 @@ trait OwnerAwareFieldTrait
      * @internal
      *
      * @param mixed $owner
-     * @param string $fieldname
-     * @param string|null $language
+     *
+     * @return $this;
      */
-    public function setOwner($owner, string $fieldname, $language = null)
+    public function _setOwner($owner)
     {
         $this->_owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function _getOwner()
+    {
+        return $this->_owner;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function _getOwnerFieldname(): ?string
+    {
+        return $this->_fieldname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function _getOwnerLanguage(): ?string
+    {
+        return $this->_language;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string|null $fieldname
+     *
+     * @return $this;
+     */
+    public function _setOwnerFieldname(?string $fieldname)
+    {
         $this->_fieldname = $fieldname;
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string|null $language
+     *
+     * @return $this
+     */
+    public function _setOwnerLanguage(?string $language)
+    {
         $this->_language = $language;
+
+        return $this;
     }
 
     /**

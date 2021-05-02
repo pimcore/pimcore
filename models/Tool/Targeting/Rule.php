@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\Targeting;
@@ -20,6 +18,8 @@ namespace Pimcore\Model\Tool\Targeting;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method Rule\Dao getDao()
  * @method void save()
  * @method void update()
@@ -35,42 +35,42 @@ class Rule extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var string
      */
-    public $scope = self::SCOPE_HIT;
+    protected $scope = self::SCOPE_HIT;
 
     /**
      * @var bool
      */
-    public $active = true;
+    protected $active = true;
 
     /**
      * @var int
      */
-    public $prio = 0;
+    protected $prio = 0;
 
     /**
      * @var array
      */
-    public $conditions = [];
+    protected $conditions = [];
 
     /**
      * @var array
      */
-    public $actions = [];
+    protected $actions = [];
 
     /**
      * @param mixed $target
@@ -122,6 +122,8 @@ class Rule extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -130,7 +132,7 @@ class Rule extends Model\AbstractModel
             $target->getDao()->getByName($name);
 
             return $target;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

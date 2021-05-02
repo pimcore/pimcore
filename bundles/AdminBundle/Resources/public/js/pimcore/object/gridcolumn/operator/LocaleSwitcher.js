@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -89,6 +89,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
         });
 
         var data = [];
+        data.push(["default", t("default")]);
         for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
             var language = pimcore.settings.websiteLanguages[i];
             data.push([language, t(pimcore.available_languages[language])]);

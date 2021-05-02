@@ -1,20 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Symfony\Component\HttpFoundation\Request;
@@ -108,15 +110,33 @@ abstract class AbstractFilterType
      * renders and returns the rendered html snippet for the current filter
      * based on settings in the filter definition and the current filter params.
      *
-     * @abstract
-     *
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
      * @return string
      */
-    abstract public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter);
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    {
+        return $this->render(
+            $this->getTemplate($filterDefinition),
+            $this->getFilterValues($filterDefinition, $productList, $currentFilter)
+        );
+    }
+
+    /**
+     * returns the raw data for the current filter based on settings in the
+     * filter definition and the current filter params.
+     *
+     * @abstract
+     *
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     */
+    abstract public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array;
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.
@@ -130,6 +150,8 @@ abstract class AbstractFilterType
      * @param bool $isPrecondition
      *
      * @return array
+     *
+     * @throws InvalidConfigException
      */
     abstract public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false);
 
@@ -138,6 +160,8 @@ abstract class AbstractFilterType
      *
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
+     *
+     * @throws InvalidConfigException
      */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {

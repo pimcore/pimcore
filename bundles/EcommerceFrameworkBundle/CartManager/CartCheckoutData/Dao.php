@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
@@ -103,7 +104,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'productId=' . $this->db->quote($this->model->getProductId()). ' AND cartId = ' . $this->db->quote($this->model->cartId));
+        $this->db->deleteWhere(self::TABLE_NAME, '`key`=' . $this->db->quote($this->model->getKey()). ' AND cartId = ' . $this->db->quote($this->model->getCartId()));
     }
 
     public function removeAllFromCart($cartId)

@@ -1,14 +1,32 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 
+/**
+ * @internal
+ */
 trait AllowDocumentRelationTrait
 {
     /**
-     * Checks if an document is an allowed relation
+     * Checks if a document is an allowed relation
+     *
+     * @internal
      *
      * @param Document $document
      *
@@ -16,6 +34,10 @@ trait AllowDocumentRelationTrait
      */
     protected function allowDocumentRelation($document)
     {
+        if (!$document instanceof Document || $document->getId() <= 0) {
+            return false;
+        }
+
         $allowedDocumentTypes = $this->getDocumentTypes();
 
         $allowed = true;

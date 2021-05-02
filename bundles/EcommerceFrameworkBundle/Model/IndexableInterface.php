@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
@@ -29,16 +30,16 @@ interface IndexableInterface
      *
      * @return bool
      */
-    public function getOSDoIndexProduct();
+    public function getOSDoIndexProduct(): bool;
 
     /**
      * defines the name of the price system for this product.
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @return string
+     * @return string|null
      */
-    public function getPriceSystemName();
+    public function getPriceSystemName(): ?string;
 
     /**
      * returns if product is active.
@@ -49,21 +50,21 @@ interface IndexableInterface
      *
      * @return bool
      */
-    public function isActive($inProductList = false);
+    public function isActive(bool $inProductList = false): bool;
 
     /**
      * returns product type for product index (either object or variant).
      * by default it returns type of object, but it may be overwritten if necessary.
      *
-     * @return string
+     * @return string|null
      */
-    public function getOSIndexType();
+    public function getOSIndexType(): ?string;
 
     /**
      * returns parent id for product index.
      * by default it returns id of parent object, but it may be overwritten if necessary.
      *
-     * @return int
+     * @return int|string|null
      */
     public function getOSParentId();
 
@@ -73,14 +74,12 @@ interface IndexableInterface
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    public function getCategories();
+    public function getCategories(): ?array;
 
     /**
      * returns the class id of the object
      *
-     * @return string
+     * @return string|null
      */
     public function getClassId();
 }
-
-class_alias(IndexableInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable');

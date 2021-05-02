@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -73,7 +73,14 @@
     min-height: 30px;
 }
 
+/* car object > basedata -> german tab active */
 .x-tab.x-tab-active.x-tab-default {
+    background-color: #f6f6f6;
+    border-color: #d0d0d0;
+}
+
+/* car object > basedata -> click on german tab (focus) */
+.x-keyboard-mode .x-tab-focus.x-tab-active.x-tab-default {
     background-color: #f6f6f6;
     border-color: #d0d0d0;
 }
@@ -227,7 +234,7 @@
     padding-bottom: 1px;
 }
 
-.x-mask.x-focus {
+.x-body .x-component.x-mask.x-focus {
     border:0;
 }
 
@@ -331,10 +338,6 @@ body > .x-mask {
     font-size: 18px;
 }
 
-.x-btn-default-small, .x-btn-default-medium, .x-btn-default-large {
-    border-color: #000;
-}
-
 .x-btn-over.x-btn-default-small, .x-btn-over.x-btn-default-medium, .x-btn-over.x-btn-default-large {
     border-color: #000;
     background-color: #000;
@@ -352,21 +355,22 @@ body > .x-mask {
     background: #f6f6f6;
     border-color: #d0d0d0;
 }
-.x-panel > .x-panel-default-outer-border-l,
-.x-panel > .x-panel-default-outer-border-b,
-.x-panel > .x-panel-default-outer-border-bl,
-.x-panel > .x-panel-default-outer-border-r,
-.x-panel > .x-panel-default-outer-border-rl,
-.x-panel > .x-panel-default-outer-border-rb,
-.x-panel > .x-panel-default-outer-border-rbl,
-.x-panel > .x-panel-default-outer-border-t,
-.x-panel > .x-panel-default-outer-border-tl,
-.x-panel > .x-panel-default-outer-border-tb,
-.x-panel > .x-panel-default-outer-border-tbl,
-.x-panel > .x-panel-default-outer-border-tr,
-.x-panel > .x-panel-default-outer-border-trl,
-.x-panel > .x-panel-default-outer-border-trb,
-.x-panel > .x-panel-default-outer-border-trbl {
+.x-panel  .x-panel-default-outer-border-l,
+.x-panel  .x-panel-default-outer-border-b,
+.x-panel  .x-panel-default-outer-border-bl,
+.x-panel  .x-panel-default-outer-border-r,
+.x-panel  .x-panel-default-outer-border-rl,
+.x-panel  .x-panel-default-outer-border-rb,
+.x-panel  .x-panel-default-outer-border-rbl,
+.x-panel  .x-panel-default-outer-border-t,
+.x-panel  .x-panel-default-outer-border-tl,
+.x-panel  .x-panel-default-outer-border-tb,
+.x-panel  .x-panel-default-outer-border-tbl,
+.x-panel  .x-panel-default-outer-border-tr,
+.x-panel  .x-panel-default-outer-border-trl,
+.x-panel  .x-panel-default-outer-border-trb,
+.x-panel  .x-panel-default-outer-border-trl,
+.x-panel  .x-panel-default-outer-border-trbl {
     border-color: #d0d0d0 !important;
     border-style: solid;
 }
@@ -406,6 +410,11 @@ body > .x-mask {
 .x-btn-focus {
     box-shadow: none !important;
     -webkit-box-shadow: none !important;
+}
+
+.pimcore_main_toolbar .x-btn.x-btn-focus.x-btn-default-toolbar-medium,
+.pimcore_main_toolbar .x-btn.x-btn-focus.x-btn-default-toolbar-small {
+    background-color: #484B4E;
 }
 
 .x-menu-default {
@@ -485,6 +494,10 @@ body > .x-mask {
 
 .x-splitter-vertical.x-border-item {
     border-left: 0;
+}
+
+.x-box-scroller {
+    font-weight: 900;
 }
 
 .x-box-scroller-disabled {
@@ -639,10 +652,171 @@ body > .x-mask {
     position: absolute;
     height: 100%;
     width: 100%;
+    z-index: 1;
 }
 
 /* Ext override for making disabled fields show tooltip on mouseover - should be fixed in 6.2.0 */
 .x-item-disabled, .x-item-disabled * {
     cursor: default;
     pointer-events: all !important; /* enables tooltip for disabled elements */
+}
+
+
+/** ExtJS7 changes starting from here */
+/* base color is #5fa2dd */
+.x-window-header-default {
+    border-color: #3c3f41;
+    background-color: #404040;
+}
+
+.x-btn-default-small, .x-btn-default-medium, .x-btn-default-large {
+    border-color: #000;
+    background-color: #3c3f41;
+}
+
+.x-btn-inner-default-small {
+    color: #f0f0f0;
+}
+
+.x-btn-inner-default-toolbar-small {
+    color: #606060;
+}
+
+.x-window-header-title-default {
+    color: #F0F0F0
+}
+
+.x-toolbar-text-default {
+    color: #4b4c4c;
+    font: 300 13px/16px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+}
+
+#pimcore_panel_tabs > .x-tab-bar {
+    background: #0C0F12;
+    background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
+    background-repeat: no-repeat;
+    background-position: right 5px top 4px;
+    background-size: 105px;
+}
+
+.x-btn-default-toolbar-small {
+    border-color: #e4e4e4;
+}
+
+
+.x-form-cb-label-default {
+    color: #404040;
+    font-size: 13px;
+    font-weight: 300;
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+}
+
+.x-grid-item {
+    color: #404040;
+    font: 300 13px/19px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    background-color: #fff;
+}
+
+/* watermark */
+.x-panel-header-title-default > .x-title-text-default:after {
+    visibility: hidden;
+}
+
+/* watermark */
+.x-window-header-title-default > .x-title-text-default:after {
+    visibility: hidden;
+}
+
+/* watermark */
+.x-panel-header-title-default-framed > .x-title-text-default-framed:after {
+    visibility: hidden;
+}
+
+/* watermark */
+.x-panel-header-title-light > .x-title-text-light:after {
+    visibility: hidden;
+}
+
+/* portlet */
+.x-panel-header-default-framed-top {
+    background-color: #3c3f41;
+}
+
+/* portlet */
+.x-panel-default-framed {
+    border-color: #3c3f41;
+}
+
+.x-window-default {
+    border-color: #3c3f41;
+}
+
+.x-keyboard-mode .x-tab-focus.x-tab-default {
+    outline: none;
+}
+
+.x-keyboard-mode .x-panel-header-title-light.x-title-focus {
+    outline: none;
+}
+
+.x-keyboard-mode .x-accordion-hd .x-panel-header-title.x-title-focus {
+    outline: none;
+}
+
+.x-accordion-hd .x-tool-img {
+    background-image: url(images/tools/tool-sprites-dark.png);
+    color: #3c3f41;
+}
+
+.x-keyboard-mode .x-tab-focus.x-tab-over.x-tab-default {
+    border-color: #d0d0d0;
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.x-keyboard-mode .x-grid-item-focused .x-grid-cell-inner:before {
+    border: 0;
+}
+
+.x-keyboard-mode .x-grid-cell-inner-action-col :focus {
+    outline: none;
+}
+
+.x-column-header {
+    font-weight: 300;
+}
+
+.x-keyboard-mode .x-form-checkbox-focus.x-form-radio-default {
+    color: #919191;
+}
+.x-keyboard-mode .x-form-checkbox-focus.x-form-checkbox-default {
+    color: #919191;
+}
+.x-keyboard-mode .x-form-cb-checked .x-form-checkbox-focus.x-form-radio-default {
+    color: #919191;
+}
+.x-keyboard-mode .x-form-cb-checked .x-form-checkbox-focus.x-form-checkbox-default {
+    color: #919191;
+}
+
+/* e.g. combobox */
+.x-boundlist-selected {
+    color: #fff;
+    background: #3c3f41;
+    border-color: #3c3f41;
+}
+
+.x-boundlist-item-over {
+    color: #fff;
+    background: #3c3f41;
+    border-color: #3c3f41;
+}
+
+/** multiselect unselect */
+.x-keyboard-mode .x-view-item-focused {
+    outline: 1px dashed #3c3f41 !important;
+}
+
+.x-tool-expand-right, .x-tool-expand-left, .x-tool-collapse-right, .x-tool-collapse-left {
+    background-color: #3c3f41 !important;
 }

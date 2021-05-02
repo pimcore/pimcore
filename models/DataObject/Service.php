@@ -1,22 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
 
+use DeepCopy\Filter\SetNullFilter;
+use DeepCopy\Matcher\PropertyNameMatcher;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
@@ -138,7 +138,7 @@ class Service extends Model\Element\Service
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -161,9 +161,9 @@ class Service extends Model\Element\Service
         $this->_copyRecursiveIds[] = $new->getId();
 
         $children = $source->getChildren([
-            AbstractObject::OBJECT_TYPE_OBJECT,
-            AbstractObject::OBJECT_TYPE_VARIANT,
-            AbstractObject::OBJECT_TYPE_FOLDER,
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER,
         ], true);
 
         foreach ($children as $child) {
@@ -189,8 +189,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source)
     {
-        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-        AbstractObject::setDisableDirtyDetection(true);
+        $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+        DataObject::setDisableDirtyDetection(true);
 
         //load properties
         $source->getProperties();
@@ -203,7 +203,7 @@ class Service extends Model\Element\Service
         $new->setId(null);
 
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -222,7 +222,7 @@ class Service extends Model\Element\Service
 
         $new->save();
 
-        AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
         $this->updateChildren($target, $new);
 
@@ -277,6 +277,8 @@ class Service extends Model\Element\Service
      * @param string $field
      *
      * @return bool
+     *
+     * @internal
      */
     public static function isHelperGridColumnConfig($field)
     {
@@ -292,6 +294,8 @@ class Service extends Model\Element\Service
      * @param array $params
      *
      * @return array
+     *
+     * @internal
      */
     public static function gridObjectData($object, $fields = null, $requestedLanguage = null, $params = [])
     {
@@ -361,7 +365,7 @@ class Service extends Model\Element\Service
                         /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                    } else {
+                    } elseif ($brickClass instanceof Objectbrick\Definition) {
                         $def = $brickClass->getFieldDefinition($brickKey, $context);
                     }
                 }
@@ -386,7 +390,7 @@ class Service extends Model\Element\Service
                     //relation type fields with remote owner do not have a getter
                     if (method_exists($object, $getter)) {
                         //system columns must not be inherited
-                        if (in_array($key, Concrete::$systemColumnNames)) {
+                        if (in_array($key, Concrete::SYSTEM_COLUMN_NAMES)) {
                             $data[$dataKey] = $object->$getter();
                         } else {
                             $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor);
@@ -478,6 +482,8 @@ class Service extends Model\Element\Service
      * @param string $key
      *
      * @return string[]|null
+     *
+     * @internal
      */
     public static function expandGridColumnForExport($helperDefinitions, $key)
     {
@@ -495,6 +501,8 @@ class Service extends Model\Element\Service
      * @param array $context
      *
      * @return mixed|null|ConfigElementInterface|ConfigElementInterface[]
+     *
+     * @internal
      */
     public static function getConfigForHelperDefinition($helperDefinitions, $key, $context = [])
     {
@@ -528,7 +536,7 @@ class Service extends Model\Element\Service
      * @param string $key
      * @param array $context
      *
-     * @return \stdClass|null
+     * @return \stdClass|array|null
      */
     public static function calculateCellValue($object, $helperDefinitions, $key, $context = [])
     {
@@ -537,6 +545,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        $inheritanceEnabled = AbstractObject::getGetInheritedValues();
+        AbstractObject::setGetInheritedValues(true);
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {
             $result = $result->value;
@@ -552,6 +562,7 @@ class Service extends Model\Element\Service
 
             return $result;
         }
+        AbstractObject::setGetInheritedValues($inheritanceEnabled);
 
         return null;
     }
@@ -569,7 +580,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $object
+     * @param AbstractObject|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
      * @param Model\User $user
      * @param string $type
      *
@@ -629,10 +640,6 @@ class Service extends Model\Element\Service
                 foreach ($permission as $p) {
                     if (preg_match(sprintf('#^(%s)_(.*)#', $classId), $p, $setting)) {
                         $l = $setting[2];
-
-                        if ($layoutPermissions === null) {
-                            $layoutPermissions = [];
-                        }
                         $layoutPermissions[$l] = $l;
                     }
                 }
@@ -845,9 +852,6 @@ class Service extends Model\Element\Service
 
         if ($class) {
             if (is_string($definition)) {
-                /**
-                 * @var ClassDefinition\Data\Select $definition
-                 */
                 $definition = $class->getFieldDefinition($definition);
             }
 
@@ -889,7 +893,7 @@ class Service extends Model\Element\Service
         $path = Element\Service::correctPath($path);
 
         try {
-            $object = new AbstractObject();
+            $object = new DataObject();
 
             $pathElements = explode('/', $path);
             $keyIdx = count($pathElements) - 1;
@@ -1055,7 +1059,7 @@ class Service extends Model\Element\Service
     /**
      * @param ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
      */
-    public static function createSuperLayout(&$layout)
+    public static function createSuperLayout($layout)
     {
         if ($layout instanceof ClassDefinition\Data) {
             $layout->setInvisible(false);
@@ -1063,9 +1067,8 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Fieldcollections) {
-            unset($layout->disallowAddRemove);
-            unset($layout->disallowReorder);
-            $layout->layoutId = -1;
+            $layout->setDisallowAddRemove(false);
+            $layout->setDisallowReorder(false);
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -1080,15 +1083,19 @@ class Service extends Model\Element\Service
 
     /**
      * @param ClassDefinition\Data[] $masterDefinition
-     * @param ClassDefinition\Data|ClassDefinition\Layout $layout
+     * @param ClassDefinition\Data|ClassDefinition\Layout|null $layout
      *
      * @return bool
      */
     private static function synchronizeCustomLayoutFieldWithMaster($masterDefinition, &$layout)
     {
+        if (is_null($layout)) {
+            return true;
+        }
+
         if ($layout instanceof ClassDefinition\Data) {
             $fieldname = $layout->name;
-            if (!$masterDefinition[$fieldname]) {
+            if (empty($masterDefinition[$fieldname])) {
                 return false;
             }
 
@@ -1142,10 +1149,12 @@ class Service extends Model\Element\Service
      * @param int $objectId
      *
      * @return array|null
+     *
+     * @internal
      */
     public static function getCustomGridFieldDefinitions($classId, $objectId)
     {
-        $object = AbstractObject::getById($objectId);
+        $object = DataObject::getById($objectId);
 
         $class = ClassDefinition::getById($classId);
         $masterFieldDefinition = $class->getFieldDefinitions();
@@ -1214,7 +1223,7 @@ class Service extends Model\Element\Service
             $customFieldDefinitions = $dummyClass->getFieldDefinitions();
 
             foreach ($mergedFieldDefinition as $key => $value) {
-                if (!$customFieldDefinitions[$key]) {
+                if (empty($customFieldDefinitions[$key])) {
                     unset($mergedFieldDefinition[$key]);
                 }
             }
@@ -1241,13 +1250,14 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param array $definition
+     * @param mixed $definition
      *
      * @return array
      */
     public static function cloneDefinition($definition)
     {
         $deepCopy = new \DeepCopy\DeepCopy();
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('fieldDefinitionsCache'));
         $theCopy = $deepCopy->copy($definition);
 
         return $theCopy;
@@ -1293,7 +1303,7 @@ class Service extends Model\Element\Service
     {
         if ($layout instanceof ClassDefinition\Data) {
             $name = $layout->getName();
-            if (!$fieldDefinitions[$name] || $fieldDefinitions[$name]->getInvisible()) {
+            if (empty($fieldDefinitions[$name]) || $fieldDefinitions[$name]->getInvisible()) {
                 return false;
             }
 
@@ -1322,6 +1332,8 @@ class Service extends Model\Element\Service
      * @param int $objectId
      *
      * @return array layout
+     *
+     * @internal
      */
     public static function getCustomLayoutDefinitionForGridColumnConfig(ClassDefinition $class, $objectId)
     {
@@ -1372,7 +1384,7 @@ class Service extends Model\Element\Service
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT]);
+        $list->setObjectTypes(DataObject::$types);
         $key = Element\Service::getValidKey($item->getKey(), 'object');
         if (!$key) {
             throw new \Exception('No item key set.');
@@ -1406,6 +1418,8 @@ class Service extends Model\Element\Service
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
      * @param Concrete|null $object
      * @param array $context additional contextual data
+     *
+     * @internal
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
@@ -1415,7 +1429,7 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             $user = AdminTool::getCurrentUser();
             if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
@@ -1447,29 +1461,33 @@ class Service extends Model\Element\Service
      * @param Model\DataObject\ClassDefinition\Data $layout
      * @param array $allowedView
      * @param array $allowedEdit
+     *
+     * @internal
      */
     public static function enrichLayoutPermissions(&$layout, $allowedView, $allowedEdit)
     {
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             if (is_array($allowedView) && count($allowedView) > 0) {
                 $haveAllowedViewDefault = null;
-                if ($layout->{'fieldtype'} === 'localizedfields') {
+                if ($layout->getFieldtype() === 'localizedfields') {
                     $haveAllowedViewDefault = isset($allowedView['default']);
                     if ($haveAllowedViewDefault) {
                         unset($allowedView['default']);
                     }
                 }
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    $layout->{'permissionView'} = AdminTool::reorderWebsiteLanguages(
-                        AdminTool::getCurrentUser(),
-                        array_keys($allowedView),
-                        true
+                    $layout->setPermissionView(
+                        AdminTool::reorderWebsiteLanguages(
+                            AdminTool::getCurrentUser(),
+                            array_keys($allowedView),
+                            true
+                        )
                     );
                 }
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
                 $haveAllowedEditDefault = null;
-                if ($layout->{'fieldtype'} === 'localizedfields') {
+                if ($layout->getFieldtype() === 'localizedfields') {
                     $haveAllowedEditDefault = isset($allowedEdit['default']);
                     if ($haveAllowedEditDefault) {
                         unset($allowedEdit['default']);
@@ -1477,10 +1495,12 @@ class Service extends Model\Element\Service
                 }
 
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    $layout->{'permissionEdit'} = AdminTool::reorderWebsiteLanguages(
-                        AdminTool::getCurrentUser(),
-                        array_keys($allowedEdit),
-                        true
+                    $layout->setPermissionEdit(
+                        AdminTool::reorderWebsiteLanguages(
+                            AdminTool::getCurrentUser(),
+                            array_keys($allowedEdit),
+                            true
+                        )
                     );
                 }
             }
@@ -1499,11 +1519,13 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      * @param array $params
-     * @param Model\DataObject\Data\CalculatedValue $data
+     * @param Model\DataObject\Data\CalculatedValue|null $data
      *
      * @return string|null
+     *
+     * @internal
      */
-    public static function getCalculatedFieldValueForEditMode($object, $params = [], $data)
+    public static function getCalculatedFieldValueForEditMode($object, $params, $data)
     {
         if (!$data) {
             return null;
@@ -1543,8 +1565,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $object
-     * @param Model\DataObject\Data\CalculatedValue $data
+     * @param Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
+     * @param Model\DataObject\Data\CalculatedValue|null $data
      *
      * @return mixed|null
      */
@@ -1643,28 +1665,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @deprecated
-     *
-     * @param int $objectId
-     *
-     * @return AbstractObject|null
-     */
-    public static function getObjectFromSession($objectId)
-    {
-        return self::getElementFromSession('object', $objectId);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param int $objectId
-     */
-    public static function removeObjectFromSession($objectId)
-    {
-        self::removeElementFromSession('object', $objectId);
-    }
-
-    /**
      * @internal
      *
      * @param array $descriptor
@@ -1697,6 +1697,8 @@ class Service extends Model\Element\Service
      * @param array $context
      *
      * @return array
+     *
+     * @internal
      */
     public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
     {
@@ -1759,6 +1761,8 @@ class Service extends Model\Element\Service
      * @param array $context
      *
      * @return array
+     *
+     * @internal
      */
     public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
     {
@@ -1831,6 +1835,8 @@ class Service extends Model\Element\Service
      * @param array $helperDefinitions
      *
      * @return mixed
+     *
+     * @internal
      */
     protected static function getCsvFieldData($fallbackLanguage, $field, $object, $requestedLanguage, $helperDefinitions)
     {

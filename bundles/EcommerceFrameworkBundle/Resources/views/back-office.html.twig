@@ -8,14 +8,14 @@
 
         <title>{% block ecommerce_title %}Ecommerce Framework Back Office{% endblock %}</title>
 
-        {% spaceless -%}
+        {% apply spaceless %}
             {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/css/bootstrap.css')) %}
             {% do pimcore_head_link().appendStylesheet('/bundles/pimcoreecommerceframework/vendor/fontawesome/css/fontawesome-all.min.css') %}
             {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/css/back-office.css')) %}
             {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/js/bootstrap-native-v4.min.js')) %}
 
 
-        {%- endspaceless %}
+        {% endapply %}
 
         {% block head_stylesheets deferred %}
             {{ pimcore_head_link() }}

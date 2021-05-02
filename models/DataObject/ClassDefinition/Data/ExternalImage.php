@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -19,37 +18,47 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
+class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
+     *
+     * @internal
      *
      * @var string
      */
     public $fieldtype = 'externalImage';
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $previewWidth;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $inputWidth;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $previewHeight;
 
     /**
      * Type for the column to query
+     *
+     * @internal
      *
      * @var string
      */
@@ -58,16 +67,11 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * Type for the column
      *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    /**
-     * Type for the generated phpdoc
+     * @internal
      *
      * @var string
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ExternalImage';
+    public $columnType = 'longtext';
 
     /**
      * @return int
@@ -120,7 +124,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param Model\DataObject\Data\ExternalImage|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -149,7 +153,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $externalImage = new Model\DataObject\Data\ExternalImage($data);
 
         if (isset($params['owner'])) {
-            $externalImage->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $externalImage->_setOwner($params['owner']);
+            $externalImage->_setOwnerFieldname($params['fieldname']);
+            $externalImage->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $externalImage;
@@ -172,7 +178,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param Model\DataObject\Data\ExternalImage|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -244,14 +250,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -264,22 +263,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return new Model\DataObject\Data\ExternalImage($importValue);
-    }
-
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -336,5 +320,63 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $newValue = $newValue instanceof DataObject\Data\ExternalImage ? $newValue->getUrl() : null;
 
         return $oldValue == $newValue;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ExternalImage::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ExternalImage::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\ExternalImage::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\ExternalImage::class . '|null';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value, $params = [])
+    {
+        if ($value instanceof DataObject\Data\ExternalImage) {
+            return [
+                'url' => $value->getUrl(),
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        if (is_array($value)) {
+            return new DataObject\Data\ExternalImage($value['url']);
+        }
+
+        return null;
     }
 }

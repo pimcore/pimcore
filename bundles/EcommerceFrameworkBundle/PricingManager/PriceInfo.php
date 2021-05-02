@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
@@ -23,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 class PriceInfo implements PriceInfoInterface
 {
     /**
-     * @var PriceInfoInterface
+     * @var PriceSystemPriceInfoInterface
      */
     protected $priceInfo;
 
@@ -38,9 +39,9 @@ class PriceInfo implements PriceInfoInterface
     protected $rules = [];
 
     /**
-     * @var RuleInterface[]
+     * @var RuleInterface[]|null
      */
-    protected $validRules = null;
+    protected $validRules;
 
     /**
      * @var bool
@@ -50,7 +51,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * @var string
      */
-    protected $priceEnvironmentHash = null;
+    protected $priceEnvironmentHash;
 
     /**
      * @var EnvironmentInterface
@@ -58,7 +59,7 @@ class PriceInfo implements PriceInfoInterface
     protected $environment;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function __construct(PriceSystemPriceInfoInterface $priceInfo, EnvironmentInterface $environment)
     {
@@ -68,7 +69,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addRule(RuleInterface $rule)
     {
@@ -78,7 +79,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getEnvironment(): EnvironmentInterface
     {
@@ -86,7 +87,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setEnvironment(EnvironmentInterface $environment)
     {
@@ -103,7 +104,7 @@ class PriceInfo implements PriceInfoInterface
      */
     protected function environmentHashChanged()
     {
-        $hash = $this->getEnvironment() ? $this->getEnvironment()->getHash() : '';
+        $hash = $this->getEnvironment()->getHash();
         if ($this->priceEnvironmentHash != $hash) {
             $this->validRules = null;
             $this->rulesApplied = false;
@@ -116,7 +117,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRules(bool $forceRecalc = false): array
     {
@@ -141,14 +142,11 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPrice(): PriceInterface
     {
         $price = clone $this->priceInfo->getPrice();
-        if ($price == null) {
-            return null;
-        }
 
         if (!$this->rulesApplied || $this->environmentHashChanged()) {
             $this->setAmount($price->getAmount());
@@ -174,7 +172,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTotalPrice(): PriceInterface
     {
@@ -189,7 +187,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isMinPrice(): bool
     {
@@ -197,7 +195,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getQuantity()
     {
@@ -205,7 +203,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setQuantity($quantity)
     {
@@ -213,7 +211,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setPriceSystem(PriceSystemInterface $priceSystem)
     {
@@ -223,7 +221,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setProduct(CheckoutableInterface $product)
     {
@@ -233,7 +231,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getProduct()
     {
@@ -241,7 +239,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setAmount(Decimal $amount)
     {
@@ -251,7 +249,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAmount(): Decimal
     {
@@ -272,7 +270,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOriginalPrice(): PriceInterface
     {
@@ -280,7 +278,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOriginalTotalPrice(): PriceInterface
     {
@@ -288,7 +286,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasDiscount(): bool
     {
@@ -298,7 +296,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDiscount(): PriceInterface
     {
@@ -311,7 +309,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTotalDiscount(): PriceInterface
     {
@@ -324,7 +322,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDiscountPercent()
     {
@@ -336,7 +334,7 @@ class PriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasRulesApplied(): bool
     {

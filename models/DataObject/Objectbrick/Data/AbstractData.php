@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Objectbrick
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
@@ -51,22 +49,22 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var bool
      */
-    protected $doDelete;
+    protected bool $doDelete = false;
 
     /**
-     * @var Model\DataObject\Concrete
+     * @var Concrete|null
      */
-    protected $object;
+    protected ?Concrete $object = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    protected $objectId;
+    protected ?int $objectId = null;
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Concrete $object
      */
-    public function __construct(DataObject\Concrete $object)
+    public function __construct(Concrete $object)
     {
         $this->setObject($object);
     }
@@ -149,6 +147,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
+     * @internal
      * Flushes the already collected items of the container object
      */
     protected function flushContainer()
@@ -192,11 +191,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Concrete|null $object
      *
      * @return $this
      */
-    public function setObject($object)
+    public function setObject(?Concrete $object)
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -205,9 +204,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
             $this->setObject(Concrete::getById($this->objectId));
@@ -232,27 +231,31 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
+     * @param string|null $language
      *
      * @return mixed
      */
-    public function get($fieldName)
+    public function get($fieldName, $language = null)
     {
-        return $this->{'get'.ucfirst($fieldName)}();
+        return $this->{'get'.ucfirst($fieldName)}($language);
     }
 
     /**
      * @param string $fieldName
      * @param mixed $value
+     * @param string|null $language
      *
      * @return mixed
      */
-    public function set($fieldName, $value)
+    public function set($fieldName, $value, $language = null)
     {
-        return $this->{'set'.ucfirst($fieldName)}($value);
+        return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
 
     /**
-     * @inheritdoc
+     * @internal
+     *
+     * @return array
      */
     protected function getLazyLoadedFieldNames(): array
     {
@@ -268,7 +271,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isAllLazyKeysMarkedAsLoaded(): bool
     {

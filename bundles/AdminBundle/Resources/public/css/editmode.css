@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -11,7 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-@import '/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css';
 @import 'ext-modifications.css';
 @import 'icons.css';
 
@@ -136,11 +135,11 @@ input.cke_dialog_ui_input_tel {
     width: 0;
     height: 0;
     border-right: 8px solid #000000;
-    border-top: 8px solid transparent;
+    border-top: 0px solid transparent;
     border-bottom: 8px solid transparent;
 
     left: 100%;
-    border-left: 8px solid #000000;
+    border-left: 5px solid #000000;
     border-right: 0px solid #000000;
 }
 
@@ -149,19 +148,19 @@ input.cke_dialog_ui_input_tel {
 }
 
 .pimcore_area_buttons.right:after {
-    left: -8px;
+    left: -5px;
     border-left: 0px solid #000000;
-    border-right: 8px solid #000000;
+    border-right: 5px solid #000000;
 }
 
 .pimcore_area_buttons.top:after {
     left: 0px;
     top: 34px;
-    border-left: 8px solid transparent;
+    border-left: 0px solid transparent;
     border-right: 8px solid transparent;
 
     border-bottom: 0px solid #000000;
-    border-top: 8px solid #000000;
+    border-top: 5px solid #000000;
 }
 
 .pimcore_block_buttons .x-form-trigger-default,
@@ -182,8 +181,13 @@ input.cke_dialog_ui_input_tel {
     border-left: 0;
 }
 
-.pimcore_block_buttons .x-btn-over {
+.pimcore_block_buttons .x-btn-over,
+.pimcore_block_buttons .x-btn-focus.x-btn-default-small,
+.pimcore_block_buttons .x-btn-pressed.x-btn-default-small
+{
     background-color: #ececec;
+    border-color: #e4e4e4;
+    border-left: 0;
 }
 
 .pimcore_area_buttons .x-btn {
@@ -281,15 +285,21 @@ input.cke_dialog_ui_input_tel {
 }
 
 
+.pimcore_editable_areablock_dropzones_active.pimcore_editable_areablock > .pimcore_area_dropzone {
+    visibility: visible;
+}
+
 .pimcore_area_dropzone {
     height: 20px;
-    background: #a3bae9;
-    border:2px dashed #fff;
+    background: #fff;
+    border:2px dashed #000;
     clear:both;
+    visibility: hidden;
+    margin: 5px 0;
 }
 
 .pimcore_area_dropzone_hover {
-    background: #6ec563;
+    background: #dedede;
 }
 
 .pimcore_wysiwyg_mask {
@@ -356,6 +366,7 @@ input.cke_dialog_ui_input_tel {
 	border: 1px solid #d0d0d0 !important;
     background:url(/bundles/pimcoreadmin/img/flat-color-icons/film_reel.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
+    min-height: 80px;
 }
 
 .pimcore_editable_embed {
@@ -437,6 +448,22 @@ input.cke_dialog_ui_input_tel {
     left:-10000px;
 }
 
+.pimcore_area_entry .pimcore_area_edit_button,
+.pimcore_editable_area .pimcore_area_edit_button{
+    position:absolute;
+    width:25px;
+    height:25px;
+    right:5px;
+    top:5px;
+}
+
+.pimcore_area_entry .pimcore_area_dialog,
+.pimcore_editable_area .pimcore_area_dialog {
+    position:relative;
+    float: right;
+    z-index: 10001;
+}
+
 .pimcore_areablock_dialogBox .x-fieldset-body {
     overflow: visible;
 }
@@ -460,7 +487,6 @@ input.cke_dialog_ui_input_tel {
     padding-bottom: 3px;
     background: #000;
     border-bottom: 1px solid #ccc;
-    cursor: move;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small:last-child {
@@ -474,6 +500,9 @@ input.cke_dialog_ui_input_tel {
     justify-content: left;
 }
 
+.pimcore_areablock_toolbar .x-btn-wrap-default-small.x-btn-arrow-right:after {
+    content: '\f0da';
+}
 
 .pimcore_editable_video {
     position: relative;
@@ -562,6 +591,16 @@ input.cke_dialog_ui_input_tel {
     outline-offset: 5px;
 }
 
+.pimcore_drag_drop_active .pimcore_editable_input:hover,
+.pimcore_drag_drop_active .pimcore_wysiwyg:hover,
+.pimcore_drag_drop_active .pimcore_editable_textarea:hover,
+.pimcore_drag_drop_active .pimcore_editable_snippet:hover,
+.pimcore_drag_drop_active .pimcore_editable_renderlet:hover,
+.pimcore_drag_drop_active .pimcore_editable_inc:hover {
+    outline:0 auto;
+}
+
+
 .pimcore_areablock_dialogBox .pimcore_editable_input,
 .pimcore_areablock_dialogBox .pimcore_editable_wysiwyg,
 .pimcore_areablock_dialogBox .pimcore_editable_textarea {
@@ -618,4 +657,28 @@ input.cke_dialog_ui_input_tel {
 
 .x-btn {
     text-decoration: none !important;
+}
+
+/* TODO this can't be the right solution. drop down arrow is the same outside editmode but cannot be rendered */
+@font-face {
+    font-family: 'Font Awesome 5 Free Editmode';
+    font-style: normal;
+    /*font-weight: normal;*/
+    src: url('/bundles/pimcoreadmin/extjs/font/font-awesome/a-solid-900.eot');
+    src: url('/bundles/pimcoreadmin/extjs/font/font-awesome/fonts/fa-solid-900.eot?#iefix') format('embedded-opentype'), url('/bundles/pimcoreadmin/extjs/font/fonts/fa-solid-900.woff2') format('woff2'), url('/bundles/pimcoreadmin/extjs/font/font-awesome/fonts/fa-solid-900.woff') format('woff'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.ttf') format('truetype'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.svg#fontawesome') format('svg');
+}
+
+.x-form-trigger-default {
+    font: 16px/30px 'Font Awesome 5 Free Editmode';
+}
+
+.x-dd-drag-ghost {
+    /* do not show drag ghost in editmode, as isn't necessary at all at often has a bad styling */
+    display: none;
+}
+
+.pimcore_cursor_move,
+.pimcore_cursor_move .x-menu-item-text
+{
+    cursor: move;
 }

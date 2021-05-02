@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic;
@@ -31,11 +32,11 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $ranges = $filterDefinition->getRanges();
         $groupByValues = $productList->getGroupByValues($filterDefinition->getField(), true);
@@ -72,7 +73,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
             $currentValue = implode('-', $currentFilter[$filterDefinition->getField()]);
         }
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentValue,
@@ -82,7 +83,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
             'definition' => $filterDefinition,
             'fieldname' => $filterDefinition->getField(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     /**
@@ -106,8 +107,13 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         } elseif ($rawValue == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } else {
-            $value['from'] = $filterDefinition->getPreSelectFrom();
-            $value['to'] = $filterDefinition->getPreSelectTo();
+            $value = ['from' => null, 'to' => null];
+            if (method_exists($filterDefinition, 'getPreSelectFrom')) {
+                $value['from'] = $filterDefinition->getPreSelectFrom();
+            }
+            if (method_exists($filterDefinition, 'getPreSelectTo')) {
+                $value['to'] = $filterDefinition->getPreSelectTo();
+            }
         }
 
         $currentFilter[$field] = $value;

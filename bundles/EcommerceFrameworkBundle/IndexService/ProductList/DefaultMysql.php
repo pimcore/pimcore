@@ -1,26 +1,25 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 /**
@@ -92,9 +91,7 @@ class DefaultMysql implements ProductListInterface
         $this->resource = new DefaultMysql\Dao($this, $this->logger);
     }
 
-    /**
-     * @return AbstractProduct[]
-     */
+    /** @inheritDoc */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -105,12 +102,12 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @var string[]
+     * @var array<string[]>
      */
     protected $conditions = [];
 
     /**
-     * @var string[]
+     * @var array<string[]>
      */
     protected $relationConditions = [];
 
@@ -120,12 +117,12 @@ class DefaultMysql implements ProductListInterface
     protected $queryConditions = [];
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceFrom = null;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $conditionPriceTo = null;
 
@@ -424,7 +421,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return array|\Pimcore\Model\DataObject\AbstractObject
+     * @return array|IndexableInterface
      */
     protected function loadElementById($elementId)
     {
@@ -792,16 +789,6 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * Return a fully configured Paginator Adapter from this method.
-     *
-     * @return AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
-    }
-
-    /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
      *
@@ -818,20 +805,11 @@ class DefaultMysql implements ProductListInterface
         return $var;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Move forward to next element
-     *
-     * @link http://php.net/manual/en/iterator.next.php
-     *
-     * @return void Any returned value is ignored.
-     */
+    /** @inheritDoc */
     public function next()
     {
         $this->getProducts();
         $var = next($this->products);
-
-        return $var;
     }
 
     /**
@@ -866,6 +844,8 @@ class DefaultMysql implements ProductListInterface
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
@@ -877,6 +857,9 @@ class DefaultMysql implements ProductListInterface
         return array_keys($vars);
     }
 
+    /**
+     * @internal
+     */
     public function __wakeup()
     {
         if (empty($this->resource)) {

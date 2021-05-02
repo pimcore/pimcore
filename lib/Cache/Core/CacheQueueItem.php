@@ -1,21 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Cache\Core;
 
-use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
-
+/**
+ * @internal
+ */
 class CacheQueueItem
 {
     /**
@@ -27,11 +29,6 @@ class CacheQueueItem
      * @var mixed
      */
     protected $data;
-
-    /**
-     * @var PimcoreCacheItemInterface
-     */
-    protected $cacheItem;
 
     /**
      * @var array
@@ -88,6 +85,14 @@ class CacheQueueItem
     }
 
     /**
+     * @param mixed $data
+     */
+    public function setData($data): void
+    {
+        $this->data = $data;
+    }
+
+    /**
      * @return array
      */
     public function getTags()
@@ -117,25 +122,5 @@ class CacheQueueItem
     public function isForce()
     {
         return $this->force;
-    }
-
-    /**
-     * @param PimcoreCacheItemInterface $cacheItem
-     *
-     * @return $this
-     */
-    public function setCacheItem(PimcoreCacheItemInterface $cacheItem)
-    {
-        $this->cacheItem = $cacheItem;
-
-        return $this;
-    }
-
-    /**
-     * @return PimcoreCacheItemInterface
-     */
-    public function getCacheItem()
-    {
-        return $this->cacheItem;
     }
 }

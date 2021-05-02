@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -22,8 +21,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -35,28 +35,38 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'manyToManyRelation';
 
     /**
-     * @var int
+     * @internal
+     *
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
      *
-     * @var int
+     * @internal
+     *
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
+     * @internal
+     *
      * @var int
      */
     public $maxItems;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $assetUploadPath;
@@ -64,29 +74,28 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Type for the column to query
      *
+     * @internal
+     *
      * @var string
      */
     public $queryColumnType = 'text';
 
     /**
-     * Type for the generated phpdoc
+     * @internal
      *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @var bool
      */
     public $relationType = true;
 
     /**
+     * @internal
      *
      * @var bool
      */
     public $objectsAllowed = false;
 
     /**
+     * @internal
      *
      * @var bool
      */
@@ -95,11 +104,14 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Allowed asset types
      *
+     * @internal
+     *
      * @var array
      */
     public $assetTypes = [];
 
     /**
+     * @internal
      *
      * @var bool
      */
@@ -107,6 +119,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * Allowed document types
+     *
+     * @internal
      *
      * @var array
      */
@@ -215,9 +229,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function prepareDataForPersistence($data, $object = null, $params = [])
+    protected function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -246,30 +260,28 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function loadData($data, $object = null, $params = [])
+    protected function loadData(array $data, $object = null, $params = [])
     {
         $elements = [
             'dirty' => false,
             'data' => [],
         ];
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $element) {
-                $e = null;
-                if ($element['type'] == 'object') {
-                    $e = DataObject::getById($element['dest_id']);
-                } elseif ($element['type'] == 'asset') {
-                    $e = Asset::getById($element['dest_id']);
-                } elseif ($element['type'] == 'document') {
-                    $e = Document::getById($element['dest_id']);
-                }
+        foreach ($data as $element) {
+            $e = null;
+            if ($element['type'] === 'object') {
+                $e = DataObject::getById($element['dest_id']);
+            } elseif ($element['type'] === 'asset') {
+                $e = Asset::getById($element['dest_id']);
+            } elseif ($element['type'] === 'document') {
+                $e = Document::getById($element['dest_id']);
+            }
 
-                if ($e instanceof Element\ElementInterface) {
-                    $elements['data'][] = $e;
-                } else {
-                    $elements['dirty'] = true;
-                }
+            if ($e instanceof Element\ElementInterface) {
+                $elements['data'][] = $e;
+            } else {
+                $elements['dirty'] = true;
             }
         }
         //must return array - otherwise this means data is not loaded
@@ -279,7 +291,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -296,7 +308,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
         $d = [];
 
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
             foreach ($data as $element) {
                 if ($element instanceof Element\ElementInterface) {
                     $elementType = Element\Service::getElementType($element);
@@ -305,11 +317,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             }
 
             return ',' . implode(',', $d) . ',';
-        } elseif (is_array($data) && count($data) === 0) {
-            return '';
-        } else {
-            throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
         }
+
+        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -328,9 +338,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName(), $element->getPublished()];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName(), $element->getPublished()];
                 } elseif ($element instanceof DataObject\AbstractObject) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', 'folder'];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
                 } elseif ($element instanceof Document) {
@@ -350,7 +360,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param array|null|false $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -359,7 +369,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         //if not set, return null
-        if ($data === null or $data === false) {
+        if ($data === null || $data === false) {
             return null;
         }
 
@@ -437,7 +447,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -445,19 +455,22 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getHeight()
     {
@@ -465,26 +478,24 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        $this->height = $this->getAsIntegerCast($height);
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
 
         return $this;
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -492,6 +503,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
         $allow = true;
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
             foreach ($data as $d) {
                 if ($d instanceof Document) {
                     $allow = $this->allowDocumentRelation($d);
@@ -516,14 +528,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -543,54 +548,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * fills object field data values from CSV Import String
-     *
-     * @abstract
-     *
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
+    public function getCacheTags($data, array $tags = [])
     {
-        $values = explode(',', $importValue);
-
-        $value = [];
-        foreach ($values as $element) {
-            $tokens = explode(':', $element);
-            if (count($tokens) == 2) {
-                $type = $tokens[0];
-                $path = $tokens[1];
-                $value[] = Element\Service::getElementByPath($type, $path);
-            } else {
-                //fallback for old export files
-                if ($el = Asset::getByPath($element)) {
-                    $value[] = $el;
-                } elseif ($el = Document::getByPath($element)) {
-                    $value[] = $el;
-                } elseif ($el = DataObject::getByPath($element)) {
-                    $value[] = $el;
-                }
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
         return $tags;
     }
 
@@ -721,11 +682,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetUploadPath;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return bool
+    /**
+     * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
     {
@@ -796,21 +754,17 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
+    /**
+     * {@inheritdoc}
      */
-    public function marshal($value, $object = null, $params = [])
+    public function normalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -830,13 +784,13 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** See marshal
+     *
      * @param mixed $value
-     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
      */
-    public function unmarshal($value, $object = null, $params = [])
+    public function denormalize($value, $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -851,6 +805,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -873,9 +829,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
         if ($data) {
             $data = $data[0];
@@ -930,7 +886,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDiffDataForEditMode($data, $object = null, $params = [])
     {
@@ -968,24 +924,23 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return true;
     }
 
     /**
-     * @param DataObject\Listing      $listing
-     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
-     * @param string                  $operator SQL comparison operator, currently only "=" supported
-     *
-     * @return DataObject\Listing
+     * {@inheritdoc}
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {

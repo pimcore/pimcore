@@ -15,7 +15,7 @@ and a helper for the [Symfony VarDumper Component](http://symfony.com/doc/3.4/co
 set up automatically (see below).
 
 ### Registering Commands
-Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yml` of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `AppBundle`. , thanks to autoconfiguration.
+Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yml` of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `App`. , thanks to autoconfiguration.
 
 ### Helpers provided by `Pimcore\Console\AbstractCommand`
 The `AbstractCommand` base class provides helpers which make your life easier.
@@ -32,10 +32,9 @@ Better `var_dump` through [`VarDumper`](http://symfony.com/doc/3.4/components/va
 ```php
 <?php
 
-namespace AppBundle\Command;
+namespace App\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Console\Dumper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -54,10 +53,10 @@ class AwesomeCommand extends AbstractCommand
         $this->dump("Isn't that awesome?");
 
         // add newlines through flags
-        $this->dump("Dump #2", Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
+        $this->dump("Dump #2");
 
         // only dump in verbose mode
-        $this->dumpVerbose("Dump verbose", Dumper::NEWLINE_BEFORE);
+        $this->dumpVerbose("Dump verbose");
         
         // Output as white text on red background.
         $this->writeError('oh noes!');

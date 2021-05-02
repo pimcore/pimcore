@@ -1,23 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Dependency
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method Dependency\Dao getDao()
  * @method void save()
  */
@@ -28,21 +28,21 @@ class Dependency extends AbstractModel
      *
      * @var int
      */
-    public $sourceId;
+    protected $sourceId;
 
     /**
      * The type of the object to get dependencies for
      *
      * @var string
      */
-    public $sourceType;
+    protected $sourceType;
 
     /**
      * Contains the ID/type of objects which are required for the given source object (sourceId/sourceType)
      *
      * @var array
      */
-    public $requires = [];
+    protected $requires = [];
 
     /**
      * Static helper to get the dependencies for the given sourceId & type
@@ -205,10 +205,6 @@ class Dependency extends AbstractModel
      */
     public function isRequired()
     {
-        if (is_array($this->getRequiredBy()) && $this->getRequiredByTotalCount() > 0) {
-            return true;
-        }
-
-        return false;
+        return $this->getRequiredByTotalCount() > 0;
     }
 }

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -23,7 +23,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore: true,
+        classificationstore: false,
         block: false,
         encryptedField: false
     },
@@ -82,18 +82,22 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
 
         var specificItems = [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("domain_label_width"),
                 name: "domainLabelWidth",
                 value: datax.domainLabelWidth
-            }
-            ,
+            },
             {
                 xtype: "textfield",
                 fieldLabel: t("controller_action"),

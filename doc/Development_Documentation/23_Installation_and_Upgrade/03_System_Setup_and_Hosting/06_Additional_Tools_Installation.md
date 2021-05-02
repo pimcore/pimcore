@@ -6,7 +6,7 @@ The installation of some of the tools is covered in this guide and should work a
 For other Linux distributions you might have to adopt some commands to your platform-specific environment, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
 > It's important that all tools (incl. `composer`) are added to the `$PATH` env. variable, so that Pimcore is able to find the executables. 
-If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/master/app/config/parameters.example.yml).
+If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/master/config/services.yaml).
 
 
 ## Composer 
@@ -66,33 +66,6 @@ chmod 0755 /usr/local/bin/advpng
 ```bash
 wget https://github.com/imagemin/mozjpeg-bin/raw/master/vendor/linux/cjpeg -O /usr/local/bin/cjpeg
 chmod 0755 /usr/local/bin/cjpeg
-```
-
-### SQIP / SVG Placeholder
-Though not stricly a Image Optimizer, [SQIP](https://github.com/technopagan/sqip) is a SVG-based implementation of the [Low Quality Image Placeholders (LQIP)](https://www.guypo.com/introducing-lqip-low-quality-image-placeholders/) technique, that need some Image-Processing tools to be installed - and therefore their installation is described here.
-
-I'm assuming you've NodeJS up and running using either `npm` or `yarn` as package manager.
-
-Install SQIP globally:
-```bash
-# with npm
-npm install -g sqip
-# or with yarn
-yarn global add sqip
-```
-This should install `sqip` somewhere in your path.
-
-Since SQIP requires [Primitive](https://github.com/fogleman/primitive) - which is written in [Go](https://golang.org/) - you need that [set-up](https://www.digitalocean.com/community/tutorials/how-to-install-go-on-ubuntu-18-04) also.
-
-Then run
-```bash
-go get -u github.com/fogleman/primitive
-```
-Usually that should install the binary to `/usr/lib/go/bin/primitive` - which may not be in your path. I prefer to add a symlink:
-
-```bash
-cd /usr/local/bin
-ln -s /usr/lib/go/bin/primitive
 ```
 
 ## Exiftool

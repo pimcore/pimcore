@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\AbstractObject;
@@ -42,7 +40,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE o_id = ?", $id);
 
-        if ($data['o_id']) {
+        if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('Object with the ID ' . $id . " doesn't exists");
@@ -54,7 +52,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -64,7 +62,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("object doesn't exist");
+            throw new Model\Exception\NotFoundException("object doesn't exist");
         }
     }
 
@@ -109,7 +107,7 @@ class Dao extends Model\Element\Dao
         $checkColumns = ['o_type', 'o_classId', 'o_className'];
         $existingData = $this->db->fetchRow('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE o_id = ?', [$this->model->getId()]);
         foreach ($checkColumns as $column) {
-            if ($column == 'o_type' && in_array($data[$column], ['variant', 'object']) && (isset($existingData[$column]) && in_array($existingData[$column], ['variant', 'object']))) {
+            if ($column == 'o_type' && in_array($data[$column], [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]) && (isset($existingData[$column]) && in_array($existingData[$column], [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]))) {
                 // type conversion variant <=> object should be possible
                 continue;
             }
@@ -162,7 +160,7 @@ class Dao extends Model\Element\Dao
      */
     public function updateChildPaths($oldPath)
     {
-        if ($this->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
+        if ($this->hasChildren(DataObject::$types)) {
             //get objects to empty their cache
             $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', $this->db->escapeLike($oldPath) . '%');
 
@@ -367,10 +365,16 @@ class Dao extends Model\Element\Dao
      * @param int $id
      *
      * @return array
+     *
+     * @throws Model\Exception\NotFoundException
      */
     public function getTypeById($id)
     {
         $t = $this->db->fetchRow('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', $id);
+
+        if (!$t) {
+            throw new Model\Exception\NotFoundException('object with ID ' . $id . ' not found');
+        }
 
         return $t;
     }
@@ -602,7 +606,8 @@ class Dao extends Model\Element\Dao
     {
         $data = $this->db->fetchRow('SELECT o_modificationDate, o_versionCount  from objects WHERE o_id = ?', $this->model->getId());
 
-        return $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()
+        return $data
+            && $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()
             && $data['o_versionCount'] == $this->model->getVersionCount();
     }
 }

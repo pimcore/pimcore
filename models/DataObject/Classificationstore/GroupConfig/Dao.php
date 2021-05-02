@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore\GroupConfig;
@@ -45,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE id = ?', $this->model->getId());
 
-        if ($data) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('GroupConfig with id: ' . $this->model->getId() . ' does not exist');
@@ -68,10 +66,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE name = ? and storeId = ?', [$name, $storeId]);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Config with name: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf('Classification store group config with name "%s" does not exist.', $name));
         }
     }
 
@@ -85,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
         $amount = 0;
 
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' where parentId= ' . $this->model->id);
+            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' where parentId= ' . $this->model->getId());
         } catch (\Exception $e) {
         }
 

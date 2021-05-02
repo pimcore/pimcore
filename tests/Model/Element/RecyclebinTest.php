@@ -1,12 +1,26 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Tests\Model\Element;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tool\Storage;
 
 /**
  * Class RecyclebinTest
@@ -18,7 +32,7 @@ class RecyclebinTest extends ModelTestCase
 {
     protected $user;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -53,17 +67,19 @@ class RecyclebinTest extends ModelTestCase
 
         $object->delete();
 
+        $storage = Storage::get('recycle_bin');
+
         //recycle asserts
         $recycledItems = new Item\Listing();
-        $this->assertFileExists($recycledItems->current()->getStoreageFile());
+        $this->assertTrue($storage->fileExists($recycledItems->current()->getStoreageFile()));
 
-        $recycledStorage = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
+        $recycledStorage = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
         $this->assertEquals($objectId, $recycledStorage->getId(), 'Recycled Object not found.');
 
         //restore asserts
         $recycledItems->current()->restore();
 
-        $restoredObject = AbstractObject::getById($objectId);
+        $restoredObject = DataObject::getById($objectId);
         $this->assertIsObject($restoredObject, 'Restored simple object');
     }
 
@@ -94,17 +110,18 @@ class RecyclebinTest extends ModelTestCase
 
         $this->assertEquals(2, $recycledItems->current()->getAmount(), 'Expected 2 recycled item');
 
+        $storage = Storage::get('recycle_bin');
         //recycle bin item storage file
-        $recycledContent = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
+        $recycledContent = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
 
         $this->assertEquals($parentId, $recycledContent->getId(), 'Expected recycled parent object ID');
-        $this->assertCount(1, $recycledContent->getChildren([AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT, AbstractObject::OBJECT_TYPE_OBJECT], true), 'Expected recycled child object');
+        $this->assertCount(1, $recycledContent->getChildren(DataObject::$types, true), 'Expected recycled child object');
 
         //restore deleted items (parent + child)
         $recycledItems->current()->restore();
 
-        $restoredParent = AbstractObject::getById($parentId);
-        $restoredChild = AbstractObject::getById($childId);
+        $restoredParent = DataObject::getById($parentId);
+        $restoredChild = DataObject::getById($childId);
 
         $this->assertIsObject($restoredParent, 'Expected restored parent object');
         $this->assertIsObject($restoredChild, 'Expected restored child object');
@@ -142,7 +159,7 @@ class RecyclebinTest extends ModelTestCase
         $recycledItems->current()->restore();
 
         //load relation and check if relation loads correctly
-        $restoredSourceObject = AbstractObject::getById($sourceObjectId);
+        $restoredSourceObject = DataObject::getById($sourceObjectId);
         $restoredRelation = $restoredSourceObject->getLobjects();
         $restoredLocalizedRelation = $restoredSourceObject->getLobjects();
 

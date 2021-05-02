@@ -1,31 +1,35 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Carbon\Carbon;
 
-class DateFormatter extends AbstractOperator
+/**
+ * @internal
+ */
+final class DateFormatter extends AbstractOperator
 {
     /**
      * @var string|null
      */
     private $format;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -33,6 +37,9 @@ class DateFormatter extends AbstractOperator
         $this->format = ($config->format ? $config->format : null);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -47,9 +54,9 @@ class DateFormatter extends AbstractOperator
 
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
-                $isArrayType = $childResult->isArrayType;
+                $isArrayType = $childResult->isArrayType ?? false;
 
-                $childValues = $childResult->value;
+                $childValues = $childResult->value ?? null;
                 if ($childValues && !is_array($childValues)) {
                     $childValues = [$childValues];
                 }
@@ -85,25 +92,24 @@ class DateFormatter extends AbstractOperator
         return $result;
     }
 
+    /**
+     * @param mixed $theValue
+     * @return string
+     */
     public function format($theValue)
     {
-        if ($theValue) {
-            if (is_int($theValue)) {
-                $theValue = Carbon::createFromTimestamp($theValue);
-            }
-            if ($this->format) {
-                $timestamp = null;
+        $timestamp = null;
+        if (is_int($theValue)) {
+            $theValue = Carbon::createFromTimestamp($theValue);
+        }
+        if ($theValue instanceof Carbon) {
+            $timestamp = $theValue->getTimestamp();
+        }
 
-                if ($theValue instanceof Carbon) {
-                    $timestamp = $theValue->getTimestamp();
-
-                    $theValue = date($this->format, $timestamp);
-                }
-            } else {
-                if ($theValue instanceof Carbon) {
-                    $theValue = $theValue->toDateString();
-                }
-            }
+        if ($timestamp && $this->format) {
+            return date($this->format, $timestamp);
+        } elseif ($theValue instanceof Carbon) {
+            return $theValue->toDateString();
         }
 
         return $theValue;

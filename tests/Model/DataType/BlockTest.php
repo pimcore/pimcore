@@ -1,9 +1,22 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Tests\Model\DataType;
 
 use Pimcore\Cache;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
@@ -20,13 +33,13 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class BlockTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         TestHelper::cleanUp();
         parent::tearDown();
@@ -127,11 +140,11 @@ class BlockTest extends ModelTestCase
         Cache\Runtime::clear();
 
         //reload from cache and save again
-        $objectRef = AbstractObject::getById($object->getId());
+        $objectRef = DataObject::getById($object->getId());
         $objectRef->save(); //block data should retain here
 
         //reload from db
-        $object = AbstractObject::getById($objectRef->getId(), true);
+        $object = DataObject::getById($objectRef->getId(), true);
 
         $loadedData = $object->getTestblock();
 
@@ -178,11 +191,11 @@ class BlockTest extends ModelTestCase
         Cache\Runtime::clear();
 
         //reload from cache and save again
-        $objectRef = AbstractObject::getById($object->getId());
+        $objectRef = DataObject::getById($object->getId());
         $objectRef->save(); //block data should retain here
 
         //reload from db
-        $object = AbstractObject::getById($objectRef->getId(), true);
+        $object = DataObject::getById($objectRef->getId(), true);
         $loadedData = $object->getLtestblock('de');
 
         $loadedLink = $loadedData[0]['lblocklink']->getData();
@@ -229,7 +242,7 @@ class BlockTest extends ModelTestCase
         $source->save();
 
         //reload target and fetch source
-        $target = AbstractObject::getById($target->getId(), true);
+        $target = DataObject::getById($target->getId(), true);
         $sourceFromRef = $target->getHref();
 
         $loadedReference = $sourceFromRef->getLtestblock('de')[0]['blockmanyToManyRelations']->getData();

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
@@ -30,7 +31,10 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
      */
     public function inIndex(IndexableInterface $object)
     {
-        $tenants = $object->getTenants();
+        $tenants = null;
+        if (method_exists($object, 'getTenants')) {
+            $tenants = $object->getTenants();
+        }
 
         return !empty($tenants);
     }
@@ -50,8 +54,13 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
     {
         $subTenantData = [];
         if ($this->inIndex($object)) {
+            $tenants = [];
+            if (method_exists($object, 'getTenants')) {
+                $tenants = $object->getTenants();
+            }
+
             //implementation specific tenant get logic
-            foreach ($object->getTenants() as $tenant) {
+            foreach ($tenants as $tenant) {
                 $subTenantData[] = $tenant->getId();
             }
         }

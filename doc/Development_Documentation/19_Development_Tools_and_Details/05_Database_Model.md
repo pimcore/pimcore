@@ -19,8 +19,6 @@ These tables are created during Pimcore install and are always the same.
 | application_logs | Contains all application logs. For more information see [Application Logger](../18_Tools_and_Features/17_Application_Logger.md). Additionally, there might be application_logs_archive* tables for old logging entries. | 
 | assets | Assets (Images, etc.), with system metadata |
 | assets_metadata | Additional user metadata (Metadata tab in the asset panel) |
-| cache | serialized data, used by the default Pimcore cache |
-| cache_tags | Tag store for cache entries. Used by some cache backends |
 | classes | List of all object classes with ID and name. Everything else is stored in PHP configuration files. |
 | classificationstore_collectionrelations | Relation Collection - Group for Classification Store | 
 | classificationstore_collections | Collections of Classification Store |
@@ -52,7 +50,6 @@ These tables are created during Pimcore install and are always the same.
 | objects | List of all objects with metadata like id, class name, path, parent, ...|
 | object_url_slugs | [URL Slug](../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md) data|
 | properties | Data from the `properties` tab |
-| qr_codes | Edit QR Code configurations | 
 | quantityvalue_units | Available quantities for quantity value object data type |
 | recyclebin | Stores metadata of deleted elements |
 | redirects | Stores redirects | 
@@ -65,7 +62,7 @@ These tables are created during Pimcore install and are always the same.
 | tmp_store | Pimcore internal tmp store | 
 | tracking_events | |
 | translations_admin | Backend translations |
-| translations_website | Frontend translations |
+| translations_messages | Frontend translations |
 | tree_locks | Locks in the tree of Pimcore backend interface | 
 | users | Backend users |
 | users_permission_definitions | List of globally assignable user permissions |

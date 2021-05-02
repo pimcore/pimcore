@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -107,9 +107,15 @@ pimcore.document.versions = Class.create({
                             var versionCount = cellValues.get('versionCount');
                             var index = cellValues.get('index');
 
-                            if (this.document.data.published && index === 0 && d == this.document.data.versionDate && versionCount == this.document.data.versionCount) {
-                                metaData.tdCls = "pimcore_icon_publish";
+                            if (index === 0 && d == this.document.data.versionDate && versionCount == this.document.data.versionCount) {
+                                if(this.document.data.published) {
+                                    metaData.tdCls = "pimcore_icon_publish";
+                                } else {
+                                    metaData.tdCls = "pimcore_icon_sql";
+                                    metaData.tdAttr = 'data-qtip="' + t('version_currently_saved_in_database') + '"';
+                                }
                             }
+
                             return "";
                         }.bind(this),
                         editable: false
@@ -137,6 +143,13 @@ pimcore.document.versions = Class.create({
                         editable: false
                     },
                     {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField(), renderer: Ext.util.Format.htmlEncode},
+                    {
+                        xtype: "checkcolumn",
+                        text: t("auto_save"),
+                        disabled : true,
+                        dataIndex: "autoSave",
+                        width: 50
+                    },
                     checkPublic,
                     {text: t("public_url"), width: 300, sortable: false, dataIndex: 'publicurl', editable: false}
                 ],
@@ -336,18 +349,19 @@ pimcore.document.versions = Class.create({
         });
     },
 
-    dataUpdate: function (store, record, operation) {
+    dataUpdate: function (store, record, operation, columns) {
 
         if (operation == "edit") {
-            Ext.Ajax.request({
-                method: "post",
-                url: Routing.generate('pimcore_admin_element_versionupdate'),
-                method: 'PUT',
-                params: {
-                    data: Ext.encode(record.data)
-                }
-            });
-
+            if (in_array("public", columns) || in_array("note", columns)) {
+                Ext.Ajax.request({
+                    method: "post",
+                    url: Routing.generate('pimcore_admin_element_versionupdate'),
+                    method: 'PUT',
+                    params: {
+                        data: Ext.encode(record.data)
+                    }
+                });
+            }
             this.checkForPreview(store);
         }
 

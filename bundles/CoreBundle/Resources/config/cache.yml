@@ -11,81 +11,60 @@ services:
         public: true
         synthetic: true
 
+    pimcore.cache.adapter.null:
+        class: Symfony\Component\Cache\Adapter\NullAdapter
+
+    pimcore.cache.adapter.null_tag_aware:
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        arguments: ['@pimcore.cache.adapter.null', null]
+
+    pimcore.cache.adapter.pdo:
+        class: Symfony\Component\Cache\Adapter\PdoAdapter
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - ''
+            - 31536000  # 1 year
+
+    pimcore.cache.adapter.pdo_tag_aware:
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        arguments: [ '@pimcore.cache.adapter.pdo', null ]
+
+    pimcore.cache.adapter.redis_tag_aware:
+        class: Symfony\Component\Cache\Adapter\RedisTagAwareAdapter
+        lazy: true
+        arguments:
+            - null
+            - null
+            - 0
+            - '@cache.default_marshaller'
+        tags:
+            - { name: cache.pool, provider: cache.default_redis_provider, clearer: cache.default_clearer }
+            - { name: monolog.logger, channel: cache }
+        calls:
+            - [setLogger, ['@logger']]
 
     #
     # PIMCORE CACHE
     #
 
-    Pimcore\Cache\Core\CoreHandlerInterface: '@pimcore.cache.core.handler'
-    Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface: '@pimcore.cache.core.pool'
-
     # the actual core handler which is used from Pimcore\Cache
     # the pimcore.cache.core.pool service is defined by config
     # and set in PimcoreExtension
 
-    pimcore.cache.core.handler:
+    Pimcore\Cache\Core\CoreCacheHandler:
         public: true
-        class: Pimcore\Cache\Core\EventDispatchingCoreHandler
         arguments:
-            - '@pimcore.cache.core.pool'
-            - '@pimcore.cache.core.write_lock'
+            - '@pimcore.cache.pool'
+            - '@Pimcore\Cache\Core\WriteLock'
             - '@event_dispatcher'
         calls:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: cache }
 
-    # CORE CACHE POOLS
-    # filesystem cache pool
-    pimcore.cache.core.pool.filesystem:
-        class: Pimcore\Cache\Pool\SymfonyAdapterProxy
-        arguments:
-            - '@pimcore.cache.core.symfony_adapter.filesystem'
-            - '%pimcore.cache.core.default_lifetime%'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: cache }
-
-    # array/in-memory cache pool
-    pimcore.cache.core.pool.array:
-        class: Pimcore\Cache\Pool\SymfonyAdapterProxy
-        arguments:
-            - '@pimcore.cache.core.symfony_adapter.array'
-            - '%pimcore.cache.core.default_lifetime%'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: cache }
-
-    # SYMFONY ADAPTERS - used in combination with SymfonyAdapterProxy
-    # filesystem cache adapter
-    pimcore.cache.core.symfony_adapter.filesystem:
-        class: Symfony\Component\Cache\Adapter\FilesystemAdapter
-        arguments:
-            - 'pimcore'
-            - '%pimcore.cache.core.default_lifetime%'
-            - '%kernel.cache_dir%/pimcore'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: cache }
-
-    # array/in-memory cache adapter
-    pimcore.cache.core.symfony_adapter.array:
-        class: Symfony\Component\Cache\Adapter\ArrayAdapter
-        arguments:
-            - '%pimcore.cache.core.default_lifetime%'
-            - false # do not store serialized
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: cache }
-
     # write lock handles locking between processes
-    pimcore.cache.core.write_lock:
-        class: Pimcore\Cache\Core\WriteLock
-        arguments: ['@pimcore.cache.core.pool']
+    Pimcore\Cache\Core\WriteLock:
+        arguments: ['@pimcore.cache.pool']
         calls:
             - [setLogger, ['@logger']]
         tags:

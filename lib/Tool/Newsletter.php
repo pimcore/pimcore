@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
@@ -72,7 +73,7 @@ class Newsletter
         }
 
         if (strlen(trim($newsletterDocument->getPlaintext())) > 0) {
-            $mail->setBodyText(trim($newsletterDocument->getPlaintext()));
+            $mail->setTextBody(trim($newsletterDocument->getPlaintext()));
         }
 
         $contentHTML = $mail->getBodyHtmlRendered();
@@ -80,48 +81,47 @@ class Newsletter
 
         // render the document and rewrite the links (if analytics is enabled)
         if ($contentHTML && $newsletterDocument->getEnableTrackingParameters()) {
-            $html = str_get_html($contentHTML);
-            if ($html) {
-                $links = $html->find('a');
-                foreach ($links as $link) {
-                    if (preg_match('/^(mailto|#)/i', trim($link->href))) {
-                        // No tracking for mailto and hash only links
-                        continue;
-                    }
-
-                    $urlParts = parse_url($link->href);
-                    $glue = '?';
-                    $params = sprintf(
-                        'utm_source=%s&utm_medium=%s&utm_campaign=%s',
-                        $newsletterDocument->getTrackingParameterSource(),
-                        $newsletterDocument->getTrackingParameterMedium(),
-                        $newsletterDocument->getTrackingParameterName()
-                    );
-
-                    if (isset($urlParts['query'])) {
-                        $glue = '&';
-                    }
-
-                    $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
-
-                    if (isset($urlParts['fragment'])) {
-                        $link->href .= '#'.$urlParts['fragment'];
-                    }
+            $html = new DomCrawler($contentHTML);
+            $links = $html->filter('a');
+            /** @var \DOMElement $link */
+            foreach ($links as $link) {
+                if (preg_match('/^(mailto|#)/i', trim($link->getAttribute('href')))) {
+                    // No tracking for mailto and hash only links
+                    continue;
                 }
 
-                $contentHTML = $html->save();
+                $urlParts = parse_url($link->getAttribute('href'));
+                $glue = '?';
+                $params = sprintf(
+                    'utm_source=%s&utm_medium=%s&utm_campaign=%s',
+                    $newsletterDocument->getTrackingParameterSource(),
+                    $newsletterDocument->getTrackingParameterMedium(),
+                    $newsletterDocument->getTrackingParameterName()
+                );
 
-                $html->clear();
-                unset($html);
+                if (isset($urlParts['query'])) {
+                    $glue = '&';
+                }
+
+                $href = preg_replace('/[#].+$/', '', $link->getAttribute('href')).$glue.$params;
+
+                if (isset($urlParts['fragment'])) {
+                    $href .= '#'.$urlParts['fragment'];
+                }
+
+                $link->setAttribute('href', $href);
             }
+            $contentHTML = $html->html();
 
-            $mail->setBodyHtml($contentHTML);
+            $html->clear();
+            unset($html);
+
+            $mail->setHtmlBody($contentHTML);
         }
 
-        $mail->setBodyHtml($contentHTML);
-        $mail->setBodyText($contentText);
+        $mail->setHtmlBody($contentHTML);
         // Adds the plain text part to the message, that it becomes a multipart email
-        $mail->addPart($contentText, 'text/plain');
+        $mail->setTextBody($contentText);
         $mail->setSubject($mail->getSubjectRendered());
 
         return $mail;
@@ -144,12 +144,12 @@ class Newsletter
         }
 
         if (!empty($mailAddress)) {
-            $mail->setTo($mailAddress);
+            $mail->to($mailAddress);
 
             $mailer = null;
             // check if newsletter specific mailer is needed
             if ($config['use_specific']) {
-                $mailer = Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
+                $mail->getHeaders()->addTextHeader('X-Transport', 'pimcore_newsletter');
             }
 
             $event = new GenericEvent($mail, [
@@ -276,8 +276,9 @@ class Newsletter
             $object->setParentId(1);
         }
 
-        $object->setNewsletterActive(true);
-        $object->setCreationDate(time());
+        if (method_exists($object, 'setNewsletterActive')) {
+            $object->setNewsletterActive(true);
+        }
         $object->setModificationDate(time());
         $object->setUserModification(0);
         $object->setUserOwner(0);
@@ -285,6 +286,7 @@ class Newsletter
         $object->setKey(File::getValidFilename(uniqid($object->getEmail(), true)));
 
         if (!$onlyCreateVersion) {
+            $object->setCreationDate(time());
             $object->save();
         }
 
@@ -318,18 +320,34 @@ class Newsletter
     public function sendConfirmationMail($object, $mailDocument, $params = []): void
     {
         $defaultParameters = [
-            'gender' => $object->getGender(),
-            'firstname' => $object->getFirstname(),
-            'lastname' => $object->getLastname(),
-            'email' => $object->getEmail(),
+            'gender' => null,
+            'firstname' => null,
+            'lastname' => null,
+            'email' => null,
             'token' => $object->getProperty('token'),
             'object' => $object,
         ];
 
+        if (method_exists($object, 'getGender')) {
+            $defaultParameters['gender'] = $object->getGender();
+        }
+
+        if (method_exists($object, 'getFirstname')) {
+            $defaultParameters['firstname'] = $object->getFirstname();
+        }
+
+        if (method_exists($object, 'getLastname')) {
+            $defaultParameters['lastname'] = $object->getLastname();
+        }
+
+        if (method_exists($object, 'getEmail')) {
+            $defaultParameters['email'] = $object->getEmail();
+        }
+
         $params = array_merge($defaultParameters, $params);
 
         $mail = new Mail();
-        $mail->addTo($object->getEmail());
+        $mail->addTo($params['email']);
         $mail->setDocument($mailDocument);
         $mail->setParams($params);
         $mail->send();
@@ -376,7 +394,9 @@ class Newsletter
                 $object->setPublished(true);
             }
 
-            $object->setNewsletterConfirmed(true);
+            if (method_exists($object, 'setNewsletterConfirmed')) {
+                $object->setNewsletterConfirmed(true);
+            }
             $object->save();
 
             $this->addNoteOnObject($object, 'confirm');
@@ -428,24 +448,22 @@ class Newsletter
     }
 
     /**
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return bool
      *
      * @throws Exception
      */
-    public function unsubscribe(DataObject\AbstractObject $object): bool
+    public function unsubscribe(DataObject\Concrete $object): bool
     {
-        if ($object) {
+        if (method_exists($object, 'setNewsletterActive')) {
             $object->setNewsletterActive(false);
-            $object->save();
-
-            $this->addNoteOnObject($object, 'unsubscribe');
-
-            return true;
         }
+        $object->save();
 
-        return false;
+        $this->addNoteOnObject($object, 'unsubscribe');
+
+        return true;
     }
 
     /**

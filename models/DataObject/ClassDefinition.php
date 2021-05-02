@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -29,54 +27,71 @@ use Pimcore\Model\DataObject;
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-class ClassDefinition extends Model\AbstractModel
+final class ClassDefinition extends Model\AbstractModel
 {
     use DataObject\ClassDefinition\Helper\VarExport;
+    use DataObject\Traits\LocateFileTrait;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
     public $id;
 
     /**
-     * @var string
+     * @internal
+     *
+     * @var string|null
      */
     public $name;
 
     /**
-     * @var string
-     */
-    public $description;
-
-    /**
-     * @var int
-     */
-    public $creationDate;
-
-    /**
-     * @var int
-     */
-    public $modificationDate;
-
-    /**
-     * @var int
-     */
-    public $userOwner;
-
-    /**
-     * @var int
-     */
-    public $userModification;
-
-    /**
-     * Name of the parent class if set
+     * @internal
      *
      * @var string
      */
-    public $parentClass;
+    public $description = '';
+
+    /**
+     * @internal
+     *
+     * @var int
+     */
+    public $creationDate = 0;
+
+    /**
+     * @internal
+     *
+     * @var int
+     */
+    public $modificationDate = 0;
+
+    /**
+     * @internal
+     *
+     * @var int
+     */
+    public $userOwner = 0;
+
+    /**
+     * @internal
+     *
+     * @var int
+     */
+    public $userModification = 0;
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
+    public $parentClass = '';
 
     /**
      * Comma separated list of interfaces
+     *
+     * @internal
      *
      * @var string|null
      */
@@ -85,96 +100,141 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * Name of the listing parent class if set
      *
+     * @internal
+     *
      * @var string
      */
     public $listingParentClass = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $useTraits = '';
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $listingUseTraits = '';
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $encryption = false;
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $encryptedTables = [];
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $allowInherit = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $allowVariants = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $showVariants = false;
 
     /**
+     * @internal
+     *
      * @var DataObject\ClassDefinition\Data[]
      */
-    public $fieldDefinitions = [];
+    public array $fieldDefinitions = [];
 
     /**
+     * @internal
+     *
      * @var DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $icon;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $previewUrl;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $group;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $showAppLoggerTab = false;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $linkGeneratorReference;
 
     /**
+     * @internal
+     *
+     * @var string|null
+     */
+    public $previewGeneratorReference;
+
+    /**
+     * @internal
+     *
      * @var array
      */
     public $compositeIndices = [];
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $generateTypeDeclarations = false;
+    public $generateTypeDeclarations = true;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $showFieldLookup = false;
 
     /**
+     * @internal
+     *
      * @var array
      */
     public $propertyVisibility = [
@@ -195,6 +255,8 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
+     * @internal
+     *
      * @var bool
      */
     public $enableGridLocking = false;
@@ -207,12 +269,8 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getById($id, $force = false)
+    public static function getById(string $id, $force = false)
     {
-        if ($id === null) {
-            throw new \Exception('Class id is null');
-        }
-
         $cacheKey = 'class_' . $id;
 
         try {
@@ -251,19 +309,19 @@ class ClassDefinition extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
         try {
             $class = new self();
             $id = $class->getDao()->getIdByName($name);
-            if ($id) {
-                return self::getById($id);
-            }
-        } catch (\Exception $e) {
-        }
 
-        return null;
+            return self::getById($id);
+        } catch (Model\Exception\NotFoundException $e) {
+            return null;
+        }
     }
 
     /**
@@ -280,6 +338,8 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      */
     public function rename($name)
@@ -292,12 +352,27 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
+     * @param mixed $data
+     *
+     * @internal
      */
     public static function cleanupForExport(&$data)
     {
-        if (isset($data->fieldDefinitionsCache)) {
-            unset($data->fieldDefinitionsCache);
+        if (!is_object($data)) {
+            return;
+        }
+
+        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
         }
 
         if (method_exists($data, 'getChildren')) {
@@ -313,7 +388,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function exists()
+    private function exists()
     {
         $name = $this->getDao()->getNameById($this->getId());
 
@@ -350,6 +425,9 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         $isUpdate = $this->exists();
+        if ($isUpdate && !$this->isWritable()) {
+            throw new \Exception('definitions in config/pimcore folder cannot be overwritten');
+        }
 
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
@@ -381,7 +459,7 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function generateClassFiles($generateDefinitionFile = true)
+    private function generateClassFiles($generateDefinitionFile = true)
     {
         $infoDocBlock = $this->getInfoDocBlock();
 
@@ -390,11 +468,6 @@ class ClassDefinition extends Model\AbstractModel
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
             $extendClass = '\\'.ltrim($extendClass, '\\');
-        }
-
-        // create directory if not exists
-        if (!is_dir(PIMCORE_CLASS_DIRECTORY.'/DataObject')) {
-            File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject');
         }
 
         $cd = '<?php ';
@@ -408,6 +481,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
         $cd .= "/**\n";
+        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).'\Listing getList()'."\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
@@ -455,7 +529,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -479,7 +553,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                if ($def instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
                     continue;
                 }
 
@@ -497,11 +571,9 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "}\n";
         $cd .= "\n";
 
-        $classFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php';
-        if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
-            throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
+        if (File::put($this->getPhpClassFile(), $cd) === false) {
+            throw new \Exception(sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpClassFile()));
         }
-        File::put($classFile, $cd);
 
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';
@@ -521,6 +593,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "/**\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())." current()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
+        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
         $cd .= ' */';
         $cd .= "\n\n";
         $cd .= 'class Listing extends '.$extendListingClass.' {';
@@ -548,15 +621,11 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "}\n";
 
-        File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
-
-        $classListFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php';
-        if (!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {
+        if (File::put($this->getPhpListingClassFile(), $cd) === false) {
             throw new \Exception(
-                'Cannot write class file in '.$classListFile.' please check the rights on this directory'
+                sprintf('Cannot write class file in %s please check the rights on this directory', $this->getPhpListingClassFile())
             );
         }
-        File::put($classListFile, $cd);
 
         if ($generateDefinitionFile) {
             // save definition as a php file
@@ -566,10 +635,10 @@ class ClassDefinition extends Model\AbstractModel
                     'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
                 );
             }
-
-            $clone = clone $this;
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
-            unset($clone->fieldDefinitions);
+            $clone->fieldDefinitions = [];
 
             self::cleanupForExport($clone->layoutDefinitions);
 
@@ -588,6 +657,8 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @return string
+     *
+     * @internal
      */
     protected function getInfoDocBlock()
     {
@@ -616,6 +687,8 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param ClassDefinition|ClassDefinition\Data $definition
      * @param string $text
      * @param int $level
@@ -671,7 +744,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $brickListing = new DataObject\Objectbrick\Definition\Listing();
         $brickListing = $brickListing->load();
-        /** @var DataObject\Objectbrick\Definition $brickDefinition */
         foreach ($brickListing as $brickDefinition) {
             $modified = false;
 
@@ -695,36 +767,53 @@ class ClassDefinition extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_DELETE);
     }
 
-    /**
-     * Deletes PHP files from Filesystem
-     */
-    protected function deletePhpClasses()
+    private function deletePhpClasses()
     {
         // delete the class files
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php');
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php');
-        @rmdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
+        @unlink($this->getPhpClassFile());
+        @unlink($this->getPhpListingClassFile());
+        @rmdir(dirname($this->getPhpListingClassFile()));
         @unlink($this->getDefinitionFile());
     }
 
     /**
+     * @internal
+     *
+     * @return bool
+     */
+    public function isWritable(): bool
+    {
+        if (getenv('PIMCORE_CLASS_DEFINITION_WRITABLE')) {
+            return true;
+        }
+
+        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+    }
+
+    /**
+     * @internal
+     *
      * @param string|null $name
      *
      * @return string
      */
     public function getDefinitionFile($name = null)
     {
-        if (!$name) {
-            $name = $this->getName();
-        }
+        return $this->locateFile($name ?? $this->getName(), 'definition_%s.php');
+    }
 
-        $file = PIMCORE_CLASS_DIRECTORY.'/definition_'.$name.'.php';
+    private function getPhpClassFile(): string
+    {
+        return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s.php');
+    }
 
-        return $file;
+    private function getPhpListingClassFile(): string
+    {
+        return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s/Listing.php');
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
@@ -732,7 +821,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -855,16 +944,17 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         $enrichedFieldDefinitions = [];
-        if (is_array($this->fieldDefinitions)) {
-            foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
-                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-                $enrichedFieldDefinitions[$key] = $fieldDefinition;
-            }
+        foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
+            $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
+            $enrichedFieldDefinitions[$key] = $fieldDefinition;
         }
 
         return $enrichedFieldDefinitions;
     }
 
+    /**
+     * @internal
+     */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
@@ -888,9 +978,9 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setFieldDefinitions($fieldDefinitions)
+    public function setFieldDefinitions(array $fieldDefinitions)
     {
-        $this->fieldDefinitions = is_array($fieldDefinitions) ? $fieldDefinitions : [];
+        $this->fieldDefinitions = $fieldDefinitions;
 
         return $this;
     }
@@ -946,7 +1036,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
-    public function extractDataDefinitions($def)
+    private function extractDataDefinitions($def)
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {
@@ -1091,15 +1181,18 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param array $tables
      */
     public function addEncryptedTables(array $tables)
     {
-        $this->encryptedTables = array_merge($this->encryptedTables, $tables);
-        array_unique($this->encryptedTables);
+        $this->encryptedTables = array_unique(array_merge($this->encryptedTables, $tables));
     }
 
     /**
+     * @internal
+     *
      * @param array $tables
      */
     public function removeEncryptedTables(array $tables)
@@ -1112,6 +1205,8 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $table
      *
      * @return bool
@@ -1130,6 +1225,8 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param array $encryptedTables
      *
      * @return $this
@@ -1160,7 +1257,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowVariants($allowVariants)
     {
-        $this->allowVariants = (bool)$allowVariants ? true : null;
+        $this->allowVariants = (bool)$allowVariants;
 
         return $this;
     }
@@ -1353,6 +1450,30 @@ class ClassDefinition extends Model\AbstractModel
     public function getLinkGenerator()
     {
         return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPreviewGeneratorReference(): ?string
+    {
+        return $this->previewGeneratorReference;
+    }
+
+    /**
+     * @param string|null $previewGeneratorReference
+     */
+    public function setPreviewGeneratorReference(?string $previewGeneratorReference): void
+    {
+        $this->previewGeneratorReference = $previewGeneratorReference;
+    }
+
+    /**
+     * @return DataObject\ClassDefinition\PreviewGeneratorInterface|null
+     */
+    public function getPreviewGenerator()
+    {
+        return DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
     }
 
     /**

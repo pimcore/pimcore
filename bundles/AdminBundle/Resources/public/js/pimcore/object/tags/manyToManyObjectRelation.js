@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -67,7 +67,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
-                    if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    if (record.data.inheritedFields && record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
                     }
 
@@ -324,9 +324,15 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 fc.layout = field;
                 fc.editor = null;
                 fc.sortable = false;
+
                 if(fc.layout.key === "fullpath") {
                     fc.renderer = this.fullPathRenderCheck.bind(this);
+                } else if(fc.layout.layout.fieldtype == "select" || fc.layout.layout.fieldtype == "multiselect") {
+                    fc.layout.layout.options.forEach(option => {
+                        option.key = t(option.key);
+                    });
                 }
+
                 columns.push(fc);
             }
         }
@@ -335,8 +341,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     },
 
     getLayoutEdit: function () {
-
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = null;
         }
 
@@ -585,9 +590,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
 
     getLayoutShow: function () {
-
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
 
@@ -908,6 +912,3 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     },
 
 });
-
-// @TODO BC layer, to be removed in v7.0
-pimcore.object.tags.objects = pimcore.object.tags.manyToManyObjectRelation;

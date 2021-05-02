@@ -1,21 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection;
 
 class NumberRangeSelection extends AbstractFilterType
@@ -25,11 +28,11 @@ class NumberRangeSelection extends AbstractFilterType
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
         $ranges = $filterDefinition->getRanges();
@@ -68,7 +71,7 @@ class NumberRangeSelection extends AbstractFilterType
             $currentValue = implode('-', $currentFilter[$field]);
         }
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentValue,
@@ -79,7 +82,7 @@ class NumberRangeSelection extends AbstractFilterType
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     private function createLabel($data)
@@ -110,6 +113,9 @@ class NumberRangeSelection extends AbstractFilterType
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
+        if (!$filterDefinition instanceof FilterNumberRangeSelection) {
+            throw new InvalidConfigException('excpected a FilterNumberRangeSelection filter');
+        }
         $field = $this->getField($filterDefinition);
         $rawValue = $params[$field] ?? null;
 
@@ -126,19 +132,21 @@ class NumberRangeSelection extends AbstractFilterType
 
         $currentFilter[$field] = $value;
 
+        $db = Db::get();
+
         if (!empty($value)) {
             if (!empty($value['from'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($field . ' >= ' . $productList->quote($value['from']), 'PRECONDITION_' . $field);
+                    $productList->addCondition($field . ' >= ' . $db->quote($value['from']), 'PRECONDITION_' . $field);
                 } else {
-                    $productList->addCondition($field . ' >= ' . $productList->quote($value['from']), $field);
+                    $productList->addCondition($field . ' >= ' . $db->quote($value['from']), $field);
                 }
             }
             if (!empty($value['to'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($field . ' <= ' . $productList->quote($value['to']), 'PRECONDITION_' . $field);
+                    $productList->addCondition($field . ' <= ' . $db->quote($value['to']), 'PRECONDITION_' . $field);
                 } else {
-                    $productList->addCondition($field . ' < ' . $productList->quote($value['to']), $field);
+                    $productList->addCondition($field . ' < ' . $db->quote($value['to']), $field);
                 }
             }
         }

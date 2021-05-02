@@ -1,25 +1,30 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Image\ImageOptimizerInterface;
+use Pimcore\Tool\Storage;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
 
+/**
+ * @internal
+ */
 class OptimizeImageThumbnailsCommand extends AbstractCommand
 {
     /**
@@ -42,32 +47,30 @@ class OptimizeImageThumbnailsCommand extends AbstractCommand
         $this
             ->setName('pimcore:thumbnails:optimize-images')
             ->setAliases(['thumbnails:optimize-images'])
-            ->setDescription('Optimize filesize of all images in ' . PIMCORE_TEMPORARY_DIRECTORY);
+            ->setDescription('Optimize filesize of all thumbnails');
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $finder = new Finder();
+        $storage = Storage::get('thumbnail');
         $savedBytesTotal = 0;
 
-        /** @var \SplFileInfo $file */
-        foreach ($finder->files()->in(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails/') as $file) {
-            $file = $file->getRealPath();
+        /** @var StorageAttributes $item */
+        foreach ($storage->listContents('/', true) as $item) {
+            if ($item->isFile()) {
+                $originalFilesize = $storage->fileSize($item->path());
 
-            if (file_exists($file)) {
-                $originalFilesize = filesize($file);
-
-                $this->optimizer->optimizeImage($file);
+                $this->optimizer->optimizeImage($item->path());
 
                 clearstatcache();
 
-                $savedBytes = ($originalFilesize - filesize($file));
+                $savedBytes = ($originalFilesize - $storage->fileSize($item->path()));
                 $savedBytesTotal += $savedBytes;
 
-                $this->output->writeln('Optimized image: ' . $file . ' saved ' . formatBytes($savedBytes));
+                $this->output->writeln('Optimized image: ' . $item->path() . ' saved ' . formatBytes($savedBytes));
             }
         }
 

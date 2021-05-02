@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    User
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\User\Workspace;
@@ -20,29 +18,39 @@ namespace Pimcore\Model\User\Workspace;
 class DataObject extends AbstractWorkspace
 {
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $save = false;
+    protected $save = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $unpublish = false;
+    protected $unpublish = false;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $lEdit = null;
+    protected $lEdit = null;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $lView = null;
+    protected $lView = null;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $layouts = null;
+    protected $layouts = null;
 
     /**
      * @param bool $save

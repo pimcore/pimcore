@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\Video;
@@ -23,19 +21,24 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 
-class ImageThumbnail
+final class ImageThumbnail
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $timeOffset;
 
     /**
+     * @internal
+     *
      * @var Image|null
      */
     protected $imageAsset;
@@ -63,11 +66,11 @@ class ImageThumbnail
      */
     public function getPath($deferredAllowed = true)
     {
-        $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = $this->convertToWebPath($fsPath);
+        $pathReference = $this->getPathReference($deferredAllowed);
+        $path = $this->convertToWebPath($pathReference);
 
         $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
+            'pathReference' => $pathReference,
             'frontendPath' => $path,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL);
@@ -77,19 +80,18 @@ class ImageThumbnail
     }
 
     /**
+     * @internal
+     *
      * @param bool $deferredAllowed
      *
      * @throws \Exception
      */
     public function generate($deferredAllowed = true)
     {
-        $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
-        if (!$this->asset) {
-            $this->filesystemPath = $errorImage;
-        } elseif (!$this->filesystemPath) {
+        if ($this->asset && empty($this->pathReference)) {
             $cs = $this->asset->getCustomSetting('image_thumbnail_time');
             $im = $this->asset->getCustomSetting('image_thumbnail_asset');
 
@@ -102,70 +104,71 @@ class ImageThumbnail
 
                 if ($im instanceof Image) {
                     $imageThumbnail = $im->getThumbnail($this->getConfig());
-                    $this->filesystemPath = $imageThumbnail->getFileSystemPath();
+                    $this->pathReference = $imageThumbnail->getPathReference();
                 }
             }
 
-            if (!$this->filesystemPath) {
+            if (empty($this->pathReference)) {
                 $timeOffset = $this->timeOffset;
                 if (!$this->timeOffset && $cs) {
                     $timeOffset = $cs;
                 }
 
                 // fallback
-                if (!$timeOffset) {
+                if (!$timeOffset && $this->asset instanceof Model\Asset\Video) {
                     $timeOffset = ceil($this->asset->getDuration() / 3);
                 }
 
-                $converter = \Pimcore\Video::getInstance();
-                $converter->load($this->asset->getFileSystemPath());
-                $path = $this->asset->getImageThumbnailSavePath() . '/video-image-cache__' . $this->asset->getId() . '__thumbnail_' . $timeOffset . '.png';
+                $storage = Storage::get('asset_cache');
+                $cacheFilePath = sprintf('%s/image-thumb__%s__video_original_image/time_%s.png',
+                    rtrim($this->asset->getRealPath(), '/'),
+                    $this->asset->getId(),
+                    $timeOffset
+                );
 
-                if (!is_dir(dirname($path))) {
-                    File::mkdir(dirname($path));
-                }
-
-                if (!is_file($path)) {
-                    $lockKey = 'video_image_thumbnail_' . $this->asset->getId() . '_' . $timeOffset;
-                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
+                if (!$storage->fileExists($cacheFilePath)) {
+                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
                     $lock->acquire(true);
 
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
-                    if (!is_file($path)) {
-                        $converter->saveImage($path, $timeOffset);
+                    if (!$storage->fileExists($cacheFilePath)) {
+                        $tempFile = File::getLocalTempFilePath('png');
+                        $converter = \Pimcore\Video::getInstance();
+                        $converter->load($this->asset->getLocalFile());
+                        $converter->saveImage($tempFile, $timeOffset);
                         $generated = true;
+                        $storage->write($cacheFilePath, file_get_contents($tempFile));
+                        unlink($tempFile);
                     }
 
                     $lock->release();
                 }
 
+                $cacheFileStream = $storage->readStream($cacheFilePath);
+
                 if ($this->getConfig()) {
                     $this->getConfig()->setFilenameSuffix('time-' . $timeOffset);
 
                     try {
-                        // The path can be remote. In that case, the processor will create a local copy of the asset, which is the video itself.
-                        // That is not what is intended, as we are tying to generate a thumbnail based on the already existing video still that
-                        // the converter created earlier. To prevent the processor from doing that, we will create a local copy here if needed
-                        if (!stream_is_local($path)) {
-                            $path = $this->asset->getTemporaryFile();
-                        }
-
-                        $path = Image\Thumbnail\Processor::process(
+                        $this->pathReference = Image\Thumbnail\Processor::process(
                             $this->asset,
                             $this->getConfig(),
-                            $path,
+                            $cacheFileStream,
                             $deferred,
-                            true,
                             $generated
                         );
                     } catch (\Exception $e) {
                         Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
                         Logger::error($e);
-                        $path = $errorImage;
                     }
                 }
+            }
 
-                $this->filesystemPath = $path;
+            if (empty($this->pathReference)) {
+                $this->pathReference = [
+                    'type' => 'error',
+                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                ];
             }
 
             $event = new GenericEvent($this, [
@@ -192,9 +195,52 @@ class ImageThumbnail
      * @param string|array|Image\Thumbnail\Config $selector
      *
      * @return Image\Thumbnail\Config|null
+     *
+     * @throws Model\Exception\NotFoundException
      */
-    protected function createConfig($selector)
+    private function createConfig($selector)
     {
-        return Image\Thumbnail\Config::getByAutoDetect($selector);
+        $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
+
+        if (!empty($selector) && $thumbnailConfig === null) {
+            throw new Model\Exception\NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
+        }
+
+        return $thumbnailConfig;
+    }
+
+    /**
+     * @param string $name
+     * @param int $highRes
+     *
+     * @return Image\Thumbnail|null
+     *
+     * @throws \Exception
+     */
+    public function getMedia($name, $highRes = 1)
+    {
+        $thumbConfig = $this->getConfig();
+        if ($thumbConfig instanceof Image\Thumbnail\Config) {
+            $mediaConfigs = $thumbConfig->getMedias();
+
+            if (isset($mediaConfigs[$name])) {
+                $thumbConfigRes = clone $thumbConfig;
+                $thumbConfigRes->selectMedia($name);
+                $thumbConfigRes->setHighResolution($highRes);
+                $thumbConfigRes->setMedias([]);
+                $imgId = $this->asset->getCustomSetting('image_thumbnail_asset');
+                $img = Model\Asset::getById($imgId);
+
+                if ($img instanceof Image) {
+                    $thumb = $img->getThumbnail($thumbConfigRes);
+                }
+
+                return $thumb ?? null;
+            } else {
+                throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
+            }
+        }
+
+        return null;
     }
 }

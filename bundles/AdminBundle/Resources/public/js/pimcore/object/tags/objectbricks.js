@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -260,7 +260,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     if(dataFields[name]) {
                         // this is especially for localized fields which get aggregated here into one field definition
                         // in the case that there are more than one localized fields in the class definition
-                        // see also Object_Class::extractDataDefinitions();
+                        // see also ClassDefinition::extractDataDefinitions();
                         if(typeof dataFields[name]["addReferencedField"]){
                             dataFields[name].addReferencedField(field);
                         }

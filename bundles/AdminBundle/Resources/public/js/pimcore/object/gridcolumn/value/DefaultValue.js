@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -41,6 +41,8 @@ pimcore.object.gridcolumn.value.defaultvalue = Class.create(pimcore.object.gridc
         var copy = source.createNode({
             iconCls: source.data.iconCls,
             text: source.data.text,
+            key: source.data.key,
+            layout: source.data.layout,
             isTarget: true,
             leaf: true,
             dataType: source.data.dataType,

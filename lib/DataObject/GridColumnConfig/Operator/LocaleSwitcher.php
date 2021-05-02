@@ -1,25 +1,26 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Localization\LocaleServiceInterface;
 
-class LocaleSwitcher extends AbstractOperator
+/**
+ * @internal
+ */
+final class LocaleSwitcher extends AbstractOperator
 {
     /**
      * @var LocaleServiceInterface
@@ -31,6 +32,9 @@ class LocaleSwitcher extends AbstractOperator
      */
     private $locale;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -39,6 +43,9 @@ class LocaleSwitcher extends AbstractOperator
         $this->locale = $config->locale ?? null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

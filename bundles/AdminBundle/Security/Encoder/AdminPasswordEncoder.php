@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\Encoder;
@@ -24,11 +25,13 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
  * user object. If user is no pimcore user, fall back to default implementation.
  *
  * @method User getUser()
+ *
+ * @internal
  */
 class AdminPasswordEncoder extends AbstractUserAwarePasswordEncoder
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function encodePassword($raw, $salt)
     {
@@ -40,7 +43,7 @@ class AdminPasswordEncoder extends AbstractUserAwarePasswordEncoder
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isPasswordValid($encoded, $raw, $salt)
     {

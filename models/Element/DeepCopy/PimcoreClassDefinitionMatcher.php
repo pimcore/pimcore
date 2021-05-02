@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element\DeepCopy;
@@ -21,6 +19,9 @@ use DeepCopy\Matcher\Matcher;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @internal
+ */
 class PimcoreClassDefinitionMatcher implements Matcher
 {
     /** @var string $matchType */
@@ -57,6 +58,3 @@ class PimcoreClassDefinitionMatcher implements Matcher
         return false;
     }
 }
-
-//TODO: remove in Pimcore 7
-class_alias(PimcoreClassDefinitionMatcher::class, 'Pimcore\Model\Version\PimcoreClassDefinitionMatcher');

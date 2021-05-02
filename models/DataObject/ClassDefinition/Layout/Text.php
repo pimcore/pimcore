@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
@@ -129,18 +128,10 @@ class Text extends Model\DataObject\ClassDefinition\Layout
             $this->getRenderingClass()
         );
 
-        if ($renderer === null) {
-            $renderer = $this->getRenderingClass();
-        }
-
-        if (!$renderer instanceof DynamicTextLabelInterface) {
-            @trigger_error('Using a text renderer class which does not implement ' . DynamicTextLabelInterface::class.' is deprecated', \E_USER_DEPRECATED);
-        }
-
-        if (method_exists($renderer, 'renderLayoutText') && $object) {
+        if ($renderer instanceof DynamicTextLabelInterface) {
             $context['fieldname'] = $this->getName();
             $context['layout'] = $this;
-            $result = call_user_func([$renderer, 'renderLayoutText'], $this->renderingData, $object, $context);
+            $result = $renderer->renderLayoutText($this->renderingData, $object, $context);
             $this->html = $result;
         }
 

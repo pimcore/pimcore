@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Event;
@@ -19,7 +20,7 @@ final class SystemEvents
     /**
      * This event is fired on shutdown (register_shutdown_function)
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -37,7 +38,7 @@ final class SystemEvents
     /**
      * This event is fired on maintenance mode activation
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -46,7 +47,7 @@ final class SystemEvents
     /**
      * This event is fired on maintenance mode deactivation
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -55,7 +56,7 @@ final class SystemEvents
     /**
      * This event is fired when maintenance mode is scheduled for the next login
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -64,7 +65,7 @@ final class SystemEvents
     /**
      * This event is fired when maintenance mode is unscheduled
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -73,7 +74,7 @@ final class SystemEvents
     /**
      * This event is fired on Full-Page Cache clear
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -82,7 +83,7 @@ final class SystemEvents
     /**
      * This event is fired on Cache clear
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -91,7 +92,7 @@ final class SystemEvents
     /**
      * This event is fired on Temporary Files clear
      *
-     * @Event()
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
