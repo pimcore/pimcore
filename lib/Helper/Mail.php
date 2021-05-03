@@ -166,7 +166,10 @@ CSS;
             $emailLog->setDocumentId($document->getId());
         }
 
-        $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        if(isset($_SERVER['REQUEST_URI'])){
+            $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        }
+
         $emailLog->setParams($mail->getParams());
         $emailLog->setSentDate(time());
 
