@@ -30,7 +30,8 @@ final class Version20210430124911 extends AbstractMigration
     public function down(Schema $schema): void
     {
         if ($schema->hasTable(CartItem\Dao::TABLE_NAME)) {
-            $this->addSql('UPDATE ecommerceframework_cartitem SET addedDateTimestamp = addedDateTimestamp / 1000000;');
+            $this->addSql('UPDATE ecommerceframework_cartitem SET addedDateTimestamp = FLOOR(addedDateTimestamp / 1000000);');
+            $this->addSql('ALTER TABLE ecommerceframework_cartitem modify addedDateTimestamp int(10) not null;');
         }
     }
 }
