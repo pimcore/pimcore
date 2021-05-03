@@ -186,7 +186,7 @@ final class QuantityValueController extends AdminController
 
         $result = [];
         $units = $list->getUnits();
-        foreach ($units as &$unit) {
+        foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
                     $unit->setAbbreviation(\Pimcore\Model\Translation::getByKeyLocalized($unit->getAbbreviation(), Translation::DOMAIN_ADMIN,
