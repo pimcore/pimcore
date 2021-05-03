@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -37,6 +35,10 @@ abstract class AbstractOperator implements OperatorInterface
      */
     protected $childs;
 
+    /**
+     * @param \stdClass $config
+     * @param null $context
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         $this->label = $config->label;
@@ -60,21 +62,33 @@ abstract class AbstractOperator implements OperatorInterface
         return false;
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getContext()
     {
         return $this->context;
     }
 
+    /**
+     * @param mixed $context
+     */
     public function setContext($context)
     {
         $this->context = $context;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabel()
     {
         return $this->label;
     }
 
+    /**
+     * @param string $label
+     */
     public function setLabel($label)
     {
         $this->label = $label;

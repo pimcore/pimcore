@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool;
@@ -23,47 +21,61 @@ use Pimcore\Model;
  * @method bool getById(string $id)
  * @method \Pimcore\Model\Tool\TmpStore\Dao getDao()
  */
-class TmpStore extends Model\AbstractModel
+final class TmpStore extends Model\AbstractModel
 {
     /**
+     * @internal
+     *
      * @var string
      */
     protected $id;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $tag;
 
     /**
+     * @internal
+     *
      * @var mixed
      */
     protected $data;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $date;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $expiryDate;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $serialized = false;
 
     /**
-     * @var TmpStore|null
+     * @internal
+     *
+     * @var self|null
      */
-    protected static $instance;
+    protected static ?self $instance = null;
 
     /**
-     * @return TmpStore
+     * @return self
      */
-    protected static function getInstance()
+    private static function getInstance(): self
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -75,7 +87,7 @@ class TmpStore extends Model\AbstractModel
     /**
      * @return int
      */
-    protected static function getDefaultLifetime()
+    private static function getDefaultLifetime()
     {
         return 86400 * 7;
     }
@@ -125,13 +137,12 @@ class TmpStore extends Model\AbstractModel
     /**
      * @param string $id
      *
-     * @return mixed
+     * @return void
      */
     public static function delete($id)
     {
         $instance = self::getInstance();
-
-        return $instance->getDao()->delete($id);
+        $instance->getDao()->delete($id);
     }
 
     /**

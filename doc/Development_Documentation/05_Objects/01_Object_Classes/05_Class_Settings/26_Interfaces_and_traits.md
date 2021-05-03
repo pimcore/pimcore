@@ -8,9 +8,9 @@ We're extending the `Cars` class with methods to retrieve the transmission type 
 ##### Create the interface
 ```php
 <?php
-// src/AppBundle/Model/Product/TransmissionInterface.php
+// src/Model/Product/TransmissionInterface.php
 
-namespace AppBundle\Model\Product;
+namespace App\Model\Product;
 
 interface TransmissionInterface
 {
@@ -30,9 +30,9 @@ interface TransmissionInterface
 Returns a GearboxType and a number of gears.
 ```php
 <?php
-// src/AppBundle/Traits/TransmissionTrait.php
+// src/Traits/TransmissionTrait.php
 
-namespace AppBundle\Traits;
+namespace App\Traits;
 
 trait TransmissionTrait
 {
@@ -58,15 +58,15 @@ Click on *General Settings* and paste your interface and trait path into `Implem
 
 Save your changes
 
-It will generate the `implements \AppBundle\Model\Product\TransmissionInterface` and the
-`use \AppBundle\Traits\TransmissionTrait;` lines within the DataObject Class.
+It will generate the `implements \App\Model\Product\TransmissionInterface` and the
+`use \App\Traits\TransmissionTrait;` lines within the DataObject Class.
 
 ```php
 // var/classes/DataObject/Car.php
 ...
-class Car extends \AppBundle\Model\Product\AbstractProduct implements \AppBundle\Model\Product\TransmissionInterface {
+class Car extends \App\Model\Product\AbstractProduct implements \App\Model\Product\TransmissionInterface {
 
-use \AppBundle\Traits\TransmissionTrait;
+use \App\Traits\TransmissionTrait;
 
 protected $o_classId = "CAR";
 protected $o_className = "Car";

@@ -7,18 +7,21 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Document\Editable;
 
 use Pimcore\Model\Document\Editable;
 
+/**
+ * @internal
+ */
 final class EditmodeEditableDefinitionCollector
 {
     private bool $stopped = false;
@@ -47,6 +50,9 @@ final class EditmodeEditableDefinitionCollector
         $this->editableDefinitions[$editable->getName()] = $editable->getEditmodeDefinition();
     }
 
+    /**
+     * @param Editable $editable
+     */
     public function remove(Editable $editable): void
     {
         if ($this->stopped) {
@@ -97,6 +103,9 @@ final class EditmodeEditableDefinitionCollector
         return $value;
     }
 
+    /**
+     * @return array
+     */
     public function getDefinitions(): array
     {
         $configs = [];
@@ -112,6 +121,10 @@ final class EditmodeEditableDefinitionCollector
         return json_encode($this->getDefinitions(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * @return string
+     * @throws \JsonException
+     */
     public function getHtml(): string
     {
         $code = '

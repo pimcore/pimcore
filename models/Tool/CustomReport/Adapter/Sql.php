@@ -1,36 +1,26 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
 use Pimcore\Db;
 
-class Sql extends AbstractAdapter
+final class Sql extends AbstractAdapter
 {
     /**
-     * @param array|null $filters
-     * @param string|null $sort
-     * @param string|null $dir
-     * @param int|null $offset
-     * @param int|null $limit
-     * @param array|null $fields
-     * @param array|null $drillDownFilters
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
     {
@@ -40,7 +30,7 @@ class Sql extends AbstractAdapter
             $columns = $this->fullConfig->getColumnConfiguration();
             $fields = [];
             foreach ($columns as $column) {
-                if ($column['export']) {
+                if ($column['export'] || $column['display'] || $column['order'] || ($column['columnAction'] ?? null)) {
                     $fields[] = $column['name'];
                 }
             }
@@ -70,11 +60,7 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param \stdClass $configuration
-     *
-     * @return array
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getColumns($configuration)
     {
@@ -245,11 +231,7 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param array $filters
-     * @param string $field
-     * @param array $drillDownFilters
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {

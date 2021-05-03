@@ -83,10 +83,10 @@ pimcore_ecommerce_framework:
                 
                 # options vary by tracker implementation
                 options:
-                    template_prefix: AppBundle:Tracking/analytics/enhanced 
+                    template_prefix: App:Tracking/analytics/enhanced 
            
                 # service id for item builder
-                item_builder_id: AppBundle\Ecommerce\Tracking\TrackingItemBuilder
+                item_builder_id: App\Ecommerce\Tracking\TrackingItemBuilder
                 
                 # List of assortment and checkout tenants where this tracker should be activated for.
                 tenants:
@@ -119,7 +119,7 @@ See the following examples
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
@@ -197,7 +197,7 @@ And define it as service:
 
 ```yaml
 services:
-    AppBundle\Ecommerce\Tracking\TrackingItemBuilder: ~
+    App\Ecommerce\Tracking\TrackingItemBuilder: ~
 ```
 
 

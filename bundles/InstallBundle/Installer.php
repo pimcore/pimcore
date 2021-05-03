@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\InstallBundle;
@@ -66,9 +66,9 @@ class Installer
     private $dbCredentials;
 
     /**
-     * @var PimcoreStyle
+     * @var PimcoreStyle|null
      */
-    private $commandLineOutput;
+    private ?PimcoreStyle $commandLineOutput = null;
 
     /**
      * When false, skips creating database structure during install
@@ -267,17 +267,6 @@ class Installer
         // check username & password
         $adminUser = $params['admin_username'] ?? '';
         $adminPass = $params['admin_password'] ?? '';
-
-        //check skipping database creation or database data
-        if (!empty($params['skip_database_structure'])) {
-            $this->createDatabaseStructure = false;
-        }
-        if (!empty($params['skip_database_data'])) {
-            $this->importDatabaseData = false;
-        }
-        if (!empty($params['skip_database_data_dump'])) {
-            $this->importDatabaseDataDump = false;
-        }
 
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
             $errors[] = 'Username and password should have at least 4 characters';
@@ -644,7 +633,7 @@ class Installer
     {
         $defaultConfig = [
             'username' => 'admin',
-            'password' => md5(microtime()),
+            'password' => bin2hex(random_bytes(16)),
         ];
 
         $settings = array_replace_recursive($defaultConfig, $config);

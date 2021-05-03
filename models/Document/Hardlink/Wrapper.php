@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Hardlink;
@@ -20,6 +18,8 @@ namespace Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document;
 
 /**
+ * @internal
+ *
  * @method Document\Dao getDao()
  */
 trait Wrapper
@@ -30,9 +30,9 @@ trait Wrapper
     protected $hardLinkSource;
 
     /**
-     * @var Document
+     * @var Document|null
      */
-    protected $sourceDocument;
+    protected ?Document $sourceDocument = null;
 
     /**
      * OVERWRITTEN METHODS
@@ -206,9 +206,9 @@ trait Wrapper
     }
 
     /**
-     * @return Document
+     * @return Document|null
      */
-    public function getSourceDocument()
+    public function getSourceDocument(): ?Document
     {
         return $this->sourceDocument;
     }
@@ -216,7 +216,7 @@ trait Wrapper
     /**
      * @param Document $sourceDocument
      */
-    public function setSourceDocument($sourceDocument)
+    public function setSourceDocument(Document $sourceDocument): void
     {
         $this->sourceDocument = $sourceDocument;
     }

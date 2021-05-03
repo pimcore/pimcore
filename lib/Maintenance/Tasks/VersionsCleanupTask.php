@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -53,6 +54,30 @@ final class VersionsCleanupTask implements TaskInterface
      */
     public function execute()
     {
+        $this->doVersionCleanup();
+        $this->doAutoSaveVersionCleanup();
+    }
+
+    private function doAutoSaveVersionCleanup()
+    {
+        $date = \Carbon\Carbon::now();
+        $date->subHours(72);
+
+        $list = new Version\Listing();
+        $ids = $list->setLoadAutoSave(true)
+            ->setCondition(' `autoSave` = 1 AND `date` < ' . $date->getTimestamp())
+            ->loadIdList();
+
+        $this->logger->debug('Auto-save versions to delete: ' . count($ids));
+        foreach ($ids as $i => $id) {
+            $this->logger->debug('Deleting auto-save version: ' . $id);
+            $version = Version::getById($id);
+            $version->delete();
+        }
+    }
+
+    private function doVersionCleanup()
+    {
         $conf['document'] = $this->config['documents']['versions'] ?? null;
         $conf['asset'] = $this->config['assets']['versions'] ?? null;
         $conf['object'] = $this->config['objects']['versions'] ?? null;
@@ -72,15 +97,14 @@ final class VersionsCleanupTask implements TaskInterface
                 $value = (int)$tConf['days'];
             }
 
-            if ($versioningType) {
-                $elementTypes[] = [
-                    'elementType' => $elementType,
-                    $versioningType => $value,
-                ];
-            }
+            $elementTypes[] = [
+                'elementType' => $elementType,
+                $versioningType => $value,
+            ];
         }
 
-        $ignoredIds = [];
+        $list = new Version\Listing();
+        $ignoredIds = $list->setLoadAutoSave(true)->setCondition(' autoSave = 1 ')->loadIdList();
 
         // Not very pretty and should be solved using a repository....
         $dao = new Version();

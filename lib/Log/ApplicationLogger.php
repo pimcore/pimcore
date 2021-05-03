@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Log;
@@ -134,9 +135,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function log($level, $message, array $context = [])
     {
@@ -251,8 +250,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function emergency($message, array $context = [])
     {
@@ -260,8 +258,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function critical($message, array $context = [])
     {
@@ -269,8 +266,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function error($message, array $context = [])
     {
@@ -278,8 +274,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function alert($message, array $context = [])
     {
@@ -287,8 +282,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function warning($message, array $context = [])
     {
@@ -296,8 +290,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function notice($message, array $context = [])
     {
@@ -305,8 +298,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function info($message, array $context = [])
     {
@@ -314,8 +306,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
+     * {@inheritdoc}
      */
     public function debug($message, array $context = [])
     {
@@ -358,7 +349,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @param string $message
      * @param \Throwable $exceptionObject
-     * @param string $priority
+     * @param string|null $priority
      * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param string|null $component
      */

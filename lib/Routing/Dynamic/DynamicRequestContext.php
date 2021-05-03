@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Routing\Dynamic;
@@ -20,9 +20,11 @@ namespace Pimcore\Routing\Dynamic;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * @internal
+ *
  * Value object containing properties needed while matching document routes.
  */
-class DynamicRequestContext
+final class DynamicRequestContext
 {
     /**
      * @var Request

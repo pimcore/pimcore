@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Debug\Traits;
@@ -20,6 +20,8 @@ namespace Pimcore\Debug\Traits;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
+ * @internal
+ *
  * Simple integration into the profiler timeline by adding events to
  * the debug stopwatch. Usage:
  *
@@ -32,23 +34,23 @@ use Symfony\Component\Stopwatch\Stopwatch;
 trait StopwatchTrait
 {
     /**
-     * @var Stopwatch
+     * @var Stopwatch|null
      */
-    private $stopwatch;
+    private ?Stopwatch $stopwatch = null;
 
-    public function setStopwatch(Stopwatch $stopwatch = null)
+    public function setStopwatch(Stopwatch $stopwatch = null): void
     {
         $this->stopwatch = $stopwatch;
     }
 
-    private function startStopwatch(string $name, string $category)
+    private function startStopwatch(string $name, string $category): void
     {
         if ($this->stopwatch) {
             $this->stopwatch->start($name, $category);
         }
     }
 
-    private function stopStopwatch(string $name)
+    private function stopStopwatch(string $name): void
     {
         if ($this->stopwatch) {
             $this->stopwatch->stop($name);

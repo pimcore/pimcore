@@ -93,7 +93,7 @@ Offers data encryption for certain data types.
 
 ![Encrypted Field](../../../img/encrypted_field.png)
 
-> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to app/config/config.yml
+> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to config/config.yaml
 
 Example:
 ```
@@ -133,7 +133,7 @@ Pimcore then cares automatically about the routing and calls the configured cont
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\DataObject;

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -255,7 +255,7 @@ pimcore.document.settings_abstract = Class.create({
                     forceSelection: false,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
@@ -266,6 +266,11 @@ pimcore.document.settings_abstract = Class.create({
                         },
                         fields: ["name"]
                     }),
+                    listeners: {
+                        afterrender: function (el) {
+                            el.getStore().load();
+                        }
+                    },
                     triggerAction: "all",
                     value: this.document.data.controller,
                     matchFieldWidth: false,
@@ -279,8 +284,11 @@ pimcore.document.settings_abstract = Class.create({
                     displayField: 'path',
                     valueField: 'path',
                     name: "template",
-                    disableKeyFilter: true,
-                    queryMode: "remote",
+                    typeAhead: true,
+                    queryMode: "local",
+                    anyMatch: true,
+                    editable: true,
+                    forceSelection: false,
                     store: new Ext.data.Store({
                         autoDestroy: true,
                         autoLoad: false,
@@ -294,6 +302,11 @@ pimcore.document.settings_abstract = Class.create({
                         },
                         fields: ["path"]
                     }),
+                    listeners: {
+                        afterrender: function (el) {
+                            el.getStore().load();
+                        }
+                    },
                     triggerAction: "all",
                     value: this.document.data.template,
                     matchFieldWidth: false,

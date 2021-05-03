@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\ClassDefinition
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -26,27 +24,37 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'reverseObjectRelation';
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $ownerClassName;
 
     /**
+     * @internal
+     *
      * @var string|null
      */
     public $ownerClassId;
 
     /**
+     * @internal
+     *
      * @var string
      */
     public $ownerFieldName;
 
     /**
      * ReverseObjectRelation must be lazy loading!
+     *
+     * @internal
      *
      * @var bool
      */
@@ -131,12 +139,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     *
-     * Checks if an object is an allowed relation
-     *
-     * @param DataObject\Concrete $object
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     protected function allowObjectRelation($object)
     {
@@ -153,14 +156,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * Checks if data is valid for current data field
-     *
-     * @param mixed $data
-     * @param bool $omitMandatoryCheck
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         //TODO
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
@@ -178,14 +176,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @internal
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -193,14 +184,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
         return $tags;
     }
@@ -216,7 +202,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptimizedAdminLoading(): bool
     {

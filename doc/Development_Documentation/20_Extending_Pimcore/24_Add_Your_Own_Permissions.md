@@ -9,7 +9,7 @@ You should now be able to select the permission in the users/roles tabs:
 
 ### Inside an AdminController
 ```php
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -37,9 +37,9 @@ class AdminController extends AdminController
 
 ### In the frontend (bundle)
 ```js
-pimcore.registerNS("pimcore.plugin.AppBundle");
+pimcore.registerNS("pimcore.plugin.App");
 
-pimcore.plugin.AppBundle = Class.create(pimcore.plugin.admin, {
+pimcore.plugin.App = Class.create(pimcore.plugin.admin, {
     pimcoreReady: function (params, broker) {
 
         if(pimcore.currentuser.permissions.indexOf("my_permission") >= 0) {

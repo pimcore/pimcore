@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Staticroute
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -26,7 +24,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method void save()
  * @method void delete()
  */
-class Staticroute extends AbstractModel
+final class Staticroute extends AbstractModel
 {
     /**
      * @var int
@@ -106,16 +104,16 @@ class Staticroute extends AbstractModel
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
      *
-     * @var Staticroute
+     * @var Staticroute|null
      */
-    protected static $_currentRoute;
+    protected static ?Staticroute $_currentRoute = null;
 
     /**
      * @static
      *
-     * @param Staticroute $route
+     * @param Staticroute|null $route
      */
-    public static function setCurrentRoute($route)
+    public static function setCurrentRoute(?Staticroute $route)
     {
         self::$_currentRoute = $route;
     }
@@ -123,9 +121,9 @@ class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @return Staticroute
+     * @return Staticroute|null
      */
-    public static function getCurrentRoute()
+    public static function getCurrentRoute(): ?Staticroute
     {
         return self::$_currentRoute;
     }
@@ -211,7 +209,7 @@ class Staticroute extends AbstractModel
      *
      * @return array
      */
-    public function getDefaultsArray()
+    private function getDefaultsArray()
     {
         $defaults = [];
 
@@ -431,6 +429,8 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param array $urlOptions
      * @param bool $encode
      *
@@ -527,6 +527,8 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $path
      * @param array $params
      *
@@ -596,7 +598,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param array $methods
+     * @param array|string $methods
      *
      * @return $this
      */

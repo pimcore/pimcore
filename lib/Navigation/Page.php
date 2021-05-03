@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -46,7 +47,7 @@ abstract class Page extends Container
      *
      * @var string|null
      */
-    protected $_label;
+    protected ?string $_label = null;
 
     /**
      * Fragment identifier (anchor identifier)
@@ -60,35 +61,35 @@ abstract class Page extends Container
      *
      * @var string|null
      */
-    protected $_fragment;
+    protected ?string $_fragment = null;
 
     /**
      * Page id
      *
      * @var string|null
      */
-    protected $_id;
+    protected ?string $_id = null;
 
     /**
      * Style class for this page (CSS)
      *
      * @var string|null
      */
-    protected $_class;
+    protected ?string $_class = null;
 
     /**
      * A more descriptive title for this page
      *
      * @var string|null
      */
-    protected $_title;
+    protected ?string $_title = null;
 
     /**
      * This page's target
      *
      * @var string|null
      */
-    protected $_target;
+    protected ?string $_target = null;
 
     /**
      * Accessibility key character
@@ -100,7 +101,7 @@ abstract class Page extends Container
      *
      * @var string|null
      */
-    protected $_accesskey;
+    protected ?string $_accesskey = null;
 
     /**
      * Forward links to other pages
@@ -125,42 +126,42 @@ abstract class Page extends Container
      *
      * @var int|null
      */
-    protected $_order;
+    protected ?int $_order = null;
 
     /**
      * Whether this page should be considered active
      *
      * @var bool
      */
-    protected $_active = false;
+    protected bool $_active = false;
 
     /**
      * Whether this page should be considered visible
      *
      * @var bool
      */
-    protected $_visible = true;
+    protected bool $_visible = true;
 
     /**
      * Parent container
      *
      * @var Container|null
      */
-    protected $_parent;
+    protected ?Container $_parent = null;
 
     /**
      * Custom page properties, used by __set(), __get() and __isset()
      *
      * @var array
      */
-    protected $_properties = [];
+    protected array $_properties = [];
 
     /**
      * Custom HTML attributes
      *
      * @var array
      */
-    protected $_customHtmlAttribs = [];
+    protected array $_customHtmlAttribs = [];
 
     /**
      * The type of page to use when it wasn't set
@@ -290,18 +291,12 @@ abstract class Page extends Container
     /**
      * Sets page label
      *
-     * @param  string $label              new page label
+     * @param string|null $label new page label
      *
-     * @return Page       fluent interface, returns self
-     *
-     * @throws \Exception  if empty/no string is given
+     * @return Page fluent interface, returns self
      */
-    public function setLabel($label)
+    public function setLabel(?string $label)
     {
-        if (null !== $label && !is_string($label)) {
-            throw new \Exception('Invalid argument: $label must be a string or null');
-        }
-
         $this->_label = $label;
 
         return $this;
@@ -310,9 +305,9 @@ abstract class Page extends Container
     /**
      * Returns page label
      *
-     * @return string  page label or null
+     * @return string|null  page label or null
      */
-    public function getLabel()
+    public function getLabel(): ?string
     {
         return $this->_label;
     }
@@ -320,18 +315,12 @@ abstract class Page extends Container
     /**
      * Sets a fragment identifier
      *
-     * @param  string $fragment   new fragment identifier
+     * @param string|null $fragment new fragment identifier
      *
-     * @return Page         fluent interface, returns self
-     *
-     * @throws \Exception    if empty/no string is given
+     * @return Page fluent interface, returns self
      */
-    public function setFragment($fragment)
+    public function setFragment(?string $fragment)
     {
-        if (null !== $fragment && !is_string($fragment)) {
-            throw new \Exception('Invalid argument: $fragment must be a string or null');
-        }
-
         $this->_fragment = $fragment;
 
         return $this;
@@ -342,7 +331,7 @@ abstract class Page extends Container
      *
      * @return string|null  fragment identifier
      */
-    public function getFragment()
+    public function getFragment(): ?string
     {
         return $this->_fragment;
     }
@@ -350,20 +339,13 @@ abstract class Page extends Container
     /**
      * Sets page id
      *
-     * @param  string|null $id            [optional] id to set. Default is null,
-     *                                    which sets no id.
+     * @param  string|null $id id to set. Default is null, which sets no id.
      *
-     * @return Page       fluent interface, returns self
-     *
-     * @throws \Exception  if not given string or null
+     * @return Page fluent interface, returns self
      */
-    public function setId($id = null)
+    public function setId(?string $id = null)
     {
-        if (null !== $id && !is_string($id) && !is_numeric($id)) {
-            throw new \Exception('Invalid argument: $id must be a string, number or null');
-        }
-
-        $this->_id = null === $id ? $id : (string) $id;
+        $this->_id = $id;
 
         return $this;
     }
@@ -373,7 +355,7 @@ abstract class Page extends Container
      *
      * @return string|null  page id or null
      */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->_id;
     }
@@ -381,19 +363,12 @@ abstract class Page extends Container
     /**
      * Sets page CSS class
      *
-     * @param  string|null $class         [optional] CSS class to set. Default
-     *                                    is null, which sets no CSS class.
+     * @param  string|null $class CSS class to set. Default is null, which sets no CSS class.
      *
-     * @return Page       fluent interface, returns self
-     *
-     * @throws \Exception  if not given string or null
+     * @return Page fluent interface, returns self
      */
-    public function setClass($class = null)
+    public function setClass(?string $class = null)
     {
-        if (null !== $class && !is_string($class)) {
-            throw new \Exception('Invalid argument: $class must be a string or null');
-        }
-
         $this->_class = $class;
 
         return $this;
@@ -404,7 +379,7 @@ abstract class Page extends Container
      *
      * @return string|null  page's CSS class or null
      */
-    public function getClass()
+    public function getClass(): ?string
     {
         return $this->_class;
     }
@@ -412,19 +387,14 @@ abstract class Page extends Container
     /**
      * Sets page title
      *
-     * @param  string $title              [optional] page title. Default is
-     *                                    null, which sets no title.
+     * @param string|null $title page title. Default is null, which sets no title.
      *
-     * @return Page       fluent interface, returns self
+     * @return Page fluent interface, returns self
      *
      * @throws \Exception  if not given string or null
      */
-    public function setTitle($title = null)
+    public function setTitle(?string $title = null)
     {
-        if (null !== $title && !is_string($title)) {
-            throw new \Exception('Invalid argument: $title must be a non-empty string');
-        }
-
         $this->_title = $title;
 
         return $this;
@@ -435,7 +405,7 @@ abstract class Page extends Container
      *
      * @return string|null  page title or null
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->_title;
     }
@@ -443,19 +413,12 @@ abstract class Page extends Container
     /**
      * Sets page target
      *
-     * @param  string|null $target        [optional] target to set. Default is
-     *                                    null, which sets no target.
+     * @param string|null $target target to set. Default is null, which sets no target.
      *
-     * @return Page       fluent interface, returns self
-     *
-     * @throws \Exception  if target is not string or null
+     * @return Page fluent interface, returns self
      */
-    public function setTarget($target = null)
+    public function setTarget(?string $target = null)
     {
-        if (null !== $target && !is_string($target)) {
-            throw new \Exception('Invalid argument: $target must be a string or null');
-        }
-
         $this->_target = $target;
 
         return $this;
@@ -466,7 +429,7 @@ abstract class Page extends Container
      *
      * @return string|null  page target or null
      */
-    public function getTarget()
+    public function getTarget(): ?string
     {
         return $this->_target;
     }
@@ -474,18 +437,15 @@ abstract class Page extends Container
     /**
      * Sets access key for this page
      *
-     * @param  string|null $character     [optional] access key to set. Default
-     *                                    is null, which sets no access key.
+     * @param string|null $character access key to set. Default is null, which sets no access key.
      *
-     * @return Page       fluent interface, returns self
+     * @return Page fluent interface, returns self
      *
-     * @throws \Exception  if access key is not string or null or
-     *                                    if the string length not equal to one
+     * @throws \Exception if the string length not equal to one
      */
-    public function setAccesskey($character = null)
+    public function setAccesskey(?string $character = null)
     {
-        if (null !== $character
-            && (!is_string($character) || 1 != strlen($character))) {
+        if (is_string($character) && 1 !== strlen($character)) {
             throw new \Exception('Invalid argument: $character must be a single character or null');
         }
 
@@ -497,9 +457,9 @@ abstract class Page extends Container
     /**
      * Returns page access key
      *
-     * @return string|null  page access key or null
+     * @return string|null page access key or null
      */
-    public function getAccesskey()
+    public function getAccesskey(): ?string
     {
         return $this->_accesskey;
     }
@@ -512,22 +472,15 @@ abstract class Page extends Container
      * prev, next, help, etc), and the value is a mixed value that could somehow
      * be considered a page.
      *
-     * @param  array $relations  [optional] an associative array of
-     *                                       forward links to other pages
+     * @param array|null $relations an associative array of forward links to other pages
      *
-     * @return Page          fluent interface, returns self
-     *
-     * @throws \Exception
+     * @return Page fluent interface, returns self
      */
-    public function setRel($relations = null)
+    public function setRel(?array $relations = null)
     {
         $this->_rel = [];
 
-        if (null !== $relations) {
-            if (!is_array($relations)) {
-                throw new \Exception('Invalid argument: $relations must be an array');
-            }
-
+        if ($relations) {
             foreach ($relations as $name => $relation) {
                 if (is_string($name)) {
                     $this->_rel[$name] = $relation;
@@ -546,19 +499,14 @@ abstract class Page extends Container
      * prev, next, help, etc), and the value is a mixed value that could somehow
      * be considered a page.
      *
-     * @param  string $relation  [optional] name of relation to return. If not
-     *                           given, all relations will be returned.
+     * @param string|null $relation name of relation to return. If not given, all relations will be returned.
      *
-     * @return array             an array of relations. If $relation is not
-     *                           specified, all relations will be returned in
-     *                           an associative array.
+     * @return array|null an array of relations. If $relation is not specified, all relations will be returned in an associative array.
      */
-    public function getRel($relation = null)
+    public function getRel(?string $relation = null)
     {
         if (null !== $relation) {
-            return isset($this->_rel[$relation]) ?
-                   $this->_rel[$relation] :
-                   null;
+            return $this->_rel[$relation] ?? null;
         }
 
         return $this->_rel;
@@ -572,22 +520,17 @@ abstract class Page extends Container
      * prev, next, help, etc), and the value is a mixed value that could somehow
      * be considered a page.
      *
-     * @param  array $relations  [optional] an associative array of
-     *                                       reverse links to other pages
+     * @param array|null $relations an associative array of reverse links to other pages
      *
-     * @return Page          fluent interface, returns self
+     * @return Page fluent interface, returns self
      *
      * @throws \Exception
      */
-    public function setRev($relations = null)
+    public function setRev(?array $relations = null)
     {
         $this->_rev = [];
 
-        if (null !== $relations) {
-            if (!is_array($relations)) {
-                throw new \Exception('Invalid argument: $relations must be an array');
-            }
-
+        if ($relations) {
             foreach ($relations as $name => $relation) {
                 if (is_string($name)) {
                     $this->_rev[$name] = $relation;
@@ -606,19 +549,14 @@ abstract class Page extends Container
      * prev, next, help, etc), and the value is a mixed value that could somehow
      * be considered a page.
      *
-     * @param  string $relation  [optional] name of relation to return. If not
-     *                           given, all relations will be returned.
+     * @param string|null $relation name of relation to return. If not given, all relations will be returned.
      *
-     * @return array             an array of relations. If $relation is not
-     *                           specified, all relations will be returned in
-     *                           an associative array.
+     * @return array|null an array of relations. If $relation is not specified, all relations will be returned in an associative array.
      */
-    public function getRev($relation = null)
+    public function getRev(?string $relation = null)
     {
         if (null !== $relation) {
-            return isset($this->_rev[$relation]) ?
-                   $this->_rev[$relation] :
-                   null;
+            return $this->_rev[$relation] ?? null;
         }
 
         return $this->_rev;
@@ -627,24 +565,13 @@ abstract class Page extends Container
     /**
      * Sets a single custom HTML attribute
      *
-     * @param  string      $name            name of the HTML attribute
-     * @param  string|null $value           value for the HTML attribute
+     * @param string $name name of the HTML attribute
+     * @param string|null $value value for the HTML attribute
      *
-     * @return Page         fluent interface, returns self
-     *
-     * @throws \Exception    if name is not string or value is
-     *                                      not null or a string
+     * @return Page fluent interface, returns self
      */
-    public function setCustomHtmlAttrib($name, $value)
+    public function setCustomHtmlAttrib(string $name, ?string $value)
     {
-        if (!is_string($name)) {
-            throw new \Exception('Invalid argument: $name must be a string');
-        }
-
-        if (null !== $value && !is_string($value)) {
-            throw new \Exception('Invalid argument: $value must be a string or null');
-        }
-
         if (null === $value && isset($this->_customHtmlAttribs[$name])) {
             unset($this->_customHtmlAttribs[$name]);
         } else {
@@ -657,23 +584,13 @@ abstract class Page extends Container
     /**
      * Returns a single custom HTML attributes by name
      *
-     * @param  string $name                 name of the HTML attribute
+     * @param string $name name of the HTML attribute
      *
-     * @return string|null                  value for the HTML attribute or null
-     *
-     * @throws \Exception    if name is not string
+     * @return string|null value for the HTML attribute or null
      */
-    public function getCustomHtmlAttrib($name)
+    public function getCustomHtmlAttrib(string $name)
     {
-        if (!is_string($name)) {
-            throw new \Exception('Invalid argument: $name must be a string');
-        }
-
-        if (isset($this->_customHtmlAttribs[$name])) {
-            return $this->_customHtmlAttribs[$name];
-        }
-
-        return null;
+        return $this->_customHtmlAttribs[$name] ?? null;
     }
 
     /**
@@ -697,7 +614,7 @@ abstract class Page extends Container
      *
      * @return array    an array containing custom HTML attributes
      */
-    public function getCustomHtmlAttribs()
+    public function getCustomHtmlAttribs(): array
     {
         return $this->_customHtmlAttribs;
     }
@@ -705,21 +622,13 @@ abstract class Page extends Container
     /**
      * Removes a custom HTML attribute from the page
      *
-     * @param  string $name          name of the custom HTML attribute
+     * @param string $name name of the custom HTML attribute
      *
-     * @return Page  fluent interface, returns self
-     *
-     * @throws \Exception
+     * @return Page fluent interface, returns self
      */
-    public function removeCustomHtmlAttrib($name)
+    public function removeCustomHtmlAttrib(string $name)
     {
-        if (!is_string($name)) {
-            throw new \Exception('Invalid argument: $name must be a string');
-        }
-
-        if (isset($this->_customHtmlAttribs[$name])) {
-            unset($this->_customHtmlAttribs[$name]);
-        }
+        unset($this->_customHtmlAttribs[$name]);
 
         return $this;
     }
@@ -739,7 +648,7 @@ abstract class Page extends Container
     /**
      * Sets page order to use in parent container
      *
-     * @param  int $order                 [optional] page order in container.
+     * @param  int|string $order                 [optional] page order in container.
      *                                    Default is null, which sets no
      *                                    specific order.
      *
@@ -751,7 +660,7 @@ abstract class Page extends Container
     {
         if (is_string($order)) {
             $temp = (int) $order;
-            if ($temp < 0 || $temp > 0 || $order == '0') {
+            if ($temp < 0 || $temp > 0 || $order === '0') {
                 $order = $temp;
             }
         }
@@ -776,7 +685,7 @@ abstract class Page extends Container
      *
      * @return int|null  page order or null
      */
-    public function getOrder()
+    public function getOrder(): ?int
     {
         return $this->_order;
     }
@@ -837,14 +746,13 @@ abstract class Page extends Container
     /**
      * Sets whether the page should be visible or not
      *
-     * @param  bool $visible         [optional] whether page should be
-     *                               considered visible or not. Default is true.
+     * @param bool|string $visible whether page should be considered visible or not. Default is true.
      *
      * @return Page  fluent interface, returns self
      */
     public function setVisible($visible = true)
     {
-        if (is_string($visible) && 'false' == strtolower($visible)) {
+        if (is_string($visible) && 'false' === strtolower($visible)) {
             $visible = false;
         }
         $this->_visible = (bool) $visible;
@@ -855,16 +763,13 @@ abstract class Page extends Container
     /**
      * Returns a boolean value indicating whether the page is visible
      *
-     * @param  bool $recursive  [optional] whether page should be considered
-     *                          invisible if parent is invisible. Default is
-     *                          false.
+     * @param bool $recursive whether page should be considered invisible if parent is invisible. Default is false.
      *
-     * @return bool             whether page should be considered visible
+     * @return bool whether page should be considered visible
      */
-    public function isVisible($recursive = false)
+    public function isVisible($recursive = false): bool
     {
-        if ($recursive && isset($this->_parent) &&
-            $this->_parent instanceof self) {
+        if ($recursive && isset($this->_parent) && $this->_parent instanceof self) {
             if (!$this->_parent->isVisible(true)) {
                 return false;
             }
@@ -878,13 +783,11 @@ abstract class Page extends Container
      *
      * Returns a boolean value indicating whether the page is visible
      *
-     * @param  bool $recursive  [optional] whether page should be considered
-     *                          invisible if parent is invisible. Default is
-     *                          false.
+     * @param  bool $recursive whether page should be considered invisible if parent is invisible. Default is false.
      *
      * @return bool             whether page should be considered visible
      */
-    public function getVisible($recursive = false)
+    public function getVisible($recursive = false): bool
     {
         return $this->isVisible($recursive);
     }
@@ -892,15 +795,13 @@ abstract class Page extends Container
     /**
      * Sets parent container
      *
-     * @param  Container $parent  [optional] new parent to set.
-     *                                            Default is null which will set
-     *                                            no parent.
+     * @param Container|null $parent new parent to set. Default is null which will set no parent.
      *
-     * @return Page               fluent interface, returns self
+     * @return Page fluent interface, returns self
      *
      * @throws \Exception
      */
-    public function setParent(Container $parent = null)
+    public function setParent(?Container $parent = null)
     {
         if ($parent === $this) {
             throw new \Exception('A page cannot have itself as a parent');
@@ -932,7 +833,7 @@ abstract class Page extends Container
      *
      * @return Container|null  parent container or null
      */
-    public function getParent()
+    public function getParent(): ?Container
     {
         return $this->_parent;
     }
@@ -950,16 +851,15 @@ abstract class Page extends Container
      *
      * @throws \Exception  if property name is invalid
      */
-    public function set($property, $value)
+    public function set(string $property, $value)
     {
-        if (!is_string($property) || empty($property)) {
+        if (empty($property)) {
             throw new \Exception('Invalid argument: $property must be a non-empty string');
         }
 
         $method = 'set' . self::_normalizePropertyName($property);
 
-        if ($method != 'setOptions' && $method != 'setConfig' &&
-            method_exists($this, $method)) {
+        if ($method !== 'setOptions' && $method !== 'setConfig' && method_exists($this, $method)) {
             $this->$method($value);
         } else {
             $this->_properties[$property] = $value;
@@ -981,9 +881,9 @@ abstract class Page extends Container
      *
      * @throws \Exception  if property name is invalid
      */
-    public function get($property)
+    public function get(string $property)
     {
-        if (!is_string($property) || empty($property)) {
+        if (empty($property)) {
             throw new \Exception('Invalid argument: $property must be a non-empty string');
         }
 
@@ -991,7 +891,8 @@ abstract class Page extends Container
 
         if (method_exists($this, $method)) {
             return $this->$method();
-        } elseif (isset($this->_properties[$property])) {
+        }
+        if (isset($this->_properties[$property])) {
             return $this->_properties[$property];
         }
 
@@ -1012,7 +913,7 @@ abstract class Page extends Container
      *
      * @throws \Exception  if property name is invalid
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         $this->set($name, $value);
     }
@@ -1028,7 +929,7 @@ abstract class Page extends Container
      *
      * @throws \Exception  if property name is invalid
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->get($name);
     }
@@ -1074,9 +975,7 @@ abstract class Page extends Container
             throw new \Exception(sprintf('Unsetting native property "%s" is not allowed', $name));
         }
 
-        if (isset($this->_properties[$name])) {
-            unset($this->_properties[$name]);
-        }
+        unset($this->_properties[$name]);
     }
 
     /**
@@ -1086,9 +985,9 @@ abstract class Page extends Container
      *
      * @return string  page label
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->_label;
+        return $this->_label ?? '';
     }
 
     // Public methods:
@@ -1184,9 +1083,9 @@ abstract class Page extends Container
     /**
      * Returns custom properties as an array
      *
-     * @return array  an array containing custom properties
+     * @return array an array containing custom properties
      */
-    public function getCustomProperties()
+    public function getCustomProperties(): array
     {
         return $this->_properties;
     }
@@ -1202,11 +1101,9 @@ abstract class Page extends Container
     }
 
     /**
-     * Returns an array representation of the page
-     *
-     * @return array  associative array containing all page properties
+     * {@inheritdoc}
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             $this->getCustomProperties(),

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -144,10 +144,9 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
     },
 
     getSaveAndSharePanel: function () {
-
         var user = pimcore.globalmanager.get("user");
-        if (user.isAllowed("share_configurations")) {
 
+        if (user.isAllowed("share_configurations")) {
             this.userStore = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
@@ -194,6 +193,24 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             value: this.settings ? this.settings.gridConfigDescription : ""
         });
 
+        var ownerField = new Ext.form.TextField({
+            fieldLabel: t('userowner'),
+            name: 'owner',
+            length: 50,
+            readOnly: true,
+            width: '100%',
+            value: this.settings.owner ? this.settings.owner : user.name
+        });
+
+        var modificationDateField = new Ext.form.TextField({
+            fieldLabel: t('modificationdate'),
+            name: 'modificationDate',
+            length: 50,
+            readOnly: true,
+            width: '100%',
+            value: this.settings.modificationDate > 0 ? new Date(this.settings.modificationDate * 1000) : new Date()
+        });
+
         if (user.isAllowed("share_configurations")) {
             this.userSharingField = Ext.create('Ext.form.field.Tag', {
                 name: "sharedUserIds",
@@ -230,9 +247,8 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             });
         }
 
-        var items = [this.nameField, this.descriptionField];
+        var items = [this.nameField, this.descriptionField, ownerField, modificationDateField];
 
-        var user = pimcore.globalmanager.get("user");
         if (user.admin) {
             this.shareGlobally = new Ext.form.field.Checkbox(
                 {

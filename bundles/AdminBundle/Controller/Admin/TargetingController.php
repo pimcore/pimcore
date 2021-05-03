@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -153,12 +154,11 @@ final class TargetingController extends AdminController implements KernelControl
         /** @var Targeting\Rule[] $changedRules */
         $changedRules = [];
         foreach ($rules as $id => $prio) {
-            /** @var Targeting\Rule $rule */
             $rule = Targeting\Rule::getById((int)$id);
             $prio = (int)$prio;
 
             if ($rule) {
-                if ((int)$rule->getPrio() !== $prio) {
+                if ($rule->getPrio() !== $prio) {
                     $rule->setPrio((int)$prio);
                     $changedRules[] = $rule;
                 }
@@ -253,7 +253,6 @@ final class TargetingController extends AdminController implements KernelControl
     {
         $success = false;
 
-        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
         if ($targetGroup) {
             $event = new TargetGroupEvent($targetGroup);

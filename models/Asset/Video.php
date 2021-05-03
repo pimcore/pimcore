@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset;
@@ -29,15 +27,14 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
+
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'video';
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -77,7 +74,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @param bool $force
+     * {@inheritdoc}
      */
     public function clearThumbnails($force = false)
     {
@@ -320,14 +317,6 @@ class Video extends Model\Asset
 
         if (in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
             $chunkSize = 1024;
-            if (!is_int($chunkSize)) {
-                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
-            }
-
-            if ($chunkSize < 12) {
-                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
-            }
-
             $file_pointer = $this->getStream();
 
             $tag = '<rdf:SphericalVideo';

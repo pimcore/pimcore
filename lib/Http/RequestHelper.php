@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Http;
@@ -42,11 +43,17 @@ class RequestHelper
         $this->requestContext = $requestContext;
     }
 
+    /**
+     * @return bool
+     */
     public function hasCurrentRequest(): bool
     {
         return null !== $this->requestStack->getCurrentRequest();
     }
 
+    /**
+     * @return Request
+     */
     public function getCurrentRequest(): Request
     {
         if (!$this->requestStack->getCurrentRequest()) {
@@ -70,11 +77,17 @@ class RequestHelper
         return $request;
     }
 
+    /**
+     * @return bool
+     */
     public function hasMasterRequest(): bool
     {
         return null !== $this->requestStack->getMasterRequest();
     }
 
+    /**
+     * @return Request
+     */
     public function getMasterRequest(): Request
     {
         $masterRequest = $this->requestStack->getMasterRequest();
@@ -113,7 +126,7 @@ class RequestHelper
      *
      * @return bool
      */
-    protected function detectFrontendRequest(Request $request): bool
+    private function detectFrontendRequest(Request $request): bool
     {
         if (\Pimcore::inAdmin()) {
             return false;
@@ -169,6 +182,7 @@ class RequestHelper
     /**
      * Get an anonymized client IP from the request
      *
+     * @internal
      * @param Request|null $request
      *
      * @return string
@@ -187,7 +201,7 @@ class RequestHelper
      *
      * @return string
      */
-    public function anonymizeIp(string $ip)
+    private function anonymizeIp(string $ip)
     {
         $aip = substr($ip, 0, strrpos($ip, '.') + 1);
         $aip .= '255';

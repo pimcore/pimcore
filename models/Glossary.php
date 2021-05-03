@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Glossary
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -25,51 +23,71 @@ namespace Pimcore\Model;
 class Glossary extends AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $text;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $link;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $abbr;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $language;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $casesensitive;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $exactmatch;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $site;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $modificationDate;

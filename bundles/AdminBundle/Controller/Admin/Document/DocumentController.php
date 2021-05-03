@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
@@ -265,7 +266,12 @@ final class DocumentController extends ElementControllerBase implements KernelCo
                     }
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
                     $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
+                } elseif($request->get('type') == 'printpage') {
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_page');
+                } elseif($request->get('type') == 'printcontainer') {
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_container');
                 }
+
 
                 if ($request->get('inheritanceSource')) {
                     $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
@@ -534,12 +540,9 @@ final class DocumentController extends ElementControllerBase implements KernelCo
         if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
             if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
                 if ($oldPath && $oldPath != $document->getRealFullPath()) {
-                    $sourceSite = null;
-                    if ($oldDocument) {
-                        $sourceSite = Frontend::getSiteForDocument($oldDocument);
-                        if ($sourceSite) {
-                            $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
-                        }
+                    $sourceSite = Frontend::getSiteForDocument($oldDocument);
+                    if ($sourceSite) {
+                        $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
                     }
 
                     $targetSite = Frontend::getSiteForDocument($document);

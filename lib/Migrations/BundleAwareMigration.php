@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Migrations;
@@ -24,8 +25,7 @@ abstract class BundleAwareMigration extends AbstractMigration
 
     protected function checkBundleInstalled()
     {
-        $kernel = \Pimcore::getContainer()->get('kernel');
-        $bundle = $kernel->getBundle($this->getBundleName());
+        $bundle = \Pimcore::getKernel()->getBundle($this->getBundleName());
         if ($bundle instanceof PimcoreBundleInterface) {
             $installer = $bundle->getInstaller();
             $this->skipIf($installer && !$installer->isInstalled(), 'Bundle not installed.');
@@ -34,12 +34,18 @@ abstract class BundleAwareMigration extends AbstractMigration
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function preUp(Schema $schema): void
     {
         $this->checkBundleInstalled();
         parent::preUp($schema);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function preDown(Schema $schema): void
     {
         $this->checkBundleInstalled();

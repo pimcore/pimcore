@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Navigation\Page;
@@ -19,19 +20,19 @@ use Pimcore\Model;
 class Document extends Url
 {
     /**
-     * @var string
+     * @var string|null
      */
-    protected $_accesskey;
+    protected ?string $_accesskey = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $_tabindex;
+    protected ?string $_tabindex = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $_relation;
+    protected ?string $_relation = null;
 
     /**
      * @var int
@@ -78,7 +79,7 @@ class Document extends Url
      *
      * @return $this
      */
-    public function setAccesskey($character = null)
+    public function setAccesskey(?string $character = null)
     {
         $this->_accesskey = $character;
 
@@ -86,9 +87,9 @@ class Document extends Url
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAccesskey()
+    public function getAccesskey(): ?string
     {
         return $this->_accesskey;
     }

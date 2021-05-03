@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -36,6 +34,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * Contains an array of indices, which represent the order of the elements in the block
      *
+     * @internal
+     *
      * @var array
      */
     protected $indices = [];
@@ -43,29 +43,35 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * Current step of the block while iteration
      *
+     * @internal
+     *
      * @var int
      */
     protected $current = 0;
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $currentIndex;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $blockStarted;
 
     /**
+     * @internal
+     *
      * @var array
      */
-    private $brickTypeUsageCounter = [];
+    protected $brickTypeUsageCounter = [];
 
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -73,9 +79,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -83,9 +87,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::admin
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function admin()
     {
@@ -93,9 +95,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function frontend()
     {
@@ -107,6 +107,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @internal
+     *
      * @param int $index
      * @param bool $return
      */
@@ -135,7 +137,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @return \Generator
+     * {@inheritdoc}
      */
     public function getIterator()
     {
@@ -144,6 +146,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
     }
 
+    /**
+     * @internal
+     *
+     * @return bool
+     */
     public function loop()
     {
         $disabled = false;
@@ -206,11 +213,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @internal
-     *
      * @return Area\Info
      */
-    public function buildInfoObject(): Area\Info
+    private function buildInfoObject(): Area\Info
     {
         // create info object and assign it to the view
         $info = new Area\Info();
@@ -240,6 +245,13 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $info;
     }
 
+    /**
+     * @param null|Document\Editable\Area\Info $info
+     * @param array $templateParams
+     * @param bool $return
+     *
+     * @return string|void
+     */
     public function content($info = null, $templateParams = [], $return = false)
     {
         if (!$info) {
@@ -266,20 +278,18 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @internal
+     *
      * @return EditableHandler
      */
-    private function getEditableHandler()
+    protected function getEditableHandler()
     {
         // TODO inject area handler via DI when editables are built through container
         return \Pimcore::getContainer()->get(EditableHandler::class);
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -292,11 +302,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
@@ -306,7 +312,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Called before the block is rendered
+     * {@inheritdoc}
      */
     public function blockConstruct()
     {
@@ -316,7 +322,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Called when the block was rendered
+     * {@inheritdoc}
      */
     public function blockDestruct()
     {
@@ -326,7 +332,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @return array
      */
-    protected function getToolBarDefaultConfig()
+    private function getToolBarDefaultConfig()
     {
         return [
             'areablock_toolbar' => [
@@ -368,11 +374,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is executed at the beginning of the loop and setup some general settings
-     *
-     * @param bool $return
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function start($return = false)
     {
@@ -396,7 +398,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is executed at the end of the loop and removes the settings set in start()
+     * {@inheritdoc}
      */
     public function end($return = false)
     {
@@ -415,9 +417,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is called everytime a new iteration starts (new entry of the block while looping)
-     *
-     * @param null $info
+     * {@inheritdoc}
      */
     public function blockStart($info = null)
     {
@@ -503,16 +503,15 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is called evertime a new iteration ends (new entry of the block while looping)
+     * {@inheritdoc}
      */
     public function blockEnd()
     {
+        // nothing to do here
     }
 
     /**
-     * @param array $config
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setConfig($config)
     {
@@ -582,7 +581,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @return array
      */
-    protected function sortAvailableAreas(array $areas, array $config)
+    private function sortAvailableAreas(array $areas, array $config)
     {
         if (isset($config['sorting']) && is_array($config['sorting']) && count($config['sorting'])) {
             $sorting = $config['sorting'];
@@ -638,9 +637,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Return the amount of block elements
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCount()
     {
@@ -648,9 +645,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Return current iteration step
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCurrent()
     {
@@ -658,9 +653,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Return current index
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCurrentIndex()
     {
@@ -685,7 +678,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEmpty()
     {

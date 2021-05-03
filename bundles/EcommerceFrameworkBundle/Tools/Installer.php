@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
@@ -67,7 +68,7 @@ class Installer extends AbstractInstaller
               `itemKey` varchar(100) COLLATE utf8_bin NOT NULL,
               `parentItemKey` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '0',
               `comment` LONGTEXT ASCII,
-              `addedDateTimestamp` int(10) NOT NULL,
+              `addedDateTimestamp` bigint NOT NULL,
               `sortIndex` INT(10) UNSIGNED NULL DEFAULT '0',
               PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`),
               KEY `cartId_parentItemKey` (`cartId`,`parentItemKey`)
@@ -286,18 +287,16 @@ class Installer extends AbstractInstaller
 
         foreach ($fieldCollections as $key => $path) {
             if ($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
-                if ($fieldCollection) {
-                    $this->output->write(sprintf(
-                        '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
-                        $key
-                    ));
+                $this->output->write(sprintf(
+                    '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
+                    $key
+                ));
 
-                    continue;
-                }
-            } else {
-                $fieldCollection = new Fieldcollection\Definition();
-                $fieldCollection->setKey($key);
+                continue;
             }
+
+            $fieldCollection = new Fieldcollection\Definition();
+            $fieldCollection->setKey($key);
 
             $data = file_get_contents($path);
             $success = Service::importFieldCollectionFromJson($fieldCollection, $data);

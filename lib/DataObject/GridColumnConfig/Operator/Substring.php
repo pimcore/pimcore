@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -22,15 +20,24 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class Substring extends AbstractOperator
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     private $start;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $length;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $ellipses;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -40,6 +47,9 @@ final class Substring extends AbstractOperator
         $this->ellipses = $config->ellipses ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -61,7 +71,6 @@ final class Substring extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var array $childValues */
             if (is_array($childValues)) {
                 /** @var string $childValue */
                 foreach ($childValues as $childValue) {

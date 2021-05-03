@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -49,112 +47,122 @@ class Asset extends Element\AbstractElement
     use TemporaryFileHelperTrait;
 
     /**
-     * possible types of an asset
+     * all possible types of assets
+     *
+     * @internal
      *
      * @var array
      */
     public static $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
     /**
-     * Unique ID
+     * @internal
      *
      * @var int
      */
     protected $id;
 
     /**
-     * ID of the parent asset
+     * @internal
      *
      * @var int
      */
     protected $parentId;
 
     /**
-     * @var Asset|null
+     * @internal
+     *
+     * @var self|null
      */
     protected $parent;
 
     /**
-     * Type
+     * @internal
      *
      * @var string
      */
     protected $type;
 
     /**
-     * Name of the file
+     * @internal
      *
      * @var string
      */
     protected $filename;
 
     /**
-     * Path of the file, without the filename, only the full path of the parent asset
+     * @internal
      *
      * @var string
      */
     protected $path;
 
     /**
-     * Mime-Type of the file
+     * @internal
      *
      * @var string
      */
     protected $mimetype;
 
     /**
-     * Timestamp of creation
+     * @internal
      *
      * @var int
      */
     protected $creationDate;
 
     /**
-     * Timestamp of modification
+     * @internal
      *
      * @var int
      */
     protected $modificationDate;
 
     /**
+     * @internal
+     *
      * @var resource|null
      */
     protected $stream;
 
     /**
-     * ID of the owner user
+     * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $userOwner;
+    protected ?int $userOwner = null;
 
     /**
-     * ID of the user who make the latest changes
+     * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification = null;
 
     /**
-     * List of properties
+     * @internal
      *
      * @var array
      */
     protected $properties = null;
 
     /**
-     * List of versions
+     * @internal
      *
      * @var array|null
      */
     protected $versions = null;
 
     /**
+     * @internal
+     *
      * @var array
      */
     protected $metadata = [];
 
     /**
+     * @internal
+     *
      * enum('self','propagate') nullable
      *
      * @var string|null
@@ -165,44 +173,50 @@ class Asset extends Element\AbstractElement
      * List of some custom settings  [key] => value
      * Here there can be stored some data, eg. the video thumbnail files, ...  of the asset, ...
      *
+     * @internal
+     *
      * @var array
      */
     protected $customSettings = [];
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $hasMetaData = false;
 
     /**
-     * Contains a list of sibling documents
+     * @internal
      *
      * @var array|null
      */
     protected $siblings;
 
     /**
-     * Indicator if document has siblings or not
+     * @internal
      *
      * @var bool|null
      */
     protected $hasSiblings;
 
     /**
-     * Contains all scheduled tasks
+     * @internal
      *
      * @var array|null
      */
     protected $scheduledTasks = null;
 
     /**
-     * Indicator if data has changed
+     * @internal
      *
      * @var bool
      */
     protected $_dataChanged = false;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $versionCount;
@@ -239,6 +253,8 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @param Asset $asset
      *
      * @return bool
@@ -256,8 +272,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Static helper to get an asset by the passed ID
-     *
      * @param int $id
      * @param bool $force
      *
@@ -309,8 +323,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Helper to quickly create a new asset
-     *
      * @param int $parentId
      * @param array $data
      * @param bool $save
@@ -401,6 +413,8 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @param array $config
      *
      * @return int total count
@@ -414,7 +428,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * returns the asset type of a filename and mimetype
+     * @internal
      *
      * @param string $mimeType
      * @param string $filename
@@ -461,9 +475,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return $this
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function save()
     {
@@ -597,10 +609,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @throws \Exception
-     *
-     * @internal
      */
-    public function correctPath()
+    private function correctPath()
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -655,6 +665,8 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -770,6 +782,9 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
+    /**
+     * @internal
+     */
     protected function postPersistData()
     {
         // hook for the save process, can be overwritten in implementations, such as Image
@@ -809,7 +824,7 @@ class Asset extends Element\AbstractElement
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
             $assetsConfig = \Pimcore\Config::getSystemConfiguration('assets');
-            if ((is_null($assetsConfig['versions']['days']) && is_null($assetsConfig['versions']['steps']))
+            if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
                 || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
@@ -838,9 +853,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns the full path of the asset including the filename
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getFullPath()
     {
@@ -878,7 +891,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getRealPath()
     {
@@ -886,7 +899,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getRealFullPath()
     {
@@ -896,8 +909,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Get a list of the sibling assets
-     *
      * @return array
      */
     public function getSiblings()
@@ -916,8 +927,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns true if the asset has at least one sibling
-     *
      * @return bool
      */
     public function hasSiblings()
@@ -950,9 +959,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * enum('self','propagate') nullable
-     *
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getLocked()
     {
@@ -960,11 +967,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * enum('self','propagate') nullable
-     *
-     * @param string|null $locked
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setLocked($locked)
     {
@@ -974,9 +977,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Deletes file from filesystem
+     * @throws \League\Flysystem\FilesystemException
      */
-    protected function deletePhysicalFile()
+    private function deletePhysicalFile()
     {
         $storage = Storage::get('asset');
         if ($this->getType() != 'folder') {
@@ -987,9 +990,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param bool $isNested
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function delete(bool $isNested = false)
     {
@@ -1066,7 +1067,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $additionalTags
+     * {@inheritdoc}
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -1081,7 +1082,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getCreationDate()
     {
@@ -1089,7 +1090,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -1105,9 +1106,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Alias for getFilename()
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getKey()
     {
@@ -1115,7 +1114,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getModificationDate()
     {
@@ -1123,7 +1122,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getParentId()
     {
@@ -1131,7 +1130,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -1139,7 +1138,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -1147,9 +1146,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int $creationDate
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCreationDate($creationDate)
     {
@@ -1159,9 +1156,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int $id
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setId($id)
     {
@@ -1183,11 +1178,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Alias for setFilename()
-     *
-     * @param string $key
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setKey($key)
     {
@@ -1195,9 +1186,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int $modificationDate
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setModificationDate($modificationDate)
     {
@@ -1222,9 +1211,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $path
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setPath($path)
     {
@@ -1273,7 +1260,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return resource
+     * @return resource|null
      */
     public function getStream()
     {
@@ -1326,7 +1313,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    protected function closeStream()
+    private function closeStream()
     {
         if (is_resource($this->stream)) {
             @fclose($this->stream);
@@ -1355,7 +1342,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return Property[]
+     * {@inheritdoc}
      */
     public function getProperties()
     {
@@ -1387,13 +1374,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
     {
@@ -1414,7 +1395,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getUserOwner()
     {
@@ -1422,7 +1403,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getUserModification()
     {
@@ -1430,9 +1411,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int $userOwner
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setUserOwner($userOwner)
     {
@@ -1442,9 +1421,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int $userModification
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setUserModification($userModification)
     {
@@ -1456,7 +1433,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return Version[]
+     * {@inheritdoc}
      */
     public function getVersions()
     {
@@ -1551,7 +1528,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $customSettings
+     * @param mixed $customSettings
      *
      * @return $this
      */
@@ -1780,7 +1757,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return Schedule\Task[]
+     * {@inheritdoc}
      */
     public function getScheduledTasks()
     {
@@ -1805,7 +1782,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function saveScheduledTasks()
+    private function saveScheduledTasks()
     {
         $this->getScheduledTasks();
         $this->getDao()->deleteAllTasks();
@@ -1822,8 +1799,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Get filesize
-     *
      * @param bool $formatted
      * @param int $precision
      *
@@ -1845,7 +1820,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return Asset
+     * {@inheritdoc}
      */
     public function getParent()
     {
@@ -1905,36 +1880,6 @@ class Asset extends Element\AbstractElement
         $this->setInDumpState(false);
     }
 
-    public function removeInheritedProperties()
-    {
-        $myProperties = $this->getProperties();
-
-        if ($myProperties) {
-            foreach ($this->getProperties() as $name => $property) {
-                if ($property->getInherited()) {
-                    unset($myProperties[$name]);
-                }
-            }
-        }
-
-        $this->setProperties($myProperties);
-    }
-
-    public function renewInheritedProperties()
-    {
-        $this->removeInheritedProperties();
-
-        // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = self::getCacheKey($this->getId());
-        if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            \Pimcore\Cache\Runtime::set($cacheKey, $this);
-        }
-
-        $myProperties = $this->getProperties();
-        $inheritedProperties = $this->getDao()->getProperties(true);
-        $this->setProperties(array_merge($inheritedProperties, $myProperties));
-    }
-
     public function __destruct()
     {
         // close open streams
@@ -1942,7 +1887,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getVersionCount(): int
     {
@@ -1950,9 +1895,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int|null $versionCount
-     *
-     * @return Asset
+     * {@inheritdoc}
      */
     public function setVersionCount(?int $versionCount): ElementInterface
     {
@@ -1964,7 +1907,7 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = [parent::resolveDependencies()];
 
@@ -2030,7 +1973,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    public function relocateThumbnails(string $oldPath)
+    private function relocateThumbnails(string $oldPath)
     {
         $oldParent = dirname($oldPath);
         $newParent = dirname($this->getRealFullPath());

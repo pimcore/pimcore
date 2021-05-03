@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset;
@@ -34,14 +32,12 @@ class Image extends Model\Asset
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'image';
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -90,6 +86,9 @@ class Image extends Model\Asset
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function postPersistData()
     {
         if ($this->getDataChanged()) {
@@ -288,7 +287,7 @@ EOT;
      *
      * @param string|array|Image\Thumbnail\Config $config
      *
-     * @return Image\Thumbnail\Config
+     * @return Image\Thumbnail\Config|null
      */
     public function getThumbnailConfig($config)
     {
@@ -451,10 +450,7 @@ EOT;
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return Model\Asset
+     * {@inheritdoc}
      */
     public function setCustomSetting($key, $value)
     {

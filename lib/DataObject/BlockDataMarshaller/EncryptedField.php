@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\BlockDataMarshaller;
@@ -28,12 +26,12 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class EncryptedField implements MarshallerInterface
 {
-
     /** @var MarshallerService */
     protected $marshallerService;
 
     /**
      * EncryptedField constructor.
+     *
      * @param MarshallerService $marshallerService
      */
     public function __construct(MarshallerService $marshallerService)
@@ -41,11 +39,12 @@ class EncryptedField implements MarshallerInterface
         $this->marshallerService = $marshallerService;
     }
 
-    /** { @inheritDoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function marshal($value, $params = [])
     {
         if ($value !== null) {
-
             $fd = $params['fieldDefinition'];
             $delegateFd = $fd->getDelegate();
 
@@ -54,12 +53,16 @@ class EncryptedField implements MarshallerInterface
                 $value = $marshaller->marshal($value, ['fieldDefinition' => $delegateFd, 'format' => 'block']);
             }
             $encryptedValue = $this->encrypt($value, $params);
+
             return $encryptedValue;
         }
+
         return null;
     }
 
-    /** { @inheritDoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function unmarshal($value, $params = [])
     {
         if ($value !== null) {
@@ -156,5 +159,4 @@ class EncryptedField implements MarshallerInterface
 
         return null;
     }
-
 }

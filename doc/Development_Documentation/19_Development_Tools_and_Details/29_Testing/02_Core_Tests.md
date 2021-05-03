@@ -64,12 +64,12 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" APP_ENV=test
 
 #### Important Environment Variables
 
-| Env Variable                              | Example          | Comment                                                                                                                        |
-|-------------------------------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| PIMCORE_ENVIRONMENT                       | test             | Test environment                                                                                                               |
-| PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
-| PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_TEST_REDIS_DSN                    | redis://localhost| **required for REDIS tests**                                                                                                   |
+| Env Variable           | Example          | Comment                                                     |
+|------------------------|------------------|-------------------------------------------------------------|
+| APP_ENV                | test             | Test environment                         |
+| PIMCORE_TEST           | 1                | **important** this will switch several directories (like /var/classes) |
+| PIMCORE_TEST_SKIP_DB   | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
+| PIMCORE_TEST_REDIS_DSN | redis://localhost| **required for REDIS tests**   |
 
 #### Suites
 

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -79,11 +79,15 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     save: function (task, only, callback, successCallback) {
 
-        if (this.tab.disabled || this.tab.isMasked()) {
+        if (this.tab.disabled || (this.tab.isMasked() && task != 'autoSave')) {
             return;
         }
 
-        this.tab.mask();
+
+        if(task != 'autoSave'){
+            this.tab.mask();
+        }
+
         var saveData = this.getSaveData(only);
 
         if (saveData) {
@@ -120,17 +124,24 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         }
                         if (rdata && rdata.success) {
                             // check for version notification
-                            if (this.newerVersionNotification) {
+                            if (this.draftVersionNotification) {
                                 if (task == "publish" || task == "unpublish") {
-                                    this.newerVersionNotification.hide();
-                                } else {
-                                    this.newerVersionNotification.show();
+                                    this.draftVersionNotification.hide();
+                                } else if (task === 'version' || task === 'autoSave') {
+                                    this.draftVersionNotification.show();
                                 }
                             }
 
-                            pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
-                            this.resetChanges();
+                            if(task !== "autoSave") {
+                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
+                            }
+
+                            this.resetChanges(task);
                             Ext.apply(this.data, rdata.data);
+
+                            if(rdata['draft']) {
+                                this.data['draft'] = rdata['draft'];
+                            }
 
                             if (typeof this["createScreenshot"] == "function") {
                                 this.createScreenshot();
@@ -143,7 +154,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     }
 
                     // reload versions
-                    if (this.versions) {
+                    if (task !== 'autoSave' && this.versions) {
                         if (typeof this.versions.reload == "function") {
                             this.versions.reload();
                         }
@@ -182,7 +193,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     saveClose: function (only) {
-        this.save(null, only, function () {
+        this.save('version', only, function () {
             this.close();
         }.bind(this));
     },

@@ -1,19 +1,25 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Twig\Extension\Templating\Traits;
 
+use Pimcore\Tool\Text;
+
+/**
+ * @internal
+ */
 trait TextUtilsTrait
 {
     /**
@@ -48,13 +54,7 @@ trait TextUtilsTrait
      */
     public function getStringAsOneLine($string)
     {
-        $string = str_replace("\r\n", ' ', $string);
-        $string = str_replace("\n", ' ', $string);
-        $string = str_replace("\r", ' ', $string);
-        $string = str_replace("\t", '', $string);
-        $string = preg_replace('#[ ]+#', ' ', $string);
-
-        return $string;
+        return Text::getStringAsOneLine($string);
     }
 
     /**

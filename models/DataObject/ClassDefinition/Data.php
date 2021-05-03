@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -100,13 +99,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $visibleSearch = true;
 
     /**
-     * If set to true then null values will not be exported.
-     *
-     * @var bool
-     */
-    protected static $dropNullValues;
-
-    /**
      * @var array
      */
     public static $validFilterOperators = [
@@ -149,10 +141,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @param mixed $data
      * @param bool $omitMandatoryCheck
+     * @param array $params
      *
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
 
@@ -500,14 +493,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
      * @param mixed $data
      * @param array $tags
      *
      * @return array
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
         return $tags;
     }
@@ -546,7 +537,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array $value
+     * @param string|array|object $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -557,15 +548,18 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $db = \Pimcore\Db::get();
         $name = $params['name'] ? $params['name'] : $this->name;
         $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
 
         if ($value === 'NULL') {
-            if ($operator == '=') {
+            if ($operator === '=') {
                 $operator = 'IS';
-            } elseif ($operator == '!=') {
+            } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
         } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator == 'LIKE') {
+            if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
                 $value = $db->quote($value);
@@ -574,9 +568,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**
@@ -984,7 +978,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
 
@@ -1234,22 +1228,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool $dropNullValues
-     */
-    public static function setDropNullValues($dropNullValues)
-    {
-        self::$dropNullValues = $dropNullValues;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function getDropNullValues()
-    {
-        return self::$dropNullValues;
-    }
-
-    /**
      * @return bool
      */
     public function getUnique()
@@ -1319,16 +1297,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                                     } else {
                                         $getter = 'get' . ucfirst($this->getName());
                                         $data = $item->$getter();
-
-                                        if ($object instanceof DataObject\Localizedfield) {
-                                            $data = $data->getLocalizedValue($this->getName(), $params['language'], true);
-                                        }
                                     }
 
                                     return $data;
-                                } else {
-                                    throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                                 }
+
+                                throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                             } else {
                                 return null;
                             }

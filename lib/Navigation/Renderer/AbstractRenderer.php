@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 /**
@@ -51,14 +52,14 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * The minimum depth a page must have to be included when rendering
      *
-     * @var int
+     * @var int|null
      */
     protected $_minDepth;
 
     /**
      * The maximum depth a page can have to be included when rendering
      *
-     * @var int
+     * @var int|null
      */
     protected $_maxDepth;
 
@@ -103,7 +104,7 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Sets the minimum depth a page must have to be included when rendering
      *
-     * @param  int $minDepth
+     * @param int|null $minDepth
      *
      * @return self  fluent interface
      */
@@ -147,7 +148,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxDepth()
     {
@@ -224,7 +225,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function getRenderInvisible()
     {
@@ -232,9 +233,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param bool $renderInvisible
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setRenderInvisible(bool $renderInvisible = true)
     {

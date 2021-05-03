@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
 
-class Serialize
+final class Serialize
 {
     /**
      * @var array
@@ -22,8 +23,6 @@ class Serialize
     protected static $loopFilterProcessedObjects = [];
 
     /**
-     * @static
-     *
      * @param mixed $data
      *
      * @return string
@@ -34,8 +33,6 @@ class Serialize
     }
 
     /**
-     * @static
-     *
      * @param string $data
      *
      * @return mixed
@@ -50,6 +47,8 @@ class Serialize
     }
 
     /**
+     * @internal
+     *
      * Shortcut to access the admin serializer
      *
      * @return \Symfony\Component\Serializer\Serializer
@@ -60,6 +59,8 @@ class Serialize
     }
 
     /**
+     * @internal
+     *
      * this is a special json encoder that avoids recursion errors
      * especially for pimcore models that contain massive self referencing objects
      *

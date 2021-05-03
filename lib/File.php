@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore;
@@ -21,10 +22,6 @@ class File
      */
     public static $defaultMode = 0664;
 
-    /**
-     * @var array
-     */
-    private static $isIncludeableCache = [];
 
     /**
      * @var null|resource
@@ -54,6 +51,7 @@ class File
     /**
      * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
+     * @internal
      * @param string $tmpFilename
      * @param string|null $language
      * @param string $replacement
@@ -71,34 +69,6 @@ class File
         $tmpFilename = trim($tmpFilename, '. ');
 
         return $tmpFilename;
-    }
-
-    /**
-     * @param string $filename
-     *
-     * @return bool
-     */
-    public static function isIncludeable($filename)
-    {
-        if (array_key_exists($filename, self::$isIncludeableCache)) {
-            return self::$isIncludeableCache[$filename];
-        }
-
-        $isIncludeAble = false;
-
-        // use stream_resolve_include_path if PHP is >= 5.3.2 because the performance is better
-        if (function_exists('stream_resolve_include_path')) {
-            if ($include = stream_resolve_include_path($filename)) {
-                if (@is_readable($include)) {
-                    $isIncludeAble = true;
-                }
-            }
-        }
-
-        // add to store
-        self::$isIncludeableCache[$filename] = $isIncludeAble;
-
-        return $isIncludeAble;
     }
 
     /**
@@ -121,7 +91,7 @@ class File
      * @param string $path
      * @param mixed $data
      *
-     * @return int
+     * @return int|false
      */
     public static function put($path, $data)
     {
@@ -136,16 +106,21 @@ class File
     }
 
     /**
+     * @internal
      * @param string $path
-     * @param mixed $data
+     * @param string $data
+     *
+     * @return int|false
      */
     public static function putPhpFile($path, $data)
     {
-        self::put($path, $data);
+        $return = self::put($path, $data);
 
         if (function_exists('opcache_reset')) {
             opcache_reset();
         }
+
+        return $return;
     }
 
     /**

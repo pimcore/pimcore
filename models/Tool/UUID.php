@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool;
@@ -25,29 +23,39 @@ use Symfony\Component\Uid\Uuid as Uid;
  * @method void delete()
  * @method void save()
  */
-class UUID extends Model\AbstractModel
+final class UUID extends Model\AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
     protected $itemId;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $uuid;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $instanceIdentifier;
 
     /**
+     * @internal
+     *
      * @var mixed
      */
     protected $item;
@@ -73,6 +81,8 @@ class UUID extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return $this
      *
      * @throws \Exception
@@ -129,6 +139,8 @@ class UUID extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return mixed
      *
      * @throws \Exception

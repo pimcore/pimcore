@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
@@ -67,7 +65,7 @@ class Processor
      *
      * @return string
      */
-    public static function getAllowedFormat($format, $allowed = [], $fallback = 'png')
+    private static function getAllowedFormat($format, $allowed = [], $fallback = 'png')
     {
         $typeMappings = [
             'jpg' => 'jpeg',
@@ -435,7 +433,7 @@ class Processor
      *
      * @return bool
      */
-    protected static function containsTransformationType(Config $config, string $transformationType): bool
+    private static function containsTransformationType(Config $config, string $transformationType): bool
     {
         $transformations = $config->getItems();
         if (is_array($transformations) && count($transformations) > 0) {

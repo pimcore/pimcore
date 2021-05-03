@@ -8,7 +8,7 @@ action in an autowired controller:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener;
 
@@ -42,7 +42,7 @@ which provides a `addCodePart()` method which allows you to add custom code snip
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Analytics\Google\Tracker;
 use Pimcore\Analytics\SiteId\SiteId;
@@ -76,7 +76,7 @@ you full control over the generated code:
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use Pimcore\Analytics\Google\Event\TrackingDataEvent;
 use Pimcore\Analytics\Google\Tracker;
@@ -120,7 +120,7 @@ As you can see in the sample event listener above, you can change the template w
 If you set a custom template, you can extend the core one and just override the blocks you want:
 
 ```twig
-{# src/AppBundle/Resources/views/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig #}
+{# templates/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig #}
 {% extends "@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig" %}
 
 {% block track %}

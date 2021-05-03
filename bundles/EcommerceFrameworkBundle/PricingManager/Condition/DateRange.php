@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
@@ -20,12 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class DateRange implements DateRangeInterface
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $starting;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $ending;
 
@@ -68,7 +69,7 @@ class DateRange implements DateRangeInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getStarting()
     {
@@ -76,7 +77,7 @@ class DateRange implements DateRangeInterface
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getEnding()
     {

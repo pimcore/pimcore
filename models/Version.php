@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Version
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -37,7 +35,7 @@ use Pimcore\Tool\Storage;
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
  */
-class Version extends AbstractModel
+final class Version extends AbstractModel
 {
     /**
      * @var int
@@ -60,9 +58,9 @@ class Version extends AbstractModel
     protected $userId;
 
     /**
-     * @var User
+     * @var User|null
      */
-    protected $user;
+    protected ?User $user = null;
 
     /**
      * @var string
@@ -118,6 +116,11 @@ class Version extends AbstractModel
      * @var bool
      */
     public static $disabled = false;
+
+    /**
+     * @var bool
+     */
+    protected bool $autoSave = false;
 
     /**
      * @param int $id
@@ -257,7 +260,7 @@ class Version extends AbstractModel
      *
      * @return mixed
      */
-    public function marshalData($data)
+    private function marshalData($data)
     {
         $context = [
             'source' => __METHOD__,
@@ -293,7 +296,7 @@ class Version extends AbstractModel
      *
      * @return mixed
      */
-    public function unmarshalData($data)
+    private function unmarshalData($data)
     {
         $context = [
             'source' => __METHOD__,
@@ -342,7 +345,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * Object
+     * @internal
      *
      * @param bool $renewReferences
      *
@@ -393,6 +396,11 @@ class Version extends AbstractModel
         return $data;
     }
 
+    /**
+     * @param int|null $id
+     *
+     * @return string
+     */
     private function getStoragePath(?int $id = null): string
     {
         if (!$id) {
@@ -414,6 +422,9 @@ class Version extends AbstractModel
         return Storage::get('version')->readStream($this->getStoragePath());
     }
 
+    /**
+     * @return string
+     */
     private function getBinaryStoragePath(): string
     {
         return $this->getStoragePath($this->getBinaryFileId()) . '.bin';
@@ -599,19 +610,19 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getUser()
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      *
      * @return $this
      */
-    public function setUser($user)
+    public function setUser(?User $user)
     {
         $this->user = $user;
 
@@ -724,5 +735,23 @@ class Version extends AbstractModel
     public function getStackTrace(): ?string
     {
         return $this->stackTrace;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoSave(): bool
+    {
+        return $this->autoSave;
+    }
+
+    /**
+     * @param bool $autoSave
+     */
+    public function setAutoSave(bool $autoSave): self
+    {
+        $this->autoSave = $autoSave;
+
+        return $this;
     }
 }

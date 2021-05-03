@@ -1,21 +1,25 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Log;
 
 use Pimcore\File;
 
+/**
+ * @internal
+ */
 class Simple
 {
     /**
@@ -40,7 +44,7 @@ class Simple
             $date = new \DateTime('now');
 
             $f = fopen($log, 'a+');
-            fwrite($f, $date->format(\DateTime::ISO8601) . ' : ' . $message . "\n");
+            fwrite($f, $date->format('Y-m-d\TH:i:sO') . ' : ' . $message . "\n");
             fclose($f);
         }
     }

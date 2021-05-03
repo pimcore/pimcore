@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -206,7 +207,6 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('general')
-            ->ignoreExtraKeys()
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('timezone')
@@ -217,7 +217,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultNull()
                 ->end()
                 ->scalarNode('domain')
-                    ->defaultNull()
+                    ->defaultValue('')
                 ->end()
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()
@@ -283,8 +283,10 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->arrayNode('services')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('google')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('client_id')
                             ->info('This is required for the Google API integrations. Only use a `Service Account´ from the Google Cloud Console.')
@@ -411,7 +413,6 @@ final class Configuration implements ConfigurationInterface
         $assetsNode = $rootNode
             ->children()
                 ->arrayNode('assets')
-                ->ignoreExtraKeys()
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('frontend_prefixes')
@@ -567,8 +568,20 @@ final class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->booleanNode('ignore_localized_query_fallback')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                                ->end()
+                            ->defaultFalse()
+                        ->end()
                         ->integerNode('tree_paging_limit')
                             ->defaultValue(30)
+                        ->end()
+                        ->integerNode('auto_save_interval')
+                            ->defaultValue(60)
                         ->end()
                         ->arrayNode('versions')
                             ->children()
@@ -708,9 +721,18 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                         ->children()
                             ->scalarNode('pdf_creation_php_memory_limit')
-                            ->defaultValue('2048M')
+                                ->defaultValue('2048M')
+                            ->end()
+                            ->scalarNode('default_controller_print_page')
+                                ->defaultValue('App\\Controller\\Web2printController::defaultAction')
+                            ->end()
+                            ->scalarNode('default_controller_print_container')
+                                ->defaultValue('App\\Controller\\Web2printController::containerAction')
+                            ->end()
                         ->end()
-                    ->end()
+                ->end()
+                ->integerNode('auto_save_interval')
+                    ->defaultValue(60)
                 ->end()
             ->end();
     }
@@ -769,7 +791,8 @@ final class Configuration implements ConfigurationInterface
     private function addContextNode(ArrayNodeDefinition $rootNode)
     {
         $contextNode = $rootNode->children()
-            ->arrayNode('context');
+            ->arrayNode('context')
+            ->useAttributeAsKey('name');
 
         /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $contextNode->prototype('array');
@@ -1029,18 +1052,29 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('sender')
+                            ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
+                                ->scalarNode('name')
+                                    ->defaultValue('')
+                                ->end()
+                                ->scalarNode('email')
+                                    ->defaultValue('')
+                                ->end()
                             ->end()
                         ->end()
                         ->arrayNode('return')
+                            ->addDefaultsIfNotSet()
                             ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('email')->end()
+                                ->scalarNode('name')
+                                    ->defaultValue('')
+                                ->end()
+                                ->scalarNode('email')
+                                    ->defaultValue('')
+                                ->end()
                             ->end()
                         ->end()
                         ->arrayNode('debug')
+                            ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('email_addresses')
                                     ->defaultValue('')
@@ -1048,6 +1082,7 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->scalarNode('usespecific')
+                            ->defaultFalse()
                         ->end()
                     ->end()
                 ->end()

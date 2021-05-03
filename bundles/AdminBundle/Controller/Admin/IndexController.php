@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -249,6 +250,9 @@ final class IndexController extends AdminController implements KernelResponseEve
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
             'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
+            'document_auto_save_interval' => $config['documents']['auto_save_interval'],
+            'object_auto_save_interval' => $config['objects']['auto_save_interval'],
+
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
             'availablePerspectives' => Config::getAvailablePerspectives($user),
@@ -256,7 +260,6 @@ final class IndexController extends AdminController implements KernelResponseEve
 
             // google analytics
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
-            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
         ];
 
         $this

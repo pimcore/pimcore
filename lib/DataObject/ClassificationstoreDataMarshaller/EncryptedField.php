@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\ClassificationstoreDataMarshaller;
@@ -28,8 +26,9 @@ use Pimcore\Marshaller\MarshallerInterface;
  */
 class EncryptedField implements MarshallerInterface
 {
-
-    /** @var MarshallerService */
+    /**
+     * @var MarshallerService
+     */
     protected $marshallerService;
 
     /**
@@ -42,7 +41,9 @@ class EncryptedField implements MarshallerInterface
         $this->marshallerService = $marshallerService;
     }
 
-    /** { @inheritDoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function marshal($value, $params = [])
     {
         if ($value !== null) {
@@ -55,8 +56,6 @@ class EncryptedField implements MarshallerInterface
                 $fd = $params['fieldDefinition'];
                 $delegateFd = $fd->getDelegate();
 
-
-
                 if ($this->marshallerService->supportsFielddefinition('classificationstore', $delegateFd->getFieldtype())) {
                     $marshaller = $this->marshallerService->buildFieldefinitionMarshaller('classificationstore', $delegateFd->getFieldtype());
                     $encodedData = $marshaller->marshal($value, ['fieldDefinition' => $delegateFd, 'format' => 'classificationstore']);
@@ -64,26 +63,28 @@ class EncryptedField implements MarshallerInterface
                     if (is_array($encodedData)) {
                         $encryptedValue = $this->encrypt($encodedData['value'], $params);
                         $encryptedValue2 = $this->encrypt($encodedData['value2'], $params);
-
                     }
                 }
             } else {
                 $encryptedValue = $this->encrypt($value, $params);
             }
 
-            $result =[
+            $result = [
                 'value' => $encryptedValue,
-                'value2' => $encryptedValue2
+                'value2' => $encryptedValue2,
             ];
+
             return $result;
         }
+
         return null;
     }
 
-    /** { @inheritDoc } */
+    /**
+     * {@inheritdoc}
+     */
     public function unmarshal($value, $params = [])
     {
-
         if (is_array($value)) {
 
             /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField $fd */
@@ -97,7 +98,7 @@ class EncryptedField implements MarshallerInterface
 
                 $decodedData = $marshaller->unmarshal([
                     'value' => $encryptedValue,
-                    'value2' => $encryptedValue2
+                    'value2' => $encryptedValue2,
                 ], ['fieldDefinition' => $delegateFd, 'format' => 'classificationstore']);
 
                 return $decodedData;
@@ -187,5 +188,4 @@ class EncryptedField implements MarshallerInterface
 
         return null;
     }
-
 }

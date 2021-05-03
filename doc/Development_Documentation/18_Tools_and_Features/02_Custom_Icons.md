@@ -21,10 +21,10 @@ This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEME
 
 Example:
 
-In `app/config/services.yaml` add
+In `config/services.yaml` add
 
 ```yaml
-  AppBundle\EventListener\AdminStyleListener:
+  App\EventListener\AdminStyleListener:
     tags:
       - { name: kernel.event_listener, event: pimcore.admin.resolve.elementAdminStyle, method: onResolveElementAdminStyle }
 ```
@@ -34,7 +34,7 @@ Create AdminStyleListener in EventListeners
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 class AdminStyleListener
 {
@@ -42,8 +42,8 @@ class AdminStyleListener
     {
         $element = $event->getElement();
         // decide which default styles you want to override
-        if ($element instanceof \AppBundle\Model\Product\Car) {
-            $event->setAdminStyle(new \AppBundle\Model\Product\AdminStyle\Car($element));
+        if ($element instanceof \App\Model\Product\Car) {
+            $event->setAdminStyle(new \App\Model\Product\AdminStyle\Car($element));
         }
     }
 }
@@ -56,9 +56,9 @@ class AdminStyleListener
 This will change the `Car` icon depending on the car type:
 
 ```php
-namespace AppBundle\Model\Product\AdminStyle;
+namespace App\Model\Product\AdminStyle;
 
-use AppBundle\Website\Tool\ForceInheritance;
+use App\Website\Tool\ForceInheritance;
 use Pimcore\Model\Element\AdminStyle;
 
 class Car extends AdminStyle
@@ -72,7 +72,7 @@ class Car extends AdminStyle
 
         $this->element = $element;
 
-        if ($element instanceof \AppBundle\Model\Product\Car) {
+        if ($element instanceof \App\Model\Product\Car) {
             ForceInheritance::run(function () use ($element) {
                 if ($element->getObjectType() == 'actual-car') {
                     $this->elementIcon = '/bundles/pimcoreadmin/img/twemoji/1f697.svg';
@@ -100,7 +100,7 @@ The example outlines how to provide a custom tooltip for `Car` objects.
      */
     public function getElementQtipConfig()
     {
-        if ($this->element instanceof \AppBundle\Model\Product\Car) {
+        if ($this->element instanceof \App\Model\Product\Car) {
             $element = $this->element;
 
             return ForceInheritance::run(function () use ($element) {
@@ -135,7 +135,7 @@ This will display the modification date and image size as additional information
 a different icon for all assets starting with a capital 'C' in their key. 
 
 ```php
-namespace AppBundle\Model\Product\AdminStyle;
+namespace App\Model\Product\AdminStyle;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\AdminStyle;

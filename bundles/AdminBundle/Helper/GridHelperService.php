@@ -7,15 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Helper;
@@ -177,7 +174,7 @@ class GridHelperService
      *
      * @return string
      */
-    public function getFilterCondition($filterJson, ClassDefinition $class): string
+    public function getFilterCondition($filterJson, ClassDefinition $class, $tablePrefix = null): string
     {
         $systemFields = Model\DataObject\Service::getSystemFields();
 
@@ -237,7 +234,7 @@ class GridHelperService
                     //if the definition doesn't exist check for object brick
                     $keyParts = explode('~', $filterField);
 
-                    if (substr($filterField, 0, 1) == '~') {
+                    if (substr($filterField, 0, 1) === '~') {
                         // not needed for now
 //                            $type = $keyParts[1];
 //                            $field = $keyParts[2];
@@ -313,14 +310,14 @@ class GridHelperService
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator);
+                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
                         }
 
                         if (!empty($fieldConditions)) {
                             $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                         }
                     } else {
-                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator);
+                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator, ['brickPrefix' => ($tablePrefix ? $tablePrefix.'.' : null)]);
                     }
                 } elseif (in_array('o_' . $filterField, $systemFields)) {
                     // system field
@@ -410,7 +407,7 @@ class GridHelperService
                 foreach ($featureJoins as $featureJoin) {
                     $fieldname = $featureJoin['fieldname'];
                     $mappedKey = 'cskey_' . $fieldname . '_' . $featureJoin['groupId'] . '_' . $featureJoin['keyId'];
-                    if (isset($alreadyJoined[$mappedKey]) && $alreadyJoined[$mappedKey]) {
+                    if (isset($alreadyJoined[$mappedKey])) {
                         continue;
                     }
                     $alreadyJoined[$mappedKey] = 1;
@@ -535,7 +532,7 @@ class GridHelperService
         }
         if ($sortingSettings['orderKey'] !== null && strlen($sortingSettings['orderKey']) > 0) {
             $orderKey = $sortingSettings['orderKey'];
-            if (!(substr($orderKey, 0, 1) == '~')) {
+            if (substr($orderKey, 0, 1) !== '~') {
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
                 } elseif ($orderKey === 'fullpath') {
@@ -556,19 +553,21 @@ class GridHelperService
                         $db = Db::get();
                         $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
                         $doNotQuote = true;
-                    } else {
-                        if (count($orderKeyParts) == 2) {
-                            $orderKey = $orderKeyParts[1];
-                        }
+                    } elseif (count($orderKeyParts) === 2) {
+                        $orderKey = $orderKeyParts[0].'.'.$orderKeyParts[1];
+                        $doNotQuote = true;
                     }
+                } else {
+                    $orderKey = $list->getDao()->getTableName().'.'.$orderKey;
+                    $doNotQuote = true;
                 }
             }
         }
 
         $conditionFilters = [];
 
-        if ($requestParams['specificId'] ?? false) {
-            $conditionFilters[] = 'oo_id = ' . $requestParams['specificId'];
+        if (($requestParams['specificId'] ?? false) && is_numeric($requestParams['specificId'])) {
+            $conditionFilters[] = 'oo_id = ' . (int) $requestParams['specificId'];
         }
 
         if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {
@@ -595,7 +594,7 @@ class GridHelperService
 
         // create filter condition
         if (!empty($requestParams['filter'])) {
-            $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class);
+            $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class, $list->getDao()->getTableName());
             $featureAndSlugFilters = $this->getFeatureAndSlugFilters($requestParams['filter'], $class, $requestedLanguage);
             if ($featureAndSlugFilters) {
                 $featureJoins = array_merge($featureJoins, $featureAndSlugFilters['featureJoins']);

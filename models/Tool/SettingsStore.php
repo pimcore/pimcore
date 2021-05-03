@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool;
@@ -23,39 +21,49 @@ use Pimcore\Model\Tool\SettingsStore\Dao;
 /**
  * @method Dao getDao()
  */
-class SettingsStore extends Model\AbstractModel
+final class SettingsStore extends Model\AbstractModel
 {
     protected static $allowedTypes = ['bool', 'int', 'float', 'string'];
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $id;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $scope;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
+     *
      * @var mixed
      */
     protected $data;
 
     /**
-     * @var SettingsStore
+     * @internal
+     *
+     * @var self|null
      */
-    protected static $instance;
+    protected static ?self $instance = null;
 
     /**
-     * @return SettingsStore
+     * @return self
      */
-    protected static function getInstance()
+    private static function getInstance(): self
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -71,7 +79,7 @@ class SettingsStore extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    protected static function validateType(string $type): bool
+    private static function validateType(string $type): bool
     {
         if (!in_array($type, self::$allowedTypes)) {
             throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::$allowedTypes)));

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Translation;
@@ -152,6 +153,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
+     *
      * @param string $domain
      * @param string $locale
      */
@@ -260,7 +263,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @throws \Exception
      */
-    protected function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
+    private function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
     {
         if (empty($id)) {
             return $translated;
@@ -344,6 +347,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
      * @return string
      */
     public function getAdminPath()
@@ -352,6 +356,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
      * @param string $adminPath
      */
     public function setAdminPath($adminPath)
@@ -360,6 +365,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
      * @return array
      */
     public function getAdminTranslationMapping(): array
@@ -368,6 +374,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
      * @param array $adminTranslationMapping
      */
     public function setAdminTranslationMapping(array $adminTranslationMapping): void
@@ -376,6 +383,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
      * @return Kernel
      */
     public function getKernel()
@@ -384,6 +392,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @internal
      * @param Kernel $kernel
      */
     public function setKernel($kernel)
@@ -401,7 +410,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->disableTranslations = $disableTranslations;
     }
 
-    public function updateLinks(string $text)
+    /**
+     * @param string $text
+     * @return string
+     */
+    private function updateLinks(string $text): string
     {
         if (strpos($text, 'pimcore_id')) {
             $text = Tool\Text::wysiwygText($text);

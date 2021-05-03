@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -324,7 +324,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("plugins") && perspectiveCfg.inToolbar("extras.plugins")) {
                 extrasItems.push({
-                    text: t("bundles"),
+                    text: t("bundles") + ' & ' + t('bricks'),
                     iconCls: "pimcore_nav_icon_bundles",
                     handler: this.extensionAdmin
                 });

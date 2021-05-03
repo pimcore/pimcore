@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
@@ -20,6 +18,9 @@ namespace Pimcore\Model\DataObject\Concrete\Dao;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
+/**
+ * @internal
+ */
 class InheritanceHelper
 {
     const STORE_TABLE = 'object_store_';
@@ -278,11 +279,22 @@ class InheritanceHelper
                 $object = DataObject\Concrete::getById($oo_id);
                 $classId = $object->getClassId();
 
-                $query = 'SELECT b.o_id AS id '
-                    . ' FROM objects b LEFT JOIN ' . $this->querytable . ' a ON b.o_id = a.' . $this->idField
-                    . ' WHERE b.o_classId = ' . $this->db->quote($classId)
-                    . ' AND o_path LIKE '. $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%')
-                    . ' AND ISNULL(a.' . $this->queryIdField . ')';
+                $query = "
+                    WITH RECURSIVE cte(id, classId) as (
+                        SELECT c.o_id AS id, c.o_classId AS classId
+                        FROM objects c
+                        WHERE c.o_parentId = {$object->getId()}
+                        UNION ALL
+                        SELECT p.o_id AS id, p.o_classId AS classId
+                        FROM objects p
+                        INNER JOIN cte on (p.o_parentId = cte.id)
+                    ) select x.id
+                    FROM cte x
+                    LEFT JOIN {$this->querytable} l on (x.id = l.{$this->idField})
+                    where x.classId = {$this->db->quote($classId)}
+                    AND l.{$this->queryIdField} is null;
+                ";
+
                 $missingIds = $this->db->fetchCol($query);
 
                 // create entries for children that don't have an entry yet
@@ -418,15 +430,50 @@ class InheritanceHelper
     protected function buildTree($currentParentId, $fields = '', $parentIdGroups = null, $params = [])
     {
         $objects = [];
+        $storeTable = $this->storetable;
+        $idfield = $this->idField;
 
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
-                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()) . '/%')
-                    . ' HAVING `language` = "' . $params['language'] . '" OR ISNULL(`language`)'
-                    . ' ORDER BY LENGTH(o_path) ASC';
+                $language = $params['language'];
+
+                $query = "
+                WITH RECURSIVE cte(id, classId, parentId, o_path) as (
+                    SELECT c.o_id AS id, c.o_classId AS classId, c.o_parentId AS parentId, c.o_path AS o_path
+                    FROM objects c
+                    WHERE c.o_parentId = $currentParentId
+                    UNION ALL
+                    SELECT p.o_id AS id, p.o_classId AS classId, p.o_parentId AS parentId, p.o_path AS o_path
+                    FROM objects p
+                    INNER JOIN cte on (p.o_parentId = cte.id)
+                ) SELECT l.language AS `language`,
+                         x.id AS id,
+                         x.classId AS classId,
+                         x.parentId AS parentId
+                         $fields
+                    FROM cte x
+                    LEFT JOIN $storeTable l ON x.id = l.$idfield
+                   WHERE COALESCE(`language`, " . $this->db->quote($language) . ') = ' . $this->db->quote($language) .
+                   ' ORDER BY x.o_path ASC';
             } else {
-                $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+                $query = "
+                    WITH RECURSIVE cte(id, classId, parentId, o_path) as (
+                        SELECT c.o_id AS id, c.o_classId AS classId, c.o_parentId AS parentId, c.o_path AS o_path
+                        FROM objects c
+                        WHERE c.o_parentId = $currentParentId
+                        UNION ALL
+                        SELECT p.o_id AS id, p.o_classId AS classId, p.o_parentId AS parentId, p.o_path AS o_path
+                        FROM objects p
+                        INNER JOIN cte on (p.o_parentId = cte.id)
+                    )	SELECT x.id AS id,
+                               x.classId AS classId,
+                               x.parentId AS parentId
+                               $fields
+                        FROM cte x
+                        LEFT JOIN $storeTable a ON x.id = a.$idfield
+                        GROUP BY x.id
+                        ORDER BY x.o_path ASC";
             }
             $queryCacheKey = 'tree_'.md5($query);
 
