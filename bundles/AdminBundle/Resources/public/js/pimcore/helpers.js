@@ -2700,8 +2700,10 @@ pimcore.helpers.exportWarning = function (type, callback) {
         buttons: [{
             text: t("OK"),
             handler: function () {
-                callback(formPanel.getValues());
-                window.close();
+                if (formPanel.isValid()) {
+                    callback(formPanel.getValues());
+                    window.close();
+                }
             }.bind(this)
         },
             {
