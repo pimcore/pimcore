@@ -68,7 +68,7 @@ class Installer extends AbstractInstaller
               `itemKey` varchar(100) COLLATE utf8_bin NOT NULL,
               `parentItemKey` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '0',
               `comment` LONGTEXT ASCII,
-              `addedDateTimestamp` int(10) NOT NULL,
+              `addedDateTimestamp` bigint NOT NULL,
               `sortIndex` INT(10) UNSIGNED NULL DEFAULT '0',
               PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`),
               KEY `cartId_parentItemKey` (`cartId`,`parentItemKey`)
