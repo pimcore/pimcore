@@ -66,8 +66,16 @@ final class SettingsController extends AdminController
      */
     public function displayCustomLogoAction(Request $request)
     {
-        $storage = Tool\Storage::get('admin');
+        $mime = 'image/svg+xml';
+        if ($request->get('white')) {
+            $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-white.svg';
+        } else {
+            $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-gray.svg';
+        }
 
+        $stream = fopen($logo, 'rb');
+
+        $storage = Tool\Storage::get('admin');
         if ($storage->fileExists(self::CUSTOM_LOGO_PATH)) {
             try {
                 $mime = $storage->mimeType(self::CUSTOM_LOGO_PATH);
@@ -75,15 +83,6 @@ final class SettingsController extends AdminController
             } catch (\Exception $e) {
                 // do nothing
             }
-        } else {
-            $mime = 'image/svg+xml';
-            if ($request->get('white')) {
-                $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-white.svg';
-            } else {
-                $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-gray.svg';
-            }
-
-            $stream = fopen($logo, 'rb');
         }
 
         return new StreamedResponse(function () use ($stream) {
