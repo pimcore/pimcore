@@ -26,7 +26,8 @@ pimcore.asset.gridexport.csv = Class.create(pimcore.element.gridexport.abstract,
                     name: 'delimiter',
                     maxLength: 1,
                     labelWidth: 200,
-                    value: ';'
+                    value: ';',
+                    allowBlank: false
                 })
             ]
         });
