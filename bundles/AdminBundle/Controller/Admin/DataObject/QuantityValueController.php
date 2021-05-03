@@ -184,8 +184,9 @@ final class QuantityValueController extends AdminController
             $list->setCondition('id IN (' . $string . ')');
         }
 
+        $result = [];
         $units = $list->getUnits();
-        foreach ($units as $unit) {
+        foreach ($units as &$unit) {
             try {
                 if ($unit->getAbbreviation()) {
                     $unit->setAbbreviation(\Pimcore\Model\Translation::getByKeyLocalized($unit->getAbbreviation(), Translation::DOMAIN_ADMIN,
@@ -195,12 +196,13 @@ final class QuantityValueController extends AdminController
                     $unit->setLongname(\Pimcore\Model\Translation::getByKeyLocalized($unit->getLongname(), Translation::DOMAIN_ADMIN, true,
                         true));
                 }
+                $result[] = $unit->getObjectVars();
             } catch (\Exception $e) {
                 // nothing to do ...
             }
         }
 
-        return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
+        return $this->adminJson(['data' => $result, 'success' => true, 'total' => $list->getTotalCount()]);
     }
 
     /**
