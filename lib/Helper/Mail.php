@@ -157,7 +157,7 @@ CSS;
             $emailLog->setDocumentId($document->getId());
         }
 
-        if(array_key_exists("REQUEST_URI",$_SERVER)){
+        if(isset($_SERVER['REQUEST_URI'])){
             $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
         }
 
