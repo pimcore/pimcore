@@ -184,18 +184,18 @@ final class DefaultValue extends AbstractValue
      */
     public function getLabeledValue($element)
     {
-        /** @var Concrete $element */
         $attributeParts = explode('~', $this->attribute);
 
         $getter = 'get' . ucfirst($this->attribute);
         $brickType = null;
         $brickKey = null;
 
-        if (substr($this->attribute, 0, 1) == '~') {
+        if (str_starts_with($this->attribute, '~')) {
             // key value, ignore for now
 
             return $this->getClassificationStoreValueForObject($element, $this->attribute);
-        } elseif (count($attributeParts) > 1) {
+        }
+        if ($element instanceof Concrete && count($attributeParts) > 1) {
             $brickType = $attributeParts[0];
             $brickKey = $attributeParts[1];
 

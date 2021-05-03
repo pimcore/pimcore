@@ -88,13 +88,9 @@ final class Frontend
      */
     public static function isOutputCacheEnabled()
     {
-        $container = \Pimcore::getContainer();
-        if (!$container->has(FullPageCacheListener::class)) {
-            return false;
-        }
+        $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
 
-        $cacheService = $container->get(FullPageCacheListener::class);
-        if ($cacheService && $cacheService->isEnabled()) {
+        if ($cacheService->isEnabled()) {
             return [
                 'enabled' => true,
                 'lifetime' => $cacheService->getLifetime(),

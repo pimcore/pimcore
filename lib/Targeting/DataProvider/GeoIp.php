@@ -142,17 +142,11 @@ class GeoIp implements DataProviderInterface
 
     private function doResolveIp(string $ip)
     {
-        $city = null;
-
         try {
             $city = $this->geoIpProvider->city($ip);
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
-            return null;
-        }
-
-        if (!$city) {
             return null;
         }
 

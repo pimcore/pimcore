@@ -149,6 +149,8 @@ class SessionStorage implements TargetingStorageInterface
      * @param string $scope
      * @param bool $checkPreviousSession
      *
+     * @throws \Exception
+     *
      * @return null|NamespacedAttributeBag
      */
     private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
@@ -164,9 +166,6 @@ class SessionStorage implements TargetingStorageInterface
         }
 
         $session = $request->getSession();
-
-        /** @var NamespacedAttributeBag $bag */
-        $bag = null;
 
         switch ($scope) {
             case self::SCOPE_SESSION:
@@ -184,15 +183,11 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
-        if ($bag) {
-            if ($bag instanceof NamespacedAttributeBag) {
-                return $bag;
-            } else {
-                throw new \Exception('wrong type');
-            }
+        if ($bag instanceof NamespacedAttributeBag) {
+            return $bag;
         }
 
-        return null;
+        throw new \Exception('wrong type');
     }
 
     private function updateTimestamps(

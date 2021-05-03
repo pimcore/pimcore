@@ -93,13 +93,8 @@ class EncoderFactory implements EncoderFactoryInterface
 
         if (null !== $factoryKey) {
             $factory = $this->encoderFactories[$factoryKey];
-            $encoder = $factory->getEncoder($user);
 
-            if (!$encoder) {
-                throw new \RuntimeException(sprintf('Failed to fetch encoder from factory "%s".', $factoryKey));
-            }
-
-            return $encoder;
+            return $factory->getEncoder($user);
         }
 
         return null;

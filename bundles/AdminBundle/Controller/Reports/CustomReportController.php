@@ -206,7 +206,6 @@ final class CustomReportController extends ReportsControllerBase
         $configuration = $configuration[0] ?? null;
 
         $success = false;
-        $columns = null;
         $errorMessage = null;
 
         $result = [];

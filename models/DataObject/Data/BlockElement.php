@@ -114,7 +114,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     public function getData()
     {
         if ($this->needsRenewReferences) {
-            $container = null;
             $this->needsRenewReferences = false;
             $this->renewReferences();
         }

@@ -676,9 +676,9 @@ final class User extends User\UserRole
     /**
      * Returns array of website translation languages for editing related to user and all related roles
      *
-     * @return array|null
+     * @return array
      */
-    private function getMergedWebsiteTranslationLanguagesEdit()
+    private function getMergedWebsiteTranslationLanguagesEdit(): array
     {
         if (null === $this->mergedWebsiteTranslationLanguagesEdit) {
             $this->mergedWebsiteTranslationLanguagesEdit = $this->getWebsiteTranslationLanguagesEdit();
@@ -719,9 +719,9 @@ final class User extends User\UserRole
     /**
      * Returns array of website translation languages for viewing related to user and all related roles
      *
-     * @return array|null
+     * @return array
      */
-    private function getMergedWebsiteTranslationLanguagesView()
+    private function getMergedWebsiteTranslationLanguagesView(): array
     {
         if (null === $this->mergedWebsiteTranslationLanguagesView) {
             $this->mergedWebsiteTranslationLanguagesView = $this->getWebsiteTranslationLanguagesView();
