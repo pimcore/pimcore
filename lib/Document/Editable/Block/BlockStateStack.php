@@ -20,9 +20,7 @@ namespace Pimcore\Document\Editable\Block;
 /**
  * @internal
  *
- * Handles block state (current block level, current block index). This is the
- * data which previously was handled in Registry pimcore_tag_block_current and
- * pimcore_tag_block_numeration.
+ * Handles block state (current block level, current block index)
  */
 final class BlockStateStack implements \Countable, \JsonSerializable
 {
