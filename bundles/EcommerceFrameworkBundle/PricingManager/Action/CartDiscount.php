@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 // TODO use Decimal for amounts?
-class CartDiscount implements DiscountInterface
+class CartDiscount implements DiscountInterface, CartActionInterface
 {
     /**
      * @var float
@@ -32,16 +32,6 @@ class CartDiscount implements DiscountInterface
      * @var float
      */
     protected $percent = 0;
-
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnProduct(EnvironmentInterface $environment)
-    {
-        return $this;
-    }
 
     /**
      * @param EnvironmentInterface $environment

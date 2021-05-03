@@ -36,17 +36,6 @@ class Gift implements GiftInterface
      *
      * @return GiftInterface
      */
-    public function executeOnProduct(EnvironmentInterface $environment)
-    {
-        // TODO: Implement executeOnProduct() method.
-        return $this;
-    }
-
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return GiftInterface
-     */
     public function executeOnCart(EnvironmentInterface $environment)
     {
         $comment = $environment->getRule()->getDescription();

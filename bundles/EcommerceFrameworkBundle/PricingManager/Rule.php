@@ -16,7 +16,8 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscountInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartActionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductActionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\BracketInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
@@ -371,7 +372,23 @@ class Rule extends AbstractModel implements RuleInterface
     public function hasProductActions()
     {
         foreach ($this->getActions() as $action) {
-            if ($action instanceof ProductDiscountInterface) {
+            if ($action instanceof ProductActionInterface) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * checks if rule has at least one action that changes cart price
+     *
+     * @return bool
+     */
+    public function hasCartActions()
+    {
+        foreach ($this->getActions() as $action) {
+            if ($action instanceof CartActionInterface) {
                 return true;
             }
         }
@@ -387,8 +404,9 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnProduct(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var ActionInterface $action */
-            $action->executeOnProduct($environment);
+            if($action instanceof ProductActionInterface) {
+                $action->executeOnProduct($environment);
+            }
         }
 
         return $this;
@@ -402,8 +420,9 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnCart(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var ActionInterface $action */
-            $action->executeOnCart($environment);
+            if($action instanceof CartActionInterface) {
+                $action->executeOnCart($environment);
+            }
         }
 
         return $this;

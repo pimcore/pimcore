@@ -18,20 +18,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 interface ActionInterface
 {
     /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnProduct(EnvironmentInterface $environment);
-
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnCart(EnvironmentInterface $environment);
-
-    /**
      * @return string
      */
     public function toJSON();

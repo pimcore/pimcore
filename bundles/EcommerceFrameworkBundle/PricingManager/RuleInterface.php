@@ -136,6 +136,13 @@ interface RuleInterface
     public function hasProductActions();
 
     /**
+     * checks if rule has at least one action that changes cart price
+     *
+     * @return bool
+     */
+    public function hasCartActions();
+
+    /**
      * execute rule actions based on current product
      *
      * @param EnvironmentInterface $environment

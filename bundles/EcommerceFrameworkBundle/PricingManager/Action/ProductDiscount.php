@@ -55,17 +55,6 @@ class ProductDiscount implements ProductDiscountInterface
     }
 
     /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnCart(EnvironmentInterface $environment)
-    {
-        //nothing to to here
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function toJSON()

@@ -258,7 +258,9 @@
 - [Ecommerce] Moved method `getIdColumnType` from `MysqlConfigInterface` to `ConfigInterface`. Since it was and still is
   implemented in `AbstractConfig` this should not have any consequences.
 - [Ecommerce] Timestamp of CartItems is now in mirco seconds (existing data will be migrated).  
-- [Web2Print]
+- [Ecommerce][PricingManager] Added two new interfaces `ProductActionInterface` and `CartActionInterface`. All actions
+  need to implement either of it - otherwise they will not be considered anymore in price calculation.
+- [Web2Print] 
    - Removed `PdfReactor8`, use `PdfReactor` instead.
    - Removed PDFreactor version selection in web2print settings, since most current PDFreactor client lib
      should be backwards compatible to older versions.
