@@ -356,9 +356,7 @@ class Manager
             return false;
         }
 
-        if (!$markingStore = $workflow->getMarkingStore()) {
-            return false;
-        }
+        $markingStore = $workflow->getMarkingStore();
 
         // check that the subject has a non-empty place
         $initialPlaces = $this->getInitialPlacesForWorkflow($workflow);

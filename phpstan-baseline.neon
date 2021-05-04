@@ -6,6 +6,16 @@ parameters:
 			path: bundles/CoreBundle/Command/Bundle/ListCommand.php
 
 		-
+			message: "#^Empty array passed to foreach\\.$#"
+			count: 1
+			path: bundles/CoreBundle/DependencyInjection/Compiler/WorkflowPass.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 3
+			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
+
+		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/CoreBundle/Request/ParamConverter/DataObjectParamConverter.php
@@ -344,14 +354,4 @@ parameters:
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: lib/Twig/Extension/DocumentEditableExtension.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: lib/Workflow/Manager.php
 
