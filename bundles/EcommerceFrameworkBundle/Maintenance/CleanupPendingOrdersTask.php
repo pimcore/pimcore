@@ -22,7 +22,7 @@ use Pimcore\Maintenance\TaskInterface;
 /**
  * @internal
  */
- CleanupPendingOrdersTask implements TaskInterface
+class CleanupPendingOrdersTask implements TaskInterface
 {
     public function execute()
     {

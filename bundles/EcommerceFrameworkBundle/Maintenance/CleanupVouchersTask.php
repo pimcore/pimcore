@@ -21,7 +21,7 @@ use Pimcore\Maintenance\TaskInterface;
 /**
  * @internal
  */
- CleanupVouchersTask implements TaskInterface
+class CleanupVouchersTask implements TaskInterface
 {
     public function execute()
     {
