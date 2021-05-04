@@ -145,7 +145,7 @@ final class WorkflowPass implements CompilerPassInterface
                 ]
             );
 
-            if (isset($workflowConfig['initial_markings']) && $workflowConfig['initial_markings'] !== []) {
+            if (!empty($workflowConfig['initial_markings'])) {
                 $definitionDefinition->addArgument($workflowConfig['initial_markings']);
             }
 
