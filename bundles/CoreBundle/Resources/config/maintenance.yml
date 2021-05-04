@@ -135,9 +135,3 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: markexpiredtagsdisabled }
-
-    Pimcore\Maintenance\Tasks\CheckErrorLogsDbTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: checkerrorlogsdb }
