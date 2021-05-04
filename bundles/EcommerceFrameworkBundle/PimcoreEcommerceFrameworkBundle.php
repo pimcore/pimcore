@@ -82,11 +82,8 @@ final class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     public function boot()
     {
         $container = $this->container;
-
-        if ($container->hasParameter('pimcore_ecommerce.decimal_scale')) {
-            // set default decimal scale from config
-            Decimal::setDefaultScale($container->getParameter('pimcore_ecommerce.decimal_scale'));
-        }
+        // set default decimal scale from config
+        Decimal::setDefaultScale($container->getParameter('pimcore_ecommerce.decimal_scale'));
     }
 
     /**

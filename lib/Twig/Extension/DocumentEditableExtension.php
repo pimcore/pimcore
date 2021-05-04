@@ -52,7 +52,7 @@ final class DocumentEditableExtension extends AbstractExtension
             new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
         ];
 
-        // those are just for auto-complete, not nice, but works ;-)
+        // @phpstan-ignore-next-line those are just for auto-complete, not nice, but works ;-)
         new TwigFunction('pimcore_area');
         new TwigFunction('pimcore_areablock');
         new TwigFunction('pimcore_block');
