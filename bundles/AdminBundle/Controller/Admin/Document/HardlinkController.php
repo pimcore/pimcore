@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class HardlinkController extends DocumentControllerBase
+class HardlinkController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

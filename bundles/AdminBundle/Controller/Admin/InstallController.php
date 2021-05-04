@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class InstallController extends AdminController
+class InstallController extends AdminController
 {
     /**
      * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})

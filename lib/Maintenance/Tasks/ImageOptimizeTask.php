@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class ImageOptimizeTask implements TaskInterface
+class ImageOptimizeTask implements TaskInterface
 {
     /**
      * @var ImageOptimizerInterface

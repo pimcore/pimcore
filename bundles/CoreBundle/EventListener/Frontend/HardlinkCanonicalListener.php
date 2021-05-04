@@ -34,7 +34,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class HardlinkCanonicalListener implements EventSubscriberInterface
+class HardlinkCanonicalListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

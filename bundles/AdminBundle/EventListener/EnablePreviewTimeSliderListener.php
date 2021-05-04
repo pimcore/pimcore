@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class EnablePreviewTimeSliderListener implements EventSubscriberInterface
+class EnablePreviewTimeSliderListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
 

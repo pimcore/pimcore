@@ -153,7 +153,7 @@ class GD extends Adapter
      * @param int $width
      * @param int $height
      *
-     * @return resource|\GdImage|false
+     * @return \GdImage|false
      */
     private function createImage($width, $height)
     {
@@ -338,23 +338,17 @@ class GD extends Adapter
         $image = ltrim($image, '/');
         $image = PIMCORE_PROJECT_ROOT . '/' . $image;
 
-        // 100 alpha is default
-        if (empty($alpha)) {
-            $alpha = 100;
-        }
-        $alpha = round($alpha / 100, 1);
-
         if (is_file($image)) {
             list($oWidth, $oHeight) = getimagesize($image);
 
-            if ($origin == 'top-right') {
+            if ($origin === 'top-right') {
                 $x = $this->getWidth() - $oWidth - $x;
-            } elseif ($origin == 'bottom-left') {
+            } elseif ($origin === 'bottom-left') {
                 $y = $this->getHeight() - $oHeight - $y;
-            } elseif ($origin == 'bottom-right') {
+            } elseif ($origin === 'bottom-right') {
                 $x = $this->getWidth() - $oWidth - $x;
                 $y = $this->getHeight() - $oHeight - $y;
-            } elseif ($origin == 'center') {
+            } elseif ($origin === 'center') {
                 $x = round($this->getWidth() / 2) - round($oWidth / 2) + $x;
                 $y = round($this->getHeight() / 2) - round($oHeight / 2) + $y;
             }

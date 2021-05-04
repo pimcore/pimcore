@@ -45,7 +45,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-final class IndexController extends AdminController implements KernelResponseEventInterface
+class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
      * @var EventDispatcherInterface

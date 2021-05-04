@@ -31,7 +31,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class AdminExceptionListener implements EventSubscriberInterface
+class AdminExceptionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

@@ -46,7 +46,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class DataObjectHelperController extends AdminController
+class DataObjectHelperController extends AdminController
 {
     const SYSTEM_COLUMNS = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 

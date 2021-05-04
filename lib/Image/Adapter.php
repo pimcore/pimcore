@@ -359,7 +359,7 @@ abstract class Adapter
     }
 
     /**
-     * @param string $image
+     * @param mixed $image
      * @param int $x
      * @param int $y
      * @param int $alpha

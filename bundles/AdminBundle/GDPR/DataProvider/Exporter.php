@@ -26,12 +26,7 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 
 /**
- * Class Exporter
- *
- * @package Pimcore\Bundle\AdminBundle\GDPR\DataProvider
- *
  * @internal
- * @final
  */
 class Exporter
 {

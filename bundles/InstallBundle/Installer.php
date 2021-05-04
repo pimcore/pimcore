@@ -376,7 +376,14 @@ class Installer
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment();
-        $kernel = new \App\Kernel($environment, true);
+
+        $kernel = \App\Kernel::class;
+
+        if (isset($_ENV['PIMCORE_KERNEL_CLASS'])) {
+            $kernel = $_ENV['PIMCORE_KERNEL_CLASS'];
+        }
+        
+        $kernel = new $kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 

@@ -37,7 +37,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @internal
  */
-final class DocumentFallbackListener implements EventSubscriberInterface
+class DocumentFallbackListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

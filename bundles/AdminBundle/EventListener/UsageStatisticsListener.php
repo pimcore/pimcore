@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class UsageStatisticsListener implements EventSubscriberInterface
+class UsageStatisticsListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

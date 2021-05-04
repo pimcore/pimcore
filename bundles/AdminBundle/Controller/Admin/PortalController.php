@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @internal
  */
-final class PortalController extends AdminController implements KernelControllerEventInterface
+class PortalController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var \Pimcore\Helper\Dashboard

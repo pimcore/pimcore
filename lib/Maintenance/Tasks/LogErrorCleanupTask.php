@@ -21,7 +21,7 @@ use Pimcore\Maintenance\TaskInterface;
 /**
  * @internal
  */
-final class LogErrorCleanupTask implements TaskInterface
+class LogErrorCleanupTask implements TaskInterface
 {
     /**
      * @var Db\ConnectionInterface

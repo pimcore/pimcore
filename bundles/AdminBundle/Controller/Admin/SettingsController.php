@@ -53,7 +53,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @internal
  */
-final class SettingsController extends AdminController
+class SettingsController extends AdminController
 {
     private const CUSTOM_LOGO_PATH = 'custom-logo.image';
 

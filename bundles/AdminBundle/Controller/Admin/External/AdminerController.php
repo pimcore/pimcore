@@ -27,7 +27,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
     /**
      * @internal
      */
-    final class AdminerController extends AdminController implements KernelControllerEventInterface
+    class AdminerController extends AdminController implements KernelControllerEventInterface
     {
         /**
          * @var string

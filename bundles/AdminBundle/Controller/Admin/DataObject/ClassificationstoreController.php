@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
+class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * Delete collection with the group-relations

@@ -37,7 +37,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @internal
  */
-final class UserController extends AdminController implements KernelControllerEventInterface
+class UserController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/user/tree-get-childs-by-id", name="pimcore_admin_user_treegetchildsbyid", methods={"GET"})

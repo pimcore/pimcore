@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class CustomReportController extends ReportsControllerBase
+class CustomReportController extends ReportsControllerBase
 {
     /**
      * @Route("/tree", name="pimcore_admin_reports_customreport_tree", methods={"GET", "POST"})
@@ -206,7 +206,6 @@ final class CustomReportController extends ReportsControllerBase
         $configuration = $configuration[0] ?? null;
 
         $success = false;
-        $columns = null;
         $errorMessage = null;
 
         $result = [];

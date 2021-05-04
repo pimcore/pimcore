@@ -41,7 +41,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
+class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;

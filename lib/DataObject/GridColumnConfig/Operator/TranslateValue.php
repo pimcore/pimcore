@@ -42,13 +42,13 @@ final class TranslateValue extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function __construct(Translator $translator, \stdClass $config, $context = null)
+    public function __construct(Translator $translator, \stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
         $this->translator = $translator;
         $this->prefix = $config->prefix ?? '';
-        if (null != $context && isset($context['language'])) {
+        if (isset($context['language'])) {
             $this->locale = $context['language'];
         }
     }

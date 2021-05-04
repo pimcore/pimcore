@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class VariantsController extends AdminController
+class VariantsController extends AdminController
 {
     /**
      * @Route("/update-key", name="pimcore_admin_dataobject_variants_updatekey", methods={"PUT"})

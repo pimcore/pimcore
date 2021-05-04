@@ -96,6 +96,21 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
+    public function save()
+    {
+        // checking the required editables renders the document, so this needs to be
+        // before the database transaction, see also https://github.com/pimcore/pimcore/issues/8992
+        $this->checkMissingRequiredEditable();
+        if ($this->getMissingRequiredEditable() && $this->getPublished()) {
+            throw new Model\Element\ValidationException('Prevented publishing document - missing values for required editables');
+        }
+
+        return parent::save();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function update($params = [])
     {
 
@@ -114,15 +129,6 @@ abstract class PageSnippet extends Model\Document
         }
 
         // scheduled tasks are saved in $this->saveVersion();
-
-        // load data which must be requested
-        $this->getProperties();
-        $this->getEditables();
-
-        $this->checkMissingRequiredEditable();
-        if ($this->getMissingRequiredEditable() && $this->getPublished()) {
-            throw new \Exception('Prevented publishing document - missing values for required editables');
-        }
 
         // update this
         parent::update($params);
@@ -626,6 +632,10 @@ abstract class PageSnippet extends Model\Document
      */
     protected function checkMissingRequiredEditable()
     {
+        // load data which must be requested
+        $this->getProperties();
+        $this->getEditables();
+
         //Allowed tags for required check
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 

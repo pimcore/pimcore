@@ -47,7 +47,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class AssetHelperController extends AdminController
+class AssetHelperController extends AdminController
 {
     /**
      * @param int $userId

@@ -38,14 +38,14 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function build(\stdClass $configElement, $context = null)
+    public function build(\stdClass $configElement, array $context = [])
     {
         if (class_exists($this->className)) {
             return new $this->className($configElement, $context);
-        } else {
-            Logger::warn('operator ' . $this->className . ' does not exist');
-
-            return null;
         }
+
+        Logger::warn('operator ' . $this->className . ' does not exist');
+
+        return null;
     }
 }

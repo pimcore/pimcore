@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-data-providers", name="pimcore_admin_gdpr_admin_getdataproviders", methods={"GET"})

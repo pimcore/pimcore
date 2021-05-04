@@ -33,7 +33,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class TargetingController extends AdminController implements KernelControllerEventInterface
+class TargetingController extends AdminController implements KernelControllerEventInterface
 {
     /* RULES */
 

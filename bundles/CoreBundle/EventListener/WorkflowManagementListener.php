@@ -39,7 +39,7 @@ use Symfony\Component\Workflow\Registry;
 /**
  * @internal
  */
-final class WorkflowManagementListener implements EventSubscriberInterface
+class WorkflowManagementListener implements EventSubscriberInterface
 {
     /**
      * @var bool

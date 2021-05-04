@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

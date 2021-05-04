@@ -50,7 +50,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
+class DataObjectController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;

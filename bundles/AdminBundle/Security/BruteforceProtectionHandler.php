@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @internal
  */
-final class BruteforceProtectionHandler implements LoggerAwareInterface
+class BruteforceProtectionHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

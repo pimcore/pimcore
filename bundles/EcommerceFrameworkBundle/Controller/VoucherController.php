@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class VoucherController extends FrontendController implements KernelControllerEventInterface
+class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

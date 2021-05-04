@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @internal
  */
-final class FindologicController extends FrontendController
+class FindologicController extends FrontendController
 {
     /**
      * create xml output for findologic

@@ -25,7 +25,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class ImageThumbnailExtension extends AbstractExtension
+class ImageThumbnailExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}

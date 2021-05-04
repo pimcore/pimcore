@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class NotificationController extends AdminController
+class NotificationController extends AdminController
 {
     /**
      * @Route("/recipients", name="pimcore_admin_notification_recipients", methods={"GET"})

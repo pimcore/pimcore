@@ -22,6 +22,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @internal
  */
-final class PimcoreInstallBundle extends Bundle
+class PimcoreInstallBundle extends Bundle
 {
 }

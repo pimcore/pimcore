@@ -24,12 +24,12 @@ class Gift implements GiftInterface
     /**
      * @var AbstractProduct|null
      */
-    protected $product;
+    protected ?AbstractProduct $product = null;
 
     /**
      * @var string
      */
-    protected $productPath;
+    protected string $productPath = '';
 
     /**
      * @param EnvironmentInterface $environment
@@ -117,10 +117,8 @@ class Gift implements GiftInterface
      */
     public function __wakeup()
     {
-        if ($this->productPath != '') {
+        if ($this->productPath !== '') {
             $this->product = AbstractProduct::getByPath($this->productPath);
-        } elseif (is_string($this->product)) {
-            $this->product = AbstractProduct::getByPath($this->product);
         }
     }
 }

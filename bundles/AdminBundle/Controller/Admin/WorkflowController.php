@@ -43,7 +43,7 @@ use Symfony\Component\Workflow\Workflow;
  *
  * @internal
  */
-final class WorkflowController extends AdminController implements KernelControllerEventInterface
+class WorkflowController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var Document|Asset|ConcreteObject|null $element

@@ -21,7 +21,7 @@ use Pimcore\Model\Tool\TmpStore;
 /**
  * @internal
  */
-final class LogCleanupTask implements TaskInterface
+class LogCleanupTask implements TaskInterface
 {
     /**
      * {@inheritdoc}

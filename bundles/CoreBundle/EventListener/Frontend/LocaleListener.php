@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class LocaleListener implements EventSubscriberInterface
+class LocaleListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

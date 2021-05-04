@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @internal
  */
-final class ImportConfigListener implements EventSubscriberInterface
+class ImportConfigListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

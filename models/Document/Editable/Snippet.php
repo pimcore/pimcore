@@ -45,7 +45,7 @@ class Snippet extends Model\Document\Editable
      *
      * @var Document\Snippet|null
      */
-    protected ?Document\Snippet $snippet = null;
+    protected $snippet = null;
 
     /**
      * {@inheritdoc}

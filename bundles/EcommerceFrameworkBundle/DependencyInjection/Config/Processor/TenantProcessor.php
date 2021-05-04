@@ -22,7 +22,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 /**
  * @internal
  */
-final class TenantProcessor
+class TenantProcessor
 {
     /**
      * Merges tenant configs with an optional _defaults key which is applied

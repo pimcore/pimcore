@@ -21,8 +21,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait PositionSortTrait
 {
     /**
-     * @param array|null $a
-     * @param array|null $b
+     * @param array|string|null $a
+     * @param array|string|null $b
      *
      * @return int
      */
@@ -30,7 +30,8 @@ trait PositionSortTrait
     {
         if (is_array($a) && is_array($b)) {
             return $a['position'] - $b['position'];
-        } elseif (is_string($a) && is_string($b)) {
+        }
+        if (is_string($a) && is_string($b)) {
             return strcmp($a, $b);
         }
 

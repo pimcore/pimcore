@@ -20,7 +20,7 @@ use Pimcore\Maintenance\TaskInterface;
 /**
  * @internal
  */
-final class HousekeepingTask implements TaskInterface
+class HousekeepingTask implements TaskInterface
 {
     /**
      * @var int

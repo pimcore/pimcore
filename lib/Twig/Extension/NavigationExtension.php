@@ -27,7 +27,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class NavigationExtension extends AbstractExtension
+class NavigationExtension extends AbstractExtension
 {
     /**
      * @var Navigation

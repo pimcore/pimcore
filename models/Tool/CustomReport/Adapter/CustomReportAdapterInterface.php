@@ -35,7 +35,7 @@ interface CustomReportAdapterInterface
     /**
      * returns available columns for given configuration
      *
-     * @param \stdClass $configuration
+     * @param \stdClass|null $configuration
      *
      * @return array
      */

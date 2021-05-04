@@ -46,7 +46,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
+class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
 

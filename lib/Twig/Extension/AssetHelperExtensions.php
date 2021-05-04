@@ -24,7 +24,7 @@ use Twig\TwigTest;
 /**
  * @internal
  */
-final class AssetHelperExtensions extends AbstractExtension
+class AssetHelperExtensions extends AbstractExtension
 {
     public function getTests(): array
     {

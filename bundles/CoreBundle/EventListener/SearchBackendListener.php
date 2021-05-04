@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @internal
  */
-final class SearchBackendListener implements EventSubscriberInterface
+class SearchBackendListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}
