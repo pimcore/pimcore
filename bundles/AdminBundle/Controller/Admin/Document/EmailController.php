@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class EmailController extends DocumentControllerBase
+class EmailController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

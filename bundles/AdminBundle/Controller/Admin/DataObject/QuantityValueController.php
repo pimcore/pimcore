@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  *  @internal
  */
-final class QuantityValueController extends AdminController
+class QuantityValueController extends AdminController
 {
     /**
      * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxyget", methods={"GET"})

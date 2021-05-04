@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class CleanupBrickTablesTask implements TaskInterface
+class CleanupBrickTablesTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

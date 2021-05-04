@@ -38,7 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class NewsletterController extends DocumentControllerBase
+class NewsletterController extends DocumentControllerBase
 {
     use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 

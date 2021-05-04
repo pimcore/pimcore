@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class AssetDocumentConversionTask implements TaskInterface
+class AssetDocumentConversionTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

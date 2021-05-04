@@ -29,7 +29,7 @@ use Twig\TwigTest;
 /**
  * @internal
  */
-final class HelpersExtension extends AbstractExtension
+class HelpersExtension extends AbstractExtension
 {
     /**
      * @var PimcoreUrl

@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
+class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

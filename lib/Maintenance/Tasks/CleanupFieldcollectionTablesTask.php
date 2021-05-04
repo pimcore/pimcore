@@ -23,7 +23,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class CleanupFieldcollectionTablesTask implements TaskInterface
+class CleanupFieldcollectionTablesTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

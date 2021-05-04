@@ -24,7 +24,7 @@ use Symfony\Component\Lock\LockInterface;
 /**
  * @internal
  */
-final class LowQualityImagePreviewTask implements TaskInterface
+class LowQualityImagePreviewTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

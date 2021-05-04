@@ -27,7 +27,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @internal
  */
-final class GridConfigListener implements EventSubscriberInterface
+class GridConfigListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

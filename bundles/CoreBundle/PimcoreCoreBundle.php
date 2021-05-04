@@ -36,7 +36,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @internal
  */
-final class PimcoreCoreBundle extends Bundle
+class PimcoreCoreBundle extends Bundle
 {
     public function getContainerExtension()
     {

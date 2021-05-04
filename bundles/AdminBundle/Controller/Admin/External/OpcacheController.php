@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-final class OpcacheController extends AdminController implements KernelControllerEventInterface
+class OpcacheController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/external_opcache", name="pimcore_admin_external_opcache_index")

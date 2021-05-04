@@ -27,7 +27,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class VersionsCleanupTask implements TaskInterface
+class VersionsCleanupTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

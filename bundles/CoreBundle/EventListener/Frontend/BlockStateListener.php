@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
+class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;

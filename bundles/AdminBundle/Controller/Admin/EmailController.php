@@ -31,7 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class EmailController extends AdminController
+class EmailController extends AdminController
 {
     /**
      * @Route("/email-logs", name="pimcore_admin_email_emaillogs", methods={"GET", "POST"})

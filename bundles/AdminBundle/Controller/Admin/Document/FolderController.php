@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class FolderController extends DocumentControllerBase
+class FolderController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

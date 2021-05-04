@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @internal
  */
-final class DocumentRendererListener implements EventSubscriberInterface
+class DocumentRendererListener implements EventSubscriberInterface
 {
     /**
      * @var ContainerService

@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class HttpCacheListener implements EventSubscriberInterface
+class HttpCacheListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

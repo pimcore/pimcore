@@ -25,7 +25,7 @@ use Twig\TwigTest;
 /**
  * @internal
  */
-final class DataObjectHelperExtensions extends AbstractExtension
+class DataObjectHelperExtensions extends AbstractExtension
 {
     /**
      * {@inheritdoc}

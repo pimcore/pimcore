@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInterface
+class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

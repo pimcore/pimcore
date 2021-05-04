@@ -37,7 +37,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class RoutingListener implements EventSubscriberInterface
+class RoutingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

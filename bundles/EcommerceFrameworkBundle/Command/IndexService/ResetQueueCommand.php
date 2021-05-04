@@ -22,7 +22,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class ResetQueueCommand extends AbstractIndexServiceCommand
+/**
+ * @internal
+ */
+class ResetQueueCommand extends AbstractIndexServiceCommand
 {
     /**
      * {@inheritdoc}

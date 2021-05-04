@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class EventedControllerListener implements EventSubscriberInterface
+class EventedControllerListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class GoogleSearchConsoleVerificationListener implements EventSubscriberInterface
+class GoogleSearchConsoleVerificationListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

@@ -35,7 +35,7 @@ use Twig\Environment;
  *
  * @internal
  */
-final class PageController extends DocumentControllerBase
+class PageController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

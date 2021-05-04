@@ -45,7 +45,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @internal
  */
-final class TranslationController extends AdminController
+class TranslationController extends AdminController
 {
     /**
      * @Route("/import", name="pimcore_admin_translation_import", methods={"POST"})

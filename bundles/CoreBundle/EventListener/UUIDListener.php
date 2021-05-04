@@ -28,7 +28,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * @internal
  */
-final class UUIDListener implements EventSubscriberInterface
+class UUIDListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

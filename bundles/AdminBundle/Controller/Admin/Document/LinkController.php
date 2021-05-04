@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  *
  * @internal
  */
-final class LinkController extends DocumentControllerBase
+class LinkController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
 

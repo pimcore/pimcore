@@ -32,7 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

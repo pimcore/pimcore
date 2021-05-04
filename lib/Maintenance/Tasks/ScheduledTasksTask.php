@@ -27,7 +27,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class ScheduledTasksTask implements TaskInterface
+class ScheduledTasksTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

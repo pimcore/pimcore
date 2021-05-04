@@ -24,7 +24,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class WebsiteConfigExtension extends AbstractExtension
+class WebsiteConfigExtension extends AbstractExtension
 {
     public function getFunctions()
     {

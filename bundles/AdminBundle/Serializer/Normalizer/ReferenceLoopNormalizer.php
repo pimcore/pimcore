@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 /**
  * @internal
  */
-final class ReferenceLoopNormalizer implements NormalizerInterface
+class ReferenceLoopNormalizer implements NormalizerInterface
 {
     /**
      * {@inheritdoc}

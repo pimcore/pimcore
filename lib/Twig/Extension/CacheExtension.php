@@ -23,7 +23,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class CacheExtension extends AbstractExtension
+class CacheExtension extends AbstractExtension
 {
     /**
      * @var string

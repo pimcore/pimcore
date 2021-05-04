@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInterface
+class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;

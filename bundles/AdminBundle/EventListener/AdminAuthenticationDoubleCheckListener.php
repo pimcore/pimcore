@@ -37,7 +37,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
+class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 {
     use ControllerTypeTrait;
 

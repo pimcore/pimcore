@@ -23,7 +23,7 @@ use Pimcore\Maintenance\TaskInterface;
 /**
  * @internal
  */
-final class LogMailMaintenanceTask implements TaskInterface
+class LogMailMaintenanceTask implements TaskInterface
 {
     /**
      * @var Db\ConnectionInterface

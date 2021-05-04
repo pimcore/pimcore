@@ -26,7 +26,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @internal
  */
-final class ElementTagsListener implements EventSubscriberInterface
+class ElementTagsListener implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

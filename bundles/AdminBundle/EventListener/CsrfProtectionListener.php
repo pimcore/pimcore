@@ -27,7 +27,7 @@ use Twig\Environment;
 /**
  * @internal
  */
-final class CsrfProtectionListener implements EventSubscriberInterface
+class CsrfProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

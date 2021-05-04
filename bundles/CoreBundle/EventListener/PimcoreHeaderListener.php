@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class PimcoreHeaderListener implements EventSubscriberInterface
+class PimcoreHeaderListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {

@@ -26,6 +26,9 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 
+/**
+ * @internal
+ */
 class DataObjects extends Elements implements DataProviderInterface
 {
     /**
