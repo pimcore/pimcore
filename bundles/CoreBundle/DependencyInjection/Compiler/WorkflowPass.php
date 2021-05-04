@@ -51,9 +51,8 @@ final class WorkflowPass implements CompilerPassInterface
             $loader->load('services_symfony_workflow.yml');
         }
 
-        $config = $container->getParameter('pimcore.workflow');
-
-        foreach ($config as $workflowName => $workflowConfig) {
+        $workflowsConfig = $container->getParameter('pimcore.workflow');
+        foreach ($workflowsConfig as $workflowName => $workflowConfig) {
             if (!$workflowConfig['enabled']) {
                 continue;
             }
