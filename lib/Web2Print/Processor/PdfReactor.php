@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Web2Print\Processor;
@@ -152,10 +153,11 @@ class PdfReactor extends Processor
         $progress = new \stdClass();
         $progress->finished = false;
 
-        $processId = $pdfreactor->convertAsync($reactorConfig);
+        $connectionSettings = [];
+        $processId = $pdfreactor->convertAsync($reactorConfig, $connectionSettings);
 
         while (!$progress->finished) {
-            $progress = $pdfreactor->getProgress($processId);
+            $progress = $pdfreactor->getProgress($processId, $connectionSettings);
             $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), 'pdf_conversion');
 
             Logger::info('PDF converting progress: ' . $progress->progress . '%');
@@ -163,7 +165,7 @@ class PdfReactor extends Processor
         }
 
         $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
-        $result = $pdfreactor->getDocument($processId);
+        $result = $pdfreactor->getDocument($processId, $connectionSettings);
         $pdf = base64_decode($result->document);
 
         return $pdf;

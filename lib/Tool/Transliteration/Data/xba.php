@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 $base = [
   0x00 => 'mya', 'myag', 'myagg', 'myags', 'myan', 'myanj', 'myanh', 'myad', 'myal', 'myalg', 'myalm', 'myalb', 'myals', 'myalt', 'myalp', 'myalh',
   0x10 => 'myam', 'myab', 'myabs', 'myas', 'myass', 'myang', 'myaj', 'myac', 'myak', 'myat', 'myap', 'myah', 'myae', 'myaeg', 'myaegg', 'myaegs',

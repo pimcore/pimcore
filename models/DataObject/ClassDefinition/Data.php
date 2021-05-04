@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -620,6 +619,9 @@ abstract class Data
         $db = \Pimcore\Db::get();
         $name = $params['name'] ? $params['name'] : $this->name;
         $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
 
         if ($value === 'NULL') {
             if ($operator == '=') {
@@ -637,9 +639,9 @@ abstract class Data
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**

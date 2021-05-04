@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -1176,12 +1177,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function saveAction(Request $request)
     {
-        $object = DataObject\Concrete::getById($request->get('id'));
-        $originalModificationDate = $object->getModificationDate();
+        $objectFromDatabase = DataObject\Concrete::getById($request->get('id'));
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($object);
+        $object = $this->getLatestVersion($objectFromDatabase);
         $object->setUserModification($this->getAdminUser()->getId());
+
+        $objectFromVersion = $object !== $objectFromDatabase;
+        $originalModificationDate = $objectFromVersion ? $object->getModificationDate() : $objectFromDatabase->getModificationDate();
 
         // data
         $data = [];

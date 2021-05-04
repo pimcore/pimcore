@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -119,6 +118,20 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @var array|null
      */
     public $fieldDefinitionsCache;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $permissionView;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $permissionEdit;
 
     /**
      * @see Data::getDataForEditmode
@@ -1434,6 +1447,38 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionView(): ?array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param string|array|null $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): ?array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param string|array|null $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
     }
 
     /**

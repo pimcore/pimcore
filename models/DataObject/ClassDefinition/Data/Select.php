@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -520,10 +519,18 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $value = is_array($value) ? current($value) : $value;
         $name = $params['name'] ?: $this->name;
 
+        $db = \Pimcore\Db::get();
+        $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
+
         if ($operator === '=') {
-            return '`'.$name.'` = '."\"$value\"".' ';
-        } elseif ($operator === 'LIKE') {
-            return '`'.$name.'` LIKE '."\"%$value%\"".' ';
+            return $key.' = '."\"$value\"".' ';
+        }
+
+        if ($operator === 'LIKE') {
+            return $key.' LIKE '."\"%$value%\"".' ';
         }
 
         return null;

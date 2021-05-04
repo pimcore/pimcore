@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -131,6 +130,20 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @var int
      */
     public $maxItems;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $permissionView;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $permissionEdit;
 
     /**
      * @see Data::getDataForEditmode
@@ -1143,6 +1156,38 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
+     * @return array
+     */
+    public function getPermissionView(): ?array
+    {
+        return $this->permissionView;
+    }
+
+    /**
+     * @param string|array|null $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): ?array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param string|array|null $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
+    }
+
+    /**
      * @param DataObject\Concrete|null $object
      * @param array $mergedMapping
      *
@@ -1238,7 +1283,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $filteredGroupIds = array_keys($activeGroupIds, true, true);
 
         $groupList = new DataObject\Classificationstore\GroupConfig\Listing();
-        $groupList->setCondition('`id` in (?)', implode(',', $filteredGroupIds));
+        $groupList->setCondition('`id` in (' . implode(',', array_fill(0, count($filteredGroupIds), '?')) . ')', $filteredGroupIds);
+
         $groupList->setOrderKey(['id']);
         $groupList->setOrder(['ASC']);
 
@@ -1304,7 +1350,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $collectionIds = array_values($groupCollectionMapping);
 
             $relation = new DataObject\Classificationstore\CollectionGroupRelation\Listing();
-            $relation->setCondition('`colId` IN (?)', implode(',', $collectionIds));
+            $relation->setCondition('`colId` in (' . implode(',', array_fill(0, count($collectionIds), '?')) . ')', $collectionIds);
 
             $sorting = [];
             /** @var DataObject\Classificationstore\CollectionGroupRelation $item */

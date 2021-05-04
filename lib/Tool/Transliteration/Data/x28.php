@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 $base = [
   0x00 => ' ', 'a', '1', 'b', '\'', 'k', '2', 'l', '@', 'c', 'i', 'f', '/', 'm', 's', 'p',
   0x10 => '"', 'e', '3', 'h', '9', 'o', '6', 'r', '^', 'd', 'j', 'g', '>', 'n', 't', 'q',

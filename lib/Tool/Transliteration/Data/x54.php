@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 $base = [
   0x00 => 'Mie ', 'Xu ', 'Mang ', 'Chi ', 'Ge ', 'Xuan ', 'Yao ', 'Zi ', 'He ', 'Ji ', 'Diao ', 'Cun ', 'Tong ', 'Ming ', 'Hou ', 'Li ',
   0x10 => 'Tu ', 'Xiang ', 'Zha ', 'Xia ', 'Ye ', 'Lu ', 'A ', 'Ma ', 'Ou ', 'Xue ', 'Yi ', 'Jun ', 'Chou ', 'Lin ', 'Tun ', 'Yin ',

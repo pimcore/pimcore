@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -261,6 +260,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if (is_array($slugs) && !empty($slugs)) {
             /** @var Model\DataObject\Data\UrlSlug $slug */
             foreach ($slugs as $slug) {
+                if (!$slug['slug']) {
+                    continue;
+                }
+
                 $this->enrichDataRow($object, $params, $classId, $slug, 'objectId');
 
                 /* relation needs to be an array with src_id, dest_id, type, fieldname*/

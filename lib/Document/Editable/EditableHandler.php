@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Document\Editable;
@@ -32,7 +33,9 @@ use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
@@ -84,6 +87,16 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     protected $brickTemplateCache = [];
 
+    /**
+     * @var FragmentRendererInterface
+     */
+    protected $fragmentRenderer;
+
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
     /**
@@ -114,6 +127,26 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         $this->requestHelper = $requestHelper;
         $this->translator = $translator;
         $this->responseStack = $responseStack;
+    }
+
+    /**
+     * @internal
+     * @required
+     * @param FragmentRendererInterface $fragmentRenderer
+     */
+    public function setFragmentRenderer(FragmentRendererInterface $fragmentRenderer): void
+    {
+        $this->fragmentRenderer = $fragmentRenderer;
+    }
+
+    /**
+     * @internal
+     * @required
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack): void
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -400,7 +433,17 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
             $query
         );
 
-        return $this->actionRenderer->render($uri, $options);
+        if($this->requestHelper->hasCurrentRequest()) {
+            return $this->actionRenderer->render($uri, $options);
+        } else {
+            // this case could happen when rendering on CLI, e.g. search-reindex ...
+            $request = $this->requestHelper->createRequestWithContext();
+            $this->requestStack->push($request);
+            $response = $this->actionRenderer->render($uri, $options);
+            $this->requestStack->pop();
+
+            return $response;
+        }
     }
 }
 

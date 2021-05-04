@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -123,7 +121,8 @@ class Renderlet extends Model\Document\Editable
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
         }
 
-        if (method_exists($this->o, 'isPublished')) {
+        $this->load();
+        if ($this->o instanceof Element\ElementInterface) {
             if (!$this->o->isPublished()) {
                 return '';
             }
