@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-final class RenderletController extends AdminController
+class RenderletController extends AdminController
 {
     /**
      * Handles editmode preview for renderlets

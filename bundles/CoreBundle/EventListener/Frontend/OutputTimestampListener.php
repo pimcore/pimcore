@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class OutputTimestampListener implements EventSubscriberInterface
+class OutputTimestampListener implements EventSubscriberInterface
 {
     const TIMESTAMP_OVERRIDE_PARAM_NAME = 'pimcore_override_output_timestamp';
 

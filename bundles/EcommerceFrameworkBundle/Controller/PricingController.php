@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class PricingController extends AdminController implements KernelControllerEventInterface
+class PricingController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

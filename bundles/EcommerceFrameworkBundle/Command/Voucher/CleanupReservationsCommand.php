@@ -20,7 +20,10 @@ use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class CleanupReservationsCommand extends AbstractCommand
+/**
+ * @internal
+ */
+class CleanupReservationsCommand extends AbstractCommand
 {
     protected function configure()
     {

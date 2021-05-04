@@ -25,7 +25,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
+/**
+ * @internal
+ */
+class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
     use Parallelization

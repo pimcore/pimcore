@@ -30,7 +30,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class HeaderExtension extends AbstractExtension
+class HeaderExtension extends AbstractExtension
 {
     /**
      * @var HeadLink

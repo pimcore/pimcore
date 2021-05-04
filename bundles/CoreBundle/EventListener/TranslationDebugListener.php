@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class TranslationDebugListener implements EventSubscriberInterface
+class TranslationDebugListener implements EventSubscriberInterface
 {
     /**
      * @var Translator

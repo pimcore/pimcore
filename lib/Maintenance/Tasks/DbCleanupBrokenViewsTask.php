@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class DbCleanupBrokenViewsTask implements TaskInterface
+class DbCleanupBrokenViewsTask implements TaskInterface
 {
     /**
      * @var Db\ConnectionInterface

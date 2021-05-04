@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @internal
  */
-final class PimcoreAdminBundle extends Bundle
+class PimcoreAdminBundle extends Bundle
 {
     /**
      * {@inheritdoc}

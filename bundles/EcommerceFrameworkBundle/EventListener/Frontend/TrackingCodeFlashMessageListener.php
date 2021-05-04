@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class TrackingCodeFlashMessageListener implements EventSubscriberInterface
+class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

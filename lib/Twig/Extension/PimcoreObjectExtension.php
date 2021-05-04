@@ -28,7 +28,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class PimcoreObjectExtension extends AbstractExtension
+class PimcoreObjectExtension extends AbstractExtension
 {
     public function getFunctions()
     {

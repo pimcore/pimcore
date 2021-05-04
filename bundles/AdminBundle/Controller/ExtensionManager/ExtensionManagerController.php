@@ -39,7 +39,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-final class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
+class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var PimcoreBundleManager

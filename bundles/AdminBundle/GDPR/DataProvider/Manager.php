@@ -19,6 +19,9 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\DependencyInjection\CollectionServiceLocator;
 
+/**
+ * @internal
+ */
 class Manager
 {
     /**

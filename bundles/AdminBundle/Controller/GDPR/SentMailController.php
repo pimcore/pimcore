@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
+class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
      * {@inheritdoc}

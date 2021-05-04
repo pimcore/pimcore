@@ -24,7 +24,7 @@ use Twig\TwigTest;
 /**
  * @internal
  */
-final class DocumentHelperExtensions extends AbstractExtension
+class DocumentHelperExtensions extends AbstractExtension
 {
     public function getTests(): array
     {

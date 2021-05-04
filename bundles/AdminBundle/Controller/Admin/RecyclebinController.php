@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-final class RecyclebinController extends AdminController implements KernelControllerEventInterface
+class RecyclebinController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/recyclebin/list", name="pimcore_admin_recyclebin_list", methods={"POST"})

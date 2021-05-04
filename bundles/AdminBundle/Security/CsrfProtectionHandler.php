@@ -26,7 +26,7 @@ use Twig\Environment;
 /**
  * @internal
  */
-final class CsrfProtectionHandler implements LoggerAwareInterface
+class CsrfProtectionHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

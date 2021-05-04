@@ -28,7 +28,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  */
-final class SanitizeElementsTask implements TaskInterface
+class SanitizeElementsTask implements TaskInterface
 {
     /**
      * @var LoggerInterface

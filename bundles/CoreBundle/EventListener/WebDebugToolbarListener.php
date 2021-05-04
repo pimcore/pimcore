@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class WebDebugToolbarListener implements EventSubscriberInterface
+class WebDebugToolbarListener implements EventSubscriberInterface
 {
     /**
      * @var RequestHelper

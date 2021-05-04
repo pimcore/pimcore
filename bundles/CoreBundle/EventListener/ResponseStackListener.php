@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class ResponseStackListener implements EventSubscriberInterface
+class ResponseStackListener implements EventSubscriberInterface
 {
     /**
      * @var ResponseStack

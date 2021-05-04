@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * @internal
  */
-final class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
+class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
     use StateHelperTrait;
 

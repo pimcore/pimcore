@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 /**
  * @internal
  */
-final class GoogleAnalyticsCodeListener
+class GoogleAnalyticsCodeListener
 {
     use EnabledTrait;
     use ResponseInjectionTrait;

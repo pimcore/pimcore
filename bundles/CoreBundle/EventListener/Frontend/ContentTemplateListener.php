@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-final class ContentTemplateListener implements EventSubscriberInterface
+class ContentTemplateListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

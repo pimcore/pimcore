@@ -34,7 +34,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class ResponseExceptionListener implements EventSubscriberInterface
+class ResponseExceptionListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;

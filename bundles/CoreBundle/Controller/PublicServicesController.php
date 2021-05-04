@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\EventListener\SessionListener;
 /**
  * @internal
  */
-final class PublicServicesController extends Controller
+class PublicServicesController extends Controller
 {
     /**
      * @param Request $request

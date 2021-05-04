@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class BruteforceProtectionListener implements EventSubscriberInterface
+class BruteforceProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 

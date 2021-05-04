@@ -35,7 +35,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @internal
  */
-final class GoogleTagManagerListener
+class GoogleTagManagerListener
 {
     const BLOCK_HEAD_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
     const BLOCK_HEAD_AFTER_SCRIPT_TAG = 'afterScriptTag';

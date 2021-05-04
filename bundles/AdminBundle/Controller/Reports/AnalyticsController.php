@@ -31,7 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
+class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {
     /**
      * @var \Google_Service_Analytics

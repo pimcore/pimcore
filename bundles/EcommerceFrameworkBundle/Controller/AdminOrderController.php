@@ -52,7 +52,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-final class AdminOrderController extends AdminController implements KernelControllerEventInterface
+class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var OrderManagerInterface

@@ -29,7 +29,7 @@ use Symfony\Component\Lock\LockInterface;
 /**
  * @internal
  */
-final class LogArchiveTask implements TaskInterface
+class LogArchiveTask implements TaskInterface
 {
     /**
      * @var Db\ConnectionInterface

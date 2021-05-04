@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 /**
  * @internal
  */
-final class MaintenancePageListener
+class MaintenancePageListener
 {
     use ResponseInjectionTrait;
 

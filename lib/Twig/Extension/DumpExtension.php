@@ -26,7 +26,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class DumpExtension extends AbstractExtension
+class DumpExtension extends AbstractExtension
 {
     public function getFunctions()
     {

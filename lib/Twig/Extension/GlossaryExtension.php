@@ -24,7 +24,7 @@ use Twig\Extension\AbstractExtension;
 /**
  * @internal
  */
-final class GlossaryExtension extends AbstractExtension
+class GlossaryExtension extends AbstractExtension
 {
     /**
      * @var \Pimcore\Tool\Glossary\Processor

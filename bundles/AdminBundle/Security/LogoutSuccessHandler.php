@@ -41,7 +41,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAwareInterface
+class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

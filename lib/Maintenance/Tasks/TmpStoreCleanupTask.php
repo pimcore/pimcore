@@ -21,7 +21,7 @@ use Pimcore\Maintenance\TaskInterface;
 /**
  * @internal
  */
-final class TmpStoreCleanupTask implements TaskInterface
+class TmpStoreCleanupTask implements TaskInterface
 {
     /**
      * @var ConnectionInterface

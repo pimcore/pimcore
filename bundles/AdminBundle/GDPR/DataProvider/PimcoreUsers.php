@@ -21,6 +21,9 @@ use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Db;
 use Pimcore\Model\User;
 
+/**
+ * @internal
+ */
 class PimcoreUsers implements DataProviderInterface
 {
     /**

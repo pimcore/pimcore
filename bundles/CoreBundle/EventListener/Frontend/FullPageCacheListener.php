@@ -34,7 +34,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class FullPageCacheListener
+class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
 

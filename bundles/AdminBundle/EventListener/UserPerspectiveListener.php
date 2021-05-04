@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * @internal
  */
-final class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareInterface
+class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;

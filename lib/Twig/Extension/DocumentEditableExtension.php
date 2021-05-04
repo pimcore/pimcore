@@ -24,7 +24,7 @@ use Twig\TwigFunction;
 /**
  * @internal
  */
-final class DocumentEditableExtension extends AbstractExtension
+class DocumentEditableExtension extends AbstractExtension
 {
     /**
      * @var EditableRenderer

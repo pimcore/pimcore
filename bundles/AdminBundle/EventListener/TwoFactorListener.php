@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 /**
  * @internal
  */
-final class TwoFactorListener
+class TwoFactorListener
 {
     use LoggerAwareTrait;
 

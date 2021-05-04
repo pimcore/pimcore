@@ -32,7 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @internal
  */
-final class LogController extends AdminController implements KernelControllerEventInterface
+class LogController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @param ControllerEvent $event

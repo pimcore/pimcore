@@ -24,6 +24,9 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @internal
+ */
 class Assets extends Elements implements DataProviderInterface
 {
     /**
