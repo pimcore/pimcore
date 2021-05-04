@@ -111,9 +111,7 @@ abstract class PageSnippet extends Model\Document
     protected $inheritedEditables = [];
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function save()
     {
@@ -124,7 +122,7 @@ abstract class PageSnippet extends Model\Document
             throw new Model\Element\ValidationException('Prevented publishing document - missing values for required editables');
         }
 
-        parent::save();
+        return parent::save();
     }
 
     /**
