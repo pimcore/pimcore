@@ -120,8 +120,8 @@ class Xliff12Escaper
 
         $content = $node->asXML();
 
-        $content = preg_replace("/<\?xml version=\"\d\.\d\"\?>/i", '', $content);
-        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
+        $content = preg_replace("/<\?xml version=\"\d\.\d\"\?>\s?/i", '', $content);
+        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>\s?/i", '', $content);
         // we have to do this again but with html entities because of CDATA content
         $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
 
