@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -51,43 +51,21 @@ Ext.Loader.setConfig({
 });
 Ext.enableAriaButtons = false;
 
-Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/ext/ux');
+Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/extjs/ext-ux/src/classic/src');
 
 Ext.require([
-    'Ext.button.Split',
-    'Ext.container.Viewport',
-    'Ext.data.JsonStore',
-    'Ext.grid.column.Action',
-    'Ext.grid.plugin.CellEditing',
-    'Ext.form.field.ComboBox',
-    'Ext.form.field.Hidden',
-    'Ext.grid.column.Check',
-    'Ext.grid.property.Grid',
-    'Ext.form.field.Time',
-    'Ext.form.FieldSet',
-    'Ext.form.Label',
-    'Ext.form.Panel',
-    'Ext.grid.feature.Grouping',
-    'Ext.grid.Panel',
-    'Ext.grid.plugin.DragDrop',
-    'Ext.layout.container.Accordion',
-    'Ext.layout.container.Border',
-    'Ext.tip.QuickTipManager',
-    'Ext.tab.Panel',
-    'Ext.toolbar.Paging',
-    'Ext.toolbar.Spacer',
-    'Ext.tree.plugin.TreeViewDragDrop',
-    'Ext.tree.Panel',
     'Ext.ux.colorpick.Field',
     'Ext.ux.colorpick.SliderAlpha',
-    'Ext.ux.DataTip',
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
     'Ext.ux.TabReorderer',
     'Ext.ux.grid.SubTable',
-    'Ext.window.Toast'
+    'Ext.window.Toast',
+    'Ext.slider.Single',
+    'Ext.form.field.Tag'
 ]);
 
+Ext.ariaWarn = Ext.emptyFn;
 
 Ext.onReady(function () {
 
@@ -186,11 +164,13 @@ Ext.onReady(function () {
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 
-        var jsonData = null;
-        try {
-            jsonData = Ext.decode(response.responseText);
-        } catch (e) {
+        var jsonData = response.responseJson;
+        if (!jsonData) {
+            try {
+                jsonData = Ext.decode(response.responseText);
+            } catch (e) {
 
+            }
         }
 
         var date = new Date();
@@ -292,6 +272,17 @@ Ext.onReady(function () {
                 },
                 depends : ['name']
             },
+            'group',
+            {
+                name: "translatedGroup",
+                convert: function (v, rec) {
+                    if (rec.data.group) {
+                        return t(rec.data.group);
+                    }
+                    return '';
+                },
+                depends : ['group']
+            },
             'controller',
             'template',
             {name: 'type', allowBlank: false},
@@ -344,12 +335,24 @@ Ext.onReady(function () {
         {name: 'id'},
         {name: 'text', allowBlank: false},
         {
-            name: "translatedText", convert: function (v, rec) {
+            name: "translatedText",
+            convert: function (v, rec) {
                 return t(rec.data.text);
-            }
+            },
+            depends : ['text']
         },
         {name: 'icon'},
         {name: 'group'},
+        {
+            name: "translatedGroup",
+            convert: function (v, rec) {
+                if (rec.data.group) {
+                    return t(rec.data.group);
+                }
+                return '';
+            },
+            depends : ['group']
+        },
         {name: "propertyVisibility"}
     ];
 
@@ -681,49 +684,6 @@ Ext.onReady(function () {
                     Ext.get("pimcore_avatar").on("click", function (ev) {
                         pimcore.helpers.openProfile();
                     });
-
-                    // check for latest news
-                    let request = new XMLHttpRequest();
-                    request.open('POST', "https://liveupdate.pimcore.org/news");
-                    request.onload = function() {
-                        if (this.status >= 200 && this.status < 400) {
-                            let data = Ext.decode(this.response);
-                            if(data && data['success'] === true) {
-                                let timestamp = Math.ceil(new Date().getTime()/1000);
-                                let localStorageMessageKey = "pimcore_news_" + data['messageId'];
-                                let messageTimestamp = localStorage.getItem(localStorageMessageKey);
-                                if(messageTimestamp === null || messageTimestamp < timestamp-data['messageInterval']) {
-                                    localStorage.setItem(localStorageMessageKey, timestamp);
-                                    if (data['frame']) {
-                                        pimcore.helpers.openGenericIframeWindow('news', data['frame']['url'], data['frame']['icon'], t(data['frame']['title']));
-                                    }
-
-                                    if (data['box']) {
-                                        Ext.applyIf(data['box'], {
-                                            width: 500,
-                                            height: 300,
-                                            bodyStyle: "padding: 10px;",
-                                            modal: false,
-                                        });
-
-                                        var win = new Ext.Window(data['box']);
-                                        win.show();
-                                    }
-                                }
-                            }
-                        }
-                    };
-
-                    let data = new FormData();
-                    data.append('id', pimcore.settings.instanceId);
-                    data.append('revision', pimcore.settings.build);
-                    data.append('version', pimcore.settings.version);
-                    data.append('debug', pimcore.settings.debug);
-                    data.append('devmode', pimcore.settings.devmode);
-                    data.append('environment', pimcore.settings.environment);
-                    data.append("language", pimcore.settings.language);
-                    data.append("isAdmin", pimcore.currentuser.admin);
-                    request.send(data);
                 }
             }
         });
@@ -947,8 +907,7 @@ Ext.onReady(function () {
             navigationModel: 'quicksearch.boundlist',
             listeners: {
                 "highlightitem": function (view, node, opts) {
-                    // we use getAttribute() here instead of dataset -> IE11 has some strange issues with that in this case
-                    var record = quicksearchStore.getAt(node.getAttribute('data-recordIndex'));
+                    var record = quicksearchStore.getAt(node.dataset.recordindex);
                     var previewHtml = record.get('preview');
                     if(!previewHtml) {
                         previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';

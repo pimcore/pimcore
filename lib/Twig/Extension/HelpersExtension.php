@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Twig\Extension;
@@ -27,7 +27,7 @@ use Twig\TwigFunction;
 use Twig\TwigTest;
 
 /**
- * Simple helpers that do not need a dedicated extension
+ * @internal
  */
 class HelpersExtension extends AbstractExtension
 {
@@ -54,7 +54,7 @@ class HelpersExtension extends AbstractExtension
             new TwigFunction('pimcore_video_is_available', [Video::class, 'isAvailable']),
             new TwigFunction('pimcore_document_is_available', [Document::class, 'isAvailable']),
             new TwigFunction('pimcore_file_exists', function ($file) {
-                return file_exists($file);
+                return is_file($file);
             }),
             new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
             new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
@@ -72,7 +72,7 @@ class HelpersExtension extends AbstractExtension
     {
         return [
             new TwigTest('instanceof', function ($object, $class) {
-                return is_object($object) && $object instanceof $class;
+                return $object instanceof $class;
             }),
         ];
     }

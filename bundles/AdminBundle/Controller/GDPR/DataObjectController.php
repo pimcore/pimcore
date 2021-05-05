@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
@@ -17,7 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,12 +28,12 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/data-object")
  *
- * @package GDPRDataExtractorBundle\Controller
+ * @internal
  */
 class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
@@ -79,7 +80,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
-        $object = AbstractObject::getById($request->get('id'));
+        $object = DataObject::getById($request->get('id'));
         if (!$object->isAllowed('view')) {
             throw new \Exception('export denied');
         }

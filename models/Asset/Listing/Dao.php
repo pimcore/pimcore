@@ -1,25 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\Listing;
 
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
  * @internal
@@ -28,10 +26,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /**
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
+    use QueryBuilderHelperTrait;
 
     /**
      * Get the assets from database
@@ -42,8 +37,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $assets = [];
 
-        $select = $this->getQuery(['id', 'type']);
-        $assetsData = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder(['id', 'type']);
+        $assetsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($assetsData as $assetData) {
             if ($assetData['type']) {
@@ -59,30 +54,18 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @deprecated
+     * @param string|string[]|null $columns
      *
-     * @param array|string|Expression $columns
-     *
-     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
+     * @return DoctrineQueryBuilder
      */
-    public function getQuery($columns = '*')
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
-        $select = $this->db->select();
-        $select->from(
-            [ 'assets' ],
-            $columns
-        );
-        $this->addConditions($select);
-        $this->addOrder($select);
-        $this->addLimit($select);
-        $this->addGroupBy($select);
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from('assets');
 
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
 
-        return $select;
+        return $queryBuilder;
     }
 
     /**
@@ -92,8 +75,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = $this->getQuery(['id']);
-        $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder(['id']);
+        $assetIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $assetIds);
     }
@@ -117,21 +100,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $select = $this->getQuery([new Expression('COUNT(*)')]);
-        $select->reset(QueryBuilder::LIMIT_COUNT);
-        $select->reset(QueryBuilder::LIMIT_OFFSET);
-        $select->reset(QueryBuilder::ORDER);
+        $queryBuilder = $this->getQueryBuilder();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        $this->onCreateQueryCallback = $callback;
     }
 }

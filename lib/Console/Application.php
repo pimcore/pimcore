@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Console;
@@ -31,8 +32,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * The console application
+ *
+ * @internal
  */
-class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
+final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {
     /**
      * Constructor.
@@ -62,10 +65,6 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $this->setDispatcher($dispatcher);
 
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
-            if ($event->getInput()->getOption('no-debug')) {
-                \Pimcore::setDebugMode(false);
-            }
-
             if ($event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -23,7 +24,10 @@ use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
-final class ScheduledTasksTask implements TaskInterface
+/**
+ * @internal
+ */
+class ScheduledTasksTask implements TaskInterface
 {
     /**
      * @var LoggerInterface
@@ -98,11 +102,11 @@ final class ScheduledTasksTask implements TaskInterface
                 } elseif ($task->getCtype() === 'object') {
                     $object = DataObject::getById($task->getCid());
 
-                    if ($object instanceof DataObject) {
+                    if ($object instanceof DataObject\Concrete) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion() && $object->isAllowed('publish', $taskUser) && $object->isAllowed('versions', $taskUser)) {
                             if ($version = Version::getById($task->getVersion())) {
                                 $object = $version->getData();
-                                if ($object instanceof DataObject\AbstractObject) {
+                                if ($object instanceof DataObject\Concrete) {
                                     $object->setPublished(true);
                                     $object->save();
                                 } else {

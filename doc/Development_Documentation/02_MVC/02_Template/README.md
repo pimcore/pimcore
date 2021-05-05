@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In general the templates are located in: `/app/Resources/views/[controller]/[action].html.twig` 
+In general the templates are located in: `templates/[controller]/[action].html.twig` 
 but [Symfony-style locations](https://symfony.com/doc/4.4/best_practices.html#use-the-default-directory-structure) also work (both controller as well as action without their suffix).  
 
 Pimcore uses the Twig templating engine, you can use Twig exactly as documented in:
@@ -16,7 +16,7 @@ Just use annotations or render the view directly to use Twig:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -107,9 +107,6 @@ for details.
 #### Subrequests
 
 ```twig
-{# render an action #}
-{{ pimcore_action('sidebarBox', 'Blog', null, { items: count }) }}
-
 {# include another document #}
 {{ pimcore_inc('/snippets/foo') }}
 ```

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -57,16 +57,26 @@ pimcore.object.classes.layout.iframe = Class.create(pimcore.object.classes.layou
                             value: this.datax.title
                         },
                         {
-                            xtype: "numberfield",
+                            xtype: "textfield",
                             fieldLabel: t("width"),
                             name: "width",
                             value: this.datax.width
                         },
                         {
-                            xtype: "numberfield",
+                            xtype: "displayfield",
+                            hideLabel: true,
+                            value: t('width_explanation')
+                        },
+                        {
+                            xtype: "textfield",
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height
+                        },
+                        {
+                            xtype: "displayfield",
+                            hideLabel: true,
+                            value: t('height_explanation')
                         },
                         {
                             xtype: "textfield",

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Editable\Area;
@@ -24,34 +22,46 @@ use Symfony\Component\HttpFoundation\Request;
 class Info
 {
     /**
+     * @internal
+     *
      * @var string
      */
-    public $id;
+    protected $id;
 
     /**
+     * @internal
+     *
      * @var Editable|Editable\Area|Editable\Areablock
      */
-    public $editable;
+    protected $editable;
 
     /**
+     * @internal
+     *
      * @var array
      */
-    public $params = [];
+    protected $params = [];
 
     /**
+     * @internal
+     *
      * @var Request
      */
-    public $request;
+    protected $request;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $index;
+    protected $index;
 
     /**
      * @return string

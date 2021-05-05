@@ -40,6 +40,11 @@ services:
         tags:
             - { name: kernel.cache_warmer }
 
+    Pimcore\HttpKernel\CacheWarmer\PimcoreCoreCacheWarmer:
+        public: false
+        tags:
+            - { name: kernel.cache_warmer }
+
     Pimcore\Cache\Symfony\CacheClearer:
         public: true
 
@@ -171,10 +176,18 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
         public: true
 
-    # Override Swiftmailer redirecting plugin
-    swiftmailer.plugin.redirecting.abstract:
-        abstract: true
-        class: Pimcore\Mail\Plugins\RedirectingPlugin
+    Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
+        public: true
+
+    Pimcore\Mail\Plugins\RedirectingPlugin: ~
+
+    # Decorates Symfony Mailer
+    Pimcore\Mail\Mailer:
+        decorates: mailer
+        arguments:
+            - '@Pimcore\Mail\Mailer.inner'
+            - '@Pimcore\Mail\Plugins\RedirectingPlugin'
+        public: true
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
         public: true
@@ -192,14 +205,30 @@ services:
         arguments:
             - '@database_connection'
 
-    Symfony\Component\Lock\Store\RetryTillSaveStore:
-        arguments:
-            - '@Symfony\Component\Lock\PersistingStoreInterface'
-            - 1000
-
     Symfony\Component\Lock\LockFactory:
         public: true
         class: Symfony\Component\Lock\LockFactory
         arguments:
-            - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
+            - '@Symfony\Component\Lock\PersistingStoreInterface'
 
+
+    Pimcore\Model\Paginator\EventSubscriber\PaginateListingSubscriber: ~
+
+    Knp\Component\Pager\Event\Subscriber\Paginate\PaginationSubscriber: ~
+
+    Knp\Component\Pager\PaginatorInterface:
+        class: Knp\Component\Pager\Paginator
+        public: true
+
+    Pimcore\Tool\Storage:
+        public: true
+        arguments:
+            $locator: !tagged_locator { tag: flysystem.storage }
+
+    Pimcore\Image\Adapter\Imagick:
+        shared: false
+        public: true
+
+    Pimcore\Image\Adapter\GD:
+        shared: false
+        public: true

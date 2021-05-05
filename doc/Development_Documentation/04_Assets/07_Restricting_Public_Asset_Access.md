@@ -105,10 +105,10 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
-In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
+In the application, there has to be a route in (config/routing.yaml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
-# app/config/routing.yml
+# config/routing.yaml
 
 # important this has to be the first route in the file!
 asset_protect:
@@ -121,7 +121,7 @@ asset_protect:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
@@ -129,7 +129,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouteCollection;use Symfony\Component\Templating\Storage\Storage;
 
 class MyAssetController extends FrontendController
 {
@@ -144,13 +144,23 @@ class MyAssetController extends FrontendController
         $pathInfo = $request->getPathInfo();
         $asset = Asset::getByPath($pathInfo);
         if ($asset){
-            return new BinaryFileResponse($asset->getFileSystemPath());
+            $stream = $asset->getStream();
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+            ]);
         } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
 
-            $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . urldecode($pathInfo);
-
-            if(is_file($filePath)){
-                return new BinaryFileResponse($filePath);
+            $storage = Storage::get('thumbnail');
+            $storagePath = urldecode($pathInfo);
+            if($storage->fileExists($storagePath)){
+                $stream = $storage->readStream($storagePath);
+                return new StreamedResponse(function () use ($stream) {
+                    fpassthru($stream);
+                }, 200, [
+                    'Content-Type' => $storage->mimeType($storagePath),
+                ]);
             } else {
                 $pimcoreThumbnailRoute = '_pimcore_service_thumbnail';
                 $route = $this->get('router')->getRouteCollection()->get($pimcoreThumbnailRoute);

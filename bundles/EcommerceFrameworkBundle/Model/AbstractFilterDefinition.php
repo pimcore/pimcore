@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
@@ -27,34 +28,34 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return float
+     * @return float|null
      */
-    abstract public function getPageLimit();
+    abstract public function getPageLimit(): ?float;
 
     /**
      * returns list of available fields for sorting ascending
      *
      * @abstract
      *
-     * @return string
+     * @return string|null
      */
-    abstract public function getOrderByAsc();
+    abstract public function getOrderByAsc(): ?string;
 
     /**
      * returns list of available fields for sorting descending
      *
      * @abstract
      *
-     * @return string
+     * @return string|null
      */
-    abstract public function getOrderByDesc();
+    abstract public function getOrderByDesc(): ?string;
 
     /**
      * return array of field collections for preconditions
      *
      * @abstract
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection|null
      */
     abstract public function getConditions();
 
@@ -63,7 +64,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @abstract
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection|null
      */
     abstract public function getFilters();
 
@@ -77,7 +78,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
     public function preGetValue(string $key)
     {
         if ($this->getClass()->getAllowInherit()
-            && DataObject\AbstractObject::doGetInheritedValues()
+            && DataObject::doGetInheritedValues()
             && $this->getClass()->getFieldDefinition($key) instanceof DataObject\ClassDefinition\Data\Fieldcollections
         ) {
             $checkInheritanceKey = $key . 'Inheritance';

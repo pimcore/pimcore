@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Helper;
@@ -17,8 +18,12 @@ namespace Pimcore\Helper;
 use Pimcore\Mail as MailClient;
 use Pimcore\Model;
 use Pimcore\Tool;
+use Symfony\Component\Mime\Address;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
+/**
+ * @internal
+ */
 class Mail
 {
     /**
@@ -132,10 +137,14 @@ CSS;
         $formatedReceiversArray = [];
 
         foreach ($receivers as $mail => $name) {
-            if (strlen(trim($name)) > 0) {
-                $formatedReceiversArray[] = $name . ' <' . $mail . '>';
+            if ($name instanceof Address) {
+                $formatedReceiversArray[] = $name->toString();
             } else {
-                $formatedReceiversArray[] = $mail;
+                if (strlen(trim($name)) > 0) {
+                    $formatedReceiversArray[] = $name . ' <' . $mail . '>';
+                } else {
+                    $formatedReceiversArray[] = $mail;
+                }
             }
         }
 
@@ -157,14 +166,17 @@ CSS;
             $emailLog->setDocumentId($document->getId());
         }
 
-        $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        if(isset($_SERVER['REQUEST_URI'])){
+            $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        }
+
         $emailLog->setParams($mail->getParams());
         $emailLog->setSentDate(time());
 
         $subject = $mail->getSubjectRendered();
         if (0 === strpos($subject, '=?')) {
             $mbIntEnc = mb_internal_encoding();
-            mb_internal_encoding($mail->getCharset());
+            mb_internal_encoding($mail->getTextCharset());
             $subject = mb_decode_mimeheader($subject);
             mb_internal_encoding($mbIntEnc);
         }
@@ -175,19 +187,14 @@ CSS;
             $emailLog->setFrom(self::formatDebugReceivers($mailFrom));
         }
 
-        $html = $mail->getBody();
+        $html = $mail->getHtmlBody();
         if ($html) {
             $emailLog->setBodyHtml($html);
         }
 
-        $text = $mail->getBodyTextMimePart();
+        $text = $mail->getTextBody();
         if ($text) {
-            $emailLog->setBodyText($text->getBody());
-        } else {
-            // Mail was probably sent as plain text only.
-            if ($text = $mail->getBodyText()) {
-                $emailLog->setBodyText($text);
-            }
+            $emailLog->setBodyText($text);
         }
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
@@ -247,6 +254,8 @@ CSS;
                 } elseif (strpos($path, '/') === 0) {
                     $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
                     $absolutePath = $hostUrl . $absolutePath;
+                } elseif (strpos($path, 'file://') === 0) {
+                    continue;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
                     if ($path[0] == '?') {
@@ -267,7 +276,11 @@ CSS;
             foreach ($parts as $key => $v) {
                 $v = trim($v);
                 // ignore absolute urls
-                if (strpos($v, 'http://') === 0 || strpos($v, 'https://') === 0 || strpos($v, '//') === 0) {
+                if (strpos($v, 'http://') === 0 ||
+                    strpos($v, 'https://') === 0 ||
+                    strpos($v, '//') === 0 ||
+                    strpos($v, 'file://') === 0
+                ) {
                     continue;
                 }
                 $parts[$key] = $hostUrl.$v;
@@ -424,6 +437,9 @@ CSS;
                 if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {
                     $entryAddress = trim($matches[2]);
                     $entryName = trim($matches[1]);
+                } elseif (preg_match('/(.*)\((.*)\)/', $entryAddress, $matches)) {
+                    $entryAddress = trim($matches[1]);
+                    $entryName = trim($matches[2]);
                 }
 
                 if ($entryAddress) {

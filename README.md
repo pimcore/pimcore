@@ -5,7 +5,6 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
-[![Build Status](https://travis-ci.com/pimcore/pimcore.svg)](https://travis-ci.com/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
@@ -24,6 +23,16 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 **Security vulnerabilities:** please use [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/)
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
+
+## Supported Versions
+
+| Version | Supported | LTS** | LTS Version |
+| ------- |    :---:  | :---: |    :---:    |
+| `<= 4.x`|    ❌     |  ❌    |             |
+| `5.x`   |    ❌     |  ✅    | `5.8`       |
+| `6.x`   |    ✅     |  ✅    |             |
+
+** [LTS](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription). 
 
 ## Overview
 ![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
@@ -62,7 +71,8 @@ Images, videos, PDF, Word/Excel documents and other files can be managed and org
 Predefined structured data, which is centrally managed and created either manually or automatically via the API. Used for products & attributes (MDM/PIM), customers (CDP), blog articles (WCM), orders (digital commerce), and so much more. Objects can be used to fill content areas and elements of a website, portal or app with data from one central source. Single source administration of data ensures a consistent, up-to-date digital customer experience with little effort.
 
 #### Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
-_Admin-URL_: [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
+_Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
+_Admin-URL_ (dev): [https://x.pimcore.fun/admin/](https://x.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 

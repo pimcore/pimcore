@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Routing\Dynamic;
@@ -25,7 +25,10 @@ use Pimcore\Routing\DataObjectRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-class DataObjectRouteHandler implements DynamicRouteHandlerInterface
+/**
+ * @internal
+ */
+final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
      * @var Document\Service
@@ -58,7 +61,7 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRouteByName(string $name)
     {
@@ -77,7 +80,7 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {

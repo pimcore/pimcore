@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Schedule
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Schedule;
@@ -20,6 +18,8 @@ namespace Pimcore\Model\Schedule;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\Schedule\Task\Dao getDao()
  * @method void save()
  */
@@ -28,37 +28,37 @@ class Task extends Model\AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
      * @var string
      */
-    public $action;
+    protected $action;
 
     /**
      * @var int
      */
-    public $version;
+    protected $version;
 
     /**
      * @var bool
      */
-    public $active;
+    protected $active;
 
     /**
      * @var null|int
@@ -100,6 +100,7 @@ class Task extends Model\AbstractModel
     public static function create($data)
     {
         $task = new self();
+        self::checkCreateData($data);
         $task->setValues($data);
 
         return $task;

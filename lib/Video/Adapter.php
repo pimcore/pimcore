@@ -1,19 +1,23 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Video;
 
+/**
+ * @internal
+ */
 abstract class Adapter
 {
     /**
@@ -30,6 +34,11 @@ abstract class Adapter
      * @var string
      */
     public $format;
+
+    /**
+     * @var array
+     */
+    public $medias;
 
     /**
      * @var string
@@ -113,6 +122,22 @@ abstract class Adapter
      * @abstract
      */
     abstract public function destroy();
+
+    /**
+     * @return array|null
+     */
+    public function getMedias()
+    {
+        return $this->medias;
+    }
+
+    /**
+     * @param array|null $medias
+     */
+    public function setMedias($medias)
+    {
+        $this->medias = $medias;
+    }
 
     /**
      * @param string $format

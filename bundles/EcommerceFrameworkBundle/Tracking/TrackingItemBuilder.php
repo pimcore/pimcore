@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
@@ -173,7 +174,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
         }
 
         foreach ($cart->getItems() as $cartItem) {
-            /** @var ProductInterface $product */
+            /** @var ProductInterface|null $product */
             $product = $cartItem->getProduct();
             if (!$product) {
                 continue;
@@ -241,7 +242,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     protected function getProductCategories(ProductInterface $product, $first = false)
     {
         $categories = [];
-        if ($product && method_exists($product, 'getCategories')) {
+        if (method_exists($product, 'getCategories')) {
             if ($product->getCategories()) {
                 foreach ($product->getCategories() as $category) {
                     if ($category && method_exists($category, 'getName')) {
@@ -268,9 +269,9 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     protected function getProductBrand(ProductInterface $product)
     {
         $brandName = null;
-        if ($product && method_exists($product, 'getBrand')) {
+        if (method_exists($product, 'getBrand')) {
             if ($brand = $product->getBrand()) {
-                if ($brand && method_exists($brand, 'getName')) {
+                if (method_exists($brand, 'getName')) {
                     $brandName = $brand->getName();
                 }
             }

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
@@ -19,7 +20,10 @@ use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
 
-class ReportAdapter implements AddressSourceAdapterInterface
+/**
+ * @internal
+ */
+final class ReportAdapter implements AddressSourceAdapterInterface
 {
     /**
      * @var string
@@ -37,12 +41,12 @@ class ReportAdapter implements AddressSourceAdapterInterface
     protected $emailAddresses;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $elementsTotal;
 
     /**
-     * @var Listing
+     * @var Listing|null
      */
     protected $list;
 
@@ -77,9 +81,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns array of email addresses for batch sending
-     *
-     * @return SendingParamContainer[]
+     * {@inheritdoc}
      */
     public function getMailAddressesForBatchSending()
     {
@@ -96,11 +98,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns params to be set on mail for test sending
-     *
-     * @param string $emailAddress
-     *
-     * @return SendingParamContainer
+     * {@inheritdoc}
      */
     public function getParamsForTestSending($emailAddress)
     {
@@ -112,9 +110,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns total number of newsletter recipients
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getTotalRecordCount()
     {
@@ -126,12 +122,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     }
 
     /**
-     * returns array of params to be set on mail for single sending
-     *
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return SendingParamContainer[]
+     * {@inheritdoc}
      */
     public function getParamsForSingleSending($limit, $offset)
     {

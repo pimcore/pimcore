@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -88,12 +88,18 @@ pimcore.settings.translations = Class.create({
             {name: 'id', persist: false},
             {name: 'editor', persist: false},
             {name: 'key', allowBlank: false},
+            {name: 'type', allowBlank: false},
             {name: 'creationDate', type: 'date', convert: dateConverter, persist: false},
             {name: 'modificationDate', type: 'date', convert: dateConverter, persist: false}
         ];
 
         var typesColumns = [
-            {text: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'}
+            {text: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'},
+            {text: t("type"), sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
+                    triggerAction: 'all',
+                    editable: false,
+                    store: ["simple","custom"]
+                })},
         ];
 
         for (var i = 0; i < languages.length; i++) {
@@ -186,7 +192,9 @@ pimcore.settings.translations = Class.create({
                         try {
                             // complete edit, so the value is stored when hopping around with TAB
                             e.completeEdit();
-                            Ext.destroy(e);
+                            if (in_array(context.field, this.languages)) {
+                                Ext.destroy(e);
+                            }
                         } catch (exception) {
                             // garbage collector was faster
                             // already destroyed
@@ -275,15 +283,20 @@ pimcore.settings.translations = Class.create({
                         return;
                     }
 
-                    var data = record.get(dataIndex);
+                    let data = record.get(dataIndex);
+                    let type = record.get('type');
 
-                    var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
-                    if (htmlRegex.test(data)) {
-                        record.set("editor", "html");
-                    } else if (data && data.match(/\n/gm))  {
-                        record.set("editor", "plain");
+                    if (type == "custom") {
+                        record.set("editor", type);
                     } else {
-                        record.set("editor", null);
+                        var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
+                        if (htmlRegex.test(data)) {
+                            record.set("editor", "html");
+                        } else if (data && data.match(/\n/gm))  {
+                            record.set("editor", "plain");
+                        } else {
+                            record.set("editor", null);
+                        }
                     }
                     return true;
 
@@ -351,7 +364,7 @@ pimcore.settings.translations = Class.create({
     },
 
     showImportForm: function () {
-        this.csvSettingsPanel = new pimcore.object.helpers.import.csvSettingsTab(this.config, false, this);
+        this.csvSettingsPanel = new pimcore.settings.translation.translationSettingsTab(this.config, false, this);
 
         var ImportForm = new Ext.form.FormPanel({
             width: 500,
@@ -453,7 +466,7 @@ pimcore.settings.translations = Class.create({
 
                 this.cellEditing.startEditByPosition({
                     row: 0,
-                    column: 1
+                    column: 2
                 });
             }
         }.bind(this));
@@ -476,10 +489,17 @@ pimcore.settings.translations = Class.create({
         if (!record.data.editor) {
             editor = this.editableLanguages.indexOf(language) >= 0 ? new Ext.form.TextField({}) : null;
         } else {
+            let __innerTitle = record.data.key;
+            let __outerTitle = record.data.editor == "plain" ? t("edit_as_plain_text") : t("edit_as_html");
+
+            if(record.data.editor == "custom") {
+                __outerTitle = t("edit_as_custom_text");
+            }
+
             editor = new pimcore.settings.translationEditor({
                 __editorType: record.data.editor,
-                __outerTitle: record.data.editor == "plain" ? t("edit_as_plain_text") : t("edit_as_html"),
-                __innerTitle: record.data.key
+                __outerTitle: __outerTitle,
+                __innerTitle: __innerTitle
             });
 
         }

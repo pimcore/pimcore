@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    User
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\User\Workspace;
@@ -20,70 +18,96 @@ namespace Pimcore\Model\User\Workspace;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @method \Pimcore\Model\User\Workspace\Dao getDao()
  * @method void save()
  */
-class AbstractWorkspace extends Model\AbstractModel
+abstract class AbstractWorkspace extends Model\AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
-    public $userId;
+    protected $userId;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $cpath;
+    protected $cpath;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $list = false;
+    protected $list = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $view = false;
+    protected $view = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $publish = false;
+    protected $publish = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $delete = false;
+    protected $delete = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $rename = false;
+    protected $rename = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $create = false;
+    protected $create = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $settings = false;
+    protected $settings = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $versions = false;
+    protected $versions = false;
 
     /**
+     * @internal
+     *
      * @var bool
      */
-    public $properties = false;
+    protected $properties = false;
 
     /**
      * @param bool $create

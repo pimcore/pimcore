@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
@@ -29,23 +27,27 @@ class Hardlink extends Document
     use Document\Traits\ScheduledTasksTrait;
 
     /**
-     * static type of this object
-     *
-     * @var string
+     * {@inheritdoc}
      */
-    protected $type = 'hardlink';
+    protected string $type = 'hardlink';
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $sourceId;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $propertiesFromSource;
 
     /**
+     * @internal
+     *
      * @var bool
      */
     protected $childrenFromSource;
@@ -53,7 +55,7 @@ class Hardlink extends Document
     /**
      * @return Document|null
      */
-    public function getSourceDocument()
+    public function getSourceDocument(): ?Document
     {
         if ($this->getSourceId()) {
             return Document::getById($this->getSourceId());
@@ -63,11 +65,9 @@ class Hardlink extends Document
     }
 
     /**
-     * @see Document::resolveDependencies
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function resolveDependencies()
+    protected function resolveDependencies(): array
     {
         $dependencies = parent::resolveDependencies();
         $sourceDocument = $this->getSourceDocument();
@@ -85,16 +85,10 @@ class Hardlink extends Document
     }
 
     /**
-     * Resolves dependencies and create tags for caching out of them
-     *
-     * @param array $tags
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getCacheTags($tags = [])
+    public function getCacheTags(array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         $tags = parent::getCacheTags($tags);
 
         if ($this->getSourceDocument()) {
@@ -167,7 +161,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @return array|null|Model\Property[]
+     * {@inheritdoc}
      */
     public function getProperties()
     {
@@ -200,9 +194,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param bool $includingUnpublished
-     *
-     * @return Document[]
+     * {@inheritdoc}
      */
     public function getChildren($includingUnpublished = false)
     {
@@ -228,7 +220,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasChildren($unpublished = false)
     {
@@ -236,7 +228,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function doDelete()
     {
@@ -253,9 +245,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {

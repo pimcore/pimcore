@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -33,7 +33,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 return false;
             }
             return true;
-        });
+        }.bind(this));
     },
 
 
@@ -80,9 +80,8 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
-        href.enableKeyEvents = true;
-        href.fieldCls = "pimcore_droptarget_input";
-        this.component = new Ext.form.TextField(href);
+        href.fieldBodyCls = 'pimcore_droptarget_input x-form-trigger-wrap';
+        this.component = new Ext.form.field.Display(href);
         if (this.data.published === false) {
             this.component.addCls("strikeThrough");
         }
@@ -104,7 +103,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 onNodeDrop: this.onNodeDrop.bind(this)
             });
 
-
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
             el.getEl().on('dblclick', function(){
@@ -115,11 +113,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
                 pimcore.helpers.openElement(this.data.id, this.data.type, subtype);
             }.bind(this));
-        }.bind(this));
-
-        // disable typing into the textfield
-        this.component.on("keyup", function (element, event) {
-            element.setValue(this.data.path);
         }.bind(this));
 
         var items = [this.component, {
@@ -381,6 +374,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         this.data.id = data.id;
         this.data.type = data.type;
         this.data.subtype = data.subtype;
+        this.data.path = data.fullpath;
         this.dataChanged = true;
         this.component.removeCls("strikeThrough");
         if (data.published === false) {
@@ -486,7 +480,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             pimcore.helpers.requestNicePathData(
                 {
                     type: "object",
-                    id: this.data.id
+                    id: this.object.id
                 },
                 targets,
                 {
@@ -523,6 +517,3 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         }
     }
 });
-
-// @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.tags.href = pimcore.object.tags.manyToOneRelation;

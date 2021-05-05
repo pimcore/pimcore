@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -85,7 +85,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             queryMode: 'local'
         };
 
-        if(this.data && this.data.unit != null && !isNaN(this.data.unit)) {
+        if(this.data && this.data.unit != null) {
             options.value = this.data.unit;
         } else {
             options.value = -1;
@@ -124,7 +124,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             }
 
             if (value) {
-                return value.value + " " + value.unit;
+                return (value.value ? value.value : "") + " " + value.unitAbbr;
             } else {
                 return "";
             }

@@ -222,7 +222,16 @@ pimcore:
 
                                     # Will be passed to the underlying Pimcore data object field type. Can be used to configure the options of a select box for example.
                                     fieldTypeSettings:    []
-
+                                    
+                            # Configure the output of custom HTML for a transition.
+                            customHtml:
+                            
+                                # Define a custom service for rendering custom HTML within the note modal.
+                                service: 'App\Service\Workflow\CustomHtmlService'
+                                
+                                # Set position of custom HTML inside modal (top, center, bottom; default=top).
+                                position: 'top'
+                            
                         # Css class to define the icon which will be used in the actions button in the backend.
                         iconClass:            ~
                         # Forces an object layout after the transition was performed.
@@ -298,4 +307,13 @@ pimcore:
                                 required:             false
                                 setterFn:             ~
                                 fieldTypeSettings:    []
+                                
+                        # Configure the output of custom HTML for a transition.
+                        customHtml:
+                        
+                            # Define a custom service for rendering custom HTML within the note modal.
+                            service: 'App\Service\Workflow\CustomHtmlService'
+                            
+                            # Set position of custom HTML inside modal (top, center, bottom; default=top).
+                            position: 'top'                                
 ```

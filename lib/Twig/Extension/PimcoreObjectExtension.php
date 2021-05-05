@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Twig\Extension;
@@ -25,6 +25,9 @@ use Pimcore\Model\User;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * @internal
+ */
 class PimcoreObjectExtension extends AbstractExtension
 {
     public function getFunctions()
@@ -40,8 +43,8 @@ class PimcoreObjectExtension extends AbstractExtension
             new TwigFunction('pimcore_site_current', [Site::class, 'getCurrentSite']),
             new TwigFunction('pimcore_asset', [Asset::class, 'getById']),
             new TwigFunction('pimcore_asset_by_path', [Asset::class, 'getByPath']),
-            new TwigFunction('pimcore_object', [DataObject\AbstractObject::class, 'getById']),
-            new TwigFunction('pimcore_object_by_path', [DataObject\AbstractObject::class, 'getByPath']),
+            new TwigFunction('pimcore_object', [DataObject::class, 'getById']),
+            new TwigFunction('pimcore_object_by_path', [DataObject::class, 'getByPath']),
             new TwigFunction('pimcore_document_wrap_hardlink', [Document\Hardlink\Service::class, 'wrap']),
             new TwigFunction('pimcore_user', [User::class, 'getById']),
             new TwigFunction('pimcore_object_classificationstore_group', [DataObject\Classificationstore\GroupConfig::class, 'getById']),

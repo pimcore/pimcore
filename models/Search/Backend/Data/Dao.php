@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Search\Backend\Data;
@@ -27,7 +28,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * @param Model\Element\ElementInterface $element
      */
-    public function getForElement($element)
+    public function getForElement(Model\Element\ElementInterface $element): void
     {
         try {
             if ($element instanceof Model\Document) {
@@ -40,8 +41,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 throw new \Exception('unknown type of element with id [ '.$element->getId().' ] ');
             }
 
-            $data = $this->db->fetchRow('SELECT * FROM search_backend_data WHERE id= ? AND maintype = ? ', [$element->getId(), $maintype]);
+            $data = $this->db->fetchRow('SELECT * FROM search_backend_data WHERE id = ? AND maintype = ? ', [$element->getId(), $maintype]);
             if (is_array($data)) {
+                unset($data['id']);
                 $this->assignVariablesToModel($data);
                 $this->model->setId(new Model\Search\Backend\Data\Id($element));
             }

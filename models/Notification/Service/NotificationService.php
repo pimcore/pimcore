@@ -1,18 +1,19 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
-declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
@@ -23,6 +24,9 @@ use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ * @internal
+ */
 class NotificationService
 {
     /** @var UserService */
@@ -96,17 +100,25 @@ class NotificationService
             throw new \UnexpectedValueException(sprintf('No group found with the ID %d', $groupId));
         }
 
-        $filter = [
-            'id != ?' => $fromUser,
-            'active = ?' => 1,
-            'roles LIKE ?' => '%' . $groupId . '%',
-        ];
-
-        $condition = implode(' AND ', array_keys($filter));
-        $conditionVariables = array_values($filter);
-
         $listing = new User\Listing();
-        $listing->setCondition($condition, $conditionVariables);
+        $listing->setCondition(
+            'id != ?
+            AND active = ?
+            AND (
+                roles = ?
+                OR roles LIKE ?
+                OR roles LIKE ? 
+                OR roles LIKE ?
+            )',
+            [
+                $fromUser,
+                1,
+                $groupId,
+                '%,' . $groupId,
+                $groupId . ',%',
+                '%,' . $groupId . ',%'
+            ]
+        );
         $listing->setOrderKey('name');
         $listing->setOrder('ASC');
         $listing->load();
@@ -142,6 +154,8 @@ class NotificationService
      * @param int|null $recipientId
      *
      * @return Notification
+     *
+     * @throws \UnexpectedValueException
      */
     public function findAndMarkAsRead(int $id, ?int $recipientId = null): Notification
     {
@@ -172,9 +186,13 @@ class NotificationService
         $listing = new Listing();
 
         if (!empty($filter)) {
-            $condition = implode(' AND ', array_keys($filter));
-            $conditionVariables = array_values($filter);
-            $listing->setCondition($condition, $conditionVariables);
+            $conditions = [];
+            foreach ($filter as $key => $value) {
+                $conditions[] = $key . ' = :' . $key;
+            }
+
+            $condition = implode(' AND ', $conditions);
+            $listing->setCondition($condition, $filter);
         }
 
         $listing->setOrderKey('creationDate');

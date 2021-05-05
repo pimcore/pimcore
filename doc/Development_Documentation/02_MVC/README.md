@@ -19,13 +19,13 @@ knowledge learning Pimcore will be much easier and faster.
 
 ## Basic file structure and naming conventions
 
-The most common module for working within the MVC in your Pimcore project is the `AppBundle`. So the most frequently 
+The most common module for working within the MVC in your Pimcore project is the `App`. So the most frequently 
 used folders and files concerning the MVC within the website module are the following:
  
 | Path   |  Description |  Example
 |--------|--------------|---------------------
-| `/src/AppBundle/Controller` | The controllers directory | eg. `ContentController.php`
-| `/app/Resources/views/` | The view (template) directory, the naming (sub folders and file names) follows also the naming-convention of Symfony (`/app/Resources/views/[controller]/[action].html.twig`) 
+| `/src/Controller` | The controllers directory | eg. `ContentController.php`
+| `/templates/` | The view (template) directory, the naming (sub folders and file names) follows also the naming-convention of Symfony (`/templates/[controller]/[action].html.twig`) 
 
 All Pimcore plugins and other modules follow the same pattern.
  

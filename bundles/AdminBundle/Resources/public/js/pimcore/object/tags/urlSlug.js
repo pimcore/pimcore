@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -34,9 +34,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (intval(field.config.width) > 10) {
-                    editorConfig.width = field.config.width;
-                }
+                editorConfig.width = field.config.width;
             }
         }
 
@@ -182,7 +180,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
-            textConfig.width += textConfig.labelWidth;
+            textConfig.width = this.sumWidths(textConfig.width, textConfig.labelWidth);
         }
 
         var text = new Ext.form.TextField(textConfig);
@@ -305,17 +303,20 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function () {
-        var dirty = this.dirty;
+        if (this.dirty) {
+            return true;
+        }
 
         for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
                 if (textfield.isDirty()) {
+                    this.dirty = true;
                     return true;
                 }
             }
         }
 
-        return dirty;
+        return false;
     }
 });

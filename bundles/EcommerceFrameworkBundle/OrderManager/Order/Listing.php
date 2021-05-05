@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
@@ -24,9 +26,9 @@ use Pimcore\Model\DataObject\OnlineShopOrderItem;
 class Listing extends AbstractOrderList implements OrderListInterface
 {
     /**
-     * @var Db\ZendCompatibility\QueryBuilder
+     * @var DoctrineQueryBuilder|null
      */
-    protected $query;
+    protected $queryBuilder;
 
     /**
      * @var OrderListFilterInterface[]
@@ -53,57 +55,50 @@ class Listing extends AbstractOrderList implements OrderListInterface
         $this->listType = $type;
 
         // reset query
-        $this->query = null;
+        $this->queryBuilder = null;
 
         return $this;
     }
 
     /**
-     * @deprecated
-     * get select query
+     * get query builder
      *
-     * @return Db\ZendCompatibility\QueryBuilder
+     * @return DoctrineQueryBuilder
      */
-    public function getQuery()
+    public function getQueryBuilder(): DoctrineQueryBuilder
     {
-        if (!$this->query) {
+        if (!$this->queryBuilder) {
             // init
-            $select = Db::getConnection()->select();
-
-            // base order
-            $select->from(
-                [ 'order' => 'object_query_' . OnlineShopOrder::classId() ],
-                [
-                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1'), 'OrderId' => 'order.oo_id',
-                ]
-            );
+            $queryBuilder = Db::getConnection()->createQueryBuilder();
+            $queryBuilder->select(['SQL_CALC_FOUND_ROWS 1', 'order.oo_id AS OrderId']);
+            $queryBuilder->from('object_query_' . OnlineShopOrder::classId(), '`order`');
 
             // join ordered products
-            $this->joinItemsAndSubItems($select);
+            $this->joinItemsAndSubItems($queryBuilder);
 
             // group by list type
             if ($this->getListType() == self::LIST_TYPE_ORDER_ITEM) {
-                $select->columns(['Id' => 'orderItem.oo_id']);
-                $select->group('OrderItemId');
+                $queryBuilder->addSelect(['orderItem.oo_id AS Id']);
+                $queryBuilder->groupBy('OrderItemId');
             } else {
-                $select->columns(['Id' => 'order.oo_id']);
-                $select->group('OrderId');
+                $queryBuilder->addSelect(['order.oo_id as Id']);
+                $queryBuilder->groupBy('OrderId');
             }
 
             // filter order state
             if (!is_null($this->getOrderState())) {
                 $orderStates = [];
                 foreach ((array)$this->getOrderState() as $orderState) {
-                    $orderStates[] = $select->getAdapter()->quote($orderState);
+                    $orderStates[] = $queryBuilder->expr()->literal($orderState);
                 }
 
-                $select->where('`order`.orderState IN('. implode(',', $orderStates) .')');
+                $queryBuilder->andWhere('order.orderState IN('. implode(',', $orderStates) .')');
             }
 
-            $this->query = $select;
+            $this->queryBuilder = $queryBuilder;
         }
 
-        return $this->query;
+        return $this->queryBuilder;
     }
 
     /**
@@ -115,7 +110,9 @@ class Listing extends AbstractOrderList implements OrderListInterface
     {
         parent::setLimit($limit, $offset);
 
-        $this->getQuery()->limit($this->getLimit(), $this->getOffset());
+        $this->getQueryBuilder()
+            ->setFirstResult($this->getOffset())
+            ->setMaxResults($this->getLimit());
 
         return $this;
     }
@@ -127,10 +124,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function setOrder($order)
     {
-        $this->getQuery()
-            ->reset(Db\ZendCompatibility\QueryBuilder::ORDER)
-            ->order($order)
-        ;
+        $this->getQueryBuilder()->add('orderBy', $order, false);
 
         return $this;
     }
@@ -140,13 +134,15 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinPricingRule()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        $queryBuilder = $this->getQueryBuilder();
+        $joins = $queryBuilder->getQueryPart('from');
 
         if (!array_key_exists('pricingRule', $joins)) {
-            $this->getQuery()->joinLeft(
-                ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()],
-                'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"',
-                ''
+            $queryBuilder->leftJoin(
+                'orderItem',
+                'object_collection_PricingRule_' . OnlineShopOrderItem::classId(),
+                'pricingRule',
+                'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"'
             );
         }
 
@@ -159,13 +155,16 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinPriceModifications()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        $queryBuilder = $this->getQueryBuilder();
+
+        $joins = $queryBuilder->getQueryPart('from');
 
         if (!array_key_exists('OrderPriceModifications', $joins)) {
-            $this->getQuery()->joinLeft(
-                ['OrderPriceModifications' => 'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId()],
-                'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"',
-                ''
+            $queryBuilder->leftJoin(
+                '`order`',
+                'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId(),
+                'OrderPriceModifications',
+                'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"'
             );
         }
 
@@ -177,32 +176,20 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinPaymentInfo()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        $queryBuilder = $this->getQueryBuilder();
+
+        $joins = $queryBuilder->getQueryPart('from');
 
         if (!array_key_exists('paymentInfo', $joins)) {
             // create sub select
-            $paymentQuery = Db::getConnection()->select();
+            $paymentQueryBuilder = Db::getConnection()->createQueryBuilder();
 
-            $paymentQuery
-                ->from(
-                    ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()],
-                    [
-                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id',
-                    ]
-                )
-                ->join(
-                    ['_order' => 'object_' . OnlineShopOrder::classId()],
-                    '_order.oo_id = _paymentInfo.o_id',
-                    ''
-                )
-            ;
+            $paymentQueryBuilder->select('GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",") AS paymentReference', '_order.o_id AS o_id')
+                ->from('object_collection_PaymentInfo_' . OnlineShopOrder::classId(), '_paymentInfo')
+                ->join('_paymentInfo', 'object_' . OnlineShopOrder::classId(), '_order', '_order.oo_id = _paymentInfo.o_id');
 
             // join
-            $this->getQuery()->joinLeft(
-                ['paymentInfo' => new Db\ZendCompatibility\Expression('(' . $paymentQuery . ')')],
-                'paymentInfo.o_id = `order`.oo_id',
-                ''
-            );
+            $queryBuilder->leftJoin('`order`', (string) $paymentQueryBuilder, 'paymentInfo', 'paymentInfo.o_id = `order`.oo_id');
         }
 
         return $this;
@@ -213,14 +200,13 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinOrderItemObjects()
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        $queryBuilder = $this->getQueryBuilder();
+
+        $joins = $queryBuilder->getQueryPart('from');
 
         if (!array_key_exists('orderItemObjects', $joins)) {
-            $this->getQuery()->join(
-                ['orderItemObjects' => 'objects'],
-                'orderItemObjects.o_id = orderItem.product__id',
-                ''
-            );
+            $queryBuilder->join('orderItem', 'objects', 'orderItemObjects',
+                'orderItemObjects.o_id = orderItem.product__id');
         }
 
         return $this;
@@ -233,13 +219,16 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinProduct($classId)
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        $queryBuilder = $this->getQueryBuilder();
+
+        $joins = $queryBuilder->getQueryPart('from');
 
         if (!array_key_exists('product', $joins)) {
-            $this->getQuery()->join(
-                ['product' => 'object_query_' . $classId],
-                'product.oo_id = orderItem.product__id',
-                ''
+            $queryBuilder->join(
+                'orderItem',
+                'object_query_' . $classId,
+                'product',
+                'product.oo_id = orderItem.product__id'
             );
         }
 
@@ -255,13 +244,13 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function joinCustomer($classId)
     {
-        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+        $queryBuilder = $this->getQueryBuilder();
+
+        $joins = $queryBuilder->getQueryPart('from');
 
         if (!array_key_exists('customer', $joins)) {
-            $this->getQuery()->join(
-                ['customer' => 'object_' . $classId],
-                'customer.o_id = order.customer__id',
-                ''
+            $queryBuilder->join('`order`', 'object_' . $classId, 'customer',
+                'customer.o_id = order.customer__id'
             );
         }
 
@@ -271,7 +260,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
     /**
      * join for item / sub items
      *
-     * @param Db\ZendCompatibility\QueryBuilder $select
+     * @param DoctrineQueryBuilder $select
      *
      * @return $this
      */
@@ -280,17 +269,97 @@ class Listing extends AbstractOrderList implements OrderListInterface
         if (!$this->useSubItems()) {
             // just order items
             $select->join(
-                [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ],
-                '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id',
-                ''
+                '`order`',
+                'object_relations_' . OnlineShopOrder::classId(),
+                '_orderItems',
+                '_orderItems.fieldname = "items" AND _orderItems.src_id = order.oo_id'
             );
         } else {
-            // join items and sub items
-            $orderClassId = OnlineShopOrder::classId();
-            $orderItemClassId = OnlineShopOrderItem::classId();
-            $select->join(
-                ['_orderItems' => new Db\ZendCompatibility\Expression(
-                    <<<SUBQUERY
+            $select->join('`order`', (string) $this->getOrderItemsSubQuery(), '_orderItems',
+                '_orderItems.orderId = order.oo_id'
+            );
+        }
+
+        // join related order item
+        $select->addSelect('orderItem.oo_id AS OrderItemId');
+        $select->join('_orderItems', 'object_' . OnlineShopOrderItem::classId(), 'orderItem',
+            'orderItem.o_id = _orderItems.dest_id');
+
+        return $this;
+    }
+
+    /**
+     * @param string $field
+     *
+     * @return $this
+     */
+    public function addSelectField($field)
+    {
+        $this->getQueryBuilder()->addSelect($field);
+
+        return $this;
+    }
+
+    /**
+     * @param OrderListFilterInterface $filter
+     *
+     * @return $this
+     */
+    public function addFilter(OrderListFilterInterface $filter)
+    {
+        $this->filter[] = $filter;
+        $filter->apply($this);
+
+        return $this;
+    }
+
+    /**
+     * @param string $condition
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function addCondition($condition, $value = null)
+    {
+        if (!is_array($value)) {
+            $value = [$value];
+        }
+
+        $this->getQueryBuilder()->where($condition)->setParameters($value);
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useSubItems()
+    {
+        return $this->useSubItems;
+    }
+
+    /**
+     * @param bool $useSubItems
+     *
+     * @return $this
+     */
+    public function setUseSubItems($useSubItems)
+    {
+        $this->useSubItems = (bool)$useSubItems;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    private function getOrderItemsSubQuery()
+    {
+        // join items and sub items
+        $orderClassId = OnlineShopOrder::classId();
+        $orderItemClassId = OnlineShopOrderItem::classId();
+
+        return <<<SUBQUERY
 (
     -- add items
     SELECT
@@ -323,123 +392,6 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
         AND _orderItems.fieldname = "items"
 )
-SUBQUERY
-                )],
-                '_orderItems.orderId = `order`.oo_id',
-                ''
-            );
-        }
-
-        // join related order item
-        $select->join(
-            [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ],
-            'orderItem.o_id = _orderItems.dest_id',
-            ['OrderItemId' => 'orderItem.oo_id']
-        );
-
-        return $this;
-    }
-
-    /**
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function addSelectField($field)
-    {
-        $this->getQuery()->columns($field);
-
-        return $this;
-    }
-
-    /**
-     * @param OrderListFilterInterface $filter
-     *
-     * @return $this
-     */
-    public function addFilter(OrderListFilterInterface $filter)
-    {
-        $this->filter[] = $filter;
-        $filter->apply($this);
-
-        return $this;
-    }
-
-    /**
-     * @param string $condition
-     * @param string $value
-     *
-     * @return $this
-     */
-    public function addCondition($condition, $value = null)
-    {
-        $this->getQuery()->where($condition, $value);
-
-        return $this;
-    }
-
-    /**
-     * get all available values that can bee used for filter
-     *
-     * @param string $field
-     *
-     * @return array
-     *
-     * @deprecated refactoring
-     */
-    protected function getAvailableFilterValues($field)
-    {
-        if (!$this->availableFilterValues) {
-            $listing = new self();
-
-            $query = $listing->getQuery();
-            $query = str_replace('-- [GET_AVAILABLE_OPTIONS]', '
-                , ifnull(GROUP_CONCAT(DISTINCT product.o_id, "|", product.o_parentId SEPARATOR "|"),0) as "available_productId"
-                , ifnull(GROUP_CONCAT(DISTINCT pricingRule.ruleId SEPARATOR "|"),0) as "available_pricingRules"
-            ', $query);
-            $query = str_replace('GROUP BY orderItem', '', $query);
-
-            $conn = \Pimcore\Db::getConnection();
-            $conn->query('SET SESSION group_concat_max_len = 1000000');
-            $this->availableFilterValues = $conn->fetchRow($query);
-        }
-
-        return explode('|', $this->availableFilterValues['available_' . $field]);
-    }
-
-    /**
-     * When an object is cloned, PHP 5 will perform a shallow copy of all of the object's properties.
-     * Any properties that are references to other variables, will remain references.
-     * Once the cloning is complete, if a __clone() method is defined,
-     * then the newly created object's __clone() method will be called, to allow any necessary properties that need to be changed.
-     * NOT CALLABLE DIRECTLY.
-     *
-     * @return mixed
-     *
-     * @link http://php.net/manual/en/language.oop5.cloning.php
-     */
-    public function __clone()
-    {
-        $this->query = clone $this->query;
-    }
-
-    /**
-     * @return bool
-     */
-    public function useSubItems()
-    {
-        return $this->useSubItems;
-    }
-
-    /**
-     * @param bool $useSubItems
-     *
-     * @return $this
-     */
-    public function setUseSubItems($useSubItems)
-    {
-        $this->useSubItems = (bool)$useSubItems;
-
-        return $this;
+SUBQUERY;
     }
 }

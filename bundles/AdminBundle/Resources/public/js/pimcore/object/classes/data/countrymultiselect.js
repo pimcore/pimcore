@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -103,36 +103,45 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
         var possibleOptions = new Ext.ux.form.MultiSelect(options);
 
         var specificItems = [
-                {
-                    xtype: "numberfield",
-                    fieldLabel: t("width"),
-                    name: "width",
-                    value: datax.width
-                },
-                {
-                    xtype: "numberfield",
-                    fieldLabel: t("height"),
-                    name: "height",
-                    value: datax.height
-                },
-                {
-                    xtype: "combo",
-                    fieldLabel: t("multiselect_render_type"),
-                    name: "renderType",
-                    itemId: "renderType",
-                    mode: 'local',
-                    store: [
-                        ['list', 'List'],
-                        ['tags', 'Tags']
-                    ],
-                    value: datax["renderType"] ? datax["renderType"] : 'list',
-                    triggerAction: "all",
-                    editable: false,
-                    forceSelection: true
-                },
-                possibleOptions
-            ]
-        ;
+            {
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("height"),
+                name: "height",
+                value: datax.height
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
+            },
+            {
+                xtype: "combo",
+                fieldLabel: t("multiselect_render_type"),
+                name: "renderType",
+                itemId: "renderType",
+                mode: 'local',
+                store: [
+                    ['list', 'List'],
+                    ['tags', 'Tags']
+                ],
+                value: datax["renderType"] ? datax["renderType"] : 'list',
+                triggerAction: "all",
+                editable: false,
+                forceSelection: true
+            },
+            possibleOptions
+        ];
 
         countryStore.load();
         return specificItems;
@@ -154,7 +163,7 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
                     width: source.datax.width,
                     height: source.datax.height,
                     renderType : source.datax.renderType
-                    
+
                 });
         }
     }

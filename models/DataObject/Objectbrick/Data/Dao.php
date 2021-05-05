@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    DataObject\Objectbrick
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
@@ -46,14 +44,14 @@ class Dao extends Model\Dao\AbstractDao
     public function save(DataObject\Concrete $object, $params = [])
     {
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
-        $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
+        $inheritedValues = DataObject::doGetInheritedValues();
 
         $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storetable, $querytable, null, 'o_id');
 
-        DataObject\AbstractObject::setGetInheritedValues(false);
+        DataObject::setGetInheritedValues(false);
 
         $fieldDefinitions = $this->model->getDefinition()->getFieldDefinitions();
 
@@ -69,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
             // as a consequence, only do inserts only on dirty fields
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  Model\Element\DirtyIndicatorInterface) {
+            if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof  Model\Element\DirtyIndicatorInterface) {
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($fd->supportsDirtyDetection()) {
@@ -109,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($fd instanceof CustomResourcePersistingInterface) {
-                if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($key), $dirtyRelations)) {
                         continue;
@@ -178,7 +176,7 @@ class Dao extends Model\Dao\AbstractDao
             $parentForInheritance = $object->getNextParentForInheritance();
             if ($parentForInheritance) {
                 // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                // we cannot DataObject\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
+                // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
                 $parentData = $this->db->fetchRow('SELECT * FROM ' . $querytable . ' WHERE o_id = ? FOR UPDATE', $parentForInheritance->getId());
@@ -282,7 +280,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->inheritanceHelper->resetFieldsToCheck();
 
         // HACK: see a few lines above!
-        DataObject\AbstractObject::setGetInheritedValues($inheritedValues);
+        DataObject::setGetInheritedValues($inheritedValues);
     }
 
     /**

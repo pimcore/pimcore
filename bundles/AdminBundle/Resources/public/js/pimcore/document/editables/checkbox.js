@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -53,10 +53,6 @@ pimcore.document.editables.checkbox = Class.create(pimcore.document.editable, {
 
         this.elComponent = Ext.get(this.htmlId);
 
-        // onchange event
-        if (this.config.onchange) {
-            this.elComponent.on('change', eval(this.config.onchange));
-        }
         if (this.config.reload) {
             this.elComponent.on('change', this.reloadDocument);
         }

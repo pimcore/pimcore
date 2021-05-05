@@ -1,29 +1,40 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect;
 
 class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectFromMultiSelect
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
+        $useAndCondition = false;
+
+        if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+            throw new InvalidConfigException('invalid configuration');
+        }
+
+        $useAndCondition = $filterDefinition->getUseAndCondition();
+
         $field = $this->getField($filterDefinition);
-        $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
+        $productList->prepareGroupByValues($field, true, !$useAndCondition);
     }
 
     /**
@@ -62,6 +73,10 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
         $currentFilter[$field] = $value;
 
         if (!empty($value)) {
+            if (!$filterDefinition instanceof FilterMultiSelectFromMultiSelect) {
+                throw new InvalidConfigException('invalid configuration');
+            }
+
             if ($filterDefinition->getUseAndCondition()) {
                 foreach ($value as $entry) {
                     $productList->addCondition(['term' => ['attributes.' . $field => $entry]], $field);

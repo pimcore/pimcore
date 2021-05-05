@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tests\Helper;
@@ -37,7 +38,7 @@ abstract class AbstractDefinitionHelper extends Module
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _beforeSuite($settings = [])
     {
@@ -54,7 +55,7 @@ abstract class AbstractDefinitionHelper extends Module
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function _afterSuite()
     {
@@ -78,7 +79,12 @@ abstract class AbstractDefinitionHelper extends Module
         if (!$name) {
             $name = $type;
         }
-        $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
+
+        if (strpos($type, 'indexField') === 0) {
+            $classname = 'Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ClassDefinition\\' . ucfirst($type);
+        } else {
+            $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
+        }
         /** @var $child Data */
         $child = new $classname();
         $child->setName($name);

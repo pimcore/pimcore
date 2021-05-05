@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -250,18 +250,20 @@ pimcore.asset.versions = Class.create({
         this.store.reload();
     },
 
-    dataUpdate: function (store, record, operation) {
+    dataUpdate: function (store, record, operation, columns) {
 
         if (operation == "edit") {
-            Ext.Ajax.request({
-                url: Routing.generate('pimcore_admin_element_versionupdate'),
-                method: 'PUT',
-                params: {
-                    data: Ext.encode(record.data)
-                }
-            });
+            if (in_array("public", columns) || in_array("note", columns)) {
+                Ext.Ajax.request({
+                    method: "post",
+                    url: Routing.generate('pimcore_admin_element_versionupdate'),
+                    method: 'PUT',
+                    params: {
+                        data: Ext.encode(record.data)
+                    }
+                });
+            }
         }
-
-        store.commitChanges();
+        this.checkForPreview(store);
     }
 });

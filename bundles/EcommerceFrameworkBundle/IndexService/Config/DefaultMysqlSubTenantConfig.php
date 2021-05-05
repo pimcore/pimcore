@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
@@ -36,14 +37,14 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     protected $db;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(
         string $tenantName,
         array $attributes,
         array $searchAttributes,
         array $filterTypes,
-        array $options = [],
+        array $options,
         EnvironmentInterface $environment,
         ConnectionInterface $db
     ) {
@@ -92,7 +93,10 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      */
     public function inIndex(IndexableInterface $object)
     {
-        $tenants = $object->getTenants();
+        $tenants = null;
+        if (method_exists($object, 'getTenants')) {
+            $tenants = $object->getTenants();
+        }
 
         return !empty($tenants);
     }
@@ -148,7 +152,12 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         $subTenantData = [];
         if ($this->inIndex($object)) {
             //implementation specific tenant get logic
-            foreach ($object->getTenants() as $tenant) {
+            $tenants = [];
+            if (method_exists($object, 'getTenants')) {
+                $tenants = $object->getTenants();
+            }
+
+            foreach ($tenants as $tenant) {
                 $subTenantData[] = ['o_id' => $object->getId(), 'subtenant_id' => $tenant->getId()];
             }
         }

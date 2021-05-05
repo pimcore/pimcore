@@ -7,15 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig;
@@ -26,7 +23,10 @@ use Pimcore\DataObject\GridColumnConfig\Value\Factory\ValueFactoryInterface;
 use Pimcore\DataObject\GridColumnConfig\Value\ValueInterface;
 use Psr\Container\ContainerInterface;
 
-class Service
+/**
+ * @internal
+ */
+final class Service
 {
     /**
      * @var ContainerInterface
@@ -48,25 +48,23 @@ class Service
 
     /**
      * @param \stdClass[] $jsonConfigs
-     * @param mixed|null $context
+     * @param array $context
      *
      * @return array
      */
-    public function buildOutputDataConfig(array $jsonConfigs, $context = null): array
+    public function buildOutputDataConfig(array $jsonConfigs, array $context = []): array
     {
-        $config = $this->doBuildConfig($jsonConfigs, [], $context);
-
-        return $config;
+        return $this->doBuildConfig($jsonConfigs, [], $context);
     }
 
     /**
      * @param \stdClass[] $jsonConfigs
      * @param array $config
-     * @param mixed|null $context
+     * @param array $context
      *
      * @return ConfigElementInterface[]
      */
-    private function doBuildConfig(array $jsonConfigs, array $config, $context = null): array
+    private function doBuildConfig(array $jsonConfigs, array $config, array $context = []): array
     {
         if (empty($jsonConfigs)) {
             return $config;
@@ -80,14 +78,24 @@ class Service
                     $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
                 }
 
-                $config[] = $this->buildOperator($configElement->class, $configElement, $context);
+                $operator = $this->buildOperator($configElement->class, $configElement, $context);
+                if ($operator) {
+                    $config[] = $operator;
+                }
             }
         }
 
         return $config;
     }
 
-    private function buildOperator(string $name, \stdClass $configElement, $context = null): OperatorInterface
+    /**
+     * @param string $name
+     * @param \stdClass $configElement
+     * @param array $context
+     *
+     * @return OperatorInterface|null
+     */
+    private function buildOperator(string $name, \stdClass $configElement, array $context = [])
     {
         if (!$this->operatorFactories->has($name)) {
             throw new \InvalidArgumentException(sprintf('Operator "%s" is not supported', $name));

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Image;
@@ -210,7 +211,7 @@ abstract class Adapter
     /**
      * @param int $width
      * @param int $height
-     * @param string $orientation
+     * @param string|array $orientation
      * @param bool $forceResize
      *
      * @return self
@@ -228,31 +229,31 @@ abstract class Adapter
             $this->scaleByHeight($height, $forceResize);
         }
 
-        if ($orientation == 'center') {
+        if ($orientation === 'center') {
             $cropX = ($this->getWidth() - $width) / 2;
             $cropY = ($this->getHeight() - $height) / 2;
-        } elseif ($orientation == 'topleft') {
+        } elseif ($orientation === 'topleft') {
             $cropX = 0;
             $cropY = 0;
-        } elseif ($orientation == 'topright') {
+        } elseif ($orientation === 'topright') {
             $cropX = $this->getWidth() - $width;
             $cropY = 0;
-        } elseif ($orientation == 'bottomleft') {
+        } elseif ($orientation === 'bottomleft') {
             $cropX = 0;
             $cropY = $this->getHeight() - $height;
-        } elseif ($orientation == 'bottomright') {
+        } elseif ($orientation === 'bottomright') {
             $cropX = $this->getWidth() - $width;
             $cropY = $this->getHeight() - $height;
-        } elseif ($orientation == 'centerleft') {
+        } elseif ($orientation === 'centerleft') {
             $cropX = 0;
             $cropY = ($this->getHeight() - $height) / 2;
-        } elseif ($orientation == 'centerright') {
+        } elseif ($orientation === 'centerright') {
             $cropX = $this->getWidth() - $width;
             $cropY = ($this->getHeight() - $height) / 2;
-        } elseif ($orientation == 'topcenter') {
+        } elseif ($orientation === 'topcenter') {
             $cropX = ($this->getWidth() - $width) / 2;
             $cropY = 0;
-        } elseif ($orientation == 'bottomcenter') {
+        } elseif ($orientation === 'bottomcenter') {
             $cropX = ($this->getWidth() - $width) / 2;
             $cropY = $this->getHeight() - $height;
         } elseif (is_array($orientation) && isset($orientation['x'])) {
@@ -358,7 +359,7 @@ abstract class Adapter
     }
 
     /**
-     * @param string $image
+     * @param mixed $image
      * @param int $x
      * @param int $y
      * @param int $alpha
@@ -483,7 +484,7 @@ abstract class Adapter
      * @param string $imagePath
      * @param array $options
      *
-     * @return self
+     * @return self|false
      */
     abstract public function load($imagePath, $options = []);
 
@@ -564,7 +565,7 @@ abstract class Adapter
     /**
      * @return array
      */
-    public function getVectorRasterDimensions()
+    protected function getVectorRasterDimensions()
     {
         $targetWidth = 5000;
         $factor = $targetWidth / $this->getWidth();

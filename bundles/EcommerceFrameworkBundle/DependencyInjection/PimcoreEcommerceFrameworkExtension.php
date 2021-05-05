@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
@@ -21,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFacto
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocator;
@@ -39,7 +40,10 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
+/**
+ * @internal
+ */
+final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_FACTORY = 'pimcore_ecommerce.factory';
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
@@ -54,7 +58,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
      * The services below are defined as public as the Factory loads services via get() on
      * demand.
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function loadInternal(array $config, ContainerBuilder $container)
     {
@@ -301,19 +305,22 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 '$checkoutStepDefinitions' => $tenantConfig['steps'],
             ]);
 
+            $paymentStrategyLocatorMapping = [];
             if (!empty($tenantConfig['factory_options'])) {
                 $factoryConfig = $tenantConfig['factory_options'];
 
                 $locatorMapping = [];
-                if ($factoryConfig['handle_pending_payments_strategy']) {
-                    $locatorMapping[$factoryConfig['handle_pending_payments_strategy']] = $factoryConfig['handle_pending_payments_strategy'];
-                } else {
-                    $locatorMapping[ThrowExceptionStrategy::class] = ThrowExceptionStrategy::class;
+                if ($factoryConfig['handle_pending_payments_strategy'] ?? false) {
+                    $paymentStrategyLocatorMapping[$factoryConfig['handle_pending_payments_strategy']] = $factoryConfig['handle_pending_payments_strategy'];
                 }
 
                 $checkoutManagerFactory->setArgument('$options', $factoryConfig);
-                $checkoutManagerFactory->setArgument('$handlePendingPaymentStrategyLocator', $this->setupServiceLocator($container, 'pimcore_ecommerce.checkout_manager.handle_pending_payments_strategy_locator', $locatorMapping));
             }
+
+            if (empty($paymentStrategyLocatorMapping)) {
+                $paymentStrategyLocatorMapping[CancelPaymentOrRecreateOrderStrategy::class] = CancelPaymentOrRecreateOrderStrategy::class;
+            }
+            $checkoutManagerFactory->setArgument('$handlePendingPaymentStrategyLocator', $this->setupServiceLocator($container, 'pimcore_ecommerce.checkout_manager.handle_pending_payments_strategy_locator', $paymentStrategyLocatorMapping));
 
             if (null !== $tenantConfig['payment']['provider']) {
                 $checkoutManagerFactory->setArgument('$paymentProvider', new Reference(sprintf(
@@ -407,9 +414,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             ->setPublic(true);
 
         $container->setParameter('pimcore_ecommerce.index_service.default_tenant', $config['default_tenant']);
-
-        //@TODO Pimcore 10 - remove this
-        $container->setParameter('pimcore_ecommerce.index_service.worker_mode', $config['worker_mode']);
 
         $getterIds = [];
         $interpreterIds = [];

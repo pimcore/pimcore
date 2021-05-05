@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -89,21 +89,24 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            allowBlank: true
         });
 
         this.attributeField = new Ext.form.TextField({
             fieldLabel: t('attribute'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.attr
+            value: this.node.data.configAttributes.attr,
+            allowBlank: false
         });
 
         this.brickTypeField = new Ext.form.TextField({
             fieldLabel: t('brick_type'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.brickType
+            value: this.node.data.configAttributes.brickType,
+            allowBlank: false
         });
 
 
@@ -111,12 +114,13 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
             fieldLabel: t('brick_attribute'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.brickAttr
+            value: this.node.data.configAttributes.brickAttr,
+            allowBlank: false
         });
 
 
 
-        this.configPanel = new Ext.Panel({
+        this.configPanel = new Ext.form.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
             items: [this.textfield, this.attributeField, this.brickTypeField, this.brickAttributeField],
@@ -124,7 +128,16 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData(params);
+                    if (this.configPanel.isValid()) {
+                        this.commitData(params);
+                    } else {
+                        Ext.MessageBox.show({
+                            title:t('error'),
+                            msg: t('Please fill all required fields correctly.'),
+                            buttons: Ext.Msg.OK ,
+                            icon: Ext.MessageBox.ERROR
+                        });
+                    }
                 }.bind(this)
             }]
         });

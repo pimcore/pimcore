@@ -1,26 +1,28 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -90,11 +92,11 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         foreach ($subObjectIds as $subObjectId => $object) {
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
-                $b = AbstractObject::doGetInheritedValues();
+                $b = DataObject::doGetInheritedValues();
                 \Pimcore::unsetAdminMode();
-                AbstractObject::setGetInheritedValues(true);
-                $hidePublishedMemory = AbstractObject::doHideUnpublished();
-                AbstractObject::setHideUnpublished(false);
+                DataObject::setGetInheritedValues(true);
+                $hidePublishedMemory = DataObject::doHideUnpublished();
+                DataObject::setHideUnpublished(false);
                 $categories = $this->tenantConfig->getCategories($object, $subObjectId);
                 $categoryIds = [];
                 $parentCategoryIds = [];
@@ -121,11 +123,11 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
 
                 $virtualProductId = $subObjectId;
                 $virtualProductActive = $object->isActive();
-                if ($object->getOSIndexType() == 'variant') {
+                if ($object->getOSIndexType() == ProductListInterface::PRODUCT_TYPE_VARIANT) {
                     $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
                 }
 
-                $virtualProduct = AbstractObject::getById($virtualProductId);
+                $virtualProduct = DataObject::getById($virtualProductId);
                 if ($virtualProduct && method_exists($virtualProduct, 'isActive')) {
                     $virtualProductActive = $virtualProduct->isActive();
                 }
@@ -181,8 +183,8 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }
-                AbstractObject::setGetInheritedValues($b);
-                AbstractObject::setHideUnpublished($hidePublishedMemory);
+                DataObject::setGetInheritedValues($b);
+                DataObject::setHideUnpublished($hidePublishedMemory);
 
                 try {
                     $this->mySqlHelper->doInsertData($data);

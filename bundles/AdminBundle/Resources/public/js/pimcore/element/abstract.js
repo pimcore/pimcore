@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -68,13 +68,21 @@ pimcore.element.abstract = Class.create({
             return true;
         }
 
+        if(this.getAutoSaveIntervalTime()) {
+            this.tab.mask();
+            this._confirmedDirtyClose = true;
+            this.stopAutoSaving();
+            this.saveAutoVersion(this._closeTabPanel.bind(this));
+            return false;
+        }
+
         this._confirmDirtyClose();
         return false;
     },
 
     // CHANGE DETECTOR
     startChangeDetector: function () {
-        if (!this.changeDetectorInterval) {
+        if (!this.changeDetectorInterval && !this.isDirty()) {
             this.changeDetectorInterval = window.setInterval(this.checkForChanges.bind(this), 1000);
         }
     },
@@ -95,6 +103,15 @@ pimcore.element.abstract = Class.create({
         this.tab.on("activate", this.startChangeDetector.bind(this));
         this.tab.on("beforeclose", this._dirtyClose.bind(this));
         this.tab.on("destroy", this.stopChangeDetector.bind(this));
+
+        this.tab.on("activate", function () {
+            if(this.isDirty()) {
+                this.startAutoSaving();
+            }
+        }.bind(this));
+
+        this.tab.on("deactivate", this.stopAutoSaving.bind(this));
+        this.tab.on("destroy", this.stopAutoSaving.bind(this));
     },
 
     isDirty: function () {
@@ -115,13 +132,16 @@ pimcore.element.abstract = Class.create({
         this.stopChangeDetector();
     },
 
-    resetChanges: function () {
+    resetChanges: function (task) {
         this.changeDetectorInitData = {};
 
         try {
-            this.tab.setTitle(this.tab.initialConfig.title);
-            this.startChangeDetector();
-            this.dirty = false;
+            if(task !== "autoSave"){
+                this.dirty = false;
+                this.tab.setTitle(this.tab.initialConfig.title);
+                this.stopAutoSaving();
+                this.startChangeDetector();
+            }
         } catch(exception) {
             // tab was closed to fast
             console.error(exception);
@@ -141,7 +161,7 @@ pimcore.element.abstract = Class.create({
 
     checkForChanges: function () {
 
-        // do not run when tab is not active
+        // do not run when browser tab is not active
         if(document.hidden) {
             return;
         }
@@ -158,16 +178,59 @@ pimcore.element.abstract = Class.create({
         }
 
         var liveData = this.getSaveData();
-
-        var keys = Object.keys(liveData);
-
-        for (var i = 0; i < keys.length; i++) {
-            if (this.changeDetectorInitData[keys[i]]) {
-                if (this.changeDetectorInitData[keys[i]] != liveData[keys[i]]) {
-                    this.detectedChange();
+        Object.keys(liveData).forEach(key => {
+            if (this.changeDetectorInitData[key]) {
+                if (this.changeDetectorInitData[key] != liveData[key]) {
+                    if(!this.isDirty()) {
+                        this.detectedChange();
+                    }
                 }
             }
-            this.changeDetectorInitData[keys[i]] = liveData[keys[i]];
+            this.changeDetectorInitData[key] = liveData[key];
+        });
+
+        if(this.isDirty()){
+            this.autoSaveDetectorInitData = {};
+            this.startAutoSaving();
+        }
+    },
+
+    getAutoSaveIntervalTime: function () {
+        return pimcore.settings[pimcore.helpers.getElementTypeByObject(this) + '_auto_save_interval'];
+    },
+
+    startAutoSaving : function(){
+        let interval = this.getAutoSaveIntervalTime();
+        if (interval && !this.autoSavingInterval) {
+            this.autoSavingInterval = window.setInterval(this.saveAutoVersion.bind(this), interval*1000);
+            this.saveAutoVersion(); // run immediately
+        }
+    },
+
+    stopAutoSaving: function () {
+        window.clearInterval(this.autoSavingInterval);
+        this.autoSavingInterval = null;
+    },
+
+    saveAutoVersion : function(callback) {
+        // do not run when browser tab is not active
+        if(document.hidden) {
+            return;
+        }
+
+        var doSave = false;
+        var liveData = this.getSaveData();
+        Object.keys(liveData).forEach(key => {
+            if (this.autoSaveDetectorInitData[key] != liveData[key]) {
+                doSave = true;
+            }
+            this.autoSaveDetectorInitData[key] = liveData[key];
+        });
+
+        if(doSave) {
+            this.save('autoSave', null, callback);
+        } else if (typeof callback === 'function') {
+            callback();
         }
     },
 
@@ -186,13 +249,16 @@ pimcore.element.abstract = Class.create({
             function (buttonValue) {
                 if (buttonValue === "yes") {
                     this._confirmedDirtyClose = true;
-
-                    this.tab.fireEventedAction("close", [this.tab, {}]);
-                    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-                    tabPanel.remove(this.tab);
+                    this._closeTabPanel();
                 }
             }.bind(this)
         );
+    },
+
+    _closeTabPanel: function () {
+        this.tab.fireEventedAction("close", [this.tab, {}]);
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
     },
 
     addToMainTabPanel: function() {
@@ -233,5 +299,22 @@ pimcore.element.abstract = Class.create({
             iconClass = pimcore.helpers.getClassForIcon(this.data.icon);
         }
         return iconClass;
+    },
+
+    deleteDraft : function () {
+
+        this.dirty = false;
+        this.stopAutoSaving();
+
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_element_deletedraft'),
+            method: 'DELETE',
+            params: {
+                id : this.data['draft']['id']
+            },
+            success : function () {
+                this.reload();
+            }.bind(this)
+        });
     }
 });

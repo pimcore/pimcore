@@ -23,6 +23,9 @@ services:
         tags:
             - { name: monolog.logger, channel: pimcore }
 
+
+    Pimcore\Document\Editable\EditmodeEditableDefinitionCollector: ~
+
     #
     # AREABRICKS
     #
@@ -53,10 +56,10 @@ services:
     Pimcore\Model\Document\Service:
         public: true
 
+    Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface: '@fragment.renderer.inline'
+
     Pimcore\Document\Renderer\DocumentRenderer:
         public: true
-        arguments:
-            $fragmentRenderer: '@fragment.renderer.inline'
 
     Pimcore\Document\Editable\EditableUsageResolver:
         public: true

@@ -7,21 +7,23 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -147,7 +149,8 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         $resolver->setDefined('handle_pending_payments_strategy');
         $resolver->setAllowedTypes('handle_pending_payments_strategy', 'string');
 
-        $resolver->setDefault('handle_pending_payments_strategy', ThrowExceptionStrategy::class);
+        $resolver->setDefault('handle_pending_payments_strategy', CancelPaymentOrRecreateOrderStrategy::class);
+        $resolver->setRequired(['handle_pending_payments_strategy']);
     }
 
     public function createCheckoutManager(CartInterface $cart): CheckoutManagerInterface
@@ -174,10 +177,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
             $this->eventDispatcher,
             $this->paymentProvider
         );
-
-        if ($checkoutManager instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface) {
-            $checkoutManager->setHandlePendingPaymentsStrategy($this->handlePendingPaymentStrategy);
-        }
+        $checkoutManager->setHandlePendingPaymentsStrategy($this->handlePendingPaymentStrategy);
 
         $this->checkoutManagers[$cartId] = $checkoutManager;
 

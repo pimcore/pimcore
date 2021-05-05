@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -25,15 +25,24 @@ if (!console) {
 }
 
 // some globals
-var editables = [];
-var requiredEditables = [];
-var editablesReady = false;
-var editableNames = [];
+/**
+ * @private
+ * @internal
+ */
 var editWindow;
 
+/**
+ * @private
+ * @internal
+ */
+var editableManager = new pimcore.document.editables.manager();
 
-// i18n
-var pimcore_system_i18n = parent.pimcore_system_i18n;
+/**
+ * @private
+ * @internal
+ */
+var dndManager;
+
 
 if (typeof pimcore == "object") {
     pimcore.registerNS("pimcore.globalmanager");
@@ -54,11 +63,6 @@ if (pimcore_document_id) {
     window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
 }
 
-// we need to disable touch support here, otherwise drag & drop of new & existing areablock doesn't work on hybrid devices
-// see also https://github.com/pimcore/pimcore/issues/1542
-// this should be removed in later ExtJS version ( > 6.0) as this should be hopefully fixed by then
-Ext.supports.Touch = false;
-
 // overwrite default z-index of windows, this ensures that CKEditor is above ExtJS Windows
 Ext.WindowManager.zseed = 10020;
 
@@ -76,30 +80,18 @@ Ext.Loader.setConfig({
     enabled: true
 });
 
-Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/ext/ux');
+Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/extjs/ext-ux/src/classic/src');
 
 Ext.require([
     'Ext.dom.Element',
     'Ext.ux.form.MultiSelect'
 ]);
 
-var dndManager;
-
 Ext.onReady(function () {
     var body = Ext.getBody();
 
     // causes styling issues, we don't need this anyway
     body.removeCls("x-body");
-
-    /* Drag an Drop from Tree panel */
-    // IE HACK because the body is not 100% at height
-    try {
-        //TODO EXT5
-        Ext.getBody().applyStyles("min-height:" +
-        parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px");
-    } catch (e) {
-        console.log(e);
-    }
 
     try {
         // init cross frame drag & drop handler
@@ -110,52 +102,31 @@ Ext.onReady(function () {
     }
 
     body.on("click", function () {
-       parent.Ext.menu.MenuMgr.hideAll();
+        parent.Ext.menu.MenuMgr.hideAll();
         editWindow.toggleTagHighlighting(false);
     });
 
     Ext.QuickTips.init();
     Ext.MessageBox.minPromptWidth = 500;
 
-    function getEditable(definition) {
-        let name = definition.name;
-        let inherited = false;
-        if(typeof definition["inherited"] != "undefined") {
-            inherited = definition["inherited"];
-        }
-
-        if (definition.inDialogBox && typeof pimcore.document.editables[definition.type].prototype['render'] !== 'function') {
-            throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
-        }
-
-        if(in_array(name,editableNames)) {
-            pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + name, "error");
-        }
-        editableNames.push(name);
-
-        let editable = new pimcore.document.editables[definition.type](definition.id, name, definition.config, definition.data, inherited);
-        editable.setRealName(definition.realName);
-        editable.setInDialogBox(definition.inDialogBox);
-
-        if(!definition.inDialogBox) {
-            if (typeof editable['render'] === 'function') {
-                editable.render();
-            }
-            editable.setInherited(inherited);
-        }
-
-        return editable;
-    }
 
     if (typeof Ext == "object" && typeof pimcore == "object") {
 
-        for (var i = 0; i < editableDefinitions.length; i++) {
-            let editable = getEditable(editableDefinitions[i]);
-            editables.push(editable);
-            if (editableDefinitions[i]['config']['required']) {
-                requiredEditables.push(editable)
+        // check for duplicate editables
+        var editableHtmlEls = {};
+        document.querySelectorAll('.pimcore_editable').forEach(editableEl => {
+            if(editableHtmlEls[editableEl.id] && editableEl.dataset.name) {
+                let message = "Duplicate editable name: " + editableEl.dataset.name;
+                pimcore.helpers.showNotification("ERROR", message, "error");
+                throw message;
             }
-        }
+            editableHtmlEls[editableEl.id] = true;
+        });
+
+        // initialize editables
+        editableDefinitions.forEach(editableDef => {
+            editableManager.addByDefinition(editableDef);
+        });
 
         if (editWindow.lastScrollposition) {
             if(typeof editWindow.lastScrollposition === 'string') {
@@ -169,7 +140,7 @@ Ext.onReady(function () {
             editWindow.lastScrollposition = null;
         }
 
-        editablesReady = true;
+        editableManager.setInitialized(true);
 
         // add lazyload styles
         // this is necessary, because otherwise ext will overwrite many default styles (reset.css)
@@ -188,18 +159,20 @@ Ext.onReady(function () {
         var tmpEl;
         for (var e=0; e<editablesForTooltip.length; e++) {
             tmpEl = Ext.get(editablesForTooltip[e]);
-            if(tmpEl) {
-                if(tmpEl.hasCls("pimcore_editable_inc") || tmpEl.hasCls("pimcore_editable_href")
-                                    || tmpEl.hasCls("pimcore_editable_image") || tmpEl.hasCls("pimcore_editable_renderlet")
-                                    || tmpEl.hasCls("pimcore_editable_snippet")) {
-                    new Ext.ToolTip({
-                        target: tmpEl,
-                        showDelay: 100,
-                        hideDelay: 0,
-                        trackMouse: true,
-                        html: t("click_right_for_more_options")
-                    });
-                }
+
+            if (tmpEl && tmpEl.hasCls("pimcore_editable_inc")
+                || tmpEl.hasCls("pimcore_editable_href")
+                || tmpEl.hasCls("pimcore_editable_image")
+                || tmpEl.hasCls("pimcore_editable_renderlet")
+                || tmpEl.hasCls("pimcore_editable_snippet")
+            ) {
+                new Ext.ToolTip({
+                    target: tmpEl,
+                    showDelay: 1000,
+                    hideDelay: 0,
+                    trackMouse: false,
+                    html: t("click_right_for_more_options")
+                });
             }
         }
 
@@ -219,7 +192,7 @@ Ext.onReady(function () {
                             handler: function (item) {
                                 item.parentMenu.destroy();
                                 pimcore.helpers.openDocument(this.getAttribute("pimcore_id"),
-                                                                                this.getAttribute("pimcore_type"));
+                                    this.getAttribute("pimcore_type"));
                             }.bind(this)
                         }));
 
@@ -241,8 +214,3 @@ Ext.onReady(function () {
         editWindow.loadMask.hide();
     }
 });
-
-
-
-
-

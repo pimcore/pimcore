@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -256,6 +256,17 @@ pimcore.object.tags.abstract = Class.create({
             metaData.tdStyle = 'text-decoration: line-through;color: #777;';
         }
         return value;
+    },
+
+    sumWidths: function (width1, width2) {
+        if (/^\d+$/.test(width1)) {
+            width1 += 'px';
+        }
+        if (/^\d+$/.test(width2)) {
+            width2 += 'px';
+        }
+
+        return 'calc(' + width1 + ' + ' + width2 + ')';
     }
 
 });

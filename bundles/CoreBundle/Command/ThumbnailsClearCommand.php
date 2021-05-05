@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -20,6 +21,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ThumbnailsClearCommand extends AbstractCommand
 {
     protected function configure()
@@ -42,7 +46,7 @@ class ThumbnailsClearCommand extends AbstractCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -60,12 +64,12 @@ class ThumbnailsClearCommand extends AbstractCommand
         }
 
         $configClass = 'Pimcore\Model\Asset\\' . ucfirst($input->getOption('type')) . '\Thumbnail\Config';
-        /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config $thumbConfig */
+        /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config|null $thumbConfig */
         $thumbConfig = $configClass::getByName($input->getOption('name'));
         if (!$thumbConfig) {
-            $this->writeError(sprintf('Unable to find %s thumbnail config with name: %s', $input->getOption('type'), $input->getOption('name')));
-
-            return 1;
+            $this->writeError(sprintf('Unable to find %s thumbnail config with name: %s. Nevertheless trying to delete remaining files', $input->getOption('type'), $input->getOption('name')));
+            $thumbConfig = new $configClass();
+            $thumbConfig->setName($input->getOption('name'));
         }
 
         $thumbConfig->clearTempFiles();

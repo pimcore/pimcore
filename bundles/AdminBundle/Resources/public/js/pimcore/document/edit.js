@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -140,6 +140,18 @@ pimcore.document.edit = Class.create({
 
     },
 
+    getEditables: function () {
+        return this.frame.editableManager.getEditables();
+    },
+
+    getRequiredEditables: function () {
+        return this.frame.editableManager.getRequiredEditables();
+    },
+
+    editablesReady: function() {
+        return this.frame.editableManager.isInitialized();
+    },
+
     toggleTagHighlighting: function (force) {
 
         if(!this['tagHighlightingActive']) {
@@ -151,24 +163,22 @@ pimcore.document.edit = Class.create({
             return;
         }
 
-        var editables = this.frame.editables;
-        var ed;
-        for(var i=0; i<editables.length; i++) {
-            ed = this.frame.Ext.get(editables[i].getId());
+        Object.values(this.getEditables()).forEach(editable => {
+            let ed = this.frame.Ext.get(editable.getId());
 
             if(!ed.hasCls("pimcore_editable_inc") && !ed.hasCls("pimcore_editable_areablock")
                 && !ed.hasCls("pimcore_editable_block") && !ed.hasCls("pimcore_editable_area")) {
                 if(!this.tagHighlightingActive) {
-                    var mask = ed.mask();
+                    let mask = ed.mask();
                     mask.setStyle("background-color","#f5d833");
                     mask.setStyle("opacity","0.5");
                     mask.setStyle("pointer-events","none");
                 } else {
                     // bring editables back to their state they were before
-                    editables[i].setInherited(editables[i].getInherited());
+                    editable.setInherited(editable.getInherited());
                 }
             }
-        }
+        });
 
         this.tagHighlightingActive = !this.tagHighlightingActive;
 
@@ -295,7 +305,7 @@ pimcore.document.edit = Class.create({
         this.areaToolbarTrigger.toggle(false);
 
         if (this.reloadInProgress) {
-            disableSaveToSession = true;
+            return;
         }
 
         this.reloadInProgress = true;
@@ -318,8 +328,7 @@ pimcore.document.edit = Class.create({
         if (disableSaveToSession === true) {
             this.frame = null;
             Ext.get(this.iframeName).dom.src = this.getEditLink();
-        }
-        else {
+        } else {
             this.document.saveToSession(function () {
                 this.frame = null;
                 Ext.get(this.iframeName).dom.src = this.getEditLink();
@@ -381,28 +390,23 @@ pimcore.document.edit = Class.create({
 
         var values = {};
 
-        if (!this.frame || !this.frame.editablesReady) {
+        if (!this.frame || !this.editablesReady()) {
             throw "edit not available";
         }
 
-        try {
-            var editables = this.frame.editables;
-            var editableName = "";
-
-            for (var i = 0; i < editables.length; i++) {
-                try {
-                    if (editables[i].getName() && !editables[i].getInherited()) {
-                        editableName = editables[i].getName();
-                        values[editableName] = {};
-                        values[editableName].data = editables[i].getValue();
-                        values[editableName].type = editables[i].getType();
-                    }
-                } catch (e) {
+        Object.values(this.getEditables()).forEach(editable => {
+            try {
+                if (editable.getName() && !editable.getInherited()) {
+                    let name = editable.getName();
+                    values[name] = {
+                        data: editable.getValue(),
+                        type: editable.getType()
+                    };
                 }
+            } catch(e2) {
+
             }
-        }
-        catch (e2) {
-        }
+        });
 
         return values;
     },
@@ -410,27 +414,20 @@ pimcore.document.edit = Class.create({
     getEmptyRequiredEditables: function () {
         var emptyRequiredEditables = [];
 
-        if (!this.frame || !this.frame.editablesReady) {
+        if (!this.frame || !this.editablesReady()) {
             throw "edit not available";
         }
 
-        try {
-            var requiredEditables = this.frame.requiredEditables;
-            var editableName = "";
-
-            for (var i = 0; i < requiredEditables.length; i++) {
-                try {
-                    if(requiredEditables[i].requiredError) {
-                        editableName = requiredEditables[i].getName();
-                        requiredEditables[i].checkValue(true);
-                        emptyRequiredEditables.push(editableName);
-                    }
-                } catch (e) {
+        Object.values(this.getRequiredEditables()).forEach(editable => {
+            try {
+                if(editable.requiredError) {
+                    let name = editable.getName();
+                    editable.checkValue(true);
+                    emptyRequiredEditables.push(name);
                 }
+            } catch (e) {
             }
-        }
-        catch (e2) {
-        }
+        });
 
         return emptyRequiredEditables;
     }

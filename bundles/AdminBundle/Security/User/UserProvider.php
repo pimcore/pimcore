@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\User;
@@ -23,24 +24,21 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class UserProvider implements UserProviderInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function loadUserByUsername($username)
     {
-        /** @var PimcoreUser $pimcoreUser */
         $pimcoreUser = PimcoreUser::getByName($username);
 
         if ($pimcoreUser) {
-            $user = new User($pimcoreUser);
-
-            return $user;
+            return new User($pimcoreUser);
         }
 
         throw new UsernameNotFoundException(sprintf('User %s was not found', $username));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param User $user
      */
@@ -68,7 +66,7 @@ class UserProvider implements UserProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsClass($class)
     {

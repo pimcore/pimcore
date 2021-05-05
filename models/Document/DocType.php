@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
@@ -29,12 +27,16 @@ class DocType extends Model\AbstractModel
     /**
      * ID of the document-type
      *
+     * @internal
+     *
      * @var int
      */
     protected $id;
 
     /**
      * Name of the document-type
+     *
+     * @internal
      *
      * @var string
      */
@@ -43,12 +45,16 @@ class DocType extends Model\AbstractModel
     /**
      * Group of document-types
      *
+     * @internal
+     *
      * @var string
      */
     protected $group;
 
     /**
      * The specified controller
+     *
+     * @internal
      *
      * @var string
      */
@@ -57,6 +63,8 @@ class DocType extends Model\AbstractModel
     /**
      * The specified template
      *
+     * @internal
+     *
      * @var string
      */
     protected $template;
@@ -64,21 +72,29 @@ class DocType extends Model\AbstractModel
     /**
      * Type, must be one of the following: page,snippet,email
      *
+     * @internal
+     *
      * @var string
      */
     protected $type;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $priority = 0;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $creationDate;
 
     /**
+     * @internal
+     *
      * @var int
      */
     protected $modificationDate;

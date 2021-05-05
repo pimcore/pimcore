@@ -32,8 +32,8 @@ if($asset instanceof Asset\Video) {
       /*
          OUTPUTS:
          Array(
-             "mp4" => "/website/var/tmp/video.....mp4",
-             "webm" => "/website/var/tmp/video.....webm"
+             "mp4" => "/public/var/tmp/video.....mp4",
+             "webm" => "/public/var/tmp/video.....webm"
          )
       */
    } else if ($thumbnail["status"] == "inprogress")  {
@@ -44,7 +44,27 @@ if($asset instanceof Asset\Video) {
 }
 ```
 
---- 
+#### Adaptive bitrate video-streaming
+This feature allows you to generate a MPEG-DASH (.mpd) file for Adaptive  bitrate video-streaming.
+
+As soon as you define transformations based on the bitrates in thumbnail config, the `.mpd` file will be generated with bitrate streams. 
+The `.mpd` file will be referenced in  generated `<video>` Tag.
+
+However, you have to include a polyfill for all major browsers to support Adaptive  bitrate video-streaming: https://github.com/Dash-Industry-Forum/dash.js
+```php
+{{ pimcore_video('campaignVideo', {
+        width: auto,
+        height: auto,
+        thumbnail: 'new',
+    }) }}
+```
+generates frontend:
+```html
+<video width="100%" height="auto" controls="controls" class="pimcore_video" preload="auto" src="blob:http://xyz/01f91372-ddd8-4d3f-ac85-e420432d9704">
+    <source type="video/mp4" src="/videodata/video-thumb__955__campaignVideo/Volkswagen-Van.mp4">
+    <source type="application/dash+xml" src="/videodata/video-thumb__955__campaignVideo/Volkswagen-Van.mpd">
+</video>
+```
 
 ### Using with the Video Editable
 Please have a look at [Video Editable](../../03_Documents/01_Editables/38_Video.md). 

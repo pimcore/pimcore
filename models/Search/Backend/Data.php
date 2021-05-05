@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Search\Backend;
@@ -26,6 +27,8 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data\Dao;
 
 /**
+ * @internal
+ *
  * @method Dao getDao()
  */
 class Data extends \Pimcore\Model\AbstractModel
@@ -34,80 +37,80 @@ class Data extends \Pimcore\Model\AbstractModel
     const MAX_WORD_OCCURENCES = 3;
 
     /**
-     * @var Data\Id
+     * @var Data\Id|null
      */
-    public $id;
+    protected ?Data\Id $id = null;
 
     /**
      * @var string
      */
-    public $fullPath;
+    protected $fullPath;
 
     /**
      * document | object | asset
      *
      * @var string
      */
-    public $maintype;
+    protected $maintype;
 
     /**
      * webresource type (e.g. page, snippet ...)
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * currently only relevant for objects where it portrays the class name
      *
      * @var string
      */
-    public $subtype;
+    protected $subtype;
 
     /**
      * published or not
      *
      * @var bool
      */
-    public $published;
+    protected $published;
 
     /**
      * timestamp of creation date
      *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * timestamp of modification date
      *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * User-ID of the owner
      *
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * User-ID of the user last modified the element
      *
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * @var string|null
      */
-    public $data;
+    protected $data;
 
     /**
      * @var string
      */
-    public $properties;
+    protected $properties;
 
     /**
      * @param Element\ElementInterface $element
@@ -120,19 +123,19 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @return Data\Id
+     * @return Data\Id|null
      */
-    public function getId()
+    public function getId(): ?Data\Id
     {
         return $this->id;
     }
 
     /**
-     * @param Data\Id $id
+     * @param Data\Id|null $id
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(?Data\Id $id)
     {
         $this->id = $id;
 
@@ -352,7 +355,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setDataFromElement($element)
+    public function setDataFromElement(Element\ElementInterface $element)
     {
         $this->data = null;
 
@@ -375,7 +378,7 @@ class Data extends \Pimcore\Model\AbstractModel
         if (is_array($properties)) {
             foreach ($properties as $nextProperty) {
                 $pData = (string) $nextProperty->getData();
-                if ($nextProperty->getName() == 'bool') {
+                if ($nextProperty->getName() === 'bool') {
                     $pData = $pData ? 'true' : 'false';
                 }
 
@@ -474,15 +477,15 @@ class Data extends \Pimcore\Model\AbstractModel
             $this->published = true;
         } elseif ($element instanceof DataObject\AbstractObject) {
             if ($element instanceof DataObject\Concrete) {
-                $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
-                DataObject\AbstractObject::setGetInheritedValues(true);
+                $getInheritedValues = DataObject::doGetInheritedValues();
+                DataObject::setGetInheritedValues(true);
 
                 $this->published = $element->isPublished();
                 foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
                     $this->data .= ' ' . $value->getDataForSearchIndex($element);
                 }
 
-                DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
+                DataObject::setGetInheritedValues($getInheritedValues);
             } elseif ($element instanceof DataObject\Folder) {
                 $this->published = true;
             }
@@ -546,9 +549,9 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @param Element\ElementInterface $element
      *
-     * @return Data
+     * @return self
      */
-    public static function getForElement($element)
+    public static function getForElement(Element\ElementInterface $element): self
     {
         $data = new self();
         $data->getDao()->getForElement($element);

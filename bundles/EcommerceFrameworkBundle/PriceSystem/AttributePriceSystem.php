@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
@@ -85,7 +86,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products): PriceInfoInterface
     {
@@ -95,13 +96,11 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
         $price = $this->getPriceClassInstance($amount);
         $totalPrice = $this->getPriceClassInstance($amount->mul($quantityScale));
 
-        if ($taxClass) {
-            $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $price->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+        $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+        $price->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
-            $totalPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
-        }
+        $totalPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+        $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
         $taxCalculationService = $this->getTaxCalculationService();
         $taxCalculationService->updateTaxes($price, $this->priceType);
@@ -111,7 +110,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
     {

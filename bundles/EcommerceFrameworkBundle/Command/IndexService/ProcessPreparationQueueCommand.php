@@ -1,22 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Console\Traits\Parallelization;
@@ -25,6 +25,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
@@ -57,7 +60,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -74,7 +77,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -83,7 +86,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function fetchItems(InputInterface $input): array
     {
@@ -97,7 +100,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runSingleCommand(string $serializedRow, InputInterface $input, OutputInterface $output): void
     {
@@ -133,7 +136,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     /**
      * @param string[] $openTenantList a list of tenants for which the workers should be retrieved
      *
-     * @return AbstractBatchProcessingWorker[]
+     * @return ProductCentricBatchProcessingWorker[]
      */
     private function getTenantWorkers(array $openTenantList): array
     {

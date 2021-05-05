@@ -1,14 +1,14 @@
 ## Synonyms 
-With elastic search so called synonym filters can be configured to further optimize search behavior. 
+With elasticsearch so called synonym filters can be configured to further optimize search behavior. 
 For details see [Synonym Token Filter and following pages](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/analysis-synonym-tokenfilter.html)
-at elastic search documentation. 
+at elasticsearch documentation. 
 
-Pimcore provides an out-of-the box integration to provide synonyms for the synonym filters of elastic search. 
+Pimcore provides an out-of-the box integration to provide synonyms for the synonym filters of elasticsearch. 
 
 
 #### Synonym Providers
 Synonym providers are symfony services that implement the `SynonymProviderInterface`, load synonyms 
-from a specific source and provide it for using them in elastic search synonym filters. 
+from a specific source and provide it for using them in elasticsearch synonym filters. 
 
 Sources can be simple files, Pimcore assets, Pimcore data objects, database tables or what ever source is
 needed. 
@@ -34,7 +34,7 @@ pimcore_ecommerce_framework:
                             provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\FileSynonymProvider
                             # additional options for synonym provider (are applied to a child-service instance of given synonym provider
                             options:
-                                synonymFile: '%kernel.project_dir%/web/var/assets/system/synonyms.txt'
+                                synonymFile: '%kernel.project_dir%/public/var/assets/system/synonyms.txt'
 
 ```
 
@@ -63,7 +63,7 @@ pimcore_ecommerce_framework:
                             provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\FileSynonymProvider
                             # additional options for synonym provider (are applied to a child-service instance of given synonym provider
                             options:
-                                synonymFile: '%kernel.project_dir%/web/var/assets/system/synonyms.txt'
+                                synonymFile: '%kernel.project_dir%/public/var/assets/system/synonyms.txt'
 
                     index_settings:
                         analysis:
@@ -74,8 +74,11 @@ pimcore_ecommerce_framework:
 
 ```
 
+> Don't forget to also add the synonyms filter to an analysers filter array where needed - as described in [elasticsearch docs](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/analysis-synonym-tokenfilter.html).
+
+
 #### Updating Synonyms 
-There are three ways of updating the synonyms in the elastic search index. For all applies that the synonyms are loaded 
+There are three ways of updating the synonyms in the elasticsearch index. For all applies that the synonyms are loaded 
 from synonyms provider and injected to the synonyms array of the corresponding synonyms filter by Pimcore.
 
 ##### Index Creation

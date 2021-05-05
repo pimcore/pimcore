@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Event;
@@ -203,9 +204,9 @@ final class DocumentEvents
      *  - mail | \Pimcore\Mail | the pimcore mail instance
      *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
      *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | Swift_Mailer|null | newsletter specific swift mailer if enabled in system settings
+     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific mailer if enabled in system settings
      *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */
@@ -216,9 +217,9 @@ final class DocumentEvents
      *  - mail | \Pimcore\Mail | the pimcore mail instance
      *  - document | \Pimcore\Model\Document\Newsletter | the newsletter document
      *  - sendingContainer | \Pimcore\Document\Newsletter | sending param container of newsletter helper
-     *  - mailer | Swift_Mailer|null | newsletter specific swift mailer if enabled in system settings
+     *  - mailer | \Pimcore\Mail\Mailer|null | newsletter specific swift mailer if enabled in system settings
      *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent\GenericEvent")
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
      */

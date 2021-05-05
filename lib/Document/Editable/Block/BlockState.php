@@ -7,24 +7,26 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Document\Editable\Block;
 
 /**
+ * @internal
+ *
  * Keeps track of the current block nesting level and index (will be used from
  * editables to build their hierarchical editable name).
  *
  * On sub requests, a new BlockState is added to the state stack which is valid
  * for the sub request.
  */
-class BlockState implements \JsonSerializable
+final class BlockState implements \JsonSerializable
 {
     /**
      * @var BlockName[]
@@ -101,7 +103,7 @@ class BlockState implements \JsonSerializable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function jsonSerialize()
     {

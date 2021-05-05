@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Translation\ExportService\Exporter;
@@ -27,13 +28,18 @@ class Xliff12Exporter implements ExporterInterface
      */
     private $xliffEscaper;
 
+    /**
+     * @var \SimpleXMLElement|null
+     */
+    private $xliffFile;
+
     public function __construct(Xliff12Escaper $xliffEscaper)
     {
         $this->xliffEscaper = $xliffEscaper;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function export(AttributeSet $attributeSet, string $exportId = null): string
     {
@@ -45,10 +51,10 @@ class Xliff12Exporter implements ExporterInterface
             return $exportFile;
         }
 
-        $xliff = simplexml_load_file($exportFile, null, LIBXML_NOCDATA);
+        $this->prepareExportFile($exportFile);
 
         foreach ($attributeSet->getTargetLanguages() as $targetLanguage) {
-            $file = $xliff->addChild('file');
+            $file = $this->xliffFile->addChild('file');
             $file->addAttribute('original', $attributeSet->getTranslationItem()->getType() . '-' . $attributeSet->getTranslationItem()->getId());
             $file->addAttribute('source-language', $attributeSet->getSourceLanguage());
             $file->addAttribute('target-language', $targetLanguage);
@@ -71,13 +77,13 @@ class Xliff12Exporter implements ExporterInterface
             }
         }
 
-        $xliff->asXML($exportFile);
+        $this->xliffFile->asXML($exportFile);
 
         return $exportFile;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getExportFilePath(string $exportId): string
     {
@@ -91,7 +97,20 @@ class Xliff12Exporter implements ExporterInterface
     }
 
     /**
-     * @inheritdoc
+     * @param string $exportFilePath
+     *
+     */
+    protected function prepareExportFile(string $exportFilePath)
+    {
+        if ($this->xliffFile === null) {
+            $dom = new \DOMDocument();
+            $dom->loadXML(file_get_contents($exportFilePath));
+            $this->xliffFile = simplexml_import_dom($dom);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getContentType(): string
     {

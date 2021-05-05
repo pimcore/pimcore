@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
@@ -35,6 +36,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Workflow\Registry;
 
+/**
+ * @internal
+ */
 class WorkflowManagementListener implements EventSubscriberInterface
 {
     /**
@@ -77,7 +81,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -205,7 +209,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
                             if (!empty($validLayouts)) {
 
                                 // check user permissions again
-                                if ($validLayouts && $validLayouts[$workflowLayoutId]) {
+                                if ($validLayouts[$workflowLayoutId]) {
                                     $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                                     $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                                     DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getArgument('object'));

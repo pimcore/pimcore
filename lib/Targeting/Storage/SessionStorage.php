@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Targeting\Storage;
@@ -149,6 +149,8 @@ class SessionStorage implements TargetingStorageInterface
      * @param string $scope
      * @param bool $checkPreviousSession
      *
+     * @throws \Exception
+     *
      * @return null|NamespacedAttributeBag
      */
     private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
@@ -164,9 +166,6 @@ class SessionStorage implements TargetingStorageInterface
         }
 
         $session = $request->getSession();
-
-        /** @var NamespacedAttributeBag $bag */
-        $bag = null;
 
         switch ($scope) {
             case self::SCOPE_SESSION:
@@ -184,7 +183,11 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
-        return $bag;
+        if ($bag instanceof NamespacedAttributeBag) {
+            return $bag;
+        }
+
+        throw new \Exception('wrong type');
     }
 
     private function updateTimestamps(

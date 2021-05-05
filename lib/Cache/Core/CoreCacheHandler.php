@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Cache\Core;
@@ -26,13 +27,17 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
  * explicitely does not expose a PSR-6 API but is intended for internal use from Pimcore\Cache or directly. Actual
  * cache calls are forwarded to a PSR-6 cache implementation though.
+ *
+ * Use Pimcore\Cache static interface, do not use this handler directly
+ *
+ * @internal
  */
 class CoreCacheHandler implements LoggerAwareInterface
 {
@@ -155,6 +160,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param TagAwareAdapterInterface $pool
      */
     public function setPool(TagAwareAdapterInterface $pool): void
@@ -163,7 +169,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * @return WriteLock
      */
     public function getWriteLock()
     {
@@ -181,7 +187,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function enable()
     {
@@ -192,7 +198,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function disable()
     {
@@ -498,11 +504,6 @@ class CoreCacheHandler implements LoggerAwareInterface
             );
         }
 
-        // normalize tags to array
-        if (!empty($tags) && !is_array($tags)) {
-            $tags = [$tags];
-        }
-
         // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
         $tags = array_values($tags);
         $tags = array_unique($tags);
@@ -538,7 +539,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param mixed $data
      * @param array $tags
      * @param null $lifetime
-     * @param false $force
+     * @param bool $force
      *
      * @return bool
      */
@@ -609,6 +610,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         $item->set($data);
         $item->expiresAfter($lifetime);
         $item->tag($tags);
+        $item->tag($key);
         $result = $this->pool->save($item);
 
         if ($result) {
@@ -681,7 +683,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return bool
      */
-    public function clearTags(array $tags)
+    public function clearTags(array $tags): bool
     {
         $this->writeLock->lock();
 
@@ -787,7 +789,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
-     *
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -803,6 +805,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -816,6 +819,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -830,6 +834,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -843,6 +848,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
+     * @internal
      * @param string $tag
      *
      * @return $this
@@ -858,7 +864,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Writes save queue to the cache
-     *
+     * @internal
      * @return bool
      */
     public function writeSaveQueue()
@@ -908,6 +914,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Shut down pimcore - write cache entries and clean up
      *
+     * @internal
      * @param bool $forceWrite
      *
      * @return $this

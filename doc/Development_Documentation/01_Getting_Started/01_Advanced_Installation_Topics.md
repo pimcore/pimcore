@@ -49,5 +49,5 @@ pimcore_install:
 # We need bash since RANDOM is a bash builtin
 SHELL=/bin/bash
 
-*/5 * * * * sleep $[ ( $RANDOM % 120 ) + 1 ]s ; /your/project/bin/console maintenance
+*/5 * * * * sleep $[ ( $RANDOM \% 120 ) + 1 ]s ; /your/project/bin/console maintenance
 ```

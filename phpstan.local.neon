@@ -1,3 +1,0 @@
-includes:
-    - ../../../vendor/phpstan/phpstan-symfony/extension.neon
-    - ../../../vendor/pimcore/pimcore/phpstan.neon

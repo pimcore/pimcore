@@ -3,21 +3,24 @@
 Following aspects need to be considered in index configuration:  
 
 ## General Configuration Options
-In the `config_options` area general Elastic Search settings can be made - like hosts, index settings, etc. 
+In the `config_options` area general elasticsearch settings can be made - like hosts, index settings, etc. 
 
 ##### `client_config`
-- `logging`: `true`/`false` to activate logging of elastic search client
+- `logging`: `true`/`false` to activate logging of elasticsearch client
 - `indexName`: index name to be used, if not provided tenant name is used as index name 
 
 ##### `index_settings`
 Index settings that are used when creating a new index. They are passed 1:1 as 
 settings param to the body of the create index command. Details see 
-also [Elastic Search Docs](https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/_index_management_operations.html). 
+also [elasticsearch Docs](https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/_index_management_operations.html). 
 
 
 ##### `es_client_params`
-- `hosts`: Array of hosts of the Elastic Search cluster to use. 
-- `indexType`: Necessary for Elastic Search 6 - defines the type name of products in index. 
+- `hosts`: Array of hosts of the elasticsearch cluster to use. 
+- `indexType`: Necessary for elasticsearch 5 - defines the type name of products in index.
+  For elasticsearch 6 it is optional, do not use it for elasticsearch 7.    
+- `timeoutMs`: optional parameter for setting the client timeout (frontend) in milliseconds.
+- `timeoutMsBackend`: optional parameter for setting the client timeout (CLI) in milliseconds. This value is typically higher than ``timeoutMs``.
 
 ##### `synonym_providers`
 Specify synonym providers for synonym filters defined in filter section of index settings. 
@@ -37,11 +40,14 @@ pimcore_ecommerce_framework:
                     es_client_params:
                         hosts:
                             - '%elasticsearch.host%'
-                        indexType: 'Product'
+                        indexType: '_doc' # optional for elasticsearch 6, not needed for elasticsearch 7
+                        timeoutMs: 20000, # 20 seconds
+                        timeoutMsBackend: 120000 # 2 minutes
 
                     index_settings:
                         number_of_shards: 5
                         number_of_replicas: 0
+                        max_ngram_diff: 30
                         analysis:
                             analyzer:
                                 my_ngram_analyzer:
@@ -66,8 +72,8 @@ pimcore_ecommerce_framework:
 
 
 ## Data Types for attributes
-The type of the data attributes needs to be set to elastic search data types. Be careful, some types changed between
-Elastic Search 5 and 6 (like string vs. keyword/text). 
+The type of the data attributes needs to be set to elasticsearch data types. Be careful, some types changed between
+elasticsearch 5 and 6 (like string vs. keyword/text). 
 
 ```yml
 pimcore_ecommerce_framework:
@@ -81,7 +87,7 @@ pimcore_ecommerce_framework:
 ```
 
 In addition to the `type` configuration, you also can provide custom mappings for a field. If provided, these mapping 
-configurations are used for creating the mapping of the elastic search index.
+configurations are used for creating the mapping of the elasticsearch index.
 
 You can also skip the `type` and `mapping`, then ES will try to create dynamic mapping. 
 

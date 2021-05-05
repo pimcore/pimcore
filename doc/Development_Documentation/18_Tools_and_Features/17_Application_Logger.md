@@ -28,7 +28,7 @@ and therefore it can be used the usual way.
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Controller\FrontendController;
@@ -55,7 +55,7 @@ class TestController extends FrontendController
 #### Dependency Injection
 
 ```yaml
-AppBundle\YourService: 
+App\YourService: 
     calls:
         - [setLogger, ['@Pimcore\Log\ApplicationLogger']]
 ```
@@ -67,13 +67,13 @@ services:
     _defaults:
         autowire: true
 
-    AppBundle\YourService: ~
+    App\YourService: ~
 ```
 
 ```php
 <?php
 
-namespace AppBundle;
+namespace App;
 
 use Pimcore\Log\ApplicationLogger;
 
@@ -149,7 +149,7 @@ channel logger or by using a DI tag to specify the channel you want to log to:
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 
@@ -169,7 +169,7 @@ Or use DI tags in combination with the `@logger` service to inject the channel l
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Psr\Log\LoggerInterface;
 
@@ -199,7 +199,7 @@ The service definition can add a DI tag to specify which logger should be inject
 
 ```yaml
 services:
-    AppBundle\Controller\TestController:
+    App\Controller\TestController:
         arguments:
             $logger: '@logger'
         tags:
@@ -213,7 +213,7 @@ There are some context variables with a special functionality: `fileObject`, `re
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
@@ -224,7 +224,7 @@ class TestController
     public function testAction(ApplicationLogger $logger)
     {
         $fileObject = new FileObject('some interesting data');
-        $myObject   = AbstractObject::getById(73);
+        $myObject   = DataObject::getById(73);
         
         $logger->error('my error message', [
             'fileObject'    => $fileObject,

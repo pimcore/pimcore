@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Workflow;
@@ -24,13 +25,14 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\PlaceConfig;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\Workflow;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Manager
 {
@@ -95,13 +97,14 @@ class Manager
      * @param string $workflowName
      * @param string $action
      * @param array $actionConfig
+     * @param CustomHtmlServiceInterface $customHtmlService
      *
      * @return $this
      */
-    public function addGlobalAction(string $workflowName, string $action, array $actionConfig)
+    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
-        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName);
+        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName, $customHtmlService);
 
         return $this;
     }
@@ -322,9 +325,7 @@ class Manager
      */
     public function getTransitionByName(string $workflowName, string $transitionName): ?\Symfony\Component\Workflow\Transition
     {
-        if (!$workflow = $this->getWorkflowByName($workflowName)) {
-            throw new \Exception(sprintf('workflow %s not found', $workflowName));
-        }
+        $workflow = $this->getWorkflowByName($workflowName);
 
         foreach ($workflow->getDefinition()->getTransitions() as $transition) {
             if ($transition->getName() === $transitionName) {
@@ -342,7 +343,8 @@ class Manager
      * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
      * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
      *
-     * @param Asset|Concrete|PageSnippet $subject
+     * @param string $workflowName
+     * @param object $subject
      *
      * @return bool true if initial state was applied
      *
@@ -354,9 +356,7 @@ class Manager
             return false;
         }
 
-        if (!$markingStore = $workflow->getMarkingStore()) {
-            return false;
-        }
+        $markingStore = $workflow->getMarkingStore();
 
         // check that the subject has a non-empty place
         $initialPlaces = $this->getInitialPlacesForWorkflow($workflow);
@@ -390,17 +390,8 @@ class Manager
 
     public function getInitialPlacesForWorkflow(Workflow $workflow): array
     {
-        $initialPlaces = [];
         $definition = $workflow->getDefinition();
 
-        if (method_exists($definition, 'getInitialPlaces')) {
-            // Symfony >= 4.3
-            $initialPlaces = $definition->getInitialPlaces();
-        } elseif (method_exists($definition, 'getInitialPlace')) {
-            // Symfony < 4.3
-            $initialPlaces = [$definition->getInitialPlace()];
-        }
-
-        return $initialPlaces;
+        return $definition->getInitialPlaces();
     }
 }

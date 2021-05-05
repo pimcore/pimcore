@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -172,8 +172,10 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
 
     // unregister the dropzone from ScrollManager
     unreg: function() {
-        Ext.dd.ScrollManager.unregister(this.portal.body);
-        Portal.view.PortalDropZone.superclass.unreg.call(this);
-        delete this.portal.afterLayout;
+        if (this.portal) {
+            Ext.dd.ScrollManager.unregister(this.portal.body);
+            Portal.view.PortalDropZone.superclass.unreg.call(this);
+            delete this.portal.afterLayout;
+        }
     }
 });

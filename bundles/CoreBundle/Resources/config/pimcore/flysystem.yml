@@ -1,0 +1,44 @@
+flysystem:
+    storages:
+        # TODO: remove private permissions once https://github.com/thephpleague/flysystem-bundle/pull/69 got merged
+        # and add directory_visibility config option to the storages
+        pimcore.asset.storage:
+            adapter: 'local'
+            visibility: public
+            options:
+                directory: '%kernel.project_dir%/public/var/assets'
+                permissions:
+                    file:
+                        private: 0644
+                    dir:
+                        private: 0755
+        pimcore.asset_cache.storage:
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/public/var/tmp/asset-cache'
+        pimcore.thumbnail.storage:
+            adapter: 'local'
+            visibility: public
+            options:
+                directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
+                permissions:
+                    file:
+                        private: 0644
+                    dir:
+                        private: 0755
+        pimcore.version.storage:
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/versions'
+        pimcore.recycle_bin.storage:
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/recyclebin'
+        pimcore.admin.storage:
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/admin'

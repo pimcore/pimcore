@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -12,16 +12,16 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.areablock");
-pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
+pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstract, {
 
     dialogBoxes: {},
 
     initialize: function(id, name, config, data, inherited) {
 
+        this.initalConfig = config;
         this.id = id;
         this.name = name;
         this.elements = [];
-        this.brickTypeUsageCounter = [];
         this.config = this.parseConfig(config);
         this.toolbarGlobalVar = this.getType() + "toolbar";
         this.applyFallbackIcons();
@@ -32,12 +32,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
         this.visibilityButtons = {};
 
-        var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv, plusUpDiv, plusUpButton,
-            dialogBoxDiv, dialogBoxButton;
-
-        this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
-
         // reload or not => default not
         if(typeof this.config["reload"] == "undefined") {
             this.config.reload = false;
@@ -47,15 +41,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             this.config['controlsTrigger'] = 'hover';
         }
 
-        for (var i=0; i<data.length; i++) {
-            this.brickTypeUsageCounter[data[i].type] = this.brickTypeUsageCounter[data[i].type]+1 || 1;
-        }
-
         // type mapping
-        var typeNameMappings = {};
+        this.typeNameMappings = {};
         this.allowedTypes = []; // this is for the toolbar to check if an brick can be dropped to this areablock
         for (var i=0; i<this.config.types.length; i++) {
-            typeNameMappings[this.config.types[i].type] = {
+            this.typeNameMappings[this.config.types[i].type] = {
                 name: this.config.types[i].name,
                 description: this.config.types[i].description,
                 icon: this.config.types[i].icon
@@ -64,8 +54,29 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             this.allowedTypes.push(this.config.types[i].type);
         }
 
+        // click outside, hide all block buttons
+        if(this.config['controlsTrigger'] === 'hover') {
+            Ext.getBody().on('click', function (event) {
+                if (Ext.get(id) && !Ext.get(id).isAncestor(event.target)) {
+                    Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
+                        el.hide();
+                    });
+                }
+            });
+        }
+    },
+
+    refresh: function() {
+        var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
+            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv, plusUpDiv, plusUpButton,
+            dialogBoxDiv, dialogBoxButton;
+
+        this.elements = Ext.get(this.id).query('.pimcore_block_entry[data-name="' + this.name + '"][key]');
+
+
+        this.brickTypeUsageCounter = [];
         var limitReached = false;
-        if(typeof config["limit"] != "undefined" && this.elements.length >= config.limit) {
+        if(this.config["limit"] && this.elements.length >= this.config.limit) {
             limitReached = true;
         }
 
@@ -77,8 +88,15 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             var hideTimeout, activeBlockEl;
 
             for (var i = 0; i < this.elements.length; i++) {
-                this.elements[i].key = this.elements[i].getAttribute("key");
+
                 this.elements[i].type = this.elements[i].getAttribute("type");
+                this.brickTypeUsageCounter[this.elements[i].type] = this.brickTypeUsageCounter[this.elements[i].type]+1 || 1;
+
+                if(this.elements[i].key) {
+                    continue;
+                }
+
+                this.elements[i].key = this.elements[i].getAttribute("key");
 
                 if(!limitReached) {
                     // plus buttons
@@ -87,7 +105,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus_up",
                         arrowVisible: false,
-                        menuAlign: "tr",
                         menu: this.getTypeMenu(this, this.elements[i], "before")
                     });
                     plusUpButton.render(plusUpDiv);
@@ -97,7 +114,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus_down",
                         arrowVisible: false,
-                        menuAlign: "tr",
                         menu: this.getTypeMenu(this, this.elements[i], "after")
                     });
                     plusButton.render(plusDiv);
@@ -168,10 +184,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                             }
                         },
 
-                        onStartDrag: this.createDropZones.bind(this),
-                        afterDragDrop: this.removeDropZones.bind(this),
-                        afterInvalidDrop: this.removeDropZones.bind(this),
-
+                        onStartDrag: this.startDragDrop.bind(this),
+                        afterDragDrop: this.endDragDrop.bind(this),
+                        afterInvalidDrop: this.endDragDrop.bind(this),
+                        beforeDragOut: function (target) {
+                            return target ? true : false;
+                        },
                         getRepairXY: function() {
                             return this.dragData.repairXY;
                         }
@@ -221,10 +239,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
                 labelDiv = Ext.get(Ext.get(this.elements[i]).query('.pimcore_block_label[data-name="' + this.name + '"]')[0]);
                 labelText = "<b>"  + this.elements[i].type + "</b>";
-                if(typeNameMappings[this.elements[i].type]
-                    && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
-                    labelText = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> "
-                        + typeNameMappings[this.elements[i].type].description;
+                if(this.typeNameMappings[this.elements[i].type]
+                    && typeof this.typeNameMappings[this.elements[i].type].name != "undefined") {
+                    labelText = "<b>" + this.typeNameMappings[this.elements[i].type].name + "</b> "
+                        + this.typeNameMappings[this.elements[i].type].description;
                 }
                 labelDiv.setHtml(labelText);
 
@@ -250,7 +268,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                             window.clearTimeout(hideTimeout);
                         }
 
-                        Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
+                        Ext.get(this.id).query('.pimcore_area_buttons', false).forEach(function (el) {
                             if (event.target != el.dom) {
                                 el.hide();
                             }
@@ -275,16 +293,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             }
         }
 
-        // click outside, hide all block buttons
-        if(this.config['controlsTrigger'] === 'hover') {
-            Ext.getBody().on('click', function (event) {
-                if (Ext.get(id) && !Ext.get(id).isAncestor(event.target)) {
-                    Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
-                        el.hide();
-                    });
-                }
-            });
-        }
+        this.updateDropZones();
+    },
+
+    render: function () {
+        this.refresh();
     },
 
     applyFallbackIcons: function() {
@@ -310,7 +323,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
     copyToClipboard: function (element) {
 
-        var ea;
         var areaIdentifier = {
             name: this.getName(),
             realName: this.getRealName(),
@@ -324,22 +336,20 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         };
 
         // check which editables are inside this area and get the data
-        for (var i = 0; i < editables.length; i++) {
+        Object.values(editableManager.getEditables()).forEach(editable => {
             try {
-                ea = editables[i];
-
-                if (!ea.getName()) {
-                    continue;
+                if (!editable.getName()) {
+                    return;
                 }
 
-                var editableData = this.copyData(areaIdentifier, ea);
+                var editableData = this.copyData(areaIdentifier, editable);
                 if (editableData) {
-                    item.values[ea.getName()] = editableData;
+                    item.values[editable.getName()] = editableData;
                 }
             } catch (e) {
                 console.error(e);
             }
-        }
+        });
 
         pimcore.globalmanager.add("areablock_clipboard", Ext.encode(item));
     },
@@ -464,7 +474,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                     Ext.iterate(item.values, function (key, value, object) {
                         var editableName = that.getPasteName(areaIdentifier, item, value);
 
-                        editables.push({
+                        editableManager.add({
                             getName: function () {
                                 return editableName;
                             },
@@ -483,15 +493,19 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                         });
                     });
 
-                    this.addBlockAfter(element, item.type);
+                    this.addBlockAfter(element, item.type, true);
+                    this.reloadDocument();
                 }.bind(this)
             }));
         }
 
-        if(menu.items && menu.items.getCount()) {
-            menu.showAt(e.getXY());
+        if(!menu.items || !menu.items.getCount()) {
+            menu.add(new Ext.menu.Item({
+                text: t('no_action_available')
+            }));
         }
 
+        menu.showAt(e.getXY());
         e.stopEvent();
     },
 
@@ -504,10 +518,26 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         }
     },
 
-    createDropZones: function () {
+    startDragDrop: function () {
+        Ext.getBody().addCls('pimcore_drag_drop_active');
+        Ext.get(this.id).addCls('pimcore_editable_areablock_dropzones_active');
+    },
+
+    endDragDrop: function () {
+        Ext.getBody().removeCls('pimcore_drag_drop_active');
+        Ext.get(this.id).removeCls('pimcore_editable_areablock_dropzones_active');
+    },
+
+    updateDropZones: function () {
 
         if(this.inherited) {
             return;
+        }
+
+        var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
+        for(var i=0; i<dropZones.length; i++) {
+            dropZones[i].dropZone.unreg();
+            Ext.get(dropZones[i]).remove();
         }
 
         if(this.elements.length > 0) {
@@ -573,14 +603,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         });
     },
 
-    removeDropZones: function () {
-        var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
-        for(var i=0; i<dropZones.length; i++) {
-            dropZones[i].dropZone.unreg();
-            Ext.get(dropZones[i]).remove();
-        }
-    },
-
     createInitalControls: function () {
 
         var plusEl = document.createElement("div");
@@ -602,6 +624,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         // plus button
         var plusButton = new Ext.Button({
             cls: "pimcore_block_button_plus",
+            arrowVisible: false,
             iconCls: "pimcore_icon_plus",
             menu: this.getTypeMenu(this, null)
         });
@@ -610,15 +633,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         // options button
         var optionsButton = new Ext.Button({
             cls: "pimcore_block_button_options",
-            iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
+            iconCls: "pimcore_icon_white_copy",
             listeners: {
                 click: this.optionsClickhandler.bind(this, false)
             }
         });
         optionsButton.render(optionsEl);
-
-        // at the moment we don't need a class
-        Ext.get(this.id).addCls("");
     },
 
     getTypeMenu: function (scope, element, insertPosition) {
@@ -632,7 +652,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 if(groups[g].length > 0) {
                     groupMenu = {
                         text: groups[g],
-                        iconCls: "pimcore_icon_area",
                         hideOnClick: false,
                         menu: []
                     };
@@ -705,9 +724,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         return nextKey;
     },
 
-    addBlockAfter : function (element, type) {
+    addBlockAfter : function (element, type, forceReload) {
         var index = this.getElementIndex(element) + 1;
-        this.addBlockAt(type, index);
+
+        this.addBlockAt(type, index, forceReload);
     },
 
     addBlockBefore : function (element, type) {
@@ -715,17 +735,21 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         this.addBlockAt(type, index);
     },
 
-    addBlockAt: function (type, index) {
+    addBlockAt: function (type, index, forceReload) {
         var limits = this.config["limits"] || {};
+        if (!this.elements.length) {
+            index = 0;
+        }
 
         if(typeof this.config["limit"] != "undefined" && this.elements.length >= this.config.limit) {
             Ext.MessageBox.alert(t("error"), t("limit_reached"));
             return;
         }
 
+        let brickName = type;
+        let brickIndex = this.allowedTypes.indexOf(brickName);
+
         if(typeof limits[type] != "undefined" && this.brickTypeUsageCounter[type] >= limits[type]) {
-            let brickName = type;
-            let brickIndex = this.allowedTypes.indexOf(brickName);
             if (brickIndex >= 0 && typeof this.config.types[brickIndex].name != "undefined") {
                 brickName = this.config.types[brickIndex].name;
             }
@@ -735,62 +759,78 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
         var nextKey = this.getNextKey();
         nextKey++;
-        var args = [index, 0, {
-            key: nextKey,
-            type: type
-        }];
 
-        this.elements.splice.apply(this.elements, args);
+        if(this.config.types[brickIndex]['needsReload'] || forceReload === true) {
+            editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
 
-        editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
+            this.elements.splice.apply(this.elements, [index, 0, {
+                key: nextKey,
+                type: type
+            }]);
 
-        this.reloadDocument();
+            this.reloadDocument();
+        } else {
+            let saveData = this.getValue();
+            saveData.splice.apply(saveData, [index, 0, {
+                key: nextKey,
+                type: type
+            }]);
+
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_admin_document_page_areabrick-render-index-editmode'),
+                method: 'post',
+                params: {
+                    documentId: window.editWindow.document.id,
+                    name: this.getName(),
+                    realName: this.getRealName(),
+                    index: index,
+                    blockStateStack: this.config['blockStateStack'],
+                    areablockConfig: Ext.encode(this.initalConfig),
+                    areablockData: Ext.encode(saveData)
+                },
+                success: function (response) {
+                    let res = Ext.decode(response.responseText);
+                    if(!this.elements.length) {
+                        Ext.get(this.id).setHtml(res['htmlCode']);
+                    } else if (this.elements[index-1]) {
+                        Ext.get(this.elements[index-1]).insertHtml('afterEnd', res['htmlCode'], true);
+                    } else if (this.elements[index]) {
+                        Ext.get(this.elements[index]).insertHtml('beforeBegin', res['htmlCode'], true);
+                    }
+
+                    res['editableDefinitions'].forEach(editableDef => {
+                        editableManager.addByDefinition(editableDef);
+                    });
+
+                    this.refresh();
+
+                }.bind(this)
+            });
+        }
     },
 
     removeBlock: function (element) {
+        let container = Ext.get(element);
+        let editablesContainer = container.query('[data-block-names]');
+        editablesContainer.forEach(editableDiv => {
+            editableManager.remove(editableDiv.dataset.name);
+        });
 
-        var index = this.getElementIndex(element);
+        container.remove();
 
-        this.elements.splice(index, 1);
-        Ext.get(element).remove();
-
-        // there is no existing block element anymore
-        if (this.elements.length < 1) {
-            this.createInitalControls();
-        }
-
-        // this is necessary because of the limit which is only applied when initializing
-        this.reloadDocument();
+        this.refresh();
     },
 
     moveBlockTo: function (block, toIndex) {
-
         toIndex = intval(toIndex);
-
-        var currentIndex = this.getElementIndex(block);
-        var tmpElements = [];
-
-        for (var i = 0; i < this.elements.length; i++) {
-            if (this.elements[i] && this.elements[i] != block) {
-                tmpElements.push(this.elements[i]);
-            }
-        }
-
-        if(currentIndex < toIndex) {
-            toIndex--;
-        }
-
-        tmpElements.splice(toIndex,0,block);
-
-        var elementAfter = tmpElements[toIndex+1];
-        if(elementAfter) {
-            Ext.get(block).insertBefore(elementAfter);
+        if(this.elements[toIndex]) {
+            Ext.get(block).insertBefore(this.elements[toIndex]);
         } else {
             // to the last position
             Ext.get(block).insertAfter(this.elements[this.elements.length-1]);
         }
 
-        this.elements = tmpElements;
+        this.refresh();
 
         if(this.config.reload) {
             this.reloadDocument();
@@ -833,127 +873,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         return index;
     },
 
-    openEditableDialogBox: function (element, dialogBoxDiv) {
 
-        //window.editWindow.loadMask.show();
-
-        let id = dialogBoxDiv.dataset.dialogId;
-        let jsonConfig = document.getElementById('dialogBoxConfig-' + id).innerHTML;
-        var config = JSON.parse(jsonConfig);
-
-        var editablesInBox = this.getEditablesInDialogBox(id);
-        let items = this.buildEditableDialogLayout(config["items"], editablesInBox, 1);
-
-        if(!this.dialogBoxes[id]) {
-            this.dialogBoxes[id] = new Ext.Window({
-                closeAction: 'hide',
-                width: Math.min(config["width"], Ext.getBody().getViewSize().width),
-                height: Math.min(config["height"], Ext.getBody().getViewSize().height),
-                items: items,
-                bodyStyle: 'padding: 10px',
-                scrollable: 'y',
-                cls: 'pimcore_areablock_dialogBox',
-                listeners: {
-                    afterrender: function (win, eOpts) {
-                        // render editables in window
-                        // we need a bit of a timeout, since it seems the layout (especially when using tabs) isn't
-                        // completely done in terms of the right dimensions, which has bad effects on the size
-                        // of editables where the size matters, e.g. the image editable
-                        window.setTimeout(function () {
-                            Object.keys(editablesInBox).forEach(function (editableName) {
-                                if (typeof editablesInBox[editableName]["renderInDialogBox"] === "function") {
-                                    editablesInBox[editableName].renderInDialogBox();
-                                } else {
-                                    editablesInBox[editableName].render();
-                                }
-                            });
-                        }, 200);
-                    }
-                },
-                buttons: ['->', {
-                    text: t("close"),
-                    listeners: {
-                        "click": function () {
-                            this.dialogBoxes[id].close();
-                            if(config["reloadOnClose"]) {
-                                this.reloadDocument();
-                            }
-                        }.bind(this)
-                    },
-                    iconCls: "pimcore_icon_save"
-                }]
-            })
-        }
-
-        this.dialogBoxes[id].show();
-    },
-
-    getEditablesInDialogBox: function (id) {
-        let editablesInDialogBox = {};
-        window.editables.forEach(function (editable) {
-            if(editable.getInDialogBox() === id) {
-                editablesInDialogBox[editable.getRealName()] = editable;
-            }
-        });
-
-        return editablesInDialogBox;
-    },
-
-    buildEditableDialogLayout: function (config, editablesInBox, level) {
-        var nextLevel = level+1;
-        if(Array.isArray(config)) {
-            var items = [];
-            config.forEach(function (itemConfig) {
-                let item = this.buildEditableDialogLayout(itemConfig, editablesInBox, nextLevel);
-                if(item) {
-                    items.push(item);
-                }
-            }.bind(this));
-
-            if(level === 1) {
-                return {
-                    xtype: 'container',
-                    items: items
-                };
-            }
-
-            return items;
-        } else if(editablesInBox[config['name']]) {
-            let templateId = 'template__' + editablesInBox[config['name']].getId();
-            var templateEl = document.getElementById(templateId);
-            if(templateEl) {
-                if(typeof editablesInBox[config['name']]['renderInDialogBox'] === "function") {
-                    if (editablesInBox[config['name']]['config']) {
-                        editablesInBox[config['name']]['config']['label'] = config['label'] ?? config['name'];
-                    }
-                    return {
-                        xtype: 'container',
-                        html: templateEl.innerHTML
-                    };
-                } else {
-                    return {
-                        xtype: 'fieldset',
-                        title: config['label'] ?? config['name'],
-                        html: templateEl.innerHTML
-                    };
-                }
-            }
-        } else if(config['items']) {
-            let container = {
-                xtype: config['type'],
-                bodyStyle: 'padding: 10px',
-                deferredRender: false,
-                manageHeight: false,
-                items: this.buildEditableDialogLayout(config['items'], editablesInBox, nextLevel)
-            };
-
-            if(config['title']) {
-                container['title'] = config['title'];
-            }
-
-            return container;
-        }
-    },
 
     createToolBar: function () {
         var buttons = [];
@@ -992,11 +912,15 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                             xtype: "button",
                             text: groups[g],
                             textAlign: "left",
-                            iconCls: "pimcore_icon_area",
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,
                             menu: [],
-                            menuAlign: 'tl-tr'
+                            menuAlign: 'tl-tr',
+                            listeners: {
+                                mouseover: function (el) {
+                                    el.showMenu();
+                                }
+                            }
                         });
                     }
 
@@ -1051,7 +975,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 cls: "pimcore_areablock_toolbar",
                 closable: false,
                 x: -1000,
-                y: 6,
+                y: 1,
                 items: buttons
             });
 
@@ -1103,6 +1027,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             xtype: "button",
             textAlign: "left",
             icon: brick.icon,
+            cls: 'pimcore_cursor_move',
             text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
                 : brick.name,
             width: areaBlockToolbarSettings.buttonWidth,
@@ -1111,6 +1036,14 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             },
             listeners: {
                 "afterrender": function (brick, v) {
+
+                    let menuLink = v.getEl().down('a', true);
+                    if(menuLink) {
+                        // the menu item has a <a> tag, with href=#, which causes dnd to not work properly
+                        // and also shows the link target next to the mouse pointer while dragging
+                        // -> removing the href attribute fixes the issue
+                        menuLink.removeAttribute('href');
+                    }
 
                     v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                         getDragData: function(e) {
@@ -1139,20 +1072,25 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                             var areablocks = pimcore.document.editables[this.toolbarGlobalVar].areablocks;
                             for(var i=0; i<areablocks.length; i++) {
                                 if(in_array(brick.type, areablocks[i].allowedTypes)) {
-                                    areablocks[i].createDropZones();
+                                    areablocks[i].startDragDrop();
                                 }
                             }
                         }.bind(this),
                         afterDragDrop: function () {
                             var areablocks = pimcore.document.editables[this.toolbarGlobalVar].areablocks;
                             for(var i=0; i<areablocks.length; i++) {
-                                areablocks[i].removeDropZones();
+                                areablocks[i].endDragDrop();
                             }
+
+                            Ext.menu.Manager.hideAll();
                         }.bind(this),
+                        beforeDragOut: function (target) {
+                            return target ? true : false;
+                        },
                         afterInvalidDrop: function () {
                             var areablocks = pimcore.document.editables[this.toolbarGlobalVar].areablocks;
                             for(var i=0; i<areablocks.length; i++) {
-                                areablocks[i].removeDropZones();
+                                areablocks[i].endDragDrop();
                             }
                         }.bind(this),
 

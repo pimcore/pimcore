@@ -1,26 +1,24 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Listing;
 
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
 /**
  * @internal
@@ -29,10 +27,7 @@ use Pimcore\Model\Document;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /**
-     * @var \Closure
-     */
-    protected $onCreateQueryCallback;
+    use QueryBuilderHelperTrait;
 
     /**
      * Loads a list of objects (all are an instance of Document) for the given parameters an return them
@@ -42,9 +37,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $documents = [];
-        $select = $this->getQuery(['id', 'type']);
+        $select = $this->getQueryBuilder(['id', 'type']);
 
-        $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $documentsData = $this->db->fetchAll((string) $select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($documentsData as $documentData) {
             if ($documentData['type']) {
@@ -60,25 +55,18 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param array|string|Expression $columns
+     * @param string|string[]|null $columns
      *
-     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
+     * @return DoctrineQueryBuilder
      */
-    public function getQuery($columns = '*')
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
-        $select = $this->db->select();
-        $select->from([ 'documents' ], $columns);
-        $this->addConditions($select);
-        $this->addOrder($select);
-        $this->addLimit($select);
-        $this->addGroupBy($select);
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from('documents');
 
-        if ($this->onCreateQueryCallback) {
-            $closure = $this->onCreateQueryCallback;
-            $closure($select);
-        }
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
 
-        return $select;
+        return $queryBuilder;
     }
 
     /**
@@ -88,8 +76,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = $this->getQuery(['id']);
-        $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder(['id']);
+        $documentIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $documentIds);
     }
@@ -99,8 +87,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList()
     {
-        $select = $this->getQuery(['id', 'CONCAT(path,`key`) as path']);
-        $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $queryBuilder = $this->getQueryBuilder(['id', 'CONCAT(path,`key`) as path']);
+        $documentIds = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
     }
@@ -124,21 +112,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $select = $this->getQuery([new Expression('COUNT(*)')]);
-        $select->reset(QueryBuilder::LIMIT_COUNT);
-        $select->reset(QueryBuilder::LIMIT_OFFSET);
-        $select->reset(QueryBuilder::ORDER);
+        $queryBuilder = $this->getQueryBuilder();
+        $this->prepareQueryBuilderForTotalCount($queryBuilder);
 
-        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
-    }
-
-    /**
-     * @param callable $callback
-     */
-    public function onCreateQuery(callable $callback)
-    {
-        $this->onCreateQueryCallback = $callback;
     }
 }

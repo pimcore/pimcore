@@ -1,59 +1,45 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
-use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider;
 
 class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**
      * Static type of this element
      *
+     * @internal
+     *
      * @var string
      */
     public $fieldtype = 'countrymultiselect';
 
-    /** Restrict selection to comma-separated list of countries.
+    /**
+     * Restrict selection to comma-separated list of countries.
+     *
+     * @internal
+     *
      * @var string|null
      */
     public $restrictTo = null;
 
-    public function __construct()
-    {
-        $countries = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getDisplayRegions();
-        asort($countries);
-        $options = [];
-
-        foreach ($countries as $short => $translation) {
-            if (strlen($short) == 2) {
-                $options[] = [
-                    'key' => $translation,
-                    'value' => $short,
-                ];
-            }
-        }
-
-        $this->setOptions($options);
-    }
-
     /**
-     * @param string|null $restrictTo
+     * @param array|string|null $restrictTo
      */
     public function setRestrictTo($restrictTo)
     {
@@ -76,22 +62,10 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getOptions()
+    public function getOptionsProviderClass()
     {
-        return $this->options;
-    }
-
-    /**
-     * @return $this
-     */
-    public function jsonSerialize()
-    {
-        if (Service::doRemoveDynamicOptions()) {
-            $this->options = null;
-        }
-
-        return $this;
+        return '@' . CountryOptionsProvider::class;
     }
 }

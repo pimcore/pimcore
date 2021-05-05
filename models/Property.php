@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -24,7 +22,7 @@ use Pimcore\Model\Element\Service;
  * @method \Pimcore\Model\Property\Dao getDao()
  * @method void save()
  */
-class Property extends AbstractModel
+final class Property extends AbstractModel
 {
     /**
      * @var string
@@ -67,7 +65,7 @@ class Property extends AbstractModel
     protected $inherited = false;
 
     /**
-     * Takes data from editmode and convert it to internal objects
+     * @internal
      *
      * @param mixed $data
      *
@@ -97,7 +95,7 @@ class Property extends AbstractModel
     }
 
     /**
-     * Takes data from resource and convert it to internal objects
+     * @internal
      *
      * @param mixed $data
      *
@@ -304,6 +302,8 @@ class Property extends AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return array
      */
     public function resolveDependencies()
@@ -333,6 +333,8 @@ class Property extends AbstractModel
      *  "asset" => array(...)
      * )
      *
+     * @internal
+     *
      * @param array $idMapping
      */
     public function rewriteIds($idMapping)
@@ -346,5 +348,19 @@ class Property extends AbstractModel
                 }
             }
         }
+    }
+
+    /**
+     * @internal
+     *
+     * @return array
+     */
+    public function serialize()
+    {
+        return [
+          'name' => $this->getName(),
+          'type' => $this->getType(),
+          'data' => $this->getData(),
+        ];
     }
 }

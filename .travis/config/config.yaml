@@ -1,5 +1,0 @@
-imports:
-    - { resource: security.yaml }
-    - { resource: services.yaml }
-    - { resource: system.yml }
-    - { resource: 'local/' }

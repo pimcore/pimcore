@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -17,9 +18,13 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Image\ImageOptimizerInterface;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
 
-final class ImageOptimizeTask implements TaskInterface
+/**
+ * @internal
+ */
+class ImageOptimizeTask implements TaskInterface
 {
     /**
      * @var ImageOptimizerInterface
@@ -47,18 +52,18 @@ final class ImageOptimizeTask implements TaskInterface
     public function execute()
     {
         $ids = TmpStore::getIdsByTag('image-optimize-queue');
+        $storage = Storage::get('thumbnail');
 
-        // id = path of image relative to PIMCORE_TEMPORARY_DIRECTORY
         foreach ($ids as $id) {
             $tmpStore = TmpStore::get($id);
 
             if ($tmpStore && $tmpStore->getData()) {
-                $file = PIMCORE_TEMPORARY_DIRECTORY.'/'.$tmpStore->getData();
-                if (file_exists($file)) {
-                    $originalFilesize = filesize($file);
+                $file = $tmpStore->getData();
+                if ($storage->fileExists($file)) {
+                    $originalFilesize = $storage->fileSize($file);
                     $this->optimizer->optimizeImage($file);
 
-                    $this->logger->debug('Optimized image: '.$file.' saved '.formatBytes($originalFilesize - filesize($file)));
+                    $this->logger->debug('Optimized image: '.$file.' saved '.formatBytes($originalFilesize - $storage->fileSize($file)));
                 } else {
                     $this->logger->debug('Skip optimizing of '.$file." because it doesn't exist anymore");
                 }

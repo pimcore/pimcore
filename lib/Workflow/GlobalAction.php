@@ -1,19 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Workflow;
 
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
 use Symfony\Component\Workflow\Workflow;
@@ -40,12 +42,23 @@ class GlobalAction implements NotesAwareInterface
     /** @var string */
     private $workflowName;
 
-    public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName)
+    /**
+     * @param string $name
+     * @param array $options
+     * @param ExpressionService $expressionService
+     * @param string $workflowName
+     * @param CustomHtmlServiceInterface|null $customHtmlService
+     *
+     */
+    public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName, CustomHtmlServiceInterface $customHtmlService = null)
     {
         $this->name = $name;
         $this->options = $options;
         $this->expressionService = $expressionService;
         $this->workflowName = $workflowName;
+        if ($customHtmlService instanceof CustomHtmlServiceInterface) {
+            $this->setCustomHtmlService($customHtmlService);
+        }
     }
 
     /**
@@ -94,6 +107,9 @@ class GlobalAction implements NotesAwareInterface
     }
 
     /**
+     * @param Workflow $workflow
+     * @param mixed $subject
+     *
      * @return bool
      */
     public function isGuardValid(Workflow $workflow, $subject): bool

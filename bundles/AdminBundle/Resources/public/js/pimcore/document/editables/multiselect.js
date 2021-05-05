@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -27,10 +27,6 @@ pimcore.document.editables.multiselect = Class.create(pimcore.document.editable,
         config.valueField = "id";
 
         config.listeners = {};
-        // onchange event
-        if (config.onchange) {
-            config.listeners.change = eval(config.onchange);
-        }
 
         if (config["reload"]) {
             config.listeners.change = this.reloadDocument;

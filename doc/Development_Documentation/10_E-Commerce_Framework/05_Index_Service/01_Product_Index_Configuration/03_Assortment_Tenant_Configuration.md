@@ -29,7 +29,7 @@ and may be extended:
    the product index.
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ConfigOptimizedMysql`: Provides an optimized mysql implementation 
   of the product index.
-  - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch`: Provides a default [elastic search](https://www.elastic.co/) 
+  - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch`: Provides a default [elasticsearch](https://www.elastic.co/) 
   implementation of the product index.
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic`: Provides a default [findologic](https://www.findologic.com/) 
   implementation of the product index.
@@ -163,7 +163,7 @@ In order to populate the additional mapping data, also following methods have to
 For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php).
 
 
-### Implementing an Assortment Subtenant for Elastic Search
+### Implementing an Assortment Subtenant for Elasticsearch
 
 In order to populate the additional mapping data, the following method has to be implemented: 
 
@@ -184,4 +184,4 @@ For an complete example have a look at the [sample implementation](https://githu
 
 ---
 
-> Note: This is currently only implemented for MySQL and Elastic Search based product index implementations. 
+> Note: This is currently only implemented for MySQL and elasticsearch based product index implementations. 

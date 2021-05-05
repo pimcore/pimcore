@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -504,6 +504,12 @@ pimcore.settings.targeting.conditions = (function () {
                         xtype: "hidden",
                         name: "type",
                         value: "visitedpagebefore"
+                    },
+                    {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: warningIconHtml + ' DEPRECATED! Will be removed in Pimcore 10',
+                        cls: "pimcore_extra_label"
                     },
                     {
                         xtype: "displayfield",

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
@@ -23,6 +24,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
@@ -60,7 +64,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -77,7 +81,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -86,7 +90,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function fetchItems(InputInterface $input): array
     {
@@ -100,7 +104,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runSingleCommand(string $serializedRow, InputInterface $input, OutputInterface $output): void
     {
@@ -120,7 +124,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
@@ -159,13 +163,19 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
             }
         }
 
-        $this->childWorkerList = $workerList;
+        // collect all workers from all processed tenants
+        $this->childWorkerList = $this->childWorkerList ?? [];
+        $childWorkerList = [];
+        foreach (array_merge($this->childWorkerList, $workerList) as $worker) {
+            $childWorkerList[$worker->getTenantConfig()->getTenantName()] = $worker;
+        }
+        $this->childWorkerList = array_values($childWorkerList);
 
         return $workerList;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getItemName(int $count): string
     {
@@ -173,7 +183,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getSegmentSize(): int
     {

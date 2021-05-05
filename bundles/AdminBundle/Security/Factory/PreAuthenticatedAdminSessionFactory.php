@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Security\Factory;
@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint): array
     {
@@ -53,7 +53,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getPosition(): string
     {
@@ -61,7 +61,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getKey(): string
     {
@@ -74,16 +74,17 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     public function addConfiguration(NodeDefinition $builder)
     {
         // make sure only the pimcore_admin user provider can be used with this authentication provider
-        $builder
-            ->children()
-                ->scalarNode('provider')
-                    ->defaultValue('pimcore_admin')
-                    ->validate()
-                    ->ifNotInArray(['pimcore_admin'])
-                        ->thenInvalid('The pimcore_admin_pre_auth authenticator can only handle Pimcore admin users through the "pimcore_admin" provider')
+        if ($builder instanceof ArrayNodeDefinition) {
+            $builder
+                ->children()
+                    ->scalarNode('provider')
+                        ->defaultValue('pimcore_admin')
+                        ->validate()
+                            ->ifNotInArray(['pimcore_admin'])
+                            ->thenInvalid('The pimcore_admin_pre_auth authenticator can only handle Pimcore admin users through the "pimcore_admin" provider')
+                        ->end()
                     ->end()
-                ->end()
-            ->end()
-        ;
+                ->end();
+        }
     }
 }

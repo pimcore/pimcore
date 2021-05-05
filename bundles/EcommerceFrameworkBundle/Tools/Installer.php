@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
@@ -23,11 +24,14 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
-use Pimcore\Model\Translation\Admin;
+use Pimcore\Model\Translation;
 use Pimcore\Model\User\Permission;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
+/**
+ * @internal
+ */
 class Installer extends AbstractInstaller
 {
     /**
@@ -64,7 +68,7 @@ class Installer extends AbstractInstaller
               `itemKey` varchar(100) COLLATE utf8_bin NOT NULL,
               `parentItemKey` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '0',
               `comment` LONGTEXT ASCII,
-              `addedDateTimestamp` int(10) NOT NULL,
+              `addedDateTimestamp` bigint NOT NULL,
               `sortIndex` INT(10) UNSIGNED NULL DEFAULT '0',
               PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`),
               KEY `cartId_parentItemKey` (`cartId`,`parentItemKey`)
@@ -170,7 +174,6 @@ class Installer extends AbstractInstaller
     {
         $this->installFieldCollections();
         $this->installClasses();
-        $this->installObjectBricks();
         $this->installTables();
         $this->installTranslations();
         $this->installPermissions();
@@ -284,18 +287,16 @@ class Installer extends AbstractInstaller
 
         foreach ($fieldCollections as $key => $path) {
             if ($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
-                if ($fieldCollection) {
-                    $this->output->write(sprintf(
-                        '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
-                        $key
-                    ));
+                $this->output->write(sprintf(
+                    '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
+                    $key
+                ));
 
-                    continue;
-                }
-            } else {
-                $fieldCollection = new Fieldcollection\Definition();
-                $fieldCollection->setKey($key);
+                continue;
             }
+
+            $fieldCollection = new Fieldcollection\Definition();
+            $fieldCollection->setKey($key);
 
             $data = file_get_contents($path);
             $success = Service::importFieldCollectionFromJson($fieldCollection, $data);
@@ -303,38 +304,6 @@ class Installer extends AbstractInstaller
             if (!$success) {
                 throw new InstallationException(sprintf(
                     'Failed to create field collection "%s"',
-                    $key
-                ));
-            }
-        }
-    }
-
-    private function installObjectBricks()
-    {
-        $bricks = $this->findInstallFiles(
-            $this->installSourcesPath . '/objectbrick_sources',
-            '/^objectbrick_(.*)_export\.json$/'
-        );
-
-        foreach ($bricks as $key => $path) {
-            if ($brick = Objectbrick\Definition::getByKey($key)) {
-                $this->output->write(sprintf(
-                    '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
-                    $key
-                ));
-
-                continue;
-            } else {
-                $brick = new Objectbrick\Definition();
-                $brick->setKey($key);
-            }
-
-            $data = file_get_contents($path);
-            $success = Service::importObjectBrickFromJson($brick, $data);
-
-            if (!$success) {
-                throw new InstallationException(sprintf(
-                    'Failed to create object brick "%s"',
                     $key
                 ));
             }
@@ -409,7 +378,7 @@ class Installer extends AbstractInstaller
 
     private function installTranslations()
     {
-        Admin::importTranslationsFromFile($this->installSourcesPath . '/admin-translations/init.csv');
+        Translation::importTranslationsFromFile($this->installSourcesPath . '/admin-translations/init.csv', Translation::DOMAIN_ADMIN);
     }
 
     /**

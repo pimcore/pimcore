@@ -24,7 +24,7 @@ Following example implements a price system that retrieves prices from an extra 
 ```php
 <?php
 
-namespace AppBundle\Ecommerce\Pricing;
+namespace App\Ecommerce\Pricing;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
@@ -67,7 +67,7 @@ services:
     # define own price system service and configure options for attribute name and price object class
     app.default_price_system:
         #class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
-        class: AppBundle\Ecommerce\Pricing\MyPriceSystem
+        class: App\Ecommerce\Pricing\MyPriceSystem
         arguments:
             - '@pimcore_ecommerce.locator.pricing_manager'
             - '@pimcore_ecommerce.environment'

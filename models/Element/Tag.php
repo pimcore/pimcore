@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element;
@@ -24,37 +22,49 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
  */
-class Tag extends Model\AbstractModel
+final class Tag extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @internal
+     *
+     * @var int|null
      */
-    public $id;
+    protected ?int $id = null;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $parentId;
+    protected int $parentId = 0;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $idPath;
+    protected $idPath;
 
     /**
+     * @internal
+     *
      * @var Tag[]
      */
-    public $children;
+    protected $children;
 
     /**
+     * @internal
+     *
      * @var Tag|null
      */
-    public $parent;
+    protected $parent;
 
     /**
      * @static
@@ -212,19 +222,19 @@ class Tag extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return Tag
      */
-    public function setId($id)
+    public function setId(?int $id)
     {
         $this->id = $id;
 
@@ -254,7 +264,7 @@ class Tag extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getParentId()
+    public function getParentId(): int
     {
         return $this->parentId;
     }
@@ -264,7 +274,7 @@ class Tag extends Model\AbstractModel
      *
      * @return Tag
      */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId)
     {
         $this->parentId = $parentId;
         $this->parent = null;
@@ -274,12 +284,12 @@ class Tag extends Model\AbstractModel
     }
 
     /**
-     * @return Tag
+     * @return Tag|null
      */
-    public function getParent()
+    public function getParent(): ?Tag
     {
-        if ($this->parent == null && $parentId = $this->getParentId()) {
-            $this->parent = Tag::getById($parentId);
+        if ($this->parent === null && $parentId = $this->getParentId()) {
+            $this->parent = self::getById($parentId);
         }
 
         return $this->parent;

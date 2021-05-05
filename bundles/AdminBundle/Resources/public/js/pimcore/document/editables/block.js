@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -20,12 +20,14 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         this.name = name;
         this.elements = [];
         this.config = this.parseConfig(config);
+    },
 
+    refresh: function() {
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
-        this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
+        this.elements = Ext.get(this.id).query('.pimcore_block_entry[data-name="' + this.name + '"][key]');
 
         var limitReached = false;
-        if(typeof config.limit != "undefined" && this.elements.length >= config.limit) {
+        if(this.config['limit'] && this.elements.length >= this.config.limit) {
             limitReached = true;
         }
 
@@ -33,7 +35,14 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             this.createInitalControls();
         }
         else {
+            Ext.get(this.id).removeCls("pimcore_block_buttons");
+
             for (var i = 0; i < this.elements.length; i++) {
+
+                if(this.elements[i].key) {
+                    continue;
+                }
+
                 this.elements[i].key = this.elements[i].getAttribute("key");
 
                 if(!limitReached) {
@@ -96,14 +105,17 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
                 downButton.render(downDiv);
             }
         }
+    },
 
+    render: function () {
+        this.refresh();
 
-        Ext.get(id).on('mouseenter', function (event) {
-            Ext.get(id).addCls('pimcore_block_entry_over');
+        Ext.get(this.id).on('mouseenter', function (event) {
+            Ext.get(this.id).addCls('pimcore_block_entry_over');
         });
 
-        Ext.get(id).on('mouseleave', function (event) {
-            Ext.get(id).removeCls('pimcore_block_entry_over');
+        Ext.get(this.id).on('mouseleave', function (event) {
+            Ext.get(this.id).removeCls('pimcore_block_entry_over');
         });
     },
 
@@ -205,19 +217,46 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             }
         }
 
-        var args = [index, 0];
-        var firstNewKey = nextKey+1;
+        if(this.config['reload'] === true) {
+            var args = [index, 0];
+            var firstNewKey = nextKey+1;
 
-        for (var p = 0; p < amount; p++) {
-            nextKey++;
-            args.push({key: nextKey});
+            for (var p = 0; p < amount; p++) {
+                nextKey++;
+                args.push({key: nextKey});
+            }
+
+            this.elements.splice.apply(this.elements, args);
+
+            editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + firstNewKey + '"]';
+            this.reloadDocument();
+        } else {
+            let template = this.config['template']['html'];
+            for (let p = 0; p < amount; p++) {
+                nextKey++;
+                let blockHtml = template.replaceAll(':1000000.', ':' + nextKey + '.');
+                blockHtml = blockHtml.replaceAll('_1000000_', '_' + nextKey + '_');
+                blockHtml = blockHtml.replaceAll('="1000000"', '="' + nextKey + '"');
+                blockHtml = blockHtml.replaceAll(', 1000000"', ', ' + nextKey + '"');
+
+                if(!this.elements.length) {
+                    Ext.get(this.id).setHtml(blockHtml);
+                } else if (this.elements[index-1]) {
+                    Ext.get(this.elements[index-1]).insertHtml('afterEnd', blockHtml, true);
+                }
+
+                this.config['template']['editables'].forEach(editableDef => {
+                    let editable = Ext.clone(editableDef);
+                    editable['id'] = editable['id'].replace('_1000000_', '_' + nextKey + '_');
+                    editable['name'] = editable['name'].replace(':1000000.', ':' + nextKey + '.');
+                    editableManager.addByDefinition(editable);
+                });
+
+                this.elements = Ext.get(this.id).query('.pimcore_block_entry[data-name="' + this.name + '"][key]');
+            }
+
+            this.refresh();
         }
-
-       this.elements.splice.apply(this.elements, args);
-
-        editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + firstNewKey + '"]';
-
-        this.reloadDocument();
     },
 
     removeBlock: function (element) {
@@ -227,45 +266,46 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         this.elements.splice(index, 1);
         Ext.get(element).remove();
 
-        // there is no existing block element anymore
-        if (this.elements.length < 1) {
-            this.createInitalControls();
+        if(this.config['reload'] === true) {
+            this.reloadDocument();
+        } else {
+            this.refresh();
         }
-
-        // this is necessary because of the limit which is only applied when initializing
-        //Even though reload is not necessary after remove, some sites change their appearance
-        //according to the amount of block elements they contain and this arose the need for reload anyway
-        this.reloadDocument();
     },
 
     moveBlockDown: function (element) {
-
         var index = this.getElementIndex(element);
-
         if (index < (this.elements.length-1)) {
-            var x = this.elements[index];
-            var y = this.elements[index + 1];
+            if(this.config['reload'] === true) {
+                var x = this.elements[index];
+                var y = this.elements[index + 1];
 
-            this.elements[index + 1] = x;
-            this.elements[index] = y;
+                this.elements[index + 1] = x;
+                this.elements[index] = y;
 
-            this.reloadDocument();
-
+                this.reloadDocument();
+            } else {
+                Ext.get(element).insertAfter(this.elements[index+1]);
+                this.refresh();
+            }
         }
     },
 
     moveBlockUp: function (element) {
-
         var index = this.getElementIndex(element);
-
         if (index > 0) {
-            var x = this.elements[index];
-            var y = this.elements[index - 1];
+            if(this.config['reload'] === true) {
+                var x = this.elements[index];
+                var y = this.elements[index - 1];
 
-            this.elements[index - 1] = x;
-            this.elements[index] = y;
+                this.elements[index - 1] = x;
+                this.elements[index] = y;
 
-            this.reloadDocument();
+                this.reloadDocument();
+            } else {
+                Ext.get(element).insertBefore(this.elements[index-1]);
+                this.refresh();
+            }
         }
     },
 

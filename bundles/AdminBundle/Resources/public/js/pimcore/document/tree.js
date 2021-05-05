@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -152,7 +152,7 @@ pimcore.document.tree = Class.create({
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
             }],
-            root: rootNodeConfig,
+            // root: rootNodeConfig,
             store: store,
             listeners: this.getTreeNodeListeners()
         });
@@ -265,13 +265,21 @@ pimcore.document.tree = Class.create({
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
                         "error",t(rdata.message));
-                    pimcore.elementservice.refreshNode(oldParent);
+                    // we have to delay refresh between two nodes,
+                    // as there could be parent child relationship leading to race condition
+                    window.setTimeout(function () {
+                        pimcore.elementservice.refreshNode(oldParent);
+                    }, 500);
                     pimcore.elementservice.refreshNode(newParent);
                 }
             } catch(e){
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
-                pimcore.elementservice.refreshNode(oldParent);
+                // we have to delay refresh between two nodes,
+                // as there could be parent child relationship leading to race condition
+                window.setTimeout(function () {
+                    pimcore.elementservice.refreshNode(oldParent);
+                }, 500);
                 pimcore.elementservice.refreshNode(newParent);
             }
             tree.loadMask.hide();
@@ -973,8 +981,11 @@ pimcore.document.tree = Class.create({
             printPage: {}
         };
 
-        document_types.sort([{property: 'priority', direction: 'DESC'},
-            {property: 'translatedName', direction: 'ASC'}]);
+        document_types.sort([
+            {property: 'priority', direction: 'DESC'},
+            {property: 'translatedGroup', direction: 'ASC'},
+            {property: 'translatedName', direction: 'ASC'}
+        ]);
 
         document_types.each(function (documentMenu, typeRecord) {
             var text = Ext.util.Format.htmlEncode(typeRecord.get("translatedName"));
@@ -1027,7 +1038,7 @@ pimcore.document.tree = Class.create({
             if(typeRecord.get("group")) {
                 if(!groups[menuOption][typeRecord.get("group")]) {
                     groups[menuOption][typeRecord.get("group")] = {
-                        text: Ext.util.Format.htmlEncode(typeRecord.get("group")),
+                        text: Ext.util.Format.htmlEncode(typeRecord.get("translatedGroup")),
                         iconCls: "pimcore_icon_folder",
                         hideOnClick: false,
                         menu: {
@@ -1305,7 +1316,7 @@ pimcore.document.tree = Class.create({
                         url: Routing.generate('pimcore_admin_document_document_updatesite'),
                         method: 'PUT',
                         params: data,
-                        success: function (response) {
+                        success: function (tree, record, response) {
                             var site = Ext.decode(response.responseText);
                             record.data.site = site;
                             tree.getStore().load({

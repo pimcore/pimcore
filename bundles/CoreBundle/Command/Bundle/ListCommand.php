@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
@@ -23,6 +23,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @internal
+ */
 class ListCommand extends AbstractBundleCommand
 {
     protected function configure()
@@ -92,7 +95,7 @@ class ListCommand extends AbstractBundleCommand
 
         if ($input->getOption('json')) {
             $jsonData = array_map(static function ($row) use ($returnData) {
-                return array_combine($returnData['headers'], $row);
+                return array_combine($returnData['headers'], $row) ?: [];
             }, $returnData['rows']);
             $output->write(\json_encode($jsonData, \JSON_PRETTY_PRINT));
         } else {

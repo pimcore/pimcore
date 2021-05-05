@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -39,7 +40,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @internal
+ */
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
 {
     /**
@@ -72,7 +77,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function onKernelResponseEvent(ResponseEvent $event)
     {
@@ -155,7 +160,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -189,13 +194,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 try {
                     $event = new LostPasswordEvent($user, $loginUrl);
-                    $this->get('event_dispatcher')->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
+                    $eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
 
                     // only send mail if it wasn't prevented in event
                     if ($event->getSendMail()) {
                         $mail = Tool::getMail([$user->getEmail()], 'Pimcore lost password service');
                         $mail->setIgnoreDebugMode(true);
-                        $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 24 hours: \r\n\r\n" . $loginUrl);
+                        $mail->text("Login to pimcore and change your password using the following link. This temporary login link will expire in 24 hours: \r\n\r\n" . $loginUrl);
                         $mail->send();
                     }
 
@@ -305,16 +310,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $browser = new \Browser();
         $browserVersion = (int)$browser->getVersion();
 
-        if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
+        if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 72) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
+        if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 84) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 10) {
+        if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 13.1) {
             $supported = true;
         }
-        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 42) {
+        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 67) {
             $supported = true;
         }
 

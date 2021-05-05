@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Site
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
@@ -25,64 +23,64 @@ use Pimcore\Logger;
  * @method void delete()
  * @method void save()
  */
-class Site extends AbstractModel
+final class Site extends AbstractModel
 {
     /**
-     * @var Site
+     * @var Site|null
      */
-    protected static $currentSite;
+    protected static ?Site $currentSite = null;
 
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var array
      */
-    public $domains;
+    protected $domains;
 
     /**
      * Contains the ID to the Root-Document
      *
      * @var int
      */
-    public $rootId;
+    protected $rootId;
 
     /**
-     * @var Document\Page
+     * @var Document\Page|null
      */
-    public $rootDocument;
-
-    /**
-     * @var string
-     */
-    public $rootPath;
+    protected ?Document\Page $rootDocument = null;
 
     /**
      * @var string
      */
-    public $mainDomain = '';
+    protected $rootPath;
 
     /**
      * @var string
      */
-    public $errorDocument = '';
+    protected $mainDomain = '';
+
+    /**
+     * @var string
+     */
+    protected $errorDocument = '';
 
     /**
      * @var bool
      */
-    public $redirectToMainDomain = false;
+    protected $redirectToMainDomain = false;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id
@@ -192,6 +190,7 @@ class Site extends AbstractModel
     public static function create($data)
     {
         $site = new self();
+        self::checkCreateData($data);
         $site->setValues($data);
 
         return $site;
@@ -199,8 +198,6 @@ class Site extends AbstractModel
 
     /**
      * returns true if the current process/request is inside a site
-     *
-     * @static
      *
      * @return bool
      */
@@ -222,9 +219,9 @@ class Site extends AbstractModel
     {
         if (null !== self::$currentSite) {
             return self::$currentSite;
-        } else {
-            throw new \Exception('This request/process is not inside a subsite');
         }
+
+        throw new \Exception('This request/process is not inside a subsite');
     }
 
     /**
@@ -232,7 +229,7 @@ class Site extends AbstractModel
      *
      * @param Site $site
      */
-    public static function setCurrentSite(Site $site)
+    public static function setCurrentSite(Site $site): void
     {
         self::$currentSite = $site;
     }
@@ -262,9 +259,9 @@ class Site extends AbstractModel
     }
 
     /**
-     * @return Document\Page
+     * @return Document\Page|null
      */
-    public function getRootDocument()
+    public function getRootDocument(): ?Document\Page
     {
         return $this->rootDocument;
     }
@@ -395,6 +392,9 @@ class Site extends AbstractModel
         return $this->redirectToMainDomain;
     }
 
+    /**
+     * @internal
+     */
     public function clearDependentCache()
     {
 

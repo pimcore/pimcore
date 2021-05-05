@@ -29,9 +29,9 @@ reusable `DateTime` data provider which stores the current `DateTime` on the `Vi
 ```php
 <?php
 
-// src/AppBundle/Targeting/DataProvider/DateTime.php
+// src/Targeting/DataProvider/DateTime.php
 
-namespace AppBundle\Targeting\DataProvider;
+namespace App\Targeting\DataProvider;
 
 use Pimcore\Targeting\DataProvider\DataProviderInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -63,7 +63,7 @@ services:
         autoconfigure: true
         public: false
 
-    AppBundle\Targeting\DataProvider\DateTime: ~
+    App\Targeting\DataProvider\DateTime: ~
 ```
 
 And register the provider to the targeting engine with its provider key:
@@ -72,7 +72,7 @@ And register the provider to the targeting engine with its provider key:
 pimcore:
     targeting:
         data_providers:
-            datetime: AppBundle\Targeting\DataProvider\DateTime
+            datetime: App\Targeting\DataProvider\DateTime
 ```
 
 
@@ -85,11 +85,11 @@ provider:
 ```php
 <?php
 
-// src/AppBundle/Targeting/Condition/TimeOfTheDay.php
+// src/Targeting/Condition/TimeOfTheDay.php
 
-namespace AppBundle\Targeting\Condition;
+namespace App\Targeting\Condition;
 
-use AppBundle\Targeting\DataProvider\DateTime;
+use App\Targeting\DataProvider\DateTime;
 use Pimcore\Targeting\Condition\AbstractVariableCondition;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;

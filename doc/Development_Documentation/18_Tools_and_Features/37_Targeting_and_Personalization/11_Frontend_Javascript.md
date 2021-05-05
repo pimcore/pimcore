@@ -33,9 +33,9 @@ event. This event can be used to influence data and the used template which is u
 ```php
 <?php
 
-// src/AppBundle/EventListener/TargetingCodeListener.php
+// src/EventListener/TargetingCodeListener.php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use Pimcore\Event\Targeting\TargetingCodeEvent;
 use Pimcore\Event\TargetingEvents;
@@ -70,7 +70,7 @@ class TargetingCodeListener implements EventSubscriberInterface
 The listener above sets a custom template which can either extend the core one or define a completely custom output:
 
 ```twig
-{# src/AppBundle/Resources/views/Targeting/targetingCode.html.twig #} 
+{# templates/Targeting/targetingCode.html.twig #} 
 
 {% extends '@PimcoreCore/Targeting/targetingCode.html.twig' %}
 
@@ -82,10 +82,6 @@ The listener above sets a custom template which can either extend the core one o
     </script>
 {% endblock %}
 ```
-
-As this makes use of the same extension/code block system as the [Matomo Tracking Integration](../28_Marketing_Settings/07_Piwik.md)
-see its documentation page for further details.
-
 
 ## Frontend Data Providers
 
@@ -107,7 +103,7 @@ Simply register your frontend data provider on the `window._ptg.dataProviders` o
 example a simple provider which does nothing more than logging the current user agent to the console:
 
 ```js
-// src/AppBundle/Resources/public/js/targeting/frontend.js
+// /public/js/targeting/frontend.js
 
 (function () {
     window._ptg = window._ptg || {};
@@ -122,7 +118,7 @@ example a simple provider which does nothing more than logging the current user 
 Taking the example listener above, we use a custom code snippet template to load our script:
 
 ```twig
-{# src/AppBundle/Resources/views/Targeting/targetingCode.html.twig #} 
+{# templates/Targeting/targetingCode.html.twig #} 
 
 {% block targetingScript %}
     <script type="text/javascript" src="{{ asset('bundles/app/js/targeting/frontend.js') }}"></script>

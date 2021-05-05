@@ -15,6 +15,7 @@ The biggest advantages of using that instead of (for example) the relation edita
 
 | Name                           | Type    | Description                                                                                                                                                                                                                              |
 |--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `title`                        | string  | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip. |
 | `width`                        | integer | Width of the image in pixel                                                                                                                                                                                                              |
 | `height`                       | integer | Height of the image in pixel                                                                                                                                                                                                             |
 | `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                                    |
@@ -34,7 +35,6 @@ The biggest advantages of using that instead of (for example) the relation edita
 | `cacheBuster`                  | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
 
 Additionally you can also pass [any valid attribute for `Thumbnail::getHtml()`](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
-as well as every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
 
 ## Methods
 
@@ -102,18 +102,6 @@ You can also change the thumbnail configuration:
 }) }}
 ```
 
-### An Example Using Custom Attributes
-
-```twig
-{{ pimcore_image("myImage", {
-    "thumbnail": "content",
-    "attributes": {
-        "custom-attr": "value",
-        "data-role": "image"
-    }
-}) }}
-```
-
 And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other Advanced Examples
@@ -140,11 +128,6 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 {% endif %}
 
 
-{# Disable automatic width and height attributes #}
-{{ pimcore_image("myImage", {
-    "thumbnail": "exampleScaleWidth",
-    "disableWidthHeightAttributes": true
-}) }}
 
 
 {# Custom drop targets #}

@@ -1,17 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -100,13 +99,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $visibleSearch = true;
 
     /**
-     * If set to true then null values will not be exported.
-     *
-     * @var bool
-     */
-    protected static $dropNullValues;
-
-    /**
      * @var array
      */
     public static $validFilterOperators = [
@@ -149,10 +141,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @param mixed $data
      * @param bool $omitMandatoryCheck
+     * @param array $params
      *
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
+    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         $isEmpty = true;
 
@@ -175,7 +168,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
+     * @internal
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
@@ -185,18 +178,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function getForCsvExport($object, $params = [])
     {
         return $this->getDataFromObjectParam($object, $params);
-    }
-
-    /**
-     * @param string $importValue
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getFromCsvImport($importValue, $object = null, $params = [])
-    {
-        return $importValue;
     }
 
     /**
@@ -512,14 +493,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
      * @param mixed $data
      * @param array $tags
      *
      * @return array
      */
-    public function getCacheTags($data, $tags = [])
+    public function getCacheTags($data, array $tags = [])
     {
         return $tags;
     }
@@ -558,7 +537,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array $value
+     * @param string|array|object $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -569,15 +548,18 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $db = \Pimcore\Db::get();
         $name = $params['name'] ? $params['name'] : $this->name;
         $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
 
         if ($value === 'NULL') {
-            if ($operator == '=') {
+            if ($operator === '=') {
                 $operator = 'IS';
-            } elseif ($operator == '!=') {
+            } elseif ($operator === '!=') {
                 $operator = 'IS NOT';
             }
         } elseif (!is_array($value) && !is_object($value)) {
-            if ($operator == 'LIKE') {
+            if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
                 $value = $db->quote($value);
@@ -586,9 +568,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**
@@ -720,10 +702,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
-            $code .= "\t" . 'if (!$isEqual) {' . "\n";
-            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
-            $code .= "\t" . '}' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+                $code .= "\t" . 'if (!$isEqual) {' . "\n";
+                $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+                $code .= "\t" . '}' . "\n";
+            } else {
+                $code .= "\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            }
         }
 
         if (method_exists($this, 'preSetData')) {
@@ -839,10 +825,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . 'if($class && $class->getAllowInherit()) {' . "\n";
             $code .= "\t\t" . '$this->getObject()::setGetInheritedValues($inheritValues);'."\n";
             $code .= "\t" . '}' . "\n";
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
-            $code .= "\t" . 'if (!$isEqual) {' . "\n";
-            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
-            $code .= "\t" . '}' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+                $code .= "\t" . 'if (!$isEqual) {' . "\n";
+                $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+                $code .= "\t" . '}' . "\n";
+            } else {
+                $code .= "\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            }
         }
 
         if (method_exists($this, 'preSetData')) {
@@ -941,10 +931,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
-            $code .= "\t" . 'if (!$isEqual) {' . "\n";
-            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
-            $code .= "\t" . '}' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+                $code .= "\t" . 'if (!$isEqual) {' . "\n";
+                $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+                $code .= "\t" . '}' . "\n";
+            } else {
+                $code .= "\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            }
         }
 
         if (method_exists($this, 'preSetData')) {
@@ -984,7 +978,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
 
@@ -1061,7 +1055,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
-            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+            if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+                $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+            } else {
+                $code .= "\t" . '$isEqual = false;' . "\n";
+            }
 
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
@@ -1230,123 +1228,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param bool $dropNullValues
-     */
-    public static function setDropNullValues($dropNullValues)
-    {
-        self::$dropNullValues = $dropNullValues;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function getDropNullValues()
-    {
-        return self::$dropNullValues;
-    }
-
-    /**
      * @return bool
      */
     public function getUnique()
     {
         return false;
-    }
-
-    /**
-     *  @internal
-     *
-     * @param mixed $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
-     * @param array $params
-     *
-     * @throws \Exception
-     */
-    protected function setDataToObject($data, $container, $params = [])
-    {
-        $context = $params['context'] ?? null;
-
-        if (isset($context['containerType'])) {
-            if ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'block') {
-                if ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield) {
-                    $fieldname = $context['fieldname'];
-
-                    if ($container instanceof DataObject\Concrete) {
-                        $containerGetter = 'get' . ucfirst($fieldname);
-                        $parentContainer = $container->$containerGetter();
-
-                        if ($parentContainer) {
-                            $originalIndex = $context['oIndex'] ?? null;
-
-                            // field collection or block items
-                            if ($originalIndex !== null) {
-                                if ($context['containerType'] === 'block') {
-                                    $items = $parentContainer;
-                                } else {
-                                    $items = $parentContainer->getItems();
-                                }
-
-                                if ($items && count($items) > $originalIndex) {
-                                    $item = $items[$originalIndex];
-
-                                    if ($context['containerType'] === 'block') {
-                                        $data = $item[$this->getName()] ?? null;
-                                        if ($data instanceof DataObject\Data\BlockElement) {
-                                            $data->setData($data);
-                                        }
-                                    } else {
-                                        if ($container instanceof DataObject\Localizedfield) {
-                                            $item->setLocalizedValue($this->getName(), $data, $params['language']);
-                                        } else {
-                                            $setter = 'set' . ucfirst($this->getName());
-                                            $item->$setter($data);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } elseif ($container instanceof DataObject\Localizedfield) {
-                        $container->setLocalizedValue($this->getName(), $data, $params['language']);
-                    }
-                }
-            } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield)) {
-                $fieldname = $context['fieldname'];
-
-                if ($container instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $parentContainer = $container->$containerGetter();
-                    if ($parentContainer) {
-                        $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        $brickData = $parentContainer->$brickGetter();
-
-                        if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
-                            $brickData->set('localizedfields', $data);
-                        }
-                    }
-                } elseif ($container instanceof DataObject\Localizedfield) {
-                    $container->setLocalizedValue($this->getName(), $data, $params['language']);
-                }
-            } elseif ($context['containerType'] === 'classificationstore') {
-                $fieldname = $context['fieldname'];
-                $getter = 'get' . ucfirst($fieldname);
-                if (method_exists($container, $getter)) {
-                    $groupId = $context['groupId'];
-                    $keyId = $context['keyId'];
-                    $language = $context['language'];
-
-                    /** @var DataObject\Classificationstore $classificationStoreData */
-                    $classificationStoreData = $container->$getter();
-                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyId, $data, $language);
-                }
-            }
-        }
-
-        $setter = 'set' . ucfirst($this->getName());
-        if (method_exists($container, $setter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
-            $container->$setter($data);
-        } elseif ($container instanceof DataObject\Localizedfield) {
-            $container->setLocalizedValue($this->getName(), $data, $params['language']);
-        }
     }
 
     /**
@@ -1411,16 +1297,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                                     } else {
                                         $getter = 'get' . ucfirst($this->getName());
                                         $data = $item->$getter();
-
-                                        if ($object instanceof DataObject\Localizedfield) {
-                                            $data = $data->getLocalizedValue($this->getName(), $params['language'], true);
-                                        }
                                     }
 
                                     return $data;
-                                } else {
-                                    throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                                 }
+
+                                throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                             } else {
                                 return null;
                             }
@@ -1511,42 +1393,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
     }
 
-    /** Encode value for packing it into a single column.
-     * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function marshal($value, $object = null, $params = [])
-    {
-        if (isset($params['raw']) && $params['raw']) {
-            return $value;
-        } else {
-            return ['value' => $value];
-        }
-    }
-
-    /** See marshal
-     * @param mixed $data
-     * @param Model\DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function unmarshal($data, $object = null, $params = [])
-    {
-        if (isset($params['raw']) && $params['raw']) {
-            return $data;
-        } else {
-            if (is_array($data)) {
-                return $data['value'];
-            }
-        }
-
-        return null;
-    }
-
     /**
      * @param array|null $existingData
      * @param array $additionalData
@@ -1588,20 +1434,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue)
-    {
-        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
-            'Implement `' . DataObject\ClassDefinition\Data\EqualComparisonInterface::class . '` instead.', E_USER_DEPRECATED);
-
-        return false;
-    }
-
-    /**
      * @param DataObject\Concrete $object
      */
     public function markLazyloadedFieldAsLoaded($object)
@@ -1623,7 +1455,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      * @param DataObject\Listing $listing
-     * @param string|int|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|array|Model\Element\ElementInterface $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return DataObject\Listing

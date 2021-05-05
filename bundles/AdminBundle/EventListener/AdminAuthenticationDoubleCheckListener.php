@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * TODO: the double authentication check is currently running for every DoubleAuthenticationControllerInterface, independent
  * of the request context, to ensure third party bundles using the AdminController handle authentication as well. Should we
  * do this on the pimcore context instead?
+ *
+ * @internal
  */
 class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 {
@@ -74,7 +77,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

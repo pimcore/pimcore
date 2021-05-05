@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -44,7 +44,7 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
         this.setupWrapper();
 
         if (!this.config.width) {
-            this.config.width = Ext.get(this.id).getWidth() - 2;
+            this.config.width = Ext.get(this.id).getWidth() ?? Ext.get(this.id).getWidth() - 2;
         }
 
         this.element = new Ext.form.TextField(this.config);
@@ -62,7 +62,29 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             element.setValue(this.data.path);
         }.bind(this));
 
-        this.element.render(this.id);
+        var items = [this.element, {
+            xtype: "button",
+            iconCls: "pimcore_icon_open",
+            style: "margin-left: 5px",
+            handler: this.openElement.bind(this)
+        }, {
+            xtype: "button",
+            iconCls: "pimcore_icon_delete",
+            style: "margin-left: 5px",
+            handler: this.empty.bind(this)
+        }, {
+            xtype: "button",
+            iconCls: "pimcore_icon_search",
+            style: "margin-left: 5px",
+            handler: this.openSearchEditor.bind(this)
+        }];
+
+        this.composite = Ext.create('Ext.form.FieldContainer', {
+            layout: 'hbox',
+            items: items
+        });
+
+        this.composite.render(this.id);
     },
 
     uploadDialog: function () {
@@ -217,32 +239,13 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             menu.add(new Ext.menu.Item({
                 text: t('empty'),
                 iconCls: "pimcore_icon_delete",
-                handler: function (item) {
-                    item.parentMenu.destroy();
-                    this.data = {};
-                    this.element.setValue(this.data.path);
-                    if (this.config.reload) {
-                        this.reloadDocument();
-                    }
-
-                }.bind(this)
+                handler: this.empty.bind(this)
             }));
 
             menu.add(new Ext.menu.Item({
                 text: t('open'),
                 iconCls: "pimcore_icon_open",
-                handler: function (item) {
-                    item.parentMenu.destroy();
-                    if (this.data.elementType == "document") {
-                        pimcore.helpers.openDocument(this.data.id, this.data.subtype);
-                    }
-                    else if (this.data.elementType == "asset") {
-                        pimcore.helpers.openAsset(this.data.id, this.data.subtype);
-                    }
-                    else if (this.data.elementType == "object") {
-                        pimcore.helpers.openObject(this.data.id, this.data.subtype);
-                    }
-                }.bind(this)
+                handler: this.openElement.bind(this)
             }));
 
             if (pimcore.elementservice.showLocateInTreeButton("document")) {
@@ -313,6 +316,20 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             if (this.config.reload) {
                 this.reloadDocument();
             }
+        }
+    },
+
+    openElement: function () {
+        if (this.data.id && this.data.elementType) {
+            pimcore.helpers.openElement(this.data.id, this.data.elementType, this.data.subtype);
+        }
+    },
+
+    empty: function () {
+        this.data = {};
+        this.element.setValue(this.data.path);
+        if (this.config.reload) {
+            this.reloadDocument();
         }
     },
 

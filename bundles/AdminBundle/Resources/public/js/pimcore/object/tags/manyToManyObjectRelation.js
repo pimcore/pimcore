@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -341,8 +341,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     },
 
     getLayoutEdit: function () {
-
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             this.fieldConfig.height = null;
         }
 
@@ -591,9 +590,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
 
     getLayoutShow: function () {
-
         var autoHeight = false;
-        if (intval(this.fieldConfig.height) < 15) {
+        if (!this.fieldConfig.height) {
             autoHeight = true;
         }
 
@@ -914,6 +912,3 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     },
 
 });
-
-// @TODO BC layer, to be removed in Pimcore 10
-pimcore.object.tags.objects = pimcore.object.tags.manyToManyObjectRelation;

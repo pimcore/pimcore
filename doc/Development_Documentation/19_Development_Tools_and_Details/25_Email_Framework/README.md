@@ -7,7 +7,7 @@ For this you have several components:
 * Document\\Email
 * [Pimcore\Mail](./01_Pimcore_Mail.md)
 
-Pimcore provides a `Pimcore\Mail` Class which extends the `\Swift_Message` Class. When you initialize a 
+Pimcore provides a `Pimcore\Mail` Class which extends the `\Symfony\Component\Mime\Email` Class. When you initialize a 
 `Pimcore\Mail` object, all data from *Settings* > *System* > *Email Settings* are applied 
 automatically.  
 
@@ -60,6 +60,6 @@ $mail->send();
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
 $mail->addBcc("bcc@pimcore.org");
-$mail->setBodyHtml("<b>some</b> rich text");
+$mail->html("<b>some</b> rich text");
 $mail->send();
 ```

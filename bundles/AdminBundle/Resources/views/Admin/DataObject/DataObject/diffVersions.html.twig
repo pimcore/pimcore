@@ -51,6 +51,14 @@
         {% set modifiedPublishedClass = object1.getPublished() is not same as(object2.getPublished()) ? 'modified' : ''  %}
         <td class="{{ modifiedPublishedClass }}">{{ object2.getPublished() ? 'true' : 'false' }}</td>
     </tr>
+    {% if versionNote1 or versionNote2 %}
+        <tr class="system">
+            <td>Version Note</td>
+            <td>&nbsp;</td>
+            <td>{{ versionNote1 }}</td>
+            <td>{{ versionNote2 }}</td>
+        </tr>
+    {% endif %}
     <tr class="system">
         <td>Id</td>
         <td>o_id</td>
@@ -65,7 +73,6 @@
         <td colspan="3">&nbsp;</td>
     </tr>
 
-    {% set c = 0 %}
     {% for fieldName, definition in fields %}
         {% if definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
             {% for language in validLanguages %}
@@ -78,9 +85,7 @@
                     {% set keyData2 = v2Container is not empty ? v2Container.getLocalizedValue(lfd.getName(), language) : null %}
                     {% set v2 = v2Container ? lfd.getVersionPreview(keyData2) %}
 
-                    {% set trClass = (c % 2) ? 'odd' : '' %}
-
-                    <tr class="{{ trClass }}">
+                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
                     <td>{{ lfd.getTitle()|trans([],'admin') }} ({{ language }})</td>
                     <td>{{ lfd.getName() }}</td>
                         {% if isImportPreview is not defined or isNew is not defined %}
@@ -135,8 +140,7 @@
                                         {% set keyData2 = storeData2 ? storeData2.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
                                         {% set preview2 = keyDef.getVersionPreview(keyData2) %}
 
-                                        {% set trClass = (c % 2) ? 'odd' : '' %}
-                                        <tr class = "{{ trClass }}">
+                                        <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                             <td>{{ definition.getTitle()|trans([],'admin') }}</td>
                                             <td>{{ groupDefinition.getName() }} - {{ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " ~ language : "" }}</td>
                                             {% if isImportPreview is not defined or isNew is not defined %}
@@ -145,7 +149,6 @@
                                             {% set fieldIsEqual = keyDef is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not keyDef.isEqual(keyData1, keyData2) ? 'modified' : '' %}
                                             <td class="{{ fieldIsEqual }}">{{ preview2 }}</td>
                                         </tr>
-                                        {% set c = c + 1 %}
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
@@ -167,8 +170,7 @@
                         {% if lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
                             {% for language in validLanguages %}
                                 {% for localizedFieldDefinition in lfd.getFieldDefinitions() %}
-                                    {% set trClass = (c % 2) ? 'odd' : '' %}
-                                    <tr class="{{ trClass }}">
+                                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                         <td>{{ localizedFieldDefinition.getTitle()|trans([],'admin') }} ({{ language }})</td>
                                         <td>{{ localizedFieldDefinition.getName() }}</td>
 
@@ -211,7 +213,6 @@
                                         {% set fieldIsEqual = localizedFieldDefinition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not localizedFieldDefinition.isEqual(localizedBrickValue1, localizedBrickValue2) ? 'modified1' : '' %}
                                         <td class="{{ fieldIsEqual }}">{{ v2 }}</td>
                                     </tr>
-                                    {% set c = c + 1 %}
                                 {% endfor %}
                                 {% set break = true %}
                             {% endfor %}
@@ -249,8 +250,7 @@
                                 {% endif %}
                             {% endif %}
 
-                            {% set trClass = (c % 2) ? 'odd' : '' %}
-                            <tr class="{{ trClass }}">
+                            <tr {% if loop.index is odd %}class="odd"{% endif %}>
                                 <td>{{ asAllowedType|capitalize ~ " - " ~ lfd.getTitle() ? lfd.getTitle()|trans([],'admin') }}</td>
                                 <td>{{ lfd.getName() }}</td>
                                 {% if isImportPreview is not defined or isNew is not defined %}
@@ -300,8 +300,7 @@
                             {% set v2 = fieldKey1.getVersionPreview(keyData2) %}
                         {% endif %}
 
-                        {% set trClass = (c % 2) ? 'odd' : '' %}
-                        <tr class="{{ trClass }}">
+                        <tr {% if loop.index is odd %}class="odd"{% endif %}>
                         <td>{{ fieldItem1.getType() ~ " - " ~ fieldKey1.getTitle()|trans([],'admin') }}</td>
                         <td>{{ fieldKey1.name }}</td>
                             {% if isImportPreview is not defined or isNew is not defined %}
@@ -310,43 +309,42 @@
                             {% set fieldIsEqual = fieldKey1 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey1.isEqual(keyData1, keyData2) ? 'modified' : '' %}
                             <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
                         </tr>
-                        {% set c = c + 1 %}
                     {% endfor %}
                 {% endfor %}
             {% endif %}
 
             {% if fieldItems2 is iterable and fieldItems2|length > 0 %}
 
-                {% for fkey2,fieldItem2  in fieldItems2 if fkey2 not in skipFieldItems2|keys %}
-                    {% set fieldKeys2 = fieldDefinitions2[fieldItem2.getType()].getFieldDefinitions() %}
+                {% for fkey2,fieldItem2  in fieldItems2 %}
+                    {% if fkey2 not in skipFieldItems2|keys %}
+                        {% set fieldKeys2 = fieldDefinitions2[fieldItem2.getType()].getFieldDefinitions() %}
 
-                    {% if fieldItems1[fkey2] is defined and fieldItem2.getType() == fieldItems1[fkey2].getType() %}
-                        {% set ffkey1 = fieldItems1[fkey2]  %}
-                        {% set fieldKeys1 = fieldDefinitions1[ffkey1.getType()].getFieldDefinitions() %}
-                    {% endif %}
-
-                    {% for fkey,fieldKey2 in fieldKeys2 %}
-                        {% set v1,keyData1 = null,null %}
-                        {% set keyData2 = fieldItem2.get(fieldKey2.name) %}
-                        {% set v2 = fieldKey2.getVersionPreview(keyData2) %}
-
-                        {% if ffkey1 is defined and fieldKeys1[fkey] is defined %}
-                            {% set keyData1 = ffkey1.get(fieldKeys1[fkey].name) %}
-                            {% set v1 = fieldKey2.getVersionPreview(keyData1) %}
+                        {% if fieldItems1[fkey2] is defined and fieldItem2.getType() == fieldItems1[fkey2].getType() %}
+                            {% set ffkey1 = fieldItems1[fkey2]  %}
+                            {% set fieldKeys1 = fieldDefinitions1[ffkey1.getType()].getFieldDefinitions() %}
                         {% endif %}
 
-                        {% set trClass = (c % 2) ? 'odd' : '' %}
-                        <tr class="{{ trClass }}">
-                            <td>{{ fieldItem2.getType() ~ " - " ~ fieldKey2.getTitle()|trans([],'admin') }}</td>
-                            <td>{{ fieldKey2.name }}</td>
-                            {% if isImportPreview is not defined or isNew is not defined %}
-                                <td>{{ v1 | raw }}</td>
+                        {% for fkey,fieldKey2 in fieldKeys2 %}
+                            {% set v1,keyData1 = null,null %}
+                            {% set keyData2 = fieldItem2.get(fieldKey2.name) %}
+                            {% set v2 = fieldKey2.getVersionPreview(keyData2) %}
+
+                            {% if ffkey1 is defined and fieldKeys1[fkey] is defined %}
+                                {% set keyData1 = ffkey1.get(fieldKeys1[fkey].name) %}
+                                {% set v1 = fieldKey2.getVersionPreview(keyData1) %}
                             {% endif %}
-                            {% set fieldIsEqual = fieldKey2 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey2.isEqual(v1, keyData2) ? 'modified' : '' %}
-                            <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
-                        </tr>
-                        {% set c = c + 1 %}
-                    {% endfor %}
+
+                            <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                                <td>{{ fieldItem2.getType() ~ " - " ~ fieldKey2.getTitle()|trans([],'admin') }}</td>
+                                <td>{{ fieldKey2.name }}</td>
+                                {% if isImportPreview is not defined or isNew is not defined %}
+                                    <td>{{ v1 | raw }}</td>
+                                {% endif %}
+                                {% set fieldIsEqual = fieldKey2 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey2.isEqual(v1, keyData2) ? 'modified' : '' %}
+                                <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         {% else %}
@@ -355,8 +353,7 @@
             {% set keyData2 = object2.getValueForFieldName(fieldName) is not same as(false) ? object2.getValueForFieldName(fieldName) : null %}
             {% set v2 = definition.getVersionPreview(keyData2) %}
 
-            {% set trClass = (c % 2) ? 'odd' : '' %}
-            <tr class="{{ trClass }}">
+            <tr {% if loop.index is odd %}class="odd"{% endif %}>
                 <td>{{ definition.getTitle()|trans([],'admin') }}</td>
                 <td>{{ definition.getName() }}</td>
                 {% if isImportPreview is not defined or isNew is not defined %}
@@ -366,7 +363,6 @@
                 <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
             </tr>
         {% endif %}
-        {% set c = c + 1 %}
     {% endfor %}
 </table>
 

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Translation\ExportDataExtractorService\DataExtractor;
@@ -76,15 +77,15 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      */
     private function extractRawAttributeSet(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages, array $exportAttributes = null, bool $inherited): AttributeSet
     {
-        $inheritedBackup = DataObject\AbstractObject::getGetInheritedValues();
-        DataObject\AbstractObject::setGetInheritedValues($inherited);
+        $inheritedBackup = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues($inherited);
 
         $result = parent::extract($translationItem, $sourceLanguage, $targetLanguages);
 
         $object = $translationItem->getElement();
 
         if ($object instanceof DataObject\Folder) {
-            DataObject\AbstractObject::setGetInheritedValues($inheritedBackup);
+            DataObject::setGetInheritedValues($inheritedBackup);
 
             return $result;
         }
@@ -98,7 +99,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
             ->addBlocks($object, $result, $exportAttributes)
             ->addLocalizedFieldsInFieldCollections($object, $result, $exportAttributes);
 
-        DataObject\AbstractObject::setGetInheritedValues($inheritedBackup);
+        DataObject::setGetInheritedValues($inheritedBackup);
 
         return $result;
     }
@@ -238,7 +239,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         foreach ($fieldDefinitions as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
 
-                /** @var DataObject\ClassDefinition\Data\Localizedfields $blockLocalizedFieldDefinition */
+                /** @var DataObject\ClassDefinition\Data\Localizedfields|null $blockLocalizedFieldDefinition */
                 $blockLocalizedFieldDefinition = $fd->getFieldDefinition('localizedfields');
                 if ($blockLocalizedFieldDefinition) {
                     $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
@@ -423,7 +424,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 foreach ($items as $item) {
                     $type = $item->getType();
 
-                    $definition = $itemFieldDefinitions[$type] ?: null;
+                    $definition = $itemFieldDefinitions[$type] ?? null;
                     if (!$definition instanceof DataObject\Fieldcollection\Definition) {
                         continue;
                     }

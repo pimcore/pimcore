@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Security\Encoder;
@@ -19,6 +20,8 @@ use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
+ * @internal
+ *
  * Password encoding and verification for Pimcore objects and admin users is implemented on the user object itself.
  * Therefore the encoder needs the user object when encoding or verifying a password. This factory decorates the core
  * factory and allows to delegate building the encoder to a type specific factory which then is able to create a
@@ -50,7 +53,7 @@ class EncoderFactory implements EncoderFactoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getEncoder($user)
     {
@@ -90,13 +93,8 @@ class EncoderFactory implements EncoderFactoryInterface
 
         if (null !== $factoryKey) {
             $factory = $this->encoderFactories[$factoryKey];
-            $encoder = $factory->getEncoder($user);
 
-            if (!$encoder) {
-                throw new \RuntimeException(sprintf('Failed to fetch encoder from factory "%s".', $factoryKey));
-            }
-
-            return $encoder;
+            return $factory->getEncoder($user);
         }
 
         return null;

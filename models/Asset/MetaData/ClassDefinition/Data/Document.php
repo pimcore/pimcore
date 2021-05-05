@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Property
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
@@ -120,7 +118,9 @@ class Document extends Data
         return $data;
     }
 
-    /** @inheritDoc */
+    /**
+     * {@inheritdoc}
+     */
     public function getDataForEditMode($data, $params = [])
     {
         if (is_numeric($data)) {
@@ -160,8 +160,8 @@ class Document extends Data
      */
     public function resolveDependencies($data, $params = [])
     {
-        if (isset($params['data'])) {
-            $elementId = $params['data'];
+        if ($data instanceof \Pimcore\Model\Document && isset($params['type'])) {
+            $elementId = $data->getId();
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;

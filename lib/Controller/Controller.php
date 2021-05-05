@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Controller;
@@ -22,7 +23,7 @@ use Symfony\Component\Templating\EngineInterface;
 abstract class Controller extends AbstractController
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     protected function render(string $view, array $parameters = [], Response $response = null): Response
@@ -43,7 +44,7 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     protected function stream(string $view, array $parameters = [], StreamedResponse $response = null): StreamedResponse
@@ -67,7 +68,7 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     protected function renderView(string $view, array $parameters = []): string
@@ -81,7 +82,7 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      */
     public static function getSubscribedServices()

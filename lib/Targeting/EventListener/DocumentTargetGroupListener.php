@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Targeting\EventListener;
@@ -26,8 +26,8 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles target groups configured on the document settings panel. If a document
@@ -80,7 +80,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo)
     {
-        if (!$document || !$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

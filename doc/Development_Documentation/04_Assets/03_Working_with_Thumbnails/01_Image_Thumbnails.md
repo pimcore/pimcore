@@ -20,7 +20,7 @@ Click on *+* to add a new transformation, so that it look like that for example:
 ![Thumbnails](../../img/thumbnails1.png)
 
 **Important**: The transformations are performed in the order from the top to the bottom. This is for example important 
-in the configuration above. If the you first round the corners this would be performed on the original image, 
+in the configuration above. If you first round the corners this would be performed on the original image, 
 and then the image will get resized, so the rounded corners are also resized which is not intended. 
 
 To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return 
@@ -86,7 +86,7 @@ You can configure the generated markup with the following options:
 | `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                                |
 | `pictureAttributes`            | array    | An key-value array of custom attributes which should be applied to the generated ´<picture>` tag |
 | `imgAttributes`                | array    | An key-value array of custom attributes which should be applied to the generated ´<img>` tag |
-| `lowQualityPlaceholder`        | bool     | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`. (requires [SQIP](https://github.com/technopagan/sqip) or [Imagick](http://php.net/imagick), details see [setup of additional tools](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)|
+| `lowQualityPlaceholder`        | bool     | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`.|
 | `pictureCallback`              | callable | A callable to modify the attributes for the generated `<picture>` tag. There 1 argument passed, the array of attributes.  |
 | `sourceCallback`               | callable | A callable to modify the attributes for any of the generated `<source>` tag. There 1 argument passed, the array of attributes.  |
 | `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes.  |
@@ -152,8 +152,8 @@ $thumbnail = $asset->getThumbnail("myThumbnail");
 $width = $thumbnail->getWidth();
 $height = $thumbnail->getHeight();
  
-// get the html "img" tag for the thumbnail incl. custom class:
-echo $thumbnail->getHtml(["class" => "custom-class"]);
+// get the html "<picture>" tag for the thumbnail incl. custom class on the containing `<img>` tag:
+echo $thumbnail->getHtml(['imgAttributes' => ["class" => "custom-class"]]);
  
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
@@ -199,7 +199,9 @@ $thumbnail->getHtml([
     'height': 180,
     'cover': true,
 }).html({
-    'class': 'thumbnail-class',
+    'imgAttributes': {
+        'class': 'thumbnail-class',
+    },
     'data-my-name': 'my value',
     'attributes': {
         'non-standard': 'HTML attributes',
@@ -209,7 +211,9 @@ $thumbnail->getHtml([
   
 /* same with a thumbnail definition */
 {{ image.thumbnail('exampleScaleWidth').html({
-    'class': 'thumbnail-class',
+    'pictureAttributes': {
+        'class': 'thumbnail-class',
+    },
     'data-my-name': 'my value',
 }) }}
   
@@ -233,7 +237,7 @@ Due licensing issues Pimcore doesn't include the color profiles (*.icc files) in
 you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075) 
 or here: [ICC (color.org)](http://www.color.org/profiles.xalter). 
 
-After downloading the profiles put them into your `/website` folder or anywhere else on your sever 
+After downloading the profiles put them into your project folder or anywhere else on your sever 
 (eg. `/usr/share/color/icc`). Then go to the Pimcore system settings, open the assets section and configure the 
 path to your favorite color profile.
 

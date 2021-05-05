@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Log\Handler;
@@ -28,8 +29,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     private $db;
 
     /**
-     * ApplicationLoggerDb constructor.
-     *
      * @param Db\ConnectionInterface $db
      * @param string $level
      * @param bool $bubble
@@ -43,7 +42,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     /**
      * @param array $record
      */
-    public function write(array $record)
+    public function write(array $record): void
     {
         $data = [
             'pid' => getmypid(),
@@ -61,8 +60,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     }
 
     /**
-     * @static
-     *
      * @return string[]
      */
     public static function getComponents()
@@ -75,8 +72,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     }
 
     /**
-     * @static
-     *
      * @return string[]
      */
     public static function getPriorities()

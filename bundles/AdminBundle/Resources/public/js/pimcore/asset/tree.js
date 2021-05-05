@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -141,7 +141,7 @@ pimcore.asset.tree = Class.create({
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
             }],
-            root: rootNodeConfig,
+            // root: rootNodeConfig,
             listeners: this.getTreeNodeListeners()
         });
 
@@ -408,13 +408,21 @@ pimcore.asset.tree = Class.create({
                     this.tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
                         "error",t(rdata.message));
-                    pimcore.elementservice.refreshNode(oldParent);
+                    // we have to delay refresh between two nodes,
+                    // as there could be parent child relationship leading to race condition
+                    window.setTimeout(function () {
+                        pimcore.elementservice.refreshNode(oldParent);
+                    }, 500);
                     pimcore.elementservice.refreshNode(newParent);
                 }
             } catch(e){
                 this.tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
-                pimcore.elementservice.refreshNode(oldParent);
+                // we have to delay refresh between two nodes,
+                // as there could be parent child relationship leading to race condition
+                window.setTimeout(function () {
+                    pimcore.elementservice.refreshNode(oldParent);
+                }, 500);
                 pimcore.elementservice.refreshNode(newParent);
             }
             this.tree.loadMask.hide();

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\UUID\Listing;
@@ -28,7 +26,7 @@ use Pimcore\Model\Tool\UUID;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
+     * Loads a list of UUID for the specified parameters, returns an array of UUID elements
      *
      * @return array
      */
@@ -44,7 +42,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * Returns the total amount of Email_Log entries
+     * Returns the total amount of UUID entries
      *
      * @return int
      */

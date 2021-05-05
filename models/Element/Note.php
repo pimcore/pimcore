@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element;
@@ -24,52 +22,70 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
  */
-class Note extends Model\AbstractModel
+final class Note extends Model\AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $cid;
+    protected $cid;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $ctype;
+    protected $ctype;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $date;
+    protected $date;
 
     /**
+     * @internal
+     *
      * @var int
      */
-    public $user;
+    protected $user;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $title;
+    protected $title;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
+     * @internal
+     *
      * @var array
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * @static
@@ -120,6 +136,9 @@ class Note extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
 

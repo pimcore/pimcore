@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Dependency
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Dependency;
@@ -245,17 +243,17 @@ class Dao extends Model\Dao\AbstractDao
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.o_path, o.o_key) as path
                 FROM dependencies d
                 JOIN objects o ON o.o_id = d.sourceid
-                WHERE d.targetid = ' . $targetId . " AND  d.targettype = '" . $targetType. "'
+                WHERE d.targetid = ' . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'object'
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
-                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
+                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'document'
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(a.path, a.filename) as path
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
-                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
+                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "' AND d.sourceType = 'asset'
             ) dep
             ORDER BY " . $orderBy . ' ' . $orderDirection;
 

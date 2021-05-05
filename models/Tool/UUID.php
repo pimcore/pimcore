@@ -1,52 +1,61 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Tool
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
+use Symfony\Component\Uid\Uuid as Uid;
 
 /**
  * @method \Pimcore\Model\Tool\UUID\Dao getDao()
  * @method void delete()
  * @method void save()
  */
-class UUID extends Model\AbstractModel
+final class UUID extends Model\AbstractModel
 {
     /**
+     * @internal
+     *
      * @var int
      */
-    public $itemId;
+    protected $itemId;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $uuid;
+    protected $uuid;
 
     /**
+     * @internal
+     *
      * @var string
      */
-    public $instanceIdentifier;
+    protected $instanceIdentifier;
 
     /**
+     * @internal
+     *
      * @var mixed
      */
     protected $item;
@@ -72,6 +81,8 @@ class UUID extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return $this
      *
      * @throws \Exception
@@ -128,6 +139,8 @@ class UUID extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @return mixed
      *
      * @throws \Exception
@@ -138,7 +151,11 @@ class UUID extends Model\AbstractModel
             throw new \Exception('No instance identifier specified.');
         }
 
-        $this->uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId())->toString();
+        // namespace originally used from \Ramsey\Uuid\Uuid::NAMESPACE_DNS
+        $namespace = Uid::fromString('6ba7b810-9dad-11d1-80b4-00c04fd430c8');
+        $uuid = Uid::v5($namespace, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
+        $this->uuid = $uuid->toRfc4122();
+
         $this->getDao()->save();
 
         return $this->uuid;

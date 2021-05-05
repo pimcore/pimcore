@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -47,7 +47,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         this.fieldConfig = fieldConfig;
 
         if (this.fieldConfig.localized) {
-            if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
+            if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined || fieldConfig.permissionView === null) {
                 this.frontendLanguages = pimcore.settings.websiteLanguages.slice(0);
                 this.frontendLanguages.unshift("default");
             } else {
@@ -383,6 +383,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var editable = !this.fieldConfig.noteditable &&
             (pimcore.currentuser.admin
                 || this.fieldConfig.permissionEdit === undefined
+                || this.fieldConfig.permissionEdit === null
                 || this.fieldConfig.permissionEdit.length == 0
                 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 

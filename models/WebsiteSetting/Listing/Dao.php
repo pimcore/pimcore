@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\WebsiteSetting\Listing;
@@ -21,26 +22,19 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\WebsiteSetting\Listing $model
  */
-class Dao extends Model\Dao\PhpArrayTable
+class Dao extends Model\Listing\Dao\AbstractDao
 {
-    public function configure()
-    {
-        parent::configure();
-        $this->setFile('website-settings');
-    }
-
     /**
-     * Loads a list of static routes for the specified parameters, returns an array of Staticroute elements
-     *
      * @return \Pimcore\Model\WebsiteSetting[]
      */
     public function load()
     {
-        $settingsData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
+        $sql = 'SELECT id FROM website_settings' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
+        $settingsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
 
         $settings = [];
         foreach ($settingsData as $settingData) {
-            $settings[] = Model\WebsiteSetting::getById($settingData['id']);
+            $settings[] = Model\WebsiteSetting::getById($settingData);
         }
 
         $this->model->setSettings($settings);
@@ -53,9 +47,6 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
-        $amount = count($data);
-
-        return $amount;
+        return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM website_settings ' . $this->getCondition(), $this->model->getConditionVariables());
     }
 }

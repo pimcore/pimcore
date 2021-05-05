@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\HttpKernel\BundleLocator;
@@ -38,7 +39,7 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getBundle($class): BundleInterface
     {
@@ -46,13 +47,18 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getBundlePath($class): string
     {
         return $this->getBundleForClass($class)->getPath();
     }
 
+    /**
+     * @param object|string $class
+     * @return BundleInterface
+     * @throws \ReflectionException
+     */
     private function getBundleForClass($class): BundleInterface
     {
         if (is_object($class)) {
@@ -66,6 +72,11 @@ class BundleLocator implements BundleLocatorInterface
         return $this->bundleCache[$class];
     }
 
+    /**
+     * @param string $class
+     * @return BundleInterface
+     * @throws \ReflectionException
+     */
     private function findBundleForClass(string $class): BundleInterface
     {
         // see TemplateGuesser from SensioFrameworkExtraBundle

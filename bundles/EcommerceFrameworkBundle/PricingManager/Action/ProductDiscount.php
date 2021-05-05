@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
@@ -50,17 +51,6 @@ class ProductDiscount implements ProductDiscountInterface
         $amount = $priceinfo->getAmount()->sub($amount);
         $priceinfo->setAmount($amount->isPositive() ? $amount : Decimal::zero());
 
-        return $this;
-    }
-
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnCart(EnvironmentInterface $environment)
-    {
-        //nothing to to here
         return $this;
     }
 

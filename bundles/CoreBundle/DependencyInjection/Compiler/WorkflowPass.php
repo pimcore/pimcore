@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
@@ -29,10 +30,13 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Workflow;
 use Symfony\Component\Workflow\Exception\LogicException;
 
-class WorkflowPass implements CompilerPassInterface
+/**
+ * @internal
+ */
+final class WorkflowPass implements CompilerPassInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
@@ -47,9 +51,8 @@ class WorkflowPass implements CompilerPassInterface
             $loader->load('services_symfony_workflow.yml');
         }
 
-        $config = $container->getParameter('pimcore.workflow');
-
-        foreach ($config as $workflowName => $workflowConfig) {
+        $workflowsConfig = $container->getParameter('pimcore.workflow');
+        foreach ($workflowsConfig as $workflowName => $workflowConfig) {
             if (!$workflowConfig['enabled']) {
                 continue;
             }
@@ -90,6 +93,17 @@ class WorkflowPass implements CompilerPassInterface
                         }
                     }
                 }
+
+                if (isset($transitionConfig['options']['notes']['customHtml'])) {
+                    $customHtmlServiceName = $transitionConfig['options']['notes']['customHtml']['service'];
+                    $position = $transitionConfig['options']['notes']['customHtml']['position'];
+                    foreach ($transitions as $transition) {
+                        $customHtmlServiceDefinition = new Definition($customHtmlServiceName, [$transitionName, false, $position]);
+                        $customHtmlServiceDefinition->setPublic(false);
+                        $customHtmlServiceDefinition->setAutowired(true);
+                        $transition->addMethodCall('setCustomHtmlService', [$customHtmlServiceDefinition]);
+                    }
+                }
             }
 
             $places = [];
@@ -100,7 +114,15 @@ class WorkflowPass implements CompilerPassInterface
             }
 
             foreach ($workflowConfig['globalActions'] ?? [] as $action => $actionConfig) {
-                $workflowManagerDefinition->addMethodCall('addGlobalAction', [$workflowName, $action, $actionConfig]);
+                $customHtmlServiceDefinition = null;
+                if (isset($actionConfig['notes']['customHtml'])) {
+                    $customHtmlServiceName = $actionConfig['notes']['customHtml']['service'];
+                    $position = $actionConfig['notes']['customHtml']['position'];
+                    $customHtmlServiceDefinition = new Definition($customHtmlServiceName, [$action, true, $position]);
+                    $customHtmlServiceDefinition->setPublic(false);
+                    $customHtmlServiceDefinition->setAutowired(true);
+                }
+                $workflowManagerDefinition->addMethodCall('addGlobalAction', [$workflowName, $action, $actionConfig, $customHtmlServiceDefinition]);
             }
 
             $markingStoreType = $workflowConfig['marking_store']['type'] ?? null;
@@ -123,7 +145,7 @@ class WorkflowPass implements CompilerPassInterface
                 ]
             );
 
-            if (isset($workflowConfig['initial_markings']) && $workflowConfig['initial_markings'] !== []) {
+            if (!empty($workflowConfig['initial_markings'])) {
                 $definitionDefinition->addArgument($workflowConfig['initial_markings']);
             }
 
@@ -154,6 +176,7 @@ class WorkflowPass implements CompilerPassInterface
                 $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
             }
             $workflowDefinition->replaceArgument(3, $workflowName);
+            $workflowDefinition->replaceArgument(4, $workflowConfig['events_to_dispatch'] ?? null);
 
             // Store to container
             $container->setDefinition($workflowId, $workflowDefinition);

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -89,33 +89,37 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
             fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.label
+            value: this.node.data.configAttributes.label,
+            allowBlank: true
         });
 
         this.attributeField = new Ext.form.TextField({
             fieldLabel: t('attribute'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.attr
+            value: this.node.data.configAttributes.attr,
+            allowBlank: false
         });
 
         this.indexField = new Ext.form.NumberField({
             fieldLabel: t('offset') + " (0-...)",
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.idx
+            value: this.node.data.configAttributes.idx,
+            allowBlank: false
         });
 
         this.colAttributeField = new Ext.form.TextField({
             fieldLabel: t('col_attribute'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.colAttr
+            value: this.node.data.configAttributes.colAttr,
+            allowBlank: false
         });
 
 
 
-        this.configPanel = new Ext.Panel({
+        this.configPanel = new Ext.form.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
             items: [this.textfield, this.attributeField, this.indexField, this.colAttributeField],
@@ -123,7 +127,16 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData(params);
+                    if (this.configPanel.isValid()) {
+                        this.commitData(params);
+                    } else {
+                        Ext.MessageBox.show({
+                            title:t('error'),
+                            msg: t('Please fill all required fields correctly.'),
+                            buttons: Ext.Msg.OK ,
+                            icon: Ext.MessageBox.ERROR
+                        });
+                    }
                 }.bind(this)
             }]
         });

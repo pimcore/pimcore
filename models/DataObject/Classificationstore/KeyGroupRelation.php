@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
@@ -24,57 +22,57 @@ use Pimcore\Model;
  * @method void save()
  * @method void delete()
  */
-class KeyGroupRelation extends Model\AbstractModel
+final class KeyGroupRelation extends Model\AbstractModel
 {
     /**
      * @var int
      */
-    public $keyId;
+    protected $keyId;
 
     /**
      * @var int
      */
-    public $groupId;
+    protected $groupId;
 
     /** The key
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * The key description.
      *
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * Field definition
      *
      * @var string
      */
-    public $definition;
+    protected $definition;
 
     /**
      * Field type
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /** @var int */
-    public $sorter;
+    protected $sorter;
 
     /** The group name
      * @var string
      */
-    public $groupName;
+    protected $groupName;
 
     /** @var bool */
-    public $mandatory;
+    protected $mandatory;
 
     /** @var bool */
-    public $enabled;
+    protected $enabled;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyGroupRelation

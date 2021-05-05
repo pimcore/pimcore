@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\WebDAV;
@@ -23,6 +21,9 @@ use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Sabre\DAV;
 
+/**
+ * @internal
+ */
 class File extends DAV\File
 {
     /**
@@ -145,7 +146,7 @@ class File extends DAV\File
     public function get()
     {
         if ($this->asset->isAllowed('view')) {
-            return fopen($this->asset->getFileSystemPath(), 'r', false, FileHelper::getContext());
+            return $this->asset->getStream();
         } else {
             throw new DAV\Exception\Forbidden();
         }
@@ -158,7 +159,7 @@ class File extends DAV\File
      */
     public function getETag()
     {
-        return '"' . md5_file($this->asset->getFileSystemPath()) . '"';
+        return '"' . md5($this->asset->getRealFullPath() . $this->asset->getModificationDate()) . '"';
     }
 
     /**
@@ -178,6 +179,6 @@ class File extends DAV\File
      */
     public function getSize()
     {
-        return filesize($this->asset->getFileSystemPath());
+        return $this->asset->getFileSize();
     }
 }

@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -140,9 +140,13 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             var layer = e.layer;
             this.editableLayers.addLayer(layer);
             if (this.editableLayers.getLayers().length === 1) {
+                let ne = layer.getBounds().getNorthEast();
+                let sw = layer.getBounds().getSouthWest();
                 this.data = {
-                    ne: layer.getBounds().getNorthEast(),
-                    sw: layer.getBounds().getSouthWest()
+                    NElatitude: ne.lat,
+                    NElongitude: ne.lng,
+                    SWlatitude: sw.lat,
+                    SWlongitude: sw.lng
                 };
             }
         }.bind(this));
@@ -155,23 +159,19 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
         leafletMap.on("draw:editresize draw:editmove", function (e) {
             this.dirty = true;
+            let ne = e.layer.getBounds().getNorthEast();
+            let sw = e.layer.getBounds().getSouthWest();
             this.data = {
-                ne: e.layer.getBounds().getNorthEast(),
-                sw: e.layer.getBounds().getSouthWest()
+                NElatitude: ne.lat,
+                NElongitude: ne.lng,
+                SWlatitude: sw.lat,
+                SWlongitude: sw.lng
             };
         }.bind(this));
     },
 
     getValue: function () {
-        if (this.data) {
-            return {
-                NElatitude: this.data.ne.lat,
-                NElongitude: this.data.ne.lng,
-                SWlatitude: this.data.sw.lat,
-                SWlongitude: this.data.sw.lng
-            };
-        }
-        return null;
+        return this.data;
     },
 
     getName: function () {

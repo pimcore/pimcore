@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -72,17 +72,21 @@ pimcore.document.edit.dnd = Class.create({
     },
 
     ddMouseMove: function (e) {
-        // update the xy of the event if necessary
-        this.setDDPos(e);
-        // *** Note that the 'this' scope is the drag drop manager
-        this.dndManager.handleMouseMove(e);
+        if (this.dndManager.dragCurrent) {
+            // update the xy of the event if necessary
+            this.setDDPos(e);
+            // *** Note that the 'this' scope is the drag drop manager
+            this.dndManager.handleMouseMove(e);
+        }
     },
 
     ddMouseUp : function (e) {
-        // update the xy of the event if necessary
-        this.setDDPos(e);
-        // *** Note that the 'this' scope is the drag drop manager
-        this.dndManager.handleMouseUp(e);
+        if (this.dndManager.dragCurrent) {
+            // update the xy of the event if necessary
+            this.setDDPos(e);
+            // *** Note that the 'this' scope is the drag drop manager
+            this.dndManager.handleMouseUp(e);
+        }
     },
 
 

@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
@@ -20,12 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class TargetGroup implements ConditionInterface
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $targetGroupId;
 
     /**
-     * @var \Pimcore\Model\Tool\Targeting\TargetGroup
+     * @var \Pimcore\Model\Tool\Targeting\TargetGroup|null
      */
     protected $targetGroup;
 
@@ -56,12 +57,17 @@ class TargetGroup implements ConditionInterface
 
     /**
      * @return array
+     *
+     * @internal
      */
     public function __sleep()
     {
         return ['targetGroupId', 'threshold'];
     }
 
+    /**
+     * @internal
+     */
     public function __wakeup()
     {
         if ($this->targetGroupId) {

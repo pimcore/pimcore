@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
@@ -20,17 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-class FreeShipping implements ActionInterface
+class FreeShipping implements ActionInterface, CartActionInterface
 {
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnProduct(EnvironmentInterface $environment)
-    {
-        return $this;
-    }
 
     /**
      * @param EnvironmentInterface $environment
@@ -43,7 +35,7 @@ class FreeShipping implements ActionInterface
 
         $list = $priceCalculator->getModificators();
         foreach ($list as &$modificator) {
-            /* @var CartPriceModificatorInterface $modificator_ */
+            /* @var CartPriceModificatorInterface $modificator */
 
             // remove shipping charge
             if ($modificator instanceof ShippingInterface) {

@@ -1,18 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Asset
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset;
@@ -29,15 +27,14 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
+
     /**
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'video';
 
     /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     protected function update($params = [])
     {
@@ -77,51 +74,25 @@ class Video extends Model\Asset
     }
 
     /**
-     * @inheritdoc
-     */
-    public function delete(bool $isNested = false)
-    {
-        parent::delete($isNested);
-        $this->clearThumbnails(true);
-    }
-
-    /**
-     * @param bool $force
+     * {@inheritdoc}
      */
     public function clearThumbnails($force = false)
     {
-        if ($this->_dataChanged || $force) {
+        if ($this->getDataChanged() || $force) {
             // clear the thumbnail custom settings
             $this->setCustomSetting('thumbnails', null);
-
-            if (is_dir($this->getImageThumbnailSavePath())) {
-                $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
-                $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                    return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0 || strpos($fileInfo->getFilename(), 'video-image-cache__' . $this->getId() . '__thumbnail_') === 0;
-                });
-                /** @var \SplFileInfo $fileInfo */
-                foreach ($filterIterator as $fileInfo) {
-                    recursiveDelete($fileInfo->getPathname());
-                }
-            }
-
-            if (is_dir($this->getVideoThumbnailSavePath())) {
-                $directoryIterator = new \DirectoryIterator($this->getVideoThumbnailSavePath());
-                $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                    return strpos($fileInfo->getFilename(), 'video-thumb__' . $this->getId()) === 0;
-                });
-                /** @var \SplFileInfo $fileInfo */
-                foreach ($filterIterator as $fileInfo) {
-                    recursiveDelete($fileInfo->getPathname());
-                }
-            }
+            parent::clearThumbnails($force);
         }
     }
 
     /**
+     * @internal
+     *
      * @param string|Video\Thumbnail\Config $config
      *
      * @return Video\Thumbnail\Config|null
+     *
+     * @throws Model\Exception\NotFoundException
      */
     public function getThumbnailConfig($config)
     {
@@ -129,6 +100,10 @@ class Video extends Model\Asset
 
         if (is_string($config)) {
             $thumbnail = Video\Thumbnail\Config::getByName($config);
+
+            if ($thumbnail === null) {
+                throw new Model\Exception\NotFoundException('Video Thumbnail definition "' . $config . '" does not exist');
+            }
         } elseif ($config instanceof Video\Thumbnail\Config) {
             $thumbnail = $config;
         }
@@ -155,17 +130,16 @@ class Video extends Model\Asset
                 // check for existing videos
                 $customSetting = $this->getCustomSetting('thumbnails');
                 if (is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
-                    foreach ($customSetting[$thumbnail->getName()]['formats'] as &$path) {
-                        $fullPath = $this->getVideoThumbnailSavePath() . $path;
-                        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails', '', $fullPath);
-                        $path = urlencode_ignore_slash($path);
-
-                        $event = new GenericEvent($this, [
-                            'filesystemPath' => $fullPath,
-                            'frontendPath' => $path,
-                        ]);
-                        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
-                        $path = $event->getArgument('frontendPath');
+                    foreach ($customSetting[$thumbnail->getName()]['formats'] as $pathKey => &$path) {
+                        if ($pathKey == 'medias') {
+                            foreach ($path as &$format) {
+                                foreach ($format as &$f) {
+                                    $f = $this->enrichThumbnailPath($f);
+                                }
+                            }
+                        } else {
+                            $path = $this->enrichThumbnailPath($path);
+                        }
                     }
 
                     return $customSetting[$thumbnail->getName()];
@@ -177,6 +151,27 @@ class Video extends Model\Asset
         }
 
         return null;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
+    private function enrichThumbnailPath($path)
+    {
+        $fullPath = rtrim($this->getRealPath(), '/') . $path;
+        $path = urlencode_ignore_slash($fullPath);
+        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
+        $path = $prefix . $path;
+
+        $event = new GenericEvent($this, [
+            'filesystemPath' => $fullPath,
+            'frontendPath' => $path,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_VIDEO_THUMBNAIL);
+
+        return $event->getArgument('frontendPath');
     }
 
     /**
@@ -204,11 +199,11 @@ class Video extends Model\Asset
      *
      * @throws \Exception
      */
-    protected function getDurationFromBackend(?string $filePath = null)
+    private function getDurationFromBackend(?string $filePath = null)
     {
         if (\Pimcore\Video::isAvailable()) {
             if (!$filePath) {
-                $filePath = $this->getFileSystemPath();
+                $filePath = $this->getLocalFile();
             }
 
             $converter = \Pimcore\Video::getInstance();
@@ -225,11 +220,11 @@ class Video extends Model\Asset
      *
      * @throws \Exception
      */
-    protected function getDimensionsFromBackend()
+    private function getDimensionsFromBackend()
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getFileSystemPath(), ['asset' => $this]);
+            $converter->load($this->getLocalFile(), ['asset' => $this]);
 
             return $converter->getDimensions();
         }
@@ -311,36 +306,35 @@ class Video extends Model\Asset
         return null;
     }
 
+    /**
+     * @internal
+     *
+     * @return array
+     */
     public function getSphericalMetaData()
     {
         $data = [];
 
         if (in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
             $chunkSize = 1024;
-            if (!is_int($chunkSize)) {
-                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
-            }
-
-            if ($chunkSize < 12) {
-                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
-            }
-
-            if (($file_pointer = fopen($this->getFileSystemPath(), 'rb')) === false) {
-                throw new \RuntimeException('Could not open file for reading');
-            }
+            $file_pointer = $this->getStream();
 
             $tag = '<rdf:SphericalVideo';
             $tagLength = strlen($tag);
             $buffer = false;
 
             // find open tag
+            $overlapString = '';
             while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
                 if (strlen($chunk) <= $tagLength) {
                     break;
                 }
+
+                $chunk = $overlapString . $chunk;
+
                 if (($position = strpos($chunk, $tag)) === false) {
                     // if open tag not found, back up just in case the open tag is on the split.
-                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
+                    $overlapString = substr($chunk, $tagLength * -1);
                 } else {
                     $buffer = substr($chunk, $position);
                 }

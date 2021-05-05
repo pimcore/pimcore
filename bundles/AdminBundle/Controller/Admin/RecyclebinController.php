@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -23,6 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @internal
+ */
 class RecyclebinController extends AdminController implements KernelControllerEventInterface
 {
     /**
@@ -123,8 +127,15 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             }
 
             $items = $list->load();
+            $data = [];
+            if (is_array($items)) {
+                /** @var Recyclebin\Item $item */
+                foreach ($items as $item) {
+                    $data[] = $item->getObjectVars();
+                }
+            }
 
-            return $this->adminJson(['data' => $items, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $data, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 

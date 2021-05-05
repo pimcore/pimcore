@@ -1,20 +1,21 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
@@ -108,10 +109,6 @@ class MultiCartManager implements CartManagerInterface
                 $order = $this->orderManagers->getOrderManager()->getOrderFromCart($cart);
                 if (empty($order) || $order->getOrderState() !== $order::ORDER_STATE_COMMITTED) {
                     $this->carts[$cart->getId()] = $cart;
-
-                    if ($cart instanceof AbstractCart) {
-                        $cart->setCurrentReadonlyMode($this->cartFactory->getCartReadOnlyMode());
-                    }
                 } else {
                     // cart is already committed - cleanup cart and environment
                     $this->logger->warning('Deleting cart with id {cartId} because linked order {orderId} is already committed.', [

@@ -7,22 +7,22 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Document\Editable\Block;
 
 /**
- * Handles block state (current block level, current block index). This is the
- * data which previously was handled in Registry pimcore_tag_block_current and
- * pimcore_tag_block_numeration.
+ * @internal
+ *
+ * Handles block state (current block level, current block index)
  */
-class BlockStateStack implements \Countable
+final class BlockStateStack implements \Countable, \JsonSerializable
 {
     /**
      * @var BlockState[]
@@ -81,5 +81,32 @@ class BlockStateStack implements \Countable
     public function count(): int
     {
         return count($this->states);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->states;
+    }
+
+    public function loadArray(array $array)
+    {
+        $this->states = [];
+
+        foreach ($array as $blockStateData) {
+            $blockState = new BlockState();
+
+            foreach ($blockStateData['blocks'] as $blockData) {
+                $blockState->pushBlock(new BlockName($blockData['name'], $blockData['realName']));
+            }
+
+            foreach ($blockStateData['indexes'] as $indexData) {
+                $blockState->pushIndex($indexData);
+            }
+
+            $this->states[] = $blockState;
+        }
     }
 }

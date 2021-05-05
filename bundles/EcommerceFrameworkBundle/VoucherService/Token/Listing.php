@@ -1,22 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
-use Laminas\Paginator\Adapter\AdapterInterface;
-use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Token[] load()
@@ -24,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
      * @param string $key
@@ -352,14 +352,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     public function setTokens($tokens)
     {
         return $this->setData($tokens);
-    }
-
-    /**
-     * @return \Pimcore\Model\DataObject\Listing|AdapterInterface
-     */
-    public function getPaginatorAdapter()
-    {
-        return $this;
     }
 
     /**

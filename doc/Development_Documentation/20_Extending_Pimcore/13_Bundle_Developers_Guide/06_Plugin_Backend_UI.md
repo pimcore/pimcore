@@ -13,7 +13,7 @@ Alternatively, you can setup this via an Eventlistener:
 ```yaml
 services:
   # adds additional static files to admin backend
-  AppBundle\EventListener\PimcoreAdminListener:
+  App\EventListener\PimcoreAdminListener:
     tags:
       - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.css, method: addCSSFiles }
       - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.js, method: addJSFiles }
@@ -21,7 +21,7 @@ services:
 
 ```php
 <?php
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use Pimcore\Event\BundleManager\PathsEvent;
 
@@ -128,7 +128,7 @@ This can be done by throwing any of the following two exceptions and passing in 
 
 ```
 pimcore.error.ActionCancelledException
-pimcore.error.ValidationCancelledException
+pimcore.error.ValidationException
 ```
 
 

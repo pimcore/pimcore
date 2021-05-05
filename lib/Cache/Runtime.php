@@ -1,48 +1,46 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Cache;
 
 final class Runtime extends \ArrayObject
 {
-    const SERVICE_ID = __CLASS__;
-
-    protected static $tempInstance;
-    protected static $instance;
+    private const SERVICE_ID = __CLASS__;
 
     /**
-     * Array of indexes which are blocked from cache. If a given
-     * index is queried or set, an exception with the given message
-     * is thrown.
-     *
-     * @var array
+     * @var self|null
      */
-    private static $blockedIndexes = [
-        'pimcore_tag_block_current' => 'Index "%s" is now handled via "pimcore.document.tag.block_state_stack" service',
-        'pimcore_tag_block_numeration' => 'Index "%s" is now handled via "pimcore.document.tag.block_state_stack" service',
-    ];
+    protected static $tempInstance;
+
+    /**
+     * @var self|null
+     */
+    protected static $instance;
 
     /**
      * Retrieves the default registry instance.
      *
      * @return self
      */
-    public static function getInstance()
+    public static function getInstance(): self
     {
         if (self::$instance) {
             return self::$instance;
-        } elseif (\Pimcore::hasContainer()) {
+        }
+
+        if (\Pimcore::hasContainer()) {
             $container = \Pimcore::getContainer();
 
             /** @var self $instance */
@@ -66,16 +64,16 @@ final class Runtime extends \ArrayObject
             }
 
             return $instance;
-        } else {
-            // create a temp. instance
-            // this is necessary because the runtime cache is sometimes in use before the actual service container
-            // is initialized
-            if (!self::$tempInstance) {
-                self::$tempInstance = new self;
-            }
-
-            return self::$tempInstance;
         }
+
+        // create a temp. instance
+        // this is necessary because the runtime cache is sometimes in use before the actual service container
+        // is initialized
+        if (!self::$tempInstance) {
+            self::$tempInstance = new self;
+        }
+
+        return self::$tempInstance;
     }
 
     /**
@@ -117,8 +115,6 @@ final class Runtime extends \ArrayObject
      */
     public static function set($index, $value)
     {
-        self::checkIndexes($index);
-
         $instance = self::getInstance();
         $instance->offsetSet($index, $value);
     }
@@ -147,18 +143,14 @@ final class Runtime extends \ArrayObject
      */
     public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
     {
-        self::checkIndexes(array_keys($array));
-
         parent::__construct($array, $flags);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function offsetSet($index, $value)
     {
-        self::checkIndexes($index);
-
         parent::offsetSet($index, $value);
     }
 
@@ -167,8 +159,6 @@ final class Runtime extends \ArrayObject
      *
      * @param mixed $data
      * @param string $id
-     *
-     * @return mixed
      */
     public static function save($data, $id)
     {
@@ -204,32 +194,5 @@ final class Runtime extends \ArrayObject
 
         \Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
         self::$instance = $newInstance;
-    }
-
-    /**
-     * Check if index is in list of blocked indexes
-     *
-     * @param string|array $indexes
-     */
-    private static function checkIndexes($indexes)
-    {
-        if (!is_array($indexes)) {
-            $indexes = [$indexes];
-        }
-
-        foreach ($indexes as $index) {
-            if (isset(self::$blockedIndexes[$index])) {
-                $message = self::$blockedIndexes[$index];
-                if (!$message) {
-                    $message = 'Index "%s" is blocked by configuration';
-                }
-
-                if (false !== strpos($message, '%s')) {
-                    $message = sprintf($message, $index);
-                }
-
-                throw new \InvalidArgumentException($message);
-            }
-        }
     }
 }

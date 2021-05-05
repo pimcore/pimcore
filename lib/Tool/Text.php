@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
@@ -175,79 +176,11 @@ class Text
     }
 
     /**
-     * @deprecated
-     * @static
-     *
-     * @param  array $idMapping e.g. array("asset"=>array(OLD_ID=>NEW_ID),"object"=>array(OLD_ID=>NEW_ID),"document"=>array(OLD_ID=>NEW_ID));
-     * @param  string $text html text of wysiwyg field
-     *
-     * @return mixed
-     */
-    public static function replaceWysiwygTextRelationIds($idMapping, $text)
-    {
-        if (!empty($text)) {
-            $html = str_get_html($text);
-            if (!$html) {
-                return $text;
-            }
-
-            $s = $html->find('a[pimcore_id],img[pimcore_id]');
-
-            foreach ($s as $el) {
-                $type = null;
-
-                // image
-                if ($el->src) {
-                    $type = 'asset';
-                }
-
-                // link
-                if ($el->href) {
-                    if ($el->pimcore_type == 'asset') {
-                        $type = 'asset';
-                    } elseif ($el->pimcore_type == 'document') {
-                        $type = 'document';
-                    }
-                }
-
-                $newId = $idMapping[$type][$el->attr['pimcore_id']] ?? null;
-                if ($newId) {
-                    //update id
-
-                    if ($type == 'asset') {
-                        $pimcoreElement = Asset::getById($newId);
-                    } else {
-                        $pimcoreElement = Document::getById($newId);
-                    }
-
-                    //TODO
-
-                    $el->pimcore_id = $newId;
-                    $el->src = $pimcoreElement->getFullPath();
-                } else {
-                    //remove relation, not found in mapping
-                    $el->pimcore_id = null;
-                    $el->src = null;
-                }
-            }
-
-            $return = $html->save();
-
-            $html->clear();
-            unset($html);
-
-            return $return;
-        }
-    }
-
-    /**
-     * @static
-     *
      * @param string $text
      *
      * @return array
      */
-    public static function getElementsTagsInWysiwyg($text)
+    private static function getElementsTagsInWysiwyg($text)
     {
         if (!is_string($text) || strlen($text) < 1) {
             return [];
@@ -267,13 +200,11 @@ class Text
     }
 
     /**
-     * @static
-     *
      * @param string $text
      *
      * @return array
      */
-    public static function getElementsInWysiwyg($text)
+    private static function getElementsInWysiwyg($text)
     {
         $hash = 'elements_wysiwyg_text_' . md5($text);
         if (\Pimcore\Cache\Runtime::isRegistered($hash)) {
@@ -311,8 +242,6 @@ class Text
     /**
      * extracts all dependencies to other elements from wysiwyg text
      *
-     * @static
-     *
      * @param  string $text
      *
      * @return array
@@ -341,10 +270,8 @@ class Text
      *
      * @return array
      */
-    public static function getCacheTagsOfWysiwygText($text, $tags = [])
+    public static function getCacheTagsOfWysiwygText($text, array $tags = []): array
     {
-        $tags = is_array($tags) ? $tags : [];
-
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {
@@ -442,7 +369,7 @@ class Text
             if (false !== ($length = strrpos($text, ' '))) {
                 $text = substr($text, 0, $length);
             }
-            $string = $text.'...';
+            $string = $text . '…';
         }
 
         return $string;

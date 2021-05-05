@@ -32,14 +32,14 @@ are shown in a grid. Via buttons object variants can be created, opened and dele
 
 
 To create object variants via code, just create a normal object, set as parent the generic t-shirt and set the object 
-type to `DataObject\AbstractObject::OBJECT_TYPE_VARIANT`.
+type to `DataObject::OBJECT_TYPE_VARIANT`.
 
 ```php
 $objectX = new DataObject\Product();
 $objectX->setParent(DataObject\Product::getById(362603));
 $objectX->setKey("variantname");
 $objectX->setColor("black");
-$objectX->setType(DataObject\AbstractObject::OBJECT_TYPE_VARIANT);
+$objectX->setType(DataObject::OBJECT_TYPE_VARIANT);
 $objectX->save();
 ```
 
@@ -50,7 +50,7 @@ Getting all variants of an object is quite simple. Just call `getChildren` and p
 If only variants should be returned use following line.
 
 ```php
-$objectX->getChildren([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+$objectX->getChildren([DataObject::OBJECT_TYPE_VARIANT]);
 ```
 
 By default, `getChildren` delivers objects and folders but no variants.
@@ -64,13 +64,13 @@ snippets:
 
 ```php
 $list = new DataObject\Product\Listing();
-$list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+$list->setObjectTypes([DataObject::OBJECT_TYPE_VARIANT]);
 $list->load();
 
 // or
 
 DataObject\Product::getList([
-    "objectTypes" => [DataObject\AbstractObject::OBJECT_TYPE_VARIANT]
+    "objectTypes" => [DataObject::OBJECT_TYPE_VARIANT]
 ]);
 ```
 
@@ -78,6 +78,6 @@ If you want regular objects and variants, you should use:
 
 ```php
 $list = new DataObject\Product\Listing();
-$list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT,DataObject\AbstractObject::OBJECT_TYPE_OBJECT]);
+$list->setObjectTypes([DataObject::OBJECT_TYPE_VARIANT,DataObject::OBJECT_TYPE_OBJECT]);
 $list->load();
 ```

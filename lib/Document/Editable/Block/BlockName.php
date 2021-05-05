@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Document\Editable\Block;
@@ -20,10 +20,12 @@ namespace Pimcore\Document\Editable\Block;
 use Pimcore\Model\Document\Editable;
 
 /**
+ * @internal
+ *
  * Simple value object containing both name and real name of
  * a block.
  */
-class BlockName implements \JsonSerializable
+final class BlockName implements \JsonSerializable
 {
     /**
      * @var string
@@ -87,7 +89,7 @@ class BlockName implements \JsonSerializable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function jsonSerialize()
     {

@@ -1,82 +1,79 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
 
 /**
- * Class Workflow
- *
  * @method Workflow\Dao getDao()
  * @method void save()
- *
- * @package Pimcore\Model
  */
 class Workflow extends AbstractModel
 {
     /**
      * @var int $id
      */
-    public $id;
+    protected $id;
 
     /**
      * The name of the workflow
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * Cache of valid states in this workflow
      *
      * @var array
      */
-    public $states;
+    protected $states;
 
     /**
      * Cache of valid statuses in this workflow
      *
      * @var array
      */
-    public $statuses;
+    protected $statuses;
 
     /**
      * Cache of valid actions in this workflow
      *
      * @var array
      */
-    public $actions;
+    protected $actions;
 
     /**
      * The actual workflow
      *
      * @var array
      */
-    public $transitionDefinitions;
+    protected $transitionDefinitions;
 
     /**
      * The default state of the element
      *
      * @var string
      */
-    public $defaultState;
+    protected $defaultState;
 
     /**
      * The default status of the element
      *
      * @var string
      */
-    public $defaultStatus;
+    protected $defaultStatus;
 
     /**
      * Determines whether or not to allow unpublished elements to
@@ -84,27 +81,27 @@ class Workflow extends AbstractModel
      *
      * @var bool
      */
-    public $allowUnpublished;
+    protected $allowUnpublished;
 
     /**
      * @var array
      */
-    public $workflowSubject;
+    protected $workflowSubject;
 
     /**
      * @var bool
      */
-    public $enabled;
+    protected $enabled;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @param int $id

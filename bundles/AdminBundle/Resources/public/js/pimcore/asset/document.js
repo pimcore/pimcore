@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -128,13 +128,6 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
             return true;
         }
 
-        var getActiveXObject = function(name) {
-            // this is IE11 only (not Edge)
-            try {
-                return new ActiveXObject(name);
-            } catch(e) {}
-        };
-
         var hasNavigatorPlugin = function(name) {
             if(navigator["plugins"]) {
                 for (key in navigator.plugins) {
@@ -149,8 +142,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
         };
 
         var supported = hasNavigatorPlugin('Adobe Acrobat') || hasNavigatorPlugin('Chrome PDF Viewer')
-            || hasNavigatorPlugin('WebKit built-in PDF') || hasNavigatorPlugin('Edge PDF Viewer')
-            || getActiveXObject('AcroPDF.PDF') || getActiveXObject('PDF.PdfCtrl');
+            || hasNavigatorPlugin('WebKit built-in PDF') || hasNavigatorPlugin('Edge PDF Viewer');
 
         return supported;
     }

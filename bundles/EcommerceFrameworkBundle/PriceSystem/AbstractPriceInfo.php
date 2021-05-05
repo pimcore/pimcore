@@ -7,12 +7,12 @@ declare(strict_types=1);
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
@@ -51,7 +51,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setQuantity($quantity)
     {
@@ -59,7 +59,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getQuantity()
     {
@@ -67,7 +67,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isMinPrice(): bool
     {
@@ -75,7 +75,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setPriceSystem(PriceSystemInterface $priceSystem)
     {
@@ -93,7 +93,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPrice(): PriceInterface
     {
@@ -101,7 +101,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTotalPrice(): PriceInterface
     {
@@ -109,7 +109,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setProduct(CheckoutableInterface $product)
     {
@@ -119,7 +119,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getProduct()
     {

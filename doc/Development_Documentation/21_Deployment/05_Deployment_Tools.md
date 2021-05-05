@@ -6,18 +6,23 @@ Following tools are provided by Pimcore to support deployment processes.
 
 All Pimcore configurations are saved as YAML or PHP files on the file system. As a result they can be included into 
 [version control systems](./01_Version_Control_Systems.md) and by utilizing the 
-[multi environment feature](./03_Multi_Environment.md) different configuration files for different deployment stages 
+[multi environment feature](03_Configuration_Environments.md) different configuration files for different deployment stages 
 can be defined. 
 
-* <https://github.com/pimcore/pimcore/tree/master/app/config> 
-* <https://github.com/pimcore/pimcore/tree/master/app/config/pimcore>
-* <https://github.com/pimcore/pimcore/tree/master/var/config>
+* <https://github.com/pimcore/demo/tree/master/config> 
+* <https://github.com/pimcore/demo/tree/master/config/pimcore>
+* <https://github.com/pimcore/demo/tree/master/var/config>
 
 
 ## Pimcore Class Definitions
 
 As with Pimcore configurations also Pimcore class definitions are saved as PHP configuration files and therefore can 
 be added to version control systems and be deployed to different deployment stages. 
+
+The PHP configuration files and PHP classes will be written to the `var/classes` directory by default. However, you can create a copy
+at `/config/pimcore/classes` which is then read-only. 
+For your development environment you can set the env variable `PIMCORE_CLASS_DEFINITION_WRITABLE=true` to 
+enable write access and update your class definitions in `/config/pimcore/classes`.
 
 > **Note**: Changes on Pimcore class definitions not only have influence to configuration files but also on the database. 
 > If deploying changes between different deployment stages also database changes need to be deployed. This can be done

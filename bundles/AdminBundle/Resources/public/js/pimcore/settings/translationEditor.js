@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -41,7 +41,27 @@ Ext.define('pimcore.settings.translationEditor', {
         var innerTitle = this.config.__innerTitle;
         var editorType = this.config.__editorType;
 
-        if (editorType == "plain") {
+        if (editorType == "custom") {
+            this.textarea = new Ext.form.TextArea({
+                width: '100%',
+                height: '100%',
+                value: value,
+                grow: true
+            });
+
+            this.component = new Ext.Panel({
+                title: innerTitle,
+                items: [this.textarea],
+                bbar: [
+                    {
+                        xtype: "displayfield",
+                        value: t('symfony_translation_link')
+                    }
+                ],
+                autoScroll: true,
+                layout: 'fit'
+            });
+        } else if (editorType == "plain" ) {
             this.textarea = new Ext.form.TextArea({
                 width: '100%',
                 height: '100%',
@@ -55,8 +75,6 @@ Ext.define('pimcore.settings.translationEditor', {
                 autoScroll: true,
                 layout: 'fit'
             });
-
-
         } else {
             this.editableDivId = "translationeditor_" + uniqid();
 
@@ -123,7 +141,7 @@ Ext.define('pimcore.settings.translationEditor', {
                     text: t("save"),
                     iconCls: 'pimcore_icon_save',
                     handler: function () {
-                        if (editorType == "plain") {
+                        if (editorType == "plain" || editorType == "custom") {
                             newValue = this.textarea.getValue();
                         } else {
                             var newValue = this.oldValue;

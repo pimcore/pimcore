@@ -3,7 +3,7 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
@@ -274,7 +274,6 @@ pimcore.log.admin = Class.create({
                 xtype: 'timefield'
             });
 
-            var formSearch = this.find.bind(this);
             this.searchpanel = new Ext.FormPanel({
                 region: "east",
                 title: t("log_search_form"),
@@ -294,14 +293,6 @@ pimcore.log.admin = Class.create({
                     handler: this.find.bind(this),
                     iconCls: "pimcore_icon_search"
                 }],
-                listeners: {
-                    afterRender: function(formCmp) {
-                        this.keyNav = Ext.create('Ext.util.KeyNav', formCmp.el, {
-                            enter: formSearch,
-                            scope: this
-                        });
-                    }
-                },
                 items: [ {
                     xtype:'fieldset',
                     autoHeight:true,
