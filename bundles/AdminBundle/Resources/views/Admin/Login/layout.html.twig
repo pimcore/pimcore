@@ -21,6 +21,8 @@
         {# https://github.com/pimcore/pimcore/issues/8129 #}
         {% if customImage matches '@^https?://@' %}
             {% set backgroundImageUrl = customImage %}
+        {% elseif pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/var/assets' ~ customImage) %}
+            {% set backgroundImageUrl = customImage %}
         {% elseif pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ customImage) %}
             {% set backgroundImageUrl = customImage %}
         {% else %}
