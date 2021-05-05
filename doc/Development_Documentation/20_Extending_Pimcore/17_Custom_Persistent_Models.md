@@ -396,13 +396,14 @@ namespace App\Model\Vote\Listing;
  
 use Pimcore\Model\Listing;
 use App\Model;
-use Pimcore\Tool;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
  
 class Dao extends Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
-
+    
     /**
      * @var string
      */
@@ -421,8 +422,9 @@ class Dao extends Listing\Dao\AbstractDao
     }
  
     /**
-     * get select query.
-     * @throws \Exception
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder()
     {

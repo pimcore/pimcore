@@ -487,4 +487,18 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
         return null;
     }
+
+    /**
+     * overwrite default implementation to consider columnType & queryColumnType from class config
+     *
+     * @return array
+     */
+    public function resolveBlockedVars(): array
+    {
+        $defaultBlockedVars = [
+            'fieldDefinitionsCache'
+        ];
+
+        return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
+    }
 }
