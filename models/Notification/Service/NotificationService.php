@@ -100,17 +100,25 @@ class NotificationService
             throw new \UnexpectedValueException(sprintf('No group found with the ID %d', $groupId));
         }
 
-        $filter = [
-            'id != ?' => $fromUser,
-            'active = ?' => 1,
-            'roles LIKE ?' => '%' . $groupId . '%',
-        ];
-
-        $condition = implode(' AND ', array_keys($filter));
-        $conditionVariables = array_values($filter);
-
         $listing = new User\Listing();
-        $listing->setCondition($condition, $conditionVariables);
+        $listing->setCondition(
+            'id != ?
+            AND active = ?
+            AND (
+                roles = ?
+                OR roles LIKE ?
+                OR roles LIKE ? 
+                OR roles LIKE ?
+            )',
+            [
+                $fromUser,
+                1,
+                $groupId,
+                '%,' . $groupId,
+                $groupId . ',%',
+                '%,' . $groupId . ',%'
+            ]
+        );
         $listing->setOrderKey('name');
         $listing->setOrder('ASC');
         $listing->load();
