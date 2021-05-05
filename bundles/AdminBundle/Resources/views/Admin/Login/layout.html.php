@@ -28,6 +28,8 @@ $config = $this->config;
     //https://github.com/pimcore/pimcore/issues/8129
     if (preg_match('@^https?://@', $customImage)) {
         $backgroundImageUrl = $customImage;
+    } elseif (is_file(PIMCORE_WEB_ROOT . '/var/assets' . $customImage)) {
+        $backgroundImageUrl = $customImage;
     } elseif (is_file(PIMCORE_WEB_ROOT . $customImage)) {
         $backgroundImageUrl = $customImage;
     } else {
