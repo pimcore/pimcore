@@ -296,11 +296,11 @@ class EmailController extends AdminController
             }
 
             if ($html = $emailLog->getHtmlLog()) {
-                $mail->setHtmlBody($html);
+                $mail->html($html);
             }
 
             if ($text = $emailLog->getTextLog()) {
-                $mail->setTextBody($text);
+                $mail->text($text);
             }
 
             foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
@@ -396,9 +396,9 @@ class EmailController extends AdminController
         $mail->setIgnoreDebugMode(true);
 
         if ($request->get('emailType') == 'text') {
-            $mail->setTextBody($request->get('content'));
+            $mail->text($request->get('content'));
         } elseif ($request->get('emailType') == 'html') {
-            $mail->setHtmlBody($request->get('content'));
+            $mail->html($request->get('content'));
         } elseif ($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
 

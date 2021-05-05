@@ -73,7 +73,7 @@ class Newsletter
         }
 
         if (strlen(trim($newsletterDocument->getPlaintext())) > 0) {
-            $mail->setTextBody(trim($newsletterDocument->getPlaintext()));
+            $mail->text(trim($newsletterDocument->getPlaintext()));
         }
 
         $contentHTML = $mail->getBodyHtmlRendered();
@@ -116,12 +116,12 @@ class Newsletter
             $html->clear();
             unset($html);
 
-            $mail->setHtmlBody($contentHTML);
+            $mail->html($contentHTML);
         }
 
-        $mail->setHtmlBody($contentHTML);
+        $mail->html($contentHTML);
         // Adds the plain text part to the message, that it becomes a multipart email
-        $mail->setTextBody($contentText);
+        $mail->text($contentText);
         $mail->setSubject($mail->getSubjectRendered());
 
         return $mail;

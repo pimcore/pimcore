@@ -135,14 +135,14 @@ final class RedirectingPlugin
                 $html = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $html);
                 $html = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $html);
 
-                $message->setHtmlBody($html);
+                $message->html($html);
             } elseif (!empty($text)) {
                 $originalData['text'] = $text;
 
                 $rawText = $text;
                 $debugInformation = MailHelper::getDebugInformation('text', $message);
                 $rawText .= $debugInformation;
-                $message->setTextBody($rawText);
+                $message->text($rawText);
             }
 
             //setting debug subject
@@ -188,10 +188,10 @@ final class RedirectingPlugin
         $originalData = $message->getOriginalData();
 
         if (isset($originalData['html']) && $originalData['html']) {
-            $message->setHtmlBody($originalData['html']);
+            $message->html($originalData['html']);
         }
         if (isset($originalData['text']) && $originalData['text']) {
-            $message->setTextBody($originalData['text']);
+            $message->text($originalData['text']);
         }
         if (isset($originalData['subject']) && $originalData['subject']) {
             $message->setSubject($originalData['subject']);

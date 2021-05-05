@@ -289,8 +289,8 @@
     After:
     ```php
         $mail= new \Pimcore\Mail($headers = null, $body = null, $contentType = null);
-        $mail->setTextBody("This is just plain text");
-        $mail->setHtmlBody("<b>some</b> rich text: {{ myParam }}");
+        $mail->text("This is just plain text");
+        $mail->html("<b>some</b> rich text: {{ myParam }}");
         ...
     ```
 
