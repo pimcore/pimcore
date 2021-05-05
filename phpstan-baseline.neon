@@ -6,11 +6,6 @@ parameters:
 			path: bundles/CoreBundle/Command/Bundle/ListCommand.php
 
 		-
-			message: "#^Empty array passed to foreach\\.$#"
-			count: 1
-			path: bundles/CoreBundle/DependencyInjection/Compiler/WorkflowPass.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
