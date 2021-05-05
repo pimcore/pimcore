@@ -60,6 +60,6 @@ $mail->send();
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
 $mail->addBcc("bcc@pimcore.org");
-$mail->setHtmlBody("<b>some</b> rich text");
+$mail->html("<b>some</b> rich text");
 $mail->send();
 ```

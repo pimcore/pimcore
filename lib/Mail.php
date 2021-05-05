@@ -477,13 +477,13 @@ class Mail extends Email
     {
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
-            $this->setHtmlBody($bodyHtmlRendered);
+            $this->html($bodyHtmlRendered);
         }
 
         $bodyTextRendered = $this->getBodyTextRendered();
         if ($bodyTextRendered) {
             //add mime part for plain text body
-            $this->setTextBody($bodyTextRendered);
+            $this->text($bodyTextRendered);
         }
 
         $this->subject($this->getSubjectRendered());
@@ -693,7 +693,7 @@ class Mail extends Email
 
     /**
      * Renders the content (Twig) and returns
-     * the rendered text if a text was set with "$mail->setTextBody()"
+     * the rendered text if a text was set with "$mail->text()"
      * @internal
      * @return string
      */
@@ -701,7 +701,7 @@ class Mail extends Email
     {
         $text = $this->getTextBody();
 
-        //if the content was manually set with $obj->setTextBody(); this content will be used
+        //if the content was manually set with $obj->text(); this content will be used
         if ($text) {
             $content = $this->renderParams($text);
         } else {
@@ -820,7 +820,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function setTextBody($bodyText, string $charset = 'utf-8')
+    public function setBodyText($bodyText, string $charset = 'utf-8')
     {
         return $this->text($bodyText, $charset);
     }
@@ -832,7 +832,7 @@ class Mail extends Email
      *
      * @return \Pimcore\Mail
      */
-    public function setHtmlBody($body, string $charset = 'utf-8')
+    public function setBodyHtml($body, string $charset = 'utf-8')
     {
         return $this->html($body, $charset);
     }
