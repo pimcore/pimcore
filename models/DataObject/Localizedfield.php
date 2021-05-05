@@ -311,13 +311,15 @@ final class Localizedfield extends Model\AbstractModel implements
                 return $locale;
             }
 
-            foreach(Tool::getValidLanguages() as $validLocale) {
-                if(strpos($validLocale, $locale.'_') === 0) {
-                    return $validLocale;
+            if (\Pimcore::inAdmin()) {
+                foreach (Tool::getValidLanguages() as $validLocale) {
+                    if (strpos($validLocale, $locale.'_') === 0) {
+                        return $validLocale;
+                    }
                 }
             }
 
-            return Tool::getDefaultLanguage();
+            throw new \Exception('Not supported language');
         } catch (\Exception $e) {
             return Tool::getDefaultLanguage();
         }
