@@ -105,7 +105,6 @@ dump($tags);
 The output will be an array with `Pimcore\Model\Element\Tag` elements.
 
 ```
-TestController.php on line 146:
 array:3 [▼
   0 => Pimcore\Model\Element\Tag {#7351 ▼
     #id: 9
