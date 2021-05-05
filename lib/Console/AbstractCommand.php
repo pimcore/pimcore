@@ -26,7 +26,6 @@ use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 /**
  * Base command class setting up some defaults (e.g. the ignore-maintenance-mode switch and the VarDumper component).
- * @internal
  *
  * @method Application getApplication()
  */
