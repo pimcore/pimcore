@@ -416,10 +416,13 @@ namespace AppBundle\Model\Vote\Listing;
  
 use Pimcore\Model\Listing;
 use AppBundle\Model;
-use Pimcore\Tool;
+use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
  
 class Dao extends Listing\Dao\AbstractDao
 {
+    use QueryBuilderHelperTrait;
+    
     /**
      * @var string
      */
@@ -438,36 +441,18 @@ class Dao extends Listing\Dao\AbstractDao
     }
  
     /**
-     * get select query.
-     * @throws \Exception
+     * @param string|string[]|null $columns
+     *
+     * @return DoctrineQueryBuilder
      */
-    public function getQuery()
+    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
- 
-        // init
-        $select = $this->db->select();
- 
-        // create base
-        $field = $this->getTableName().'.id';
-        $select->from(
-            [$this->getTableName()], [
-                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field)),
-            ]
-        );
- 
-        // add condition
-        $this->addConditions($select);
- 
-        // group by
-        $this->addGroupBy($select);
- 
-        // order
-        $this->addOrder($select);
- 
-        // limit
-        $this->addLimit($select);
- 
-        return $select;
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder->select(...$columns)->from($this->tableName);
+
+        $this->applyListingParametersToQueryBuilder($queryBuilder);
+
+        return $queryBuilder;
     }
  
     /**
