@@ -32,8 +32,14 @@ final class Version20210412112812 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `notes_data` DROP INDEX `id`;');
-        $this->addSql('ALTER TABLE `notes_data` ADD PRIMARY KEY (`id`, `name`);');
+        $notesTable = $schema->getTable('notes_data');
+        if($notesTable->hasIndex('id')) {
+            $this->addSql('ALTER TABLE `notes_data` DROP INDEX `id`;');
+        }
+
+        if(!$notesTable->hasPrimaryKey()) {
+            $this->addSql('ALTER TABLE `notes_data` ADD PRIMARY KEY (`id`, `name`);');
+        }
     }
 
     public function down(Schema $schema): void
