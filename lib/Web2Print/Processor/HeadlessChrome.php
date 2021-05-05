@@ -79,7 +79,7 @@ class HeadlessChrome extends Processor
         $event = new PrintConfigEvent($this, [
             'options' => [],
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
 
         return (array)$event->getArgument('options');
     }

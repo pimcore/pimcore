@@ -110,7 +110,7 @@
     "codeception/module-symfony": "^1.6.0",
     "codeception/phpunit-wrapper": "^9",
     "phpstan/phpstan": "^0.12.85",
-    "phpstan/phpstan-symfony": "^0.12.30",
+    "phpstan/phpstan-symfony": "^0.12.32",
     "phpunit/phpunit": "^9",
     "spiritix/php-chrome-html2pdf": "^1.5",
     "elasticsearch/elasticsearch": "^7.11",
