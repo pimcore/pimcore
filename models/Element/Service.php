@@ -420,18 +420,29 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * Returns a uniqe key for the element in the $target-Path (recursive)
-     *
-     * @internal
-     *
-     * @return string
+     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
      *
      * @param string $type
      * @param string $sourceKey
      * @param ElementInterface $target
+     * @return string
      */
-    public static function getSafeCopyName($type, $sourceKey, $target)
+    public static function getSaveCopyName($type, $sourceKey, $target)
     {
+        return self::getSafeCopyName($sourceKey, $target);
+    }
+
+    /**
+     * Returns a uniqe key for the element in the $target-Path (recursive)
+     *
+     * @return string
+     *
+     * @param string $sourceKey
+     * @param ElementInterface $target
+     */
+    public static function getSafeCopyName(string $sourceKey, ElementInterface $target)
+    {
+        $type = self::getElementType($target);
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
@@ -450,7 +461,7 @@ class Service extends Model\AbstractModel
                 $sourceKey .= '_copy';
             }
 
-            return self::getSafeCopyName($type, $sourceKey, $target);
+            return self::getSafeCopyName($sourceKey, $target);
         }
 
         return $sourceKey;

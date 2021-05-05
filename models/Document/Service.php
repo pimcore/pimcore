@@ -150,7 +150,7 @@ class Service extends Model\Element\Service
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSafeCopyName('document', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
@@ -205,7 +205,7 @@ class Service extends Model\Element\Service
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
-        $new->setKey(Element\Service::getSafeCopyName('document', $new->getKey(), $target));
+        $new->setKey(Element\Service::getSafeCopyName($new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
