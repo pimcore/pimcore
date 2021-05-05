@@ -80,7 +80,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
-        href.fieldBodyCls = 'pimcore_droptarget_input x-form-trigger-wrap';
+        href.cls = 'pimcore_droptarget_display_edit';
+
+        href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
         this.component = new Ext.form.field.Display(href);
         if (this.data.published === false) {
             this.component.addCls("strikeThrough");

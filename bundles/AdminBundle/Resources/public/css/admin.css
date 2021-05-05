@@ -1218,6 +1218,19 @@ span.warning {
     cursor: default;
 }
 
+.pimcore_droptarget_display_edit {
+    opacity: 1 !important;
+}
+
+.pimcore_droptarget_display div {
+    min-height: 30px;
+    padding: 5px 10px 4px;
+    margin-top: 0;
+    white-space: nowrap;
+    font: 300 13px/21px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right 5px center/20px no-repeat #fff !important;
+}
+
 .pimcore_document_metadata_label {
     line-height: 32px;
     padding: 0 5px;
