@@ -46,7 +46,7 @@ class Ghostscript extends Adapter
                 return true;
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::notice($e->getMessage());
         }
 
         return false;

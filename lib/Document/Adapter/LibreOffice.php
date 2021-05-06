@@ -39,7 +39,7 @@ class LibreOffice extends Ghostscript
                 return true;
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::notice($e->getMessage());
         }
 
         return false;
@@ -52,7 +52,6 @@ class LibreOffice extends Ghostscript
      */
     public function isFileTypeSupported($fileType)
     {
-
         // it's also possible to pass a path or filename
         if (preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/i", $fileType)) {
             return true;
@@ -62,13 +61,13 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
     public static function getLibreOfficeCli()
     {
-        return \Pimcore\Tool\Console::getExecutable('soffice', true);
+        return Console::getExecutable('soffice', true);
     }
 
     /**
