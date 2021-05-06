@@ -53,7 +53,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
     },
 
     getLayout: function ($super) {
-
         $super();
 
         this.specificPanel.removeAll();
@@ -64,9 +63,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-
-        var selectionModel;
-
         if (typeof datax.options != "object") {
             datax.options = [];
         }
@@ -88,36 +84,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     }
                 ]
             },
-            plugins: [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit: 1,
-                listeners: {
-                    edit: function(editor, e) {
-                        if(!e.record.get('value')) {
-                            e.record.set('value', e.record.get('key'));
-                        }
-                    },
-                    beforeedit: function(editor, e) {
-                        if(e.field === 'value') {
-                            return !!e.value;
-                        }
-                        return true;
-                    },
-                    validateedit: function(editor, e) {
-                        if(e.field !== 'value') {
-                            return true;
-                        }
-
-                        // Iterate to all store data
-                        for(var i=0; i < valueStore.data.length; i++) {
-                            var existingRecord = valueStore.getAt(i);
-                            if(i != e.rowIdx && existingRecord.get('value') === e.value) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                }
-            })],
             tbar: [{
                 xtype: "tbtext",
                 text: t("selection_options")
@@ -130,15 +96,16 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                         value: ""
                     };
 
-                    var selectedRow = selectionModel.getSelected();
+                    let selection = this.selectionModel.getSelection();
                     var idx;
-                    if (selectedRow) {
+                    if (selection.length > 0) {
+                        let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
                         idx = valueStore.getCount();
                     }
                     valueStore.insert(idx, u);
-                    selectionModel.select(idx);
+                    this.selectionModel.select(idx);
                 }.bind(this)
             },
                 {
@@ -146,12 +113,12 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     iconCls: "pimcore_icon_edit",
                     handler: this.showoptioneditor.bind(this, valueStore)
 
-                }
-            ],
+                }],
+            disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
             store: valueStore,
-            disabled: this.isInCustomLayoutEditor(),
             selModel: Ext.create('Ext.selection.RowModel', {}),
+            clicksToEdit: 1,
             columnLines: true,
             columns: [
                 {
@@ -176,7 +143,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 {
                     xtype: 'actioncolumn',
                     menuText: t('up'),
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('up'),
@@ -186,7 +153,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    selectionModel.select(rowIndex);
+                                    this.selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -195,7 +162,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 {
                     xtype: 'actioncolumn',
                     menuText: t('down'),
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('down'),
@@ -205,7 +172,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(++rowIndex, [rec]);
-                                    selectionModel.select(rowIndex);
+                                    this.selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -214,7 +181,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 {
                     xtype: 'actioncolumn',
                     menuText: t('remove'),
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('remove'),
@@ -226,10 +193,42 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     ]
                 }
             ],
-            autoHeight: true
+            autoHeight: true,
+            plugins: [
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1,
+                    listeners: {
+                        edit: function(editor, e) {
+                            if(!e.record.get('value')) {
+                                e.record.set('value', e.record.get('key'));
+                            }
+                        },
+                        beforeedit: function(editor, e) {
+                            if(e.field === 'value') {
+                                return !!e.value;
+                            }
+                            return true;
+                        },
+                        validateedit: function(editor, e) {
+                            if(e.field !== 'value') {
+                                return true;
+                            }
+
+                            // Iterate to all store data
+                            for(var i=0; i < valueStore.data.length; i++) {
+                                var existingRecord = valueStore.getAt(i);
+                                if(i != e.rowIdx && existingRecord.get('value') === e.value) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                    }
+                })
+            ]
         });
 
-        selectionModel = valueGrid.getSelectionModel();
+        this.selectionModel = valueGrid.getSelectionModel();
 
         var specificItems = [
             {
