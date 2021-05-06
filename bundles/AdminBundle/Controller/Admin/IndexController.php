@@ -128,14 +128,17 @@ class IndexController extends AdminController implements KernelResponseEventInte
     public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
         // DB
-        $mysqlVersion = null;
         try {
-            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as rows from information_schema.TABLES
+            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as `rows` from information_schema.TABLES
                 WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);
-
-            $mysqlVersion = $db->fetchOne('SELECT VERSION()');
         } catch (\Exception $e) {
             $tables = [];
+        }
+
+        try {
+            $mysqlVersion = $db->fetchOne('SELECT VERSION()');
+        } catch (\Exception $e) {
+            $mysqlVersion = null;
         }
 
         // @TODO System
@@ -152,6 +155,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
+                'pimcore_major_version' => 10,
                 'pimcore_version' => Version::getVersion(),
                 'pimcore_hash' => Version::getRevision(),
                 'php_version' => PHP_VERSION,
