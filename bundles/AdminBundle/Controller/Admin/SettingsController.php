@@ -240,7 +240,7 @@ class SettingsController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
         foreach ($list as $item) {
-            if (!$group || $group === $item->getGroup()) {
+            if ((string)$group === $item->getGroup()) {
                 $item->expand();
                 $result[] = $item;
             }
