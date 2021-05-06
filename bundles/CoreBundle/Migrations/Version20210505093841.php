@@ -23,7 +23,7 @@ final class Version20210505093841 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql(
-            'CREATE TABLE locks (
+            'CREATE TABLE IF NOT EXISTS webdav_locks (
                 id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 owner VARCHAR(100),
                 timeout INTEGER UNSIGNED,
