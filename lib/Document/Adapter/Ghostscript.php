@@ -32,7 +32,7 @@ class Ghostscript extends Adapter
     /**
      * @var string|null
      */
-    private $version = null;
+    private $version;
 
     /**
      * @return bool
@@ -46,7 +46,7 @@ class Ghostscript extends Adapter
                 return true;
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::notice($e->getMessage());
         }
 
         return false;
@@ -59,7 +59,6 @@ class Ghostscript extends Adapter
      */
     public function isFileTypeSupported($fileType)
     {
-
         // it's also possible to pass a path or filename
         if (preg_match("/\.?pdf$/i", $fileType)) {
             return true;
