@@ -190,7 +190,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 }.bind(this);
 
                 listeners = {
-                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
+                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type, readOnly)
                 };
 
                 if (readOnly) {
@@ -199,7 +199,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer,
-                        listeners: listeners
                     }));
                     continue;
                 }
@@ -871,7 +870,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     },
 
-    cellMousedown: function (key, colType, grid, cell, rowIndex, cellIndex, e) {
+    cellMousedown: function (key, colType, readOnly, grid, cell, rowIndex, cellIndex, e) {
 
         // this is used for the boolean field type
 
@@ -880,6 +879,18 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         if (colType == "bool") {
             record.set(key, !record.data[key]);
+        } else if (!readOnly && colType === "columnbool") {
+            if (record.data[key]) {
+                grid.getStore().each(function (record) {
+                    if (!!record.get(key)) {
+                        // note, we don't need to check for the row here as the editor fires another change
+                        // on blur, which updates the underlying record without a subsequent event being fired.
+                        record.set(key, false);
+                    }
+                });
+            } else {
+                record.set(key, !record.data[key]);
+            }
         }
     },
 
