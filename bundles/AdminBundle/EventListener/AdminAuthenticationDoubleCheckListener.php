@@ -18,6 +18,8 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 use Pimcore\Bundle\AdminBundle\Controller\DoubleAuthenticationControllerInterface;
 use Pimcore\Bundle\AdminBundle\EventListener\Traits\ControllerTypeTrait;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestMatcherFactory;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,15 +33,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Handles double authentication check for pimcore controllers after the firewall did to make sure the admin interface is
  * not accessible on configuration errors. Unauthenticated routes are not double-checked (e.g. login).
  *
- * TODO: the double authentication check is currently running for every DoubleAuthenticationControllerInterface, independent
- * of the request context, to ensure third party bundles using the AdminController handle authentication as well. Should we
- * do this on the pimcore context instead?
- *
  * @internal
  */
 class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 {
     use ControllerTypeTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var RequestMatcherFactory
@@ -88,23 +87,35 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 
     public function onKernelController(ControllerEvent $event)
     {
-        if (!$this->isControllerType($event, DoubleAuthenticationControllerInterface::class)) {
+        if(!$event->isMasterRequest()) {
             return;
         }
 
         $request = $event->getRequest();
 
-        /** @var DoubleAuthenticationControllerInterface $controller */
-        $controller = $this->getControllerType($event, DoubleAuthenticationControllerInterface::class);
+        $isDoubleAuthController = $this->isControllerType($event, DoubleAuthenticationControllerInterface::class);
+        $isPimcoreAdminContext = $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN);
+
+        if (!$isDoubleAuthController && !$isPimcoreAdminContext) {
+            return;
+        }
 
         // double check we have a valid user to make sure there is no invalid security config
         // opening admin interface to the public
         if ($this->requestNeedsAuthentication($request)) {
-            if ($controller->needsSessionDoubleAuthenticationCheck()) {
-                $this->checkSessionUser();
-            }
+            if($isDoubleAuthController) {
+                /** @var DoubleAuthenticationControllerInterface $controller */
+                $controller = $this->getControllerType($event, DoubleAuthenticationControllerInterface::class);
 
-            if ($controller->needsStorageDoubleAuthenticationCheck()) {
+                if ($controller->needsSessionDoubleAuthenticationCheck()) {
+                    $this->checkSessionUser();
+                }
+
+                if ($controller->needsStorageDoubleAuthenticationCheck()) {
+                    $this->checkTokenStorageUser();
+                }
+            } else {
+                $this->checkSessionUser();
                 $this->checkTokenStorageUser();
             }
         }
