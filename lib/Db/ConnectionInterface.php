@@ -292,4 +292,9 @@ interface ConnectionInterface extends Connection
      * @return string
      */
     public function escapeLike(string $like): string;
+
+    /**
+     * @return \PDO
+     */
+    public function getWrappedConnection();
 }
