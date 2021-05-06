@@ -29,6 +29,11 @@ class File
     protected static $context = null;
 
     /**
+     * @var int
+     */
+    private static int $defaultFlags = LOCK_EX;
+
+    /**
      * @param string $name
      *
      * @return string
@@ -88,6 +93,14 @@ class File
     }
 
     /**
+     * @param int $defaultFlags
+     */
+    public static function setDefaultFlags(int $defaultFlags): void
+    {
+        self::$defaultFlags = $defaultFlags;
+    }
+
+    /**
      * @param string $path
      * @param mixed $data
      *
@@ -99,7 +112,7 @@ class File
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents($path, $data, null, self::getContext());
+        $return = file_put_contents($path, $data, self::$defaultFlags, self::getContext());
         @chmod($path, self::$defaultMode);
 
         return $return;
