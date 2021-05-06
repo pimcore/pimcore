@@ -30,8 +30,15 @@ class Version20210408153226 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `versions` ADD `autoSave` TINYINT(4) NOT NULL DEFAULT 0');
-        $this->addSql('ALTER TABLE `versions` ADD INDEX `autoSave` (`autoSave`)');
+        $versionsTable = $schema->getTable('versions');
+
+        if(!$versionsTable->hasColumn('autoSave')) {
+            $this->addSql('ALTER TABLE `versions` ADD `autoSave` TINYINT(4) NOT NULL DEFAULT 0');
+        }
+
+        if (!$versionsTable->hasIndex('autoSave')) {
+            $this->addSql('ALTER TABLE `versions` ADD INDEX `autoSave` (`autoSave`)');
+        }
     }
 
     /**
