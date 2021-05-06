@@ -15,6 +15,8 @@
 
 namespace Pimcore;
 
+use Throwable;
+
 class File
 {
     /**
@@ -99,7 +101,12 @@ class File
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents($path, $data, null, self::getContext());
+        try {
+            $return = file_put_contents($path, $data, LOCK_EX, self::getContext());
+        } catch(Throwable $e) {
+            $return = file_put_contents($path, $data, null, self::getContext());
+        }
+
         @chmod($path, self::$defaultMode);
 
         return $return;
