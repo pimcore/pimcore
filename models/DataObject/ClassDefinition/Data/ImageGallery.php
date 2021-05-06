@@ -44,7 +44,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var array
      */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'text'];
+    public $queryColumnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * Type for the column
@@ -53,7 +53,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var array
      */
-    public $columnType = ['images' => 'text', 'hotspots' => 'text'];
+    public $columnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * @internal
