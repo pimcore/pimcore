@@ -2,11 +2,13 @@
 
 ## Our Backward Compatibility Promise
 Since we're building on top of Symfony and in an app, Pimcore and Symfony code gets mixed together, 
-it just makes sense that we're adopting the same backward compatibility promise.
+it just makes sense that we're adopting the same backward compatibility promise for PHP code. 
 
 So for further information how you can ensure that your application won’t break completely 
 when upgrading to a newer version of the same major release branch, please have a look at
 https://symfony.com/doc/current/contributing/code/bc.html
+
+The code for the admin user interface (mostly `AdminBundle` but also parts of `EcommerceFrameworkBundle`) is not covered by this promise.
 
 ## Upgrading within Version X
 - Carefully read our [Upgrade Notes](../09_Upgrade_Notes/README.md) before any update. 
