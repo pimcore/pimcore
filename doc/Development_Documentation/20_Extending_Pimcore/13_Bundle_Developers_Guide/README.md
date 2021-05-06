@@ -18,7 +18,7 @@ There is a special kind of bundle implementing `Pimcore\Extension\Bundle\Pimcore
 possibilities. These bundles provide a similar API as plugins did in previous versions:
 
 * The bundle shows up in the extension manager and can be enabled/disabled from there. Normal bundles need to be registered
-  via code in your `AppKernel.php`.
+  via code in your `Kernel.php`.
 * In the extension manager, you're able to trigger installation/uninstallation of bundles, for example to install/update 
   database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode. 
