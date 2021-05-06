@@ -461,19 +461,19 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            $postEvent = new DocumentEvent($this, $params);
             if ($isUpdate) {
-                $updateEvent = new DocumentEvent($this);
                 if ($differentOldPath) {
-                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                    $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($updateEvent, DocumentEvents::POST_UPDATE);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_ADD);
+                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_ADD);
             }
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DocumentEvent($this);
+            $failureEvent = new DocumentEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
