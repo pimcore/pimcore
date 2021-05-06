@@ -103,7 +103,6 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
         // double check we have a valid user to make sure there is no invalid security config
         // opening admin interface to the public
         if ($this->requestNeedsAuthentication($request)) {
-
             if($isDoubleAuthController) {
                 /** @var DoubleAuthenticationControllerInterface $controller */
                 $controller = $this->getControllerType($event, DoubleAuthenticationControllerInterface::class);
