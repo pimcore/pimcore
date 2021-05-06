@@ -23,17 +23,18 @@ final class Version20210505093841 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql(
-            'CREATE TABLE IF NOT EXISTS webdav_locks (
-                id integer primary key NOT NULL,
-                owner text,
-                timeout integer,
-                created integer,
-                token text,
-                scope integer,
-                depth integer,
-                uri text,
-                INDEX idx_uri (uri)
-            )'
+            'CREATE TABLE locks (
+                id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                owner VARCHAR(100),
+                timeout INTEGER UNSIGNED,
+                created INTEGER,
+                token VARBINARY(100),
+                scope TINYINT,
+                depth TINYINT,
+                uri VARBINARY(1000),
+                INDEX(token),
+                INDEX(uri(100))
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;'
         );
     }
 
