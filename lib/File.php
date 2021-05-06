@@ -15,8 +15,6 @@
 
 namespace Pimcore;
 
-use Throwable;
-
 class File
 {
     /**
@@ -103,7 +101,7 @@ class File
 
         try {
             $return = file_put_contents($path, $data, LOCK_EX, self::getContext());
-        } catch(Throwable $e) {
+        } catch(\Throwable $e) {
             $return = file_put_contents($path, $data, null, self::getContext());
         }
 
