@@ -349,7 +349,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             // add
             $arrTimeline[$group][] = [
                 'icon' => $arrIcons[$note->getTitle()],
-                'context' => $arrContext[$note->getTitle()] ?: 'default',
+                'context' => $arrContext[$note->getTitle()] ?? 'default',
                 'type' => $note->getTitle(),
                 'date' => $formatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM),
                 'avatar' => $avatar,

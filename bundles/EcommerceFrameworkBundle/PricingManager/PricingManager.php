@@ -158,13 +158,12 @@ class PricingManager implements PricingManagerInterface
 
         $categories = [];
         foreach ($cart->getItems() as $item) {
-            if ($product = $item->getProduct()) {
-                if (method_exists($product, 'getCategories')) {
-                    $productCategories = $product->getCategories();
-                    if (is_array($productCategories)) {
-                        foreach ($productCategories as $c) {
-                            $categories[$c->getId()] = $c;
-                        }
+            $product = $item->getProduct();
+            if (method_exists($product, 'getCategories')) {
+                $productCategories = $product->getCategories();
+                if (is_array($productCategories)) {
+                    foreach ($productCategories as $c) {
+                        $categories[$c->getId()] = $c;
                     }
                 }
             }
@@ -325,9 +324,10 @@ class PricingManager implements PricingManagerInterface
         // create environment
         $environment = $this->getEnvironment();
         $environment->setProduct($priceInfo->getProduct());
+        $priceInfoProduct = $priceInfo->getProduct();
 
-        if ($priceInfo->getProduct() && method_exists($priceInfo->getProduct(), 'getCategories')) {
-            $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
+        if ($priceInfoProduct && method_exists($priceInfoProduct, 'getCategories')) {
+            $environment->setCategories((array)$priceInfoProduct->getCategories());
         }
 
         if ($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {

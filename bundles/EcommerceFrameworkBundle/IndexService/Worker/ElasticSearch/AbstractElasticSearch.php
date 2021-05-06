@@ -245,11 +245,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $relationAttributesMapping = [];
 
         foreach ($this->tenantConfig->getAttributes() as $attribute) {
-            if (empty($attribute->getType())
-                && (empty($attribute->getInterpreter()) || ($attribute->getInterpreter() && !($attribute->getInterpreter() instanceof RelationInterpreterInterface)))
-                && empty($attribute->getOption('mapping'))
-                && empty($attribute->getOption('mapper'))
-                && empty($attribute->getOption('analyzer'))
+            if (
+                empty($attribute->getType()) &&
+                !$attribute->getInterpreter() instanceof RelationInterpreterInterface &&
+                empty($attribute->getOption('mapping')) &&
+                empty($attribute->getOption('mapper')) &&
+                empty($attribute->getOption('analyzer'))
             ) {
                 continue;
             }

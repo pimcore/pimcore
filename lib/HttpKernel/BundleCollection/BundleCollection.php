@@ -149,6 +149,7 @@ class BundleCollection
     {
         if ($bundle instanceof BundleInterface) {
             $item = new Item($bundle, $priority, $environments);
+        // @phpstan-ignore-next-line
         } elseif (is_string($bundle) || !empty($bundle)) {
             $item = new LazyLoadedItem($bundle, $priority, $environments);
         } else {

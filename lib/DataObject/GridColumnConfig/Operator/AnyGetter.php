@@ -147,9 +147,9 @@ final class AnyGetter extends AbstractOperator
                     }
                 } else {
                     $o = $value;
-                    if ($this->attribute && method_exists($o, $getter)) {
+                    if ($this->attribute && $o && method_exists($o, $getter)) {
                         $resultElementValue = $o->$getter($this->getParam1());
-                    } elseif ($this->attribute && method_exists($o, $fallbackGetter)) {
+                    } elseif ($this->attribute && $o && method_exists($o, $fallbackGetter)) {
                         $resultElementValue = $o->$fallbackGetter($this->getParam1());
                     }
                 }

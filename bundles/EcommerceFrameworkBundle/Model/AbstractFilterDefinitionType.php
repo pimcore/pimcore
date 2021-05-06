@@ -15,6 +15,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Model\DataObject\Concrete;
+
 /**
  * Abstract base class for filter definition type field collections
  */
@@ -63,5 +65,21 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fi
     public function getRequiredFilterField()
     {
         return '';
+    }
+
+    /**
+     * @return Concrete[]
+     */
+    public function getAvailableCategories()
+    {
+        return [];
+    }
+
+    /**
+     * @return Concrete|null
+     */
+    public function getRootCategory()
+    {
+        return null;
     }
 }

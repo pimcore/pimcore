@@ -192,9 +192,9 @@ class IndexUpdateService
             return;
         }
 
-        if ($tenantNameList == null) {
+        if ($tenantNameList === null) {
             $tenantNameList = $this->indexService->getTenants();
-        } elseif (count($tenantNameList) <= 0) {
+        } elseif (count($tenantNameList) === 0) {
             return;
         }
 

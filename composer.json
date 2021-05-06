@@ -202,6 +202,7 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
       "Pimcore\\Tests\\": "tests"
     },
     "files": [

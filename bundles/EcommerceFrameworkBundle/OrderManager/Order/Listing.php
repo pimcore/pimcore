@@ -86,14 +86,8 @@ class Listing extends AbstractOrderList implements OrderListInterface
             }
 
             // filter order state
-            if (!is_null($this->getOrderState())) {
-                $orderStates = [];
-                foreach ((array)$this->getOrderState() as $orderState) {
-                    $orderStates[] = $queryBuilder->expr()->literal($orderState);
-                }
-
-                $queryBuilder->andWhere('order.orderState IN('. implode(',', $orderStates) .')');
-            }
+            $queryBuilder->andWhere('order.orderState = :orderState');
+            $queryBuilder->setParameter('orderState', $this->getOrderState());
 
             $this->queryBuilder = $queryBuilder;
         }

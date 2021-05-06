@@ -130,16 +130,17 @@ interface TokenManagerInterface
     public function insertOrUpdateVoucherSeries();
 
     /**
-     * @return  int
+     * @return int
      */
     public function getFinalTokenLength();
 
     /**
      * @param int $duration
+     * @param string|null $seriesId
      *
      * @return bool
      */
-    public function cleanUpReservations($duration = 0);
+    public function cleanUpReservations($duration = 0, $seriesId = null);
 
     /**
      * Prepares the view and returns the according template for rendering.

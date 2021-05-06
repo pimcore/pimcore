@@ -76,12 +76,10 @@ class Shipping implements ShippingInterface
         $modificatedPrice = new ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 
         $taxClass = $this->getTaxClass();
-        if ($taxClass) {
-            $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+        $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+        $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
-            $modificatedPrice->setGrossAmount($this->getCharge(), true);
-        }
+        $modificatedPrice->setGrossAmount($this->getCharge(), true);
 
         return $modificatedPrice;
     }

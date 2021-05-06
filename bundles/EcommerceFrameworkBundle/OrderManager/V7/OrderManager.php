@@ -466,10 +466,9 @@ class OrderManager implements OrderManagerInterface
 
         $orderItem->setAmount($item->getCount());
         $orderItem->setProduct($item->getProduct());
-        if ($item->getProduct()) {
-            $orderItem->setProductName($item->getProduct()->getOSName());
-            $orderItem->setProductNumber($item->getProduct()->getOSProductNumber());
-        }
+        $itemProduct = $item->getProduct();
+        $orderItem->setProductName($itemProduct->getOSName());
+        $orderItem->setProductNumber($itemProduct->getOSProductNumber());
         $orderItem->setComment($item->getComment());
 
         $price = Decimal::zero();
@@ -769,9 +768,6 @@ class OrderManager implements OrderManagerInterface
     {
         // sets customer to order - if available
         if (@Tool::classExists('\\Pimcore\\Model\\DataObject\\Customer')) {
-            /**
-             * @var $customer \Pimcore\Model\DataObject\Customer
-             */
             $customer = \Pimcore\Model\DataObject\Customer::getById($this->environment->getCurrentUserId());
             $order->setCustomer($customer);
         }

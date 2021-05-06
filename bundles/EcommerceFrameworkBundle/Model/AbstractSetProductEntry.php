@@ -79,10 +79,6 @@ class AbstractSetProductEntry
      */
     public function getId()
     {
-        if ($this->getProduct()) {
-            return $this->getProduct()->getId();
-        }
-
-        return null;
+        return $this->getProduct()->getId();
     }
 }

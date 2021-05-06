@@ -330,6 +330,7 @@ class Mail extends Email
      */
     public function setParam($key, $value)
     {
+        // @phpstan-ignore-next-line
         if (is_string($key) || is_int($key)) {
             $this->params[$key] = $value;
         } else {
@@ -396,6 +397,7 @@ class Mail extends Email
      */
     public function unsetParam($key)
     {
+        // @phpstan-ignore-next-line
         if (is_string($key) || is_int($key)) {
             unset($this->params[$key]);
         } else {

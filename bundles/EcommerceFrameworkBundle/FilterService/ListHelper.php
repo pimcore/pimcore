@@ -78,11 +78,13 @@ class ListHelper
             $offset = $pageLimit * ($params['page'] - 1);
         }
         if ($filterDefinition->getAjaxReload()) {
-            if ($loadFullPage && !$excludeLimitOfFirstpage) {
-                $productList->setLimit($pageLimit);
-            } elseif ($loadFullPage && $excludeLimitOfFirstpage) {
-                $offset += $limitOnFirstLoad;
-                $productList->setLimit($pageLimit - $limitOnFirstLoad);
+            if ($loadFullPage) {
+                if (!$excludeLimitOfFirstpage) {
+                    $productList->setLimit($pageLimit);
+                } else {
+                    $offset += $limitOnFirstLoad;
+                    $productList->setLimit($pageLimit - $limitOnFirstLoad);
+                }
             } else {
                 $productList->setLimit($limitOnFirstLoad);
             }
@@ -131,10 +133,7 @@ class ListHelper
             }
         }
 
-        if ($filterService) {
-            $params['currentFilter'] = $filterService->initFilterService($filterDefinition, $productList, $params);
-        }
-
+        $params['currentFilter'] = $filterService->initFilterService($filterDefinition, $productList, $params);
         $params['orderByOptions'] = $orderByOptions;
     }
 

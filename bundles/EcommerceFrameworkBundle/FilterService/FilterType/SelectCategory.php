@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
 class SelectCategory extends AbstractFilterType
 {
     /**
-     * @param FilterCategory $filterDefinition
+     * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
@@ -39,7 +39,6 @@ class SelectCategory extends AbstractFilterType
 
         $availableRelations = [];
         if ($filterDefinition->getAvailableCategories()) {
-            /** @var Concrete $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[$rel->getId()] = true;
             }
@@ -47,9 +46,8 @@ class SelectCategory extends AbstractFilterType
 
         foreach ($rawValues as $v) {
             $explode = explode(',', $v['value']);
-            /** @var int $e */
             foreach ($explode as $e) {
-                if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
+                if (!empty($availableRelations[$e])) {
                     if (!empty($values[$e])) {
                         $count = $values[$e]['count'] + $v['count'];
                     } else {

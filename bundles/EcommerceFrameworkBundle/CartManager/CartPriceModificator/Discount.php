@@ -77,12 +77,12 @@ class Discount implements DiscountInterface
         $modificatedPrice->setRule($this->rule);
 
         $taxClass = Factory::getInstance()->getPriceSystem('default')->getTaxClassForPriceModification($this);
-        if ($taxClass) {
-            $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
-            $modificatedPrice->setGrossAmount($amount, true);
-        }
+        $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+        $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+
+        $modificatedPrice->setGrossAmount($amount, true);
+
 
         return $modificatedPrice;
     }

@@ -36,19 +36,17 @@ final class Iterator extends AbstractOperator
 
         if (!$childs) {
             return $result;
-        } else {
-            $c = $childs[0];
-
-            $valueArray = [];
-
-            foreach ($elements as $element) {
-                $childResult = $c->getLabeledValue($element);
-
-                $valueArray[] = $childResult->value ? $childResult->value : null;
-            }
-
-            $result->value = $valueArray;
         }
+
+        $c = $childs[0];
+        $valueArray = [];
+
+        foreach ($elements as $element) {
+            $childResult = $c->getLabeledValue($element);
+            $valueArray[] = $childResult->value ?: null;
+        }
+
+        $result->value = $valueArray;
 
         return $result;
     }

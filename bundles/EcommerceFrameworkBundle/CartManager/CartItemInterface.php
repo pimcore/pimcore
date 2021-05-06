@@ -28,6 +28,8 @@ interface CartItemInterface
 {
     /**
      * @return CheckoutableInterface
+     *
+     * @throws \Exception
      */
     public function getProduct();
 

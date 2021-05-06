@@ -274,7 +274,7 @@ trait PimcoreExtensionsTrait
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
         if ($stmt instanceof Result) {
-            while (($row = $stmt->fetchOne()) || $row !== false) {
+            while ($row = $stmt->fetchOne()) {
                 $data[] = $row;
             }
             $stmt->free();
@@ -441,18 +441,15 @@ trait PimcoreExtensionsTrait
         if (is_string($ident)) {
             $ident = explode('.', $ident);
         }
-        if (is_array($ident)) {
-            $segments = [];
-            foreach ($ident as $segment) {
-                $segments[] = $this->_quoteIdentifier($segment, $auto);
-            }
-            if ($alias !== null && end($ident) == $alias) {
-                $alias = null;
-            }
-            $quoted = implode('.', $segments);
-        } else {
-            $quoted = $this->_quoteIdentifier($ident, $auto);
+
+        $segments = [];
+        foreach ($ident as $segment) {
+            $segments[] = $this->_quoteIdentifier($segment, $auto);
         }
+        if ($alias !== null && end($ident) == $alias) {
+            $alias = null;
+        }
+        $quoted = implode('.', $segments);
 
         if ($alias !== null) {
             $quoted .= $as . $this->_quoteIdentifier($alias, $auto);

@@ -69,10 +69,6 @@ class DataObjectParamConverter implements ParamConverterInterface
      */
     public function supports(ParamConverter $configuration)
     {
-        if (null === $configuration->getClass()) {
-            return false;
-        }
-
         return is_subclass_of($configuration->getClass(), AbstractObject::class);
     }
 }

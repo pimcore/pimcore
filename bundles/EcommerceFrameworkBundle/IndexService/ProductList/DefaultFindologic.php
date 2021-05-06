@@ -97,7 +97,7 @@ class DefaultFindologic implements ProductListInterface
     protected $groupedValues;
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $conditions = [];
 
@@ -109,12 +109,12 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @var float|null
      */
-    protected $conditionPriceFrom = null;
+    protected $conditionPriceFrom;
 
     /**
      * @var float|null
      */
-    protected $conditionPriceTo = null;
+    protected $conditionPriceTo;
 
     /**
      * @var string
@@ -381,8 +381,6 @@ class DefaultFindologic implements ProductListInterface
                 case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                     throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
-
-                    break;
             }
 
             if ($id) {

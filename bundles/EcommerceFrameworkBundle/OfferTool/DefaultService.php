@@ -68,13 +68,6 @@ class DefaultService implements ServiceInterface
             $folder = Service::createFolderByPath($this->parentFolderPath);
         }
 
-        if (!$folder) {
-            throw new \RuntimeException(sprintf(
-                'Unable to create/load parent folder from path "%s"',
-                $this->parentFolderPath
-            ));
-        }
-
         return $folder;
     }
 
@@ -168,17 +161,13 @@ class DefaultService implements ServiceInterface
 
         $offerItem->setAmount($item->getCount());
         $offerItem->setProduct($item->getProduct());
-        if ($item->getProduct()) {
-            $offerItem->setProductName($item->getProduct()->getOSName());
-            $offerItem->setProductNumber($item->getProduct()->getOSProductNumber());
-        }
+        $itemProduct = $item->getProduct();
+        $offerItem->setProductName($itemProduct->getOSName());
+        $offerItem->setProductNumber($itemProduct->getOSProductNumber());
 
         $offerItem->setComment($item->getComment());
 
-        $price = Decimal::zero();
-        if ($item->getTotalPrice()) {
-            $price = $item->getTotalPrice()->getAmount();
-        }
+        $price = $item->getTotalPrice()->getAmount();
 
         $price = $this->priceTransformationHook($price);
 
@@ -215,10 +204,7 @@ class DefaultService implements ServiceInterface
 
         $offerItem->setComment($cartItem->getComment());
 
-        $price = Decimal::zero();
-        if ($cartItem->getTotalPrice()) {
-            $price = $cartItem->getTotalPrice()->getAmount();
-        }
+        $price = $cartItem->getTotalPrice()->getAmount();
 
         $price = $this->priceTransformationHook($price);
 

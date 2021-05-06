@@ -46,27 +46,25 @@ class IndexFieldSelectionCombo extends Select
     {
         $options = [];
 
-        if (\Pimcore::getContainer()->has(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY)) {
-            try {
-                $indexService = Factory::getInstance()->getIndexService();
-                $indexColumns = $indexService->getIndexAttributes(true);
+        try {
+            $indexService = Factory::getInstance()->getIndexService();
+            $indexColumns = $indexService->getIndexAttributes(true);
 
-                foreach ($indexColumns as $c) {
-                    $options[] = [
-                        'key' => $c,
-                        'value' => $c,
-                    ];
-                }
-
-                if ($this->getSpecificPriceField()) {
-                    $options[] = [
-                        'key' => ProductListInterface::ORDERKEY_PRICE,
-                        'value' => ProductListInterface::ORDERKEY_PRICE,
-                    ];
-                }
-            } catch (\Exception $e) {
-                Logger::error($e);
+            foreach ($indexColumns as $c) {
+                $options[] = [
+                    'key' => $c,
+                    'value' => $c,
+                ];
             }
+
+            if ($this->getSpecificPriceField()) {
+                $options[] = [
+                    'key' => ProductListInterface::ORDERKEY_PRICE,
+                    'value' => ProductListInterface::ORDERKEY_PRICE,
+                ];
+            }
+        } catch (\Exception $e) {
+            Logger::error($e);
         }
 
         return $options;

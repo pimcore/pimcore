@@ -63,9 +63,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         \Pimcore::disableShutdown();
 
         // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
-        if (!$container->hasParameter('container.dumper.inline_class_loader')) {
-            $container->setParameter('container.dumper.inline_class_loader', true);
-        }
+        $container->setParameter('container.dumper.inline_class_loader', true);
 
         // bundle manager/locator config
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
@@ -74,9 +72,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
-        if (!$container->hasParameter('pimcore.encryption.secret')) {
-            $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
-        }
+        $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
 
         $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
@@ -257,9 +253,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     {
         $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
         $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
-        if (!$container->hasParameter('pimcore.geoip.db_file')) {
-            $container->setParameter('pimcore.geoip.db_file', '');
-        }
+        $container->setParameter('pimcore.geoip.db_file', '');
 
         $loader->load('targeting.yml');
 

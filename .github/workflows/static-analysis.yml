@@ -45,7 +45,7 @@ jobs:
                   .github/ci/scripts/setup-pimcore-environment.sh
 
             - name: "Copy models"
-              run: "cp -rv .github/ci/files/models ."
+              run: "cp -rv .github/ci/files/var ."
 
             - name: "Set Symfony version constraint in composer.json"
               env:

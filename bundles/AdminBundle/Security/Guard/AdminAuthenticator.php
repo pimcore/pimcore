@@ -242,7 +242,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 throw new AuthenticationException('Invalid authentication method, must be either password or token');
             }
 
-            if ($user && Authentication::isValidUser($user->getUser())) {
+            if (Authentication::isValidUser($user->getUser())) {
                 $pimcoreUser = $user->getUser();
 
                 Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {

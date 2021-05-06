@@ -347,6 +347,7 @@ final class Console
         Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
 
         $WshShell = new \COM('WScript.Shell');
+        // @phpstan-ignore-next-line
         $WshShell->Run($commandWrapped, 0, false);
         Logger::debug('Process started - returning the PID is not supported on Windows Systems');
 

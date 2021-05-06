@@ -187,12 +187,11 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
             $paymentInformationCollection = $order->getPaymentInfo();
             if ($paymentInformationCollection) {
                 foreach ($paymentInformationCollection as $paymentInfo) {
-                    if ($paymentInfo->getInternalPaymentId() == $paymentStatus->getInternalPaymentId()) {
-                        if ($paymentInfo->getPaymentState() == $paymentStatus->getStatus()) {
+                    if ($paymentInfo->getInternalPaymentId() === $paymentStatus->getInternalPaymentId()) {
+                        if ($paymentInfo->getPaymentState() === $paymentStatus->getStatus()) {
                             return $order;
-                        } else {
-                            Logger::warning('Payment state of order ' . $order->getId() . ' does not match with new request!');
                         }
+                        Logger::warning('Payment state of order ' . $order->getId() . ' does not match with new request!');
                     }
                 }
             }

@@ -17,31 +17,31 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerInterface;
+use Pimcore\Db;
+use Pimcore\Model\DataObject\Fieldcollection;
 
 abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
 {
     /**
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection
      */
     abstract public function getTokenSettings();
 
     /**
-     * @return bool|TokenManagerInterface
-     *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @return TokenManagerInterface|null
      */
     public function getTokenManager()
     {
         $items = $this->getTokenSettings();
-        if ($items && $items->get(0)) {
 
+        if ($items->get(0)) {
             // name of fieldcollection class
             $configuration = $items->get(0);
 
             return Factory::getInstance()->getTokenManager($configuration);
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -49,7 +49,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
      */
     public function getExistingLengths()
     {
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
 
         $query = '
             SELECT length, COUNT(*) AS count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . '

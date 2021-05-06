@@ -139,16 +139,18 @@ class Decimal
     {
         if (is_string($amount)) {
             return static::fromString($amount, $scale, $roundingMode);
-        } elseif (is_numeric($amount)) {
-            return static::fromNumeric($amount, $scale, $roundingMode);
-        } elseif ($amount instanceof self) {
-            return static::fromDecimal($amount, $scale);
-        } else {
-            throw new \TypeError(
-                'Expected (int, float, string, self), but received ' .
-                (is_object($amount) ? get_class($amount) : gettype($amount))
-            );
         }
+        if (is_numeric($amount)) {
+            return static::fromNumeric($amount, $scale, $roundingMode);
+        }
+        if ($amount instanceof self) {
+            return static::fromDecimal($amount, $scale);
+        }
+
+        // @phpstan-ignore-next-line
+        throw new \TypeError(
+            'Expected (int, float, string, self), but received ' . get_debug_type($amount)
+        );
     }
 
     /**
@@ -759,10 +761,12 @@ class Decimal
             return $operand->asNumeric();
         }
 
+        // @phpstan-ignore-next-line
+        $value = is_scalar($operand) ? $operand : (string)$operand;
         throw new \InvalidArgumentException(sprintf(
             'Value "%s" with type "%s" is no valid operand',
-            (is_scalar($operand)) ? $operand : (string)$operand,
-            (is_object($operand) ? get_class($operand) : gettype($operand))
+            $value,
+            get_debug_type($operand)
         ));
     }
 

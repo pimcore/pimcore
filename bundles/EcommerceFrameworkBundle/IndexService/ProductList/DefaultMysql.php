@@ -102,29 +102,29 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @var array<string[]>
+     * @var array
      */
     protected $conditions = [];
 
     /**
-     * @var array<string[]>
+     * @var array
      */
     protected $relationConditions = [];
 
     /**
-     * @var string[][]
+     * @var array
      */
     protected $queryConditions = [];
 
     /**
      * @var float|null
      */
-    protected $conditionPriceFrom = null;
+    protected $conditionPriceFrom;
 
     /**
      * @var float|null
      */
-    protected $conditionPriceTo = null;
+    protected $conditionPriceTo;
 
     /**
      * @param string $condition
