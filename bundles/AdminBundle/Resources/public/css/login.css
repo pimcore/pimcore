@@ -167,6 +167,12 @@ a, a:hover, a:visited, a:active {
     padding: 10px 0 10px 0;
 }
 
+#github {
+    position: absolute;
+    bottom: 15px;
+    z-index: 2000;
+    left: 390px;
+}
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
