@@ -141,17 +141,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             $mysqlVersion = null;
         }
 
-        // @TODO System
-        $system = [
-            'OS' => '',
-            'Distro' => '',
-            'RAMTotal' => '',
-            'CPUCount' => '',
-            'CPUModel' => '',
-            'CPUClock' => '',
-            'virtualization' => '',
-        ];
-
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
@@ -161,7 +150,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
                 'php_version' => PHP_VERSION,
                 'mysql_version' => $mysqlVersion,
                 'bundles' => array_keys($kernel->getBundles()),
-                'system' => $system,
                 'tables' => $tables,
             ];
         } catch (\Exception $e) {
