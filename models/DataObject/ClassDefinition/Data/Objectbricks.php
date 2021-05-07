@@ -22,10 +22,11 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
-use Pimcore\Model\DataObject\Traits\ClassSavedTrait;
 
 class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
+
+    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * Static type of this element

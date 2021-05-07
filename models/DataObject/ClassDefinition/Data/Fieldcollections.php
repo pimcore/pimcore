@@ -20,10 +20,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
-use Pimcore\Model\DataObject\Traits\ClassSavedTrait;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
+
+    use DataObject\Traits\ClassSavedTrait;
+
     /**
      * Static type of this element
      *
