@@ -35,7 +35,7 @@ $config->setRules([
             'LICENSE.md which is distributed with this source code.' . PHP_EOL .
             PHP_EOL .
             ' @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)' . PHP_EOL .
-            ' @license    http://www.pimcore.org/license     GPLv3 and PEL'
+            ' @license    http://www.pimcore.org/license     GPLv3 and PCL'
     ],
 
     'blank_line_before_statement'         => true,
