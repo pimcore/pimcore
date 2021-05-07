@@ -4,11 +4,13 @@ name: "PHP-CS-Fixer"
 on:
     pull_request:
         branches:
-            - "6.9"
+            - "*.*"
+            - "master"
     push:
         branches:
-            - "6.9"
-            - "*_actions_6x"
+            - "*.*"
+            - "master"
+            - "*_actions"
 
 jobs:
     php-cs-fixer:
