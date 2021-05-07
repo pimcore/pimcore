@@ -209,10 +209,11 @@ class QuantityValueController extends AdminController
      * @Route("/quantity-value/convert", name="pimcore_admin_dataobject_quantityvalue_convert", methods={"GET"})
      *
      * @param Request $request
+     * @param UnitConversionService $conversionService
      *
      * @return JsonResponse
      */
-    public function convertAction(Request $request)
+    public function convertAction(Request $request, UnitConversionService $conversionService)
     {
         $fromUnitId = $request->get('fromUnit');
         $toUnitId = $request->get('toUnit');
@@ -223,11 +224,8 @@ class QuantityValueController extends AdminController
             return $this->adminJson(['success' => false]);
         }
 
-        /** @var UnitConversionService $converter */
-        $converter = $this->container->get(UnitConversionService::class);
-
         try {
-            $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
+            $convertedValue = $conversionService->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false]);
         }
@@ -239,10 +237,11 @@ class QuantityValueController extends AdminController
      * @Route("/quantity-value/convert-all", name="pimcore_admin_dataobject_quantityvalue_convertall", methods={"GET"})
      *
      * @param Request $request
+     * @param UnitConversionService $conversionService
      *
      * @return JsonResponse
      */
-    public function convertAllAction(Request $request)
+    public function convertAllAction(Request $request, UnitConversionService $conversionService)
     {
         $unitId = $request->get('unit');
 
@@ -257,11 +256,9 @@ class QuantityValueController extends AdminController
         $units->setCondition('baseunit = '.$units->quote($baseUnit->getId()).' AND id != '.$units->quote($fromUnit->getId()));
 
         $convertedValues = [];
-        /** @var UnitConversionService $converter */
-        $converter = $this->container->get(UnitConversionService::class);
         foreach ($units->getUnits() as $targetUnit) {
             try {
-                $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
+                $convertedValue = $conversionService->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
 
                 $convertedValues[] = ['unit' => $targetUnit->getAbbreviation(), 'unitName' => $targetUnit->getLongname(), 'value' => round($convertedValue->getValue(), 4)];
             } catch (\Exception $e) {
