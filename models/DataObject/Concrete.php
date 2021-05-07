@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -156,6 +156,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 $exceptionClass = get_class($e);
                                 $newException = new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                                 $newException->setSubItems($e->getSubItems());
+
                                 throw $newException;
                             }
                         } else {
@@ -163,6 +164,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 throw $e;
                             }
                             $exceptionClass = get_class($e);
+
                             throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
                     }
@@ -201,10 +203,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             $message .= implode(' / ', $errors);
             $aggregatedExceptions = new Model\Element\ValidationException($message);
             $aggregatedExceptions->setSubItems($validationExceptions);
+
             throw $aggregatedExceptions;
         }
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+
         try {
             $oldVersionCount = $this->getVersionCount();
 
@@ -687,6 +691,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                 if (!$localizedField instanceof Model\DataObject\ClassDefinition\Data) {
                     Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
+
                     throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
                 }
 
@@ -744,6 +749,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // there is no property for the called method, so throw an exception
         Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
+
         throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
     }
 
@@ -761,6 +767,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if ($this->getClass()->getModificationDate() >= $this->getModificationDate() && $this->getId()) {
             DataObject::disableDirtyDetection();
         }
+
         try {
             $params = [];
             if (func_num_args() && is_array(func_get_arg(0))) {

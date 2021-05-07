@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -94,6 +94,7 @@ final class DateFormatter extends AbstractOperator
 
     /**
      * @param mixed $theValue
+     *
      * @return string
      */
     public function format($theValue)

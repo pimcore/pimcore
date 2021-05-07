@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
@@ -24,10 +24,12 @@ class Statistic extends \Pimcore\Model\AbstractModel
      * @var int
      */
     public $id;
+
     /**
      * @var string
      */
     public $tokenSeriesId;
+
     /**
      * @var int
      */
@@ -90,6 +92,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     public static function increaseUsageStatistic($seriesId)
     {
         $db = $db = \Pimcore\Db::get();
+
         try {
             $db->query('INSERT INTO ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' (voucherSeriesId,date) VALUES (?,NOW())', [(int)$seriesId]);
 
@@ -117,6 +120,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             $db->query($query, $params);
 

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Cache\Core;
@@ -161,6 +161,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @internal
+     *
      * @param TagAwareAdapterInterface $pool
      */
     public function setPool(TagAwareAdapterInterface $pool): void
@@ -789,7 +790,9 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
+     *
      * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -806,6 +809,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -820,6 +824,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -835,6 +840,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -849,6 +855,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @internal
+     *
      * @param string $tag
      *
      * @return $this
@@ -864,7 +871,9 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * Writes save queue to the cache
+     *
      * @internal
+     *
      * @return bool
      */
     public function writeSaveQueue()
@@ -915,6 +924,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * Shut down pimcore - write cache entries and clean up
      *
      * @internal
+     *
      * @param bool $forceWrite
      *
      * @return $this

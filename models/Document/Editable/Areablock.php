@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -219,6 +219,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     {
         // create info object and assign it to the view
         $info = new Area\Info();
+
         try {
             $info->setId($this->currentIndex ? $this->currentIndex['type'] : null);
             $info->setEditable($this);

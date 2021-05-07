@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -21,7 +21,6 @@ class File
      * @var int
      */
     public static $defaultMode = 0664;
-
 
     /**
      * @var null|resource
@@ -57,6 +56,7 @@ class File
      * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
      * @internal
+     *
      * @param string $tmpFilename
      * @param string|null $language
      * @param string $replacement
@@ -120,6 +120,7 @@ class File
 
     /**
      * @internal
+     *
      * @param string $path
      * @param string $data
      *
@@ -171,6 +172,7 @@ class File
                     if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
                         // the directory was not created by either this or a concurrent process ...
                         $return = false;
+
                         break;
                     }
                 }

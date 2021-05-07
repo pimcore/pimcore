@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
@@ -87,7 +87,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
 
     public function onKernelController(ControllerEvent $event)
     {
-        if(!$event->isMasterRequest()) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
@@ -103,7 +103,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
         // double check we have a valid user to make sure there is no invalid security config
         // opening admin interface to the public
         if ($this->requestNeedsAuthentication($request)) {
-            if($isDoubleAuthController) {
+            if ($isDoubleAuthController) {
                 /** @var DoubleAuthenticationControllerInterface $controller */
                 $controller = $this->getControllerType($event, DoubleAuthenticationControllerInterface::class);
 
