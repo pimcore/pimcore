@@ -58,9 +58,12 @@
             {{ block('content') }}
         </div>
 
-        <div id="github">
-            <a class="github-button" href="https://github.com/pimcore/pimcore" data-color-scheme="no-preference: dark; light: dark; dark: dark;" data-size="large" aria-label="Star pimcore/pimcore on GitHub">Star</a>
-        </div>
+        {% if debug is defined and debug %}
+            <div id="github">
+                <a class="github-button" href="https://github.com/pimcore/pimcore" data-color-scheme="no-preference: dark; light: dark; dark: dark;" data-size="large" aria-label="Star pimcore/pimcore on GitHub">Star</a>
+            </div>
+            <script async defer src="https://buttons.github.io/buttons.js"></script>
+        {% endif %}
 
         {#
             <div id="news">
@@ -88,6 +91,5 @@
             {{ block('below_footer') }}
         {% endif %}
 
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
     </body>
 </html>

@@ -120,6 +120,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         }
 
         $params['browserSupported'] = $this->detectBrowser();
+        $params['debug'] = \Pimcore::inDebugMode();
 
         return $this->render('@PimcoreAdmin/Admin/Login/login.html.twig', $params);
     }
