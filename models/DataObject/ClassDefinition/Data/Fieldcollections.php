@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Model\DataObject\Traits\ClassSavedTrait;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
@@ -922,19 +923,5 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         return null;
-    }
-
-    /** {@inheritdoc } */
-    public function preSave($containerDefinition, $params = [])
-    {
-        // nothing to do
-    }
-
-    /** {@inheritdoc } */
-    public function postSave($containerDefinition, $params = [])
-    {
-        if ($containerDefinition instanceof DataObject\ClassDefinition) {
-            $this->classSaved($containerDefinition);
-        }
     }
 }
