@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\HttpKernel\BundleLocator;
@@ -56,7 +56,9 @@ class BundleLocator implements BundleLocatorInterface
 
     /**
      * @param object|string $class
+     *
      * @return BundleInterface
+     *
      * @throws \ReflectionException
      */
     private function getBundleForClass($class): BundleInterface
@@ -74,7 +76,9 @@ class BundleLocator implements BundleLocatorInterface
 
     /**
      * @param string $class
+     *
      * @return BundleInterface
+     *
      * @throws \ReflectionException
      */
     private function findBundleForClass(string $class): BundleInterface

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
@@ -23,7 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class FreeShipping implements ActionInterface, CartActionInterface
 {
-
     /**
      * @param EnvironmentInterface $environment
      *
@@ -35,7 +34,7 @@ class FreeShipping implements ActionInterface, CartActionInterface
 
         $list = $priceCalculator->getModificators();
         foreach ($list as &$modificator) {
-            /* @var CartPriceModificatorInterface $modificator */
+            // @var CartPriceModificatorInterface $modificator
 
             // remove shipping charge
             if ($modificator instanceof ShippingInterface) {

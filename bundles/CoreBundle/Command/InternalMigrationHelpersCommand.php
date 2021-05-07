@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -28,6 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class InternalMigrationHelpersCommand extends AbstractCommand
 {
     private FilteredTableMetadataStorage $metadataStorage;
+
     private DependencyFactory $dependencyFactory;
 
     public function __construct(DependencyFactory $dependencyFactory, FilteredTableMetadataStorage $metadataStorage, ?string $name = null)

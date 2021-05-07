@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\EventSubscriber;
@@ -27,8 +27,11 @@ use Symfony\Component\Workflow\Event\Event;
 class ChangePublishedStateSubscriber implements EventSubscriberInterface
 {
     const NO_CHANGE = 'no_change';
+
     const FORCE_PUBLISHED = 'force_published';
+
     const FORCE_UNPUBLISHED = 'force_unpublished';
+
     const SAVE_VERSION = 'save_version';
 
     public function onWorkflowCompleted(Event $event)

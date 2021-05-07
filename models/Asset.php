@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -295,6 +295,7 @@ class Asset extends Element\AbstractElement
 
         if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
             $asset = new Asset();
+
             try {
                 $asset->getDao()->getById($id);
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
@@ -457,6 +458,7 @@ class Asset extends Element\AbstractElement
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
                     $type = $assetType;
+
                     break;
                 }
             }
@@ -609,6 +611,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     *
      * @throws \Exception
      */
     public function correctPath()
@@ -691,6 +694,7 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
                 $sourceUri = stream_get_meta_data($src)['uri'];
+
                 try {
                     $targetUri = stream_get_meta_data($storage->readStream($path));
                 } catch (\Exception $e) {
@@ -1055,6 +1059,7 @@ class Asset extends Element\AbstractElement
             $failureEvent->setArgument('exception', $e);
             \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_DELETE_FAILURE);
             Logger::crit($e);
+
             throw $e;
         }
 

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
@@ -21,8 +21,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 interface StatusInterface
 {
     const STATUS_PENDING = 'paymentPending';
+
     const STATUS_AUTHORIZED = 'paymentAuthorized';
+
     const STATUS_CANCELLED = 'cancelled';
+
     const STATUS_CLEARED = 'committed';
 
     /**

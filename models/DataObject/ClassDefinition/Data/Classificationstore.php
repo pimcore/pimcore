@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -817,6 +817,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             if ($keyGroupRelation->isMandatory()) {
                                 $keyDef->setMandatory(1);
                             }
+
                             try {
                                 $keyDef->checkValidity($value, false, $params);
                             } catch (\Exception $exception) {
@@ -839,6 +840,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
             $validationException = new Model\Element\ValidationException(implode(', ', $messages));
             $validationException->setSubItems($subItems);
+
             throw $validationException;
         }
     }

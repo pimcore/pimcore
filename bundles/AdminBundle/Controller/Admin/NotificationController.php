@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -105,6 +105,7 @@ class NotificationController extends AdminController
         $this->checkPermission('notifications');
 
         $id = (int) $request->get('id', 0);
+
         try {
             $notification = $service->findAndMarkAsRead($id, $this->getAdminUser()->getId());
         } catch (\UnexpectedValueException $e) {

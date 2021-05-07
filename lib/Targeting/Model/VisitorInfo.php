@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\Model;
@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 class VisitorInfo implements \IteratorAggregate
 {
     const VISITOR_ID_COOKIE_NAME = '_pc_vis';
+
     const SESSION_ID_COOKIE_NAME = '_pc_ses';
 
     const ACTION_SCOPE_RESPONSE = 'response';

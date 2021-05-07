@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Helper;
@@ -166,7 +166,7 @@ CSS;
             $emailLog->setDocumentId($document->getId());
         }
 
-        if(isset($_SERVER['REQUEST_URI'])){
+        if (isset($_SERVER['REQUEST_URI'])) {
             $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
         }
 

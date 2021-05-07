@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\HttpKernel\BundleCollection;
@@ -40,6 +40,7 @@ class LazyLoadedItem extends AbstractItem
 
     /**
      * LazyLoadedItem constructor.
+     *
      * @param string $className
      * @param int $priority
      * @param array $environments
@@ -110,6 +111,7 @@ class LazyLoadedItem extends AbstractItem
     /**
      * @param string $className
      * @param string $interfaceName
+     *
      * @return bool
      */
     private static function implementsInterface(string $className, string $interfaceName): bool
