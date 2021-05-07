@@ -103,7 +103,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     {
         if (count($this->globalsStack)) {
             $globals = array_pop($this->globalsStack);
-            if($globals !== false)  {
+            if ($globals !== false) {
                 $this->twig->addGlobal('document', $globals['document'] ?? null);
                 $this->twig->addGlobal('editmode', $globals['editmode'] ?? null);
             }
