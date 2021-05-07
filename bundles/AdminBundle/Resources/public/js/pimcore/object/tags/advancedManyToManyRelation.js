@@ -189,39 +189,19 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn {0}" style=""></div></div>', value ? 'x-grid-checkcolumn-checked' : '');
                 }.bind(this);
 
+                listeners = {
+                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type, readOnly)
+                };
+
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check', {
                         text: t(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
-                        renderer: renderer
+                        renderer: renderer,
                     }));
                     continue;
                 }
-
-                cellEditor = function (type, readOnly) {
-                    var editor = Ext.create('Ext.form.field.Checkbox', {style: 'margin-top: 2px;'});
-
-                    if (!readOnly && type === "columnbool") {
-                        editor.addListener('change', function (el, newValue) {
-                            window.gridPanel = el.up('gridpanel');
-                            window.el = el;
-                            var gridPanel = el.up('gridpanel');
-                            var columnKey = el.up().column.dataIndex;
-                            if (newValue) {
-                                gridPanel.getStore().each(function (record) {
-                                    if (!!record.get(columnKey)) {
-                                        // note, we don't need to check for the row here as the editor fires another change
-                                        // on blur, which updates the underlying record without a subsequent event being fired.
-                                        record.set(columnKey, false);
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    return editor;
-                }.bind(this, this.fieldConfig.columns[i].type, readOnly);
             }
 
             var columnConfig = {
@@ -888,6 +868,30 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });
 
+    },
+
+    cellMousedown: function (key, colType, readOnly, grid, cell, rowIndex, cellIndex, e) {
+
+        // this is used for the boolean field type
+
+        var store = grid.getStore();
+        var record = store.getAt(rowIndex);
+
+        if (colType == "bool") {
+            record.set(key, !record.data[key]);
+        } else if (!readOnly && colType === "columnbool") {
+            if (record.data[key]) {
+                grid.getStore().each(function (record) {
+                    if (!!record.get(key)) {
+                        // note, we don't need to check for the row here as the editor fires another change
+                        // on blur, which updates the underlying record without a subsequent event being fired.
+                        record.set(key, false);
+                    }
+                });
+            } else {
+                record.set(key, !record.data[key]);
+            }
+        }
     },
 
     requestNicePathData: function (targets, isInitialLoad) {
