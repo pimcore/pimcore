@@ -94,7 +94,7 @@ class RenderletController extends AdminController
 
         // setting locale manually here before rendering the action to make sure editables use the right locale - if this
         // is needed in multiple places, move this to the tag handler instead (see #1834)
-        if ($attributes['_locale']) {
+        if (isset($attributes['_locale'])) {
             $localeService->setLocale($attributes['_locale']);
         }
 
