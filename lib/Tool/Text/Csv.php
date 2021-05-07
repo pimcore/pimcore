@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 // this is a port / excerpt of: CSV Reader By Luke Visinoni which isn't maintained anymore
@@ -207,6 +207,7 @@ class Csv
             $dev = $this->deviation($array);
             if ($dev > 0.5) { // threshold not scientifically determined or something
                 unset($tmp[$char]);
+
                 continue;
             }
 

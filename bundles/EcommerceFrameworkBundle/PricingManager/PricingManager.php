@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
@@ -127,7 +127,7 @@ class PricingManager implements PricingManagerInterface
 
         // add all valid rules to the price info
         foreach ($this->getValidRules() as $rule) {
-            /* @var RuleInterface $rule */
+            // @var RuleInterface $rule
             $priceInfoWithRules->addRule($rule);
         }
 

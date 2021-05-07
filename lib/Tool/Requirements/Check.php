@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool\Requirements;
@@ -21,7 +21,9 @@ namespace Pimcore\Tool\Requirements;
 final class Check implements \ArrayAccess
 {
     const STATE_OK = 1;
+
     const STATE_WARNING = 2;
+
     const STATE_ERROR = 3;
 
     /**

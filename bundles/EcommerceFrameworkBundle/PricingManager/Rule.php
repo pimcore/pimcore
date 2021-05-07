@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
@@ -37,6 +37,7 @@ class Rule extends AbstractModel implements RuleInterface
     public static function getById($id)
     {
         $cacheKey = Dao::TABLE_NAME . '_' . $id;
+
         try {
             $rule = Runtime::get($cacheKey);
         } catch (\Exception $e) {
@@ -404,7 +405,7 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnProduct(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            if($action instanceof ProductActionInterface) {
+            if ($action instanceof ProductActionInterface) {
                 $action->executeOnProduct($environment);
             }
         }
@@ -420,7 +421,7 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnCart(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            if($action instanceof CartActionInterface) {
+            if ($action instanceof CartActionInterface) {
                 $action->executeOnCart($environment);
             }
         }

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
@@ -28,26 +28,32 @@ class Token extends AbstractModel
      * @var int
      */
     public $id;
+
     /**
      * @var int
      */
     public $voucherSeriesId;
+
     /**
      * @var string
      */
     public $token;
+
     /**
      * @var int
      */
     public $length;
+
     /**
      * @var string
      */
     public $type;
+
     /**
      * @var int
      */
     public $usages;
+
     /**
      * @var int
      */

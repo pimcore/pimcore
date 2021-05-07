@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
@@ -35,7 +35,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
  */
 class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
-    /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
+    // @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code
 
     const MAX_PROBABILITY = 0.005;
 
@@ -116,8 +116,10 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             if (Reservation::create($code, $cart)) {
                 return true;
             }
+
             throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
         }
+
         throw new VoucherServiceException('No Token for this code exists.', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
     }
 
@@ -228,6 +230,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
+
         try {
             $codeSets = $this->generateCodes();
 

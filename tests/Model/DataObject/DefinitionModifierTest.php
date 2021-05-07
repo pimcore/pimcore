@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Model\DataObject;
@@ -22,11 +22,15 @@ use Pimcore\Tests\Test\ModelTestCase;
 class DefinitionModifierTest extends ModelTestCase
 {
     const _CLASS = 'class';
+
     const _FIELDCOLLECTION = 'fieldcollection';
+
     const _OBJECTBRICK = 'objectbrick';
 
     const LOOP_COUNT = 2;
+
     const PANEL_NAME_PREFIX = 'panel';
+
     const DATA_NAME_PREFIX = 'input';
 
     /**
@@ -245,6 +249,7 @@ class DefinitionModifierTest extends ModelTestCase
         foreach ($children as $index => $child) {
             if ($child->getName() == $name) {
                 $found = true;
+
                 break;
             }
         }

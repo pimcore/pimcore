@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -235,6 +235,7 @@ class PortalController extends AdminController implements KernelControllerEventI
             foreach ($col as &$portlet) {
                 if ($portlet['id'] == $id) {
                     $portlet['config'] = $configuration;
+
                     break;
                 }
             }

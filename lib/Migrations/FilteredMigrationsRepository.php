@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Migrations;
@@ -38,6 +38,7 @@ final class FilteredMigrationsRepository implements \Doctrine\Migrations\Migrati
 
     /**
      * @param DependencyFactory $dependencyFactory
+     *
      * @return $this
      */
     public function __invoke(DependencyFactory $dependencyFactory)

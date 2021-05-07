@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
@@ -25,7 +25,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 abstract class AbstractElasticSearch implements ProductListInterface
 {
     const LIMIT_UNLIMITED = 'unlimited';
+
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
+
     const ADVANCED_SORT = 'advanced_sort';
 
     /**

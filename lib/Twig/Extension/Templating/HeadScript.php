@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -68,8 +68,10 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @const string
      */
     const FILE = 'FILE';
+
     const SCRIPT = 'SCRIPT';
-    /**#@-*/
+
+    // #@-
 
     /**
      * Registry key for placeholder
@@ -90,10 +92,14 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @var string
      */
     protected $_captureLock;
+
     protected $_captureScriptType = null;
+
     protected $_captureScriptAttrs = null;
+
     protected $_captureType;
-    /**#@-*/
+
+    // #@-
 
     /**
      * Optional allowed attributes for script tag
@@ -168,9 +174,11 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                 case 'prepend':
                 case 'append':
                     $action = $placement . $action;
+
                     break;
                 default:
                     $action = 'append' . $action;
+
                     break;
             }
             $this->$action($spec, $type, $attrs);
@@ -220,9 +228,11 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             case Container::PREPEND:
             case Container::APPEND:
                 $action = strtolower($this->_captureType) . 'Script';
+
                 break;
             default:
                 $action = 'appendScript';
+
                 break;
         }
         $this->$action($content, $type, $attrs);
@@ -285,6 +295,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                     } else {
                         $this->$action($item);
                     }
+
                     break;
                 case 'file':
                 default:
@@ -297,6 +308,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                             $this->$action($item);
                         }
                     }
+
                     break;
             }
 
