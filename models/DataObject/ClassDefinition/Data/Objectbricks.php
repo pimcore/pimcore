@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
+use Pimcore\Model\DataObject\Traits\ClassSavedTrait;
 
 class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
@@ -1014,19 +1015,5 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
 
         return null;
-    }
-
-    /** {@inheritdoc } */
-    public function preSave($containerDefinition, $params = [])
-    {
-        // nothing to do
-    }
-
-    /** {@inheritdoc } */
-    public function postSave($containerDefinition, $params = [])
-    {
-        if ($containerDefinition instanceof DataObject\ClassDefinition) {
-            $this->classSaved($containerDefinition);
-        }
     }
 }
