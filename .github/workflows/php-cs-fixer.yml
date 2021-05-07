@@ -1,0 +1,26 @@
+
+name: "PHP-CS-Fixer"
+
+on:
+    pull_request:
+        branches:
+            - "6.9"
+    push:
+        branches:
+            - "6.9"
+            - "*_actions_6x"
+
+jobs:
+    php-cs-fixer:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  ref: ${{ github.head_ref }}
+
+            - name: PHP-CS-Fixer
+              uses: docker://oskarstark/php-cs-fixer-ga:latest
+
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: Apply php-cs-fixer changes
