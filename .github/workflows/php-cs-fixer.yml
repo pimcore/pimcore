@@ -2,20 +2,17 @@
 name: "PHP-CS-Fixer"
 
 on:
-    pull_request:
-        branches:
-            - "6.9"
     push:
         branches:
             - "6.9"
-            - "*_actions_6x"
 
 jobs:
     php-cs-fixer:
         runs-on: ubuntu-latest
         steps:
-            - name: "Checkout code"
-              uses: "actions/checkout@v2"
+            - uses: actions/checkout@v2
+              with:
+                  ref: ${{ github.head_ref }}
 
             - name: PHP-CS-Fixer
               uses: docker://oskarstark/php-cs-fixer-ga:latest
