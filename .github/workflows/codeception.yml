@@ -4,11 +4,9 @@ name: "Codeception Tests"
 on:
     pull_request:
         branches:
-            - "6.8"
             - "6.9"
     push:
         branches:
-            - "6.8"
             - "6.9"
             - "*_actions_6x"
 
