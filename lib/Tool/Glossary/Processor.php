@@ -127,7 +127,6 @@ class Processor
             $tmpData['replace'][] = $entry['replace'];
         }
 
-        $result = '';
         $data = $tmpData;
         $data['count'] = array_fill(0, count($data['search']), 0);
 
@@ -153,7 +152,7 @@ class Processor
 
                 $domNode = $parentNode->getNode(0);
                 $fragment = $domNode->ownerDocument->createDocumentFragment();
-                $fragment->appendXML($text);
+                $fragment->appendXML(sprintf('<![CDATA[%s]]>', $text));
                 $clone = $domNode->cloneNode();
                 $clone->appendChild($fragment);
                 $domNode->parentNode->replaceChild($clone, $domNode);
