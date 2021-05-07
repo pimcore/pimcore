@@ -29,9 +29,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class NotificationSubscriber implements EventSubscriberInterface
 {
     const MAIL_TYPE_TEMPLATE = 'template';
+
     const MAIL_TYPE_DOCUMENT = 'pimcore_document';
 
     const NOTIFICATION_CHANNEL_MAIL = 'mail';
+
     const NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION = 'pimcore_notification';
 
     const DEFAULT_MAIL_TEMPLATE_PATH = '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig';

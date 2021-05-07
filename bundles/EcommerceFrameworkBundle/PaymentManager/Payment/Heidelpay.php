@@ -142,6 +142,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
         }
 
         $url = null;
+
         try {
             $transaction = $heidelpay->charge(
                 $price->getAmount()->asString(2),

@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;

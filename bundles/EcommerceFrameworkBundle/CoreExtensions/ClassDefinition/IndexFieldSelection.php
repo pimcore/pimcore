@@ -64,9 +64,13 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public $phpdocType = '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
 
     public $width;
+
     public $considerTenants = false;
+
     public $multiPreSelect = false;
+
     public $filterGroups = '';
+
     public $predefinedPreSelectOptions = [];
 
     public function __construct()

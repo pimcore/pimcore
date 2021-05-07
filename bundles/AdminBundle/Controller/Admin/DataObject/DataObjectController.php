@@ -734,6 +734,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     foreach ($objectData['classes'] as $class) {
                         if ($class['id'] == $selectedClassId) {
                             $objectData['selectedClass'] = $selectedClassId;
+
                             break;
                         }
                     }
@@ -1146,6 +1147,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
 
                 Db::get()->commit();
+
                 break;
             } catch (\Exception $e) {
                 Db::get()->rollBack();
@@ -1160,6 +1162,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 } else {
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
                     Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+
                     throw $e;
                 }
             }
@@ -1440,6 +1443,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($currentObject->isAllowed('publish')) {
             $object->setPublished(true);
             $object->setUserModification($this->getAdminUser()->getId());
+
             try {
                 $object->save();
 
@@ -2082,6 +2086,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         if ($currentData[$i]->getId() == $object->getId()) {
                             unset($currentData[$i]);
                             $owner->$setter($currentData);
+
                             break;
                         }
                     }

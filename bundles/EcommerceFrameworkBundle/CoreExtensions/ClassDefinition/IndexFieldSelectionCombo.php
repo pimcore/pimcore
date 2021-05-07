@@ -31,7 +31,9 @@ class IndexFieldSelectionCombo extends Select
     public $fieldtype = 'indexFieldSelectionCombo';
 
     public $specificPriceField = false;
+
     public $showAllFields = false;
+
     public $considerTenants = false;
 
     public function __construct()

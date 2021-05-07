@@ -189,6 +189,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     {
         // create info object and assign it to the view
         $info = new Area\Info();
+
         try {
             $info->setId($this->currentIndex['type']);
             $info->setEditable($this);

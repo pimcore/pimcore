@@ -28,6 +28,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
     const ATTRIBUTE_PIMCORE_CONTEXT = '_pimcore_context';
 
     const CONTEXT_ADMIN = 'admin';
+
     const CONTEXT_DEFAULT = 'default';
 
     /**

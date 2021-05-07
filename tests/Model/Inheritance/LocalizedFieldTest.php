@@ -242,6 +242,7 @@ class LocalizedFieldTest extends ModelTestCase
         foreach ($validLanguages as $language) {
             if ($language != $groupByLanguage) {
                 $otherLanguage = $language;
+
                 break;
             }
         }

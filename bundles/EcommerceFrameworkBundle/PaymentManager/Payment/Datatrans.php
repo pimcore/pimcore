@@ -42,9 +42,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface, RecurringPaymentInterface
 {
     const TRANS_TYPE_DEBIT = '05';
+
     const TRANS_TYPE_CREDIT = '06';
 
     const AUTH_TYPE_AUTHORIZATION = 'NOA';
+
     const AUTH_TYPE_FINAL_AUTHORIZATION = 'FOA'; // final authorization (MasterCard/Maestro)
 
     /**
@@ -418,6 +420,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
             case 'ECA':
                 $required['expm'] = null;
                 $required['expy'] = null;
+
                 break;
         }
 
@@ -479,7 +482,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
         $transaction = $xml->body->transaction;
         $status = (string)$transaction->attributes()['trxStatus'];
         $response = $transaction->{ $status };
-        /* @var \SimpleXMLElement $response */
+        // @var \SimpleXMLElement $response
 
         $message = null;
         $paymentState = null;
@@ -588,7 +591,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
         $transaction = $xml->body->transaction;
         $status = (string)$transaction->attributes()['trxStatus'];
 
-        /* @var \SimpleXMLElement $response */
+        // @var \SimpleXMLElement $response
         $response = $transaction->{$status};
 
         $message = null;

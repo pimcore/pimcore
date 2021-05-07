@@ -23,14 +23,23 @@ use Symfony\Contracts\Cache\ItemInterface;
 class CacheItem implements PimcoreCacheItemInterface, ItemInterface
 {
     private const METADATA_EXPIRY_OFFSET = 1527506807;
+
     protected $key;
+
     protected $value;
+
     protected $isHit;
+
     protected $expiry;
+
     protected $defaultLifetime;
+
     protected $metadata = [];
+
     protected $previousTags = [];
+
     protected $tags = [];
+
     protected $newMetadata = [];
 
     /**

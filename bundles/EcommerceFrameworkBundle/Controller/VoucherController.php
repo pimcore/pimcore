@@ -114,6 +114,7 @@ class VoucherController extends FrontendController
                 $result = $tokenManager->exportCsv($request->query->all());
                 $contentType = 'text/csv';
                 $suffix = 'csv';
+
                 break;
 
             case ExportableTokenManagerInterface::FORMAT_PLAIN:
@@ -121,6 +122,7 @@ class VoucherController extends FrontendController
                 $contentType = 'text/plain';
                 $suffix = 'txt';
                 $download = false;
+
                 break;
 
             default:

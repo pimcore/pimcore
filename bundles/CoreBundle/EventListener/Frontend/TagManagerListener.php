@@ -163,6 +163,7 @@ class TagManagerListener
                             //disable tag item if expired
                             $tag->items[$itemKey]['disabled'] = true;
                             $tag->save();
+
                             continue;
                         }
 

@@ -122,6 +122,7 @@ class AssetHelperController extends AdminController
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = null;
+
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -187,6 +188,7 @@ class AssetHelperController extends AdminController
         if (strlen($requestedGridConfigId) == 0) {
             // check if there is a favourite view
             $favourite = null;
+
             try {
                 try {
                     $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $classId, 0, $searchType);
@@ -212,6 +214,7 @@ class AssetHelperController extends AdminController
             }
 
             $savedGridConfig = null;
+
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
@@ -219,6 +222,7 @@ class AssetHelperController extends AdminController
 
             if ($savedGridConfig) {
                 $shared = null;
+
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -997,6 +1001,7 @@ class AssetHelperController extends AdminController
                             }
                             $em['data'] = $value;
                             $dirty = true;
+
                             break;
                         }
                     }

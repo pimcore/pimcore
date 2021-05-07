@@ -90,6 +90,7 @@ class LibreOffice extends Ghostscript
         if (!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
             Logger::error($message);
+
             throw new \Exception($message);
         }
 
@@ -177,6 +178,7 @@ class LibreOffice extends Ghostscript
             } else {
                 $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $process->getCommandLine() . "'";
                 Logger::error($message);
+
                 throw new \Exception($message);
             }
         } else {

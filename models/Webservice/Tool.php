@@ -45,6 +45,7 @@ class Tool
                     foreach ($includePatterns as $pattern) {
                         if (preg_match($pattern, $file)) {
                             $match = true;
+
                             break;
                         }
                     }

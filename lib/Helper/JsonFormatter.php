@@ -71,6 +71,7 @@ class JsonFormatter
             if (!$outOfQuotes) {
                 $buffer .= $char;
                 $noescape = '\\' === $char ? !$noescape : true;
+
                 continue;
             } elseif ('' !== $buffer) {
                 if ($unescapeSlashes) {
@@ -96,6 +97,7 @@ class JsonFormatter
 
                 $result .= $buffer.$char;
                 $buffer = '';
+
                 continue;
             }
 

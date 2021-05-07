@@ -107,6 +107,7 @@ class Ghostscript extends Adapter
         if (!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
             Logger::error($message);
+
             throw new \Exception($message);
         }
 
@@ -138,6 +139,7 @@ class Ghostscript extends Adapter
 
         $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
         Logger::error($message);
+
         throw new \Exception($message);
     }
 

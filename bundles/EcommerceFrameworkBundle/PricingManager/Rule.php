@@ -36,6 +36,7 @@ class Rule extends AbstractModel implements RuleInterface
     public static function getById($id)
     {
         $cacheKey = Dao::TABLE_NAME . '_' . $id;
+
         try {
             $rule = Runtime::get($cacheKey);
         } catch (\Exception $e) {
@@ -385,7 +386,7 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnProduct(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var ActionInterface $action */
+            // @var ActionInterface $action
             $action->executeOnProduct($environment);
         }
 
@@ -400,7 +401,7 @@ class Rule extends AbstractModel implements RuleInterface
     public function executeOnCart(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var ActionInterface $action */
+            // @var ActionInterface $action
             $action->executeOnCart($environment);
         }
 

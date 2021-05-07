@@ -213,6 +213,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
                                 $emailSettings = $emailSettings[$keys[$i]];
                             } else {
                                 $emailSettings = null;
+
                                 break;
                             }
                         }

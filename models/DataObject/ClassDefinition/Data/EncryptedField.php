@@ -154,6 +154,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         if ($data) {
             try {
                 $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+
                 try {
                     $key = Key::loadFromAsciiSafeString($key);
                 } catch (\Exception $e) {
@@ -162,6 +163,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
                         return null;
                     }
+
                     throw new \Exception('could not load key');
                 }
 

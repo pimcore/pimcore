@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 interface ServiceInterface
 {
     const DISCOUNT_TYPE_PERCENT = 'percent';
+
     const DISCOUNT_TYPE_AMOUNT = 'amount';
 
     /**

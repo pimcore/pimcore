@@ -23,10 +23,13 @@ use Symfony\Component\HttpFoundation\Response;
 class CodeInjector
 {
     const SELECTOR_BODY = 'body';
+
     const SELECTOR_HEAD = 'head';
 
     const POSITION_BEGINNING = 'beginning';
+
     const POSITION_END = 'end';
+
     const REPLACE = 'replace';
 
     private static $presetSelectors = [

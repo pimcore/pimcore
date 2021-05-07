@@ -313,6 +313,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             foreach ($this->localeParams as $localeParam) {
                 if (isset($routeParams[$localeParam])) {
                     $routeParams['_locale'] = $routeParams[$localeParam];
+
                     break;
                 }
             }

@@ -99,12 +99,13 @@ class Cart extends AbstractCart implements CartInterface
     public static function getById($id)
     {
         $cacheKey = Cart\Dao::TABLE_NAME . '_' . $id;
+
         try {
             $cart = Runtime::get($cacheKey);
         } catch (\Exception $e) {
             try {
                 $cartClass = get_called_class();
-                /* @var Cart $cart */
+                // @var Cart $cart
                 $cart = new $cartClass;
                 $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);

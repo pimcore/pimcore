@@ -287,18 +287,21 @@ class TagsController extends AdminController
                 if ($object) {
                     $idList = $this->getSubObjectIds($object, $eventDispatcher);
                 }
+
                 break;
             case 'asset':
                 $asset = \Pimcore\Model\Asset::getById($elementId);
                 if ($asset) {
                     $idList = $this->getSubAssetIds($asset, $eventDispatcher);
                 }
+
                 break;
             case 'document':
                 $document = \Pimcore\Model\Document::getById($elementId);
                 if ($document) {
                     $idList = $this->getSubDocumentIds($document, $eventDispatcher);
                 }
+
                 break;
         }
 

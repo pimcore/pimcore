@@ -46,7 +46,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var string
      */
     protected $itemKey;
+
     protected $count;
+
     protected $comment;
 
     /**
@@ -60,6 +62,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var CartInterface
      */
     protected $cart;
+
     protected $cartId;
 
     /**

@@ -27,6 +27,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Video extends Model\Asset
 {
     use Model\Asset\MetaData\EmbeddedMetaDataTrait;
+
     /**
      * @var string
      */

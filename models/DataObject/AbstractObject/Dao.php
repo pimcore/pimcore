@@ -199,6 +199,7 @@ class Dao extends Model\Element\Dao
     public function getCurrentFullPath()
     {
         $path = null;
+
         try {
             $path = $this->db->fetchOne('SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?', $this->model->getId());
         } catch (\Exception $e) {

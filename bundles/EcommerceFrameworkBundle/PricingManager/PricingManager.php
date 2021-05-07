@@ -127,7 +127,7 @@ class PricingManager implements PricingManagerInterface
 
         // add all valid rules to the price info
         foreach ($this->getValidRules() as $rule) {
-            /* @var RuleInterface $rule */
+            // @var RuleInterface $rule
             $priceInfoWithRules->addRule($rule);
         }
 

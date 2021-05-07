@@ -27,8 +27,11 @@ use Symfony\Component\Templating\EngineInterface;
 class TargetingCodeGenerator
 {
     const BLOCK_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
+
     const BLOCK_BEFORE_SCRIPT = 'beforeScript';
+
     const BLOCK_AFTER_SCRIPT = 'afterScript';
+
     const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
     /**

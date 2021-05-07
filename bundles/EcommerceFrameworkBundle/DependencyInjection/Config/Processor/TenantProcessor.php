@@ -44,6 +44,7 @@ class TenantProcessor
             // but can be used for yaml inheritance
             if (preg_match('/^_defaults/i', $tenant)) {
                 unset($config[$tenant]);
+
                 continue;
             }
 

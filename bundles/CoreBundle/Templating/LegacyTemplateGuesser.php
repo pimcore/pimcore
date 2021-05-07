@@ -93,6 +93,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
         foreach ($this->controllerPatterns as $pattern) {
             if (preg_match($pattern, $className, $tempMatch)) {
                 $matchController = $tempMatch;
+
                 break;
             }
         }
@@ -112,6 +113,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             while ($bundleName = $bundle->getName()) {
                 if (!method_exists($bundle, 'getParent') || (null === $parentBundleName = $bundle->getParent())) {
                     $bundleName = $bundle->getName();
+
                     break;
                 }
                 $bundle = $this->kernel->getBundle($parentBundleName);

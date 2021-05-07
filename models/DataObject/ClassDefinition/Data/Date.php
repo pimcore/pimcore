@@ -537,7 +537,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function resolveBlockedVars(): array
     {
         $defaultBlockedVars = [
-            'fieldDefinitionsCache'
+            'fieldDefinitionsCache',
         ];
 
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());

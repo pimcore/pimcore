@@ -38,6 +38,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements BatchProcessingWorkerInterface
 {
     const INDEX_STATUS_PREPARATION_STATUS_DONE = 0;
+
     const INDEX_STATUS_PREPARATION_STATUS_ERROR = 5;
 
     /**
@@ -497,6 +498,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $this->db->commit();
         } catch (\Exception $e) {
             Logger::warn('Error during processUpdateIndexQueue().');
+
             try {
                 $this->db->rollBack();
             } catch (\Exception $e) {

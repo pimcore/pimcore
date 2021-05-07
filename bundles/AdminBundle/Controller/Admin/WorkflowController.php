@@ -218,6 +218,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
             $svg = null;
             $msg = '';
+
             try {
                 $svg = $this->getWorkflowSvg($workflow);
             } catch (\InvalidArgumentException $e) {

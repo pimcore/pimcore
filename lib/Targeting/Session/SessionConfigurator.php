@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class SessionConfigurator implements SessionConfiguratorInterface, EventSubscriberInterface
 {
     const TARGETING_BAG_SESSION = 'pimcore_targeting_session';
+
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
     public static function getSubscribedEvents()

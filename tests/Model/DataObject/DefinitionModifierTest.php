@@ -22,11 +22,15 @@ use Pimcore\Tests\Test\ModelTestCase;
 class DefinitionModifierTest extends ModelTestCase
 {
     const _CLASS = 'class';
+
     const _FIELDCOLLECTION = 'fieldcollection';
+
     const _OBJECTBRICK = 'objectbrick';
 
     const LOOP_COUNT = 2;
+
     const PANEL_NAME_PREFIX = 'panel';
+
     const DATA_NAME_PREFIX = 'input';
 
     /**
@@ -245,6 +249,7 @@ class DefinitionModifierTest extends ModelTestCase
         foreach ($children as $index => $child) {
             if ($child->getName() == $name) {
                 $found = true;
+
                 break;
             }
         }

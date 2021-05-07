@@ -22,6 +22,7 @@ use Pimcore\Model\Element\Note;
 class Consent implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+
     /**
      * @var bool
      */

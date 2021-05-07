@@ -38,6 +38,7 @@ class Version20200820151104 extends AbstractPimcoreMigration
                 $i = 0;
                 foreach ($duplicateTags as $duplicateTag) {
                     $i++;
+
                     try {
                         $oldName = $duplicateTag->getName();
                         $newName = $duplicateTag->getName() . '_' . $i;

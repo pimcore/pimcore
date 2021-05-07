@@ -234,6 +234,7 @@ class PortalController extends AdminController implements EventedControllerInter
             foreach ($col as &$portlet) {
                 if ($portlet['id'] == $id) {
                     $portlet['config'] = $configuration;
+
                     break;
                 }
             }

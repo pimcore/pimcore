@@ -100,6 +100,7 @@ class ElementControllerBase extends AdminController
                 }
             } catch (\Exception $e) {
                 Logger::err('failed to access element with id: ' . $id);
+
                 continue;
             }
 
@@ -131,6 +132,7 @@ class ElementControllerBase extends AdminController
                             'allowed' => false,
                         ];
                         $errors |= true;
+
                         continue;
                     }
                 }

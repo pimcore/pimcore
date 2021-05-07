@@ -27,6 +27,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 interface PriceInterface
 {
     const PRICE_MODE_NET = 'net';
+
     const PRICE_MODE_GROSS = 'gross';
 
     /**

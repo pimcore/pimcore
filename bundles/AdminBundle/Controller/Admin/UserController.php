@@ -301,6 +301,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                     if (method_exists($user, 'setAllAclToFalse')) {
                         $user->setAllAclToFalse();
                     }
+
                     break;
                 }
             }
@@ -637,7 +638,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         return $response;
     }
 
-    /* ROLES */
+    // ROLES
 
     /**
      * @Route("/user/role-tree-get-childs-by-id", name="pimcore_admin_user_roletreegetchildsbyid", methods={"GET"})

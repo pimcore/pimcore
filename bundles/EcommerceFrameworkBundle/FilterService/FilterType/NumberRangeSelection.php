@@ -52,6 +52,7 @@ class NumberRangeSelection extends AbstractFilterType
                 foreach ($ranges->getData() as $row) {
                     if ((empty($row['from']) || (floatval($row['from']) <= $value)) && (empty($row['to']) || floatval($row['to']) > $value)) {
                         $counts[$row['from'] . '_' . $row['to']] += $groupByValue['count'];
+
                         break;
                     }
                 }

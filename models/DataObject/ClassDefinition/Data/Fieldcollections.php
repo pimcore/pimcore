@@ -494,6 +494,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                 ], ];
 
                             $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $params, $idMapper);
+
                             break;
                         }
                     }
@@ -619,6 +620,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             if ($validationExceptions) {
                 $aggregatedExceptions = new Model\Element\ValidationException();
                 $aggregatedExceptions->setSubItems($validationExceptions);
+
                 throw $aggregatedExceptions;
             }
         }

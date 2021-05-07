@@ -538,6 +538,7 @@ function resolvePath($filename)
         }
         if ($part == '..') {
             array_pop($out);
+
             continue;
         }
         $out[] = $part;

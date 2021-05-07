@@ -56,6 +56,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
                 foreach ($ranges->getData() as $row) {
                     if ((empty($row['from']) || ($row['from'] <= $value)) && (empty($row['to']) || $row['to'] >= $value)) {
                         $counts[$row['from'] . '_' . $row['to']] += $groupByValue['count'];
+
                         break;
                     }
                 }

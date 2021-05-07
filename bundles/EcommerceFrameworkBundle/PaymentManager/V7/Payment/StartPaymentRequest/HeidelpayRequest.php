@@ -18,8 +18,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 class HeidelpayRequest extends AbstractRequest
 {
     protected $paymentReference;
+
     protected $internalPaymentId;
+
     protected $returnUrl;
+
     protected $errorUrl;
 
     /**

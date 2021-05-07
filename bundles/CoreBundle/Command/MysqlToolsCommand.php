@@ -55,6 +55,7 @@ class MysqlToolsCommand extends AbstractCommand
 
             foreach ($tables as $table) {
                 $t = current($table);
+
                 try {
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
                     $db->query('OPTIMIZE TABLE ' . $t);
@@ -67,6 +68,7 @@ class MysqlToolsCommand extends AbstractCommand
 
             foreach ($tables as $table) {
                 $t = current($table);
+
                 try {
                     Logger::debug("Running: SELECT COUNT(*) FROM $t");
                     $res = $db->fetchOne("SELECT COUNT(*) FROM $t");

@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\Translation\AbstractTranslation;
 
-use Pimcore\Model;
-
 /**
  * @property \Pimcore\Model\Translation\AbstractTranslation $model
  *

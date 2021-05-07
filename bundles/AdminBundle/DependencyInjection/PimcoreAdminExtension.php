@@ -23,7 +23,9 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 class PimcoreAdminExtension extends Extension
 {
     const PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES = 'pimcore_admin.dataObjects.notes_events.types';
+
     const PARAM_ASSETS_NOTES_EVENTS_TYPES = 'pimcore_admin.assets.notes_events.types';
+
     const PARAM_DOCUMENTS_NOTES_EVENTS_TYPES = 'pimcore_admin.documents.notes_events.types';
 
     /**

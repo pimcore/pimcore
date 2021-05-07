@@ -162,6 +162,7 @@ class Dao extends Model\Dao\AbstractDao
 
                         if (count($versionIds) > 1000) {
                             $stop = true;
+
                             break;
                         }
                     }

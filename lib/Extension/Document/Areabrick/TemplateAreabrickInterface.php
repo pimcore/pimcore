@@ -25,9 +25,11 @@ namespace Pimcore\Extension\Document\Areabrick;
 interface TemplateAreabrickInterface extends AreabrickInterface
 {
     const TEMPLATE_LOCATION_GLOBAL = 'global';
+
     const TEMPLATE_LOCATION_BUNDLE = 'bundle';
 
     const TEMPLATE_SUFFIX_PHP = 'html.php';
+
     const TEMPLATE_SUFFIX_TWIG = 'html.twig';
 
     /**

@@ -38,6 +38,7 @@ class WorkflowState extends Model\AbstractModel
      * @var string
      */
     public $workflow;
+
     /**
      * @var string
      */

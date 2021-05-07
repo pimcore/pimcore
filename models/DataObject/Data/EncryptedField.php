@@ -110,6 +110,7 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $this->encrypted = $data;
             } catch (\Exception $e) {
                 Logger::error($e);
+
                 throw new \Exception('could not load key');
             }
 
@@ -140,6 +141,7 @@ class EncryptedField implements OwnerAwareFieldInterface
                 $this->plain = $data;
             } catch (\Exception $e) {
                 Logger::error($e);
+
                 throw new \Exception('could not load key');
             }
         }

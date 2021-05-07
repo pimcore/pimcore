@@ -222,6 +222,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     protected $order;
+
     /**
      * @var string | array
      */
@@ -570,16 +571,19 @@ class DefaultMysql implements ProductListInterface
 
                 //make sure, that only variant objects are considered
                 $condition .= ' AND a.o_id != o_virtualProductId ';
+
                 break;
 
             case ProductListInterface::VARIANT_MODE_HIDE:
 
                 $condition .= " AND o_type != 'variant'";
+
                 break;
 
             case ProductListInterface::VARIANT_MODE_VARIANTS_ONLY:
 
                 $condition .= " AND o_type = 'variant'";
+
                 break;
         }
 

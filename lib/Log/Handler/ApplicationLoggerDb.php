@@ -21,6 +21,7 @@ use Pimcore\Db;
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
     const TABLE_NAME = 'application_logs';
+
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**

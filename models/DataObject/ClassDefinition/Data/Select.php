@@ -314,6 +314,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         foreach ($this->options as $option) {
             if ($option['value'] == $data) {
                 $value = $option['key'];
+
                 break;
             }
         }

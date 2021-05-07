@@ -26,6 +26,7 @@ class CompositeIndexTest extends ModelTestCase
     {
         $classId = Unittest::classId();
         $db = Db::get();
+
         try {
             $db->query('ALTER TABLE `object_query_' . $classId . '` DROP INDEX `mycomposite`');
             $this->fail('expected that the index does not exist yet');

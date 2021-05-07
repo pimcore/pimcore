@@ -30,6 +30,7 @@ class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInte
     use LoggerAwareTrait;
 
     protected $documents;
+
     protected $documentStack;
 
     public function __construct(DocumentStack $documentStack)

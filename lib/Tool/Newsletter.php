@@ -33,6 +33,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Newsletter
 {
     public const SENDING_MODE_BATCH = 'batch';
+
     public const SENDING_MODE_SINGLE = 'single';
 
     /**

@@ -36,13 +36,21 @@ use Symfony\Component\Templating\EngineInterface;
 class Tracker extends AbstractTracker
 {
     const BLOCK_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
+
     const BLOCK_BEFORE_SCRIPT = 'beforeScript';
+
     const BLOCK_BEFORE_TRACK = 'beforeTrack';
+
     const BLOCK_TRACK = 'track';
+
     const BLOCK_AFTER_TRACK = 'afterTrack';
+
     const BLOCK_BEFORE_ASYNC = 'beforeAsync';
+
     const BLOCK_AFTER_ASYNC = 'afterAsync';
+
     const BLOCK_AFTER_SCRIPT = 'afterScript';
+
     const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
     /**

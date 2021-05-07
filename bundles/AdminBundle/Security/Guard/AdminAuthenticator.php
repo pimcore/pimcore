@@ -158,6 +158,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 ];
             } else {
                 $this->bruteforceProtectionHandler->checkProtection();
+
                 throw new AuthenticationException('Missing username or token');
             }
 

@@ -26,6 +26,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 interface TargetingStorageInterface
 {
     const SCOPE_SESSION = 'session';
+
     const SCOPE_VISITOR = 'visitor';
 
     const VALID_SCOPES = [

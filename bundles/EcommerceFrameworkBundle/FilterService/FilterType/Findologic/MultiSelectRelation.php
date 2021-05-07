@@ -45,6 +45,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
                 foreach ($values as $v) {
                     if ($v['value'] == $id) {
                         $add = false;
+
                         break;
                     }
                 }

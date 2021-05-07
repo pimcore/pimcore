@@ -61,6 +61,7 @@ final class CleanupBrickTablesTask implements TaskInterface
                 $brickDef = Definition::getByKey($brickType);
                 if (!$brickDef) {
                     $this->logger->error("Brick '" . $brickType . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 
@@ -69,6 +70,7 @@ final class CleanupBrickTablesTask implements TaskInterface
                 $classDefinition = ClassDefinition::getById($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 

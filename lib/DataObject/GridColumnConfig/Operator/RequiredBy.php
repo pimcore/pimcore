@@ -44,10 +44,13 @@ class RequiredBy extends AbstractOperator
         $typeCondition = '';
         switch ($this->getElementType()) {
             case 'document': $typeCondition = " AND sourcetype = 'document'";
+
                 break;
             case 'asset': $typeCondition = " AND sourcetype = 'asset'";
+
                 break;
             case 'object': $typeCondition = " AND sourcetype = 'object'";
+
                 break;
         }
 

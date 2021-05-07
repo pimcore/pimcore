@@ -84,6 +84,7 @@ class EncoderFactory implements EncoderFactoryInterface
             foreach ($this->encoderFactories as $class => $factory) {
                 if ((is_object($user) && $user instanceof $class) || (!is_object($user) && (is_subclass_of($user, $class) || $user == $class))) {
                     $factoryKey = $class;
+
                     break;
                 }
             }

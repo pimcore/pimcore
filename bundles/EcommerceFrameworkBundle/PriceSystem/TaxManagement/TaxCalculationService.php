@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 class TaxCalculationService
 {
     const CALCULATION_FROM_NET = 'net';
+
     const CALCULATION_FROM_GROSS = 'gross';
 
     /**

@@ -139,6 +139,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
+
         try {
             $query =
                 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) VALUES (?,?,?)

@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CartFactory implements CartFactoryInterface

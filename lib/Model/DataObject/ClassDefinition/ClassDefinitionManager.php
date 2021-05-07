@@ -21,7 +21,9 @@ use Pimcore\Model\DataObject\ClassDefinition;
 class ClassDefinitionManager
 {
     public const SAVED = 'saved';
+
     public const CREATED = 'created';
+
     public const DELETED = 'deleted';
 
     /**

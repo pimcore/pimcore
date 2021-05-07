@@ -153,6 +153,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
             } else {
                 // error
                 Logger::debug('video [' . $video->getId() . "] has status: '" . $thumb['status'] . "' -> skipping");
+
                 break;
             }
         }

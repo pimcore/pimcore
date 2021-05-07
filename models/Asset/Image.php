@@ -570,9 +570,11 @@ EOT;
         switch ($this->getMimetype()) {
             case 'image/gif':
                 $isAnimated = $this->isAnimatedGif();
+
                 break;
             case 'image/png':
                 $isAnimated = $this->isAnimatedPng();
+
                 break;
             default:
                 break;

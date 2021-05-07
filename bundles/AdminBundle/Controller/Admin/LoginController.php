@@ -62,6 +62,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         foreach ($event->getRequest()->getLanguages() as $userLocale) {
             if (in_array($userLocale, $availableLocales)) {
                 $locale = $userLocale;
+
                 break;
             }
         }

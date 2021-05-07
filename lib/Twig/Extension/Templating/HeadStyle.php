@@ -128,13 +128,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
             switch (strtoupper($placement)) {
                 case 'SET':
                     $action = 'setStyle';
+
                     break;
                 case 'PREPEND':
                     $action = 'prependStyle';
+
                     break;
                 case 'APPEND':
                 default:
                     $action = 'appendStyle';
+
                     break;
             }
             $this->$action($content, $attributes);
@@ -315,13 +318,16 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
         switch ($this->_captureType) {
             case Container::SET:
                 $this->setStyle($content, $attrs);
+
                 break;
             case Container::PREPEND:
                 $this->prependStyle($content, $attrs);
+
                 break;
             case Container::APPEND:
             default:
                 $this->appendStyle($content, $attrs);
+
                 break;
         }
     }

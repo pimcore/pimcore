@@ -20,7 +20,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 interface BracketInterface extends ConditionInterface
 {
     const OPERATOR_AND = 'and';
+
     const OPERATOR_OR = 'or';
+
     const OPERATOR_AND_NOT = 'and_not';
 
     /**

@@ -640,6 +640,7 @@ class Staticroute extends AbstractModel
                 foreach ($siteIds as $siteId) {
                     if ($siteId == Site::getCurrentSite()->getId()) {
                         $siteMatched = true;
+
                         break;
                     }
                 }

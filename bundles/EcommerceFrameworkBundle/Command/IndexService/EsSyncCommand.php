@@ -70,6 +70,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
 
             if (!$elasticWorker instanceof AbstractElasticSearch) {
                 $output->writeln("<info>Skipping tenant \"{$tenantName}\" as it's not an elasticsearch tenant.</info>");
+
                 continue;
             }
 

@@ -24,6 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ConnectionFactory
 {
     const DEFAULT_CONNECT_TIMEOUT = 2.5;
+
     const DEFAULT_CONNECT_RETRIES = 1;
 
     /**

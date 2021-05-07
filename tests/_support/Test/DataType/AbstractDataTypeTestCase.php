@@ -510,6 +510,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $invalidSlug = new UrlSlug('/xyz      /abc');
         $this->testObject->setUrlSlug([$invalidSlug]);
         $ex = null;
+
         try {
             $this->testObject->save();
         } catch (\Exception $e) {
@@ -532,6 +533,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $duplicateSlug = new UrlSlug('/xyz/abc');
         $this->testObject->setUrlSlug2([$duplicateSlug]);
         $ex = null;
+
         try {
             $this->testObject->save();
         } catch (\Exception $e) {

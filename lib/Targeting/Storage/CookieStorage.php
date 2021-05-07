@@ -36,9 +36,11 @@ class CookieStorage implements TargetingStorageInterface
     use TimestampsTrait;
 
     const COOKIE_NAME_SESSION = '_pc_tss'; // tss = targeting session storage
+
     const COOKIE_NAME_VISITOR = '_pc_tvs'; // tvs = targeting visitor storage
 
     const STORAGE_KEY_CREATED_AT = '_c';
+
     const STORAGE_KEY_UPDATED_AT = '_u';
 
     /**

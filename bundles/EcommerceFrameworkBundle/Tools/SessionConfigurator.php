@@ -22,8 +22,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class SessionConfigurator implements SessionConfiguratorInterface
 {
     const ATTRIBUTE_BAG_CART = 'ecommerceframework_cart';
+
     const ATTRIBUTE_BAG_ENVIRONMENT = 'ecommerceframework_environment';
+
     const ATTRIBUTE_BAG_PRICING_ENVIRONMENT = 'ecommerceframework_pricing_environment';
+
     const ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT = 'ecommerceframework_payment_environment';
 
     /**

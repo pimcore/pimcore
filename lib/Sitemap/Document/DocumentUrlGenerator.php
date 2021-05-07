@@ -89,6 +89,7 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         foreach ($site->getDomains() as $domain) {
             if (!empty($domain)) {
                 $host = $domain;
+
                 break;
             }
         }

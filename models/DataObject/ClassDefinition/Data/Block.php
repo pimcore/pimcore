@@ -134,6 +134,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -219,6 +220,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
 
@@ -306,6 +308,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -529,6 +532,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
 
@@ -569,6 +573,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                         continue;
                     }
 
@@ -865,6 +870,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $elementData = $blockElement->getData();
@@ -902,6 +908,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+
                     continue;
                 }
                 $data = $blockElement->getData();
@@ -1223,6 +1230,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if ($validationExceptions) {
                     $aggregatedExceptions = new Model\Element\ValidationException();
                     $aggregatedExceptions->setSubItems($validationExceptions);
+
                     throw $aggregatedExceptions;
                 }
             }

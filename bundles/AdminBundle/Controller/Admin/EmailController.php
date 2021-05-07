@@ -212,15 +212,19 @@ class EmailController extends AdminController
                     switch ($data['objectClassSubType']) {
                         case 'Image':
                             $fullEntry['iconCls'] = 'pimcore_icon_image';
+
                             break;
                         case 'Video':
                             $fullEntry['iconCls'] = 'pimcore_icon_wmv';
+
                             break;
                         case 'Text':
                             $fullEntry['iconCls'] = 'pimcore_icon_txt';
+
                             break;
                         case 'Document':
                             $fullEntry['iconCls'] = 'pimcore_icon_pdf';
+
                             break;
                         default:
                             $fullEntry['iconCls'] = 'pimcore_icon_asset';

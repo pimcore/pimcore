@@ -118,6 +118,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             if (!$class) {
                 Logger::error('class ' . $classname . " doesn't exist anymore");
+
                 continue;
             }
 

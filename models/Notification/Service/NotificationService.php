@@ -112,7 +112,7 @@ class NotificationService
                 $groupId,
                 '%,' . $groupId,
                 $groupId . ',%',
-                '%,' . $groupId . ',%'
+                '%,' . $groupId . ',%',
             ]
         );
         $listing->setOrderKey('name');

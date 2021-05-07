@@ -64,6 +64,7 @@ final class CleanupFieldcollectionTablesTask implements TaskInterface
                 $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
                 if (!$fcDef) {
                     $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 
@@ -79,6 +80,7 @@ final class CleanupFieldcollectionTablesTask implements TaskInterface
                 $classDefinition = ClassDefinition::getById($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 

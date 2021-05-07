@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject\Concrete;
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
     const CART_READ_ONLY_MODE_STRICT = 'strict';
+
     const CART_READ_ONLY_MODE_DEACTIVATED = 'deactivated';
 
     /**

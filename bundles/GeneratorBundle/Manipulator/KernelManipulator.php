@@ -27,6 +27,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class KernelManipulator extends Manipulator
 {
     protected $kernel;
+
     protected $reflected;
 
     public function __construct(KernelInterface $kernel)

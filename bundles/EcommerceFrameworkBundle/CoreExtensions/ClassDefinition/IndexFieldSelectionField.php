@@ -27,7 +27,9 @@ class IndexFieldSelectionField extends Textarea
     public $fieldtype = 'indexFieldSelectionField';
 
     public $specificPriceField = false;
+
     public $showAllFields = false;
+
     public $considerTenants = false;
 
     public function setSpecificPriceField($specificPriceField)

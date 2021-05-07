@@ -43,6 +43,7 @@ class RobotsTxt
     public function __construct($domain)
     {
         $this->_domain = $domain;
+
         try {
             $robotsUrl = $domain . '/robots.txt';
             $cacheKey = 'robots_' . crc32($robotsUrl);

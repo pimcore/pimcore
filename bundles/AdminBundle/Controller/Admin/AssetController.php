@@ -436,6 +436,7 @@ class AssetController extends ElementControllerBase implements EventedController
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 try {
                     $newParent = Asset\Service::createFolderByPath($newPath);
+
                     break;
                 } catch (\Exception $e) {
                     if ($retries < ($maxRetries - 1)) {
@@ -1899,6 +1900,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         } else {
             Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
+
             throw $this->createAccessDeniedHttpException();
         }
 
@@ -2484,6 +2486,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
                                 $em['data'] = $value;
                                 $dirty = true;
+
                                 break;
                             }
                         }

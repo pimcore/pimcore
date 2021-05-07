@@ -184,6 +184,7 @@ class File
                     if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
                         // the directory was not created by either this or a concurrent process ...
                         $return = false;
+
                         break;
                     }
                 }

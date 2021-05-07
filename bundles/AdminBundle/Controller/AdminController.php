@@ -110,6 +110,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         foreach ($permissions as $permission) {
             if ($this->getAdminUser()->isAllowed($permission)) {
                 $allowed = true;
+
                 break;
             }
         }

@@ -95,6 +95,7 @@ class Folder extends DAV\Collection
                 return new Asset\WebDAV\File($asset);
             }
         }
+
         throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 

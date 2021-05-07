@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 interface ExportableTokenManagerInterface
 {
     const FORMAT_CSV = 'csv';
+
     const FORMAT_PLAIN = 'plain';
 
     /**

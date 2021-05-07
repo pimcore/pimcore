@@ -140,6 +140,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     if (!in_array($destinationId, $existingTargets[$destinationType])) {
                         // destination object does not exist anymore
                         $list['dirty'] = true;
+
                         continue;
                     }
 
@@ -292,6 +293,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
                 if (!isset($existingTargets[$targetType]) || !isset($existingTargets[$targetType][$targetId])) {
                     Logger::error('element ' . $targetType . ' ' . $targetId . ' does not exist anymore');
+
                     continue;
                 }
 

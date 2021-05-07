@@ -130,13 +130,16 @@ class HeadLink extends CacheBusterAware
             switch ($placement) {
                 case Container::SET:
                     $this->set($item);
+
                     break;
                 case Container::PREPEND:
                     $this->prepend($item);
+
                     break;
                 case Container::APPEND:
                 default:
                     $this->append($item);
+
                     break;
             }
         }

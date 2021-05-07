@@ -140,6 +140,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                     } else {
                         $id = '??';
                     }
+
                     throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(). ' , tried to assign ' . $o->getId(), null, null);
                 }
             }

@@ -58,7 +58,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
         $json = [];
         foreach ($rules->load() as $rule) {
-            /* @var  RuleInterface $rule */
+            // @var  RuleInterface $rule
 
             if ($rule->getActive()) {
                 $icon = 'bundle_ecommerce_pricing_icon_rule_' . $rule->getBehavior();

@@ -18,12 +18,19 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 class DatatransRequest extends AbstractRequest
 {
     protected $reqtype;
+
     protected $refno;
+
     protected $language;
+
     protected $successUrl;
+
     protected $errorUrl;
+
     protected $cancelUrl;
+
     protected $uppStartTarget;
+
     protected $useAlias;
 
     /**

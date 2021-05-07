@@ -27,6 +27,7 @@ interface ProductListInterface extends PaginateListingInterface
     const ORDERKEY_PRICE = 'orderkey_price';
 
     const PRODUCT_TYPE_OBJECT = 'object';
+
     const PRODUCT_TYPE_VARIANT = 'variant';
 
     /**

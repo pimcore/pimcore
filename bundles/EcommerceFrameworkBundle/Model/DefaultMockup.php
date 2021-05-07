@@ -21,7 +21,9 @@ use Pimcore\Logger;
 class DefaultMockup implements ProductInterface
 {
     protected $id;
+
     protected $params;
+
     protected $relations;
 
     public function __construct($id, $params, $relations)

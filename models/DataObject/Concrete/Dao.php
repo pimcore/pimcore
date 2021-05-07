@@ -349,6 +349,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                         // do nothing, ... value is still empty and parent data is equal to current data in query table
                                     } elseif ($oldDataValue != $insertDataValue) {
                                         $doInsert = true;
+
                                         break;
                                     }
                                 }

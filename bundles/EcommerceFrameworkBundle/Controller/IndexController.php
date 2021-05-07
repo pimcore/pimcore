@@ -83,6 +83,7 @@ class IndexController extends AdminController
                     foreach ($fields as $field) {
                         if ($field == $request->get('field')) {
                             $columnGroup = $filterGroup;
+
                             break 2;
                         }
                     }

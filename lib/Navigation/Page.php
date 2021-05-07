@@ -208,6 +208,7 @@ abstract class Page extends Container
                 switch (strtolower($type)) {
                     case 'uri':
                         $type = '\Pimcore\Navigation\Page\Url';
+
                         break;
                 }
 

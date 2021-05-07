@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 class Payment implements OrderListFilterInterface
 {
     const PAYMENT_STATE_OK = 'ok';
+
     const PAYMENT_STATE_FAIL = 'fail';
 
     /**
@@ -60,10 +61,12 @@ class Payment implements OrderListFilterInterface
         switch ($this->value) {
             case self::PAYMENT_STATE_OK:
                 $orderList->addCondition('order.paymentAuthorizedData_aliasCC IS NOT NULL');
+
                 break;
 
             case self::PAYMENT_STATE_FAIL:
                 $orderList->addCondition('order.paymentAuthorizedData_aliasCC IS NULL');
+
                 break;
         }
 

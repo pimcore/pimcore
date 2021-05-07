@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 class HobexRequest extends AbstractRequest
 {
     const STYLE_CARD = 'card';
+
     const STYLE_PLAIN = 'plain';
 
     protected $shopperResultUrl = '';

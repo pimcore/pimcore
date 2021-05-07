@@ -32,7 +32,9 @@ use Pimcore\Tool\Authentication;
 class TestDataHelper extends Module
 {
     const IMAGE = 'sampleimage.jpg';
+
     const DOCUMENT = 'sampledocument.txt';
+
     const HOTSPOT_IMAGE = 'hotspot.jpg';
 
     /**

@@ -24,6 +24,7 @@ use Pimcore\Model\Element\Service;
 class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+
     /**
      * @var Asset\Image|null
      */

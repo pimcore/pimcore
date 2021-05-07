@@ -41,6 +41,7 @@ class Video
             }
         } catch (\Exception $e) {
             Logger::crit('Unable to load video adapter: ' . $e->getMessage());
+
             throw $e;
         }
 

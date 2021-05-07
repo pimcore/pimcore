@@ -27,6 +27,7 @@ use Pimcore\Sitemap\Element\GeneratorContextInterface;
 class PropertiesFilter implements FilterInterface
 {
     const PROPERTY_EXCLUDE = 'sitemaps_exclude';
+
     const PROPERTY_EXCLUDE_CHILDREN = 'sitemaps_exclude_children';
 
     public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool

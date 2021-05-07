@@ -48,13 +48,16 @@ class RequirementsCheckCommand extends AbstractCommand
             case 'warning':
             case 'warnings':
                 $this->levelsToDisplay = [Requirements\Check::STATE_WARNING, Requirements\Check::STATE_ERROR];
+
                 break;
             case 'error':
             case 'errors':
                 $this->levelsToDisplay = [Requirements\Check::STATE_ERROR];
+
                 break;
             default:
                 $this->levelsToDisplay = [Requirements\Check::STATE_OK, Requirements\Check::STATE_WARNING, Requirements\Check::STATE_ERROR];
+
                 break;
         }
 
@@ -100,13 +103,16 @@ class RequirementsCheckCommand extends AbstractCommand
         switch ($state) {
             case Requirements\Check::STATE_OK:
                 $displayState = '<fg=green>ok</>';
+
                 break;
             case Requirements\Check::STATE_WARNING:
                 $displayState = '<fg=yellow>warning</>';
+
                 break;
             case Requirements\Check::STATE_ERROR:
             default:
                 $displayState = '<fg=red>error</>';
+
                 break;
         }
 

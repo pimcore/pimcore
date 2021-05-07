@@ -20,6 +20,7 @@ use PackageVersions\Versions;
 class Version
 {
     const PART_NUMBER = 0;
+
     const PART_HASH = 1;
 
     /**

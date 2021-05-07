@@ -25,6 +25,7 @@ class LongRunningHelper
     use LoggerAwareTrait;
 
     protected $connectionRegistry;
+
     protected $pimcoreRuntimeCacheProtectedItems = [
         'Config_system',
         'pimcore_admin_user',
@@ -34,6 +35,7 @@ class LongRunningHelper
         'pimcore_site',
         'Pimcore_Db',
     ];
+
     protected $monologHandlers = [];
 
     /**

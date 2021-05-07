@@ -205,6 +205,7 @@ class PayPal extends AbstractPayment
             foreach ($errors as $error) {
                 $messages .= $error->LongMessage ."\n";
             }
+
             throw new \Exception($messages);
         }
     }

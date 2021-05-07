@@ -205,6 +205,7 @@ class Dao extends Model\Dao\AbstractDao
             $keyConfig = DefinitionCache::get($keyId);
             if (!$keyConfig) {
                 Logger::error('Could not resolve key with ID: ' . $keyId);
+
                 continue;
             }
 

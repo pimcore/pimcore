@@ -26,8 +26,11 @@ use Symfony\Component\HttpFoundation\Request;
 class Redirect extends AbstractModel
 {
     const TYPE_ENTIRE_URI = 'entire_uri';
+
     const TYPE_PATH_QUERY = 'path_query';
+
     const TYPE_PATH = 'path';
+
     const TYPE_AUTO_CREATE = 'auto_create';
 
     const TYPES = [

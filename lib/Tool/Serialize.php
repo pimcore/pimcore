@@ -71,6 +71,7 @@ class Serialize
     public static function removeReferenceLoops($data)
     {
         self::$loopFilterProcessedObjects = []; // reset
+
         return self::loopFilterCycles($data);
     }
 

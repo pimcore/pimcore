@@ -27,6 +27,7 @@ class ClassResolver
             if (isset(self::$cache[$class])) {
                 return self::$cache[$class];
             }
+
             try {
                 if (strpos($class, '@') === 0) {
                     $serviceName = substr($class, 1);

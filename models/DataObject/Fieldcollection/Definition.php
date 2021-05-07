@@ -134,6 +134,7 @@ class Definition extends Model\AbstractModel
                     if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->createUpdateTable($class);
+
                             break;
                         }
                     }
@@ -245,6 +246,7 @@ class Definition extends Model\AbstractModel
                     if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->delete($class);
+
                             break;
                         }
                     }

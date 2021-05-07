@@ -29,7 +29,9 @@ class EditableUsageResolver
      * @var UsageRecorderSubscriber|null
      */
     protected $subscriber;
+
     protected $dispatcher;
+
     protected $renderer;
 
     public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRenderer $documentRenderer)

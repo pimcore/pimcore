@@ -25,12 +25,12 @@ use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 
 abstract class AbstractTokenManager implements TokenManagerInterface
 {
-    /* @var AbstractVoucherTokenType */
+    // @var AbstractVoucherTokenType
     public $configuration;
 
     public $seriesId;
 
-    /* @var AbstractVoucherSeries */
+    // @var AbstractVoucherSeries
     public $series;
 
     /**

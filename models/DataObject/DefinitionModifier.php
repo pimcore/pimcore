@@ -151,6 +151,7 @@ class DefinitionModifier
         foreach ($children as $index => $child) {
             if ($child->getName() == $nameToFind) {
                 $found = true;
+
                 break;
             }
         }

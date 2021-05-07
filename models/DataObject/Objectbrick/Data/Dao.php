@@ -61,6 +61,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // remove all relations
         $db = Db::get();
+
         try {
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
@@ -225,6 +226,7 @@ class Dao extends Model\Dao\AbstractDao
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
                                 } elseif ($oldDataValue != $insertDataValue) {
                                     $doInsert = true;
+
                                     break;
                                 }
                             }
@@ -326,6 +328,7 @@ class Dao extends Model\Dao\AbstractDao
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
                     $localizedFieldDao->delete();
+
                     continue;
                 }
 

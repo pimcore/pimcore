@@ -25,6 +25,7 @@ use Pimcore\Tests\Test\TestCase;
 class CodeCollectorTest extends TestCase
 {
     private $validBlocks = ['A', 'B'];
+
     private $defaultBlock = 'A';
 
     /**

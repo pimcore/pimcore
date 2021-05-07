@@ -720,6 +720,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     public function fetchEsActiveIndex(): ?string
     {
         $esClient = $this->getElasticSearchClient();
+
         try {
             $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
         } catch (\Exception $e) {

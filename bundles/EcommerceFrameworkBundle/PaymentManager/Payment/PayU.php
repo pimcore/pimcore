@@ -37,6 +37,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     const ORDER_URL = 'https://secure%s.payu.com/api/v2_1/orders';
+
     const AUTHORIZE_URL = 'https://secure%s.payu.com/pl/standard/user/oauth/authorize';
 
     /** @var string $pos_id */

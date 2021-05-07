@@ -31,6 +31,7 @@ use SeekableIterator;
 interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateListingInterface
 {
     const LIST_TYPE_ORDER = 'order';
+
     const LIST_TYPE_ORDER_ITEM = 'item';
 
     /**

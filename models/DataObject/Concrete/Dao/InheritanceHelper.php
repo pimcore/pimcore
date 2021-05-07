@@ -368,6 +368,7 @@ class InheritanceHelper
                     if (!in_array($fieldname, $systemFields)) {
                         if (!is_null($value)) {
                             $toBeRemoved = false;
+
                             break;
                         }
                     }

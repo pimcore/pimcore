@@ -41,6 +41,7 @@ class GridConfig extends AbstractModel
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */

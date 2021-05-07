@@ -47,6 +47,7 @@ class Image
             }
         } catch (\Exception $e) {
             Logger::crit('Unable to load image extensions: ' . $e->getMessage());
+
             throw $e;
         }
     }

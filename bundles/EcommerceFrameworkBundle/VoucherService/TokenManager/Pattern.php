@@ -35,7 +35,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
  */
 class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
-    /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
+    // @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code
 
     const MAX_PROBABILITY = 0.005;
 
@@ -119,6 +119,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                 throw new VoucherServiceException('Token Reservation not possible.', VoucherServiceException::ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE);
             }
         }
+
         throw new VoucherServiceException('No Token for this code exists.', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
     }
 
@@ -229,6 +230,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
+
         try {
             $codeSets = $this->generateCodes();
 

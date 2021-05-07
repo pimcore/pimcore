@@ -34,6 +34,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     const DECIMAL_SIZE_DEFAULT = 64;
+
     const DECIMAL_PRECISION_DEFAULT = 0;
 
     /**

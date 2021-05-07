@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 class StructuredTable implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+
     /**
      * @var array
      */

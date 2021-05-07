@@ -24,6 +24,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class PimcoreUrl implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
+
     /**
      * @var UrlGeneratorInterface
      */

@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 class VisitorInfo implements \IteratorAggregate
 {
     const VISITOR_ID_COOKIE_NAME = '_pc_vis';
+
     const SESSION_ID_COOKIE_NAME = '_pc_ses';
 
     const ACTION_SCOPE_RESPONSE = 'response';

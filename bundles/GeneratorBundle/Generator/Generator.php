@@ -26,6 +26,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class Generator
 {
     private $skeletonDirs;
+
     private static $output;
 
     /**

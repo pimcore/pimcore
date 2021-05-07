@@ -27,6 +27,7 @@ class SessionStorage implements TargetingStorageInterface
     use TimestampsTrait;
 
     const STORAGE_KEY_CREATED_AT = '_c';
+
     const STORAGE_KEY_UPDATED_AT = '_u';
 
     public function all(VisitorInfo $visitorInfo, string $scope): array
@@ -171,10 +172,12 @@ class SessionStorage implements TargetingStorageInterface
         switch ($scope) {
             case self::SCOPE_SESSION:
                 $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_SESSION);
+
                 break;
 
             case self::SCOPE_VISITOR:
                 $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_VISITOR);
+
                 break;
 
             default:

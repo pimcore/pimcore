@@ -70,8 +70,11 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * @var array
      */
     protected $_typeKeys = ['name', 'http-equiv', 'charset', 'property'];
+
     protected $_requiredKeys = ['content'];
+
     protected $_modifierKeys = ['lang', 'scheme'];
+
     protected $rawItems = [];
 
     /**
@@ -113,9 +116,11 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
                 case 'prepend':
                 case 'set':
                     $this->$action($item);
+
                     break;
                 default:
                     $this->append($item);
+
                     break;
             }
         }
@@ -379,6 +384,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
 
         $items = [];
         $this->getContainer()->ksort();
+
         try {
             foreach ($this as $item) {
                 $items[] = $this->itemToString($item);

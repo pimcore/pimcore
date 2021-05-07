@@ -226,7 +226,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
         $this->modifications = [];
         foreach ($this->getModificators() as $modificator) {
-            /* @var CartPriceModificatorInterface $modificator */
+            // @var CartPriceModificatorInterface $modificator
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if ($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;

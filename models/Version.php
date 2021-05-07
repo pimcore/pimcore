@@ -365,12 +365,14 @@ class Version extends AbstractModel
         foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
             if (file_exists($path)) {
                 $filePath = $path;
+
                 break;
             }
 
             if (file_exists($path . '.gz')) {
                 $filePath = $path . '.gz';
                 $zipped = true;
+
                 break;
             }
         }

@@ -18,7 +18,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 {
     protected $key;
+
     protected $data;
+
     /**
      * @var CartInterface
      */

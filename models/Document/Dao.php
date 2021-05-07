@@ -217,6 +217,7 @@ class Dao extends Model\Element\Dao
     public function getCurrentFullPath()
     {
         $path = null;
+
         try {
             $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?', $this->model->getId());
         } catch (\Exception $e) {

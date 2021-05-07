@@ -803,15 +803,19 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                         switch ($mimeType) {
                             case 'image/tiff':
                                 $filename = $this->changeExtension($filename, 'tiff');
+
                                 break;
                             case 'image/jpeg':
                                 $filename = $this->changeExtension($filename, 'jpg');
+
                                 break;
                             case 'image/gif':
                                 $filename = $this->changeExtension($filename, 'gif');
+
                                 break;
                             case 'image/png':
                                 $filename = $this->changeExtension($filename, 'png');
+
                                 break;
 
                         }

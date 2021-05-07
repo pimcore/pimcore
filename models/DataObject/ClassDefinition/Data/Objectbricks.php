@@ -591,6 +591,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         throw new \Exception('Type mismatch for objectbricks field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
                                     }
                                     $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $params, $idMapper);
+
                                     break;
                                 }
                             }
@@ -798,6 +799,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             if ($validationExceptions) {
                 $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
                 $aggregatedExceptions->setSubItems($validationExceptions);
+
                 throw $aggregatedExceptions;
             }
         }

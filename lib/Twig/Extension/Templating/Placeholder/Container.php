@@ -315,6 +315,7 @@ class Container extends \ArrayObject
                 } else {
                     $this->exchangeArray([$data]);
                 }
+
                 break;
             case self::PREPEND:
                 if (null !== $key) {
@@ -325,6 +326,7 @@ class Container extends \ArrayObject
                 } else {
                     $this->prepend($data);
                 }
+
                 break;
             case self::APPEND:
             default:
@@ -337,6 +339,7 @@ class Container extends \ArrayObject
                 } else {
                     $this[$this->nextIndex()] = $data;
                 }
+
                 break;
         }
     }

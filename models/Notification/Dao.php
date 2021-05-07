@@ -41,6 +41,7 @@ class Dao extends AbstractDao
 
         if ($data === false) {
             $message = sprintf('Notification with id %d not found', $id);
+
             throw new \Exception($message);
         }
 

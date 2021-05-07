@@ -31,7 +31,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    /*abstract public function load();*/
+    // abstract public function load();
 
     /**
      * @return string

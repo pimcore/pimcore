@@ -204,6 +204,7 @@ class Csv
             $dev = $this->deviation($array);
             if ($dev > 0.5) { // threshold not scientifically determined or something
                 unset($tmp[$char]);
+
                 continue;
             }
 

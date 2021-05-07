@@ -28,6 +28,7 @@ class CodeCollector
     const CONFIG_KEY_GLOBAL = '__global';
 
     const ACTION_PREPEND = 'prepend';
+
     const ACTION_APPEND = 'append';
 
     /**

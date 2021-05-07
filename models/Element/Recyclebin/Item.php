@@ -171,6 +171,7 @@ class Item extends Model\AbstractModel
             if ($dummy) {
                 $dummy->delete();
             }
+
             throw $e;
         }
 

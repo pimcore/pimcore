@@ -43,6 +43,7 @@ class Document
             }
         } catch (\Exception $e) {
             Logger::crit('Unable to load document adapter: ' . $e->getMessage());
+
             throw $e;
         }
 

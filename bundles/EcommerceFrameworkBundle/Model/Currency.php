@@ -20,10 +20,15 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 class Currency
 {
     const LEFT = 'left';
+
     const RIGHT = 'right';
+
     const NO_SYMBOL = 'none';
+
     const USE_SYMBOL = 'sign';
+
     const USE_SHORTNAME = 'shortname';
+
     const USE_NAME = 'longname';
 
     /**

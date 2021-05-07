@@ -105,6 +105,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         if (empty($order)) {
             $message = 'No order found for payment status: ' . print_r($paymentStatus, true);
             $this->logger->error($message);
+
             throw new \Exception($message);
         }
 

@@ -173,6 +173,7 @@ class Sold extends AbstractOrder implements ConditionInterface
             foreach ($rules as $r) {
                 if ($r->getId() == $rule->getId()) {
                     $counter++;
+
                     break;
                 }
             }

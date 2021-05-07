@@ -223,6 +223,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($items as $item) {
                     if ($item->hasDirtyFields()) {
                         $this->model->markFieldDirty('_self');
+
                         break;
                     }
                 }

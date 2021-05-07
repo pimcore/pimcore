@@ -462,6 +462,7 @@ class CustomReportController extends ReportsControllerBase
 
             return $response;
         }
+
         throw new FileNotFoundException("File \"$exportFile\" not found!");
     }
 }

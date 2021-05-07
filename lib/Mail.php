@@ -615,6 +615,7 @@ class Mail extends \Swift_Message
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
+
             try {
                 $mailer->send($this, $failedRecipients);
             } catch (\Exception $e) {

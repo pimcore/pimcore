@@ -379,6 +379,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
             }
 
             $this->state = self::STATE_NONE;
+
             throw $e;
         }
     }

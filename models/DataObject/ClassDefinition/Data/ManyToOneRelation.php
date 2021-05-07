@@ -803,6 +803,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
             return $listing;
         }
+
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 

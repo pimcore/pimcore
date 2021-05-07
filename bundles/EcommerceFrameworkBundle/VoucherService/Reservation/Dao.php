@@ -68,6 +68,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         if (\Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation::reservationExists($code, $cart)) {
             return true;
         }
+
         try {
             // Single Type Token --> only one token per Cart! --> Update on duplicate key!
             $this->db->query('INSERT INTO ' . self::TABLE_NAME . ' (token,cart_id,timestamp) VALUES (?,?,NOW())', [$code, $cart->getId()]);

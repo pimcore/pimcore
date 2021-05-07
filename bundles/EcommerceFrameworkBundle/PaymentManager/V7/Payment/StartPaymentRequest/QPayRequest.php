@@ -18,13 +18,21 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 class QPayRequest extends AbstractRequest
 {
     protected $language;
+
     protected $successURL;
+
     protected $cancelURL;
+
     protected $failureURL;
+
     protected $serviceURL;
+
     protected $confirmMail;
+
     protected $orderDescription;
+
     protected $imageURL;
+
     protected $orderIntent;
 
     /**

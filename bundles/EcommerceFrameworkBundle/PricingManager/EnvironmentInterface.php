@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 interface EnvironmentInterface
 {
     const EXECUTION_MODE_PRODUCT = 'product';
+
     const EXECUTION_MODE_CART = 'cart';
 
     /**

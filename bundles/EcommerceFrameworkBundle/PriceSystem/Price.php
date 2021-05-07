@@ -89,9 +89,11 @@ class Price implements PriceInterface
         switch ($priceMode) {
             case self::PRICE_MODE_GROSS:
                 $this->setGrossAmount($amount, $recalc);
+
                 break;
             case self::PRICE_MODE_NET:
                 $this->setNetAmount($amount, $recalc);
+
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Price mode "%s" is not supported', $priceMode));

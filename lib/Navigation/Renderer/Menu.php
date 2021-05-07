@@ -1029,6 +1029,7 @@ class Menu extends AbstractRenderer
 
         if (empty($partial)) {
             $e = new \Exception('Unable to render menu: No partial view script provided');
+
             throw $e;
         }
 

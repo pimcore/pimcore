@@ -37,6 +37,7 @@ class Service extends Model\Element\Service
      * @var Model\User|null
      */
     protected $_user;
+
     /**
      * @var array
      */
@@ -231,6 +232,7 @@ class Service extends Model\Element\Service
                         }
 
                         $metaData = $rawMetaData['data'] ?? null;
+
                         try {
                             /** @var Data $instance */
                             $instance = $loader->build($type);
@@ -366,6 +368,7 @@ class Service extends Model\Element\Service
         $result = [];
         foreach ($metadata as $item) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+
             try {
                 /** @var Data $instance */
                 $instance = $loader->build($item['type']);

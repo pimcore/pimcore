@@ -25,8 +25,11 @@ use Pimcore\Model\AbstractModel;
 class Reservation extends AbstractModel
 {
     public $id;
+
     public $token;
+
     public $timestamp;
+
     public $cart_id;
 
     /**
@@ -128,6 +131,7 @@ class Reservation extends AbstractModel
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             $db->executeQuery($query, $params);
 

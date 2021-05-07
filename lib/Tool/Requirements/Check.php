@@ -18,7 +18,9 @@ namespace Pimcore\Tool\Requirements;
 class Check implements \ArrayAccess
 {
     const STATE_OK = 1;
+
     const STATE_WARNING = 2;
+
     const STATE_ERROR = 3;
 
     /**

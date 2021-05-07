@@ -21,8 +21,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 interface StatusInterface
 {
     const STATUS_PENDING = 'paymentPending';
+
     const STATUS_AUTHORIZED = 'paymentAuthorized';
+
     const STATUS_CANCELLED = 'cancelled';
+
     const STATUS_CLEARED = 'committed';
 
     /**

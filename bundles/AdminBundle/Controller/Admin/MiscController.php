@@ -322,7 +322,7 @@ class MiscController extends AdminController
         ]);
     }
 
-    /* FILEEXPLORER */
+    // FILEEXPLORER
 
     /**
      * @Route("/fileexplorer-tree", name="pimcore_admin_misc_fileexplorertree", methods={"GET"})

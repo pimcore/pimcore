@@ -827,6 +827,7 @@ abstract class PageSnippet extends Model\Document
         if ($this->getMissingRequiredEditable() === null) {
             /** @var EditableUsageResolver $editableUsageResolver */
             $editableUsageResolver = \Pimcore::getContainer()->get(EditableUsageResolver::class);
+
             try {
                 $documentCopy = Service::cloneMe($this);
                 if ($documentCopy instanceof self) {
@@ -838,6 +839,7 @@ abstract class PageSnippet extends Model\Document
                             $editableConfig = $editable->getConfig();
                             if ($editable->isEmpty() && isset($editableConfig['required']) && $editableConfig['required'] == true) {
                                 $this->setMissingRequiredEditable(true);
+
                                 break;
                             }
                         }

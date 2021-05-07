@@ -90,7 +90,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
      */
     protected function getFieldDefinition()
     {
-        /* @var Password $passwordField */
+        // @var Password $passwordField
         $field = $this->getUser()->getClass()->getFieldDefinition($this->fieldName);
 
         if (!$field || !$field instanceof Password) {

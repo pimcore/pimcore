@@ -194,6 +194,7 @@ class Image extends Model\Document\Editable
                     if ($item['method'] == 'cover') {
                         $config['focal_point_context_menu_item'] = true;
                         $this->config['focal_point_context_menu_item'] = true;
+
                         break;
                     }
                 }

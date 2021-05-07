@@ -39,6 +39,7 @@ class Authentication
         if (self::isValidUser($user)) {
             if (self::verifyPassword($user, $password)) {
                 $user->setLastLoginDate(); //set user current login date
+
                 return $user;
             }
         }
@@ -124,6 +125,7 @@ class Authentication
     {
         $username = null;
         $timestamp = null;
+
         try {
             $decrypted = self::tokenDecrypt($token);
             list($timestamp, $username) = $decrypted;

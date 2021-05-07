@@ -48,6 +48,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 foreach ($values as $v) {
                     if ($v['value'] == $value) {
                         $add = false;
+
                         break;
                     }
                 }

@@ -220,10 +220,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * Methods for Iterator
      */
-
-    /*
-     *
-     */
     public function rewind()
     {
         reset($this->items);

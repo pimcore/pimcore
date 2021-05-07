@@ -29,6 +29,7 @@ use Pimcore\Tool;
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
     use Model\Element\Traits\DirtyIndicatorTrait;
+
     /**
      * @var array
      */

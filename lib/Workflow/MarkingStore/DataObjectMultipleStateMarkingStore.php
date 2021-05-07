@@ -25,6 +25,7 @@ use Symfony\Component\Workflow\MarkingStore\MultipleStateMarkingStore;
 class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
 {
     private $property;
+
     private $propertyAccessor;
 
     /**

@@ -24,6 +24,7 @@ namespace Pimcore\Bundle\GeneratorBundle\Manipulator;
 class Manipulator
 {
     protected $tokens;
+
     protected $line;
 
     /**

@@ -20,7 +20,9 @@ use Pimcore\Db;
 class ClassLayoutDefinitionManager
 {
     public const SAVED = 'saved';
+
     public const CREATED = 'created';
+
     public const DELETED = 'deleted';
 
     /**

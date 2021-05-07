@@ -219,6 +219,7 @@ class CacheWarmingCommand extends AbstractCommand
             foreach ($input as $value) {
                 if (!in_array($value, $this->$property)) {
                     $message = sprintf('Invalid %s: %s', $singular, $value);
+
                     throw new \InvalidArgumentException($message);
                 }
             }

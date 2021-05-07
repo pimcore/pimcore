@@ -822,6 +822,7 @@ class Document extends Element\AbstractElement
             $failureEvent->setArgument('exception', $e);
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, $failureEvent);
             Logger::error($e);
+
             throw $e;
         }
 

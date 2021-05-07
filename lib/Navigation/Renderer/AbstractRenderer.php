@@ -287,12 +287,14 @@ abstract class AbstractRenderer implements RendererInterface
             while ($foundDepth > $maxDepth) {
                 if (--$foundDepth < $minDepth) {
                     $found = null;
+
                     break;
                 }
 
                 $found = $found->getParent();
                 if (!$found instanceof Page) {
                     $found = null;
+
                     break;
                 }
             }

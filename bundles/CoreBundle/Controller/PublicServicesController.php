@@ -169,6 +169,7 @@ class PublicServicesController extends Controller
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
                 Logger::error($message);
+
                 throw $this->createNotFoundException($message, $e);
             }
         } else {

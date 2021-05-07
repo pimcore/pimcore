@@ -28,7 +28,9 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     const EXPORTABLE_TAGS = ['input', 'textarea', 'wysiwyg'];
 
     const BRICK_DELIMITER = '|';
+
     const FIELD_COLLECTIONS_DELIMITER = '|';
+
     const BLOCK_DELIMITER = '|';
 
     /**

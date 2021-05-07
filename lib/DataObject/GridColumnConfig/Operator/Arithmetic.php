@@ -75,6 +75,7 @@ class Arithmetic extends AbstractOperator
 
                 if ($i == 0) {
                     $resultValue = $val;
+
                     continue;
                 }
 

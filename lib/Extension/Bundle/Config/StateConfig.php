@@ -192,6 +192,7 @@ final class StateConfig
 
             if ($options[$option] !== static::$optionDefaults[$option]) {
                 $isDefault = false;
+
                 break;
             }
         }

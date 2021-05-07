@@ -35,9 +35,11 @@ use Symfony\Component\Templating\EngineInterface;
 class GoogleTagManagerListener
 {
     const BLOCK_HEAD_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
+
     const BLOCK_HEAD_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
     const BLOCK_BODY_BEFORE_NOSCRIPT_TAG = 'beforeNoscriptTag';
+
     const BLOCK_BODY_AFTER_NOSCRIPT_TAG = 'afterNoscriptTag';
 
     use EnabledTrait;

@@ -27,6 +27,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      * @TODO Pimcore 10 - remove this
      */
     const WORKER_MODE_LEGACY = 'legacy';
+
     const WORKER_MODE_PRODUCT_CENTRIC = 'product_centric';
 
     /**

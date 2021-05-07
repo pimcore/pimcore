@@ -83,6 +83,7 @@ class PHPCode extends AbstractOperator
 
             return $operatorInstance;
         }
+
         throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
     }
 }

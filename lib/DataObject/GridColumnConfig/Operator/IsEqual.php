@@ -65,6 +65,7 @@ class IsEqual extends AbstractOperator
             foreach ($valueArray as $val) {
                 if ($firstValue !== $val) {
                     $isEqual = false;
+
                     break;
                 }
             }

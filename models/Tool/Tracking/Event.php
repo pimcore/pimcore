@@ -84,6 +84,7 @@ class Event extends Model\AbstractModel
     public static function getByDate($category, $action, $label, $day, $month, $year)
     {
         $event = new self();
+
         try {
             $event->getDao()->getByDate($category, $action, $label, $day, $month, $year);
         } catch (\Exception $e) {

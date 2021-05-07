@@ -83,6 +83,7 @@ class Composer
 
         // execute migrations
         $currentVersion = null;
+
         try {
             $process = static::executeCommand($event, $consoleDir,
                 'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);

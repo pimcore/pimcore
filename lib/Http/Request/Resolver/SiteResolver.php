@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SiteResolver extends AbstractRequestResolver
 {
     const ATTRIBUTE_SITE = '_site';
+
     const ATTRIBUTE_SITE_PATH = '_site_path';
 
     /**

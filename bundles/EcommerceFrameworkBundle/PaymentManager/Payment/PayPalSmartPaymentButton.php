@@ -39,6 +39,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     const CAPTURE_STRATEGY_MANUAL = 'manual';
+
     const CAPTURE_STRATEGY_AUTOMATIC = 'automatic';
 
     /**

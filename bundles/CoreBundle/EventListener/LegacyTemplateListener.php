@@ -57,7 +57,7 @@ class LegacyTemplateListener extends TemplateListener
     public function onKernelView(KernelEvent $event)
     {
 
-        /* @var Template $template */
+        // @var Template $template
         $request = $event->getRequest();
         $template = $request->attributes->get('_template');
 

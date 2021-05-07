@@ -29,6 +29,7 @@ use Pimcore\Tool;
 class Translation extends AbstractModel implements TranslationInterface
 {
     const DOMAIN_DEFAULT = 'messages';
+
     const DOMAIN_ADMIN = 'admin';
 
     /**

@@ -25,6 +25,7 @@ class RedisStorage implements TargetingStorageInterface
     use TimestampsTrait;
 
     const STORAGE_KEY_CREATED_AT = '_c';
+
     const STORAGE_KEY_UPDATED_AT = '_u';
 
     /**

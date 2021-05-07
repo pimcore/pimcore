@@ -47,14 +47,17 @@ class RedirectUrlPartResolver
         switch ($type) {
             case Redirect::TYPE_ENTIRE_URI:
                 $part = $this->request->getUri();
+
                 break;
 
             case Redirect::TYPE_PATH_QUERY:
                 $part = $this->request->getRequestUri();
+
                 break;
 
             case Redirect::TYPE_PATH:
                 $part = $this->request->getPathInfo();
+
                 break;
         }
 
