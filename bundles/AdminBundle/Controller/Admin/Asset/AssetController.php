@@ -877,12 +877,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
+            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO(\Pimcore\Db::get()->getWrappedConnection());
+            $lockBackend->tableName = 'webdav_locks';
+
             $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
             $server->addPlugin($lockPlugin);
-
-            // sync plugin
-            $server->addPlugin(new \Sabre\DAV\Sync\Plugin());
 
             // browser plugin
             $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
