@@ -608,9 +608,10 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @internal
      * @throws \Exception
      */
-    private function correctPath()
+    public function correctPath()
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
