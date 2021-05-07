@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 6.9.0
+- [Workflows] Fixed wrong behavior of force_unpublished option, which created a new version (in case of published) instead of unpublishing the object. If you still want to save version, just use save_version option.
 - [Documents] Announcement: Run the `pimcore:documents:migrate-elements` command before (!) you upgrade to Pimcore 10. Not needed if you don't intend to keep your document versions.   
 - [Templating] If you are using Twig, then overriding templating helpers will no effect on Twig extension calls on frontend. Please override Twig extensions instead.
 - [Data Objects] Deprecated `\Pimcore\Model\DataObject\ClassDefinition\Data\DataInterface` as it isn't used anymore. Will be removed in Pimcore 10.
