@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
@@ -48,8 +48,11 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
 
     const PAYMENT_RETURN_STATE_SUCCESS = 'success';
+
     const PAYMENT_RETURN_STATE_FAILURE = 'failure';
+
     const PAYMENT_RETURN_STATE_CANCEL = 'cancel';
+
     const PAYMENT_RETURN_STATE_PENDING = 'pending';
 
     const ENCODED_ORDERIDENT_DELIMITER = '---';
@@ -127,12 +130,19 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     protected $js;
 
     private $URL_WIRECARD_CHECKOUT = 'https://checkout.wirecard.com';
+
     private $URL_DATASTORAGE_INIT;
+
     private $URL_DATASTORAGE_READ;
+
     private $URL_FRONTEND_INIT;
+
     private $URL_APPROVE_REVERSAL = 'https://checkout.wirecard.com/seamless/backend/approveReversal';
+
     private $URL_DEPOSIT = 'https://checkout.wirecard.com/seamless/backend/deposit';
+
     private $WEBSITE_URL;
+
     private $CHECKOUT_WINDOW_NAME = 'wirecard_checkout';
 
     public function __construct(array $options, EngineInterface $templatingEngine, SessionInterface $session)
@@ -393,6 +403,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
             if (\Pimcore::inDebugMode()) {
                 Logger::error('seamless result: ' . var_export($result, true));
             }
+
             throw new \Exception('redirect url could not be evalutated');
         }
 

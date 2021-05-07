@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Adapter;
@@ -90,6 +90,7 @@ class LibreOffice extends Ghostscript
         if (!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
             Logger::error($message);
+
             throw new \Exception($message);
         }
 
@@ -177,6 +178,7 @@ class LibreOffice extends Ghostscript
             } else {
                 $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $process->getCommandLine() . "'";
                 Logger::error($message);
+
                 throw new \Exception($message);
             }
         } else {

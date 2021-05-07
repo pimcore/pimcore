@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
@@ -134,6 +134,7 @@ class Definition extends Model\AbstractModel
                     if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->createUpdateTable($class);
+
                             break;
                         }
                     }
@@ -245,6 +246,7 @@ class Definition extends Model\AbstractModel
                     if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->delete($class);
+
                             break;
                         }
                     }

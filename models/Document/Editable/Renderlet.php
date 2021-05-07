@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -124,7 +124,6 @@ class Renderlet extends Model\Document\Editable
         $this->load();
 
         if ($this->o instanceof Element\ElementInterface) {
-
             if (method_exists($this->o, 'isPublished')) {
                 if (!$this->o->isPublished()) {
                     return '';

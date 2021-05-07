@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Controller;
@@ -25,7 +25,9 @@ use Symfony\Component\HttpFoundation\Request;
 interface TemplateControllerInterface
 {
     const ATTRIBUTE_TEMPLATE_CONTROLLER = '_template_controller';
+
     const ATTRIBUTE_AUTO_RENDER = '_template_controller_auto_render';
+
     const ATTRIBUTE_AUTO_RENDER_ENGINE = '_template_controller_auto_render_engine';
 
     /**

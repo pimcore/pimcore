@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Storage\Redis;
@@ -24,6 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ConnectionFactory
 {
     const DEFAULT_CONNECT_TIMEOUT = 2.5;
+
     const DEFAULT_CONNECT_RETRIES = 1;
 
     /**

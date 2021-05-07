@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -88,13 +88,21 @@ function dump_html_tree($node, $show_attr = true, $deep = 0)
 class simple_html_dom_node
 {
     public $nodetype = HDOM_TYPE_TEXT;
+
     public $tag = 'text';
+
     public $attr = [];
+
     public $children = [];
+
     public $nodes = [];
+
     public $parent = null;
+
     public $_ = [];
+
     public $tag_start = 0;
+
     private $dom = null;
 
     public function __construct($dom)
@@ -421,8 +429,12 @@ class simple_html_dom_node
                 $ret .= $key;
             } else {
                 switch ($this->_[HDOM_INFO_QUOTE][$i]) {
-                    case HDOM_QUOTE_DOUBLE: $quote = '"'; break;
-                    case HDOM_QUOTE_SINGLE: $quote = '\''; break;
+                    case HDOM_QUOTE_DOUBLE: $quote = '"';
+
+break;
+                    case HDOM_QUOTE_SINGLE: $quote = '\'';
+
+break;
                     default: $quote = '';
                 }
                 $ret .= $key.$this->_[HDOM_INFO_SPACE][$i][1].'='.$this->_[HDOM_INFO_SPACE][$i][2].$quote.$val.$quote;
@@ -538,6 +550,7 @@ class simple_html_dom_node
                 if (in_array($node, $this->children, true)) {
                     $ret[$i] = 1;
                 }
+
                 continue;
             }
 
@@ -891,27 +904,46 @@ class simple_html_dom_node
 class simple_html_dom
 {
     public $root = null;
+
     public $nodes = [];
+
     public $callback = null;
+
     public $lowercase = false;
+
     public $size;
+
     protected $pos;
+
     protected $doc;
+
     protected $char;
+
     protected $cursor;
+
     protected $parent;
+
     protected $noise = [];
+
     protected $token_blank = " \t\r\n";
+
     protected $token_equal = ' =/>';
+
     protected $token_slash = " />\r\n\t";
+
     protected $token_attr = ' >';
+
     protected $_charset = '';
+
     protected $_target_charset = '';
+
     protected $default_br_text = '';
 
     // use isset instead of in_array, performance boost about 30%...
     protected $self_closing_tags = ['img' => 1, 'br' => 1, 'input' => 1, 'meta' => 1, 'link' => 1, 'hr' => 1, 'base' => 1, 'embed' => 1, 'spacer' => 1];
+
     protected $block_tags = ['root' => 1, 'body' => 1, 'form' => 1, 'div' => 1, 'span' => 1, 'table' => 1];
+
     // Known sourceforge issue #2977341
     // B tags that are not closed cause us to return everything to the end of the document.
     protected $optional_closing_tags = [
@@ -1251,6 +1283,7 @@ class simple_html_dom
             }
 
             $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
             return true;
         }
 
@@ -1276,6 +1309,7 @@ class simple_html_dom
             }
             $this->link_nodes($node, true);
             $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
             return true;
         }
 
@@ -1285,6 +1319,7 @@ class simple_html_dom
             $node->_[HDOM_INFO_TEXT] = $tag;
             $this->link_nodes($node, false);
             $this->char = $this->doc[--$this->pos]; // prev
+
             return true;
         }
 
@@ -1301,6 +1336,7 @@ class simple_html_dom
             }
             $this->link_nodes($node, false);
             $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
             return true;
         }
 
@@ -1329,6 +1365,7 @@ class simple_html_dom
             $name = $this->copy_until($this->token_equal);
             if ($guard === $this->pos) {
                 $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
                 continue;
             }
             $guard = $this->pos;
@@ -1422,12 +1459,14 @@ class simple_html_dom
                 $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
                 $node->attr[$name] = $this->restore_noise($this->copy_until_char_escape('"'));
                 $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
                 break;
             case '\'':
                 $node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_SINGLE;
                 $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
                 $node->attr[$name] = $this->restore_noise($this->copy_until_char_escape('\''));
                 $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
                 break;
             default:
                 $node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
@@ -1460,6 +1499,7 @@ class simple_html_dom
         $node->_[HDOM_INFO_TEXT] = '</' . $tag . '>';
         $this->link_nodes($node, false);
         $this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
         return true;
     }
 
@@ -1488,6 +1528,7 @@ class simple_html_dom
         $len = strcspn($this->doc, $chars, $pos);
         $this->pos += $len;
         $this->char = ($this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
         return substr($this->doc, $pos, $len);
     }
 
@@ -1537,6 +1578,7 @@ class simple_html_dom
 
             if ($this->doc[$pos - 1] === '\\') {
                 $start = $pos + 1;
+
                 continue;
             }
 

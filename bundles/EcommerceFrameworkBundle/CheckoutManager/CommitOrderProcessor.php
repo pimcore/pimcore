@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
@@ -33,6 +33,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CommitOrderProcessor implements CommitOrderProcessorInterface
 {
     const LOCK_KEY = 'ecommerce-framework-commitorder-lock';
+
     const LOGGER_NAME = 'commit-order-processor';
 
     /**
@@ -204,6 +205,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
         if (empty($order)) {
             $message = 'No order found for payment status: ' . print_r($paymentStatus, true);
             Logger::error($message);
+
             throw new \Exception($message);
         }
 

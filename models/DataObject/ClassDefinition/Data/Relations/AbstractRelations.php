@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
@@ -112,7 +112,7 @@ abstract class AbstractRelations extends Data implements
             foreach ($relations as $relation) {
                 $this->enrichDataRow($object, $params, $classId, $relation);
 
-                /*relation needs to be an array with src_id, dest_id, type, fieldname*/
+                // relation needs to be an array with src_id, dest_id, type, fieldname
                 try {
                     $db->insert('object_relations_' . $classId, $relation);
                 } catch (\Exception $e) {

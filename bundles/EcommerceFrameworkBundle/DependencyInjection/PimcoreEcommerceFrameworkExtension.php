@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
@@ -44,12 +44,19 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_FACTORY = 'pimcore_ecommerce.factory';
+
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
+
     const SERVICE_ID_PAYMENT_MANAGER = 'pimcore_ecommerce.payment_manager';
+
     const SERVICE_ID_INDEX_SERVICE = 'pimcore_ecommerce.index_service';
+
     const SERVICE_ID_VOUCHER_SERVICE = 'pimcore_ecommerce.voucher_service';
+
     const SERVICE_ID_TOKEN_MANAGER_FACTORY = 'pimcore_ecommerce.voucher_service.token_manager_factory';
+
     const SERVICE_ID_OFFER_TOOL = 'pimcore_ecommerce.offer_tool';
+
     const SERVICE_ID_TRACKING_MANAGER = 'pimcore_ecommerce.tracking.tracking_manager';
 
     /**

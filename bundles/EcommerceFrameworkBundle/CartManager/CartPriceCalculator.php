@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -226,7 +226,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
         $this->modifications = [];
         foreach ($this->getModificators() as $modificator) {
-            /* @var CartPriceModificatorInterface $modificator */
+            // @var CartPriceModificatorInterface $modificator
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if ($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;

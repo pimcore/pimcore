@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -314,6 +314,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         foreach ($this->options as $option) {
             if ($option['value'] == $data) {
                 $value = $option['key'];
+
                 break;
             }
         }

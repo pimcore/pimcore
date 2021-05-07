@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\User;
@@ -52,6 +52,7 @@ class AbstractUser extends Model\AbstractModel
     public static function getById($id)
     {
         $cacheKey = 'user_' . $id;
+
         try {
             if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
                 $user = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -193,6 +194,7 @@ class AbstractUser extends Model\AbstractModel
         }
 
         $this->beginTransaction();
+
         try {
             if (!$this->getId()) {
                 $this->getDao()->create();
@@ -203,6 +205,7 @@ class AbstractUser extends Model\AbstractModel
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
+
             throw $e;
         }
 

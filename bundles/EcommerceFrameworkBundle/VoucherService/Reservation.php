@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
@@ -25,8 +25,11 @@ use Pimcore\Model\AbstractModel;
 class Reservation extends AbstractModel
 {
     public $id;
+
     public $token;
+
     public $timestamp;
+
     public $cart_id;
 
     /**
@@ -128,6 +131,7 @@ class Reservation extends AbstractModel
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             $db->executeQuery($query, $params);
 

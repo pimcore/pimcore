@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Webservice;
@@ -45,6 +45,7 @@ class Tool
                     foreach ($includePatterns as $pattern) {
                         if (preg_match($pattern, $file)) {
                             $match = true;
+
                             break;
                         }
                     }

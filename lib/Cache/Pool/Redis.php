@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Cache\Pool;
@@ -31,17 +31,23 @@ use Pimcore\Cache\Pool\Exception\CacheException;
 class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInterface
 {
     const SET_IDS = 'zc:ids';
+
     const SET_TAGS = 'zc:tags';
 
     const PREFIX_KEY = 'zc:k:';
+
     const PREFIX_TAG_IDS = 'zc:ti:';
 
     const FIELD_DATA = 'd';
+
     const FIELD_MTIME = 'm';
+
     const FIELD_TAGS = 't';
+
     const FIELD_INF = 'i';
 
     const MAX_LIFETIME = 2592000; // Redis backend limit
+
     const COMPRESS_PREFIX = ":\x1f\x8b";
 
     /**
@@ -787,7 +793,7 @@ LUA;
 
                     $tagsBatch = [];
 
-                    /* Give Redis some time to handle other requests */
+                    // Give Redis some time to handle other requests
                     usleep(20000);
                 }
             }
@@ -925,15 +931,19 @@ LUA;
             switch ($this->compressionLib) {
                 case 'snappy':
                     $data = snappy_compress($data);
+
                     break;
                 case 'lzf':
                     $data = lzf_compress($data);
+
                     break;
                 case 'l4z':
                     $data = lz4_compress($data, ($level > 1 ? true : false));
+
                     break;
                 case 'gzip':
                     $data = gzcompress($data, $level);
+
                     break;
                 default:
                     throw new \CredisException("Unrecognized 'compression_lib'.");

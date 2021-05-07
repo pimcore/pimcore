@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Sitemap\Element\Filter;
@@ -27,6 +27,7 @@ use Pimcore\Sitemap\Element\GeneratorContextInterface;
 class PropertiesFilter implements FilterInterface
 {
     const PROPERTY_EXCLUDE = 'sitemaps_exclude';
+
     const PROPERTY_EXCLUDE_CHILDREN = 'sitemaps_exclude_children';
 
     public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool

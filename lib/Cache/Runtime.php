@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Cache;
@@ -20,6 +20,7 @@ final class Runtime extends \ArrayObject
     const SERVICE_ID = __CLASS__;
 
     protected static $tempInstance;
+
     protected static $instance;
 
     /**

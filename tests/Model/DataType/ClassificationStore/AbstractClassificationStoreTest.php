@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
@@ -122,72 +122,94 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                 switch ($keyName) {
                     case 'booleanSelect':
                         $definition = new ClassDefinition\Data\BooleanSelect();
+
                         break;
                     case 'checkbox':
                         $definition = new ClassDefinition\Data\Checkbox();
+
                         break;
                     case 'country':
                         $definition = new ClassDefinition\Data\Country();
+
                         break;
                     case 'countrymultiselect':
                         $definition = new ClassDefinition\Data\Countrymultiselect();
+
                         break;
                     case 'date':
                         $definition = new ClassDefinition\Data\Date();
+
                         break;
                     case 'datetime':
                         $definition = new ClassDefinition\Data\Datetime();
+
                         break;
                     case 'encryptedField':
                         $delegate = new ClassDefinition\Data\Input();
                         $definition = new ClassDefinition\Data\EncryptedField();
                         $definition->setDelegateDatatype('input');
                         $definition->setDelegate($delegate);
+
                         break;
                     case 'input':
                         $definition = new ClassDefinition\Data\Input();
+
                         break;
                     case 'inputQuantityValue':
                         $definition = new ClassDefinition\Data\InputQuantityValue();
+
                         break;
                     case 'language':
                         $definition = new ClassDefinition\Data\Language();
+
                         break;
                     case 'languagemultiselect':
                         $definition = new ClassDefinition\Data\Languagemultiselect();
+
                         break;
                     case 'multiselect':
                         $definition = new ClassDefinition\Data\Multiselect();
+
                         break;
                     case 'numeric':
                         $definition = new ClassDefinition\Data\Numeric();
+
                         break;
                     case 'rgbaColor':
                         $definition = new ClassDefinition\Data\RgbaColor();
+
                         break;
                     case 'select':
                         $definition = new ClassDefinition\Data\Select();
+
                         break;
                     case 'slider':
                         $definition = new ClassDefinition\Data\Slider();
+
                         break;
                     case 'table':
                         $definition = new ClassDefinition\Data\Table();
+
                         break;
                     case 'textarea':
                         $definition = new ClassDefinition\Data\Textarea();
+
                         break;
                     case 'time':
                         $definition = new ClassDefinition\Data\Time();
+
                         break;
                     case 'user':
                         $definition = new ClassDefinition\Data\User();
+
                         break;
                     case 'quantityValue':
                         $definition = new ClassDefinition\Data\QuantityValue();
+
                         break;
                     case 'wysiwyg':
                         $definition = new ClassDefinition\Data\Wysiwyg();
+
                         break;
 
                     default:

@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
@@ -89,9 +89,11 @@ class Price implements PriceInterface
         switch ($priceMode) {
             case self::PRICE_MODE_GROSS:
                 $this->setGrossAmount($amount, $recalc);
+
                 break;
             case self::PRICE_MODE_NET:
                 $this->setNetAmount($amount, $recalc);
+
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Price mode "%s" is not supported', $priceMode));

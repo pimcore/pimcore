@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -114,6 +114,7 @@ class Requirements
 
         // create table
         $queryCheck = true;
+
         try {
             $db->query('CREATE TABLE __pimcore_req_check (
                   id int(11) NOT NULL AUTO_INCREMENT,
@@ -131,6 +132,7 @@ class Requirements
 
         // alter table
         $queryCheck = true;
+
         try {
             $db->query('ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL');
         } catch (\Exception $e) {
@@ -144,6 +146,7 @@ class Requirements
 
         // Manage indexes
         $queryCheck = true;
+
         try {
             $db->query('ALTER TABLE __pimcore_req_check
                   CHANGE COLUMN id id int(11) NOT NULL,
@@ -170,6 +173,7 @@ class Requirements
 
         // Fulltext indexes
         $queryCheck = true;
+
         try {
             $db->query('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
         } catch (\Exception $e) {
@@ -183,6 +187,7 @@ class Requirements
 
         // insert data
         $queryCheck = true;
+
         try {
             $db->insert('__pimcore_req_check', [
                 'field' => uniqid(),
@@ -199,6 +204,7 @@ class Requirements
 
         // update
         $queryCheck = true;
+
         try {
             $db->updateWhere('__pimcore_req_check', [
                 'field' => uniqid(),
@@ -215,6 +221,7 @@ class Requirements
 
         // select
         $queryCheck = true;
+
         try {
             $db->fetchAll('SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
@@ -228,6 +235,7 @@ class Requirements
 
         // create view
         $queryCheck = true;
+
         try {
             $db->query('CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
@@ -241,6 +249,7 @@ class Requirements
 
         // select from view
         $queryCheck = true;
+
         try {
             $db->fetchAll('SELECT * FROM __pimcore_req_check_view');
         } catch (\Exception $e) {
@@ -254,6 +263,7 @@ class Requirements
 
         // delete
         $queryCheck = true;
+
         try {
             $db->deleteWhere('__pimcore_req_check');
         } catch (\Exception $e) {
@@ -267,6 +277,7 @@ class Requirements
 
         // show create view
         $queryCheck = true;
+
         try {
             $db->query('SHOW CREATE VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
@@ -280,6 +291,7 @@ class Requirements
 
         // show create table
         $queryCheck = true;
+
         try {
             $db->query('SHOW CREATE TABLE __pimcore_req_check');
         } catch (\Exception $e) {
@@ -293,6 +305,7 @@ class Requirements
 
         // drop view
         $queryCheck = true;
+
         try {
             $db->query('DROP VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
@@ -306,6 +319,7 @@ class Requirements
 
         // drop table
         $queryCheck = true;
+
         try {
             $db->query('DROP TABLE __pimcore_req_check');
         } catch (\Exception $e) {

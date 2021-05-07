@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -71,6 +71,7 @@ class Serialize
     public static function removeReferenceLoops($data)
     {
         self::$loopFilterProcessedObjects = []; // reset
+
         return self::loopFilterCycles($data);
     }
 

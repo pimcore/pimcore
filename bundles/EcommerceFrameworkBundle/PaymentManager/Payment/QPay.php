@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
@@ -43,6 +43,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
 {
     // supported hashing algorithms
     const HASH_ALGO_MD5 = 'md5';
+
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
 
     /**
@@ -325,7 +326,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             'orderIdent' => null,
         ];
 
-        /* Initialize authorized data with null values */
+        // Initialize authorized data with null values
         $authorizedDataProperties = $this->getAuthorizedDataProperties();
         $authorizedData = [];
         foreach ($authorizedDataProperties as $property) {
@@ -717,9 +718,9 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
         $orders->addObjectbrick($providerBrickName);
 
         $orders->addConditionParam("{$providerBrickName}.auth_orderNumber IS NOT NULL");
-        /* recurring payment possible for 400 days */
+        // recurring payment possible for 400 days
         $orders->addConditionParam("FROM_UNIXTIME({$providerBrickName}.paymentFinished) > (NOW() - INTERVAL 400 DAY)");
-        /* consider credit card expiry if available */
+        // consider credit card expiry if available
         $orders->addConditionParam("({$providerBrickName}.auth_expiry IS NULL OR LAST_DAY(STR_TO_DATE({$providerBrickName}.auth_expiry, '%m/%Y')) >= CURDATE())");
 
         if ($paymentMethod = $additionalParameters['paymentMethod']) {

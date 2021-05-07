@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Helper;
@@ -25,6 +25,7 @@ class LongRunningHelper
     use LoggerAwareTrait;
 
     protected $connectionRegistry;
+
     protected $pimcoreRuntimeCacheProtectedItems = [
         'Config_system',
         'pimcore_admin_user',
@@ -34,6 +35,7 @@ class LongRunningHelper
         'pimcore_site',
         'Pimcore_Db',
     ];
+
     protected $monologHandlers = [];
 
     /**

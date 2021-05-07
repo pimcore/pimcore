@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Cache\Pool;
@@ -23,14 +23,23 @@ use Symfony\Contracts\Cache\ItemInterface;
 class CacheItem implements PimcoreCacheItemInterface, ItemInterface
 {
     private const METADATA_EXPIRY_OFFSET = 1527506807;
+
     protected $key;
+
     protected $value;
+
     protected $isHit;
+
     protected $expiry;
+
     protected $defaultLifetime;
+
     protected $metadata = [];
+
     protected $previousTags = [];
+
     protected $tags = [];
+
     protected $newMetadata = [];
 
     /**

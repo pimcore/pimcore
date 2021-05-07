@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -37,11 +37,15 @@ use Pimcore\Model\Element;
 class AbstractObject extends Model\Element\AbstractElement
 {
     const OBJECT_TYPE_FOLDER = 'folder';
+
     const OBJECT_TYPE_OBJECT = 'object';
+
     const OBJECT_TYPE_VARIANT = 'variant';
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
+
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
+
     const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
@@ -603,6 +607,7 @@ class AbstractObject extends Model\Element\AbstractElement
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, $failureEvent);
 
             Logger::crit($e);
+
             throw $e;
         }
 
@@ -688,6 +693,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     self::setHideUnpublished($hideUnpublishedBackup);
 
                     $this->commit();
+
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (\Exception $e) {
                     try {
@@ -715,6 +721,7 @@ class AbstractObject extends Model\Element\AbstractElement
                         } else {
                             // if the transaction still fail after $maxRetries retries, we throw out the exception
                             Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+
                             throw $e;
                         }
                     } else {

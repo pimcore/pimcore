@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -32,6 +32,7 @@ class Version20180924111736 extends AbstractPimcoreMigration
     public function up(Schema $schema)
     {
         $db = Db::get();
+
         try {
             $db->query("INSERT INTO users_permission_definitions (`key`) VALUES('qr_codes');");
         } catch (\Exception $e) {

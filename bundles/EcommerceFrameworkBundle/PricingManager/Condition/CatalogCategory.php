@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
@@ -66,7 +66,7 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
 
         // add categories
         foreach ($this->getCategories() as $category) {
-            /* @var AbstractCategory $category */
+            // @var AbstractCategory $category
             $json['categories'][] = [
                 $category->getId(),
                 $category->getFullPath(),
@@ -123,9 +123,9 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
     public function check(EnvironmentInterface $environment)
     {
         foreach ($environment->getCategories() as $category) {
-            /* @var AbstractCategory $category */
+            // @var AbstractCategory $category
             foreach ($this->getCategories() as $allow) {
-                /* @var AbstractCategory $allow */
+                // @var AbstractCategory $allow
                 if (strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }

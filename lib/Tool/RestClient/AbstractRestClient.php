@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool\RestClient;
@@ -803,15 +803,19 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                         switch ($mimeType) {
                             case 'image/tiff':
                                 $filename = $this->changeExtension($filename, 'tiff');
+
                                 break;
                             case 'image/jpeg':
                                 $filename = $this->changeExtension($filename, 'jpg');
+
                                 break;
                             case 'image/gif':
                                 $filename = $this->changeExtension($filename, 'gif');
+
                                 break;
                             case 'image/png':
                                 $filename = $this->changeExtension($filename, 'png');
+
                                 break;
 
                         }

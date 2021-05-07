@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -83,6 +83,7 @@ class Composer
 
         // execute migrations
         $currentVersion = null;
+
         try {
             $process = static::executeCommand($event, $consoleDir,
                 'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);

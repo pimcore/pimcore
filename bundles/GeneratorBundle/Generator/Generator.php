@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\GeneratorBundle\Generator;
@@ -26,6 +26,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class Generator
 {
     private $skeletonDirs;
+
     private static $output;
 
     /**

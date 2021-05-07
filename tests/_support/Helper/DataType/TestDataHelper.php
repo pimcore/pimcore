@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Helper\DataType;
@@ -32,7 +32,9 @@ use Pimcore\Tool\Authentication;
 class TestDataHelper extends Module
 {
     const IMAGE = 'sampleimage.jpg';
+
     const DOCUMENT = 'sampledocument.txt';
+
     const HOTSPOT_IMAGE = 'hotspot.jpg';
 
     /**

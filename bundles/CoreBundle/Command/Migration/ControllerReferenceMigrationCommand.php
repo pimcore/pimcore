@@ -10,12 +10,11 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command\Migration;
 
-use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Controller\Config\ConfigNormalizer;
@@ -92,7 +91,7 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
             'documents_snippet',
             'documents_email',
             'documents_newsletter',
-            'documents_printpage'
+            'documents_printpage',
         ];
         $queryBuilders = [];
 
@@ -134,7 +133,7 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
                             'values' => [
                                 'controller' => $controllerReference,
                                 'action' => '',
-                                'module' => ''
+                                'module' => '',
                             ],
                         ];
                     }
@@ -153,13 +152,12 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
                 );
 
                 $cacheTags[] = 'document_' . $update['id'];
-            }
-            catch (\Exception $ex) {
+            } catch (\Exception $ex) {
                 $this->output->writeln(sprintf('<error>%s [ID: %s]: %s</error>', $update['table'], $update['id'], $ex->getMessage()));
                 $this->errors++;
             }
         }
-        
+
         Cache::clearTags($cacheTags);
 
         if ($this->errors) {

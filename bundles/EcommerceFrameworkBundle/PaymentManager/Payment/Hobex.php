@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
@@ -43,13 +43,19 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     use LoggerAwareTrait;
 
     const HOST_URL_TESTSYSTEM = 'https://test.oppwa.com';
+
     const HOST_URL_LIVESYSTEM = 'https://oppwa.com';
 
     const PAYMENT_TYPE_PREAUTHORIZATION = 'PA';
+
     const PAYMENT_TYPE_DEBIT = 'DB';
+
     const PAYMENT_TYPE_CREDIT = 'CD';
+
     const PAYMENT_TYPE_CAPTURE = 'CP';
+
     const PAYMENT_TYPE_REVERSAL = 'RV';
+
     const PAYMENT_TYPE_REFUND = 'RF';
 
     const TRANSACTION_CATEGORY_ECOMMERCE = 'EC';
@@ -148,6 +154,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         );
 
         $response = null;
+
         try {
             $params = [
                 'entityId' => $this->config->getEntityId(),
@@ -186,6 +193,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             throw new \Exception('Could not parse response.');
         } catch (\Exception $e) {
             $this->logException('Cannot initialize payment', 'initPayment', $e, ['response' => $response]);
+
             throw $e;
         }
     }
@@ -287,6 +295,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
                 switch ($paymentType) {
                     case self::PAYMENT_TYPE_DEBIT:
                         $responseStatus = StatusInterface::STATUS_CLEARED;
+
                         break;
                     default: $responseStatus = StatusInterface::STATUS_AUTHORIZED;
                 }
@@ -303,6 +312,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             );
         } catch (\Exception $e) {
             $this->logException('Could not process payment response.', 'handleResponse', $e, ['response' => $response]);
+
             throw $e;
         }
 

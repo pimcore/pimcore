@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\Tracking;
@@ -84,6 +84,7 @@ class Event extends Model\AbstractModel
     public static function getByDate($category, $action, $label, $day, $month, $year)
     {
         $event = new self();
+
         try {
             $event->getDao()->getByDate($category, $action, $label, $day, $month, $year);
         } catch (\Exception $e) {

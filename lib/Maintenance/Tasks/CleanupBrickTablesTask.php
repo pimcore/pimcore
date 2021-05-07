@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -61,6 +61,7 @@ final class CleanupBrickTablesTask implements TaskInterface
                 $brickDef = Definition::getByKey($brickType);
                 if (!$brickDef) {
                     $this->logger->error("Brick '" . $brickType . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 
@@ -69,6 +70,7 @@ final class CleanupBrickTablesTask implements TaskInterface
                 $classDefinition = ClassDefinition::getById($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -607,6 +607,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         if (!$class instanceof DataObject\ClassDefinition) {
             $errorMessage = ': Class with id [ ' . $id . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -655,6 +656,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $errorMessage = ': Custom Layout with id [ ' . $id . ' not found. ]';
         Logger::error($errorMessage);
+
         throw $this->createNotFoundException($errorMessage);
     }
 
@@ -774,6 +776,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         if (!$fieldCollection instanceof DataObject\Fieldcollection\Definition) {
             $errorMessage = ': Field-Collection with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -1023,6 +1026,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['childs'] = $brickLayoutDefinitions->getChildren();
+
                         break;
                     }
                 }
@@ -1156,6 +1160,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         if (!$objectBrick instanceof DataObject\Objectbrick\Definition) {
             $errorMessage = ': Object-Brick with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
+
             throw $this->createNotFoundException($errorMessage);
         }
 
@@ -1220,6 +1225,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $keep = true;
+
                             continue;
                         }
                     }
@@ -1333,6 +1339,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                     foreach ($clsDefs as $cd) {
                         if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $filteredList[] = $type;
+
                             continue;
                         }
                     }

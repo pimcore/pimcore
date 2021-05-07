@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -47,44 +47,77 @@ use Pimcore\Db\ConnectionInterface;
 class QueryBuilder
 {
     const DISTINCT = 'distinct';
+
     const COLUMNS = 'columns';
+
     const FROM = 'from';
+
     const UNION = 'union';
+
     const WHERE = 'where';
+
     const GROUP = 'group';
+
     const HAVING = 'having';
+
     const ORDER = 'order';
+
     const LIMIT_COUNT = 'limitcount';
+
     const LIMIT_OFFSET = 'limitoffset';
+
     const FOR_UPDATE = 'forupdate';
 
     const INNER_JOIN = 'inner join';
+
     const LEFT_JOIN = 'left join';
+
     const RIGHT_JOIN = 'right join';
+
     const FULL_JOIN = 'full join';
+
     const CROSS_JOIN = 'cross join';
+
     const NATURAL_JOIN = 'natural join';
 
     const SQL_WILDCARD = '*';
+
     const SQL_SELECT = 'SELECT';
+
     const SQL_UNION = 'UNION';
+
     const SQL_UNION_ALL = 'UNION ALL';
+
     const SQL_FROM = 'FROM';
+
     const SQL_WHERE = 'WHERE';
+
     const SQL_DISTINCT = 'DISTINCT';
+
     const SQL_GROUP_BY = 'GROUP BY';
+
     const SQL_ORDER_BY = 'ORDER BY';
+
     const SQL_HAVING = 'HAVING';
+
     const SQL_FOR_UPDATE = 'FOR UPDATE';
+
     const SQL_AND = 'AND';
+
     const SQL_AS = 'AS';
+
     const SQL_OR = 'OR';
+
     const SQL_ON = 'ON';
+
     const SQL_ASC = 'ASC';
+
     const SQL_DESC = 'DESC';
 
     const REGEX_COLUMN_EXPR = '/^([\w]*\s*\(([^\(\)]|(?1))*\))$/';
+
     const REGEX_COLUMN_EXPR_ORDER = '/^([\w]+\s*\(([^\(\)]|(?1))*\))$/';
+
     const REGEX_COLUMN_EXPR_GROUP = '/^([\w]+\s*\(([^\(\)]|(?1))*\))$/';
 
     // @see http://stackoverflow.com/a/13823184/2028814
@@ -951,6 +984,7 @@ class QueryBuilder
                     $tableName = $_tableName;
                     $correlationName = $this->_uniqueCorrelation($tableName);
                 }
+
                 break;
             }
         } elseif ($name instanceof Expression || $name instanceof self) {
@@ -1451,9 +1485,7 @@ class QueryBuilder
             $count = (int) $this->_parts[self::LIMIT_COUNT];
         }
 
-        /*
-         * Add limits clause
-         */
+        // Add limits clause
         if ($count > 0) {
             $sql = trim($this->_adapter->limit($sql, $count, $offset));
         }

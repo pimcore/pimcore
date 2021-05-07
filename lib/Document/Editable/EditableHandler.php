@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Editable;
@@ -132,6 +132,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
     /**
      * @internal
      * @required
+     *
      * @param FragmentRendererInterface $fragmentRenderer
      */
     public function setFragmentRenderer(FragmentRendererInterface $fragmentRenderer): void
@@ -142,6 +143,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
     /**
      * @internal
      * @required
+     *
      * @param RequestStack $requestStack
      */
     public function setRequestStack(RequestStack $requestStack): void
@@ -200,6 +202,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
+
                 try {
                     $bundle = $this->bundleLocator->getBundle($brick);
 
@@ -433,7 +436,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
             $query
         );
 
-        if($this->requestHelper->hasCurrentRequest()) {
+        if ($this->requestHelper->hasCurrentRequest()) {
             return $this->actionRenderer->render($uri, $options);
         } else {
             // this case could happen when rendering on CLI, e.g. search-reindex ...

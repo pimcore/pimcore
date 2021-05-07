@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
@@ -188,6 +188,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -201,6 +202,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         $params[] = $seriesId;
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -220,6 +222,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
 
         $db = \Pimcore\Db::get();
+
         try {
             return $db->fetchOne($query, $params);
         } catch (\Exception $e) {
@@ -311,6 +314,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
 
         $db->beginTransaction();
+
         try {
             $db->executeQuery($reservationsQuery, $params);
             $db->executeQuery($tokensQuery, $params);

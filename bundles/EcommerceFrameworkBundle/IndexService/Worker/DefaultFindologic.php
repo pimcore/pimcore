@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
@@ -31,7 +31,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInterface, BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_findologic';
+
     const EXPORT_TABLE_NAME = 'ecommerceframework_productindex_export_findologic';
+
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_findologic';
 
     /**
@@ -114,7 +116,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
             ->addChild('attributes');
 
         $attributes = $xml->allAttributes->attributes;
-        /* @var \SimpleXMLElement $attributes */
+        // @var \SimpleXMLElement $attributes
 
         // add optional fields
         if (array_key_exists('salesFrequency', $data['data'])) {
@@ -163,26 +165,31 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
                     case 'ordernumber':
                         $parent = $xml->allOrdernumbers->ordernumbers;
                         $parent->addChild('ordernumber', $value);
+
                         break;
 
                     case 'name':
                         $parent = $xml->names;
                         $parent->addChild('name', $value);
+
                         break;
 
                     case 'summary':
                         $parent = $xml->summaries;
                         $parent->addChild('summary', $value);
+
                         break;
 
                     case 'description':
                         $parent = $xml->descriptions;
                         $parent->addChild('description', $value);
+
                         break;
 
                     case 'price':
                         $parent = $xml->prices;
                         $parent->addChild('price', $value);
+
                         break;
                 }
             } else {
@@ -214,6 +221,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
                                 $values->addChild('value', implode('_', array_reverse($categoryIds, true)));
                             }
                         }
+
                         break;
 
                     default:

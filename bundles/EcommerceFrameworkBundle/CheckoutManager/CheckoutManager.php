@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
@@ -42,6 +42,7 @@ class CheckoutManager implements CheckoutManagerInterface
      * always concatenated with current cart id
      */
     const CURRENT_STEP = 'checkout_current_step';
+
     const FINISHED = 'checkout_finished';
 
     /**
@@ -336,6 +337,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
         // delegate commit order to commit order processor
         $order = null;
+
         try {
             $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         } catch (\Exception $e) {
@@ -358,7 +360,7 @@ class CheckoutManager implements CheckoutManagerInterface
     protected function verifyRecurringPayment(PaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
     {
 
-        /* @var OrderManager $orderManager */
+        // @var OrderManager $orderManager
         $orderManager = $this->orderManagers->getOrderManager();
 
         if (!$provider->isRecurringPaymentEnabled()) {
@@ -378,22 +380,22 @@ class CheckoutManager implements CheckoutManagerInterface
      */
     public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId)
     {
-        /* @var PaymentInfo $targetPaymentInfo */
+        // @var PaymentInfo $targetPaymentInfo
         $targetPaymentInfo = $this->startOrderPayment();
 
-        /* @var OrderManager $orderManager */
+        // @var OrderManager $orderManager
         $orderManager = $this->orderManagers->getOrderManager();
 
-        /* @var Agent $sourceOrderAgent */
+        // @var Agent $sourceOrderAgent
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
 
-        /* @var QPay $paymentProvider */
+        // @var QPay $paymentProvider
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
         $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 
         $targetOrder = $orderManager->getOrderFromCart($this->getCart());
 
-        /* @var Agent $targetOrderAgent */
+        // @var Agent $targetOrderAgent
         $targetOrderAgent = $orderManager->createOrderAgent($targetOrder);
 
         $targetOrderAgent->setPaymentProvider($paymentProvider, $sourceOrder);

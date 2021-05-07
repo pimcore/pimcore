@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Http\Request\Resolver;
@@ -28,6 +28,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
     const ATTRIBUTE_PIMCORE_CONTEXT = '_pimcore_context';
 
     const CONTEXT_ADMIN = 'admin';
+
     const CONTEXT_DEFAULT = 'default';
 
     /**

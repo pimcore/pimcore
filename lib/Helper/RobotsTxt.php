@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -43,6 +43,7 @@ class RobotsTxt
     public function __construct($domain)
     {
         $this->_domain = $domain;
+
         try {
             $robotsUrl = $domain . '/robots.txt';
             $cacheKey = 'robots_' . crc32($robotsUrl);

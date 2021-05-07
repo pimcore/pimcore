@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -212,15 +212,19 @@ class EmailController extends AdminController
                     switch ($data['objectClassSubType']) {
                         case 'Image':
                             $fullEntry['iconCls'] = 'pimcore_icon_image';
+
                             break;
                         case 'Video':
                             $fullEntry['iconCls'] = 'pimcore_icon_wmv';
+
                             break;
                         case 'Text':
                             $fullEntry['iconCls'] = 'pimcore_icon_txt';
+
                             break;
                         case 'Document':
                             $fullEntry['iconCls'] = 'pimcore_icon_pdf';
+
                             break;
                         default:
                             $fullEntry['iconCls'] = 'pimcore_icon_asset';

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
@@ -64,9 +64,13 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public $phpdocType = '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
 
     public $width;
+
     public $considerTenants = false;
+
     public $multiPreSelect = false;
+
     public $filterGroups = '';
+
     public $predefinedPreSelectOptions = [];
 
     public function __construct()

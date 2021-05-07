@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
@@ -129,6 +129,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
                     $filterProductType = new ProductType();
                     $filterProductType->setTypes([$q]);
                     $list->addFilter($filterProductType);
+
                     break;
 
                 case 'order':
@@ -136,6 +137,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
                     $filterOrder = new OrderSearch();
                     $filterOrder->setKeyword($q);
                     $list->addFilter($filterOrder);
+
                     break;
             }
         }
@@ -214,7 +216,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
         // init
         $order = OnlineShopOrder::getById($request->get('id'));
-        /* @var AbstractOrder $order */
+        // @var AbstractOrder $order
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -236,6 +238,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
             );
 
             $json = null;
+
             try {
                 $response = $client->request('GET', $url);
                 if ($response->getStatusCode() < 300) {
@@ -298,7 +301,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
                     $classes = $field->getClasses();
                     if (count($classes) === 1) {
                         $class = 'Pimcore\Model\DataObject\\' . reset($classes)['classes'];
-                        /* @var \Pimcore\Model\DataObject\Concrete $class */
+                        // @var \Pimcore\Model\DataObject\Concrete $class
 
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
@@ -324,13 +327,13 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $arrTimeline = [];
         $date = new \DateTime();
         foreach ($orderAgent->getFullChangeLog() as $note) {
-            /* @var \Pimcore\Model\Element\Note $note */
+            // @var \Pimcore\Model\Element\Note $note
 
             $quantity = null;
 
             // get avatar
             $user = User::getById($note->getUser());
-            /* @var \Pimcore\Model\User $user */
+            // @var \Pimcore\Model\User $user
             $avatar = $user ? sprintf('/admin/user/get-image?id=%d', $user->getId()) : null;
 
             // group events
@@ -389,7 +392,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     {
         // init
         $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -422,7 +425,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -454,7 +457,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
+        // @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

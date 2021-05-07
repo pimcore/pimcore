@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Analytics\Google;
@@ -36,11 +36,17 @@ class Tracker extends AbstractTracker
     use LoggerAwareTrait;
 
     const BLOCK_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
+
     const BLOCK_BEFORE_SCRIPT = 'beforeScript';
+
     const BLOCK_BEFORE_INIT = 'beforeInit';
+
     const BLOCK_BEFORE_TRACK = 'beforeTrack';
+
     const BLOCK_AFTER_TRACK = 'afterTrack';
+
     const BLOCK_AFTER_SCRIPT = 'afterScript';
+
     const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
     /**

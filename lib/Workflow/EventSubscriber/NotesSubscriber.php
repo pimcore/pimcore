@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Workflow\EventSubscriber;
@@ -28,6 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class NotesSubscriber implements EventSubscriberInterface
 {
     const ADDITIONAL_DATA_NOTES_COMMENT = 'notes';
+
     const ADDITIONAL_DATA_NOTES_ADDITIONAL_FIELDS = 'additional';
 
     /**

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -36,12 +36,16 @@ class BooleanSelect extends Data implements
 
     /** storage value for yes */
     const YES_VALUE = 1;
+
     /** storage value for no */
     const NO_VALUE = -1;
+
     /** storage value for empty */
     const EMPTY_VALUE = null;
+
     /** edit mode valze for empty */
     const EMPTY_VALUE_EDITMODE = 0;
+
     /**
      * Available options to select - Default options
      *
@@ -61,18 +65,23 @@ class BooleanSelect extends Data implements
             'value' => self::NO_VALUE,
         ],
     ];
+
     /**
      * Static type of this element
      *
      * @var string
      */
     public $fieldtype = 'booleanSelect';
+
     /** @var string */
     public $yesLabel;
+
     /** @var string */
     public $noLabel;
+
     /** @var string */
     public $emptyLabel;
+
     public $options = self::DEFAULT_OPTIONS;
 
     /**
@@ -254,6 +263,7 @@ class BooleanSelect extends Data implements
         foreach ($this->options as $option) {
             if ($option->value == $data) {
                 $value = $option->key;
+
                 break;
             }
         }
@@ -336,6 +346,7 @@ class BooleanSelect extends Data implements
                 if ($option['value'] == $value) {
                     $option['key'] = $label;
                     $this->options[$idx] = $option;
+
                     break;
                 }
             }

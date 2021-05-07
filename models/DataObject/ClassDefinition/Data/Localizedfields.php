@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -579,6 +579,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         continue;
                     }
+
                     throw new \Exception(
                         "Unknown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName(
                         ).' ] '
@@ -1175,6 +1176,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                         throw $e;
                                     }
                                     $exceptionClass = get_class($e);
+
                                     throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                                 }
                             } else {
@@ -1182,6 +1184,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
+
                                 throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                             }
                         }
@@ -1196,6 +1199,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         if (count($validationExceptions) > 0) {
             $aggregatedExceptions = new Model\Element\ValidationException();
             $aggregatedExceptions->setSubItems($validationExceptions);
+
             throw $aggregatedExceptions;
         }
     }
@@ -1520,6 +1524,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         if (!$fd) {
                             // class definition seems to have changed
                             Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                             continue;
                         }
 
@@ -1566,6 +1571,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                         continue;
                     }
 
@@ -1629,6 +1635,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         if (!$fd) {
                             // class definition seems to have changed
                             Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                             continue;
                         }
 
@@ -1672,6 +1679,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: '.$elementName);
+
                         continue;
                     }
 

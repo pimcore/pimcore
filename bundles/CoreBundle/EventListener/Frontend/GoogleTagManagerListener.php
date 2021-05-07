@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -35,9 +35,11 @@ use Symfony\Component\Templating\EngineInterface;
 class GoogleTagManagerListener
 {
     const BLOCK_HEAD_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
+
     const BLOCK_HEAD_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
     const BLOCK_BODY_BEFORE_NOSCRIPT_TAG = 'beforeNoscriptTag';
+
     const BLOCK_BODY_AFTER_NOSCRIPT_TAG = 'afterNoscriptTag';
 
     use EnabledTrait;

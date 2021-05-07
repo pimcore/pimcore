@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest;
@@ -18,13 +18,21 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 class QPayRequest extends AbstractRequest
 {
     protected $language;
+
     protected $successURL;
+
     protected $cancelURL;
+
     protected $failureURL;
+
     protected $serviceURL;
+
     protected $confirmMail;
+
     protected $orderDescription;
+
     protected $imageURL;
+
     protected $orderIntent;
 
     /**

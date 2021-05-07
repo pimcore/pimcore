@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
@@ -194,6 +194,7 @@ class Sql extends AbstractAdapter
                         case 'like':
                             $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+
                             break;
                         case 'lt':
                         case 'gt':
@@ -207,15 +208,18 @@ class Sql extends AbstractAdapter
                             if ($type == 'date') {
                                 if ($operator == 'eq') {
                                     $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
+
                                     break;
                                 }
                             }
                             $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
+
                             break;
                         case '=':
                             $fields[] = $filter['property'];
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
+
                             break;
                     }
                 }

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Search\Backend;
@@ -530,6 +530,7 @@ class Data extends \Pimcore\Model\AbstractModel
             $wordLength = \mb_strlen($word);
             if ($wordLength < $minWordLength || $wordLength > $maxWordLength) {
                 unset($words[$key]);
+
                 continue;
             }
 

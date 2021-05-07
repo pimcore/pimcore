@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -188,11 +188,13 @@ class Bootstrap
                 foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $varName) {
                     if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
                         $envVarName = $varName;
+
                         break;
                     }
 
                     if (isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
                         $envVarName = 'REDIRECT_' . $varName;
+
                         break;
                     }
                 }

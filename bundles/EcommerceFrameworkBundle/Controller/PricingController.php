@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
@@ -58,7 +58,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
         $json = [];
         foreach ($rules->load() as $rule) {
-            /* @var  RuleInterface $rule */
+            // @var  RuleInterface $rule
 
             if ($rule->getActive()) {
                 $icon = 'bundle_ecommerce_pricing_icon_rule_' . $rule->getBehavior();

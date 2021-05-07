@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
@@ -489,14 +489,17 @@ class DefaultFactFinder implements ProductListInterface
                 case self::VARIANT_MODE_INCLUDE:
                 case self::VARIANT_MODE_HIDE:
                     $id = $item['id'];
+
                     break;
 
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                     $id = $item['record']['MasterProductID'];
+
                     break;
 
                 case self::VARIANT_MODE_VARIANTS_ONLY:
                     throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
+
                     break;
             }
 
@@ -557,10 +560,12 @@ class DefaultFactFinder implements ProductListInterface
         switch ($this->getVariantMode()) {
             case self::VARIANT_MODE_HIDE:
                 $filter['duplicateFilter'] = 'NONE';
+
                 break;
 
             case self::VARIANT_MODE_INCLUDE:
                 $filter['duplicateFilter'] = 'NONE';
+
                 break;
 
             default:

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
@@ -278,7 +278,7 @@ class Agent implements OrderAgentInterface
             foreach ($order->getPaymentProvider()->getBrickGetters() as $method) {
                 $providerData = $order->getPaymentProvider()->{$method}();
                 if ($providerData) {
-                    /* @var \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData $providerData */
+                    // @var \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData $providerData
 
                     // get provider data
                     if (method_exists($providerData, 'getConfigurationKey') && $providerData->getConfigurationKey()) {
@@ -322,12 +322,12 @@ class Agent implements OrderAgentInterface
         $order = $this->getOrder();
 
         $provider = $order->getPaymentProvider();
-        /* @var \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider $provider */
+        // @var \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider $provider
 
         // load existing
         $providerDataGetter = 'getPaymentProvider' . $paymentProvider->getName();
         $providerData = $provider->{$providerDataGetter}();
-        /* @var ObjectbrickData\PaymentProvider* $providerData */
+        // @var ObjectbrickData\PaymentProvider* $providerData
 
         if (!$providerData) {
             // create new
@@ -353,7 +353,7 @@ class Agent implements OrderAgentInterface
             $providerData->setConfigurationKey($paymentProvider->getConfigurationKey());
         }
 
-        /* recurring payment data */
+        // recurring payment data
         if ($sourceOrder) {
             $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
         }
@@ -596,6 +596,7 @@ class Agent implements OrderAgentInterface
                 $currentPaymentInformation = $paymentInfo;
 
                 $currentOrderFingerPrint = $this->generateInternalPaymentId($paymentInfoIndex + 1);
+
                 break;
             }
         }
@@ -648,6 +649,7 @@ class Agent implements OrderAgentInterface
                 $paymentStateBackup . '". throwing exception!'
             );
             $order->save(['versionNote' => 'OrderAgent::updatePayment - aborted response received.']);
+
             throw new UnsupportedException('Got response although payment state was already aborted, new payment state was ' . $paymentStateBackup);
         } elseif ($currentOrderFingerPrint != $status->getInternalPaymentId()) {
             // check, if order finger print has changed since start payment - if so, throw exception because something wired is going on
@@ -656,6 +658,7 @@ class Agent implements OrderAgentInterface
             $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' -> order fingerprint changed since start payment. throwing exception!');
             $order->setOrderState(null);
             $order->save(['versionNote' => 'OrderAgent::updatePayment - finger print of order changed.']);
+
             throw new UnsupportedException('order fingerprint changed since start payment. Old internal status = ' . $status->getInternalPaymentId() . ' -> current internal status id = ' . $currentOrderFingerPrint);
         } else {
             $order->save(['versionNote' => 'OrderAgent::updatePayment.']);
@@ -685,7 +688,7 @@ class Agent implements OrderAgentInterface
 
             // load order events
             $noteList = new NoteListing();
-            /* @var \Pimcore\Model\Element\Note\Listing $noteList */
+            // @var \Pimcore\Model\Element\Note\Listing $noteList
 
             $cid = [ $order->getId() ];
             foreach ($order->getItems() as $item) {

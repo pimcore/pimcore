@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
@@ -45,6 +45,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     private static $OGONE_SERVER_URL_TEST = 'https://secure.ogone.com/ncol/test/orderstandard_utf8.asp';
+
     private static $OGONE_SERVER_URL_LIVE = 'https://secure.ogone.com/ncol/prod/orderstandard_utf8.asp';
 
     /**
@@ -372,8 +373,9 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
      */
     protected function mapAdditionalPaymentData(array $params, array $config)
     {
-        /* Example fields: EMAIL, "CN", "OWNERADDRESS", "OWNERZIP", "OWNERCITY", etc. */
+        // Example fields: EMAIL, "CN", "OWNERADDRESS", "OWNERZIP", "OWNERCITY", etc.
         $additionalParams = []; //@map onto additional params from config
+
         return $additionalParams;
     }
 
@@ -391,7 +393,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
      */
     private function processAdditionalPaymentData(array $params, array $config, array $additionalParams)
     {
-        /* Example fields: EMAIL, "CN", "OWNERADDRESS", "OWNERZIP", "OWNERCITY", etc. */
+        // Example fields: EMAIL, "CN", "OWNERADDRESS", "OWNERZIP", "OWNERCITY", etc.
         foreach ($additionalParams as $key => $value) {
             if (!in_array($key, self::$_SHA_IN_PARAMETERS)) {
                 throw new \Exception('Unknown parameter "%s" for oGone. Please only use parameters that are specified by oGone. Also see "%s".',
@@ -497,12 +499,14 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
                 if (function_exists('hash')) {
                     return mb_strtoupper(hash('sha256', $rawString));
                 }
+
                 break;
             case 'SHA512':
                 if (function_exists('hash')) {
                     return mb_strtoupper(hash('sha512', $rawString));
                 }
         }
+
         throw new \Exception(sprintf('Algorithm "%s" not available in OGone payment provider.', $encryptionType));
     }
 }

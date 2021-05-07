@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
@@ -27,6 +27,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      * @TODO Pimcore 10 - remove this
      */
     const WORKER_MODE_LEGACY = 'legacy';
+
     const WORKER_MODE_PRODUCT_CENTRIC = 'product_centric';
 
     /**

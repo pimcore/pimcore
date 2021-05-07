@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Redirect;
@@ -47,14 +47,17 @@ class RedirectUrlPartResolver
         switch ($type) {
             case Redirect::TYPE_ENTIRE_URI:
                 $part = $this->request->getUri();
+
                 break;
 
             case Redirect::TYPE_PATH_QUERY:
                 $part = $this->request->getRequestUri();
+
                 break;
 
             case Redirect::TYPE_PATH:
                 $part = $this->request->getPathInfo();
+
                 break;
         }
 

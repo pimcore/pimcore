@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Webservice;
@@ -63,6 +63,7 @@ class Service
             throw new \Exception('Document Folder with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -87,6 +88,7 @@ class Service
             throw new \Exception('Document Link with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -111,6 +113,7 @@ class Service
             throw new \Exception('Document Hardlink with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -135,6 +138,7 @@ class Service
             throw new \Exception('Document Email with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -161,6 +165,7 @@ class Service
             throw new \Exception('Document Page with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -187,6 +192,7 @@ class Service
             throw new \Exception('Document Snippet with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -256,6 +262,7 @@ class Service
             return $items;
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -281,6 +288,7 @@ class Service
             throw new \Exception('Document with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -305,6 +313,7 @@ class Service
             throw new \Exception('Document with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -326,6 +335,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -347,6 +357,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -368,6 +379,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -389,6 +401,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -410,6 +423,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -431,6 +445,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -452,6 +467,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -473,6 +489,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -494,6 +511,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -515,6 +533,7 @@ class Service
             }
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -535,9 +554,11 @@ class Service
 
                 return $this->create($wsDocument, $document);
             }
+
             throw new \Exception('Unable to create new Document Page.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -562,6 +583,7 @@ class Service
             throw new \Exception('Unable to create new Document Snippet.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -586,6 +608,7 @@ class Service
             throw new \Exception('Unable to create new Document Snippet.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -606,9 +629,11 @@ class Service
 
                 return $this->create($wsDocument, $document);
             }
+
             throw new \Exception('Unable to create new Document Folder.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -629,9 +654,11 @@ class Service
 
                 return $this->create($wsDocument, $document);
             }
+
             throw new \Exception('Unable to create new Document Link.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -652,9 +679,11 @@ class Service
 
                 return $this->create($wsDocument, $document);
             }
+
             throw new \Exception('Unable to create new Document Hardlink.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -675,9 +704,11 @@ class Service
 
                 return $this->create($wsDocument, $asset);
             }
+
             throw new \Exception('Unable to create new Asset Folder.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -711,6 +742,7 @@ class Service
             throw new \Exception('Unable to create new Asset File.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -735,6 +767,7 @@ class Service
             throw new \Exception('Unable to create new Object Folder.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -762,6 +795,7 @@ class Service
             throw new \Exception('Unable to create new Object Concrete.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -787,6 +821,7 @@ class Service
             throw new \Exception('Asset Folder with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -812,6 +847,7 @@ class Service
             throw new \Exception('Asset File with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -887,6 +923,7 @@ class Service
             return $items;
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -911,6 +948,7 @@ class Service
             throw new \Exception('Asset with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -935,6 +973,7 @@ class Service
             throw new \Exception('Object Folder with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -962,6 +1001,7 @@ class Service
             throw new \Exception('Object with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -1049,6 +1089,7 @@ class Service
             return $items;
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -1074,6 +1115,7 @@ class Service
             throw new \Exception('Object with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -1098,6 +1140,7 @@ class Service
             throw new \Exception('Object with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -1283,6 +1326,7 @@ class Service
             throw new \Exception('Class with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }
@@ -1309,6 +1353,7 @@ class Service
             throw new \Exception('Object with given ID (' . $id . ') does not exist.');
         } catch (\Exception $e) {
             Logger::error($e);
+
             throw $e;
         }
     }

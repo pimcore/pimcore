@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -64,6 +64,7 @@ final class CleanupFieldcollectionTablesTask implements TaskInterface
                 $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
                 if (!$fcDef) {
                     $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 
@@ -79,6 +80,7 @@ final class CleanupFieldcollectionTablesTask implements TaskInterface
                 $classDefinition = ClassDefinition::getById($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
+
                     continue;
                 }
 

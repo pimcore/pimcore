@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -118,6 +118,7 @@ class Config implements \ArrayAccess
                     $tmpFile = $path . '/' . $pureName . '_' . $env . '.' . $fileExt;
                     if (file_exists($tmpFile)) {
                         $file = $tmpFile;
+
                         break;
                     }
                 }
@@ -129,6 +130,7 @@ class Config implements \ArrayAccess
                     $tmpFile = $path . '/' . $name;
                     if (file_exists($tmpFile)) {
                         $file = $tmpFile;
+
                         break;
                     }
                 }
@@ -278,15 +280,19 @@ class Config implements \ArrayAccess
                         case 'asset':
                         case 'object':
                             $s = $item->getData();
+
                             break;
                         case 'bool':
                             $s = (bool) $item->getData();
+
                             break;
                         case 'text':
                             $s = (string) $item->getData();
+
                             break;
                         default:
                             $s = null;
+
                             break;
                     }
 
@@ -660,6 +666,7 @@ class Config implements \ArrayAccess
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_perspectives');
         } else {
             $file = self::locateConfigFile('perspectives.php');
+
             try {
                 $config = static::getConfigInstance($file);
                 self::setPerspectivesConfig($config);
@@ -835,6 +842,7 @@ class Config implements \ArrayAccess
                 $tmpData = $node;
                 if (!isset($tmpData['id'])) {
                     Logger::error('custom view ID is missing ' . var_export($tmpData, true));
+
                     continue;
                 }
 
@@ -866,11 +874,13 @@ class Config implements \ArrayAccess
                 $customViewId = $resultItem['id'];
                 if (!$customViewId) {
                     Logger::error('custom view id missing ' . var_export($resultItem, true));
+
                     continue;
                 }
                 $customViewCfg = isset($cfConfigMapping[$customViewId]) ? $cfConfigMapping[$customViewId] : null;
                 if (!$customViewCfg) {
                     Logger::error('no custom view config for id  ' . $customViewId);
+
                     continue;
                 }
 

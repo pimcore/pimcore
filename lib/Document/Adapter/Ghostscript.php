@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Adapter;
@@ -107,6 +107,7 @@ class Ghostscript extends Adapter
         if (!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
             Logger::error($message);
+
             throw new \Exception($message);
         }
 
@@ -138,6 +139,7 @@ class Ghostscript extends Adapter
 
         $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
         Logger::error($message);
+
         throw new \Exception($message);
     }
 

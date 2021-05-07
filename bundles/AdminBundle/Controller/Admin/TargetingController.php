@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TargetingController extends AdminController implements EventedControllerInterface
 {
-    /* RULES */
+    // RULES
 
     /**
      * @Route("/rule/list", name="pimcore_admin_targeting_rulelist", methods={"GET"})
@@ -179,7 +179,7 @@ class TargetingController extends AdminController implements EventedControllerIn
         return $this->adminJson($return);
     }
 
-    /* TARGET GROUPS */
+    // TARGET GROUPS
 
     /**
      * @Route("/target-group/list", name="pimcore_admin_targeting_targetgrouplist", methods={"GET"})

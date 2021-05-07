@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest;
@@ -18,12 +18,19 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 class DatatransRequest extends AbstractRequest
 {
     protected $reqtype;
+
     protected $refno;
+
     protected $language;
+
     protected $successUrl;
+
     protected $errorUrl;
+
     protected $cancelUrl;
+
     protected $uppStartTarget;
+
     protected $useAlias;
 
     /**

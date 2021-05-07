@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /*
@@ -71,6 +71,7 @@ class JsonFormatter
             if (!$outOfQuotes) {
                 $buffer .= $char;
                 $noescape = '\\' === $char ? !$noescape : true;
+
                 continue;
             } elseif ('' !== $buffer) {
                 if ($unescapeSlashes) {
@@ -96,6 +97,7 @@ class JsonFormatter
 
                 $result .= $buffer.$char;
                 $buffer = '';
+
                 continue;
             }
 

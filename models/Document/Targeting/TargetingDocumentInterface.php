@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Targeting;
@@ -29,7 +29,9 @@ interface TargetingDocumentInterface
     // this was kept "persona" for BC reasons and is one of the
     // few parts where the term "persona" refers to a "target group"
     const TARGET_GROUP_EDITABLE_PREFIX = 'persona_-';
+
     const TARGET_GROUP_EDITABLE_SUFFIX = '-_';
+
     /**
      * @deprecated since v6.7 and will be removed in Pimcore 10. Use TARGET_GROUP_EDITABLE_PREFIX instead
      */

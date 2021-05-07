@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\GeneratorBundle\Command;
@@ -124,9 +124,7 @@ EOT
         $questionHelper = $this->getQuestionHelper();
         $questionHelper->writeSection($output, 'Welcome to the Symfony bundle generator!');
 
-        /*
-         * shared option
-         */
+        // shared option
         $shared = $input->getOption('shared');
         // ask, but use $shared as the default
         $question = new ConfirmationQuestion($questionHelper->getQuestion(
@@ -136,9 +134,7 @@ EOT
         $shared = $questionHelper->ask($input, $output, $question);
         $input->setOption('shared', $shared);
 
-        /*
-         * namespace option
-         */
+        // namespace option
         $namespace = $input->getOption('namespace');
         $output->writeln([
             '',
@@ -196,9 +192,7 @@ EOT
         }
         $input->setOption('namespace', $namespace);
 
-        /*
-         * bundle-name option
-         */
+        // bundle-name option
         if ($askForBundleName) {
             $bundle = $input->getOption('bundle-name');
             // no bundle yet? Get a default from the namespace
@@ -225,9 +219,7 @@ EOT
             $input->setOption('bundle-name', $bundle);
         }
 
-        /*
-         * dir option
-         */
+        // dir option
         // defaults to src/ in the option
         $dir = $input->getOption('dir');
         $output->writeln([
@@ -244,9 +236,7 @@ EOT
         $dir = $questionHelper->ask($input, $output, $question);
         $input->setOption('dir', $dir);
 
-        /*
-         * format option
-         */
+        // format option
         $format = $input->getOption('format');
         if (!$format) {
             $format = $shared ? 'xml' : 'annotation';
@@ -320,6 +310,7 @@ EOT
             $this->makePathRelative($targetRoutingPath)
         ));
         $routing = new RoutingManipulator($targetRoutingPath);
+
         try {
             $ret = $routing->addResource($bundle->getName(), $bundle->getConfigurationFormat());
             if (!$ret) {
@@ -355,6 +346,7 @@ EOT
             $this->makePathRelative($targetConfigurationPath)
         ));
         $manipulator = new ConfigurationManipulator($targetConfigurationPath);
+
         try {
             $manipulator->addResource($bundle);
         } catch (\RuntimeException $e) {

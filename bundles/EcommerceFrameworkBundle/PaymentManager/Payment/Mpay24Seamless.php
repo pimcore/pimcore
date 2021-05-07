@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
@@ -52,8 +52,11 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
     private $templatingEngine;
 
     private $successURL;
+
     private $errorURL;
+
     private $confirmationURL;
+
     private $authorizedData;
 
     public function __construct(array $options, EngineInterface $templatingEngine)
@@ -243,9 +246,11 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
             switch ($paymentType) {
                 case 'CC':
                     $paymentType = 'TOKEN';
+
                     break;
                 case 'TOKEN':
                     $payment['token'] = $request->get('token');
+
                     break;
             }
 

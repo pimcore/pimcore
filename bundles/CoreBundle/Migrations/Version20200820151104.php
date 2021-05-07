@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -38,6 +38,7 @@ class Version20200820151104 extends AbstractPimcoreMigration
                 $i = 0;
                 foreach ($duplicateTags as $duplicateTag) {
                     $i++;
+
                     try {
                         $oldName = $duplicateTag->getName();
                         $newName = $duplicateTag->getName() . '_' . $i;

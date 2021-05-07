@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement;
@@ -22,7 +22,9 @@ use Pimcore\Model\DataObject\OnlineShopTaxClass;
 class TaxEntry
 {
     const CALCULATION_MODE_COMBINE = 'combine';
+
     const CALCULATION_MODE_ONE_AFTER_ANOTHER = 'oneAfterAnother';
+
     const CALCULATION_MODE_FIXED = 'fixed';
 
     /**

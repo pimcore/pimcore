@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
@@ -21,7 +21,9 @@ use Pimcore\Logger;
 class DefaultMockup implements ProductInterface
 {
     protected $id;
+
     protected $params;
+
     protected $relations;
 
     public function __construct($id, $params, $relations)

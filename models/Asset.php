@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -438,6 +438,7 @@ class Asset extends Element\AbstractElement
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
                     $type = $assetType;
+
                     break;
                 }
             }
@@ -523,6 +524,7 @@ class Asset extends Element\AbstractElement
                         if (is_file($oldFullPath) || is_dir($oldFullPath)) {
                             if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
                                 $error = error_get_last();
+
                                 throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
                             }
                             $differentOldPath = $oldPath;
@@ -1085,6 +1087,7 @@ class Asset extends Element\AbstractElement
             $failureEvent->setArgument('exception', $e);
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, $failureEvent);
             Logger::crit($e);
+
             throw $e;
         }
 

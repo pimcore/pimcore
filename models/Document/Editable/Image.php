@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -194,6 +194,7 @@ class Image extends Model\Document\Editable
                     if ($item['method'] == 'cover') {
                         $config['focal_point_context_menu_item'] = true;
                         $this->config['focal_point_context_menu_item'] = true;
+
                         break;
                     }
                 }

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tool;
@@ -111,6 +111,7 @@ class Transliteration
                 // ASCII chunk: guaranteed to be valid UTF-8 and in normal form C, so
                 // skip over it.
                 $result .= $str;
+
                 continue;
             }
 
@@ -141,6 +142,7 @@ class Transliteration
                                 // Premature end of string! Drop a replacement character into
                                 // output to represent the invalid UTF-8 sequence.
                                 $result .= $unknown;
+
                                 break 2;
                             } else {
                                 // Illegal tail byte; abandon the sequence.
@@ -149,6 +151,7 @@ class Transliteration
                                 // ASCII or UTF-8 sequence head.
                                 --$i;
                                 ++$len;
+
                                 continue 2;
                             }
                         }

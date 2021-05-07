@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model;
@@ -365,12 +365,14 @@ class Version extends AbstractModel
         foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
             if (file_exists($path)) {
                 $filePath = $path;
+
                 break;
             }
 
             if (file_exists($path . '.gz')) {
                 $filePath = $path . '.gz';
                 $zipped = true;
+
                 break;
             }
         }

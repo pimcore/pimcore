@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Localizedfield;
@@ -217,6 +217,7 @@ class Dao extends Model\Dao\AbstractDao
                     // throw exception which gets caught in AbstractObject::save() -> retry saving
                     throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                 }
+
                 throw $e;
             }
 
@@ -237,6 +238,7 @@ class Dao extends Model\Dao\AbstractDao
                     )." AND language = '".$language."'";
 
                 $oldData = [];
+
                 try {
                     $oldData = $this->db->fetchRow($sql);
                 } catch (\Exception $e) {
@@ -328,6 +330,7 @@ class Dao extends Model\Dao\AbstractDao
                                                 // do nothing, ... value is still empty and parent data is equal to current data in query table
                                             } elseif ($oldDataValue != $insertDataValue) {
                                                 $doInsert = true;
+
                                                 break;
                                             }
                                         }

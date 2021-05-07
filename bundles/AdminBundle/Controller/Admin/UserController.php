@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -301,6 +301,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                     if (method_exists($user, 'setAllAclToFalse')) {
                         $user->setAllAclToFalse();
                     }
+
                     break;
                 }
             }
@@ -637,7 +638,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         return $response;
     }
 
-    /* ROLES */
+    // ROLES
 
     /**
      * @Route("/user/role-tree-get-childs-by-id", name="pimcore_admin_user_roletreegetchildsbyid", methods={"GET"})

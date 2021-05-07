@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -192,6 +192,7 @@ class DataObjectHelperController extends AdminController
                     foreach ($sharedGridConfigs as $sharedConfig) {
                         if ($sharedConfig->getSharedWithUserId() == $this->getAdminUser()->getId()) {
                             $found = true;
+
                             break;
                         }
                     }
@@ -286,6 +287,7 @@ class DataObjectHelperController extends AdminController
     {
         $configId = $request->get('importConfigId');
         $config = null;
+
         try {
             $config = ImportConfig::getById($configId);
         } catch (\Exception $e) {
@@ -315,6 +317,7 @@ class DataObjectHelperController extends AdminController
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = null;
+
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -410,6 +413,7 @@ class DataObjectHelperController extends AdminController
         if (strlen($requestedGridConfigId) == 0 && $class) {
             // check if there is a favourite view
             $favourite = null;
+
             try {
                 try {
                     $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ? $objectId : 0, $searchType);
@@ -437,6 +441,7 @@ class DataObjectHelperController extends AdminController
             }
 
             $savedGridConfig = null;
+
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
@@ -444,6 +449,7 @@ class DataObjectHelperController extends AdminController
 
             if ($savedGridConfig) {
                 $shared = null;
+
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -1384,6 +1390,7 @@ class DataObjectHelperController extends AdminController
                 while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                     if ($count == $rowIndex) {
                         $haveData = true;
+
                         break;
                     }
                     $count++;
@@ -1587,6 +1594,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $importConfig = null;
+
         try {
             $importConfig = ImportConfig::getById($importConfigId);
         } catch (\Exception $e) {

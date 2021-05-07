@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 class DeliveryDate extends AbstractStep implements CheckoutStepInterface
 {
     const INSTANTLY = 'delivery_instantly';
+
     const DATE = 'delivery_date';
 
     /**

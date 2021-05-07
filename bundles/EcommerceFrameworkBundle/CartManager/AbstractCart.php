@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject\Concrete;
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
     const CART_READ_ONLY_MODE_STRICT = 'strict';
+
     const CART_READ_ONLY_MODE_DEACTIVATED = 'deactivated';
 
     /**

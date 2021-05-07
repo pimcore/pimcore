@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Templating;
@@ -93,6 +93,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
         foreach ($this->controllerPatterns as $pattern) {
             if (preg_match($pattern, $className, $tempMatch)) {
                 $matchController = $tempMatch;
+
                 break;
             }
         }
@@ -112,6 +113,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             while ($bundleName = $bundle->getName()) {
                 if (!method_exists($bundle, 'getParent') || (null === $parentBundleName = $bundle->getParent())) {
                     $bundleName = $bundle->getName();
+
                     break;
                 }
                 $bundle = $this->kernel->getBundle($parentBundleName);

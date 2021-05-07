@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
@@ -44,10 +44,13 @@ class RequiredBy extends AbstractOperator
         $typeCondition = '';
         switch ($this->getElementType()) {
             case 'document': $typeCondition = " AND sourcetype = 'document'";
+
                 break;
             case 'asset': $typeCondition = " AND sourcetype = 'asset'";
+
                 break;
             case 'object': $typeCondition = " AND sourcetype = 'object'";
+
                 break;
         }
 

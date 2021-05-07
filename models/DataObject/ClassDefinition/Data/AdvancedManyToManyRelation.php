@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -140,6 +140,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     if (!in_array($destinationId, $existingTargets[$destinationType])) {
                         // destination object does not exist anymore
                         $list['dirty'] = true;
+
                         continue;
                     }
 
@@ -292,6 +293,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
                 if (!isset($existingTargets[$targetType]) || !isset($existingTargets[$targetType][$targetId])) {
                     Logger::error('element ' . $targetType . ' ' . $targetId . ' does not exist anymore');
+
                     continue;
                 }
 

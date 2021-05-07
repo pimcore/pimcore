@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -75,6 +75,7 @@ class SettingsController extends AdminController
                 try {
                     $mime = Tool\Mime::detect($customLogoFile);
                     $logo = $customLogoFile;
+
                     break;
                 } catch (\Exception $e) {
                     // do nothing
@@ -428,6 +429,7 @@ class SettingsController extends AdminController
         $values = $this->decodeJson($request->get('data'));
 
         $existingValues = [];
+
         try {
             $file = Config::locateConfigFile('system.yml');
             $existingValues = Config::getConfigInstance($file, true);
@@ -1790,6 +1792,7 @@ class SettingsController extends AdminController
                                 $element = Element\Service::getElementByPath($setting->getType(), $data['data']);
                                 $data['data'] = $element;
                             }
+
                             break;
                     }
 
@@ -1896,9 +1899,11 @@ class SettingsController extends AdminController
                 if ($element) {
                     $resultItem['data'] = $element->getRealFullPath();
                 }
+
                 break;
             default:
                 $resultItem['data'] = $item->getData();
+
                 break;
         }
 

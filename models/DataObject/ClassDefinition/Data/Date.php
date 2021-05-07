@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -537,7 +537,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function resolveBlockedVars(): array
     {
         $defaultBlockedVars = [
-            'fieldDefinitionsCache'
+            'fieldDefinitionsCache',
         ];
 
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());

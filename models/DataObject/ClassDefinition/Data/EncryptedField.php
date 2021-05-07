@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -154,6 +154,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         if ($data) {
             try {
                 $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+
                 try {
                     $key = Key::loadFromAsciiSafeString($key);
                 } catch (\Exception $e) {
@@ -162,6 +163,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
                         return null;
                     }
+
                     throw new \Exception('could not load key');
                 }
 

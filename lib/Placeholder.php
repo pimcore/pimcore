@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -164,6 +164,7 @@ class Placeholder
                         $placeholderConfig = new \Pimcore\Config\Config($configArray, null);
                     } catch (\Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
+
                         continue;
                     }
                 } else {
@@ -239,6 +240,7 @@ class Placeholder
                     $className = $classPrefix . $placeholder['placeholderClass'];
                     if (Tool::classExists($className)) {
                         $placeholderObject = new $className();
+
                         break;
                     }
                 }

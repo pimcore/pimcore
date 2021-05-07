@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element\Tag;
@@ -53,6 +53,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->beginTransaction();
+
         try {
             $dataAttributes = $this->model->getObjectVars();
 
@@ -85,6 +86,7 @@ class Dao extends Model\Dao\AbstractDao
             return true;
         } catch (\Exception $e) {
             $this->db->rollBack();
+
             throw $e;
         }
     }
@@ -97,6 +99,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->beginTransaction();
+
         try {
             $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
             $this->db->deleteWhere('tags_assignment', $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
@@ -107,6 +110,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->commit();
         } catch (\Exception $e) {
             $this->db->rollBack();
+
             throw $e;
         }
     }
@@ -181,6 +185,7 @@ class Dao extends Model\Dao\AbstractDao
     public function setTagsForElement($cType, $cId, array $tags)
     {
         $this->db->beginTransaction();
+
         try {
             $this->db->delete('tags_assignment', ['ctype' => $cType, 'cid' => $cId]);
 
@@ -191,6 +196,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->commit();
         } catch (\Exception $e) {
             $this->db->rollBack();
+
             throw $e;
         }
     }

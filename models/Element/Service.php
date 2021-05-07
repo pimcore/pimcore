@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element;
@@ -349,10 +349,12 @@ class Service extends Model\AbstractModel
                     case 'document':
                         $idColumn = 'id';
                         $publishedColumn = 'published';
+
                         break;
                     case 'object':
                         $idColumn = 'o_id';
                         $publishedColumn = 'o_published';
+
                         break;
                     default:
                         throw new \Exception('unknown type');
@@ -661,6 +663,7 @@ class Service extends Model\AbstractModel
                  */
                 if ($child->getId() == $new->getId()) {
                     $found = true;
+
                     break;
                 }
             }

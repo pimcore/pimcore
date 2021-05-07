@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -97,6 +97,7 @@ final class VersionsCleanupTask implements TaskInterface
                     if (!$version = Version::getById($id)) {
                         $ignoredIds[] = $id;
                         $this->logger->debug('Version with ' . $id . " not found\n");
+
                         continue;
                     }
 
@@ -105,12 +106,14 @@ final class VersionsCleanupTask implements TaskInterface
                     // do not delete public versions
                     if ($version->getPublic()) {
                         $ignoredIds[] = $version->getId();
+
                         continue;
                     }
 
                     // do not delete versions referenced in the scheduler
                     if ($dao->isVersionUsedInScheduler($version)) {
                         $ignoredIds[] = $version->getId();
+
                         continue;
                     }
 

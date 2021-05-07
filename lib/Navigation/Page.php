@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -208,6 +208,7 @@ abstract class Page extends Container
                 switch (strtolower($type)) {
                     case 'uri':
                         $type = '\Pimcore\Navigation\Page\Url';
+
                         break;
                 }
 

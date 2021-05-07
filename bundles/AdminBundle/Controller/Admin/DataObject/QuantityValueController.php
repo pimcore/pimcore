@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -220,6 +220,7 @@ class QuantityValueController extends AdminController
 
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
+
         try {
             $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
         } catch (\Exception $e) {

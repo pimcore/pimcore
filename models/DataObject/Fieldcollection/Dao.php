@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
@@ -223,6 +223,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($items as $item) {
                     if ($item->hasDirtyFields()) {
                         $this->model->markFieldDirty('_self');
+
                         break;
                     }
                 }
