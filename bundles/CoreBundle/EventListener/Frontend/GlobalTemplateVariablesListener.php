@@ -84,13 +84,16 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         }
 
         $globals = $this->twig->getGlobals();
-        array_push($this->globalsStack, $globals);
 
-        $document = $this->documentResolver->getDocument($request);
-        $editmode = $this->editmodeResolver->isEditmode($request);
-
-        $this->twig->addGlobal('document', $document);
-        $this->twig->addGlobal('editmode', $editmode);
+        try {
+            // it could be the case that the Twig environment is already initialized at this point
+            // then it's not possible anymore to add globals
+            $this->twig->addGlobal('document', $this->documentResolver->getDocument($request));
+            $this->twig->addGlobal('editmode', $this->editmodeResolver->isEditmode($request));
+            array_push($this->globalsStack, $globals);
+        } catch (\Exception $e) {
+            array_push($this->globalsStack, false);
+        }
     }
 
     /**
@@ -100,8 +103,10 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     {
         if (count($this->globalsStack)) {
             $globals = array_pop($this->globalsStack);
-            $this->twig->addGlobal('document', $globals['document'] ?? null);
-            $this->twig->addGlobal('editmode', $globals['editmode'] ?? null);
+            if ($globals !== false) {
+                $this->twig->addGlobal('document', $globals['document'] ?? null);
+                $this->twig->addGlobal('editmode', $globals['editmode'] ?? null);
+            }
         }
     }
 }
