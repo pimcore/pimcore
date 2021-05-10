@@ -546,7 +546,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $paginator = $paginator->paginate(
             $tokens,
             $params['page'] ?? 1,
-            $params['tokensPerPage'] ? (int)$params['tokensPerPage'] : 25
+            isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
         );
 
         $viewParamsBag['paginator'] = $paginator;
