@@ -20,7 +20,7 @@ trait Relation
     /**
      * @internal
      *
-     * @param bool|false $asArray
+     * @param bool $asArray
      *
      * @return string[]
      */
