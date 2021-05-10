@@ -695,10 +695,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                     foreach ($fieldDefinition as $fd) {
                         if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
-                            if (!$fd instanceof Localizedfields) {
-                                // defer creation
-                                $fd->classSaved($class);
-                            }
+                            // defer creation
+                            $fd->classSaved($class);
                         }
                     }
 
