@@ -163,10 +163,7 @@ class Manager
         $this->workflows[$workflowName] = new WorkflowConfig($workflowName, $options);
 
         uasort($this->workflows, function (WorkflowConfig $a, WorkflowConfig $b) {
-            if ($a->getPriority() == $b->getPriority()) {
-                return 0;
-            }
-            return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
+            return $b->getPriority() <=> $a->getPriority();
         });
     }
 
