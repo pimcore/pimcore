@@ -77,7 +77,7 @@ services:
         class: 'Aws\S3\S3Client'
         arguments:
             -  endpoint: 'https://s3.eu-central-1.amazonaws.com'
-               region: 'eu-central-1',
+               region: 'eu-central-1'
                version: 'latest'
                credentials:
                    key: '%env(S3_STORAGE_KEY)%'
