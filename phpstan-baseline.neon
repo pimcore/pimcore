@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to an undefined static method \\\\Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:getById\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/EmailController.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: bundles/CoreBundle/Command/Bundle/ListCommand.php
