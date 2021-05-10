@@ -261,7 +261,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
             // apply pricing rules
             $this->appliedPricingRules = $this->getPricingManager()->applyCartRules($this->cart);
 
-            //check if some pricing rule needs recalculation of sums
+            // @phpstan-ignore-next-line check if some pricing rule needs recalculation of sums
             if (!$this->isCalculated) {
                 $this->calculate(true);
             }

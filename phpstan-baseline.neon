@@ -18,16 +18,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceCalculator.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php
 
 		-
@@ -71,11 +61,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/IndexUpdateService.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Interpreter/DefaultClassificationStore.php
-
-		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
@@ -102,22 +87,7 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractSetProductEntry.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractSetProductEntry.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractVoucherSeries.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 3
+			count: 2
 			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
 
 		-
@@ -129,11 +99,6 @@ parameters:
 			message: "#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -149,11 +114,6 @@ parameters:
 			message: "#^Right side of && is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/TargetGroup.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/PricingManager.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -204,11 +164,6 @@ parameters:
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 2
 			path: lib/Mail.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
-			path: lib/Navigation/Renderer/AbstractRenderer.php
 
 		-
 			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"

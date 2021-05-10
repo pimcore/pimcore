@@ -26,22 +26,20 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
     abstract public function getTokenSettings();
 
     /**
-     * @return bool|TokenManagerInterface
-     *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @return TokenManagerInterface|null
      */
     public function getTokenManager()
     {
         $items = $this->getTokenSettings();
-        if ($items && $items->get(0)) {
 
+        if ($items->get(0)) {
             // name of fieldcollection class
             $configuration = $items->get(0);
 
             return Factory::getInstance()->getTokenManager($configuration);
         }
 
-        return false;
+        return null;
     }
 
     /**

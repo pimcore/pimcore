@@ -122,12 +122,12 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * @var float|null
      */
-    protected $conditionPriceFrom = null;
+    protected $conditionPriceFrom;
 
     /**
      * @var float|null
      */
-    protected $conditionPriceTo = null;
+    protected $conditionPriceTo;
 
     /**
      * @var array
