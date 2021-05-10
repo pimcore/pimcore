@@ -23,27 +23,32 @@ class DefaultClassificationStore implements InterpreterInterface
      * @param Classificationstore|null $value
      * @param array|null $config
      *
-     * @return array|void
+     * @return array|null
      *
      * @throws \Exception
      */
     public function interpret($value, $config = null)
     {
         if (!$value instanceof Classificationstore) {
-            return;
+            return null;
         }
 
-        $data = [];
+        $data = [
+            'values' => [],
+            'keys' => [],
+        ];
+
         foreach ($this->getAllKeysFromStore($value) as $groupId => $groupItem) {
             foreach ($groupItem as $keyId => $item) {
+                if (!isset($data['values'][$keyId])) {
+                    $data['values'][$keyId] = [];
+                }
                 $data['values'][$keyId][] = (string) $value->getLocalizedKeyValue($groupId, $keyId, 'en');
                 $data['keys'][$keyId] = $keyId;
             }
         }
 
-        if ($data['keys']) {
-            $data['keys'] = array_values($data['keys']);
-        }
+        $data['keys'] = array_values($data['keys']);
 
         return $data;
     }
@@ -80,8 +85,8 @@ class DefaultClassificationStore implements InterpreterInterface
             }
 
             return $items;
-        } else {
-            return $store->getItems();
         }
+
+        return $store->getItems();
     }
 }

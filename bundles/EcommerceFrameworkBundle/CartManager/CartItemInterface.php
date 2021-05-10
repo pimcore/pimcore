@@ -27,9 +27,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 interface CartItemInterface
 {
     /**
-     * @return CheckoutableInterface
+     * @return CheckoutableInterface|null
      */
     public function getProduct();
+
+    /**
+     * @return int|null
+     */
+    public function getProductId();
 
     /**
      * @return int

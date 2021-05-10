@@ -233,7 +233,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         //load items first in order to lazyload items (if they are lazy loaded)
         $this->getItems();
 
-        if ($this->items[$itemKey]) {
+        if (!empty($this->items[$itemKey])) {
             $this->items[$itemKey]->setCount($count);
         }
 

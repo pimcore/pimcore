@@ -57,6 +57,9 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function cleanupReservations($duration = 0, $seriesId = null)
     {
         return Reservation::cleanUpReservations($duration, $seriesId);

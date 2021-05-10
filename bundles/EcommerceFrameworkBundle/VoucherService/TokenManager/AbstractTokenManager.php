@@ -287,11 +287,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     abstract public function getFinalTokenLength();
 
     /**
-     * @param int $duration
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    abstract public function cleanUpReservations($duration = 0);
+    abstract public function cleanUpReservations($duration = 0, $seriesId = null);
 
     /**
      * @param array $viewParamsBag

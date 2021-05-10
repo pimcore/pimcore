@@ -78,7 +78,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function setCount($count, bool $fireModified = true)
     {
-        if ($this->count != $count && $this->getCart() && !$this->isLoading && $fireModified) {
+        if ($this->count !== $count && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
         $this->count = $count;
@@ -95,7 +95,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setProduct(CheckoutableInterface $product, bool $fireModified = true)
     {
-        if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading && $fireModified) {
+        if ($this->productId !== $product->getId() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
         $this->product = $product;
@@ -103,7 +103,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return CheckoutableInterface
+     * @return CheckoutableInterface|null
      */
     public function getProduct()
     {
@@ -156,15 +156,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getProductId()
     {
-        if (!is_null($this->productId)) {
-            return $this->productId;
-        }
-
-        return $this->getProduct()->getId();
+        return $this->productId;
     }
 
     /**
@@ -172,7 +168,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setProductId($productId)
     {
-        if ($this->productId != $productId && $this->getCart() && !$this->isLoading) {
+        if ($this->productId !== $productId && !$this->isLoading) {
             $this->getCart()->modified();
         }
         $this->productId = $productId;
@@ -218,7 +214,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setSubItems($subItems)
     {
-        if ($this->getCart() && !$this->isLoading) {
+        if (!$this->isLoading) {
             $this->getCart()->modified();
         }
 
