@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Logger;
 use Pimcore\Mail;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -167,7 +168,7 @@ class EmailController extends AdminController
     {
         if (!empty($data['objectClass'])) {
             $class = '\\' . ltrim($data['objectClass'], '\\');
-            if (!empty($data['objectId']) && is_subclass_of($class, '\\Pimcore\\Model\\Element\\ElementInterface')) {
+            if (!empty($data['objectId']) && is_subclass_of($class, ElementInterface::class)) {
                 $obj = $class::getById($data['objectId']);
                 if (is_null($obj)) {
                     $data['objectPath'] = '';
@@ -524,7 +525,7 @@ class EmailController extends AdminController
         $data = null;
         if ($params['data']['type'] === 'object') {
             $class = '\\' . ltrim($params['data']['objectClass'], '\\');
-            if (!empty($params['data']['objectId']) && is_subclass_of($class, '\\Pimcore\\Model\\Element\\ElementInterface')) {
+            if (!empty($params['data']['objectId']) && is_subclass_of($class, ElementInterface::class)) {
                 $obj = $class::getById($params['data']['objectId']);
                 if (!is_null($obj)) {
                     $data = $obj;
