@@ -164,7 +164,6 @@
     ]
   },
   "extra": {
-    "symfony-app-dir": "app",
     "symfony-bin-dir": "bin",
     "symfony-var-dir": "var",
     "symfony-web-dir": "public",

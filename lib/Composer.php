@@ -27,7 +27,6 @@ use Symfony\Component\Process\Process;
 class Composer
 {
     protected static $options = [
-        'symfony-app-dir' => 'app',
         'symfony-web-dir' => 'public',
         'symfony-assets-install' => 'hard',
         'symfony-cache-warmup' => false,
@@ -252,11 +251,7 @@ class Composer
             return $options['symfony-bin-dir'];
         }
 
-        if (!static::hasDirectory($event, 'symfony-app-dir', $options['symfony-app-dir'], 'execute command')) {
-            return;
-        }
-
-        return $options['symfony-app-dir'];
+        return;
     }
 
     protected static function hasDirectory(Event $event, $configName, $path, $actionName)
