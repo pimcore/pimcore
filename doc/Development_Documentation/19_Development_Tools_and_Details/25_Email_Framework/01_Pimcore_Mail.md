@@ -41,8 +41,6 @@ to the html with a `<style>` tag because the image paths are also normalised.
 | getSubjectRendered()              | Renders the content as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
 | getBodyHtmlRendered()             | Renders the content as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
 | getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
-| setHtml2TextOptions($options)     | set options for html2text (only for binary version)                                                                                                                                                        |
-
 
 ## Usage Example
 
