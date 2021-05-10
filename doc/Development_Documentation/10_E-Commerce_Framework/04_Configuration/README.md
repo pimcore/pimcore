@@ -4,7 +4,7 @@ The E-Commerce Framework is implemented as semantic bundle configuration which m
 in any of the loaded config files (e.g. `/config/config.yaml` or `*Bundle/Resources/config/pimcore/config.yml`) by
 adding configuration to the `pimcore_ecommerce_framework` node.
 
-The configuration is built upon the [Symfony Config Component](https://symfony.com/doc/3.4/components/config.html) and
+The configuration is built upon the [Symfony Config Component](https://symfony.com/doc/5.2/components/config.html) and
 defines a well-known configuration tree which is validated against a defined configuration structure. While configuring
 the framework you'll get instant feedback on configuration errors. As Pimcore defines a standard configuration for the 
 E-Commerce Framework, your custom configuration will be merged into the standard configuration. You can dump the final
@@ -15,7 +15,7 @@ E-Commerce Framework, your custom configuration will be merged into the standard
 A reference of available configuration entries can be found on [PimcoreEcommerceFrameworkBundle Configuration Reference](./01_PimcoreEcommerceFrameworkBundle_Configuration_Reference.md).
 
 As the E-Commerce Framework makes heavy use of Symfony service definitions and you'll need to reference IDs of custom
-services in the configuration it's advised that you are comfortable to work with [Symfony's Service Container](https://symfony.com/doc/3.4/service_container.html#creating-configuring-services-in-the-container]). 
+services in the configuration it's advised that you are comfortable to work with [Symfony's Service Container](https://symfony.com/doc/5.2/service_container.html#creating-configuring-services-in-the-container]). 
 
 ## Tenant support and `_defaults` sections
 
@@ -130,7 +130,7 @@ pimcore_ecommerce_framework:
 As you can see we define 2 tenants `default` and `b2b` with the same order manager ID but with different options for
 each tenant. In this case it's not possible to just alias the default or the b2b order manager to the given service ID as
 we need multiple order manager instances based on this service definition. In this case the framework takes the configured
-service ID as *template* to configure 2 independent child services by utilizing the configured service id as [parent service](https://symfony.com/doc/3.4/service_container/parent_services.html).
+service ID as *template* to configure 2 independent child services by utilizing the configured service id as [parent service](https://symfony.com/doc/5.2/service_container/parent_services.html).
 
 This means, that when you request the `Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager` service from the
 container, it would be neither the default nor the b2b tenant. In fact, getting that service directly wouldn't work anyways

@@ -2,7 +2,7 @@
 
 Pimcore applications can be tested with any PHP testing solution, but this page demonstrates 2 viable approaches:
 
-1. [Symfony's default testing setup](https://symfony.com/doc/3.4/testing.html) with PHPUnit
+1. [Symfony's default testing setup](https://symfony.com/doc/5.2/testing.html) with PHPUnit
 2. [Codeception](https://codeception.com/) (which is based on PHPUnit) for more advanced features like Selenium testing by using Codeception's module system
 
 In general it's recommended to start with the first approach as it is simpler to set up and to get started with testing. Note, however, that the PHPUnit setup does not include any out-of-the-box solution how to prepare your application for tests (e.g. how to make sure you are always testing with the same reproducible data set), so that's up to you. You could prepare test data in your bootstrap file or run some script before you start the test suite.
@@ -12,7 +12,7 @@ In addition to Codeception's general features, Pimcore's Codeception modules pro
 ## PHPUnit
 
 As Pimcore is a standard Symfony application, you can use Symfony's PHPUnit testing setup exactly as described in
-[Symfony's Testing Documentation](https://symfony.com/doc/3.4/testing.html). All you need to do is to create a custom
+[Symfony's Testing Documentation](https://symfony.com/doc/5.2/testing.html). All you need to do is to create a custom
 bootstrap file to ensure the Pimcore startup process has everything it needs. Start by adding Symfony's PHPUnit bridge
 to your project:
 
@@ -249,7 +249,7 @@ Time: 2.69 seconds, Memory: 36.00MB
 OK (10 tests, 15 assertions)
 ```
 
-For more information you can follow [Symfony's Testing Documentation](https://symfony.com/doc/3.4/testing.html). Just keep
+For more information you can follow [Symfony's Testing Documentation](https://symfony.com/doc/5.2/testing.html). Just keep
 in mind to make sure Pimcore is properly bootstrapped before tests are run.
 
 
