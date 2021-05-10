@@ -33,7 +33,7 @@ You can restrict the access to certain perspectives via the user settings.
 
 ## The Configuration File
 
-Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/master/config/pimcore/perspectives.example.php) 
+Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/10.x/config/pimcore/perspectives.example.php) 
 for further details on how this can be set up.
 
 You can find out there how the default view is prepared and how to add a special perspective.
@@ -55,7 +55,7 @@ The table below, describes the most useful of available options in the configura
 
 ## Simple example
 
-In the [Example File](https://github.com/pimcore/skeleton/blob/master/config/pimcore/perspectives.example.php) you 
+In the [Example File](https://github.com/pimcore/skeleton/blob/10.x/config/pimcore/perspectives.example.php) you 
 can find advance usage. Below, I showed how to create the simple structure which would be use for catalog administrators.
 
 We need only to see 

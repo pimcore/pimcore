@@ -51,7 +51,7 @@ at AWS S3), you have multiple ways to do so:
 
 
 The [Pimcore Skeleton](https://github.com/pimcore/skeleton) repository contains an example file,
-[`constants.example.php`](https://github.com/pimcore/skeleton/blob/master/config/pimcore/constants.example.php).
+[`constants.example.php`](https://github.com/pimcore/skeleton/blob/10.x/config/pimcore/constants.example.php).
 The following file is an example of how you can overwrite some paths:
 
 ```php

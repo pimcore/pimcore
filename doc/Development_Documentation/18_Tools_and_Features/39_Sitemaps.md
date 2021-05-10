@@ -230,7 +230,7 @@ and processors. For example, the `DocumentTreeProcessor` uses the context to def
 In the example above, the URL is created by using a [Link Generator](../05_Objects/01_Object_Classes/05_Class_Settings/30_Link_Generator.md).
 
 > It's important that your link generator is able to generate an absolute URL for the given object. Above is only an example, but
-  you can have a look at the [demo](https://github.com/pimcore/demo/tree/master/src/)
+  you can have a look at the [demo](https://github.com/pimcore/demo/tree/10.x/src/)
   for a working example building sitemap entries for News objects.
 
 After creating the generator, register it as service and add it to the config. Use filters and processors to reuse already
