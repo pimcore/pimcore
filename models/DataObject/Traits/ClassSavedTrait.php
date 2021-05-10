@@ -23,13 +23,21 @@ use Pimcore\Model\DataObject\ClassDefinition;
  */
 trait ClassSavedTrait
 {
-    /** {@inheritdoc } */
+    /**
+     * @param mixed $containerDefinition
+     * @param array $params
+     * @return mixed
+     */
     public function preSave($containerDefinition, $params = [])
     {
         // nothing to do
     }
 
-    /** {@inheritdoc } */
+    /**
+     * @param mixed $containerDefinition
+     * @param array $params
+     * @return mixed
+     */
     public function postSave($containerDefinition, $params = [])
     {
         if ($containerDefinition instanceof ClassDefinition) {
