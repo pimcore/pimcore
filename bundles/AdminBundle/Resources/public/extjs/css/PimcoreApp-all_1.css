@@ -11562,7 +11562,7 @@ body > .x-mask {
     width: 16px;
     height: 16px;
     margin: 0 5px;
-    background: url(../images/form/exclamation.png) no-repeat;
+    background: url(../../img/icon/exclamation.png) no-repeat;
 }
 
 .x-form-invalid-under-default {
@@ -11570,7 +11570,7 @@ body > .x-mask {
     color: #cf4c35;
     font: 300 13px/16px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
     background: no-repeat 0 2px;
-    background-image: url(../images/form/exclamation.png);
+    background-image: url(../../img/icon/exclamation.png);
 }
 
 .x-form-error-wrap-default.x-form-error-wrap-side {
@@ -12846,7 +12846,7 @@ a.x-monthpicker-yearnav-button:hover {
 
 .x-tip-body-form-invalid {
     background: 1px 1px no-repeat;
-    background-image: url(../images/form/exclamation.png);
+    background-image: url(../../img/icon/exclamation.png);
 }
 
 .x-tip-body-form-invalid li {
