@@ -10,8 +10,8 @@ information can be found in the [Symfony Docs](https://symfony.com/doc/current/c
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* <https://github.com/pimcore/demo/tree/master/config/pimcore> 
-* <https://github.com/pimcore/demo/tree/master/var/config>
+* <https://github.com/pimcore/demo/tree/10.x/config/pimcore> 
+* <https://github.com/pimcore/demo/tree/10.x/var/config>
 
 The environment specific config file has priority over the default config, so if your 
 current environment is `dev` Pimcore first checks if e.g. `var/config/image-thumbnails_dev.php`
