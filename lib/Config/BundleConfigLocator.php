@@ -102,7 +102,7 @@ class BundleConfigLocator
         $finder = new Finder();
         $finder->in($directory);
 
-        foreach (['php', 'yml', 'xml'] as $extension) {
+        foreach (['php', 'yml', 'yaml', 'xml'] as $extension) {
             $finder->name(sprintf('%s.%s', $name, $extension));
         }
 
