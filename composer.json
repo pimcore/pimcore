@@ -163,13 +163,6 @@
       "Pimcore\\Composer::installAssets"
     ]
   },
-  "extra": {
-    "symfony-bin-dir": "bin",
-    "symfony-var-dir": "var",
-    "symfony-web-dir": "public",
-    "symfony-tests-dir": "tests",
-    "symfony-assets-install": "relative"
-  },
   "bin": ["bin/pimcore-install"],
   "config": {
     "preferred-install": {
