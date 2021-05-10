@@ -163,17 +163,6 @@
       "Pimcore\\Composer::installAssets"
     ]
   },
-  "extra": {
-    "symfony-app-dir": "app",
-    "symfony-bin-dir": "bin",
-    "symfony-var-dir": "var",
-    "symfony-web-dir": "public",
-    "symfony-tests-dir": "tests",
-    "symfony-assets-install": "relative",
-    "branch-alias": {
-      "dev-master": "10.0-dev"
-    }
-  },
   "bin": ["bin/pimcore-install"],
   "config": {
     "preferred-install": {

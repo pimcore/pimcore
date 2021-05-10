@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -406,11 +406,11 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
             }
         }
 
-        $itemRules = array_filter($itemRules, function(RuleInterface $rule) {
+        $itemRules = array_filter($itemRules, function (RuleInterface $rule) {
             return $rule->hasProductActions();
         });
 
-        $cartRules = array_filter($this->appliedPricingRules, function(RuleInterface $rule) {
+        $cartRules = array_filter($this->appliedPricingRules, function (RuleInterface $rule) {
             return $rule->hasCartActions();
         });
 

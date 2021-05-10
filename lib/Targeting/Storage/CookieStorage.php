@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Targeting\Storage;
@@ -36,9 +36,11 @@ class CookieStorage implements TargetingStorageInterface
     use TimestampsTrait;
 
     const COOKIE_NAME_SESSION = '_pc_tss'; // tss = targeting session storage
+
     const COOKIE_NAME_VISITOR = '_pc_tvs'; // tvs = targeting visitor storage
 
     const STORAGE_KEY_CREATED_AT = '_c';
+
     const STORAGE_KEY_UPDATED_AT = '_u';
 
     /**

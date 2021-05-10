@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Element;
@@ -333,10 +333,12 @@ class Service extends Model\AbstractModel
                     case 'document':
                         $idColumn = 'id';
                         $publishedColumn = 'published';
+
                         break;
                     case 'object':
                         $idColumn = 'o_id';
                         $publishedColumn = 'o_published';
+
                         break;
                     default:
                         throw new \Exception('unknown type');
@@ -425,6 +427,7 @@ class Service extends Model\AbstractModel
      * @param string $type
      * @param string $sourceKey
      * @param ElementInterface $target
+     *
      * @return string
      */
     public static function getSaveCopyName($type, $sourceKey, $target)
@@ -659,6 +662,7 @@ class Service extends Model\AbstractModel
              */
             if ($child->getId() == $new->getId()) {
                 $found = true;
+
                 break;
             }
         }
@@ -960,18 +964,22 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-                $fromAlias = $select->getQueryPart('form')[1];
+                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
                         $method = $type == 'left' || $type == 'right' ? $method = $type . 'Join' : 'join';
-                        $name = $joinConfig['name'];
+
+                        $joinAlias = array_keys($joinConfig['name']);
+                        $joinAlias = reset($joinAlias);
+                        $joinTable = $joinConfig['name'][$joinAlias];
+
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
                         $select->addSelect($columns);
-                        $select->$method($fromAlias, $name, $name, $condition);
+                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }
 

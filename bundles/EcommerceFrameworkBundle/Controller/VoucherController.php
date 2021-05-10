@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class VoucherController
@@ -36,6 +37,15 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services['translator'] = TranslatorInterface::class;
+        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
+
+        return $services;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -114,6 +124,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
                 $result = $tokenManager->exportCsv($request->query->all());
                 $contentType = 'text/csv';
                 $suffix = 'csv';
+
                 break;
 
             case ExportableTokenManagerInterface::FORMAT_PLAIN:
@@ -121,6 +132,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
                 $contentType = 'text/plain';
                 $suffix = 'txt';
                 $download = false;
+
                 break;
 
             default:

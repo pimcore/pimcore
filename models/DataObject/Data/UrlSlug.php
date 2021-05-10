@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -337,6 +337,7 @@ class UrlSlug implements OwnerAwareFieldInterface
 
         $slug = null;
         $db = Db::get();
+
         try {
             $query = sprintf(
                 'SELECT * FROM object_url_slugs WHERE slug = %s AND (siteId = %d OR siteId = 0) ORDER BY siteId DESC LIMIT 1',
@@ -399,6 +400,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                                         $lfDef = $brickDef->getFieldDefinition('localizedfields');
                                         if ($lfDef instanceof Localizedfields) {
                                             $fd = $lfDef->getFieldDefinition($this->getFieldname());
+
                                             break;
                                         }
                                     }

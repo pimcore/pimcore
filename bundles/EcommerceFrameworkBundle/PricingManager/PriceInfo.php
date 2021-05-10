@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
@@ -153,7 +153,7 @@ class PriceInfo implements PriceInfoInterface
             $env = $this->getEnvironment();
 
             foreach ($this->getRules() as $rule) {
-                /* @var RuleInterface $rule */
+                // @var RuleInterface $rule
                 $env->setRule($rule);
 
                 // execute rule

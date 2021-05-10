@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -22,11 +22,15 @@ class File
      */
     public static $defaultMode = 0664;
 
-
     /**
      * @var null|resource
      */
     protected static $context = null;
+
+    /**
+     * @var int
+     */
+    private static int $defaultFlags = LOCK_EX;
 
     /**
      * @param string $name
@@ -52,6 +56,7 @@ class File
      * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
      * @internal
+     *
      * @param string $tmpFilename
      * @param string|null $language
      * @param string $replacement
@@ -88,6 +93,14 @@ class File
     }
 
     /**
+     * @param int $defaultFlags
+     */
+    public static function setDefaultFlags(int $defaultFlags): void
+    {
+        self::$defaultFlags = $defaultFlags;
+    }
+
+    /**
      * @param string $path
      * @param mixed $data
      *
@@ -99,7 +112,7 @@ class File
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents($path, $data, null, self::getContext());
+        $return = file_put_contents($path, $data, self::$defaultFlags, self::getContext());
         @chmod($path, self::$defaultMode);
 
         return $return;
@@ -107,6 +120,7 @@ class File
 
     /**
      * @internal
+     *
      * @param string $path
      * @param string $data
      *
@@ -158,6 +172,7 @@ class File
                     if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
                         // the directory was not created by either this or a concurrent process ...
                         $return = false;
+
                         break;
                     }
                 }

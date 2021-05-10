@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Http\Response;
@@ -24,10 +24,13 @@ use Symfony\Component\HttpFoundation\Response;
 class CodeInjector
 {
     public const SELECTOR_BODY = 'body';
+
     public const SELECTOR_HEAD = 'head';
 
     public const POSITION_BEGINNING = 'beginning';
+
     public const POSITION_END = 'end';
+
     public const REPLACE = 'replace';
 
     private static $presetSelectors = [
@@ -78,11 +81,13 @@ class CodeInjector
 
     /**
      * @internal
+     *
      * @param string $html
      * @param string $code
      * @param string $selector
      * @param string $position
      * @param string $charset
+     *
      * @return string
      */
     public function injectIntoHtml(string $html, string $code, string $selector, string $position, string $charset = 'UTF-8'): string

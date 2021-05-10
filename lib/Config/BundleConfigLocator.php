@@ -12,7 +12,7 @@ declare(strict_types = 1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Config;
@@ -102,7 +102,7 @@ class BundleConfigLocator
         $finder = new Finder();
         $finder->in($directory);
 
-        foreach (['php', 'yml', 'xml'] as $extension) {
+        foreach (['php', 'yml', 'yaml', 'xml'] as $extension) {
             $finder->name(sprintf('%s.%s', $name, $extension));
         }
 

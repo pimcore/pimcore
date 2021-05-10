@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Image\Adapter;
@@ -412,6 +412,7 @@ class Imagick extends Adapter
 
     /**
      * @internal
+     *
      * @param string $CMYKColorProfile
      */
     public static function setCMYKColorProfile($CMYKColorProfile)
@@ -421,6 +422,7 @@ class Imagick extends Adapter
 
     /**
      * @internal
+     *
      * @return string
      */
     public static function getCMYKColorProfile()
@@ -441,6 +443,7 @@ class Imagick extends Adapter
 
     /**
      * @internal
+     *
      * @param string $RGBColorProfile
      */
     public static function setRGBColorProfile($RGBColorProfile)
@@ -450,6 +453,7 @@ class Imagick extends Adapter
 
     /**
      * @internal
+     *
      * @return string
      */
     public static function getRGBColorProfile()

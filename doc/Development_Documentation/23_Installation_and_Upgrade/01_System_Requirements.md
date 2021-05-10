@@ -3,8 +3,8 @@
 For production, we highly recommend a *nix based system.
 
 > Also have a look at our official [Docker images](https://hub.docker.com/r/pimcore/pimcore) and the
-> docker-compose files in our [skeleton](https://github.com/pimcore/skeleton/blob/master/docker-compose.yml) 
-> and [demo application](https://github.com/pimcore/demo/blob/master/docker-compose.yml).  
+> docker-compose files in our [skeleton](https://github.com/pimcore/skeleton/blob/10.x/docker-compose.yml) 
+> and [demo application](https://github.com/pimcore/demo/blob/10.x/docker-compose.yml).  
 
 
 ### Webserver 

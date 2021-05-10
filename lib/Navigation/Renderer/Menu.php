@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 /**
@@ -1029,6 +1029,7 @@ class Menu extends AbstractRenderer
 
         if (empty($partial)) {
             $e = new \Exception('Unable to render menu: No partial view script provided');
+
             throw $e;
         }
 

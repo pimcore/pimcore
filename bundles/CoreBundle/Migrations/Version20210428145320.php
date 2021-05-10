@@ -11,8 +11,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -32,11 +32,11 @@ final class Version20210428145320 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE `documents_page` CHANGE `prettyUrl` `prettyUrl` varchar(255) NULL AFTER `metaData`;");
+        $this->addSql('ALTER TABLE `documents_page` CHANGE `prettyUrl` `prettyUrl` varchar(255) NULL AFTER `metaData`;');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE `documents_page` CHANGE `prettyUrl` `prettyUrl` varchar(190) NULL AFTER `metaData`;");
+        $this->addSql('ALTER TABLE `documents_page` CHANGE `prettyUrl` `prettyUrl` varchar(190) NULL AFTER `metaData`;');
     }
 }

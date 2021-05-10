@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
@@ -54,6 +54,7 @@ class NumberRangeSelection extends AbstractFilterType
                 foreach ($ranges->getData() as $row) {
                     if ((empty($row['from']) || ((float)$row['from'] <= $value)) && (empty($row['to']) || (float)$row['to'] > $value)) {
                         $counts[$row['from'] . '_' . $row['to']] += $groupByValue['count'];
+
                         break;
                     }
                 }

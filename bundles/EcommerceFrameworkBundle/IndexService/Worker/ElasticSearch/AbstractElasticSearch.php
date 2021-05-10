@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
@@ -41,6 +41,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     const REINDEXING_LOCK_KEY = 'elasticsearch_reindexing_lock';
 
     const DEFAULT_TIMEOUT_MS_FRONTEND = 20000; // 20 seconds
+
     const DEFAULT_TIMEOUT_MS_BACKEND =  120000; // 2 minutes
 
     /**
@@ -208,9 +209,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $builder->setConnectionParams([
                 'client' => [
                     'curl' => [
-                        CURLOPT_TIMEOUT_MS => $timeoutMs
-                    ]
-                ]
+                        CURLOPT_TIMEOUT_MS => $timeoutMs,
+                    ],
+                ],
             ]);
 
             $this->elasticSearchClient = $builder->build();
@@ -727,6 +728,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     public function fetchEsActiveIndex(): ?string
     {
         $esClient = $this->getElasticSearchClient();
+
         try {
             $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
         } catch (\Exception $e) {

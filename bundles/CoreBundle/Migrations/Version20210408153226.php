@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -32,7 +32,7 @@ class Version20210408153226 extends AbstractMigration
     {
         $versionsTable = $schema->getTable('versions');
 
-        if(!$versionsTable->hasColumn('autoSave')) {
+        if (!$versionsTable->hasColumn('autoSave')) {
             $this->addSql('ALTER TABLE `versions` ADD `autoSave` TINYINT(4) NOT NULL DEFAULT 0');
         }
 

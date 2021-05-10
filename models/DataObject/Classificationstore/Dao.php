@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
@@ -194,6 +194,7 @@ class Dao extends Model\Dao\AbstractDao
             $keyConfig = DefinitionCache::get($keyId);
             if (!$keyConfig) {
                 Logger::error('Could not resolve key with ID: ' . $keyId);
+
                 continue;
             }
 

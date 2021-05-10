@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Model\Inheritance;
@@ -283,6 +283,7 @@ class LocalizedFieldTest extends ModelTestCase
         foreach ($validLanguages as $language) {
             if ($language != $groupByLanguage) {
                 $otherLanguage = $language;
+
                 break;
             }
         }

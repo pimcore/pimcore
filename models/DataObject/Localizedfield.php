@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -310,6 +310,15 @@ final class Localizedfield extends Model\AbstractModel implements
             if (Tool::isValidLanguage($locale)) {
                 return $locale;
             }
+
+            if (\Pimcore::inAdmin()) {
+                foreach (Tool::getValidLanguages() as $validLocale) {
+                    if (str_starts_with($validLocale, $locale.'_')) {
+                        return $validLocale;
+                    }
+                }
+            }
+
             throw new \Exception('Not supported language');
         } catch (\Exception $e) {
             return Tool::getDefaultLanguage();

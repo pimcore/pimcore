@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -44,7 +44,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var array
      */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'text'];
+    public $queryColumnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * Type for the column
@@ -53,7 +53,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var array
      */
-    public $columnType = ['images' => 'text', 'hotspots' => 'text'];
+    public $columnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * @internal

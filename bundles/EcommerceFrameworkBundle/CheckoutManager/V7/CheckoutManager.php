@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
@@ -42,6 +42,7 @@ class CheckoutManager implements CheckoutManagerInterface
      * always concatenated with current cart id
      */
     const CURRENT_STEP = 'checkout_current_step';
+
     const FINISHED = 'checkout_finished';
 
     /**
@@ -350,6 +351,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
         // delegate commit order to commit order processor
         $order = null;
+
         try {
             $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         } catch (\Exception $e) {
@@ -373,7 +375,7 @@ class CheckoutManager implements CheckoutManagerInterface
     protected function verifyRecurringPayment(RecurringPaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
     {
 
-        /* @var OrderManager $orderManager */
+        // @var OrderManager $orderManager
         $orderManager = $this->orderManagers->getOrderManager();
 
         if (!$provider->isRecurringPaymentEnabled()) {
@@ -406,7 +408,7 @@ class CheckoutManager implements CheckoutManagerInterface
         //verify recurring payment
         $orderManager = $this->orderManagers->getOrderManager();
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
-        /* @var RecurringPaymentInterface $paymentProvider */
+        // @var RecurringPaymentInterface $paymentProvider
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
         $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 

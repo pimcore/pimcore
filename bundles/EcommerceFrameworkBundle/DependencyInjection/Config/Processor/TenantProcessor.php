@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor;
@@ -47,6 +47,7 @@ class TenantProcessor
             // but can be used for yaml inheritance
             if (preg_match('/^_defaults/i', $tenant)) {
                 unset($config[$tenant]);
+
                 continue;
             }
 

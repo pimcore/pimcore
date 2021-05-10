@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Asset\Thumbnail;
@@ -94,6 +94,7 @@ trait ImageThumbnailTrait
     public function getStream()
     {
         $pathReference = $this->getPathReference();
+
         try {
             return Storage::get($pathReference['type'])->readStream($pathReference['src']);
         } catch (\Exception $e) {
