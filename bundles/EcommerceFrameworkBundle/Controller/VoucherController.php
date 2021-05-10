@@ -45,6 +45,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
 
         return $services;
     }
+
     /**
      * {@inheritdoc}
      */
