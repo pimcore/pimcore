@@ -609,6 +609,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      */
     public function cleanUpReservations($duration = 0, $seriesId = null)
     {
+        // TODO: Also use the $seriesId param
         return Reservation::cleanUpReservations($duration, $this->seriesId);
     }
 

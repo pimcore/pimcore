@@ -66,20 +66,4 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fi
     {
         return '';
     }
-
-    /**
-     * @return Concrete[]
-     */
-    public function getAvailableCategories()
-    {
-        return [];
-    }
-
-    /**
-     * @return Concrete|null
-     */
-    public function getRootCategory()
-    {
-        return null;
-    }
 }
