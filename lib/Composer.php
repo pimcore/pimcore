@@ -248,8 +248,6 @@ class Composer
         }
 
         return $options['bin-dir'];
-
-        return;
     }
 
     protected static function hasDirectory(Event $event, $configName, $path, $actionName)
