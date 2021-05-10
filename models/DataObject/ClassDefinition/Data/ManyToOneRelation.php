@@ -674,7 +674,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getPhpdocReturnType(): ?string
     {
         if ($this->getPhpdocType()) {
-            return '\\' . $this->getPhpdocType() . '|null';
+            return $this->getPhpdocType() . '|null';
         }
 
         return null;
