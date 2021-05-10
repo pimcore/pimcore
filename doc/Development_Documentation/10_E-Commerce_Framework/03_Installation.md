@@ -45,7 +45,7 @@ There are two ways of preparing a Pimcore class for product-usage in the E-Comme
 the parent class functionality or the overriding models functionality of Pimcore 
 (see also [Overriding Models](../20_Extending_Pimcore/03_Overriding_Models.md)).
 
-> If using the abstract class, also have a look at its [implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Model/AbstractProduct.php). 
+> If using the abstract class, also have a look at its [implementation](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/Model/AbstractProduct.php). 
 You might need to override a few methods that cannot be implemented by the abstract class and throw an 
 exception depending on the use case you are using it. 
 
