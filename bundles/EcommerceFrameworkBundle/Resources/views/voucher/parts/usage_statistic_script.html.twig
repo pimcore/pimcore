@@ -44,8 +44,8 @@
                 var tokens = document.getElementById("canvas-token").getContext("2d");
                 var tokenChart = new Chart(tokens, {
                     type: 'pie',
-                    labels: ['{{ 'Used'|trans }}', '{{ 'Free'|trans }}', '{{ 'Reserved'|trans }}'],
                     data: {
+                        labels: ['{{ 'Used'|trans }}', '{{ 'Free'|trans }}', '{{ 'Reserved'|trans }}'],
                         datasets: [{
                             data: [{{ statistics['usageCount'] }}, {{ statistics['freeCount'] }}, {{ statistics['reservedCount'] }}],
                             backgroundColor: [
