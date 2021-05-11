@@ -73,7 +73,7 @@ You can use this functionality for your own application, and also to control the
 careful!).
 
 If you don't need the transactional tagging functionality as used in the core you're free to use a custom cache system as
-[provided by Symfony](https://symfony.com/blog/new-in-symfony-3-1-cache-component) but be aware that custom caches are not 
+[provided by Symfony](https://symfony.com/doc/5.2/components/cache.html) but be aware that custom caches are not 
 integrated with Pimcore's cache clearing functionality.
  
 #### Example of custom usage in an action
