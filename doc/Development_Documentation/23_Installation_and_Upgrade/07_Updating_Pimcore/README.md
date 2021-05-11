@@ -6,7 +6,7 @@ it just makes sense that we're adopting the same backward compatibility promise 
 
 So for further information how you can ensure that your application won’t break completely 
 when upgrading to a newer version of the same major release branch, please have a look at
-https://symfony.com/doc/current/contributing/code/bc.html
+https://symfony.com/doc/5.2/contributing/code/bc.html
 
 The code for the admin user interface (mostly `AdminBundle` but also parts of `EcommerceFrameworkBundle`) is not covered by this promise.
 

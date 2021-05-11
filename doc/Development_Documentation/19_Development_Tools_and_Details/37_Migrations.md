@@ -3,7 +3,7 @@
 A common tasks in evolving applications is the need to migrate data and data structures to a specific format. Common examples
 are adding a new column to a database table or changing data.
 
-To be able to execute migration changes across environments, Pimcore integrates the [Doctrine Migrations Bundle](https://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html)
+To be able to execute migration changes across environments, Pimcore integrates the [Doctrine Migrations Bundle](https://symfony.com/doc/5.2/bundles/DoctrineMigrationsBundle/index.html)
 library which provides a powerful migration framework. 
 
 To create your project or bundle specific migrations you can just follow the official guide linked above. 

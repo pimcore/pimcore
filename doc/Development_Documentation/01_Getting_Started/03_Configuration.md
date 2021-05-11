@@ -93,7 +93,7 @@ bootstrapping (loading the autoloader, parsing constants, ...) is done, but **be
 This gives you the possibility to reconfigure environment settings before they are used and to configure the system for
 your needs. Examples:
 
-* Defining the [Trusted Proxies](http://symfony.com/doc/5.2/deployment/proxies.html) configuration on the `Request` object
+* Defining the [Trusted Proxies](https://symfony.com/doc/5.2/deployment/proxies.html) configuration on the `Request` object
 * Influencing the default [environment handling](../21_Deployment/03_Configuration_Environments.md)
 
 ```php
