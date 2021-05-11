@@ -282,8 +282,8 @@ trait ImageThumbnailTrait
      */
     protected function convertToWebPath(array $pathReference): string
     {
-        $type = $pathReference['type'];
-        $src = $pathReference['src'];
+        $type = $pathReference['type'] ?? null;
+        $src = $pathReference['src'] ?? null;
 
         if ($type === 'data-uri') {
             return $src;
