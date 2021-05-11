@@ -163,7 +163,6 @@
     "element_cannot_be_move_because_it_is_locked": "Заблокированный элемент не может быть перемещен",
     "element_cannot_be_moved": "Элемент не может быть перенесен сюда",
     "no_collections_allowed": "Нет разрешенных наборов",
-    "this_is_a_newer_not_published_version": "Это новая неопубликованная версия",
     "filter_condition": "Условия фильтра",
     "all_types": "Все Типы",
     "audio": "Аудио",
@@ -353,7 +352,6 @@
     "translations_are_not_configured": "Перевод не настроен",
     "read_more_here": "Более подробно об этом",
     "publish_version": "Опубликованная версия",
-    "save_only_new_version": "Только сохранить новую версию",
     "start": "Начало",
     "su": "Вс",
     "mo": "Пн",
@@ -896,7 +894,6 @@
     "batch_remove_selected": "Групповое удаление из выбранных",
     "batch_remove_from": "Удалить данные из всех",
     "batch_remove_selected_from": "Удалить данные из выбранных",
-    "force_picture_html_tag": "Принудительно установить &lt;picture&gt; HTML тег",
     "unit_tooltip": "Альтернативные подсказки единиц измерения",
     "toggle_image_features_visibility": "Переключить видимость Image Feature",
     "detect_image_features": "Определить свойства изображения (Image Features)",
@@ -936,6 +933,12 @@
     "deprecated": "Устаревшeе",
     "version_currently_saved_in_database": "Сохранено в базу, но не опубликовано",
     "deprecated_feature": "<p style='color: orange;'>Устаревшая функциональность. Пожалуйста, используйте вместо: %s</p>",
-    "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html"
+    "edit_as_custom_text": "Редактировать как пользовательский текст",
+    "symfony_translation_link": "Формат перевода: https://symfony.com/doc/current/translation/message_format.html",
+    "no_action_available": "Действий нет",
+    "bricks": "Кирпичи",
+    "draft": "Черновик",
+    "auto_save": "Автосохранение",
+    "save_draft": "Сохранить черновик",
+    "selected_grid_columns": "Выбранные столбцы сетки"
 }
