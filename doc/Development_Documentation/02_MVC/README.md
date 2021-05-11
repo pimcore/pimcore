@@ -13,7 +13,7 @@ If you don't know the MVC pattern please read [this article](http://en.wikipedia
 
 
 The MVC module of Pimcore is built on top of Symfony. If you are new to Symfony you can read about 
-[controllers](http://symfony.com/doc/3.4/controller.html) in the Symfony manual. With this 
+[controllers](https://symfony.com/doc/5.2/controller.html) in the Symfony manual. With this 
 knowledge learning Pimcore will be much easier and faster.
 
 

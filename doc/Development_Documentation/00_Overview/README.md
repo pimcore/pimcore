@@ -54,7 +54,7 @@ print, digital signage, ... there are basically no limits.
 In terms of output to the frontend or custom APIs, Pimcore follows the MVC pattern and is based on the Symfony Framework. 
  If you don't know the MVC pattern please read [this article](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) 
  first.
-If you are new to Symfony you should read the [getting started guide](http://symfony.com/doc/3.4/) of Symfony first. With this 
+If you are new to Symfony you should read the [getting started guide](https://symfony.com/doc/5.2/) of Symfony first. With this 
 knowledge learning Pimcore will be much easier.
 
 In addition to that, Pimcore can also be executed in a headless way and therefore integrated into any environment. 

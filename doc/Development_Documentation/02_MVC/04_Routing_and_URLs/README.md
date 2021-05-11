@@ -8,7 +8,7 @@ Beside the pure technical aspect, (which controller is called) there are several
  URL structure and hierarchy, SEO and multi domain sites that need to be considered in combination with routing.
    
 Knowing how routing works in Pimcore/Symfony is essential to understand how an application can be implemented and how 
- routes actually work. Technically the entire routing process is based on the [Symfony routing](http://symfony.com/doc/3.4/routing.html). 
+ routes actually work. Technically the entire routing process is based on the [Symfony routing](https://symfony.com/doc/5.2/routing.html). 
 In addition to the default routing provided by Symfony (which is of course used as well), Pimcore has some special
 routing capabilities for documents, custom routes, multi-site support and redirects. 
  

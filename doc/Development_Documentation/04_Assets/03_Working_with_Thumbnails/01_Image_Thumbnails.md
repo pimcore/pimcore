@@ -24,9 +24,8 @@ in the configuration above. If you first round the corners this would be perform
 and then the image will get resized, so the rounded corners are also resized which is not intended. 
 
 To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return 
-an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file 
-beginning from the document root, for example: 
-`/var/tmp/image-thumbnails/0/53/thumb__exampleCover/img_0322.jpeg`
+an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example: 
+`/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813.jpg`
 
 This path can then be directly used to display the image in a `<img />` or `<picture`> tag. For example:
 ```php
@@ -45,11 +44,11 @@ Same in Twig:
 ```twig 
 {% set image = pimcore_asset(1234) %}
 
-/* get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp  */
-<img src="{{ image.thumbnail('myThumbnailName')">
+{# get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp #}
+<img src="{{ image.thumbnail('myThumbnailName') }}">
 
-/* preferred alternative - let Pimcore create the whole image tag */
-/* including high-res alternatives (srcset) or media queries, if configured */
+{# preferred alternative - let Pimcore create the whole image tag #}
+{# including high-res alternatives (srcset) or media queries, if configured #}
 {{ image.thumbnail('myThumbnailName').html }}
 ```
 
@@ -159,7 +158,7 @@ echo $thumbnail->getHtml(['imgAttributes' => ["class" => "custom-class"]]);
 $path = $thumbnail->getPath();
  
 // Asset\Image\Thumbnail implements __toString(), so you can still print the path by
-echo $thumbnail; // prints something like /var/tmp/....png
+echo $thumbnail; // prints something like /Car%20Images/....png
 
 // examples for callbacks, etc. for the generated <picture> tag
 $thumbnail->getHtml([
@@ -298,7 +297,7 @@ using the following code
 ```
 this will create the following output: 
 ```php
-<img src="/var/tmp/thumb_6644__contentimages@2x.png" width="250" height="190" />
+<img src="/Car%20Images/ac%20cars/image-thumb__68__contentimages/automotive-car-classic-149813@2x.png" width="250" height="190" />
 ```
 It's also possible to add the high-res dynamically: 
 ```twig
@@ -323,26 +322,24 @@ So again, this feature is only useful in some edge-cases.
 ```
 this generates the followinig ouput: 
 ```php
-/var/tmp/thumb_6644__testimage.png
+/Car%20Images/ac%20cars/image-thumb__68__testThumbnailDefinitionName/automotive-car-classic-149813.jpg
 ```
 
 To get an high-res version of the thumbnail, you can just add `@2x` before the file extension: 
 ```
-/var/tmp/thumb_7865__teaserportal@2x.png
-/var/tmp/thumb_6644__testimage@5x.png
+/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@2x.png
+/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@5x.png
 ``` 
 Using float is possible too:
 ```
-/var/tmp/thumb_123456__teaserportal@3.2x.png
+/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@3.2x.png
 ```
 
 Pimcore will then dynamically generate the thumbnails accordingly. 
 
 ## Media Queries in Thumbnail Configuration
-If your're using media queries in your thumbnail configuration pimcore automatically generates a `<picture>`  tag 
-instead of an `<img>` tag when calling `$asset->getThumbnail("example")->getHtml()`.
-But in some cases it is necessary to get single thumbnails for certain media queries out of the thumbnail object, 
-which is described in the examples below. 
+If your're using media queries in your thumbnail configuration pimcore automatically generates a `<picture>` tag when calling `$asset->getThumbnail("example")->getHtml()`.
+But in some cases it is necessary to get single thumbnails for certain media queries out of the thumbnail object, which is described in the examples below. 
 ```php
 $a = Asset::getById(71);
  

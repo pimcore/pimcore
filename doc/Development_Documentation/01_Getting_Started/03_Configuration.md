@@ -9,7 +9,7 @@ Pimcore's configuration can be found in several places:
 
 ## Symfony Configuration
 
-Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/3.4/bundles/configuration.html)
+Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/5.2/bundles/configuration.html)
 tree defined under the `pimcore` and `pimcore_admin` extension. These values can be changed through config files in `config` (e.g. `config/config.yaml)`).
 
 Pimcore additionally includes a set of standard configuration files which, in contrast to a standard Symfony project, are
@@ -46,7 +46,7 @@ at AWS S3), you have multiple ways to do so:
   already defined.
 * Define an environment variable named after the constant. When defining a constant, Pimcore will look if an env variable
   with the same name is defined and use that instead of the default value.
-* Define an environment variable in a `/.env` file which will be automatically loaded through the [DotEnv](https://symfony.com/doc/3.4/components/dotenv.html)
+* Define an environment variable in a `/.env` file which will be automatically loaded through the [Symfony DotEnv](https://github.com/symfony/dotenv)
   component if it exists. Environment variables defined here will have the same effect as "real" environment variables.
 
 
@@ -93,7 +93,7 @@ bootstrapping (loading the autoloader, parsing constants, ...) is done, but **be
 This gives you the possibility to reconfigure environment settings before they are used and to configure the system for
 your needs. Examples:
 
-* Defining the [Trusted Proxies](http://symfony.com/doc/3.4/deployment/proxies.html) configuration on the `Request` object
+* Defining the [Trusted Proxies](https://symfony.com/doc/5.2/deployment/proxies.html) configuration on the `Request` object
 * Influencing the default [environment handling](../21_Deployment/03_Configuration_Environments.md)
 
 ```php

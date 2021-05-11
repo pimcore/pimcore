@@ -49,9 +49,9 @@ class App extends AbstractPimcoreBundle
 
 A common tasks in evolving bundles is to update an already existing/installed data structure to a newer version while also
 supporting fresh installs of your bundle. To be able to apply versioned changes (migrations), Pimcore integrates the
-[Doctrine Migrations Bundle](https://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html)  which
+[Doctrine Migrations Bundle](https://symfony.com/doc/5.2/bundles/DoctrineMigrationsBundle/index.html)  which
 provides a powerful migration framework.
-For details how to work with migrations, please have a look at the [Doctrine Migrations Bundle documentation](https://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html).
+For details how to work with migrations, please have a look at the [Doctrine Migrations Bundle documentation](https://symfony.com/doc/5.2/bundles/DoctrineMigrationsBundle/index.html).
 
 ### Pimcore Specifics
 
@@ -171,4 +171,4 @@ For further details please see
 
 * [Migrations](../../../19_Development_Tools_and_Details/37_Migrations.md)
 * [Doctrine Migrations](http://docs.doctrine-project.org/projects/doctrine-migrations/en/latest/index.html)
-* [Doctrine Migrations Bundle](http://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html)
+* [Doctrine Migrations Bundle](https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html)

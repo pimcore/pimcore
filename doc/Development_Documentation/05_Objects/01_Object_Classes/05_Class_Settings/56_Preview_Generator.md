@@ -15,13 +15,13 @@ Provide a Preview Generator within the Class settings:
 
 ### Sample PreviewProvider Implementation
 ```php
-namespace AppBundle\Service\PreviewParamProvider;
+namespace App\Service\PreviewParamProvider;
 
 class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface
 {
     protected $productLinkGenerator;
 
-    public function __construct(\AppBundle\Service\LinkGenerator\ProductLinkGenerator $productLinkGenerator)
+    public function __construct(\App\Website\LinkGenerator\ProductLinkGenerator $productLinkGenerator)
     {
         $this->productLinkGenerator = $productLinkGenerator;
     }

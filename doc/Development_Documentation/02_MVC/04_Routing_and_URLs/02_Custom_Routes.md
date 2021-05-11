@@ -11,7 +11,7 @@ All things where Documents are not practical. Here Custom Routes come into actio
 Custom Routes come fourth in the route processing priority.
 
 Custom routes are an alternative to Symfony's routing functionalities and give you a bit more flexibility, but you can 
-still use [Symfony's routing capabilities](http://symfony.com/doc/3.4/routing.html) (eg. @Route() annotation,
+still use [Symfony's routing capabilities](https://symfony.com/doc/5.2/routing.html) (eg. @Route() annotation,
  `routing.yml`, ...) in parallel to Pimcore Custom Routes.
  
 ## Configuring Custom Routes
@@ -65,7 +65,7 @@ class NewsController extends FrontendController
 The default variables can be accessed the same way.
 
 ## Using Param Converter to convert request ID to Data Object
-Pimcore has a built-in [param converter](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html)
+Pimcore has a built-in [param converter](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/converters.html)
 for converting data object IDs in the request parameters to actual objects. 
 
 To use the param converter, simply type hint the argument (Symfony routing example): 
@@ -84,7 +84,7 @@ To use the param converter, simply type hint the argument (Symfony routing examp
 
 Param converters work with Pimcore Custom Routes as well as with Symfony Routes. 
 Of course you can also configure the param converter using the `@ParamConverter`, for details please have a look at
-the official documentation for [param converters](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html).
+the official documentation for [param converters](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/converters.html).
 
 
 ## Building URLs based on Custom Routes
@@ -149,7 +149,7 @@ Output will be: `/news-category/random+text_5_category_776`
 ### Setting locale from a route
 
 Symfony supports a special `_locale` parameter which is automatically used as current locale if set via route 
-parameters (see [https://symfony.com/doc/3.4/translation/locale.html#the-locale-and-the-url](https://symfony.com/doc/3.4/translation/locale.html#the-locale-and-the-url)).
+parameters (see [https://symfony.com/doc/5.2/translation/locale.html#the-locale-and-the-url](https://symfony.com/doc/5.2/translation/locale.html#the-locale-and-the-url)).
 As an example a simple route matching `/{_locale}/test`:
 
 | Name          | Pattern                                                  | Reverse                                          | Module     | Controller     | Action     | Variables                | Defaults     | Site     | Priority     |

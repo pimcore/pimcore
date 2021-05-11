@@ -43,9 +43,6 @@ $list->load();
 Please also have a look at [object listings](../05_Objects/03_Working_with_PHP_API.md#objectsListing) 
 and [document listings](../03_Documents/09_Working_with_PHP_API.md#documentsListing).
 
-[comment]: #(TODO add links)
-
-
 
 ## Custom Settings
 
@@ -102,10 +99,10 @@ This includes for example:
 {{ pimcore_image("myImage", {"thumbnail": "xyz"}) }}
 ```
 
-```php
-// thumbnail html generator
-<?= $asset->getThumbnail("xyz")->getHtml(); ?>
-<?= $object->getMyImage()->getThumbnail("xyz")->getHtml(); ?>
+```twig
+{# thumbnail html generator #}
+{{ asset.getThumbnail("xyz").getHtml()|raw }}
+{{ object.getMyImage().getThumbnail("xyz").getHtml()|raw }}
 ```
 The `copyright` field will be appended to every `title` and `alt` attribute separated by |. 
 

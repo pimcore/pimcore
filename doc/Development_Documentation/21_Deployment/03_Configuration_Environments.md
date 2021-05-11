@@ -4,7 +4,7 @@ Pimcore supports different configurations for different environments (dev, test,
 configurations including a fallback mechanism. 
 
 Pimcore is relying on Symfony's environments, with some extras, however all the essential 
-information can be found in the [Symfony Docs](https://symfony.com/doc/current/configuration.html#configuration-environments)
+information can be found in the [Symfony Docs](https://symfony.com/doc/5.2/configuration.html#configuration-environments)
 
 ## Supported Configurations
 

@@ -1,6 +1,6 @@
 # Pimcore Mail
 
-The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/current/mailer.html#email-addresses) 
+The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/5.2/mailer.html#email-addresses) 
 Class and adds some features for the usage with Pimcore.
 
 When you create a new `Pimcore\Mail` instance the E-Mail settings from *Settings* > *System* > *Email Settings*
@@ -21,7 +21,7 @@ framework:
             main: smtp://user:pass@smtp.example.com:port
             pimcore_newsletter: smtp://user:pass@smtp.example.com:port
 ```
-Please refer to the [Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for further details on how this can be set up.
+Please refer to the [Transport Setup](https://symfony.com/doc/5.2/mailer.html#transport-setup) for further details on how this can be set up.
 
 
 The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, 
@@ -41,8 +41,6 @@ to the html with a `<style>` tag because the image paths are also normalised.
 | getSubjectRendered()              | Renders the content as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
 | getBodyHtmlRendered()             | Renders the content as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
 | getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
-| setHtml2TextOptions($options)     | set options for html2text (only for binary version)                                                                                                                                                        |
-
 
 ## Usage Example
 
