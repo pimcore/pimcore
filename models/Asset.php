@@ -240,7 +240,7 @@ class Asset extends Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
-        if(!$path){
+        if (!$path) {
             return null;
         }
 
