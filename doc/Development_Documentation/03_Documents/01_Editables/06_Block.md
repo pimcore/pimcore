@@ -125,7 +125,7 @@ Bricks and structure refer to the CMS demo (content/default template).
 {% set document = pimcore_document_by_path('/en/More-Stuff/Developers-Corner/Galleries') %}
 
 {# get the first picture from the first "gallery-carousel" brick #}
-{% set image = document.getEditable('content').getElement('gallery-single-images')[5].getBlock('gallery').getElements()[0].getImage('image') %}
+{% set image = document.getEditable('content').getElement('gallery-single-images')[0].getBlock('gallery').getElements()[0].getImage('image') %}
 
 {{ dump(document.getEditable('content').getElement('gallery-single-images')) }}
 {{ dump(image.getSrc()) }}
