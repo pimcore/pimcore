@@ -240,6 +240,10 @@ class Asset extends Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
+        if(!$path){
+            return null;
+        }
+
         $path = Element\Service::correctPath($path);
 
         try {

@@ -288,15 +288,15 @@ class Video extends Model\Document\Editable
      */
     public function setDataFromEditmode($data)
     {
-        if ($data['type']) {
+        if (isset($data['type'])) {
             $this->type = $data['type'];
         }
 
-        if ($data['title']) {
+        if (isset($data['title'])) {
             $this->title = $data['title'];
         }
 
-        if ($data['description']) {
+        if (isset($data['description'])) {
             $this->description = $data['description'];
         }
 
@@ -778,11 +778,11 @@ class Video extends Model\Document\Editable
             $uploadDate->setTimestamp($video->getCreationDate());
 
             $jsonLd = [
-                '@context' => 'http://schema.org',
+                '@context' => 'https://schema.org',
                 '@type' => 'VideoObject',
                 'name' => $this->getTitle(),
                 'description' => $this->getDescription(),
-                'uploadDate' => $uploadDate->format(\DateTime::ISO8601),
+                'uploadDate' => $uploadDate->format('Y-m-d\TH:i:sO'),
                 'duration' => $durationString,
                 //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
