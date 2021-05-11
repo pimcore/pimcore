@@ -10,7 +10,7 @@ Before working on a contribution, you must determine on which branch you need to
 ## Please make sure your PR complies with all of the following points: 
 - [ ] Read and accept our [contributing guidelines](/CONTRIBUTING.md) before you submit a PR.
 - [ ] Features need to be proper documented in `doc/` -> target branch `10.x`
-- [ ] Bugfixes need a short guide how to reproduce them -> target branch latest maintenance branch, e.g. `10.0`
+- [ ] Bugfixes need a short guide how to reproduce them -> target branch is the oldest supported maintenance branch, e.g. `10.0` (see Readme.md for the list of supported versions)
 - [ ] Please try to meet all level 2 requirements according to [PHPStan tests](/doc/Development_Documentation/19_Development_Tools_and_Details/29_Testing/02_Core_Tests.md)
 
 **Don't submit a PR if it doesn't comply, it'll be closed without a comment!**

@@ -26,13 +26,16 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 ## Supported Versions
 
-| Version | Supported | LTS** | LTS Version |
-| ------- |    :---:  | :---: |    :---:    |
-| `<= 4.x`|    ❌     |  ❌    |             |
-| `5.x`   |    ❌     |  ✅    | `5.8`       |
-| `6.x`   |    ✅     |  ✅    |             |
+| Version  | Supported | LTS** | LTS Version** | CE End of life*** |
+| -------- |    :---:  | :---: |    :---:      |   :---:          |
+| `<= 4.x` |    ❌     |  ❌    |               | `2017-09-28`     |
+| `5.x`    |    ❌     |  ✅    | `5.8`         | `2019-12-09`     |
+| `6.x`    |    ✅     |  ✅    | `6.9`         | `2021-06-14`     |
+| `10.x`   |    ✅     |  ❌    |               |                  |
 
-** [LTS](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription). 
+** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
+*** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
+
 
 ## Overview
 ![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
