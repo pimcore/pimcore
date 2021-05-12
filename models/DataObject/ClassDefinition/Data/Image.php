@@ -384,7 +384,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function denormalize($value, $params = [])
     {
-        $id = $value['id'];
+        $id = $value['id'] ?? 0;
         if (intval($id) > 0) {
             return Asset\Image::getById($id);
         }

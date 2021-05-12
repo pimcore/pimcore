@@ -565,10 +565,10 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if (is_array($value)) {
             $video = new DataObject\Data\Video();
             $video->setType($value['type']);
-            $video->setTitle($value['title']);
-            $video->setDescription($value['description']);
+            $video->setTitle($value['title'] ?? null);
+            $video->setDescription($value['description'] ?? null);
 
-            if ($value['poster']) {
+            if ($value['poster'] ?? null) {
                 $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
             }
 
