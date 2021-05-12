@@ -172,6 +172,7 @@ trait QueryBuilderHelperTrait
                 }
             }
         } elseif ($queryBuilder instanceof ZendCompatibilityQueryBuilder) {
+            $queryBuilder->reset(ZendCompatibilityQueryBuilder::COLUMNS);
             $queryBuilder->columns([new Expression('COUNT(*)')]);
             $queryBuilder->reset(ZendCompatibilityQueryBuilder::LIMIT_COUNT);
             $queryBuilder->reset(ZendCompatibilityQueryBuilder::LIMIT_OFFSET);
