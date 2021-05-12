@@ -85,7 +85,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             iconCls = "pimcore_icon_droptarget";
         }
 
-        var html = '<div class="pimcore_tag_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.data + '</div>';
+        var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.data + '</div>';
         var pConf = {
             iconCls: iconCls,
             title: this.fieldConfig.title,
