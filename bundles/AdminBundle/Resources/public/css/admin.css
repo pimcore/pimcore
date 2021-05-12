@@ -1112,11 +1112,6 @@ span.warning {
     height: 13px;
 }
 
-[class^="pimcore_tag_"], [class*=" pimcore_tag_"] {
-    --deprecated: "Warning! pimcore_tag_* class selectors are deprecated and will be removed in Pimcore 10. Use .pimcore_editable_* instead";
-}
-
-.pimcore_tag_wysiwyg,
 .pimcore_editable_wysiwyg {
     position:relative;
     padding: 10px;
@@ -1125,79 +1120,66 @@ span.warning {
     background-color: #fff;
 }
 
-.pimcore_tag_wysiwyg strong,
 .pimcore_editable_wysiwyg strong {
     font-weight: bold !important;
     font-style: inherit;
 }
 
-.pimcore_tag_wysiwyg em,
 .pimcore_editable_wysiwyg em {
     font-style: italic !important;
     font-weight: inherit;
 }
 
-.pimcore_tag_wysiwyg ul, .pimcore_tag_wysiwyg ol,
 .pimcore_editable_wysiwyg ul, .pimcore_editable_wysiwyg ol {
     list-style: inherit;
     margin:inherit;
     padding-left: 30px;
 }
 
-.pimcore_tag_wysiwyg ol,
 .pimcore_editable_wysiwyg ol {
     list-style: decimal;
 }
 
-.pimcore_tag_wysiwyg ul,
 .pimcore_editable_wysiwyg ul {
     list-style: disc;
 }
 
-.pimcore_tag_wysiwyg blockquote,
 .pimcore_editable_wysiwyg blockquote {
     padding-left: 20px;
     border-left: 3px solid #666666;
 }
 
-.pimcore_tag_wysiwyg h1,
 .pimcore_editable_wysiwyg h1 {
     font-size: 28px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h2,
 .pimcore_editable_wysiwyg h2 {
     font-size: 24px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h3,
 .pimcore_editable_wysiwyg h3 {
     font-size: 20px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h4,
 .pimcore_editable_wysiwyg h4 {
     font-size: 18px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg h5,
 .pimcore_editable_wysiwyg h5 {
     font-size: 14px;
     font-weight: normal;
 }
 
-.pimcore_tag_wysiwyg table,
 .pimcore_editable_wysiwyg table {
     border-collapse: collapse;
     border-top:1px solid #333333;
     border-right:1px solid #333333;
 }
 
-.pimcore_tag_wysiwyg table td, .pimcore_tag_wysiwyg table th,
 .pimcore_editable_wysiwyg table td, .pimcore_editable_wysiwyg table th {
     border-left:1px solid #333333;
     border-bottom:1px solid #333333;
