@@ -1052,6 +1052,29 @@ Ext.override(Ext.picker.Date, {
 });
 
 
+/** workaround for [DataObject] Advanced Image Dropzone only works once #9115
+ * Issue: on node drop the component gets destroyed. On mouse up it then tries to focus an already destroyed element.
+ */
+Ext.override(Ext.dom.Element, {
+    focus: function (defer, dom) {
+
+        var me = this;
+
+        dom = dom || me.dom;
+
+        if (Number(defer)) {
+            Ext.defer(me.focus, defer, me, [null, dom]);
+        } else {
+            Ext.fireEvent('beforefocus', dom);
+            if (dom) {
+                dom.focus();
+            }
+        }
+
+        return me;
+    }
+});
+
 /**
  * A specialized {@link Ext.view.BoundListKeyNav} implementation for navigating in the quicksearch.
  * This is needed because in the default implementation the Crtl+A combination is disabled, but this is needed
