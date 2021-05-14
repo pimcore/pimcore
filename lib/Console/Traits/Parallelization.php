@@ -20,12 +20,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Lock\Lock;
 use Symfony\Component\Lock\LockFactory;
 use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
 
 trait Parallelization
 {
-    /** @var LockFactory */
+    /** @var Lock */
     private $lock;
 
     use WebmozartParallelization
