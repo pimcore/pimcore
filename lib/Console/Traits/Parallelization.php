@@ -26,7 +26,7 @@ use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelizati
 
 trait Parallelization
 {
-    /** @var Lock */
+    /** @var Lock|null */
     private $lock;
 
     use WebmozartParallelization
