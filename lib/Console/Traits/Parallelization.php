@@ -56,8 +56,22 @@ trait Parallelization
                 null,
                 InputOption::VALUE_NONE,
                 'Set on child processes. For internal use only.'
+            )->addOption(
+                'batch-size',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Sets the number of items to process per child process or in a batch',
+                50
             )
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getSegmentSize(): int
+    {
+        return (int)$this->input->getOption('batch-size');
     }
 
     /**
