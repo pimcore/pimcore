@@ -59,7 +59,7 @@ pimcore.settings.system = Class.create({
         var current = this.data.values;
 
         for (var i = 0; i < nk.length; i++) {
-            if (current[nk[i]]) {
+            if (typeof current[nk[i]] != "undefined") {
                 current = current[nk[i]];
             } else {
                 current = null;
