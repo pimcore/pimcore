@@ -4,7 +4,7 @@ The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://sy
 Class and adds some features for the usage with Pimcore.
 
 If email settings are configured in your `config/config.yaml` then on initializing  
-`Pimcore\Mail` object, these settings applied automatically.#
+`Pimcore\Mail` object, these settings applied automatically.
 
 It is recommended to configure email settings in `config/config.yaml` file:
 ```yaml
