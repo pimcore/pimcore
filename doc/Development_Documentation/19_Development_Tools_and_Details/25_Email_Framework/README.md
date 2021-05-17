@@ -7,13 +7,9 @@ For this you have several components:
 * Document\\Email
 * [Pimcore\Mail](./01_Pimcore_Mail.md)
 
-Pimcore provides a `Pimcore\Mail` Class which extends the `\Symfony\Component\Mime\Email` Class. When you initialize a 
-`Pimcore\Mail` object, all data from *Settings* > *System* > *Email Settings* are applied 
-automatically.  
-
-When you enable the debug mode in *Settings* > *System* > *Debug*, all emails will be sent to the 
-addresses given in *Settings* > *System* > *Email Settings* > *Debug Email Addresses* and the debug 
-information (to whom the email would have been sent) is automatically appended.
+Pimcore provides a `Pimcore\Mail` Class which extends the `\Symfony\Component\Mime\Email` Class. 
+If email settings are configured in your `config/config.yaml` then on initializing 
+`Pimcore\Mail` object, these settings applied automatically 
 
 Pimcore provides a `Document Email` type where you can define the recipients ... (more information 
 [here](../../03_Documents/README.md)) and Twig variables. 
