@@ -23,6 +23,8 @@ recipients, add Dynamic Placeholders... and pass this document to the `Pimcore\M
 nasty stuff (creating valid URLs, embedding CSS, compile Less files, rendering the document..) is 
 automatically handled by the `Pimcore\Mail` object.
 
+In the `Settings` section of the `Email Document` you can use `Full Username <user@domain.fr>` or `Full Username (user@domain.fr)` to set full username.
+
 ## Usage Example
 Lets assume that we have created a `Email Document` in the Pimcore Backen UI (`/email/myemaildocument`) 
 which looks like this:
