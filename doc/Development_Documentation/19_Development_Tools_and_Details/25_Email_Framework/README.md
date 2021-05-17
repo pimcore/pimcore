@@ -42,7 +42,7 @@ $params = array('firstName' => 'Pim',
  
 //sending the email
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
+$mail->to('example@pimcore.org');
 $mail->setDocument('/email/myemaildocument');
 $mail->setParams($params);
 $mail->send();
@@ -52,16 +52,16 @@ $mail->send();
 #### Sending a Plain Text Email:
 ```php
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
-$mail->setBodyText("This is just plain text");
+$mail->to('example@pimcore.org');
+$mail->text("This is just plain text");
 $mail->send();
 ```
 
 #### Sending a Rich Text (HTML) Email: 
 ```php
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
-$mail->addBcc("bcc@pimcore.org");
+$mail->to('example@pimcore.org');
+$mail->bcc("bcc@pimcore.org");
 $mail->html("<b>some</b> rich text");
 $mail->send();
 ```

@@ -40,7 +40,7 @@ to the html with a `<style>` tag because the image paths are also normalised.
 | getDocument()                     | Returns the Document                                                                                                                                                                                       |
 | getSubjectRendered()              | Renders the content as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
 | getBodyHtmlRendered()             | Renders the content as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
-| getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
+| getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->text()`. If no text was set, a text version on the html email will be automatically created |
 
 ## Usage Example
 
@@ -49,7 +49,7 @@ $params = ['firstName' => 'Pim', 'lastName' => 'Core', 'product' => 73613];
  
 //sending an email document (pimcore document)
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
+$mail->to('example@pimcore.org');
 $mail->setDocument('/email/myemaildocument');
 $mail->setParams($params);
 $mail->send();
@@ -58,14 +58,14 @@ $mail->send();
 // sending a text-mail
  
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
+$mail->to('example@pimcore.org');
 $mail->text("This is just plain text");
 $mail->send();
  
 // Sending a rich text (HTML) email with Twig expressions 
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
-$mail->addBcc("bcc@pimcore.org");
+$mail->to('example@pimcore.org');
+$mail->bcc("bcc@pimcore.org");
 $mail->setParams([
     'myParam' => 'Just a simple text'
 ]);
@@ -79,7 +79,7 @@ if($asset instanceof Asset) {
 
 //Embedding Images
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
+$mail->to('example@pimcore.org');
 
 $mail->embed($asset->getData(), 'logo', $asset->getMimetype());
 //or
