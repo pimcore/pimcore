@@ -104,7 +104,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         // disable versioning
         Version::disable();
 
-        list($assetId, $thumbnailConfigName) = explode('~~~', $item);
+        list($assetId, $thumbnailConfigName) = explode('~~~', $item, 2);
 
         $video = Asset\Video::getById($assetId);
         if (!$video) {
