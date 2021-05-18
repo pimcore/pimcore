@@ -58,7 +58,7 @@ class HeadlessChrome extends Processor
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, $web2printConfig ?: $this->getDefaultOptions());
+            $pdf = $this->getPdfFromString($html, $web2printConfig);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error($e);
@@ -90,6 +90,7 @@ class HeadlessChrome extends Processor
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
+        $params = $params ?: $this->getDefaultOptions();
         $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
         $input = new StringInput();
         $input->setHtml($html);
