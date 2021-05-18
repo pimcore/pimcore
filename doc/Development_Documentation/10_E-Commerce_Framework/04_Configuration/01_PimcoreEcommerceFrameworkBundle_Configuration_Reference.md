@@ -49,7 +49,7 @@ pimcore_ecommerce_framework:
             # Examples:
             _defaults:
                 cart:
-                    factory_id:          Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory
+                    factory_id:          CartFactory
             default:
                 cart:
                     factory_options:
@@ -62,7 +62,7 @@ pimcore_ecommerce_framework:
                                 charge:              5.90
             noShipping:
                 price_calculator:
-                    factory_id:          Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory
+                    factory_id:          PriceCalculatorFactory
                     modificators:        []
 
             # Prototype
