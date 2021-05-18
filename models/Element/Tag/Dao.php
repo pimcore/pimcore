@@ -254,18 +254,18 @@ class Dao extends Model\Dao\AbstractDao
 
         $select = $this->db->createQueryBuilder()->select(['*'])
                            ->from('tags_assignment')
-                           ->where('tags_assignment.ctype = ?', $type);
+                           ->andWhere('tags_assignment.ctype = :ctype')->setParameter(':ctype', $type);
 
         if (true === $considerChildTags) {
             $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
-            $select->where(
+            $select->andWhere(
                 '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
                 $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%')
                 . ')'
             );
         } else {
-            $select->where('tags_assignment.tagid = ?', $tag->getId());
+            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter(':tagId',  $tag->getId());
         }
 
         $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);
@@ -274,20 +274,20 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($subtypes as $subType) {
                 $quotedSubTypes[] = $this->db->quote($subType);
             }
-            $select->where($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
+            $select->andWhere($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {
             foreach ($classNames as $cName) {
                 $quotedClassNames[] = $this->db->quote($cName);
             }
-            $select->where('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
+            $select->andWhere('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
-        $res = $this->db->query((string) $select);
+        $res = $this->db->query((string) $select, $select->getParameters());
 
         while ($row = $res->fetch()) {
-            $el = $map[$type][3]::getById($row['el_id']);
+            $el = $map[$type][3]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;
             }
