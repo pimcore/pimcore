@@ -21,6 +21,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool;
 
 /**
@@ -165,6 +166,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->checkTablenames();
         $this->checkContainerRestrictions();
 
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
         $newClassDefinitions = [];
         $classDefinitionsToDelete = [];
 
@@ -186,6 +194,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->createContainerClasses();
         $this->updateDatabase();
+
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->postSave($this);
+            }
+        }
     }
 
     private function enforceBlockRules($fds, $found = [])
@@ -740,4 +754,5 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Objectbrick/Data/%s.php');
     }
+
 }
