@@ -21,15 +21,17 @@ use Pimcore\Model\DataObject\Concrete;
 interface DataContainerAwareInterface
 {
     /**
-     * @param Data $containerDefinition
+     * @param mixed $containerDefinition
      * @param array $params
+     *
      * @return mixed
      */
     public function preSave($containerDefinition, $params = []);
 
     /**
-     * @param Data $containerDefinition
+     * @param mixed $containerDefinition
      * @param array $params
+     *
      * @return mixed
      */
     public function postSave($containerDefinition, $params = []);

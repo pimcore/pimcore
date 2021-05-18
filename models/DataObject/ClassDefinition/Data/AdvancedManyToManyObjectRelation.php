@@ -24,11 +24,10 @@ use Pimcore\Model\Element;
 /**
  * @method DataObject\Data\ObjectMetadata\Dao getDao()
  */
-class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements DataContainerAwareInterface
+class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
-    use DataObject\Traits\ClassSavedTrait;
 
     /**
      * @internal

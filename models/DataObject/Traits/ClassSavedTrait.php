@@ -26,6 +26,7 @@ trait ClassSavedTrait
     /**
      * @param mixed $containerDefinition
      * @param array $params
+     *
      * @return mixed
      */
     public function preSave($containerDefinition, $params = [])
@@ -36,6 +37,7 @@ trait ClassSavedTrait
     /**
      * @param mixed $containerDefinition
      * @param array $params
+     *
      * @return mixed
      */
     public function postSave($containerDefinition, $params = [])
