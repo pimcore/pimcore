@@ -402,7 +402,6 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
-
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
