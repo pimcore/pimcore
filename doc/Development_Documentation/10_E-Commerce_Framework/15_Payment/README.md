@@ -110,6 +110,8 @@ Following Payment Providers are available as a dedicated bundle to be integrated
 - [PayU](https://github.com/pimcore/payment-provider-payu)
 - [Unzer (former Heidelpay)](https://github.com/pimcore/payment-provider-unzer)
 - [Hobex](https://github.com/pimcore/payment-provider-hobex)
+
+### Third-party Payment Provider Integrations
 - [BS PAYONE](https://github.com/asioso/payone)
 
 ## Further Payment Aspects
