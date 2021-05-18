@@ -23,7 +23,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
-
     use DataObject\Traits\ClassSavedTrait;
 
     /**
@@ -702,7 +701,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     }
 
                     $definition->getDao()->classSaved($class);
-
                 } else {
                     Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
                     unset($this->allowedTypes[$i]);
