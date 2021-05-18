@@ -25,7 +25,6 @@ use Pimcore\Tool;
 
 class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
-
     use DataObject\Traits\ClassSavedTrait;
 
     /**

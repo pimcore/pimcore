@@ -21,7 +21,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool;
 
 /**
@@ -754,5 +753,4 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Objectbrick/Data/%s.php');
     }
-
 }
