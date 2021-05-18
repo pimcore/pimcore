@@ -132,8 +132,14 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
                 dateString += " 00:00";
             }
 
-            var date = Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime();
-            return date;
+            let value = Ext.Date.parseDate(dateString, "Y-m-d H:i")
+            if (typeof value.getTime == "function") {
+                return value.getTime();
+            } else {
+                return value;
+            }
+
+            return value;
         }
         return false;
     },

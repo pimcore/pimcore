@@ -179,6 +179,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data) {
+            if (!is_numeric($data)) {
+                throw new Model\Element\ValidationException("Date format validation failed");
+            }
             return $this->getDateFromTimestamp($data / 1000);
         }
 
