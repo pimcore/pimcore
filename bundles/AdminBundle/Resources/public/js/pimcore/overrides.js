@@ -19,6 +19,78 @@ if(typeof window['t'] !== 'function') {
 
 Ext.form.field.Date.prototype.startDay = 1;
 
+Ext.override(Ext.grid.plugin.CellEditing, {
+
+    // patch for Using TAB-Key within Data Object grid breaks ExtJS https://github.com/pimcore/pimcore/issues/9079
+    // NOTE: already fixed in Ext7, no need to merge this into Pimcore 10!
+
+    activateCell: function(position) {
+        var me = this,
+            record = position.record,
+            column = position.column,
+            context, cell, editor,
+            previousEditor = me.getActiveEditor(),
+            p, editValue;
+
+        context = me.getEditingContext(record, column);
+        if (!context || !column.getEditor(record)) {
+            return;
+        }
+
+        if (previousEditor && previousEditor.editing) {
+            me.view.actionPosition = null;
+            if (previousEditor.completeEdit() === false) {
+                return;
+            }
+        }
+
+        if (me.beforeEdit(context) === false || me.fireEvent('beforeedit', me, context) === false || context.cancel) {
+            return;
+        }
+
+        editor = me.getEditor(record, column);
+
+        if (context.cell !== context.getCell(true)) {
+            context = me.getEditingContext(context.rowIdx, context.colIdx);
+            position.setPosition(context);
+        }
+
+        if (editor) {
+            cell = Ext.get(context.cell);
+            if (!editor.rendered) {
+                editor.hidden = true;
+                editor.render(cell);
+            } else {
+                p = editor.el.dom.parentNode;
+                if (p !== cell.dom) {
+                    p.removeChild(editor.el.dom);
+                    editor.container = cell;
+                    cell.dom.appendChild(editor.el.dom, cell.dom.firstChild);
+                }
+            }
+
+            editValue = context.record.get(context.column.dataIndex);
+            if (editValue !== context.originalValue) {
+                context.value = context.originalValue = editValue;
+            }
+
+            me.setEditingContext(context);
+
+            editor.startEdit(cell, context.value, false);
+
+            if (editor.editing) {
+                me.setActiveEditor(editor);
+                me.setActiveRecord(context.record);
+                me.setActiveColumn(context.column);
+                me.editing = true;
+                me.scroll = position.view.el.getScroll();
+            }
+
+            return editor.editing;
+        }
+    }
+});
+
 Ext.override(Ext.dd.DragDropMgr, {
         startDrag: function (x, y) {
 
