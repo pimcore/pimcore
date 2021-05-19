@@ -3,8 +3,21 @@
 The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/5.2/mailer.html#email-addresses) 
 Class and adds some features for the usage with Pimcore.
 
-When you create a new `Pimcore\Mail` instance the E-Mail settings from *Settings* > *System* > *Email Settings*
-are automatically applied.
+If email settings are configured in your `config/config.yaml` then on initializing  
+`Pimcore\Mail` object, these settings applied automatically.
+
+It is recommended to configure email settings in `config/config.yaml` file:
+```yaml
+pimcore
+    email:
+        sender:
+            name: 'Pimcore Demo'
+            email: demo@pimcore.com
+        return:
+            name: ''
+            email: ''
+```
+and debug email addresses should be configured in Admin *Settings* > *System* > *Debug* > *Debug Email Addresses*.
 
 If the Debug Mode is enabled, all emails will be sent to the 
 Debug Email recipients defined in *Settings* > *System* > *Debug* > *Debug Email Addresses*. 
@@ -40,7 +53,7 @@ to the html with a `<style>` tag because the image paths are also normalised.
 | getDocument()                     | Returns the Document                                                                                                                                                                                       |
 | getSubjectRendered()              | Renders the content as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
 | getBodyHtmlRendered()             | Renders the content as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
-| getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
+| getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->text()`. If no text was set, a text version on the html email will be automatically created |
 
 ## Usage Example
 
@@ -49,7 +62,7 @@ $params = ['firstName' => 'Pim', 'lastName' => 'Core', 'product' => 73613];
  
 //sending an email document (pimcore document)
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
+$mail->to('example@pimcore.org');
 $mail->setDocument('/email/myemaildocument');
 $mail->setParams($params);
 $mail->send();
@@ -58,14 +71,14 @@ $mail->send();
 // sending a text-mail
  
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
+$mail->to('example@pimcore.org');
 $mail->text("This is just plain text");
 $mail->send();
  
 // Sending a rich text (HTML) email with Twig expressions 
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
-$mail->addBcc("bcc@pimcore.org");
+$mail->to('example@pimcore.org');
+$mail->bcc("bcc@pimcore.org");
 $mail->setParams([
     'myParam' => 'Just a simple text'
 ]);
@@ -79,7 +92,7 @@ if($asset instanceof Asset) {
 
 //Embedding Images
 $mail = new \Pimcore\Mail();
-$mail->addTo('example@pimcore.org');
+$mail->to('example@pimcore.org');
 
 $mail->embed($asset->getData(), 'logo', $asset->getMimetype());
 //or

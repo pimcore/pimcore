@@ -200,8 +200,8 @@ pimcore.settings.system = Class.create({
                             items: [{
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
-                                name: "general.loginscreencustomimage",
-                                value: this.getValue("general.login_screen_custom_image")
+                                name: "branding.login_screen_custom_image",
+                                value: this.getValue("branding.login_screen_custom_image")
                             }]
                         }]
                     }

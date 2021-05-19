@@ -432,7 +432,7 @@ CSS;
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
                 $entryAddress = trim($emailStringEntry);
-                $entryName = null;
+                $entryName = ''; // Symfony mailer want a string
                 $matches = [];
                 if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {
                     $entryAddress = trim($matches[2]);
