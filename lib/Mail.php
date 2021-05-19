@@ -168,7 +168,7 @@ class Mail extends Email
     }
 
     /**
-     * Initializes the mailer with the settings form Settings -> System -> Email Settings
+     * Initializes the mailer with the configured pimcore.email system settings
      *
      * @param string $type
      *

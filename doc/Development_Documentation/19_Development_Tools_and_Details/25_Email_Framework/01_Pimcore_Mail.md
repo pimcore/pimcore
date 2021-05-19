@@ -3,8 +3,21 @@
 The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/5.2/mailer.html#email-addresses) 
 Class and adds some features for the usage with Pimcore.
 
-When you create a new `Pimcore\Mail` instance the E-Mail settings from *Settings* > *System* > *Email Settings*
-are automatically applied.
+If email settings are configured in your `config/config.yaml` then on initializing  
+`Pimcore\Mail` object, these settings applied automatically.
+
+It is recommended to configure email settings in `config/config.yaml` file:
+```yaml
+pimcore
+    email:
+        sender:
+            name: 'Pimcore Demo'
+            email: demo@pimcore.com
+        return:
+            name: ''
+            email: ''
+```
+and debug email addresses should be configured in Admin *Settings* > *System* > *Debug* > *Debug Email Addresses*.
 
 If the Debug Mode is enabled, all emails will be sent to the 
 Debug Email recipients defined in *Settings* > *System* > *Debug* > *Debug Email Addresses*. 
