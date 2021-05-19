@@ -265,7 +265,7 @@ class Dao extends Model\Dao\AbstractDao
                 . ')'
             );
         } else {
-            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter(':tagId',  $tag->getId());
+            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter(':tagId', $tag->getId());
         }
 
         $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);
