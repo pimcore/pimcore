@@ -21,9 +21,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Layout\Traits;
 trait IconTrait
 {
     /**
+     * @internal
+     *
      * @var string|null
      */
-    protected $icon;
+    public $icon;
 
     /**
      * @return string
