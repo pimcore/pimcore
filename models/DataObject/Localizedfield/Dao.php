@@ -824,6 +824,7 @@ QUERY;
             }
         }
 
+        $this->removeIndices($table, $columnsToRemove, $protectedColumns);
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColumns);
 
         $validLanguages = Tool::getValidLanguages();
