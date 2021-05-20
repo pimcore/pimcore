@@ -170,7 +170,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param int $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

@@ -169,7 +169,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param int $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
