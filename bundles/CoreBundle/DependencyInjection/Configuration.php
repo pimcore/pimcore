@@ -59,21 +59,6 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('error_handling')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('render_error_document')
-                            ->info('Render error document in case of an error instead of showing Symfony\'s error page')
-                            ->defaultTrue()
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
                     ->children()

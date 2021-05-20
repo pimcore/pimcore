@@ -86,8 +86,6 @@ services:
     #
 
     Pimcore\Bundle\CoreBundle\EventListener\ResponseExceptionListener:
-        arguments:
-            $renderErrorPage: '%pimcore.response_exception_listener.render_error_document%'
         calls:
             - [setLogger, ['@logger']]
 
