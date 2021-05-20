@@ -196,10 +196,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         if (strlen($part) === 0) {
                             throw new Model\Element\ValidationException('Slug ' . $slug .' not valid');
                         }
-                        $sanitizedKey = Model\Element\Service::getValidKey($part, 'document');
-                        if ($sanitizedKey != $part) {
-                            throw new Model\Element\ValidationException('Slug part ' . $part .' not valid');
-                        }
                     }
                 }
             }
