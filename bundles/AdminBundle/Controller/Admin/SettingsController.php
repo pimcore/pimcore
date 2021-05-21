@@ -956,7 +956,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                $glossaries[] = $glossary;
+                $glossaries[] = $glossary->getObjectVars();
             }
 
             return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
