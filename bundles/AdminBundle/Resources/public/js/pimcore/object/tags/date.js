@@ -102,7 +102,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
     getValue:function () {
         if (this.component.getValue()) {
             let value = this.component.getValue();
-            if (typeof value.getTime == "function") {
+            if (value && typeof value.getTime == "function") {
                 return value.getTime();
             } else {
                 return value;

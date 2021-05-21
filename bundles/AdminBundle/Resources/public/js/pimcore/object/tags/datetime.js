@@ -133,7 +133,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             }
 
             value = Ext.Date.parseDate(dateString, "Y-m-d H:i");
-            if (typeof value.getTime == "function") {
+            if (value && typeof value.getTime == "function") {
                 return value.getTime();
             }
 
