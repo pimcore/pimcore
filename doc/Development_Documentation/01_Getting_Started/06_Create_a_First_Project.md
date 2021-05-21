@@ -44,12 +44,14 @@ Then we can put some template code into it, for example:
 ```twig
 {% extends 'layout.html.twig' %}
 
-<h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
+{% block content %}
+    <h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
 
-{% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
-    <h2>{{ pimcore_input('subline') }}</h2>
-    {{ pimcore_wysiwyg('content') }}
-{% endfor %}
+    {% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
+        <h2>{{ pimcore_input('subline') }}</h2>
+        {{ pimcore_wysiwyg('content') }}
+    {% endfor %}
+{% endblock %}
 ```
 
 Pimcore uses by default Symfony Twig engine, so you have the full power of Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore specific additions like the so called *editables*, which add editable parts (placeholders) to the layout and some custom templating helpers. 
