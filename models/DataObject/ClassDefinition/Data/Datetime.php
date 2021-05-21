@@ -169,7 +169,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param int $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -177,7 +177,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data) {
+        if (is_numeric($data)) {
             return $this->getDateFromTimestamp($data / 1000);
         }
 
