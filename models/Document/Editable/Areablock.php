@@ -161,8 +161,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             if (!$manual && $this->blockStarted) {
                 $this->blockDestruct();
                 $this->blockEnd();
-
-                $this->blockStarted = false;
             }
         } else {
             if (!$manual) {
@@ -196,7 +194,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $this->blockConstruct();
                 $templateParams = $this->blockStart($info);
 
-                $this->blockStarted = true;
                 $this->content($info, $templateParams);
             } elseif (!$manual) {
                 $this->current++;
@@ -213,9 +210,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @internal
+     *
      * @return Area\Info
      */
-    private function buildInfoObject(): Area\Info
+    public function buildInfoObject(): Area\Info
     {
         // create info object and assign it to the view
         $info = new Area\Info();
@@ -422,6 +421,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function blockStart($info = null)
     {
+        $this->blockStarted = true;
         $attributes = [
             'data-name' => $this->getName(),
             'data-real-name' => $this->getRealName(),
@@ -508,7 +508,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function blockEnd()
     {
-        // nothing to do here
+        $this->blockStarted = false;
     }
 
     /**
