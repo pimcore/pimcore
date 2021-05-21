@@ -144,6 +144,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         while ($this->loop()) {
             yield $this->getCurrentIndex();
         }
+
+        $editableDefCollector = $this->getEditableDefinitionCollector();
+        $editableDefCollector->add($this);
     }
 
     /**
@@ -570,6 +573,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $config['blockStateStack'] = json_encode($this->getBlockStateStack());
 
         $this->config = $config;
+
+        if (($this->config['manual'] ?? false) === true) {
+            $this->config['reload'] = true;
+        }
 
         return $this;
     }
