@@ -476,10 +476,12 @@ class Video extends Model\Document\Editable
             if ($youtubeId = $this->id) {
                 if (strpos($youtubeId, '//') !== false) {
                     $parts = parse_url($this->id);
-                    parse_str($parts['query'], $vars);
+                    if( array_key_exists('query', $parts) ){
+                        parse_str($parts['query'], $vars);
 
-                    if ($vars['v']) {
-                        $youtubeId = $vars['v'];
+                        if ($vars['v']) {
+                            $youtubeId = $vars['v'];
+                        }
                     }
 
                     //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
