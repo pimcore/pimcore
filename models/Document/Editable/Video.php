@@ -476,7 +476,7 @@ class Video extends Model\Document\Editable
             if ($youtubeId = $this->id) {
                 if (strpos($youtubeId, '//') !== false) {
                     $parts = parse_url($this->id);
-                    if( array_key_exists('query', $parts) ){
+                    if (array_key_exists('query', $parts)) {
                         parse_str($parts['query'], $vars);
 
                         if ($vars['v']) {
