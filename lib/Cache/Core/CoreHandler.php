@@ -386,24 +386,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     {
         $this->saveQueue[$item->getKey()] = $item;
 
-        // order by priority
-        uasort($this->saveQueue, function (CacheQueueItem $a, CacheQueueItem $b) {
-            if ($a->getPriority() === $b->getPriority()) {
-                // records with serialized data have priority, to save cpu cycles. if the item has a CacheItem set, data
-                // was already serialized
-                if (null !== $a->getCacheItem()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-
-            return $a->getPriority() < $b->getPriority() ? 1 : -1;
-        });
-
-        // remove overrun
-        array_splice($this->saveQueue, $this->maxWriteToCacheItems);
-
         // check if item is still on queue and serialize the data into a CacheItem
         if (isset($this->saveQueue[$item->getKey()])) {
             $cacheItem = $this->prepareCacheItem($item->getKey(), $item->getData(), $item->getLifetime());
@@ -872,6 +854,24 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function writeSaveQueue()
     {
+        // order by priority
+        uasort($this->saveQueue, function (CacheQueueItem $a, CacheQueueItem $b) {
+            if ($a->getPriority() === $b->getPriority()) {
+                // records with serialized data have priority, to save cpu cycles. if the item has a CacheItem set, data
+                // was already serialized
+                if (null !== $a->getCacheItem()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+
+            return $a->getPriority() < $b->getPriority() ? 1 : -1;
+        });
+
+        // remove overrun
+        array_splice($this->saveQueue, $this->maxWriteToCacheItems);
+        
         $totalResult = true;
 
         if ($this->writeLock->hasLock()) {
