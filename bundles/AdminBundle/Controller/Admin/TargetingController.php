@@ -278,6 +278,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
+        $targetGroup = $targetGroup->getObjectVars();
 
         return $this->adminJson($targetGroup);
     }
