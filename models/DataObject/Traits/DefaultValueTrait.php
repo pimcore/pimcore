@@ -28,7 +28,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 trait DefaultValueTrait
 {
     /** @var string */
-    protected $defaultValueGenerator = '';
+    public $defaultValueGenerator = '';
 
     /**
      * @param \Pimcore\Model\DataObject\Concrete $object
