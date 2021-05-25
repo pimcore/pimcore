@@ -119,7 +119,7 @@ You can limit certain bricks for the Areablock by using `limits` configurations.
 The manual mode offers you the possibility to use areablocks with custom HTML, this is for example useful when using tables: 
 
 ```twig
-{% set areaBlock = pimcore_areablock("myArea", {"manual":"true"}) %}
+{% set areaBlock = pimcore_areablock("myArea", {"manual":true}) %}
 
 {% do areaBlock.start() %}
 <table>
