@@ -132,12 +132,13 @@ class Processor
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
             /** @var DomCrawler|null $parentNode */
-            $text = $parentNode->getNode(0)->ownerDocument->saveHTML($parentNode->getNode(0));
+            $text = htmlspecialchars($parentNode->text(), ENT_QUOTES | ENT_HTML5);
             if (
                 $parentNode instanceof DomCrawler &&
                 !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
                 strlen(trim($text))
             ) {
+                $originalText = $text;
                 if ($options['limit'] < 0) {
                     $text = preg_replace($data['search'], $data['replace'], $text);
                 } else {
@@ -150,16 +151,18 @@ class Processor
                     }
                 }
 
-                $domNode = $parentNode->getNode(0);
-                $fragment = $domNode->ownerDocument->createDocumentFragment();
-                $fragment->appendChild($domNode->ownerDocument->createCDATASection($text));
-                $clone = $domNode->cloneNode();
-                $clone->appendChild($fragment);
-                $domNode->parentNode->replaceChild($clone, $domNode);
+                if($originalText !== $text) {
+                    $domNode = $parentNode->getNode(0);
+                    $fragment = $domNode->ownerDocument->createDocumentFragment();
+                    $fragment->appendXML($text);
+                    $clone = $domNode->cloneNode();
+                    $clone->appendChild($fragment);
+                    $domNode->parentNode->replaceChild($clone, $domNode);
+                }
             }
         });
 
-        $result = $html->getNode(0)->ownerDocument->saveHTML($html->getNode(0));
+        $result = $html->html();
         $html->clear();
         unset($html);
 
