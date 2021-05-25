@@ -62,7 +62,8 @@ Ext.require([
     'Ext.ux.grid.SubTable',
     'Ext.window.Toast',
     'Ext.slider.Single',
-    'Ext.form.field.Tag'
+    'Ext.form.field.Tag',
+    'Ext.ux.TabMiddleButtonClose'
 ]);
 
 Ext.ariaWarn = Ext.emptyFn;
