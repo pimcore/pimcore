@@ -1530,7 +1530,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object1 = $version1->loadData();
 
         if (method_exists($object1, 'getLocalizedFields')) {
-            /** @var DataObject\Localizedfield $localizedFields */
+            /** @var DataObject\Localizedfield $localizedFields1 */
             $localizedFields1 = $object1->getLocalizedFields();
             $localizedFields1->setLoadedAllLazyData();
         }
@@ -1539,7 +1539,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object2 = $version2->loadData();
 
         if (method_exists($object2, 'getLocalizedFields')) {
-            /** @var DataObject\Localizedfield $localizedFields */
+            /** @var DataObject\Localizedfield $localizedFields2 */
             $localizedFields2 = $object2->getLocalizedFields();
             $localizedFields2->setLoadedAllLazyData();
         }
