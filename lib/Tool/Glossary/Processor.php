@@ -151,7 +151,7 @@ class Processor
                     }
                 }
 
-                if($originalText !== $text) {
+                if ($originalText !== $text) {
                     $domNode = $parentNode->getNode(0);
                     $fragment = $domNode->ownerDocument->createDocumentFragment();
                     $fragment->appendXML($text);
