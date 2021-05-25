@@ -144,9 +144,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         while ($this->loop()) {
             yield $this->getCurrentIndex();
         }
-
-        $editableDefCollector = $this->getEditableDefinitionCollector();
-        $editableDefCollector->add($this);
     }
 
     /**
@@ -382,6 +379,13 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function start($return = false)
     {
+        if (($this->config['manual'] ?? false) === true) {
+            // in manual mode $this->render() is not called for the areablock, so we need to add
+            // the editable to the collector manually here
+            $editableDefCollector = $this->getEditableDefinitionCollector();
+            $editableDefCollector->add($this);
+        }
+
         reset($this->indices);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
