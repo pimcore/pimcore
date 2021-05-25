@@ -114,7 +114,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             updateCompatibleUnitsToolTipContent();
         });
 
-        var input = {};
+        var input = {mouseWheelEnabled: false};
 
         if (this.data && !isNaN(this.data.value)) {
             input.value = this.data.value;
