@@ -1064,7 +1064,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         if ($inheritanceAllowed) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
-                $activeGroups = $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
+                $activeGroups += $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
             }
         }
 
