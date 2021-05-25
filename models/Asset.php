@@ -684,38 +684,19 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('asset');
         $this->updateModificationInfos();
 
-        // use current file name in order to prevent problems when filename has changed
-        // (otherwise binary data would be overwritten with old binary data with rename() in save method)
-        $path = $this->getDao()->getCurrentFullPath();
-        if (!$path) {
-            // this is happen during a restore from the recycle bin
-            $path = $this->getRealFullPath();
-        }
-
+        $path = $this->getRealFullPath();
         $typeChanged = false;
 
         if ($this->getType() != 'folder') {
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
-                $sourceUri = stream_get_meta_data($src)['uri'];
 
-                try {
-                    $targetUri = stream_get_meta_data($storage->readStream($path));
-                } catch (\Exception $e) {
-                    $targetUri = null;
+                $dbPath = $this->getDao()->getCurrentFullPath();
+                if ($dbPath !== $path && $storage->fileExists($dbPath)) {
+                    $storage->delete($dbPath);
                 }
 
-                if ($targetUri !== $sourceUri) {
-                    if ($storage->fileExists($path)) {
-                        // We don't open a stream on existing files, because they could be possibly used by versions
-                        // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
-                        // versioning information persists. Using the stream on the existing file would overwrite the
-                        // contents of the inode and therefore leads to wrong version data
-                        $storage->delete($path);
-                    }
-
-                    $storage->writeStream($path, $src);
-                }
+                $storage->writeStream($path, $src);
 
                 $this->stream = null; // set stream to null, so that the source stream isn't used anymore after saving
 

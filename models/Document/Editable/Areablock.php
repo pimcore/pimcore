@@ -161,8 +161,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             if (!$manual && $this->blockStarted) {
                 $this->blockDestruct();
                 $this->blockEnd();
-
-                $this->blockStarted = false;
             }
         } else {
             if (!$manual) {
@@ -196,7 +194,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $this->blockConstruct();
                 $templateParams = $this->blockStart($info);
 
-                $this->blockStarted = true;
                 $this->content($info, $templateParams);
             } elseif (!$manual) {
                 $this->current++;
@@ -213,9 +210,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @internal
+     *
      * @return Area\Info
      */
-    private function buildInfoObject(): Area\Info
+    public function buildInfoObject(): Area\Info
     {
         // create info object and assign it to the view
         $info = new Area\Info();
@@ -379,6 +378,13 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function start($return = false)
     {
+        if (($this->config['manual'] ?? false) === true) {
+            // in manual mode $this->render() is not called for the areablock, so we need to add
+            // the editable to the collector manually here
+            $editableDefCollector = $this->getEditableDefinitionCollector();
+            $editableDefCollector->add($this);
+        }
+
         reset($this->indices);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
@@ -422,6 +428,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function blockStart($info = null)
     {
+        $this->blockStarted = true;
         $attributes = [
             'data-name' => $this->getName(),
             'data-real-name' => $this->getRealName(),
@@ -508,7 +515,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function blockEnd()
     {
-        // nothing to do here
+        $this->blockStarted = false;
     }
 
     /**
@@ -570,6 +577,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $config['blockStateStack'] = json_encode($this->getBlockStateStack());
 
         $this->config = $config;
+
+        if (($this->config['manual'] ?? false) === true) {
+            $this->config['reload'] = true;
+        }
 
         return $this;
     }

@@ -1,7 +1,6 @@
 
 In this section, you will learn the basics of Pimcore, required to start developing. 
 
-[TOC]
 
 # Creating CMS Pages with Documents
 
@@ -100,12 +99,12 @@ The code `{{ block('content') }}` is the placeholder where the content of the pa
 ### Putting it all together with Pimcore Documents
 Now we need to connect the action to a page in the Pimcore backend, so that the page knows which action 
 (and therefore also which template) needs to be executed/processed.
-First, click right on *Home* in the *Documents* panel. 
+First, click right on *Home* in the *Documents* panel and Select *Add Page* > *Blank* to add a new page. 
 
 ![Create page](../img/Pimcore_Elements_check_homepage.png)
 
 Now select the tab *Settings* in the newly opened tab.
-Select the name of the controller and the name of the action in the according fields.
+Select the Controller::Action and template(if different from controller action naming).
 
 ![Page settings](../img/Pimcore_Elements_homepage_settings.png)
 

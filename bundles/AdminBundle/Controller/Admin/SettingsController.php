@@ -881,7 +881,7 @@ class SettingsController extends AdminController
                 // save glossary
                 $glossary = Glossary::getById($data['id']);
 
-                if ($data['link']) {
+                if (!empty($data['link'])) {
                     if ($doc = Document::getByPath($data['link'])) {
                         $data['link'] = $doc->getId();
                     }
@@ -925,7 +925,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->adminJson(['data' => $glossary, 'success' => true]);
+                return $this->adminJson(['data' => $glossary->getObjectVars(), 'success' => true]);
             }
         } else {
             // get list of glossaries
@@ -956,7 +956,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                $glossaries[] = $glossary;
+                $glossaries[] = $glossary->getObjectVars();
             }
 
             return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
