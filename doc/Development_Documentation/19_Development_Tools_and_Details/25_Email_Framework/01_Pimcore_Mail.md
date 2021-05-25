@@ -8,7 +8,7 @@ If email settings are configured in your `config/config.yaml` then on initializi
 
 It is recommended to configure email settings in `config/config.yaml` file:
 ```yaml
-pimcore
+pimcore:
     email:
         sender:
             name: 'Pimcore Demo'

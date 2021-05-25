@@ -637,9 +637,8 @@ class Mail extends Email
     {
         $twig = \Pimcore::getContainer()->get('twig');
         $template = $twig->createTemplate($string);
-        $rendered = $twig->render($template, $this->getParams());
 
-        return $rendered;
+        return $template->render($this->getParams());
     }
 
     /**
