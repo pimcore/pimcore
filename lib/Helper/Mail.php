@@ -126,13 +126,15 @@ CSS;
     }
 
     /**
+     * @internal
+     *
      * Helper to format the receivers for the debug email and logging
      *
      * @param array $receivers
      *
      * @return string
      */
-    protected static function formatDebugReceivers(array $receivers)
+    public static function formatDebugReceivers(array $receivers)
     {
         $formatedReceiversArray = [];
 
