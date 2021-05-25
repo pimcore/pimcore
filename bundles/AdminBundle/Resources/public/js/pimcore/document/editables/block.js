@@ -234,7 +234,10 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             let template = this.config['template']['html'];
             for (let p = 0; p < amount; p++) {
                 nextKey++;
-                let blockHtml = template.replaceAll(':1000000.', ':' + nextKey + '.');
+                let blockHtml = template;
+                blockHtml = blockHtml.replaceAll(new RegExp('"([^"]+):1000000.' + this.getRealName() + '("|:)', 'g'), '"' + this.getName() + '$2');
+                blockHtml = blockHtml.replaceAll(new RegExp('"pimcore_editable_([^"]+)_1000000_' + this.getRealName() + '_', 'g'), '"pimcore_editable_' + this.getName().replaceAll(/(:|\.)/g, '_') + '_');
+                blockHtml = blockHtml.replaceAll(':1000000.', ':' + nextKey + '.');
                 blockHtml = blockHtml.replaceAll('_1000000_', '_' + nextKey + '_');
                 blockHtml = blockHtml.replaceAll('="1000000"', '="' + nextKey + '"');
                 blockHtml = blockHtml.replaceAll(', 1000000"', ', ' + nextKey + '"');
@@ -247,12 +250,12 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
                 this.config['template']['editables'].forEach(editableDef => {
                     let editable = Ext.clone(editableDef);
-                    editable['id'] = editable['id'].replace('_1000000_', '_' + nextKey + '_');
-                    editable['name'] = editable['name'].replace(':1000000.', ':' + nextKey + '.');
+                    editable['id'] = editable['id'].replace(new RegExp('pimcore_editable_([^"]+)_1000000_' + this.getRealName() + '_'), 'pimcore_editable_' + this.getName().replaceAll(/(:|\.)/g, '_') + '_');
+                    editable['id'] = editable['id'].replaceAll('_1000000_', '_' + nextKey + '_');
+                    editable['name'] = editable['name'].replace(new RegExp('^([^"]+):1000000.' + this.getRealName()), this.getName());
+                    editable['name'] = editable['name'].replaceAll(':1000000.', ':' + nextKey + '.');
                     editableManager.addByDefinition(editable);
                 });
-
-                this.elements = Ext.get(this.id).query('.pimcore_block_entry[data-name="' + this.name + '"][key]');
             }
 
             this.refresh();
