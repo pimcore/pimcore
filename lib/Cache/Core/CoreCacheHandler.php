@@ -410,7 +410,10 @@ class CoreCacheHandler implements LoggerAwareInterface
         return false;
     }
 
-    private function cleanupQueue(): void
+    /**
+     * @internal
+     */
+    public function cleanupQueue(): void
     {
         // order by priority
         uasort($this->saveQueue, function (CacheQueueItem $a, CacheQueueItem $b) {
