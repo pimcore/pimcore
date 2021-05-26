@@ -67,7 +67,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @var Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected $object = null;
 
     /**
      * @internal
@@ -196,6 +196,16 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
+     * @internal
+     *
+     * @param bool $mark
+     */
+    public function setLoadedAllLazyData($mark = true)
+    {
+        $this->_loadedAllLazyData = $mark;
+    }
+
+    /**
      * Note: this is for pimcore/pimcore use only.
      *
      * @internal
@@ -220,7 +230,7 @@ final class Localizedfield extends Model\AbstractModel implements
             }
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-            $this->_loadedAllLazyData = true;
+            $this->setLoadedAllLazyData();
         }
 
         foreach ($this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]) as $fieldDefinition) {
@@ -235,15 +245,23 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|null $object
+     * @param Concrete|Model\Element\ElementDescriptor|null $object
      * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(?Concrete $object, bool $markAsDirty = true)
+    public function setObject($object, bool $markAsDirty = true)
     {
+        if ($object instanceof Model\Element\ElementDescriptor) {
+            $object = Service::getElementById($object->getType(), $object->getId());
+        }
+
+        if (!is_null($object) && !$object instanceof Concrete) {
+            throw new \Exception('must be instance of object concrete');
+        }
+
         if ($markAsDirty) {
             $this->markAllLanguagesAsDirty();
         }
@@ -460,7 +478,7 @@ final class Localizedfield extends Model\AbstractModel implements
             return $data;
         }
 
-        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading() && !$this->_loadedAllLazyData) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
