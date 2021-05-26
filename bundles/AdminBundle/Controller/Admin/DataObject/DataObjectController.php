@@ -1192,6 +1192,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $objectFromVersion = $object !== $objectFromDatabase;
         $originalModificationDate = $objectFromVersion ? $object->getModificationDate() : $objectFromDatabase->getModificationDate();
+        if ($objectFromVersion) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+        }
 
         // data
         $data = [];
@@ -1500,6 +1507,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
+        if (method_exists($object, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields */
+            $localizedFields = $object->getLocalizedFields();
+            $localizedFields->setLoadedAllLazyData();
+        }
+
         DataObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object) {
@@ -1539,8 +1552,20 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version1 = Model\Version::getById($id1);
         $object1 = $version1->loadData();
 
+        if (method_exists($object1, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields1 */
+            $localizedFields1 = $object1->getLocalizedFields();
+            $localizedFields1->setLoadedAllLazyData();
+        }
+
         $version2 = Model\Version::getById($id2);
         $object2 = $version2->loadData();
+
+        if (method_exists($object2, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields2 */
+            $localizedFields2 = $object2->getLocalizedFields();
+            $localizedFields2->setLoadedAllLazyData();
+        }
 
         DataObject::setDoNotRestoreKeyAndPath(false);
 
