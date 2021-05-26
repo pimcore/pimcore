@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Bundle\DataHubBundle\GraphQL\ElementDescriptor;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -236,7 +235,7 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|ElementDescriptor|null $object
+     * @param Concrete|Model\Element\ElementDescriptor|null $object
      * @param bool $markAsDirty
      *
      * @return $this
