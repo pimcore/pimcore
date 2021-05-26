@@ -1856,10 +1856,10 @@ class Asset extends Element\AbstractElement
     public function __wakeup()
     {
         if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
+            // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)
             $originalElement = Asset::getById($this->getId());
             if ($originalElement) {
-                $this->setFilename($originalElement->getFilename());
+                $this->setParentId($originalElement->getParentId());
                 $this->setPath($originalElement->getRealPath());
             }
         }
