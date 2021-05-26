@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Ecommerce;
 
-final class CheckoutManagerEvents
+class CheckoutManagerEvents
 {
     /**
      * @Event("Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent")

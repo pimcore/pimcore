@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class DataObjectClassificationStoreEvents
+class DataObjectClassificationStoreEvents
 {
     /**
      * @Event("Pimcore\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent")

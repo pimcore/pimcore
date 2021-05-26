@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @internal
  */
-final class StateConfig
+class StateConfig
 {
     /**
      * @var OptionsResolver

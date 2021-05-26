@@ -21,7 +21,7 @@ use Pimcore\Model;
  * @method bool getById(string $id)
  * @method \Pimcore\Model\Tool\TmpStore\Dao getDao()
  */
-final class TmpStore extends Model\AbstractModel
+class TmpStore extends Model\AbstractModel
 {
     /**
      * @internal

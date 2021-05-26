@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class TargetGroupEvents
+class TargetGroupEvents
 {
     /**
      * @Event("Pimcore\Event\Model\TargetGroupEvent")

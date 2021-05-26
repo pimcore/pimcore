@@ -18,7 +18,7 @@ namespace Pimcore\Image\Optimizer;
 use Symfony\Component\Mime\MimeTypeGuesserInterface;
 use Symfony\Component\Mime\MimeTypes;
 
-final class AdvancedPngOptimizer extends AbstractCommandOptimizer
+class AdvancedPngOptimizer extends AbstractCommandOptimizer
 {
     /**
      * @var MimeTypeGuesserInterface

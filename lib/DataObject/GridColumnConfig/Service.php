@@ -26,7 +26,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @internal
  */
-final class Service
+class Service
 {
     /**
      * @var ContainerInterface

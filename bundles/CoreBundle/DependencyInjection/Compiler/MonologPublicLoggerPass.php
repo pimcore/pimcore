@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * @internal
  */
-final class MonologPublicLoggerPass implements CompilerPassInterface
+class MonologPublicLoggerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

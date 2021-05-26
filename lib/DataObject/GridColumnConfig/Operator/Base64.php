@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class Base64 extends AbstractOperator
+class Base64 extends AbstractOperator
 {
     /**
      * @var string

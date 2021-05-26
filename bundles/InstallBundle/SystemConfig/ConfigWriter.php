@@ -23,7 +23,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * @internal
  */
-final class ConfigWriter
+class ConfigWriter
 {
     /**
      * @var array

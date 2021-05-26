@@ -22,7 +22,7 @@ use Pimcore\Model;
  *
  * @method \Pimcore\Model\Element\Sanitycheck\Dao getDao()
  */
-final class Sanitycheck extends Model\AbstractModel
+class Sanitycheck extends Model\AbstractModel
 {
     /**
      * @var int

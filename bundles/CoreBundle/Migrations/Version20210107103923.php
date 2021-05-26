@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject;
 /**
  * @internal
  */
-final class Version20210107103923 extends AbstractMigration
+class Version20210107103923 extends AbstractMigration
 {
     public function getDescription(): string
     {

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Ecommerce;
 
-final class OrderManagerEvents
+class OrderManagerEvents
 {
     /**
      * @Event("Pimcore\Event\Model\Ecommerce\OrderManagerEvent")

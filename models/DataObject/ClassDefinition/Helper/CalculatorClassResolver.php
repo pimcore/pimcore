@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
 /**
  * @internal
  */
-final class CalculatorClassResolver extends ClassResolver
+class CalculatorClassResolver extends ClassResolver
 {
     public static function resolveCalculatorClass($calculatorClass)
     {

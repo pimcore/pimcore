@@ -24,7 +24,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class TranslateValueFactory implements OperatorFactoryInterface
+class TranslateValueFactory implements OperatorFactoryInterface
 {
     /**
      * @var TranslatorInterface

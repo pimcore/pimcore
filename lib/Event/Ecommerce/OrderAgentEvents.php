@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Ecommerce;
 
-final class OrderAgentEvents
+class OrderAgentEvents
 {
     /**
      * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")

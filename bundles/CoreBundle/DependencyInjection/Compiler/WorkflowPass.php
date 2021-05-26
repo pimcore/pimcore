@@ -33,7 +33,7 @@ use Symfony\Component\Workflow\Exception\LogicException;
 /**
  * @internal
  */
-final class WorkflowPass implements CompilerPassInterface
+class WorkflowPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

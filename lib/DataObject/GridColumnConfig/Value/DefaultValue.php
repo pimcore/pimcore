@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\Service;
 /**
  * @internal
  */
-final class DefaultValue extends AbstractValue
+class DefaultValue extends AbstractValue
 {
     /**
      * @var LocaleServiceInterface

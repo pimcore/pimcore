@@ -21,7 +21,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 /**
  * @internal
  */
-final class SetDumpStateFilter implements Filter
+class SetDumpStateFilter implements Filter
 {
     protected $state;
 

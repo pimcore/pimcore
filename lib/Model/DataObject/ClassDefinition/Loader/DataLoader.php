@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 /**
  * @internal
  */
-final class DataLoader extends ImplementationLoader implements DataLoaderInterface
+class DataLoader extends ImplementationLoader implements DataLoaderInterface
 {
     /**
      * @param string $name

@@ -35,7 +35,7 @@ use Symfony\Component\Lock\LockInterface;
 /**
  * @internal
  */
-final class RedirectHandler implements LoggerAwareInterface
+class RedirectHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

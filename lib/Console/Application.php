@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
  *
  * @internal
  */
-final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
+class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {
     /**
      * Constructor.

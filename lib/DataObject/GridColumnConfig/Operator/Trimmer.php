@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class Trimmer extends AbstractOperator
+class Trimmer extends AbstractOperator
 {
     const LEFT = 1;
 

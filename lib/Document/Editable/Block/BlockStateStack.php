@@ -22,7 +22,7 @@ namespace Pimcore\Document\Editable\Block;
  *
  * Handles block state (current block level, current block index)
  */
-final class BlockStateStack implements \Countable, \JsonSerializable
+class BlockStateStack implements \Countable, \JsonSerializable
 {
     /**
      * @var BlockState[]

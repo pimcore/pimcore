@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class JSON extends AbstractOperator
+class JSON extends AbstractOperator
 {
     /**
      * @var string

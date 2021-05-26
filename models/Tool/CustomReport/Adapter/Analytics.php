@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
-final class Analytics extends AbstractAdapter
+class Analytics extends AbstractAdapter
 {
     /**
      * {@inheritdoc}

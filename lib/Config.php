@@ -22,7 +22,7 @@ use Pimcore\Model\User\UserRole;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
 
-final class Config implements \ArrayAccess
+class Config implements \ArrayAccess
 {
     /**
      * @var array

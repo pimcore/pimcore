@@ -56,7 +56,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 /**
  * @internal
  */
-final class Configuration implements ConfigurationInterface
+class Configuration implements ConfigurationInterface
 {
     /**
      * @var TenantProcessor

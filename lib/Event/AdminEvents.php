@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class AdminEvents
+class AdminEvents
 {
     /**
      * The LOGIN_CREDENTIALS event is triggered after login credentials were resolved from request.

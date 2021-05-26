@@ -24,7 +24,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\User\Dao getDao()
  */
-final class User extends User\UserRole
+class User extends User\UserRole
 {
     use TemporaryFileHelperTrait;
 

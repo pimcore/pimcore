@@ -26,7 +26,7 @@ namespace Pimcore\Document\Editable\Block;
  * On sub requests, a new BlockState is added to the state stack which is valid
  * for the sub request.
  */
-final class BlockState implements \JsonSerializable
+class BlockState implements \JsonSerializable
 {
     /**
      * @var BlockName[]

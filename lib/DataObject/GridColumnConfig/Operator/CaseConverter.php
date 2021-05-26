@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class CaseConverter extends AbstractOperator
+class CaseConverter extends AbstractOperator
 {
     /**
      * @var int

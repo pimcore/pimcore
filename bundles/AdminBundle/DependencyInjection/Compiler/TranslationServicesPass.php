@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @internal
  */
-final class TranslationServicesPass implements CompilerPassInterface
+class TranslationServicesPass implements CompilerPassInterface
 {
     /**
      * Registers each service with tag pimcore.translation.data-extractor as data extractor for the translations export data extractor service.

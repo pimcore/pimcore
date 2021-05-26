@@ -27,7 +27,7 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 
-final class ImageThumbnail
+class ImageThumbnail
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
     use TemporaryFileHelperTrait;

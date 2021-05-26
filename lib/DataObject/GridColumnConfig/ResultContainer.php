@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig;
 /**
  * @internal
  */
-final class ResultContainer
+class ResultContainer
 {
     public $label;
 

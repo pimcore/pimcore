@@ -23,7 +23,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyConfig\Dao getDao()
  */
-final class KeyConfig extends Model\AbstractModel
+class KeyConfig extends Model\AbstractModel
 {
     /**
      * @var array

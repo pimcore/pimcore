@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tool;
 
-final class Serialize
+class Serialize
 {
     /**
      * @var array

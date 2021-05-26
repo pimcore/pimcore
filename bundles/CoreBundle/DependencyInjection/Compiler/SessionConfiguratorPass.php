@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @internal
  */
-final class SessionConfiguratorPass implements CompilerPassInterface
+class SessionConfiguratorPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

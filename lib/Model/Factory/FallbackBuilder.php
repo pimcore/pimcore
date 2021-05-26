@@ -22,7 +22,7 @@ use Pimcore\Loader\ImplementationLoader\AbstractClassNameLoader;
 /**
  * @internal
  */
-final class FallbackBuilder extends AbstractClassNameLoader
+class FallbackBuilder extends AbstractClassNameLoader
 {
     /**
      * {@inheritdoc}

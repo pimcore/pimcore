@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 /**
  * @internal
  */
-final class ProfilerAliasPass implements CompilerPassInterface
+class ProfilerAliasPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

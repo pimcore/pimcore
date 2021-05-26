@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class TranslationEvents
+class TranslationEvents
 {
     /**
      * @Event("Pimcore\Event\Model\TranslationEvent")

@@ -19,7 +19,7 @@ use Pimcore\Marshaller\MarshallerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-final class MarshallerService
+class MarshallerService
 {
     /**
      * @var ContainerInterface

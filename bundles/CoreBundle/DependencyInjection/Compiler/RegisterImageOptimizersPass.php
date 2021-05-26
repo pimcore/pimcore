@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @internal
  */
-final class RegisterImageOptimizersPass implements CompilerPassInterface
+class RegisterImageOptimizersPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

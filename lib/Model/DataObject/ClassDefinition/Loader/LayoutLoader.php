@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 /**
  * @internal
  */
-final class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
+class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
 {
     /**
      * {@inheritdoc}

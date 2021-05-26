@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class NotificationEvents
+class NotificationEvents
 {
     /**
      * @Event("Pimcore\Event\Model\NotificationEvent")

@@ -20,7 +20,7 @@ use Pimcore\Workflow\Place\StatusInfo;
 /**
  * @internal
  */
-final class WorkflowState extends AbstractOperator
+class WorkflowState extends AbstractOperator
 {
     /**
      * @var StatusInfo

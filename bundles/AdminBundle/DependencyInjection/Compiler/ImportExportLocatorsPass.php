@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 /**
  * @internal
  */
-final class ImportExportLocatorsPass implements CompilerPassInterface
+class ImportExportLocatorsPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

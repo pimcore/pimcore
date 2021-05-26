@@ -15,7 +15,7 @@
 
 namespace Pimcore\Cache;
 
-final class Runtime extends \ArrayObject
+class Runtime extends \ArrayObject
 {
     private const SERVICE_ID = __CLASS__;
 

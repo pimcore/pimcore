@@ -17,7 +17,7 @@ namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
 use Pimcore\Db;
 
-final class Sql extends AbstractAdapter
+class Sql extends AbstractAdapter
 {
     /**
      * {@inheritdoc}

@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Model\DataObject\Classificationstore;
 
-final class Group
+class Group
 {
     /**
      * @var GroupConfig

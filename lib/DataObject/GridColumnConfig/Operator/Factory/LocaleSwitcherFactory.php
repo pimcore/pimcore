@@ -24,7 +24,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 /**
  * @internal
  */
-final class LocaleSwitcherFactory implements OperatorFactoryInterface
+class LocaleSwitcherFactory implements OperatorFactoryInterface
 {
     /**
      * @var LocaleServiceInterface

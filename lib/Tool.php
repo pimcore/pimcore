@@ -20,7 +20,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-final class Tool
+class Tool
 {
     /**
      * Sets the current request to use when resolving request at early

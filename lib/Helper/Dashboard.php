@@ -23,7 +23,7 @@ use Pimcore\Tool\Serialize;
 /**
  * @internal
  */
-final class Dashboard
+class Dashboard
 {
     /**
      * @var User

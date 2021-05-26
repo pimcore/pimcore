@@ -24,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210430124911 extends AbstractMigration
+class Version20210430124911 extends AbstractMigration
 {
     public function getDescription(): string
     {

@@ -29,7 +29,7 @@ use Pimcore\Tool;
  * @method void save($params = [])
  * @method void createUpdateTable($params = [])
  */
-final class Localizedfield extends Model\AbstractModel implements
+class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,

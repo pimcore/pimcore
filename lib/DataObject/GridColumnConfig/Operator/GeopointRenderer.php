@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class GeopointRenderer extends AbstractRenderer
+class GeopointRenderer extends AbstractRenderer
 {
     /**
      * @var string

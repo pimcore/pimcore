@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Ecommerce;
 
-final class IndexServiceEvents
+class IndexServiceEvents
 {
     /**
      * Fired when error occurs during processing attributes for index. Event can influence handling of that error (like ignoring, throwing exceptions, etc.)

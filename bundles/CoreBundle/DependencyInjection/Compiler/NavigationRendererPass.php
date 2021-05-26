@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @internal
  */
-final class NavigationRendererPass implements CompilerPassInterface
+class NavigationRendererPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

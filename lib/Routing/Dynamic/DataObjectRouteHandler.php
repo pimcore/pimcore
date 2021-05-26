@@ -28,7 +28,7 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * @internal
  */
-final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
+class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     /**
      * @var Document\Service

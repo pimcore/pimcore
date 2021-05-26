@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class Concatenator extends AbstractOperator
+class Concatenator extends AbstractOperator
 {
     /**
      * @var string

@@ -23,7 +23,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\GroupConfig\Dao getDao()
  */
-final class GroupConfig extends Model\AbstractModel
+class GroupConfig extends Model\AbstractModel
 {
     use Model\Element\ChildsCompatibilityTrait;
 

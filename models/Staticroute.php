@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method void save()
  * @method void delete()
  */
-final class Staticroute extends AbstractModel
+class Staticroute extends AbstractModel
 {
     /**
      * @var int

@@ -20,7 +20,7 @@ use Pimcore\Logger;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
-final class Console
+class Console
 {
     /**
      * @var string system environment

@@ -21,7 +21,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * @internal
  */
-final class Version20201113143914 extends AbstractMigration
+class Version20201113143914 extends AbstractMigration
 {
     private $tables = ['documents_email', 'documents_newsletter', 'documents_page',
         'documents_snippet', 'documents_printpage', ];

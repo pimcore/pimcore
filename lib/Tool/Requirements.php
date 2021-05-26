@@ -23,7 +23,7 @@ use Pimcore\Tool\Requirements\Check;
 /**
  * @internal
  */
-final class Requirements
+class Requirements
 {
     /**
      * @return Check[]

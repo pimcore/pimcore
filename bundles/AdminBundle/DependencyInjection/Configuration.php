@@ -24,7 +24,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  *
  * @internal
  */
-final class Configuration implements ConfigurationInterface
+class Configuration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}

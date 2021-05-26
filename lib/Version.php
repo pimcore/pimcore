@@ -20,7 +20,7 @@ use PackageVersions\Versions;
 /**
  * @internal
  */
-final class Version
+class Version
 {
     const PART_NUMBER = 0;
 

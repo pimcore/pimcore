@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Analytics;
 
-final class GoogleTagManagerEvents
+class GoogleTagManagerEvents
 {
     /**
      * Triggered before the tag manager head code block is rendered. Can be used to add additional code

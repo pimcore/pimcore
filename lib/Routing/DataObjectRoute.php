@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Route;
 /**
  * @internal
  */
-final class DataObjectRoute extends Route implements RouteObjectInterface
+class DataObjectRoute extends Route implements RouteObjectInterface
 {
     /**
      * @var Concrete|null

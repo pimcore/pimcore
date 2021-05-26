@@ -22,7 +22,7 @@ use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
-final class Session
+class Session
 {
     /**
      * @var AdminSessionHandlerInterface

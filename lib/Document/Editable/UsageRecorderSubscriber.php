@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * @internal
  */
-final class UsageRecorderSubscriber implements EventSubscriberInterface
+class UsageRecorderSubscriber implements EventSubscriberInterface
 {
     /**
      * @var array

@@ -20,7 +20,7 @@ use Pimcore\Tool\Serialize;
 /**
  * @internal
  */
-final class PHP extends AbstractOperator
+class PHP extends AbstractOperator
 {
     /**
      * @var string

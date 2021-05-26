@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject\Data\Hotspotimage;
 /**
  * @internal
  */
-final class AssetMetadataGetter extends AbstractOperator
+class AssetMetadataGetter extends AbstractOperator
 {
     /**
      * @var string

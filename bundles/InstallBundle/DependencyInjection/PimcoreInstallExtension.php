@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 /**
  * @internal
  */
-final class PimcoreInstallExtension extends ConfigurableExtension
+class PimcoreInstallExtension extends ConfigurableExtension
 {
     protected function loadInternal(array $config, ContainerBuilder $container)
     {

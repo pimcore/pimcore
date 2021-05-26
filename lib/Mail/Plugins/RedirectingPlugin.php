@@ -22,7 +22,7 @@ use Symfony\Component\Mime\Header\MailboxListHeader;
 /**
  * @internal
  */
-final class RedirectingPlugin
+class RedirectingPlugin
 {
     /**
      * The recipient who will receive all messages.

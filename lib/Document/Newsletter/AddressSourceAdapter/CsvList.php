@@ -21,7 +21,7 @@ use Pimcore\Document\Newsletter\SendingParamContainer;
 /**
  * @internal
  */
-final class CsvList implements AddressSourceAdapterInterface
+class CsvList implements AddressSourceAdapterInterface
 {
     /**
      * @var string[]

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class DataObjectCustomLayoutEvents
+class DataObjectCustomLayoutEvents
 {
     /**
      * @Event("Pimcore\Event\Model\DataObject\CustomLayoutEvent")

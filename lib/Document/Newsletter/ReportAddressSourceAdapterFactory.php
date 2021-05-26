@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 /**
  * @internal
  */
-final class ReportAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
+class ReportAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
 {
     /**
      * @var ServiceLocator

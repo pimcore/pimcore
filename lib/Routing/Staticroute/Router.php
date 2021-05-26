@@ -35,7 +35,7 @@ use Symfony\Component\Routing\RouterInterface;
  *
  * A custom router implementation handling pimcore static routes.
  */
-final class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface, LoggerAwareInterface
+class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

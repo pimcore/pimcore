@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class SearchBackendEvents
+class SearchBackendEvents
 {
     /**
      * @Event("Pimcore\Event\Model\SearchBackendEvent")

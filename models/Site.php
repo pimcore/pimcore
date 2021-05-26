@@ -23,7 +23,7 @@ use Pimcore\Logger;
  * @method void delete()
  * @method void save()
  */
-final class Site extends AbstractModel
+class Site extends AbstractModel
 {
     /**
      * @var Site|null

@@ -20,7 +20,7 @@ use Pimcore\File;
 /**
  * @internal
  */
-final class PhpArrayFileTable
+class PhpArrayFileTable
 {
     /**
      * @var array

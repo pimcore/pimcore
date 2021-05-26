@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Ecommerce;
 
-final class AdminEvents
+class AdminEvents
 {
     /**
      * Fired when values in filter definition get fetched

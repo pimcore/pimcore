@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * @internal
  */
-final class CacheFallbackPass implements CompilerPassInterface
+class CacheFallbackPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

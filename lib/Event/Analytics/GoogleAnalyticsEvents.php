@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Analytics;
 
-final class GoogleAnalyticsEvents
+class GoogleAnalyticsEvents
 {
     /**
      * Triggered before a tracking code block is rendered. Can be used to add additional code

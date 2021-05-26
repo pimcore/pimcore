@@ -43,7 +43,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 /**
  * @internal
  */
-final class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
+class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     /**
      * @return string

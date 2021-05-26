@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @internal
  */
-final class LongRunningHelperPass implements CompilerPassInterface
+class LongRunningHelperPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

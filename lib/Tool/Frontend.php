@@ -19,7 +19,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
-final class Frontend
+class Frontend
 {
     /**
      * @param Site|null $site

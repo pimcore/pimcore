@@ -22,7 +22,7 @@ use Pimcore\Loader\ImplementationLoader\PrefixLoader as BasePrefixLoader;
 /**
  * @internal
  */
-final class PrefixLoader extends BasePrefixLoader
+class PrefixLoader extends BasePrefixLoader
 {
     /**
      * {@inheritdoc}

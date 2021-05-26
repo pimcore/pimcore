@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class CharCounter extends AbstractOperator
+class CharCounter extends AbstractOperator
 {
     /**
      * {@inheritdoc}

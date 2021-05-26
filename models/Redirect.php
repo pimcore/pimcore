@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Pimcore\Model\Redirect\Dao getDao()
  */
-final class Redirect extends AbstractModel
+class Redirect extends AbstractModel
 {
     const TYPE_ENTIRE_URI = 'entire_uri';
 

@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class Iterator extends AbstractOperator
+class Iterator extends AbstractOperator
 {
     /**
      * {@inheritdoc}

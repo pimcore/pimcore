@@ -21,7 +21,7 @@ use Pimcore\Tool\Admin;
 /**
  * @internal
  */
-final class AnyGetter extends AbstractOperator
+class AnyGetter extends AbstractOperator
 {
     /**
      * @var string

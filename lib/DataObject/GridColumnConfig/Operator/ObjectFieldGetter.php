@@ -21,7 +21,7 @@ use Pimcore\Model\Element\ElementInterface;
 /**
  * @internal
  */
-final class ObjectFieldGetter extends AbstractOperator
+class ObjectFieldGetter extends AbstractOperator
 {
     /**
      * @var string

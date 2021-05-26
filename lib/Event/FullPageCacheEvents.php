@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
-final class FullPageCacheEvents
+class FullPageCacheEvents
 {
     /**
      * Fired when the full page chage determines if it should disable

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class RedirectEvents
+class RedirectEvents
 {
     /**
      * @Event("Pimcore\Event\Model\RedirectEvent")

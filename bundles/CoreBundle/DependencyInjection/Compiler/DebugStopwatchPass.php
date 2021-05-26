@@ -32,7 +32,7 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @internal
  */
-final class DebugStopwatchPass implements CompilerPassInterface
+class DebugStopwatchPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

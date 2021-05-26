@@ -24,7 +24,7 @@ use Doctrine\Migrations\Version\Version;
 /**
  * @internal
  */
-final class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRepository
+class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRepository
 {
     /**
      * @var FilesystemMigrationsRepository

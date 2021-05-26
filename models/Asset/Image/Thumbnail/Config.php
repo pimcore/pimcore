@@ -24,7 +24,7 @@ use Pimcore\Tool\Serialize;
  * @method void save(bool $forceClearTempFiles = false)
  * @method void delete(bool $forceClearTempFiles = false)
  */
-final class Config extends Model\AbstractModel
+class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 

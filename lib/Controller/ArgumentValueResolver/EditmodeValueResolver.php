@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 /**
  * @internal
  */
-final class EditmodeValueResolver implements ArgumentValueResolverInterface
+class EditmodeValueResolver implements ArgumentValueResolverInterface
 {
     /**
      * @var EditmodeResolver

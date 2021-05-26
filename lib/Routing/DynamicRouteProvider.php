@@ -26,7 +26,7 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * @internal
  */
-final class DynamicRouteProvider implements RouteProviderInterface
+class DynamicRouteProvider implements RouteProviderInterface
 {
     /**
      * @var SiteResolver

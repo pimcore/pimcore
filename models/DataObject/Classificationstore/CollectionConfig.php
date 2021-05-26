@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\CollectionConfig\Dao getDao()
  */
-final class CollectionConfig extends Model\AbstractModel
+class CollectionConfig extends Model\AbstractModel
 {
     /**
      * Group id.

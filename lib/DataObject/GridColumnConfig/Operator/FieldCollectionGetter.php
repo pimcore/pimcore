@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\Fieldcollection;
 /**
  * @internal
  */
-final class FieldCollectionGetter extends AbstractOperator
+class FieldCollectionGetter extends AbstractOperator
 {
     /**
      * @var string

@@ -26,7 +26,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
  */
-final class Translation extends AbstractModel
+class Translation extends AbstractModel
 {
     const DOMAIN_DEFAULT = 'messages';
 

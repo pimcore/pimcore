@@ -22,7 +22,7 @@ use Symfony\Component\Lock\LockFactory;
 /**
  * @internal
  */
-final class Executor implements ExecutorInterface
+class Executor implements ExecutorInterface
 {
     /**
      * @var array

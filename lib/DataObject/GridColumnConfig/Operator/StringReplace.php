@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class StringReplace extends AbstractOperator
+class StringReplace extends AbstractOperator
 {
     /**
      * @var string

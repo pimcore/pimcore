@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class SystemEvents
+class SystemEvents
 {
     /**
      * This event is fired on shutdown (register_shutdown_function)

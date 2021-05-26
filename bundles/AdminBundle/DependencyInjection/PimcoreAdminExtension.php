@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 /**
  * @internal
  */
-final class PimcoreAdminExtension extends Extension
+class PimcoreAdminExtension extends Extension
 {
     const PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES = 'pimcore_admin.dataObjects.notes_events.types';
 

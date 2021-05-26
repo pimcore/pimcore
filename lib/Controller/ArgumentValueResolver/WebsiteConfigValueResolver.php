@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 /**
  * @internal
  */
-final class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
+class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
 {
     public function supports(Request $request, ArgumentMetadata $argument)
     {

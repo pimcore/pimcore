@@ -23,7 +23,7 @@ use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 /**
  * @internal
  */
-final class Factory extends ImplementationLoader implements FactoryInterface
+class Factory extends ImplementationLoader implements FactoryInterface
 {
     /**
      * {@inheritdoc}

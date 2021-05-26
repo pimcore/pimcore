@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class AssetEvents
+class AssetEvents
 {
     /**
      * @Event("Pimcore\Event\Model\AssetEvent")

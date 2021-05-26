@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @internal
  */
-final class RegisterMaintenanceTaskPass implements CompilerPassInterface
+class RegisterMaintenanceTaskPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

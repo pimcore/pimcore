@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
-final class TestEvents
+class TestEvents
 {
     /**
      * @Event("\Symfony\Component\EventDispatcher\GenericEvent")

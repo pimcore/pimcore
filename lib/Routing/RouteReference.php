@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @internal
  */
-final class RouteReference implements RouteReferenceInterface
+class RouteReference implements RouteReferenceInterface
 {
     /**
      * @var string

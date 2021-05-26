@@ -35,7 +35,7 @@ use Pimcore\Tool\Storage;
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
  */
-final class Version extends AbstractModel
+class Version extends AbstractModel
 {
     /**
      * @var int

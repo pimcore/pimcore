@@ -20,7 +20,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 /**
  * @internal
  */
-final class LocaleSwitcher extends AbstractOperator
+class LocaleSwitcher extends AbstractOperator
 {
     /**
      * @var LocaleServiceInterface

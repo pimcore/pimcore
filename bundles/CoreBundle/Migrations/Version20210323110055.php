@@ -25,7 +25,7 @@ use Pimcore\Model\Tool\SettingsStore;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210323110055 extends AbstractMigration
+class Version20210323110055 extends AbstractMigration
 {
     public function getDescription(): string
     {

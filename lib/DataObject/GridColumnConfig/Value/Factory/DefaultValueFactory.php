@@ -20,7 +20,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Value\Factory;
 use Pimcore\DataObject\GridColumnConfig\Value\ValueInterface;
 use Pimcore\Localization\LocaleServiceInterface;
 
-final class DefaultValueFactory implements ValueFactoryInterface
+class DefaultValueFactory implements ValueFactoryInterface
 {
     /**
      * @var string

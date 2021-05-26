@@ -22,7 +22,7 @@ use Pimcore\Model\Document\Editable;
 /**
  * @internal
  */
-final class EditmodeEditableDefinitionCollector
+class EditmodeEditableDefinitionCollector
 {
     private bool $stopped = false;
 

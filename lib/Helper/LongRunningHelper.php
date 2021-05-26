@@ -20,7 +20,7 @@ use Doctrine\Persistence\ConnectionRegistry;
 use Monolog\Handler\HandlerInterface;
 use Psr\Log\LoggerAwareTrait;
 
-final class LongRunningHelper
+class LongRunningHelper
 {
     use LoggerAwareTrait;
 

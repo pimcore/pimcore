@@ -18,7 +18,7 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 
-final class DefinitionModifier
+class DefinitionModifier
 {
     /**
      * appends valid $fieldsToAdd to a $layoutDefinition element with $nameToFind

@@ -23,7 +23,7 @@ use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
 /**
  * @internal
  */
-final class ReportAdapter implements AddressSourceAdapterInterface
+class ReportAdapter implements AddressSourceAdapterInterface
 {
     /**
      * @var string

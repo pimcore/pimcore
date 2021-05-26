@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class Anonymizer extends AbstractOperator
+class Anonymizer extends AbstractOperator
 {
     /**
      * @var string

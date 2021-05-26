@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class FrontendEvents
+class FrontendEvents
 {
     /**
      * Allows to rewrite the frontend path of an image thumbnail

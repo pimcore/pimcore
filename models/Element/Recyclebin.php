@@ -23,7 +23,7 @@ use Pimcore\Tool\Storage;
  *
  * @internal
  */
-final class Recyclebin extends Model\AbstractModel
+class Recyclebin extends Model\AbstractModel
 {
     public function flush()
     {

@@ -25,7 +25,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * @internal
  */
-final class PimcoreStyle extends SymfonyStyle
+class PimcoreStyle extends SymfonyStyle
 {
     /**
      * @var InputInterface

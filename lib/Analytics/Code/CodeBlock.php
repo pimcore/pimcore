@@ -21,7 +21,7 @@ namespace Pimcore\Analytics\Code;
  * Represents a single template block. Parts are represented as array and concatenated
  * with newlines on render.
  */
-final class CodeBlock
+class CodeBlock
 {
     /**
      * @var array

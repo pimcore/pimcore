@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class CoreCacheEvents
+class CoreCacheEvents
 {
     /**
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")

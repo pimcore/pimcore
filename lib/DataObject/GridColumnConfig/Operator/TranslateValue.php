@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class TranslateValue extends AbstractOperator
+class TranslateValue extends AbstractOperator
 {
     /**
      * @var TranslatorInterface|LocaleAwareInterface

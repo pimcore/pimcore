@@ -23,7 +23,7 @@ use Pimcore\Model\Exception\NotFoundException;
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
  */
-final class WebsiteSetting extends AbstractModel
+class WebsiteSetting extends AbstractModel
 {
     /**
      * @var int

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
-final class TargetingEvents
+class TargetingEvents
 {
     /**
      * Fired when the targeting code is rendered. Allows to add data to the targeting

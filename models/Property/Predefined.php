@@ -24,7 +24,7 @@ use Pimcore\Model;
  * @method void save()
  * @method void delete()
  */
-final class Predefined extends Model\AbstractModel
+class Predefined extends Model\AbstractModel
 {
     /**
      * @var int

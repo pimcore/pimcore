@@ -22,7 +22,7 @@ use Pimcore\Tool;
 /**
  * @internal
  */
-final class LFExpander extends AbstractOperator
+class LFExpander extends AbstractOperator
 {
     /**
      * @var LocaleServiceInterface

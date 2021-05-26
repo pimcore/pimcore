@@ -18,7 +18,7 @@ namespace Pimcore\Model\Element;
 /**
  * @internal
  */
-final class ElementDescriptor
+class ElementDescriptor
 {
     /**
      * @var string

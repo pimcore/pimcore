@@ -25,7 +25,7 @@ use Pimcore\Model\Document\Editable;
  * Simple value object containing both name and real name of
  * a block.
  */
-final class BlockName implements \JsonSerializable
+class BlockName implements \JsonSerializable
 {
     /**
      * @var string

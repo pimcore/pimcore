@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * @internal
  */
-final class ServiceControllersPass implements CompilerPassInterface
+class ServiceControllersPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {

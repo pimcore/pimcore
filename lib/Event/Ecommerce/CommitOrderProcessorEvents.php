@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Ecommerce;
 
-final class CommitOrderProcessorEvents
+class CommitOrderProcessorEvents
 {
     /**
      * @Event("Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent")

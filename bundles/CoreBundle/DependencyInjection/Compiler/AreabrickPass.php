@@ -33,7 +33,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * @internal
  */
-final class AreabrickPass implements CompilerPassInterface
+class AreabrickPass implements CompilerPassInterface
 {
     /**
      * @var Inflector

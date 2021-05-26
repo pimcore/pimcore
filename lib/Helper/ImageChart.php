@@ -18,7 +18,7 @@ namespace Pimcore\Helper;
 /**
  * @internal
  */
-final class ImageChart
+class ImageChart
 {
     /**
      * @var string

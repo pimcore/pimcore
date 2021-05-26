@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class MailEvents
+class MailEvents
 {
     /**
      * Arguments:

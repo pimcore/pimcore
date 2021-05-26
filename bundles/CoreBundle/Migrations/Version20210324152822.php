@@ -24,7 +24,7 @@ use Pimcore\Db;
 /**
  * @internal
  */
-final class Version20210324152822 extends AbstractMigration
+class Version20210324152822 extends AbstractMigration
 {
     /**
      * @param Schema $schema

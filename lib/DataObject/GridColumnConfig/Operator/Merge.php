@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class Merge extends AbstractOperator
+class Merge extends AbstractOperator
 {
     /**
      * @var bool

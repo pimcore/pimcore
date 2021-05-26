@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class UserRoleEvents
+class UserRoleEvents
 {
     /**
      * @Event("Pimcore\Event\Model\UserRoleEvent")

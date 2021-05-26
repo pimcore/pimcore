@@ -43,7 +43,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 /**
  * @internal
  */
-final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
+class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_FACTORY = 'pimcore_ecommerce.factory';
 

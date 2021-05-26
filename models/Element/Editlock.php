@@ -25,7 +25,7 @@ use Pimcore\Tool\Session;
  * @method void delete()
  * @method void save()
  */
-final class Editlock extends Model\AbstractModel
+class Editlock extends Model\AbstractModel
 {
     /**
      * @var int

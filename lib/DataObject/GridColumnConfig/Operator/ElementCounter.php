@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class ElementCounter extends AbstractOperator
+class ElementCounter extends AbstractOperator
 {
     /**
      * @var bool

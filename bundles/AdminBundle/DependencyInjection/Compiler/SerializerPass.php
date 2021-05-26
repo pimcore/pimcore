@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
  *
  * @internal
  */
-final class SerializerPass implements CompilerPassInterface
+class SerializerPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 

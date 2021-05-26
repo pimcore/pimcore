@@ -20,7 +20,7 @@ namespace Pimcore\Model\Asset\Metadata\Loader;
 use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 
-final class DataLoader extends ImplementationLoader implements DataLoaderInterface
+class DataLoader extends ImplementationLoader implements DataLoaderInterface
 {
     /**
      * {@inheritdoc}

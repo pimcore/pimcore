@@ -23,7 +23,7 @@ use Symfony\Component\Uid\Uuid as Uid;
  * @method void delete()
  * @method void save()
  */
-final class UUID extends Model\AbstractModel
+class UUID extends Model\AbstractModel
 {
     /**
      * @internal

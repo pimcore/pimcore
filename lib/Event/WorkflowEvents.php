@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class WorkflowEvents
+class WorkflowEvents
 {
     /**
      * Fired BEFORE a global action happens in the workflow. use this to hook into actions globally and define

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event\Admin;
 
-final class ReportEvents
+class ReportEvents
 {
     /**
      * The SAVE_SETTINGS event is triggered when reports settings are saved

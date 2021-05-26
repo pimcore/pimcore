@@ -18,7 +18,7 @@ namespace Pimcore\Image\Optimizer;
 use Symfony\Component\Mime\MimeTypeGuesserInterface;
 use Symfony\Component\Mime\MimeTypes;
 
-final class ZopflipngOptimizer extends AbstractCommandOptimizer
+class ZopflipngOptimizer extends AbstractCommandOptimizer
 {
     /**
      * @var MimeTypeGuesserInterface

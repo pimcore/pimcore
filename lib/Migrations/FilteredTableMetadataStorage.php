@@ -24,7 +24,7 @@ use Doctrine\Migrations\Version\ExecutionResult;
 /**
  * @internal
  */
-final class FilteredTableMetadataStorage implements MetadataStorage
+class FilteredTableMetadataStorage implements MetadataStorage
 {
     /**
      * @var TableMetadataStorage

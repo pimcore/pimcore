@@ -15,7 +15,7 @@
 
 namespace Pimcore\Event;
 
-final class DocumentEvents
+class DocumentEvents
 {
     /**
      * @Event("Pimcore\Event\Model\DocumentEvent")

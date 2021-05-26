@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Listing;
 /**
  * @internal
  */
-final class DefaultAdapter implements AddressSourceAdapterInterface
+class DefaultAdapter implements AddressSourceAdapterInterface
 {
     /**
      * @var string

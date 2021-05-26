@@ -18,7 +18,7 @@ namespace Pimcore\Tool\Requirements;
 /**
  * @internal
  */
-final class Check implements \ArrayAccess
+class Check implements \ArrayAccess
 {
     const STATE_OK = 1;
 

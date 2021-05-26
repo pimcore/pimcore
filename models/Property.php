@@ -22,7 +22,7 @@ use Pimcore\Model\Element\Service;
  * @method \Pimcore\Model\Property\Dao getDao()
  * @method void save()
  */
-final class Property extends AbstractModel
+class Property extends AbstractModel
 {
     /**
      * @var string

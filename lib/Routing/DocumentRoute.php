@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Route;
 /**
  * @internal
  */
-final class DocumentRoute extends Route implements RouteObjectInterface
+class DocumentRoute extends Route implements RouteObjectInterface
 {
     /**
      * @var Document|null

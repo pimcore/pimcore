@@ -24,7 +24,7 @@ use Pimcore\Workflow\Place\StatusInfo;
 /**
  * @internal
  */
-final class WorkflowStateFactory implements OperatorFactoryInterface
+class WorkflowStateFactory implements OperatorFactoryInterface
 {
     /**
      * @var StatusInfo

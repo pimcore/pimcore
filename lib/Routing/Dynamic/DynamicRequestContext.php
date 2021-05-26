@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * Value object containing properties needed while matching document routes.
  */
-final class DynamicRequestContext
+class DynamicRequestContext
 {
     /**
      * @var Request

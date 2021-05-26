@@ -18,7 +18,7 @@ namespace Pimcore\Document\Newsletter;
 /**
  * @internal
  */
-final class DefaultAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
+class DefaultAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
 {
     /**
      * @var string

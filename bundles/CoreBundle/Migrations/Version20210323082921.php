@@ -25,7 +25,7 @@ use Pimcore\Db\PhpArrayFileTable;
 /**
  * @internal
  */
-final class Version20210323082921 extends AbstractMigration
+class Version20210323082921 extends AbstractMigration
 {
     public function getDescription(): string
     {

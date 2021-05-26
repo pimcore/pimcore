@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
  *
  * @internal
  */
-final class DocumentValueResolver implements ArgumentValueResolverInterface
+class DocumentValueResolver implements ArgumentValueResolverInterface
 {
     /**
      * @var DocumentResolver

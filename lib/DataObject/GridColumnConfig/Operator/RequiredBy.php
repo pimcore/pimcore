@@ -21,7 +21,7 @@ use Pimcore\Model\Element\Service;
 /**
  * @internal
  */
-final class RequiredBy extends AbstractOperator
+class RequiredBy extends AbstractOperator
 {
     /**
      * @var string|null

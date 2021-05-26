@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class StringContains extends AbstractOperator
+class StringContains extends AbstractOperator
 {
     /**
      * @var string

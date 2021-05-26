@@ -20,7 +20,7 @@ use Carbon\Carbon;
 /**
  * @internal
  */
-final class DateFormatter extends AbstractOperator
+class DateFormatter extends AbstractOperator
 {
     /**
      * @var string|null

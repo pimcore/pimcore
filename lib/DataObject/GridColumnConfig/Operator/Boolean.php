@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class Boolean extends AbstractOperator
+class Boolean extends AbstractOperator
 {
     /**
      * @var bool

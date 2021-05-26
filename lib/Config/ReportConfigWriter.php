@@ -27,7 +27,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  *
  * @internal
  */
-final class ReportConfigWriter
+class ReportConfigWriter
 {
     /**
      * @var EventDispatcherInterface

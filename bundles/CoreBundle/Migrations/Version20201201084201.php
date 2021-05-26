@@ -23,7 +23,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * @internal
  */
-final class Version20201201084201 extends AbstractMigration
+class Version20201201084201 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {

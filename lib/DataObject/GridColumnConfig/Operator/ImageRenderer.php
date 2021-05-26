@@ -18,7 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 /**
  * @internal
  */
-final class ImageRenderer extends AbstractRenderer
+class ImageRenderer extends AbstractRenderer
 {
     /**
      * @var string

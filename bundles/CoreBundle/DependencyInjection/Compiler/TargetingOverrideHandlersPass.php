@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * @internal
  */
-final class TargetingOverrideHandlersPass implements CompilerPassInterface
+class TargetingOverrideHandlersPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 
