@@ -248,7 +248,7 @@ final class Localizedfield extends Model\AbstractModel implements
             $object = Service::getElementById($object->getType(), $object->getId());
         }
 
-        if ($object && !$object instanceof Concrete) {
+        if (!is_null($object) && !$object instanceof Concrete) {
             throw new \Exception('must be instance of object concrete');
         }
 
