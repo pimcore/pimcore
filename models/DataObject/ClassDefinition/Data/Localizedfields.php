@@ -189,10 +189,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
 
-        $dataItems = $data->getInternalData(true);
+        $loadLazy = !($params['objectFromVersion'] ?? false);
+        $dataItems = $data->getInternalData($loadLazy);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading() && $loadLazy) {
                     $lazyKey = $data->buildLazyKey($fd->getName(), $language);
                     if (!$data->isLazyKeyLoaded($lazyKey) && $fd instanceof CustomResourcePersistingInterface) {
                         $params['language'] = $language;
