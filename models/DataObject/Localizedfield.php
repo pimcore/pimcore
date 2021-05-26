@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Bundle\DataHubBundle\GraphQL\ElementDescriptor;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -67,7 +68,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @var Concrete|null
      */
-    protected ?Concrete $object = null;
+    protected $object = null;
 
     /**
      * @internal
@@ -235,15 +236,19 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @param Concrete|null $object
+     * @param Concrete|ElementDescriptor|null $object
      * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(?Concrete $object, bool $markAsDirty = true)
+    public function setObject($object, bool $markAsDirty = true)
     {
+        if ($object instanceof Model\Element\ElementDescriptor) {
+            $object = Model\Element\Service::getElementById($object->getType(), $object->getId());
+        }
+
         if ($markAsDirty) {
             $this->markAllLanguagesAsDirty();
         }
