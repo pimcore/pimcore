@@ -375,7 +375,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             $this->getHandlerPropertyValue('saveQueue')
         );
 
-        $this->assertFalse($this->handler->save('additional_item', 'foo'));
+        $this->handler->save('additional_item', 'foo');
         $this->handler->cleanupQueue();
 
         $queue = $this->getHandlerPropertyValue('saveQueue');
