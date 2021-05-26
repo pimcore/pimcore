@@ -246,9 +246,10 @@ final class Localizedfield extends Model\AbstractModel implements
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
             $object = Service::getElementById($object->getType(), $object->getId());
-            if (!$object instanceof Concrete) {
-                throw new \Exception("wrong element descriptor data, tried to resolve " . $object->getType() . " " . $object->getId());
-            }
+        }
+
+        if ($object && !$object instanceof Concrete) {
+            throw new \Exception('must be instance of object concrete');
         }
 
         if ($markAsDirty) {
