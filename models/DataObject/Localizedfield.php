@@ -245,7 +245,10 @@ final class Localizedfield extends Model\AbstractModel implements
     public function setObject($object, bool $markAsDirty = true)
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
-            $object = Model\Element\Service::getElementById($object->getType(), $object->getId());
+            $object = Service::getElementById($object->getType(), $object->getId());
+            if (!$object instanceof Concrete) {
+                throw new \Exception("wrong element descriptor data, tried to resolve " . $object->getType() . " " . $object->getId());
+            }
         }
 
         if ($markAsDirty) {
