@@ -510,16 +510,13 @@ class Data extends \Pimcore\Model\AbstractModel
      */
     protected function cleanupData($data)
     {
-        $data = strip_tags($data);
+        $data = preg_replace('/(<\?.*?(\?>|$)|<[^<]+>)/s', '', $data);
 
         $data = html_entity_decode($data, ENT_QUOTES, 'UTF-8');
 
         // we don't remove ".", otherwise it would be impossible to search for email addresses
         $data = str_replace([',', ':', ';', "'", '"'], ' ', $data);
-        $data = str_replace("\r\n", ' ', $data);
-        $data = str_replace("\n", ' ', $data);
-        $data = str_replace("\r", ' ', $data);
-        $data = str_replace("\t", '', $data);
+        $data = str_replace(["\r\n", "\n", "\r", "\t"], ' ', $data);
         $data = preg_replace('#[ ]+#', ' ', $data);
 
         $minWordLength = $this->getDao()->getMinWordLengthForFulltextIndex();
