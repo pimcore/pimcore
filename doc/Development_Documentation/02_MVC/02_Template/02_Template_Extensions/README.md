@@ -11,7 +11,6 @@ Following an overview of some [Twig Extensions](https://twig.symfony.com/doc/2.x
 - `asset` 
 - `csrf_token`  
 - `path` 
-- `url` 
 - `absolute_url` 
 - `translator` 
 - `trans`
