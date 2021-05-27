@@ -35,7 +35,7 @@ class DefaultElasticSearch6 extends AbstractElasticSearch
      *
      * @var string
      */
-    protected $routingParamName = '_routing';
+    protected $routingParamName = 'routing';
 
     public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
