@@ -1365,7 +1365,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
      *
      * @param string $type
      * @param int $elementId
