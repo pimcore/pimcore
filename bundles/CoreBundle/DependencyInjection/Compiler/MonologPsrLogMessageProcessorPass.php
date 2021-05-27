@@ -34,6 +34,8 @@ class MonologPsrLogMessageProcessorPass implements CompilerPassInterface
     {
         $processorId = 'monolog.processor.psr_log_message';
 
+        // We need to ignore this due to this bug: https://github.com/phpstan/phpstan-symfony/issues/15
+        // @phpstan-ignore-next-line
         if ($container->has($processorId)) {
             return;
         }
