@@ -340,9 +340,9 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 fieldLabel: t("error_page") + " (" + t("default") + ")",
-                                name: "documents.error_pages.default",
+                                name: "documents.default_error_page",
                                 fieldCls: "input_drop_target",
-                                value: this.getValue("documents.error_pages.default"),
+                                value: this.getValue("documents.default_error_page"),
                                 width: 600,
                                 xtype: "textfield",
                                 listeners: {
@@ -374,6 +374,22 @@ pimcore.settings.system = Class.create({
                                             }.bind(el)
                                         });
                                     }
+                                }
+                            },
+                            {
+                                xtype: "container",
+                                width: 450,
+                                style: "margin-top: 20px;",
+                                id: "system_settings_errorPage_languageContainer",
+                                items: [],
+                                listeners: {
+                                    beforerender: function () {
+                                        // add existing language entries
+                                        var locales = this.getValue("general.valid_languages").split(",");
+                                        if (locales && locales.length > 0) {
+                                            Ext.each(locales, this.addErrorPage.bind(this));
+                                        }
+                                    }.bind(this)
                                 }
                             }
                         ]
@@ -714,6 +730,86 @@ pimcore.settings.system = Class.create({
             container.remove(lang);
         }
         container.updateLayout();
-    }
+    },
 
+    addErrorPage: function (language) {
+
+        if (empty(language)) {
+            return;
+        }
+
+        // find the language entry in the store, because "language" can be the display value too
+        var index = this.languagesStore.findExact("language", language);
+        if (index < 0) {
+            index = this.languagesStore.findExact("display", language)
+        }
+
+        if (index >= 0) {
+
+            var rec = this.languagesStore.getAt(index);
+            language = rec.get("language");
+
+            // add the language to the hidden field used to send the languages to the action
+            var languageField = Ext.getCmp("system_settings_general_validLanguages");
+            var addedLanguages = languageField.getValue().split(",");
+            if (!in_array(language, addedLanguages)) {
+                addedLanguages.push(language);
+                languageField.setValue(addedLanguages.join(","));
+            }
+
+            var container = Ext.getCmp("system_settings_errorPage_languageContainer");
+            var lang = container.getComponent(language);
+            if (lang) {
+                return;
+            }
+
+            container.add({
+                xtype: "fieldset",
+                itemId: language,
+                title: rec.get("display"),
+                labelWidth: 250,
+                width: 600,
+                style: "position: relative;",
+                items: [{
+                    fieldLabel: t("error_page"),
+                    name: "documents.localized_error_pages." + language,
+                    fieldCls: "input_drop_target",
+                    value: this.getValue("documents.localized_error_pages." + language),
+                    width: 550,
+                    xtype: "textfield",
+                    listeners: {
+                        "render": function (el) {
+                            new Ext.dd.DropZone(el.getEl(), {
+                                reference: this,
+                                ddGroup: "element",
+                                getTargetFromEvent: function (e) {
+                                    return this.getEl();
+                                }.bind(el),
+
+                                onNodeOver: function (target, dd, e, data) {
+                                    if (data.records.length == 1 && data.records[0].data.elementType == "document") {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    }
+                                },
+
+                                onNodeDrop: function (target, dd, e, data) {
+                                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                        var record = data.records[0];
+                                        var data = record.data;
+
+                                        if (data.elementType == "document") {
+                                            this.setValue(data.path);
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }.bind(el)
+                            });
+                        }
+                    }
+                }]
+            });
+            container.updateLayout();
+        }
+    }
 });

@@ -21,6 +21,7 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Psr\Log\LoggerAwareTrait;
@@ -60,16 +61,34 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $db;
 
     /**
+     * @var Document\Service
+     */
+    protected $documentService;
+
+    /**
+     * @var SiteResolver
+     */
+    protected $siteResolver;
+
+    /**
      * @param DocumentRenderer $documentRenderer
      * @param ConnectionInterface $db
      * @param bool $renderErrorPage
      */
-    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config, $renderErrorPage = true)
-    {
+    public function __construct(
+        DocumentRenderer $documentRenderer,
+        ConnectionInterface $db,
+        Config $config,
+        Document\Service $documentService,
+        SiteResolver $siteResolver,
+        $renderErrorPage = true
+    ) {
         $this->documentRenderer = $documentRenderer;
         $this->renderErrorPage = (bool)$renderErrorPage;
         $this->db = $db;
         $this->config = $config;
+        $this->documentService = $documentService;
+        $this->siteResolver = $siteResolver;
     }
 
     /**
@@ -109,6 +128,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             return;
         }
 
+        $request = $event->getRequest();
         $exception = $event->getThrowable();
 
         $statusCode = 500;
@@ -122,19 +142,9 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $this->logger->error($exception);
         }
 
-        $errorPath = $this->config['documents']['error_pages']['default'];
-
-        if (Site::isSiteRequest()) {
-            $site = Site::getCurrentSite();
-            $errorPath = $site->getErrorDocument();
-        }
+        $errorPath = $this->determineErrorPath($request);
 
         $this->logToHttpErrorLog($event->getRequest(), $statusCode);
-
-        // Error page rendering
-        if (empty($errorPath)) {
-            $errorPath = '/';
-        }
 
         $document = Document::getByPath($errorPath);
 
@@ -176,5 +186,55 @@ class ResponseExceptionListener implements EventSubscriberInterface
                 'count' => 1,
             ]);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     * @throws \Exception
+     */
+    private function determineErrorPath(Request $request): string
+    {
+        if ($this->siteResolver->isSiteRequest($request)) {
+            $path = $this->siteResolver->getSitePath($request);
+        } else {
+            $path = urldecode($request->getPathInfo());
+        }
+
+        // Find nearest document by path
+        $document = $this->documentService->getNearestDocumentByPath(
+            $path,
+            false,
+            ['page', 'snippet', 'hardlink', 'link', 'folder']
+        );
+
+        if ($document) {
+            if ($document->getProperty('language')) {
+                $locale = $document->getProperty('language');
+            }
+        }
+
+        // If locale can't be determined or localized error page for given locale is not defined
+        // return default_error_page
+        if (
+            empty($locale) ||
+            !array_key_exists($locale, $this->config['documents']['localized_error_pages'])
+        ) {
+            return $this->config['documents']['default_error_page'];
+        }
+
+        $errorPath = $this->config['documents']['localized_error_pages'][$locale];
+
+        /** @todo Add logic for localized site request error pages */
+        if (Site::isSiteRequest()) {
+            $site = Site::getCurrentSite();
+            $errorPath = $site->getErrorDocument();
+        }
+
+        if (empty($errorPath)) {
+            $errorPath = '/';
+        }
+
+        return $errorPath;
     }
 }
