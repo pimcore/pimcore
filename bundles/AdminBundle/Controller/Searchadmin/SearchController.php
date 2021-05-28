@@ -526,7 +526,7 @@ class SearchController extends AdminController
         }
 
         if (mb_strlen($shortPath) > 50) {
-            $shortPath = mb_strstr($shortPath, 0, 49) . '…';
+            $shortPath = mb_substr($shortPath, 0, 49) . '…';
         }
 
         return $shortPath;
