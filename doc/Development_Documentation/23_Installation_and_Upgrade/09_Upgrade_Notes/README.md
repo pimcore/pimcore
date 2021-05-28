@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 10.1.0
+- [InstallBundle] Installer preconfiguration path changed from `app\config/installer.yml` to `config/installer.yaml`
+
 ## 10.0.0
 
 ### System Requirements
