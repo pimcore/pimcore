@@ -63,6 +63,7 @@ pimcore.object.classes.klass = Class.create({
                 }
             }
         });
+        this.tree.getStore().setDefaultRootText("");
     },
 
     addLayout: function () {
