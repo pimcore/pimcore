@@ -341,6 +341,11 @@ parameters:
 			path: lib/Security/Encoder/AbstractUserAwarePasswordEncoder.php
 
 		-
+            message: "#^Call to an undefined method Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface\\:\\:getUsername\\(\\)\\.$#"
+            count: 3
+            path: lib/Security/Encoder/Factory/UserAwareEncoderFactory.php
+
+		-
 			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: lib/Security/Encoder/Factory/UserAwareEncoderFactory.php
