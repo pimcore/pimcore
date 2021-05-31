@@ -367,6 +367,7 @@ final class Site extends AbstractModel
 
     /**
      * @param mixed $localizedErrorDocuments
+     *
      * @return $this
      */
     public function setLocalizedErrorDocuments($localizedErrorDocuments)

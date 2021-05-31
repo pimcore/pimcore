@@ -190,7 +190,9 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
     /**
      * @param Request $request
+     *
      * @return string
+     *
      * @throws \Exception
      */
     private function determineErrorPath(Request $request): string
@@ -240,6 +242,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
                     $localizedErrorDocumentsPaths[$requestLocale]
                 ) {
                     $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
+
                     break;
                 }
             }
