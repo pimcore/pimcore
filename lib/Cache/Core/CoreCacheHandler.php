@@ -400,7 +400,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         if ($data) {
             $this->saveQueue[$item->getKey()] = $item;
 
-            if(count($this->saveQueue) > ($this->maxWriteToCacheItems*3)) {
+            if (count($this->saveQueue) > ($this->maxWriteToCacheItems*3)) {
                 $this->cleanupQueue();
             }
 
