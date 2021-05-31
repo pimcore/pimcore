@@ -749,14 +749,6 @@ pimcore.settings.system = Class.create({
             var rec = this.languagesStore.getAt(index);
             language = rec.get("language");
 
-            // add the language to the hidden field used to send the languages to the action
-            var languageField = Ext.getCmp("system_settings_general_validLanguages");
-            var addedLanguages = languageField.getValue().split(",");
-            if (!in_array(language, addedLanguages)) {
-                addedLanguages.push(language);
-                languageField.setValue(addedLanguages.join(","));
-            }
-
             var container = Ext.getCmp("system_settings_errorPage_languageContainer");
             var lang = container.getComponent(language);
             if (lang) {

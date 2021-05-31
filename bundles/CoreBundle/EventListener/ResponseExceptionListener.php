@@ -190,9 +190,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
     /**
      * @param Request $request
-     *
      * @return string
-     *
      * @throws \Exception
      */
     private function determineErrorPath(Request $request): string
@@ -216,30 +214,35 @@ class ResponseExceptionListener implements EventSubscriberInterface
             }
         }
 
-        // If locale can't be determined or localized error page for given locale is not defined
-        // check if error page is defined for any of user-agent preferences otherwise return default error page
-        if (
-            empty($locale) ||
-            !array_key_exists($locale, $this->config['documents']['error_pages']['localized'])
-        ) {
-            foreach ($request->getLanguages() as $requestLocale) {
-                if (
-                    array_key_exists($requestLocale, $this->config['documents']['error_pages']['localized']) &&
-                    $this->config['documents']['error_pages']['localized'][$requestLocale]
-                ) {
-                    return $this->config['documents']['error_pages']['localized'][$requestLocale];
-                }
-            }
-
-            return $this->config['documents']['error_pages']['default'] ?: $request->getLanguages();
-        }
-
-        $errorPath = $this->config['documents']['error_pages']['localized'][$locale];
-
-        /** @todo Add logic for localized site request error pages */
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-            $errorPath = $site->getErrorDocument();
+
+            $siteLocalizedErrorDocuments = $site->getLocalizedErrorDocuments();
+
+            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
+            $defaultErrorDocumentPath = $site->getErrorDocument();
+        } else {
+            $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?: [];
+            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'];
+        }
+
+        if (!empty($locale)) {
+            if (array_key_exists($locale, $localizedErrorDocumentsPaths)) {
+                $errorPath = $localizedErrorDocumentsPaths[$locale];
+            } else {
+                $errorPath = $defaultErrorDocumentPath;
+            }
+        } else {
+            // If locale can't be determined check if error page is defined for any of user-agent preferences
+            foreach ($request->getLanguages() as $requestLocale) {
+                if (
+                    array_key_exists($requestLocale, $localizedErrorDocumentsPaths) &&
+                    $localizedErrorDocumentsPaths[$requestLocale]
+                ) {
+                    $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
+                    break;
+                }
+            }
         }
 
         if (empty($errorPath)) {
