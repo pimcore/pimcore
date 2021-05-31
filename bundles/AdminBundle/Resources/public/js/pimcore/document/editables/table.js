@@ -74,7 +74,8 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
                         allowBlank: true
                     }),
                     hideable: false,
-                    sortable: false
+                    sortable: false,
+                    draggable: false
                 });
             }
         }
