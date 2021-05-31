@@ -346,11 +346,6 @@ parameters:
 			path: lib/Security/Encoder/Factory/UserAwareEncoderFactory.php
 
 		-
-			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"
-			count: 1
-			path: lib/Security/Encoder/Factory/UserAwareEncoderFactory.php
-
-		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
