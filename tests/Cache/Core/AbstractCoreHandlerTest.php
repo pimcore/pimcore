@@ -362,6 +362,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
         for ($i = 1; $i <= $maxItems; $i++) {
             $this->assertTrue($this->handler->save('item_' . $i, $i));
+            $this->handler->cleanupQueue();
 
             $this->assertCount(
                 $i,
@@ -374,7 +375,8 @@ abstract class AbstractCoreHandlerTest extends TestCase
             $this->getHandlerPropertyValue('saveQueue')
         );
 
-        $this->assertFalse($this->handler->save('additional_item', 'foo'));
+        $this->handler->save('additional_item', 'foo');
+        $this->handler->cleanupQueue();
 
         $queue = $this->getHandlerPropertyValue('saveQueue');
         for ($i = 1; $i <= $maxItems; $i++) {
@@ -401,6 +403,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
         for ($i = 1; $i <= $maxItems; $i++) {
             $this->assertTrue($this->handler->save('item_' . $i, $i));
+            $this->handler->cleanupQueue();
 
             $this->assertCount(
                 $i,
@@ -414,6 +417,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
         );
 
         $this->assertTrue($this->handler->save('additional_item', 'foo', [], null, 10));
+        $this->handler->cleanupQueue();
 
         $queue = $this->getHandlerPropertyValue('saveQueue');
 
