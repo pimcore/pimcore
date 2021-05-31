@@ -215,15 +215,24 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
 
         // If locale can't be determined or localized error page for given locale is not defined
-        // return default_error_page
+        // check if error page is defined for any of user-agent preferences otherwise return default error page
         if (
             empty($locale) ||
-            !array_key_exists($locale, $this->config['documents']['localized_error_pages'])
+            !array_key_exists($locale, $this->config['documents']['error_pages']['localized'])
         ) {
-            return $this->config['documents']['default_error_page'];
+            foreach ($request->getLanguages() as $requestLocale) {
+                if (
+                    array_key_exists($requestLocale, $this->config['documents']['error_pages']['localized']) &&
+                    $this->config['documents']['error_pages']['localized'][$requestLocale]
+                ) {
+                    return $this->config['documents']['error_pages']['localized'][$requestLocale];
+                }
+            }
+
+            return $this->config['documents']['error_pages']['default'] ?: $request->getLanguages();
         }
 
-        $errorPath = $this->config['documents']['localized_error_pages'][$locale];
+        $errorPath = $this->config['documents']['error_pages']['localized'][$locale];
 
         /** @todo Add logic for localized site request error pages */
         if (Site::isSiteRequest()) {

@@ -340,9 +340,9 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 fieldLabel: t("error_page") + " (" + t("default") + ")",
-                                name: "documents.default_error_page",
+                                name: "documents.error_pages.default",
                                 fieldCls: "input_drop_target",
-                                value: this.getValue("documents.default_error_page"),
+                                value: this.getValue("documents.error_pages.default"),
                                 width: 600,
                                 xtype: "textfield",
                                 listeners: {
@@ -772,9 +772,9 @@ pimcore.settings.system = Class.create({
                 style: "position: relative;",
                 items: [{
                     fieldLabel: t("error_page"),
-                    name: "documents.localized_error_pages." + language,
+                    name: "documents.error_pages.localized." + language,
                     fieldCls: "input_drop_target",
-                    value: this.getValue("documents.localized_error_pages." + language),
+                    value: this.getValue("documents.error_pages.localized." + language),
                     width: 550,
                     xtype: "textfield",
                     listeners: {

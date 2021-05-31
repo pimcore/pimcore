@@ -423,8 +423,8 @@ class SettingsController extends AdminController
             }
 
             // localized error pages
-            if (isset($values['documents.localized_error_pages.' . $language])) {
-                $localizedErrorPages[$language] = $values['documents.localized_error_pages.' . $language];
+            if (isset($values['documents.error_pages.localized.' . $language])) {
+                $localizedErrorPages[$language] = $values['documents.error_pages.localized.' . $language];
             }
 
             if ($localeService->isLocale($language)) {
@@ -452,8 +452,10 @@ class SettingsController extends AdminController
                     'days' => $values['documents.versions.days'] ?? null,
                     'steps' => $values['documents.versions.steps'] ?? null,
                 ],
-                'localized_error_pages' => $localizedErrorPages,
-                'default_error_page' => $values['documents.default_error_page'],
+                'error_pages' => [
+                    'default' => $values['documents.error_pages.default'],
+                    'localized' => $localizedErrorPages,
+                ],
             ],
             'objects' => [
                 'versions' => [
