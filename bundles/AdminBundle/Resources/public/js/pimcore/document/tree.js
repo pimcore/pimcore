@@ -1373,7 +1373,7 @@ pimcore.document.tree = Class.create({
                         },
                         keyup: function (el) {
                             pageForm.getComponent("name").setValue(el.getValue());
-                            pageForm.getComponent("key").setValue(el.getValue());
+                            pageForm.getComponent("key").setValue(el.getValue().replace(/\s+/g, '-').toLowerCase());
                         }.bind(this)
                     }
                 },{
