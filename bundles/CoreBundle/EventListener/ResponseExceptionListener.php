@@ -190,7 +190,9 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
     /**
      * @param Request $request
+     *
      * @return string
+     *
      * @throws \Exception
      */
     private function determineErrorPath(Request $request): string
