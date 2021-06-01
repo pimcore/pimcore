@@ -54,8 +54,10 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             ));
         }
 
-        if (isset($this->encoders[$user->getUsername()])) {
-            return $this->encoders[$user->getUsername()];
+        $username = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
+
+        if (isset($this->encoders[$username])) {
+            return $this->encoders[$username];
         }
 
         $reflector = $this->getReflector();
@@ -69,7 +71,7 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             $encoder->setUser($user);
         }
 
-        $this->encoders[$user->getUsername()] = $encoder;
+        $this->encoders[$username] = $encoder;
 
         return $encoder;
     }
