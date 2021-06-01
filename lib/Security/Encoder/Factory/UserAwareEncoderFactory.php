@@ -54,8 +54,8 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             ));
         }
 
-        if (isset($this->encoders[$user->getUsername()])) {
-            return $this->encoders[$user->getUsername()];
+        if (isset($this->encoders[$user->getUsername()])) { // @phpstan-ignore-line
+            return $this->encoders[$user->getUsername()];   // @phpstan-ignore-line
         }
 
         $reflector = $this->getReflector();
@@ -69,7 +69,7 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             $encoder->setUser($user);
         }
 
-        $this->encoders[$user->getUsername()] = $encoder;
+        $this->encoders[$user->getUsername()] = $encoder;   // @phpstan-ignore-line
 
         return $encoder;
     }
