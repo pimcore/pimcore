@@ -54,7 +54,14 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             ));
         }
 
-        $username = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
+        $username = null;
+        if (method_exists($user, 'getUserIdentifier')) {
+            $username = $user->getUserIdentifier();
+        } elseif (method_exists($user, 'getUsername')) {
+            $username =  $user->getUsername();
+        } else {
+            throw new \RuntimeException('User class must implement either getUserIdentifier() or getUsername()');
+        }
 
         if (isset($this->encoders[$username])) {
             return $this->encoders[$username];
