@@ -59,7 +59,7 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
         if (method_exists($user, "getUsername")) {
             $userName = $user->getUsername();
         } else {
-            @trigger_error("getUsername() does not exist anymore. See https://github.com/symfony/symfony/issues/41470");
+            @trigger_error("getUsername() does not exist anymore. See https://github.com/symfony/symfony/pull/40403");
         }
 
         if ($userName && isset($this->encoders[$userName])) {
