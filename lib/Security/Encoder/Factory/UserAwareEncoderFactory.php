@@ -54,8 +54,16 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             ));
         }
 
-        if (isset($this->encoders[$user->getUsername()])) { // @phpstan-ignore-line
-            return $this->encoders[$user->getUsername()];   // @phpstan-ignore-line
+        $userName = null;
+
+        if (method_exists($user, "getUsername")) {
+            $userName = $user->getUsername();
+        } else {
+            @trigger_error("getUsername() does not exist anymore. See https://github.com/symfony/symfony/issues/41470");
+        }
+
+        if ($userName && isset($this->encoders[$userName])) {
+            return $this->encoders[$userName];
         }
 
         $reflector = $this->getReflector();
@@ -69,7 +77,9 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             $encoder->setUser($user);
         }
 
-        $this->encoders[$user->getUsername()] = $encoder;   // @phpstan-ignore-line
+        if ($userName) {
+            $this->encoders[$userName] = $encoder;
+        }
 
         return $encoder;
     }
