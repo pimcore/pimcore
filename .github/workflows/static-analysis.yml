@@ -25,14 +25,10 @@ jobs:
 
         strategy:
             matrix:
-                dependencies:
-                    - "lowest"
-                    - "highest"
-                php-version:
-                    - "8.0"
-                symfony:
-                    - ""
-                    - "5.4.x-dev"
+                include:
+                    - { php-version: "8.0", dependencies: "lowest", symfony: "" }
+                    - { php-version: "8.0", dependencies: "highest", symfony: "" }
+                    - { php-version: "8.0", dependencies: "highest", symfony: "5.4.x-dev" }
 
         steps:
             - name: "Checkout code"
