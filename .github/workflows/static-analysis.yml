@@ -32,7 +32,7 @@ jobs:
                     - "8.0"
                 symfony:
                     - ""
-                    - "5.*"
+                    - "5.4.x-dev"
 
         steps:
             - name: "Checkout code"
