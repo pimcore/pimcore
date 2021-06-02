@@ -691,4 +691,24 @@ class GeneralTest extends AbstractClassificationStoreTest
         $newValue = $o->getCsstore()->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId());
         $this->assertEquals($originalValue, $newValue);
     }
+
+    public function testKeysByName() {
+        $k1 = new Classificationstore\KeyConfig();
+        $k1->setName("duplicatename");
+        $k1->setDescription("desc1");
+        $k1->setStoreId(1);
+        $k1->save();
+
+        $k2 = new Classificationstore\KeyConfig();
+        $k2->setName("duplicatename");
+        $k2->setDescription("desc2");
+        $k2->setStoreId(1);
+        $k2->save();
+
+        $list = Classificationstore\KeyConfig::getKeyConfigsByName("duplicatename");
+        $this->assertEquals(2, count($list), "expected 2 key configs");
+
+        $this->assertEquals("desc1", $list[0]->getDescription());
+        $this->assertEquals("desc2", $list[1]->getDescription());
+    }
 }

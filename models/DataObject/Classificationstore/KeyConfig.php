@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Cache;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
 use Pimcore\Model;
@@ -139,6 +140,48 @@ final class KeyConfig extends Model\AbstractModel
     public static function getCacheEnabled()
     {
         return self::$cacheEnabled;
+    }
+
+    /**
+     * @param string $name
+     * @param int $storeId
+     *
+     * @return KeyConfig[]
+     *
+     * @throws \Exception
+     */
+    public static function getKeyConfigsByName($name, $storeId = 1)
+    {
+        $cacheKey = 'cs_keyconfigs_' . $storeId . '_' . md5($name);
+
+        if (self::$cacheEnabled && Cache\Runtime::isRegistered($cacheKey)) {
+            $list = Cache\Runtime::get($cacheKey);
+            if ($list) {
+                return $list;
+            }
+        }
+
+        $list = Cache::load($cacheKey);
+        if ($list) {
+            return $list;
+        }
+
+        $list = new KeyConfig\Listing();
+        $list->setIncludeDisabled(true);
+
+        $db = Db::get();
+        $storeId = $storeId ? $storeId : 1;
+        $list->setCondition('name = ' . $db->quote($name) . ' AND storeId = ' . $storeId);
+        $list->setOrderKey("id");
+        $list = $list->load();
+
+        if (self::$cacheEnabled) {
+            Cache\Runtime::set($cacheKey, $list);
+        }
+
+        Cache::save($list, $cacheKey, [], null, 0, true);
+
+        return $list;
     }
 
     /**
