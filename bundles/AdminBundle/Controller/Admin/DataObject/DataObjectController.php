@@ -1125,7 +1125,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
 
     /**
-     * @param DataObject\AbstractObject $parent
+     * @param DataObject\AbstractObject $parentObject
      * @param string $currentSortOrder
      */
     protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder) {
