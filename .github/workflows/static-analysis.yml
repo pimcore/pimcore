@@ -22,13 +22,13 @@ jobs:
     static-analysis-phpstan:
         name: "Static Analysis with PHPStan"
         runs-on: "ubuntu-20.04"
-
+        continue-on-error: ${{ matrix.experimental }}
         strategy:
             matrix:
                 include:
-                    - { php-version: "8.0", dependencies: "lowest", symfony: "" }
-                    - { php-version: "8.0", dependencies: "highest", symfony: "" }
-                    - { php-version: "8.0", dependencies: "highest", symfony: "5.4.x-dev" }
+                    - { php-version: "8.0", dependencies: "lowest", experimental: false, symfony: "" }
+                    - { php-version: "8.0", dependencies: "highest", experimental: false, symfony: "" }
+                    - { php-version: "8.0", dependencies: "highest", experimental: true, symfony: "5.4.x-dev" }
 
         steps:
             - name: "Checkout code"
