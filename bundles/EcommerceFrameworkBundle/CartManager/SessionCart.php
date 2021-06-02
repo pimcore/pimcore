@@ -179,7 +179,7 @@ class SessionCart extends AbstractCart implements CartInterface
         foreach ($this->getItems() as $item) {
 
             // if a product is deleted in backend, then remove item from SessionCart
-            $product = DataObject::getById($item->getProductId());
+            $product = $item->getProduct();
             if (!$product instanceof CheckoutableInterface) {
                 $this->removeItem($item->getItemKey());
                 continue;
