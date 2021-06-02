@@ -15,7 +15,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class SessionCart extends AbstractCart implements CartInterface
@@ -175,6 +177,14 @@ class SessionCart extends AbstractCart implements CartInterface
 
         // set current cart
         foreach ($this->getItems() as $item) {
+
+            // if a product is deleted in backend, then remove item from SessionCart
+            $product = DataObject::getById($item->getProductId());
+            if (!$product instanceof CheckoutableInterface) {
+                $this->removeItem($item->getItemKey());
+                continue;
+            }
+
             $item->setCart($this);
 
             if ($item->getSubItems()) {
