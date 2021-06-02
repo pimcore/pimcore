@@ -347,7 +347,7 @@ class Asset extends Element\AbstractElement
                 }
             } else {
                 if (is_dir($data['sourcePath'])) {
-                    $mimeType = "directory";
+                    $mimeType = 'directory';
                 } else {
                     $mimeType = MimeTypeGuesser::getInstance()->guess($data['sourcePath']);
                     if (is_file($data['sourcePath'])) {
