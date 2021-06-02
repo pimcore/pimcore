@@ -30,6 +30,9 @@ jobs:
                     - "highest"
                 php-version:
                     - "8.0"
+                symfony:
+                    - ""
+                    - "5.*"
 
         steps:
             - name: "Checkout code"
@@ -47,6 +50,15 @@ jobs:
 
             - name: "Copy models"
               run: "cp -rv .github/ci/files/models ."
+
+            - name: "Set Symfony version constraint in composer.json"
+              env:
+                  SYMFONY_VERSION: "${{ matrix.symfony }}"
+              run: |
+                  if [ ! -z "$SYMFONY_VERSION" ]; then
+                      composer config minimum-stability "dev"
+                      composer require --no-update symfony/symfony:$SYMFONY_VERSION
+                  fi
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
