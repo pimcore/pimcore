@@ -54,8 +54,17 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             ));
         }
 
-        if (isset($this->encoders[$user->getUsername()])) {
-            return $this->encoders[$user->getUsername()];
+        $username = null;
+        if (method_exists($user, 'getUserIdentifier')) {
+            $username = $user->getUserIdentifier();
+        } elseif (method_exists($user, 'getUsername')) {
+            $username =  $user->getUsername();
+        } else {
+            throw new \RuntimeException('User class must implement either getUserIdentifier() or getUsername()');
+        }
+
+        if (isset($this->encoders[$username])) {
+            return $this->encoders[$username];
         }
 
         $reflector = $this->getReflector();
@@ -69,7 +78,7 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             $encoder->setUser($user);
         }
 
-        $this->encoders[$user->getUsername()] = $encoder;
+        $this->encoders[$username] = $encoder;
 
         return $encoder;
     }
