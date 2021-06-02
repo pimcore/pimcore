@@ -345,11 +345,7 @@ final class Tool
 
         $user = Tool\Authentication::authenticateSession($request);
 
-        if (!($user && $element->isAllowed('view', $user))) {
-            return false;
-        }
-
-        return true;
+        return $user && $element->isAllowed('view', $user);
     }
 
     /**
