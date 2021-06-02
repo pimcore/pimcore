@@ -939,5 +939,5 @@
   "version_currently_saved_in_database": "Currently saved in database (but not published)",
   "preview_item": "Preview Item",
   "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>",
-  "reindex_warning": "Chaning it from alphabatical sort order to index will reindex all item. Do you want to continue?"
+  "reindex_warning": "Changing it from alphabetical sort order to index will reindex all item. Do you want to continue?"
 }
