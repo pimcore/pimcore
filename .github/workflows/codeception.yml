@@ -91,8 +91,8 @@ jobs:
               env:
                   SYMFONY_VERSION: "${{ matrix.symfony }}"
               run: |
-                  if [ -z "$SYMFONY_VERSION" ]; then
-                      composer require --no-update symfony/symfony:"$SYMFONY_VERSION"
+                  if [ ! -z "$SYMFONY_VERSION" ]; then
+                      composer require --no-update symfony/symfony:$SYMFONY_VERSION
                   fi
 
             - name: "Install dependencies with Composer"
