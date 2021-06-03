@@ -18,6 +18,7 @@ namespace Pimcore;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Request;
 
 final class Tool
@@ -326,6 +327,25 @@ final class Tool
         return \Pimcore::getContainer()
             ->get(RequestHelper::class)
             ->isFrontendRequestByAdmin($request);
+    }
+
+    /**
+     * Verify element request (eg. editmode, preview, version preview) called within admin, with permissions.
+     *
+     * @param Request $request
+     * @param Element\ElementInterface $element
+     *
+     * @return bool
+     */
+    public static function isElementRequestByAdmin(Request $request, Element\ElementInterface $element)
+    {
+        if (!self::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        $user = Tool\Authentication::authenticateSession($request);
+
+        return $user && $element->isAllowed('view', $user);
     }
 
     /**

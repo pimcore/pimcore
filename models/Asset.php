@@ -368,9 +368,13 @@ class Asset extends Element\AbstractElement
                     }
                 }
             } else {
-                $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
-                if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                if (is_dir($data['sourcePath'])) {
+                    $mimeType = 'directory';
+                } else {
+                    $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
+                    if (is_file($data['sourcePath'])) {
+                        $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
+                    }
                 }
 
                 unset($data['sourcePath']);
