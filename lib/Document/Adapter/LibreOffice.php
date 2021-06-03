@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Document\Adapter;
@@ -39,7 +39,7 @@ class LibreOffice extends Ghostscript
                 return true;
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::notice($e->getMessage());
         }
 
         return false;
@@ -50,7 +50,6 @@ class LibreOffice extends Ghostscript
      */
     public function isFileTypeSupported($fileType)
     {
-
         // it's also possible to pass a path or filename
         if (preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/i", $fileType)) {
             return true;
@@ -60,13 +59,13 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
     public static function getLibreOfficeCli()
     {
-        return \Pimcore\Tool\Console::getExecutable('soffice', true);
+        return Console::getExecutable('soffice', true);
     }
 
     /**
@@ -83,6 +82,7 @@ class LibreOffice extends Ghostscript
         if (!$this->isFileTypeSupported($asset->getFilename())) {
             $message = "Couldn't load document " . $asset->getRealFullPath() . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
             Logger::error($message);
+
             throw new \Exception($message);
         }
 
@@ -161,6 +161,7 @@ class LibreOffice extends Ghostscript
             } else {
                 $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "'";
                 Logger::error($message);
+
                 throw new \Exception($message);
             }
         }

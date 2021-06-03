@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -664,6 +664,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
             return $listing;
         }
+
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
@@ -672,8 +673,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getPhpdocReturnType(): ?string
     {
-        if ($this->getPhpdocType()) {
-            return '\\' . $this->getPhpdocType() . '|null';
+        if ($phpdocType = $this->getPhpdocType()) {
+            return $phpdocType . '|null';
         }
 
         return null;

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Tool\Targeting;
@@ -28,8 +28,11 @@ use Pimcore\Model;
 class Rule extends Model\AbstractModel
 {
     const SCOPE_HIT = 'hit';
+
     const SCOPE_SESSION = 'session';
+
     const SCOPE_SESSION_WITH_VARIABLES = 'session_with_variables';
+
     const SCOPE_VISITOR = 'visitor';
 
     /**

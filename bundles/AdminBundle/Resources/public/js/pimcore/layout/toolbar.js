@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.layout.toolbar");
@@ -1085,7 +1085,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t("mail_settings_incomplete"),
                     iconCls: "pimcore_nav_icon_email",
                     handler: function () {
-                        window.open('https://pimcore.com/docs/6.x/Development_Documentation/Tools_and_Features/System_Settings.html#page_E-Mail-Settings');
+                        window.open('https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Email_Framework');
                     }
                 });
                 pimcore.notification.helper.incrementCount();

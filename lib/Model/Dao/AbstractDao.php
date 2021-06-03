@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Dao;
@@ -37,25 +37,16 @@ abstract class AbstractDao implements DaoInterface
         $this->db = Db::get();
     }
 
-    /**
-     *
-     */
     public function beginTransaction()
     {
         $this->db->beginTransaction();
     }
 
-    /**
-     *
-     */
     public function commit()
     {
         $this->db->commit();
     }
 
-    /**
-     *
-     */
     public function rollBack()
     {
         $this->db->rollBack();

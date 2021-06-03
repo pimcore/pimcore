@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
@@ -18,6 +18,7 @@ namespace Pimcore;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Request;
 
 final class Tool
@@ -119,6 +120,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param string $language
      *
      * @return array
@@ -202,6 +204,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param string $language
      * @param bool $absolutePath
      *
@@ -327,7 +330,27 @@ final class Tool
     }
 
     /**
+     * Verify element request (eg. editmode, preview, version preview) called within admin, with permissions.
+     *
+     * @param Request $request
+     * @param Element\ElementInterface $element
+     *
+     * @return bool
+     */
+    public static function isElementRequestByAdmin(Request $request, Element\ElementInterface $element)
+    {
+        if (!self::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        $user = Tool\Authentication::authenticateSession($request);
+
+        return $user && $element->isAllowed('view', $user);
+    }
+
+    /**
      * @internal
+     *
      * @param Request|null $request
      *
      * @return bool
@@ -363,6 +386,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param Request|null $request
      *
      * @return null|string
@@ -380,6 +404,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @return string
      */
     public static function getRequestScheme(Request $request = null)
@@ -439,6 +464,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param Request|null $request
      *
      * @return string|null
@@ -469,6 +495,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param Request|null $request
      *
      * @return null|string
@@ -488,6 +515,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @return array|bool
      */
     public static function getCustomViewConfig()
@@ -605,6 +633,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param string $class
      *
      * @return bool
@@ -616,6 +645,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param string $class
      *
      * @return bool
@@ -627,6 +657,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param string $class
      *
      * @return bool
@@ -680,6 +711,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @return array
      */
     public static function getCachedSymfonyEnvironments(): array
@@ -695,6 +727,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @param string $message
      */
     public static function exitWithError($message)

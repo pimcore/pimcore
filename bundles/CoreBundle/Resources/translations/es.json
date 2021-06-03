@@ -163,7 +163,6 @@
     "element_cannot_be_move_because_it_is_locked": "El elemento no puede ser movido porque está bloqueado",
     "element_cannot_be_moved": "El elemento no puede ser movido aquí",
     "no_collections_allowed": "Colecciones no permitidas",
-    "this_is_a_newer_not_published_version": "Versión más reciente no publicada",
     "filter_condition": "Condición de filtro",
     "all_types": "Todos los tipos",
     "audio": "Audio",
@@ -353,7 +352,6 @@
     "translations_are_not_configured": "Las traducciones no están configuradas",
     "read_more_here": "Leer más aquí",
     "publish_version": "Publicar versión",
-    "save_only_new_version": "Guardar solamente la versión nueva",
     "start": "Inicio",
     "su": "Do",
     "mo": "Lu",
@@ -896,7 +894,6 @@
     "batch_remove_selected": "batch_remove_selected",
     "batch_remove_from": "batch_remove_from",
     "batch_remove_selected_from": "batch_remove_selected_from",
-    "force_picture_html_tag": "force_picture_html_tag",
     "unit_tooltip": "unit_tooltip",
     "toggle_image_features_visibility": "cambiar la visibilidad de las características de imagen",
     "detect_image_features": "detectar características de la imagen",
@@ -937,5 +934,11 @@
     "version_currently_saved_in_database": "Currently saved in database (but not published)",
     "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>",
     "edit_as_custom_text": "Edit as custom text",
-    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html"
+    "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
+    "no_action_available": "No action available",
+    "bricks": "Bricks",
+    "draft": "Draft",
+    "auto_save": "Auto save",
+    "save_draft": "Save draft",
+    "selected_grid_columns": "Selected grid columns"
 }

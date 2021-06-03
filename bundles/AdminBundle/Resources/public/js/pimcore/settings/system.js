@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.settings.system");
@@ -59,7 +59,7 @@ pimcore.settings.system = Class.create({
         var current = this.data.values;
 
         for (var i = 0; i < nk.length; i++) {
-            if (current[nk[i]]) {
+            if (typeof current[nk[i]] != "undefined") {
                 current = current[nk[i]];
             } else {
                 current = null;
@@ -200,8 +200,8 @@ pimcore.settings.system = Class.create({
                             items: [{
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
-                                name: "general.loginscreencustomimage",
-                                value: this.getValue("general.login_screen_custom_image")
+                                name: "branding.login_screen_custom_image",
+                                value: this.getValue("branding.login_screen_custom_image")
                             }]
                         }]
                     }

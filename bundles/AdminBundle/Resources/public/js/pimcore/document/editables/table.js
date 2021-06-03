@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.table");
@@ -74,7 +74,8 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
                         allowBlank: true
                     }),
                     hideable: false,
-                    sortable: false
+                    sortable: false,
+                    draggable: false
                 });
             }
         }

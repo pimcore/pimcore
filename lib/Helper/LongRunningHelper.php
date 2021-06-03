@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Helper;
@@ -34,6 +34,7 @@ final class LongRunningHelper
         'pimcore_site',
         'Pimcore_Db',
     ];
+
     protected $monologHandlers = [];
 
     /**
@@ -119,9 +120,6 @@ final class LongRunningHelper
         }
     }
 
-    /**
-     *
-     */
     protected function cleanupMonolog()
     {
         foreach ($this->monologHandlers as $handler) {
@@ -131,6 +129,7 @@ final class LongRunningHelper
 
     /**
      * @internal
+     *
      * @param HandlerInterface $handler
      */
     public function addMonologHandler(HandlerInterface $handler)

@@ -10,4 +10,4 @@ The following list of resources should show you where to get information about P
 * [Pimcore at Packagist](https://packagist.org/search/?q=pimcore)
 * [Pimcore Support / Professional Services](https://pimcore.com/en/services/support)
 * [Pimcore at Gitter](https://gitter.im/pimcore/pimcore)
-* [Pimcore Community Forums](https://talk.pimcore.org)
+* [Pimcore Community Forums](https://github.com/pimcore/pimcore/discussions)

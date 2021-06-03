@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Twig\Extension;
@@ -103,6 +103,7 @@ class DocumentEditableExtension extends AbstractExtension
      * Returns an iterator which can be used instead of while($block->loop())
      *
      * @internal
+     *
      * @param BlockInterface $block
      *
      * @return \Generator|int[]

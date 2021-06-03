@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,8 +23,10 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface
 {
+    use DataObject\Traits\ClassSavedTrait;
+
     /**
      * Static type of this element
      *
@@ -636,6 +638,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             if ($validationExceptions) {
                 $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
                 $aggregatedExceptions->setSubItems($validationExceptions);
+
                 throw $aggregatedExceptions;
             }
         }
@@ -890,8 +893,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     foreach ($fieldDefinition as $fd) {
                         if (method_exists($fd, 'classSaved')) {
-                            if (!$fd instanceof Localizedfields) {
-                                // defer creation
+                            // defer creation
+                            if (!$fd instanceof DataContainerAwareInterface) {
                                 $fd->classSaved($class);
                             }
                         }

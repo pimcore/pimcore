@@ -11,7 +11,6 @@ Following an overview of some [Twig Extensions](https://twig.symfony.com/doc/2.x
 - `asset` 
 - `csrf_token`  
 - `path` 
-- `url` 
 - `absolute_url` 
 - `translator` 
 - `trans`
@@ -91,7 +90,7 @@ The following table gives an overview of all available tests:
 | `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
 
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
-Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)
+Here you can find an example how to [create](https://symfony.com/doc/5.2/templating/twig_extension.html)
 your own Twig Extension.
     
 ### `pimcore_cache`

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\Translation\Listing;
@@ -43,7 +43,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
-        $this->prepareQueryBuilderForTotalCount($queryBuilder);
+        $queryBuilder->resetQueryPart('orderBy');
+        $queryBuilder->setMaxResults(null);
+        $queryBuilder->setFirstResult(0);
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
         $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());

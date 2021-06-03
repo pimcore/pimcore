@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -18,7 +18,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 {
     protected $key;
+
     protected $data;
+
     /**
      * @var CartInterface
      */

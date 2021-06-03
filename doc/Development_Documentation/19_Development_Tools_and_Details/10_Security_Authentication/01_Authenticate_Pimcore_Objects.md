@@ -89,7 +89,7 @@ We'll use this service later in our security configuration to tell the firewall 
 have a look at `ObjectUserProvider` which is basically calling `User::getByUsername($username, 1)` internally. If you have
 more complex use cases you can extend the `ObjectUserProvider` or ship your completely custom implementation.
 
-For more information see [How to Create a custom User Provider](http://symfony.com/doc/3.4/security/custom_provider.html)
+For more information see [How to Create a custom User Provider](https://symfony.com/doc/5.2/security/custom_provider.html)
 on the Symfony docs.
 
 
@@ -171,4 +171,4 @@ This should get you started with a custom authentication system based on Pimcore
 
 * The [Demo CMS profile](https://github.com/pimcore/demo-basic) which acts as base for
   this guide and implements a form/session login.
-* The [Symfony Security Component documentation](http://symfony.com/doc/3.4/security.html)
+* The [Symfony Security Component documentation](https://symfony.com/doc/5.2/security.html)

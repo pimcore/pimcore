@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -98,7 +98,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $queryColumnType = [
         'value' => 'double',
-        'unit' => 'varchar(50)',
+        'unit' => 'varchar(64)',
     ];
 
     /**
@@ -110,7 +110,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = [
         'value' => 'double',
-        'unit' => 'varchar(50)',
+        'unit' => 'varchar(64)',
     ];
 
     /**
@@ -458,6 +458,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         if (!$this->validUnits) {
             $table = null;
+
             try {
                 if (Runtime::isRegistered(Model\DataObject\QuantityValue\Unit::CACHE_KEY)) {
                     $table = Runtime::get(Model\DataObject\QuantityValue\Unit::CACHE_KEY);

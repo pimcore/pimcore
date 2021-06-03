@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
@@ -62,7 +62,7 @@ class Bracket implements BracketInterface
 
         // check all conditions
         foreach ($this->conditions as $num => $condition) {
-            /* @var ConditionInterface $condition */
+            // @var ConditionInterface $condition
 
             //The first condition shouldn't have an operator.
             //https://github.com/pimcore/pimcore/pull/7902
@@ -79,6 +79,7 @@ class Bracket implements BracketInterface
                 // first condition
                 case null:
                     $state = $check;
+
                     break;
 
                 // AND
@@ -89,6 +90,7 @@ class Bracket implements BracketInterface
                         //consider current state with check, if not default.
                         $state = ($state === null) ? $check : ($check && $state);
                     }
+
                     break;
 
                 // AND FALSE
@@ -99,6 +101,7 @@ class Bracket implements BracketInterface
                         //consider current state with check, if not default.
                         $state = ($state === null) ? !$check : (!$check && $state);
                     }
+
                     break;
 
                 // OR
@@ -106,6 +109,7 @@ class Bracket implements BracketInterface
                     if ($check === true) {
                         $state = $check;
                     }
+
                     break;
             }
         }
@@ -121,7 +125,7 @@ class Bracket implements BracketInterface
         $json = ['type' => 'Bracket', 'conditions' => []];
         foreach ($this->conditions as $num => $condition) {
             if ($condition) {
-                /* @var ConditionInterface $condition */
+                // @var ConditionInterface $condition
                 $cond = [
                     'operator' => $this->operator[$num],
                     'condition' => json_decode($condition->toJSON()),

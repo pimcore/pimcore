@@ -1,7 +1,6 @@
 
 In this section, you will learn the basics of Pimcore, required to start developing. 
 
-[TOC]
 
 # Creating CMS Pages with Documents
 
@@ -44,25 +43,22 @@ Then we can put some template code into it, for example:
 ```twig
 {% extends 'layout.html.twig' %}
 
-<h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
+{% block content %}
+    <h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
 
-{% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
-    <h2>{{ pimcore_input('subline') }}</h2>
-    {{ pimcore_wysiwyg('content') }}
-{% endfor %}
+    {% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
+        <h2>{{ pimcore_input('subline') }}</h2>
+        {{ pimcore_wysiwyg('content') }}
+    {% endfor %}
+{% endblock %}
 ```
 
-Pimcore uses by default an improved version of the Symfony PHP templating engine (`PhpEngine`) and therefore plain PHP as template language. So you have the full power of
-Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore specific additions like the so called *editables*, 
-which add editable parts (placeholders) to the layout and some custom templating helpers. 
+Pimcore uses by default Symfony Twig engine, so you have the full power of Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore specific additions like the so called *editables*, which add editable parts (placeholders) to the layout and some custom templating helpers. 
 
-We've improved the default [Symfony PHP engine](http://symfony.com/doc/3.4/templating/PHP.html), by adding the `$this` context, which is basically the same as using 
-the `$view` variable or local variables when using the default Symfony syntax. However the default syntax is still available and ready to use.  
-
-For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
+For details concerning editables (like `pimcore_input`, `pimcore_block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
-We can use Symfony`s [template inheritance and layout](http://symfony.com/doc/3.4/templating.html#template-inheritance-and-layouts) functionality 
+We can use Symfony`s [template inheritance and layout](https://symfony.com/doc/5.2/templates.html#template-inheritance-and-layouts) functionality 
 to wrap our content page with another template which contains the main navigation, a sidebar, … using the following code:
 
 ```twig
@@ -103,12 +99,12 @@ The code `{{ block('content') }}` is the placeholder where the content of the pa
 ### Putting it all together with Pimcore Documents
 Now we need to connect the action to a page in the Pimcore backend, so that the page knows which action 
 (and therefore also which template) needs to be executed/processed.
-First, click right on *Home* in the *Documents* panel. 
+First, click right on *Home* in the *Documents* panel and Select *Add Page* > *Blank* to add a new page. 
 
 ![Create page](../img/Pimcore_Elements_check_homepage.png)
 
 Now select the tab *Settings* in the newly opened tab.
-Select the name of the controller and the name of the action in the according fields.
+Select the Controller::Action and template(if different from controller action naming).
 
 ![Page settings](../img/Pimcore_Elements_homepage_settings.png)
 

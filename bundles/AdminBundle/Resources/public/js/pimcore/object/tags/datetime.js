@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.object.tags.datetime");
@@ -132,8 +132,12 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
                 dateString += " 00:00";
             }
 
-            var date = Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime();
-            return date;
+            value = Ext.Date.parseDate(dateString, "Y-m-d H:i");
+            if (value && typeof value.getTime == "function") {
+                return value.getTime();
+            }
+
+            return value;
         }
         return false;
     },

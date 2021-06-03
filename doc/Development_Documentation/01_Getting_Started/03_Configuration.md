@@ -9,11 +9,11 @@ Pimcore's configuration can be found in several places:
 
 ## Symfony Configuration
 
-Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/3.4/bundles/configuration.html)
+Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/5.2/bundles/configuration.html)
 tree defined under the `pimcore` and `pimcore_admin` extension. These values can be changed through config files in `config` (e.g. `config/config.yaml)`).
 
 Pimcore additionally includes a set of standard configuration files which, in contrast to a standard Symfony project, are
-not located in `config/`, but in the [PimcoreCoreBundle](https://github.com/pimcore/pimcore/tree/master/bundles/CoreBundle/Resources/config/pimcore).
+not located in `config/`, but in the [PimcoreCoreBundle](https://github.com/pimcore/pimcore/tree/10.x/bundles/CoreBundle/Resources/config/pimcore).
 This allows us to ship and update default configurations without affecting project code in `config/`. See
 [Auto loading config and routing definitions](../20_Extending_Pimcore/13_Bundle_Developers_Guide/03_Auto_Loading_Config_And_Routing_Definitions.md)
 for details how this works.
@@ -37,7 +37,7 @@ $ bin/console config:dump-reference pimcore
 ## Pimcore constants
 
 Pimcore uses several constants for locating certain directories like logging, assets, versions etc. These constants are
-defined in [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/master/lib/Bootstrap.php).
+defined in [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/10.x/lib/Bootstrap.php).
 
 If you need to overwrite these constants (e.g. for using a special directory for assets or versions at an object storage
 at AWS S3), you have multiple ways to do so:
@@ -46,12 +46,12 @@ at AWS S3), you have multiple ways to do so:
   already defined.
 * Define an environment variable named after the constant. When defining a constant, Pimcore will look if an env variable
   with the same name is defined and use that instead of the default value.
-* Define an environment variable in a `/.env` file which will be automatically loaded through the [DotEnv](https://symfony.com/doc/3.4/components/dotenv.html)
+* Define an environment variable in a `/.env` file which will be automatically loaded through the [Symfony DotEnv](https://github.com/symfony/dotenv)
   component if it exists. Environment variables defined here will have the same effect as "real" environment variables.
 
 
 The [Pimcore Skeleton](https://github.com/pimcore/skeleton) repository contains an example file,
-[`constants.example.php`](https://github.com/pimcore/skeleton/blob/master/config/pimcore/constants.example.php).
+[`constants.example.php`](https://github.com/pimcore/skeleton/blob/10.x/config/pimcore/constants.example.php).
 The following file is an example of how you can overwrite some paths:
 
 ```php
@@ -64,7 +64,7 @@ define("PIMCORE_CLASS_DIRECTORY", "/my/tmp/path");
 
 ```
 
-Please see [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/master/lib/Bootstrap.php)
+Please see [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/10.x/lib/Bootstrap.php)
 for a list of defined constants.
 
 
@@ -93,7 +93,7 @@ bootstrapping (loading the autoloader, parsing constants, ...) is done, but **be
 This gives you the possibility to reconfigure environment settings before they are used and to configure the system for
 your needs. Examples:
 
-* Defining the [Trusted Proxies](http://symfony.com/doc/3.4/deployment/proxies.html) configuration on the `Request` object
+* Defining the [Trusted Proxies](https://symfony.com/doc/5.2/deployment/proxies.html) configuration on the `Request` object
 * Influencing the default [environment handling](../21_Deployment/03_Configuration_Environments.md)
 
 ```php

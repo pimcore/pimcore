@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Translation\ExportDataExtractorService\DataExtractor;
@@ -28,7 +28,9 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     const EXPORTABLE_TAGS = ['input', 'textarea', 'wysiwyg'];
 
     const BRICK_DELIMITER = '|';
+
     const FIELD_COLLECTIONS_DELIMITER = '|';
+
     const BLOCK_DELIMITER = '|';
 
     /**

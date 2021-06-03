@@ -12,7 +12,7 @@ Pimcore provides 2 possible ways of working with custom entities namely Doctrine
 
 ## Option 1: Use Doctrine ORM
 Pimcore comes already with the Doctrine bundle, so you can easily create your own entities. 
-Please check <http://symfony.com/doc/3.4/doctrine.html> for more details.  
+Please check <https://symfony.com/doc/5.2/doctrine.html> for more details.  
 
 ## Option 2: Working with Pimcore Data Access Objects (Dao)
 
@@ -23,7 +23,7 @@ As a first step, create the database structure for the model, for this example I
 has an id, a username (just a string) and a score. If you want to write a model for a bundle you have to create the 
 table(s) during the installation.
 
-```php
+```sql
 CREATE TABLE `votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) DEFAULT NULL,
@@ -397,7 +397,6 @@ namespace App\Model\Vote\Listing;
 use Pimcore\Model\Listing;
 use App\Model;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
-use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
  
 class Dao extends Listing\Dao\AbstractDao

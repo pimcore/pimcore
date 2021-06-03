@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject;
@@ -402,6 +402,13 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
         if (!$this->getId()) {
             $db = Db::get();
             $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
@@ -445,6 +452,12 @@ final class ClassDefinition extends Model\AbstractModel
         try {
             Cache::clearTag('class_'.$this->getId());
         } catch (\Exception $e) {
+        }
+
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->postSave($this);
+            }
         }
 
         if ($isUpdate) {
@@ -562,7 +575,7 @@ final class ClassDefinition extends Model\AbstractModel
                 $cd .= $def->getSetterCode($this);
 
                 // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
-                if (method_exists($def, 'classSaved')) {
+                if (!$def instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface && method_exists($def, 'classSaved')) {
                     $def->classSaved($this);
                 }
             }

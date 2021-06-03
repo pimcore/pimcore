@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
@@ -98,7 +98,7 @@ class MultiCartManager implements CartManagerInterface
 
     protected function initSavedCarts()
     {
-        /* @var CartInterface[] $carts */
+        // @var CartInterface[] $carts
         $carts = $this->getAllCartsForCurrentUser();
 
         if (empty($carts)) {

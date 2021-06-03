@@ -10,13 +10,11 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore;
 
-use Egulias\EmailValidator\EmailValidator;
-use Egulias\EmailValidator\Validation\RFCValidation;
 use League\HTMLToMarkdown\HtmlConverter;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
@@ -170,7 +168,7 @@ class Mail extends Email
     }
 
     /**
-     * Initializes the mailer with the settings form Settings -> System -> Email Settings
+     * Initializes the mailer with the configured pimcore.email system settings
      *
      * @param string $type
      *
@@ -217,7 +215,9 @@ class Mail extends Email
 
     /**
      * returns if redirecting to debug mail addresses should take place when sending the mail
+     *
      * @internal
+     *
      * @return bool
      */
     public function doRedirectMailsToDebugMailAddresses()
@@ -548,6 +548,7 @@ class Mail extends Email
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             $failedRecipients = [];
+
             try {
                 $mailer->send($this);
             } catch (TransportExceptionInterface $e) {
@@ -576,6 +577,7 @@ class Mail extends Email
 
     /**
      * @param array $addresses
+     *
      * @return array
      */
     private function filterLogAddresses(array $addresses): array
@@ -599,6 +601,7 @@ class Mail extends Email
 
     /**
      * @param array $recipients
+     *
      * @return array
      */
     private function getDebugMailRecipients(array $recipients): array
@@ -627,20 +630,22 @@ class Mail extends Email
 
     /**
      * @param string $string
+     *
      * @return string
      */
     private function renderParams(string $string): string
     {
         $twig = \Pimcore::getContainer()->get('twig');
         $template = $twig->createTemplate($string);
-        $rendered = $twig->render($template, $this->getParams());
 
-        return $rendered;
+        return $template->render($this->getParams());
     }
 
     /**
      * Renders the content (Twig) and returns the rendered subject
+     *
      * @internal
+     *
      * @return string
      */
     public function getSubjectRendered()
@@ -660,7 +665,9 @@ class Mail extends Email
 
     /**
      * Renders the content (Twig) and returns the rendered HTML
+     *
      * @internal
+     *
      * @return string|null
      */
     public function getBodyHtmlRendered()
@@ -694,7 +701,9 @@ class Mail extends Email
     /**
      * Renders the content (Twig) and returns
      * the rendered text if a text was set with "$mail->text()"
+     *
      * @internal
+     *
      * @return string
      */
     public function getBodyTextRendered()
@@ -771,7 +780,9 @@ class Mail extends Email
 
     /**
      * Prevents appending of debug information (used for resending emails)
+     *
      * @internal
+     *
      * @return \Pimcore\Mail
      */
     public function preventDebugInformationAppending()
@@ -783,7 +794,9 @@ class Mail extends Email
 
     /**
      * Returns, if debug information is not added
+     *
      * @internal
+     *
      * @return bool
      */
     public function isPreventingDebugInformationAppending()
@@ -815,6 +828,7 @@ class Mail extends Email
 
     /**
      * @deprecated use text() instead. Will be removed in Pimcore 11
+     *
      * @param string $bodyText
      * @param string $charset
      *
@@ -827,6 +841,7 @@ class Mail extends Email
 
     /**
      * @deprecated use html() instead. Will be removed in Pimcore 11
+     *
      * @param string $body
      * @param string $charset
      *
@@ -839,6 +854,7 @@ class Mail extends Email
 
     /**
      * @internal
+     *
      * @return array
      */
     public function getOriginalData()
@@ -848,6 +864,7 @@ class Mail extends Email
 
     /**
      * @internal
+     *
      * @param array $originalData
      */
     public function setOriginalData($originalData)
@@ -857,6 +874,7 @@ class Mail extends Email
 
     /**
      * @deprecated use attach() instead. Will be removed in Pimcore 11
+     *
      * @param string $data
      * @param string|null $mimeType
      * @param string|null $filename

@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
@@ -746,6 +746,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     foreach ($objectData['classes'] as $class) {
                         if ($class['id'] == $selectedClassId) {
                             $objectData['selectedClass'] = $selectedClassId;
+
                             break;
                         }
                     }
@@ -1150,6 +1151,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 }
 
                 Db::get()->commit();
+
                 break;
             } catch (\Exception $e) {
                 Db::get()->rollBack();
@@ -1164,6 +1166,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 } else {
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
                     Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+
                     throw $e;
                 }
             }
@@ -1189,6 +1192,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $objectFromVersion = $object !== $objectFromDatabase;
         $originalModificationDate = $objectFromVersion ? $object->getModificationDate() : $objectFromDatabase->getModificationDate();
+        if ($objectFromVersion) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+        }
 
         // data
         $data = [];
@@ -1460,6 +1470,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($currentObject->isAllowed('publish')) {
             $object->setPublished(true);
             $object->setUserModification($this->getAdminUser()->getId());
+
             try {
                 $object->save();
 
@@ -1496,6 +1507,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
+        if (method_exists($object, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields */
+            $localizedFields = $object->getLocalizedFields();
+            $localizedFields->setLoadedAllLazyData();
+        }
+
         DataObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object) {
@@ -1507,6 +1524,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         'validLanguages' => Tool::getValidLanguages(),
                     ]);
             }
+
             throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
         }
 
@@ -1534,8 +1552,20 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version1 = Model\Version::getById($id1);
         $object1 = $version1->loadData();
 
+        if (method_exists($object1, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields1 */
+            $localizedFields1 = $object1->getLocalizedFields();
+            $localizedFields1->setLoadedAllLazyData();
+        }
+
         $version2 = Model\Version::getById($id2);
         $object2 = $version2->loadData();
+
+        if (method_exists($object2, 'getLocalizedFields')) {
+            /** @var DataObject\Localizedfield $localizedFields2 */
+            $localizedFields2 = $object2->getLocalizedFields();
+            $localizedFields2->setLoadedAllLazyData();
+        }
 
         DataObject::setDoNotRestoreKeyAndPath(false);
 
@@ -2109,6 +2139,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         if ($currentData[$i]->getId() == $object->getId()) {
                             unset($currentData[$i]);
                             $owner->$setter($currentData);
+
                             break;
                         }
                     }

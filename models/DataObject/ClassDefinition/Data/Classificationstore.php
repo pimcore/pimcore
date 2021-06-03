@@ -10,7 +10,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -449,6 +449,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore = $object->$getter();
         $items = $classificationStore->getItems();
         $activeGroups = $classificationStore->getActiveGroups();
+        $params['owner'] = $classificationStore;
+
         if ($items) {
             foreach ($items as $groupId => $keys) {
                 if (!isset($activeGroups[$groupId])) {
@@ -817,6 +819,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             if ($keyGroupRelation->isMandatory()) {
                                 $keyDef->setMandatory(1);
                             }
+
                             try {
                                 $keyDef->checkValidity($value, false, $params);
                             } catch (\Exception $exception) {
@@ -839,6 +842,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
             $validationException = new Model\Element\ValidationException(implode(', ', $messages));
             $validationException->setSubItems($subItems);
+
             throw $validationException;
         }
     }
@@ -1062,7 +1066,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         if ($inheritanceAllowed) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
-                $activeGroups = $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
+                $activeGroups += $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
             }
         }
 

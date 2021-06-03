@@ -8,7 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 pimcore.registerNS("pimcore.document.editables.numeric");
@@ -26,6 +26,7 @@ pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
         config.value = data;
         config.name = id + "_editable";
         config.decimalPrecision = 20;
+        config.mouseWheelEnabled = false;
 
         if(config["required"]) {
             this.required = config["required"];

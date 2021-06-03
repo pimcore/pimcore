@@ -12,7 +12,7 @@ declare(strict_types=1);
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Routing\Redirect;
@@ -63,7 +63,9 @@ class Csv
 
     /**
      * @param Redirect\Listing $list
+     *
      * @return Writer
+     *
      * @throws \League\Csv\CannotInsertRecord
      * @throws \League\Csv\Exception
      */
@@ -117,7 +119,9 @@ class Csv
 
     /**
      * @param string $filename
+     *
      * @return array
+     *
      * @throws \League\Csv\Exception
      */
     public function import(string $filename): array
@@ -171,6 +175,7 @@ class Csv
 
     /**
      * @param array $record
+     *
      * @return array
      */
     private function preprocessImportData(array $record): array
@@ -187,6 +192,7 @@ class Csv
     /**
      * @param array $data
      * @param array $stats
+     *
      * @return mixed|Redirect|null
      */
     private function processImportData(array $data, array &$stats)
