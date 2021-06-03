@@ -20,7 +20,6 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -421,9 +420,8 @@ class SettingsController extends AdminController
             if (isset($values['general.fallbackLanguages.' . $language])) {
                 $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
 
+                $previousFallbackLanguages = Tool::getFallbackLanguagesFor($language);
                 if($fallbackLanguages[$language] === '') {
-                    $previousFallbackLanguages = Tool::getFallbackLanguagesFor($language);
-
                     if(isset($previousFallbackLanguages[0])) {
                         foreach ($classes as $class) {
                             foreach($class->getFieldDefinitions() as $fieldDefinition) {
