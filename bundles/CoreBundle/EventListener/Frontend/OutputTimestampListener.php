@@ -52,7 +52,7 @@ class OutputTimestampListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

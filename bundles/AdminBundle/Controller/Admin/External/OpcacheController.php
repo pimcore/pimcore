@@ -56,8 +56,8 @@ class OpcacheController extends AdminController implements KernelControllerEvent
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        $isMainRequest = $event->isMainRequest();
+        if (!$isMainRequest) {
             return;
         }
 

@@ -108,7 +108,7 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -171,7 +171,7 @@ class TargetingListener implements EventSubscriberInterface
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
         $response = $event->getResponse();
 
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             $this->startStopwatch('Targeting:responseActions', 'targeting');
 
             // handle recorded actions on response

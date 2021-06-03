@@ -119,8 +119,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          */
         public function onKernelControllerEvent(ControllerEvent $event)
         {
-            $isMasterRequest = $event->isMasterRequest();
-            if (!$isMasterRequest) {
+            $isMainRequest = $event->isMainRequest();
+            if (!$isMainRequest) {
                 return;
             }
 

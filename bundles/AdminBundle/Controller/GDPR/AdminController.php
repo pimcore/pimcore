@@ -49,7 +49,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
