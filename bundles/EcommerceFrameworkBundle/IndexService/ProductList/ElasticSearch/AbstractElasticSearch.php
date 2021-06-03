@@ -883,7 +883,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
             //mapping of relations
             $relationFormatPimcore = [];
-            foreach ($sourceData['relations'] ?: [] as $name => $relation) {
+            foreach ($sourceData['relations'] ?? [] as $name => $relation) {
                 $relationFormatPimcore[] = ['fieldname' => $name, 'dest' => $relation[0], 'type' => 'object'];
             }
             $mergedAttributes = array_merge($sourceData['system'], $sourceData['attributes']);
