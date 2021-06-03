@@ -80,7 +80,7 @@
     "symfony-cmf/routing-bundle": "^2.0",
     "symfony/contracts": "^2.0",
     "symfony/monolog-bundle": "^3.1.0",
-    "symfony/symfony": "^5.2.0",
+    "symfony/symfony": "^5.3.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/twig": "^3.0",
     "twig/string-extra": "^3.0",
