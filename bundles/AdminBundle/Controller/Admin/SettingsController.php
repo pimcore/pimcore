@@ -20,6 +20,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -394,7 +395,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function setSystemAction(Request $request, LocaleServiceInterface $localeService)
+    public function setSystemAction(Request $request, LocaleServiceInterface $localeService, ConnectionInterface $db)
     {
         $this->checkPermission('system_settings');
 
@@ -413,9 +414,110 @@ class SettingsController extends AdminController
         $existingValues['pimcore']['general']['fallback_languages'] = [];
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
+
+        $classesList = new \Pimcore\Model\DataObject\ClassDefinition\Listing();
+        $classes = $classesList->load();
         foreach ($languages as $language) {
             if (isset($values['general.fallbackLanguages.' . $language])) {
                 $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
+
+                if($fallbackLanguages[$language] === '') {
+                    $previousFallbackLanguages = Tool::getFallbackLanguagesFor($language);
+
+                    if(isset($previousFallbackLanguages[0])) {
+                        foreach ($classes as $class) {
+                            foreach($class->getFieldDefinitions() as $fieldDefinition) {
+                                if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                                    $updates = array_map(
+                                        static function (Model\DataObject\ClassDefinition\Data $fieldDefinition) {
+                                            return '`query`.`'.$fieldDefinition->getName().'` = `data`.`'.$fieldDefinition->getName().'`';
+                                        },
+                                        $fieldDefinition->getFieldDefinitions()
+                                    );
+
+                                    $db->executeQuery(
+                                        'UPDATE object_localized_query_'.$class->getId().'_'.$language.' query
+                                        INNER JOIN object_localized_data_'.$class->getId().' data ON query.ooo_id=data.ooo_id AND data.language = ?
+                                        SET '.implode(',', $updates),
+                                        [$language]
+                                    );
+                                } elseif($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Objectbricks) {
+                                    foreach($fieldDefinition->getAllowedTypes() as $brickName) {
+                                        $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickName);
+                                        if($brickDefinition instanceof Model\DataObject\Objectbrick\Definition) {
+                                            $localizedFields = $brickDefinition->getFieldDefinition('localizedfields');
+                                            if($localizedFields instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                                                $updates = array_map(
+                                                    static function (Model\DataObject\ClassDefinition\Data $fieldDefinition) {
+                                                        return '`query`.`'.$fieldDefinition->getName().'` = `data`.`'.$fieldDefinition->getName().'`';
+                                                    },
+                                                    $localizedFields->getFieldDefinitions()
+                                                );
+
+                                                $db->executeQuery(
+                                                    'UPDATE object_brick_localized_query_'.$brickName.'_'.$class->getId().'_'.$language.' query
+                                                    INNER JOIN object_brick_localized_'.$brickName.'_'.$class->getId().' data ON query.ooo_id=data.ooo_id AND data.language = ?
+                                                    SET '.implode(',', $updates),
+                                                    [$language]
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    foreach ($classes as $class) {
+                        foreach ($class->getFieldDefinitions() as $fieldDefinition) {
+                            if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                                $fields = array_map(
+                                    static function (Model\DataObject\ClassDefinition\Data $fieldDefinition) {
+                                        return '`'.$fieldDefinition->getName().'`';
+                                    },
+                                    $fieldDefinition->getFieldDefinitions()
+                                );
+
+                                $updates = array_map(static function($field) use ($class, $language) {
+                                    return $field.'=IFNULL(object_localized_query_'.$class->getId().'_'.$language.'.'.$field.', VALUES('.$field.'))';
+                                }, $fields);
+
+                                $db->executeQuery(
+                                    'INSERT INTO object_localized_query_'.$class->getId().'_'.$language.' (ooo_id, language, '.implode(',', $fields).')
+                                    SELECT ooo_id, ?, '.implode(',', $fields).' FROM object_localized_data_'.$class->getId().' WHERE language = ?
+                                    ON DUPLICATE KEY UPDATE '.implode(',', $updates),
+                                    [$language, $fallbackLanguages[$language]]
+                                );
+                            } elseif ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Objectbricks) {
+                                foreach ($fieldDefinition->getAllowedTypes() as $brickName) {
+                                    $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickName);
+                                    if ($brickDefinition instanceof Model\DataObject\Objectbrick\Definition) {
+                                        $localizedFields = $brickDefinition->getFieldDefinition('localizedfields');
+                                        if ($localizedFields instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                                            $fields = array_map(
+                                                static function (Model\DataObject\ClassDefinition\Data $fieldDefinition) {
+                                                    return '`'.$fieldDefinition->getName().'`';
+                                                },
+                                                $localizedFields->getFieldDefinitions()
+                                            );
+
+                                            $updates = array_map(static function ($field) use ($brickName, $class, $language) {
+                                                return $field.'=IFNULL(object_brick_localized_query_'.$brickName.'_'.$class->getId().'_'.$language.'.'.$field.', VALUES('.$field.'))';
+                                            }, $fields);
+
+                                            $db->executeQuery(
+                                                'INSERT INTO object_brick_localized_query_'.$brickName.'_'.$class->getId().'_'.$language.' (ooo_id, language, '.implode(',', $fields).')
+                                                SELECT ooo_id, ?, '.implode(',', $fields).' FROM object_brick_localized_'.$brickName.'_'.$class->getId().' WHERE language = ?
+                                                ON DUPLICATE KEY UPDATE '.implode(',', $updates),
+                                                [$language, $fallbackLanguages[$language]]
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             if ($localeService->isLocale($language)) {
