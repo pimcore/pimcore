@@ -956,7 +956,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $sortOrder = $request->get('childrenSortOrder');
 
             $currentSortBy = $object->getChildrenSortBy();
-            $currentSortOrder= $object->getChildrenSortOrder();
 
             $object->setChildrenSortBy($sortBy);
             $object->setChildrenSortOrder($sortOrder);
