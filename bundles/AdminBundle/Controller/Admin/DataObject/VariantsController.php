@@ -86,15 +86,6 @@ class VariantsController extends AdminController
             $object = DataObject\Concrete::getById($data['id']);
             $class = $object->getClass();
 
-            $requestedLanguage = $allParams['language'] ?? null;
-            if ($requestedLanguage) {
-                if ($requestedLanguage != 'default') {
-                    $request->setLocale($requestedLanguage);
-                }
-            } else {
-                $requestedLanguage = $request->getLocale();
-            }
-
             if ($object->isAllowed('publish')) {
                 $objectData = [];
                 foreach ($data as $key => $value) {
