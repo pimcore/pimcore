@@ -70,7 +70,7 @@ class VariantsController extends AdminController
     {
         // get list of variants
 
-        $requestedLanguage = $request->get('language') ?? null;
+        $requestedLanguage = $request->get('language');
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
                 $request->setLocale($requestedLanguage);
