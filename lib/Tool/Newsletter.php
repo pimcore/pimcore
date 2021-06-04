@@ -59,7 +59,7 @@ class Newsletter
         $mail->setIgnoreDebugMode(true);
         $config = Config::getSystemConfiguration('newsletter');
 
-        if ($config['use_specific']) {
+        if ($config['use_specific'] ?? false) {
             $mail->init('newsletter');
         }
 
@@ -149,7 +149,7 @@ class Newsletter
 
             $mailer = null;
             // check if newsletter specific mailer is needed
-            if ($config['use_specific']) {
+            if ($config['use_specific'] ?? false) {
                 $mail->getHeaders()->addTextHeader('X-Transport', 'pimcore_newsletter');
             }
 
