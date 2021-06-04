@@ -205,7 +205,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             ? $params['owner']
             : ($object ?: null);
 
-        if (null !== $passwordModel) {
+        if (null !== $passwordModel && !$passwordModel instanceof DataObject\Classificationstore && !$passwordModel instanceof DataObject\Localizedfield) {
             $setter = 'set' . ucfirst($this->getName());
             $passwordModel->$setter($hashed);
         }

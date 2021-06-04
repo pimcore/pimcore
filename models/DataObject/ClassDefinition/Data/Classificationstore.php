@@ -449,6 +449,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $classificationStore = $object->$getter();
         $items = $classificationStore->getItems();
         $activeGroups = $classificationStore->getActiveGroups();
+        $params['owner'] = $classificationStore;
+
         if ($items) {
             foreach ($items as $groupId => $keys) {
                 if (!isset($activeGroups[$groupId])) {
