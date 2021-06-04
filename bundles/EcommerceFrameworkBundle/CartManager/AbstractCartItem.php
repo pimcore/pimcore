@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInter
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\MockProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject;
@@ -113,6 +114,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $product = DataObject::getById($this->productId);
 
         if ($product instanceof CheckoutableInterface) {
+            $this->product = $product;
+        } else {
+            // actual product is not available or not checkoutable (e.g. deleted in Admin)
+            $product = new MockProduct();
             $this->product = $product;
         }
 
