@@ -29,11 +29,12 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php-version: 8.0, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local }
-                    - { php-version: 8.0, database: "mariadb:10.4", dependencies: lowest, experimental: false, storage: local }
-                    - { php-version: 8.0, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local }
-                    - { php-version: 8.0, database: "mysql:8.0", dependencies: lowest, experimental: false, storage: local }
-                    - { php-version: 8.0, database: "percona:8.0", dependencies: lowest, experimental: false, storage: minio }
+                    - { php-version: 8.0, database: "mariadb:10.5", dependencies: highest, experimental: true, storage: local, symfony: "5.4.x-dev" }
+                    - { php-version: 8.0, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "" }
+                    - { php-version: 8.0, database: "mariadb:10.4", dependencies: lowest, experimental: false, storage: local, symfony: "" }
+                    - { php-version: 8.0, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "" }
+                    - { php-version: 8.0, database: "mysql:8.0", dependencies: lowest, experimental: false, storage: local, symfony: "" }
+                    - { php-version: 8.0, database: "percona:8.0", dependencies: lowest, experimental: false, storage: minio, symfony: "" }
 
         services:
             minio:
@@ -85,6 +86,15 @@ jobs:
               run: |
                   mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
                   .github/ci/scripts/setup-pimcore-environment.sh
+
+            - name: "Set Symfony version constraint in composer.json"
+              env:
+                  SYMFONY_VERSION: "${{ matrix.symfony }}"
+              run: |
+                  if [ ! -z "$SYMFONY_VERSION" ]; then
+                      composer config minimum-stability "dev"
+                      composer require --no-update symfony/symfony:$SYMFONY_VERSION
+                  fi
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
