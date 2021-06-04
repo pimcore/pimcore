@@ -22,14 +22,13 @@ jobs:
     static-analysis-phpstan:
         name: "Static Analysis with PHPStan"
         runs-on: "ubuntu-20.04"
-
+        continue-on-error: ${{ matrix.experimental }}
         strategy:
             matrix:
-                dependencies:
-                    - "lowest"
-                    - "highest"
-                php-version:
-                    - "8.0"
+                include:
+                    - { php-version: "8.0", dependencies: "lowest", experimental: false, symfony: "" }
+                    - { php-version: "8.0", dependencies: "highest", experimental: false, symfony: "" }
+                    - { php-version: "8.0", dependencies: "highest", experimental: true, symfony: "5.4.x-dev" }
 
         steps:
             - name: "Checkout code"
@@ -47,6 +46,15 @@ jobs:
 
             - name: "Copy models"
               run: "cp -rv .github/ci/files/models ."
+
+            - name: "Set Symfony version constraint in composer.json"
+              env:
+                  SYMFONY_VERSION: "${{ matrix.symfony }}"
+              run: |
+                  if [ ! -z "$SYMFONY_VERSION" ]; then
+                      composer config minimum-stability "dev"
+                      composer require --no-update symfony/symfony:$SYMFONY_VERSION
+                  fi
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
