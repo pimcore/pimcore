@@ -104,6 +104,7 @@
     "monolog/monolog": ">=2",
     "phpstan/phpstan": "0.12.55",
     "symfony/symfony": "3.4.43 || 4.4.11",
+    "webmozarts/console-parallelization": "1.2.2",
     "symfony/monolog-bundle": "3.6.0"
   },
   "require-dev": {
