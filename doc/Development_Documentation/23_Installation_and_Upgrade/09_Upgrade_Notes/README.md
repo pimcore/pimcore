@@ -2,6 +2,7 @@
 
 ## 10.1.0
 - [InstallBundle] Installer preconfiguration path changed from `app\config/installer.yml` to `config/installer.yaml`
+- [Core] composer.json: `symfony/symfony` package requirement has been replaced by `symfony/*` individual bundles. **Note for Bundles**: if you are using `symfony/symfony` dependency, it will now conflict with package `pimcore/pimcore`. Please move your bundle requirements to Symfony individual component packages.
 
 ## 10.0.0
 
