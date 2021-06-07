@@ -45,11 +45,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $documentRenderer;
 
     /**
-     * @var bool
-     */
-    protected $renderErrorPage = true;
-
-    /**
      * @var Config
      */
     protected $config;
@@ -62,12 +57,10 @@ class ResponseExceptionListener implements EventSubscriberInterface
     /**
      * @param DocumentRenderer $documentRenderer
      * @param ConnectionInterface $db
-     * @param bool $renderErrorPage
      */
-    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config, $renderErrorPage = true)
+    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config)
     {
         $this->documentRenderer = $documentRenderer;
-        $this->renderErrorPage = (bool)$renderErrorPage;
         $this->db = $db;
         $this->config = $config;
     }
@@ -97,9 +90,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         // further checks are only valid for default context
         $request = $event->getRequest();
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            if ($this->renderErrorPage) {
-                $this->handleErrorPage($event);
-            }
+            $this->handleErrorPage($event);
         }
     }
 
@@ -133,7 +124,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         // Error page rendering
         if (empty($errorPath)) {
-            $errorPath = '/';
+            // if not set, use Symfony error handling
+            return;
         }
 
         $document = Document::getByPath($errorPath);
