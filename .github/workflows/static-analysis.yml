@@ -52,8 +52,7 @@ jobs:
                   SYMFONY_VERSION: "${{ matrix.symfony }}"
               run: |
                   if [ ! -z "$SYMFONY_VERSION" ]; then
-                      composer config minimum-stability "dev"
-                      composer require --no-update symfony/symfony:$SYMFONY_VERSION
+                    .github/ci/scripts/symfony-require-dev.sh
                   fi
 
             - name: "Install dependencies with Composer"
