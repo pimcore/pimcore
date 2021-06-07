@@ -776,7 +776,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     params: {
                         configuration: m,
                         values: n,
-                        id: this.data.id
+                        id: this.currentLayoutId
                     },
                     success: this.saveOnComplete.bind(this),
                     failure: this.saveOnError.bind(this)
@@ -906,6 +906,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     this.setCurrentNode("root");
                     this.editPanel.removeAll();
                     this.classDefinitionPanel.enable();
+                    this.data = data.data;
                     this.enableButtons();
                     this.layoutComboStore.reload();
                     this.currentLayoutId = data.id;
