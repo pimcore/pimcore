@@ -670,22 +670,35 @@ pimcore.object.tree = Class.create({
             // Sort Children By
             var sortByItems = [];
 
-            if (record.data.permissions.settings && perspectiveCfg.inTreeContextMenu("object.changeChildrenSortBy")) {
-                sortByItems.push({
-                    text: t('by_key'),
-                    iconCls: "pimcore_icon_alphabetical_sorting_az",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'ASC')
-                });
-                sortByItems.push({
-                    text: t('by_key_reverse'),
-                    iconCls: "pimcore_icon_alphabetical_sorting_za",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'DESC')
-                });
-                sortByItems.push({
-                    text: t('by_index'),
-                    iconCls: "pimcore_icon_index_sorting",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index', 'ASC')
-                });
+            if (user.admin || !record.data.locked) {
+
+                if (record.data.permissions.settings && perspectiveCfg.inTreeContextMenu("object.changeChildrenSortBy")) {
+                    // only the admin is allowed to change the sort method.
+                    // See https://github.com/pimcore/pimcore/issues/8476
+
+                    let currentSortMethod = record.data.sortBy;
+
+                    if (currentSortMethod == "key" || user.admin) {
+                        sortByItems.push({
+                            text: t('by_key'),
+                            iconCls: "pimcore_icon_alphabetical_sorting_az",
+                            handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'ASC')
+                        });
+                        sortByItems.push({
+                            text: t('by_key_reverse'),
+                            iconCls: "pimcore_icon_alphabetical_sorting_za",
+                            handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'DESC')
+                        });
+                    }
+
+                    if (currentSortMethod == "index" || user.admin) {
+                        sortByItems.push({
+                            text: t('by_index'),
+                            iconCls: "pimcore_icon_index_sorting",
+                            handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index', record.data.sortOrder)
+                        });
+                    }
+                }
             }
 
             if (sortByItems.length) {
@@ -1035,8 +1048,8 @@ pimcore.object.tree = Class.create({
 
     },
 
-    changeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
 
+    doChangeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
         var parameters = {
             id: record.data.id,
             sortBy: sortBy,
@@ -1077,7 +1090,22 @@ pimcore.object.tree = Class.create({
 
             }.bind(this, tree, record, sortBy)
         });
+    },
 
+    changeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
+
+        let currentSortMethod = record.data.sortBy;
+
+        if (currentSortMethod != sortBy && sortBy == "index") {
+            Ext.MessageBox.confirm(t("warning"), t("reindex_warning"),
+                function (tree, record, sortBy, childrenSortOrder, buttonValue) {
+                    if (buttonValue == "yes") {
+                        this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
+                    }
+                }.bind(this, tree, record, sortBy, childrenSortOrder));
+        } else {
+            this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
+        }
     },
 
     searchAndMove: function(tree, record) {
