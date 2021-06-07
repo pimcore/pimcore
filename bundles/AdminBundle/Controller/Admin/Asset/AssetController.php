@@ -191,7 +191,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
-        $data['url'] = $request->getSchemeAndHttpHost() . $asset->getFrontendFullPath();
+        $data['url'] = preg_match('/^http(s)?:\\/\\/.+/', $asset->getFrontendFullPath()) ?
+            $asset->getFrontendFullPath() :
+            $request->getSchemeAndHttpHost() . $asset->getFrontendFullPath();
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
