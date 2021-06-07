@@ -238,6 +238,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             $nonEmpty = true;
         }
 
+        if ($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\Multiselect && is_array($value) && empty($value)) {
+            $nonEmpty = true;
+        }
+
         if ($nonEmpty || $value) {
             $this->items[$groupId][$keyId][$language] = $value;
         } elseif (isset($this->items[$groupId][$keyId][$language])) {
